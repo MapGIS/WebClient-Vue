@@ -2,36 +2,40 @@
   <div class="mapgis-3d-graphic-container" :style="containerStyle">
     <div>
       <mapgis-ui-graphic-icons-panel
-          ref="iconsPanel"
-          :models="models"
-          :containerStyle="iconsPanelStyle"
-          :enableOneMap="enableOneMap"
-          :enableMapStory="enableMapStory"
-          @startDraw="$_startDraw"
-          @startDrawModel="$_startDrawModel"
+        ref="iconsPanel"
+        :models="models"
+        :containerStyle="iconsPanelStyle"
+        :enableOneMap="enableOneMap"
+        :enableMapStory="enableMapStory"
+        @startDraw="$_startDraw"
+        @startDrawModel="$_startDrawModel"
       />
     </div>
     <div>
       <mapgis-ui-graphic-edit-panel
-          ref="editPanel"
-          :editPanelValues="editPanelValues"
-          :editList="editList"
-          :dataSource="dataSourceCopy"
-          :currentEditType="currentEditType"
-          :graphicGroups="graphicGroups"
-          @change="$_changeEditPanelValues"
-          @changeGroup="$_changeGroup"
-          @stopDrawing="$_stopDraw"
-          @dblclick="$_dbclick"
-          @clickTool="$_clickTool"
-          @changeAttributes="$_changeAttributes"
-          @editTitle="$_editTitle"
+        ref="editPanel"
+        :editPanelValues="editPanelValues"
+        :editList="editList"
+        :dataSource="dataSourceCopy"
+        :currentEditType="currentEditType"
+        :graphicGroups="graphicGroups"
+        @change="$_changeEditPanelValues"
+        @changeGroup="$_changeGroup"
+        @stopDrawing="$_stopDraw"
+        @dblclick="$_dbclick"
+        @clickTool="$_clickTool"
+        @changeAttributes="$_changeAttributes"
+        @editTitle="$_editTitle"
       />
     </div>
     <mapgis-3d-popup
-        v-if="enablePopup"
-        :position='{"longitude":popup.lng,"latitude":popup.lat,"height":popup.alt}'
-        :forceRender="true"
+      v-if="enablePopup"
+      :position="{
+        longitude: popup.lng,
+        latitude: popup.lat,
+        height: popup.alt
+      }"
+      :forceRender="true"
     >
       <div>
         <slot name="content" :popup="popup">
@@ -44,13 +48,13 @@
 
 <script>
 import GraphicLayerService from "./GraphicLayerService";
-import icons from "../Plotting/base64Source"
+import icons from "../Plotting/base64Source";
 import editList from "./editList";
-import {polygon} from "@turf/helpers";
+import { polygon } from "@turf/helpers";
 import centerOfMass from "@turf/center-of-mass";
 import bbox from "@turf/bbox";
-import {getPopupHtml} from "../../UI/Popup/popupUtil";
-import clonedeep from 'lodash.clonedeep';
+import { getPopupHtml } from "../../UI/Popup/popupUtil";
+import clonedeep from "lodash.clonedeep";
 
 export default {
   name: "mapgis-3d-graphic-single-layer",
@@ -64,7 +68,7 @@ export default {
     dataSource: {
       type: Array,
       default() {
-        return []
+        return [];
       }
     },
     models: {
@@ -111,16 +115,16 @@ export default {
       //切换面板参数
       tabListNoTitle: [
         {
-          key: 'list',
-          tab: '标注列表',
+          key: "list",
+          tab: "标注列表"
         },
         {
-          key: 'edit',
-          tab: '设置面板',
+          key: "edit",
+          tab: "设置面板"
         }
       ],
       //当前显示面板
-      noTitleKey: 'list',
+      noTitleKey: "list",
       //设置面板显示参数
       editList: editList,
       //当前编辑的类型
@@ -165,21 +169,24 @@ export default {
   },
   watch: {
     dataSource: {
-      handler: function () {
-        if (!this.isEdit && !this.addSource && !this.editTitle && this.dataSource.length > 0) {
+      handler: function() {
+        if (
+          !this.isEdit &&
+          !this.addSource &&
+          !this.editTitle &&
+          this.dataSource.length > 0
+        ) {
           this.$_init();
         }
       },
       deep: true
     },
     dataSourceCopy: {
-      handler: function () {
-      },
+      handler: function() {},
       deep: true
-    },
+    }
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     $_getGroups() {
       let dataSource = [];
@@ -231,7 +238,7 @@ export default {
         rectangle: 0,
         ellipsoid: 0,
         model: 0
-      }
+      };
     },
     /**
      * 显示当前图层的所有标绘对象
@@ -259,12 +266,20 @@ export default {
       //先存起来title
       let title = this.editPanelValues.title;
       //更新样式
-      let options = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
+      let options = this.$_getDrawOptions(
+        this.editPanelValues,
+        this.currentEditType,
+        Cesium
+      );
       this.$_updateStyleByStyle(this.editPanelValues.id, options.style);
       if (options.hasOwnProperty("position")) {
         let graphicsLayer = this.$_getGraphicLayer();
         let primitive = graphicsLayer.getGraphicByID(this.editPanelValues.id);
-        primitive.primitive.position = Cesium.Cartesian3.fromDegrees(options.position.lng, options.position.lat, this.editPanelValues.height);
+        primitive.primitive.position = Cesium.Cartesian3.fromDegrees(
+          options.position.lng,
+          options.position.lat,
+          this.editPanelValues.height
+        );
       }
       //更新数据
       let dataSource = this.$_getJsonById(this.editPanelValues.id);
@@ -294,11 +309,11 @@ export default {
     $_changeAttributes(attributes, graphicId) {
       if (graphicId) {
         let graphic = this.$_getGraphicByID(graphicId);
-        Object.keys(attributes).forEach(function (key) {
+        Object.keys(attributes).forEach(function(key) {
           graphic.attributes[key] = attributes[key];
         });
         this.enablePopup = false;
-        this.$nextTick(function () {
+        this.$nextTick(function() {
           this.$_setPopUp(graphic, true);
         });
       }
@@ -325,19 +340,21 @@ export default {
             this.$_stopDrawing();
             this.isStartDrawing = false;
             //开始编辑
-            this.$nextTick(function () {
+            this.$nextTick(function() {
               this.isEdit = true;
               this.$_startEdit();
             });
             //获取设置面板显示参数
             this.editPanelValues = {
               scale: row.style.scale,
-              heading: 0,//z轴
-              pitch: 0,//y轴
-              roll: 0,//x轴
+              heading: 0, //z轴
+              pitch: 0, //y轴
+              roll: 0 //x轴
             };
             let graphicLayer = this.$_getGraphicLayer();
-            let graphicGroups = graphicLayer.getGraphicByName(row.attributes.title);
+            let graphicGroups = graphicLayer.getGraphicByName(
+              row.attributes.title
+            );
             let groups = [];
             for (let i = 0; i < graphicGroups.length; i++) {
               groups.push({
@@ -378,8 +395,11 @@ export default {
             }
           }
           this.$emit("delete", row.id);
-          this.$nextTick(function () {
-            let graphicsLayer = this.$_getGraphicLayer(this.vueIndex, this.vueKey);
+          this.$nextTick(function() {
+            let graphicsLayer = this.$_getGraphicLayer(
+              this.vueIndex,
+              this.vueKey
+            );
             graphicsLayer.removeGraphicByID(row.id);
             this.$refs.editPanel.isUpdatePanel = true;
             this.addSource = false;
@@ -416,29 +436,70 @@ export default {
       } = json;
 
       let {
-        text, font, color, fillColor, backgroundColor, outlineWidth, outlineColor, image,
-        extrudedHeight, width, height, topRadius, backgroundOpacity, backgroundPadding, bottomRadius,
-        pixelSize, radius, materialType, material, cornerType, radiusX, radiusY, radiusZ, url, scale,
-        isHermiteSpline, stRotation, offsetHeight, loop
+        text,
+        font,
+        color,
+        fillColor,
+        backgroundColor,
+        outlineWidth,
+        outlineColor,
+        image,
+        extrudedHeight,
+        width,
+        height,
+        topRadius,
+        backgroundOpacity,
+        backgroundPadding,
+        bottomRadius,
+        pixelSize,
+        radius,
+        materialType,
+        material,
+        cornerType,
+        radiusX,
+        radiusY,
+        radiusZ,
+        url,
+        scale,
+        isHermiteSpline,
+        stRotation,
+        offsetHeight,
+        loop,
+        verticalOrigin,
+        horizontalOrigin
       } = style;
 
-      const {title, __flashStyle} = attributes;
+      const { title, __flashStyle } = attributes;
       material = material || {};
 
-      const {speed, duration, gradient, count, direction} = material;
+      const { speed, duration, gradient, count, direction } = material;
 
       let editPanelValues = {};
 
       switch (json.type) {
         case "point":
           editPanelValues.id = id;
-          editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.color =
+            "rgb(" +
+            color[0] * 255 +
+            "," +
+            color[1] * 255 +
+            "," +
+            color[2] * 255 +
+            ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.pixelSize = pixelSize;
           editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.outlineWidth = outlineWidth;
           editPanelValues.outlineOpacity = outlineColor[3] * 100;
-          editPanelValues.outlineColor = "rgb(" + outlineColor[0] * 255 + "," + outlineColor[1] * 255 + "," + outlineColor[2] * 255 + ")";
+          editPanelValues.outlineColor =
+            "rgb(" +
+            outlineColor[0] * 255 +
+            "," +
+            outlineColor[1] * 255 +
+            "," +
+            outlineColor[2] * 255 +
+            ")";
           if (title) {
             editPanelValues.title = title;
           }
@@ -458,13 +519,34 @@ export default {
           }
           editPanelValues.fontSize = fonts[0];
           editPanelValues.fontFamily = fonts[1];
-          editPanelValues.fontColor = "rgb(" + fillColor[0] * 255 + "," + fillColor[1] * 255 + "," + fillColor[2] * 255 + ")";
+          editPanelValues.fontColor =
+            "rgb(" +
+            fillColor[0] * 255 +
+            "," +
+            fillColor[1] * 255 +
+            "," +
+            fillColor[2] * 255 +
+            ")";
           editPanelValues.opacity = fillColor[3] * 100;
-          editPanelValues.backgroundColor = "rgb(" + backgroundColor[0] * 255 + "," + backgroundColor[1] * 255 + "," + backgroundColor[2] * 255 + ")";
+          editPanelValues.backgroundColor =
+            "rgb(" +
+            backgroundColor[0] * 255 +
+            "," +
+            backgroundColor[1] * 255 +
+            "," +
+            backgroundColor[2] * 255 +
+            ")";
           editPanelValues.backgroundOpacity = backgroundColor[3] * 100;
           editPanelValues.backgroundPadding = backgroundPadding.x;
           editPanelValues.outlineWidth = outlineWidth;
-          editPanelValues.outlineColor = "rgb(" + outlineColor[0] * 255 + "," + outlineColor[1] * 255 + "," + outlineColor[2] * 255 + ")";
+          editPanelValues.outlineColor =
+            "rgb(" +
+            outlineColor[0] * 255 +
+            "," +
+            outlineColor[1] * 255 +
+            "," +
+            outlineColor[2] * 255 +
+            ")";
           editPanelValues.outlineOpacity = outlineColor[3] * 100;
           let position = this.$_cartesian3ToLongLat({
             x: positions[0],
@@ -473,6 +555,8 @@ export default {
           });
           editPanelValues.offsetHeight = position.alt;
           editPanelValues.position = position;
+          editPanelValues.verticalOrigin = verticalOrigin;
+          editPanelValues.horizontalOrigin = horizontalOrigin;
           break;
         case "box":
           editPanelValues.id = id;
@@ -486,7 +570,14 @@ export default {
           break;
         case "billboard":
           editPanelValues.id = id;
-          editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.color =
+            "rgb(" +
+            color[0] * 255 +
+            "," +
+            color[1] * 255 +
+            "," +
+            color[2] * 255 +
+            ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.image = image;
           editPanelValues.width = width;
@@ -494,14 +585,28 @@ export default {
           editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.outlineWidth = outlineWidth;
           editPanelValues.outlineOpacity = outlineColor[3] * 100;
-          editPanelValues.outlineColor = "rgb(" + outlineColor[0] * 255 + "," + outlineColor[1] * 255 + "," + outlineColor[2] * 255 + ")";
+          editPanelValues.outlineColor =
+            "rgb(" +
+            outlineColor[0] * 255 +
+            "," +
+            outlineColor[1] * 255 +
+            "," +
+            outlineColor[2] * 255 +
+            ")";
           if (title) {
             editPanelValues.title = title;
           }
           break;
         case "polyline":
           editPanelValues.id = id;
-          editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.color =
+            "rgb(" +
+            color[0] * 255 +
+            "," +
+            color[1] * 255 +
+            "," +
+            color[2] * 255 +
+            ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.width = width;
           editPanelValues.isHermiteSpline = isHermiteSpline;
@@ -513,7 +618,14 @@ export default {
           break;
         case "polylineVolume":
           editPanelValues.id = id;
-          editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.color =
+            "rgb(" +
+            color[0] * 255 +
+            "," +
+            color[1] * 255 +
+            "," +
+            color[2] * 255 +
+            ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.width = width;
           editPanelValues.offsetHeight = offsetHeight;
@@ -525,7 +637,14 @@ export default {
         case "polygon":
           editPanelValues.id = id;
           editPanelValues.title = title;
-          editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.color =
+            "rgb(" +
+            color[0] * 255 +
+            "," +
+            color[1] * 255 +
+            "," +
+            color[2] * 255 +
+            ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.extrudedHeight = extrudedHeight;
           editPanelValues.offsetHeight = offsetHeight;
@@ -540,7 +659,7 @@ export default {
             editPanelValues.materialType = "flash";
           }
           if (materialType === "Image") {
-            const {repeat} = material;
+            const { repeat } = material;
             editPanelValues.image = material.image;
             editPanelValues.stRotation = stRotation;
             editPanelValues.repeatX = repeat.x;
@@ -565,21 +684,42 @@ export default {
             editPanelValues.title = title;
           }
           if (materialType === "text") {
-            const {backgroundColor, text, font, fillColor} = material;
-            editPanelValues.rtBackgroundColor = "rgb(" + backgroundColor[0] * 255 + "," + backgroundColor[1] * 255 + "," + backgroundColor[2] * 255 + ")";
+            const { backgroundColor, text, font, fillColor } = material;
+            editPanelValues.rtBackgroundColor =
+              "rgb(" +
+              backgroundColor[0] * 255 +
+              "," +
+              backgroundColor[1] * 255 +
+              "," +
+              backgroundColor[2] * 255 +
+              ")";
             editPanelValues.rtBackgroundOpacity = backgroundColor[3] * 100;
             editPanelValues.rectangleText = text;
             let fonts = font.split(" ");
             editPanelValues.rtFontSize = fonts[0].split("px")[0];
             editPanelValues.rtFontFamily = fonts[1];
-            editPanelValues.color = "rgb(" + fillColor[0] * 255 + "," + fillColor[1] * 255 + "," + fillColor[2] * 255 + ")";
+            editPanelValues.color =
+              "rgb(" +
+              fillColor[0] * 255 +
+              "," +
+              fillColor[1] * 255 +
+              "," +
+              fillColor[2] * 255 +
+              ")";
             editPanelValues.opacity = fillColor[3] * 100;
           } else {
-            editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+            editPanelValues.color =
+              "rgb(" +
+              color[0] * 255 +
+              "," +
+              color[1] * 255 +
+              "," +
+              color[2] * 255 +
+              ")";
             editPanelValues.opacity = color[3] * 100;
           }
           if (materialType === "Image") {
-            const {repeat} = material;
+            const { repeat } = material;
             editPanelValues.image = material.image;
             editPanelValues.stRotation = stRotation;
             editPanelValues.repeatX = repeat.x;
@@ -594,7 +734,14 @@ export default {
           editPanelValues.offsetHeight = offsetHeight;
           if (this.currentEditType === "circle") {
             editPanelValues.id = id;
-            editPanelValues.pureColor = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+            editPanelValues.pureColor =
+              "rgb(" +
+              color[0] * 255 +
+              "," +
+              color[1] * 255 +
+              "," +
+              color[2] * 255 +
+              ")";
             editPanelValues.pureOpacity = color[3] * 100;
             editPanelValues.radius = radius;
             editPanelValues.speed = speed || 1;
@@ -603,10 +750,24 @@ export default {
             editPanelValues.count = count || 4;
             editPanelValues.materialType = materialType;
             if (materialType === "Color") {
-              editPanelValues.materialColor = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+              editPanelValues.materialColor =
+                "rgb(" +
+                color[0] * 255 +
+                "," +
+                color[1] * 255 +
+                "," +
+                color[2] * 255 +
+                ")";
               editPanelValues.materialOpacity = color[3] * 100;
             } else {
-              editPanelValues.materialColor = "rgb(" + material.color.red * 255 + "," + material.color.green * 255 + "," + material.color.blue * 255 + ")";
+              editPanelValues.materialColor =
+                "rgb(" +
+                material.color.red * 255 +
+                "," +
+                material.color.green * 255 +
+                "," +
+                material.color.blue * 255 +
+                ")";
               editPanelValues.materialOpacity = material.color.alpha * 100;
             }
             if (title) {
@@ -615,7 +776,14 @@ export default {
           } else {
             editPanelValues.id = id;
             editPanelValues.title = title;
-            editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+            editPanelValues.color =
+              "rgb(" +
+              color[0] * 255 +
+              "," +
+              color[1] * 255 +
+              "," +
+              color[2] * 255 +
+              ")";
             editPanelValues.opacity = color[3] * 100;
             editPanelValues.radius = radius;
             editPanelValues.extrudedHeight = extrudedHeight;
@@ -626,7 +794,14 @@ export default {
           break;
         case "ellipsoid":
           editPanelValues.id = id;
-          editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.color =
+            "rgb(" +
+            color[0] * 255 +
+            "," +
+            color[1] * 255 +
+            "," +
+            color[2] * 255 +
+            ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.radiusX = radiusX;
           editPanelValues.radiusY = radiusY;
@@ -642,17 +817,33 @@ export default {
           editPanelValues.extrudedHeight = extrudedHeight;
           editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.speed = speed || 1;
-          editPanelValues.image = material.image || "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAAUCAYAAAA3IwABAAABv0lEQVR4nO2cwW7DMAiGSbrbTnuCvf8DrtplzQ5dNWSBwa4bCen7JMsONn8MiTiyHcch8v25yT/b4Kz9rDOezTvTe1/WzxrtPT29aG9GY+bcWb672vfWkfasn6exKsZd2dq1vm/0Th2XFWdWZ/S/jPIhifWITZw5s7Z8vH1x7FZOtP36Js+jRXfDlgkmSrj33P4k7bmZD69/9sgvq99qrhirtC7q/lbhyd5ln/Dz8n2Z1LBiE6Wv1yNxtndqc9Xqj367nt/IXu+fzdh6z16cYsyv4mNFwdIci/Uibn/z6g+/yT2WyC+r/xi3pNaZ40fd/5mCNeO3WsPSFGc98q72XJurVn909Pxm9ix7xtZ7jtbtHO33/MSxf+0CAFAEChYAlIGCBQBloGABQBkoWABQBgoWAJSBggUAZaBgAUAZKFgAUAYKFgCUgYIFAGWgYAFAGShYAFAGChYAlIGCBQBlWN0Pq9ffZrbfTu+ZBn7PDxr45b4tDfzsOMWYX8X7ioKlm/bphnqP2QqqlxAvCZbfaAM/bz/yy5ztacycO8uXFsnxO3VcVpxZndH/MsqHJNYjNnHmzNry8fbFsVs50fbrLwRiE9BpH2RgAAAAAElFTkSuQmCC";
+          editPanelValues.image =
+            material.image ||
+            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAAUCAYAAAA3IwABAAABv0lEQVR4nO2cwW7DMAiGSbrbTnuCvf8DrtplzQ5dNWSBwa4bCen7JMsONn8MiTiyHcch8v25yT/b4Kz9rDOezTvTe1/WzxrtPT29aG9GY+bcWb672vfWkfasn6exKsZd2dq1vm/0Th2XFWdWZ/S/jPIhifWITZw5s7Z8vH1x7FZOtP36Js+jRXfDlgkmSrj33P4k7bmZD69/9sgvq99qrhirtC7q/lbhyd5ln/Dz8n2Z1LBiE6Wv1yNxtndqc9Xqj367nt/IXu+fzdh6z16cYsyv4mNFwdIci/Uibn/z6g+/yT2WyC+r/xi3pNaZ40fd/5mCNeO3WsPSFGc98q72XJurVn909Pxm9ix7xtZ7jtbtHO33/MSxf+0CAFAEChYAlIGCBQBloGABQBkoWABQBgoWAJSBggUAZaBgAUAZKFgAUAYKFgCUgYIFAGWgYAFAGShYAFAGChYAlIGCBQBlWN0Pq9ffZrbfTu+ZBn7PDxr45b4tDfzsOMWYX8X7ioKlm/bphnqP2QqqlxAvCZbfaAM/bz/yy5ztacycO8uXFsnxO3VcVpxZndH/MsqHJNYjNnHmzNry8fbFsVs50fbrLwRiE9BpH2RgAAAAAElFTkSuQmCC";
           editPanelValues.duration = duration || 2000;
           editPanelValues.direction = direction || 1;
           editPanelValues.materialType = materialType;
           editPanelValues.loop = loop;
           if (materialType === "Color") {
-            editPanelValues.materialColor = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+            editPanelValues.materialColor =
+              "rgb(" +
+              color[0] * 255 +
+              "," +
+              color[1] * 255 +
+              "," +
+              color[2] * 255 +
+              ")";
             editPanelValues.materialOpacity = color[3] * 100;
             editPanelValues.linkColor = "rgb(255, 255, 255)";
           } else {
-            editPanelValues.linkColor = "rgb(" + material.color.red * 255 + "," + material.color.green * 255 + "," + material.color.blue * 255 + ")";
+            editPanelValues.linkColor =
+              "rgb(" +
+              material.color.red * 255 +
+              "," +
+              material.color.green * 255 +
+              "," +
+              material.color.blue * 255 +
+              ")";
             editPanelValues.materialOpacity = material.color.alpha * 100;
           }
           if (title) {
@@ -661,7 +852,14 @@ export default {
           break;
         case "corridor":
           editPanelValues.id = id;
-          editPanelValues.color = "rgba(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.color =
+            "rgba(" +
+            color[0] * 255 +
+            "," +
+            color[1] * 255 +
+            "," +
+            color[2] * 255 +
+            ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.width = width;
           editPanelValues.cornerType = cornerType;
@@ -673,7 +871,14 @@ export default {
           break;
         case "cylinder":
           editPanelValues.id = id;
-          editPanelValues.color = "rgba(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.color =
+            "rgba(" +
+            color[0] * 255 +
+            "," +
+            color[1] * 255 +
+            "," +
+            color[2] * 255 +
+            ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.topRadius = topRadius;
           editPanelValues.bottomRadius = bottomRadius;
@@ -716,14 +921,21 @@ export default {
         case "point":
           if (!this.editPanelValues) {
             //根据当前的绘制类型，获取设置面板显示参数数据
-            this.editPanelValues = this.$_getEditPanelValues(this.editList, "model");
+            this.editPanelValues = this.$_getEditPanelValues(
+              this.editList,
+              "model"
+            );
           }
           this.editPanelValues.url = model;
           this.editPanelValues.scale = scale;
           //更新编辑面板
           this.$refs.editPanel.$_setEditPanelValues(this.editPanelValues);
           //根据面板显示参数数据生成绘制参数
-          let drawOptions = this.$_getDrawOptions(this.editPanelValues, "model", Cesium);
+          let drawOptions = this.$_getDrawOptions(
+            this.editPanelValues,
+            "model",
+            Cesium
+          );
           this.$_startDrawing({
             type: "model",
             ...drawOptions
@@ -738,7 +950,8 @@ export default {
       }
     },
     $_DrawGroup(type, model, scale, drawDistance, modelRadius) {
-      let str = model.split("/"), vm = this;
+      let str = model.split("/"),
+        vm = this;
       let name = str[str.length - 1];
       this.drawMode = "group";
       name = name.split(".")[0];
@@ -747,7 +960,7 @@ export default {
       let graphicsLayer, DrawTool;
       graphicsLayer = this.$_getGraphicLayer();
       DrawTool = new this.Cesium.DrawTool(this.viewer, graphicsLayer, {
-        finishDraw: function () {
+        finishDraw: function() {
           let groupId = Number((Math.random() * 100000000).toFixed(0));
           vm.currentGroupId = groupId;
           vm.dataSourceCopy.push({
@@ -761,7 +974,7 @@ export default {
             },
             dataSource: []
           });
-          console.log("vm.dataSourceCopy",vm.dataSourceCopy)
+          console.log("vm.dataSourceCopy", vm.dataSourceCopy);
         }
       });
       switch (type) {
@@ -802,11 +1015,18 @@ export default {
         this.isStartDrawing = false;
       } else {
         //根据当前的绘制类型，获取设置面板显示参数数据
-        this.editPanelValues = this.$_getEditPanelValues(this.editList, this.currentEditType);
+        this.editPanelValues = this.$_getEditPanelValues(
+          this.editList,
+          this.currentEditType
+        );
         //更新编辑面板
         this.$refs.editPanel.$_setEditPanelValues(this.editPanelValues);
         //根据面板显示参数数据生成绘制参数
-        let drawOptions = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
+        let drawOptions = this.$_getDrawOptions(
+          this.editPanelValues,
+          this.currentEditType,
+          Cesium
+        );
         //开始绘制
         this.isStartDrawing = true;
         //停止编辑
@@ -851,7 +1071,11 @@ export default {
           //停止绘制
           this.$_stopDrawing();
           //根据面板显示参数数据生成绘制参数
-          let drawOptions = this.$_getDrawOptions(editPanelValues, this.currentEditType, Cesium);
+          let drawOptions = this.$_getDrawOptions(
+            editPanelValues,
+            this.currentEditType,
+            Cesium
+          );
           //根据编辑面板参数绘制图形
           let drawType = this.currentEditType;
           if (drawType === "cone") {
@@ -861,19 +1085,26 @@ export default {
             drawType = "polygon";
           }
           if (drawType === "model") {
-            this.$_startDrawModel("model", this.modelUrl, this.drawMode, this.drawDistance, 0, editPanelValues.scale)
+            this.$_startDrawModel(
+              "model",
+              this.modelUrl,
+              this.drawMode,
+              this.drawDistance,
+              0,
+              editPanelValues.scale
+            );
           } else {
-            const {materialType} = editPanelValues;
+            const { materialType } = editPanelValues;
             if (materialType === "flash") {
               drawOptions.attributes = {
-                "__enableFlash": true,
-                "__flashStyle": {
+                __enableFlash: true,
+                __flashStyle: {
                   flog: true,
                   flashAlpha: editPanelValues.flashAlpha,
                   alphaSpace: editPanelValues.alphaSpace,
                   flashTime: editPanelValues.flashTime
                 }
-              }
+              };
             }
             this.$_startDrawing({
               type: drawType,
@@ -895,13 +1126,17 @@ export default {
             Graphic.attributes.title = title;
           }
           //更新样式
-          let options = this.$_getDrawOptions(editPanelValues, this.currentEditType, Cesium);
+          let options = this.$_getDrawOptions(
+            editPanelValues,
+            this.currentEditType,
+            Cesium
+          );
           if (Graphic.type === "label") {
-            const {showBackground} = Graphic.style;
+            const { showBackground } = Graphic.style;
             options.style.showBackground = showBackground;
           }
           this.$_updateStyleByStyle(editPanelValues.id, options.style);
-          this.$nextTick(function () {
+          this.$nextTick(function() {
             this.$refs.editPanel.isUpdatePanel = true;
           });
         }
@@ -918,7 +1153,7 @@ export default {
         for (let j = 0; j < this.graphicGroups.length; j++) {
           let graphic = this.$_getGraphicByID(this.graphicGroups[j].id);
           if (graphic) {
-            Object.keys(editPanelValues).forEach(function (key) {
+            Object.keys(editPanelValues).forEach(function(key) {
               if (key === "scale") {
                 graphic[key] = editPanelValues[key];
               } else {
@@ -943,7 +1178,7 @@ export default {
       this.isStartDrawing = false;
       //开始编辑
       if (!noStartEdit) {
-        this.$nextTick(function () {
+        this.$nextTick(function() {
           this.isEdit = true;
           this.$_startEdit();
         });
@@ -960,12 +1195,18 @@ export default {
         this.currentEditType = "square";
       }
       if (this.currentEditType === "circle") {
-        if (json.style.hasOwnProperty("extrudedHeight") && json.style.extrudedHeight > 0) {
+        if (
+          json.style.hasOwnProperty("extrudedHeight") &&
+          json.style.extrudedHeight > 0
+        ) {
           this.currentEditType = "cone";
         }
       }
       if (this.currentEditType === "polygon") {
-        if (json.style.hasOwnProperty("extrudedHeight") && json.style.extrudedHeight > 0) {
+        if (
+          json.style.hasOwnProperty("extrudedHeight") &&
+          json.style.extrudedHeight > 0
+        ) {
           this.currentEditType = "polygonCube";
         }
       }
@@ -976,10 +1217,12 @@ export default {
       this.editPanelValues.showOutline = false;
       let graphic = this.$_getGraphicByID(json.id);
       let graphicJSON = this.$_getJsonById(json.id);
-      this.$refs.editPanel.$_setEditPanelValues(this.$_getEditPanelValuesFromJSON(graphicJSON));
+      this.$refs.editPanel.$_setEditPanelValues(
+        this.$_getEditPanelValuesFromJSON(graphicJSON)
+      );
       //定义视角高度
-      const {style} = graphic;
-      const {offsetHeight, extrudedHeight, radiusX, width, radius} = style;
+      const { style } = graphic;
+      const { offsetHeight, extrudedHeight, radiusX, width, radius } = style;
       this.destinationHeight = 0;
       //如果有offsetHeight，则加上这个高度
       if (offsetHeight) {
@@ -1010,16 +1253,27 @@ export default {
       if (this.destinationHeight <= 0) {
         this.destinationHeight = 10000;
       }
-      let positions = [[]], center, destination, polygonG, position, lla;
+      let positions = [[]],
+        center,
+        destination,
+        polygonG,
+        position,
+        lla;
       switch (json.type) {
         case "label":
         case "billboard":
         case "point":
           //计算中心点
           position = graphic.positions[0];
-          lla = this.$_cartesian3ToLongLat(new Cesium.Cartesian3(position.x, position.y, position.z));
+          lla = this.$_cartesian3ToLongLat(
+            new Cesium.Cartesian3(position.x, position.y, position.z)
+          );
           //生成视角位置
-          destination = Cesium.Cartesian3.fromDegrees(lla.lng, lla.lat, this.destinationHeight);
+          destination = Cesium.Cartesian3.fromDegrees(
+            lla.lng,
+            lla.lat,
+            this.destinationHeight
+          );
           break;
         case "polygon":
         case "polyline":
@@ -1027,7 +1281,13 @@ export default {
         case "corridor":
         case "wall":
           for (let i = 0; i < json.positions.length / 3; i++) {
-            let lla = this.$_cartesian3ToLongLat(new Cesium.Cartesian3(json.positions[i * 3], json.positions[i * 3 + 1], json.positions[i * 3 + 2]));
+            let lla = this.$_cartesian3ToLongLat(
+              new Cesium.Cartesian3(
+                json.positions[i * 3],
+                json.positions[i * 3 + 1],
+                json.positions[i * 3 + 2]
+              )
+            );
             positions[0].push([lla.lng, lla.lat]);
           }
           positions[0].push(positions[0][0]);
@@ -1035,18 +1295,36 @@ export default {
           center = centerOfMass(polygonG);
           //计算边界框长度
           let boxP = bbox(polygonG);
-          let x = Cesium.Cartesian3.distance(Cesium.Cartesian3.fromDegrees(boxP[0], boxP[1]), Cesium.Cartesian3.fromDegrees(boxP[2], boxP[1]));
-          let y = Cesium.Cartesian3.distance(Cesium.Cartesian3.fromDegrees(boxP[0], boxP[1]), Cesium.Cartesian3.fromDegrees(boxP[0], boxP[3]));
+          let x = Cesium.Cartesian3.distance(
+            Cesium.Cartesian3.fromDegrees(boxP[0], boxP[1]),
+            Cesium.Cartesian3.fromDegrees(boxP[2], boxP[1])
+          );
+          let y = Cesium.Cartesian3.distance(
+            Cesium.Cartesian3.fromDegrees(boxP[0], boxP[1]),
+            Cesium.Cartesian3.fromDegrees(boxP[0], boxP[3])
+          );
           //加上边界框的最大值
           this.destinationHeight += Number(x > y ? x : y);
-          destination = Cesium.Cartesian3.fromDegrees(center.geometry.coordinates[0], center.geometry.coordinates[1], this.destinationHeight);
+          destination = Cesium.Cartesian3.fromDegrees(
+            center.geometry.coordinates[0],
+            center.geometry.coordinates[1],
+            this.destinationHeight
+          );
           break;
         case "rectangle":
         case "box":
           //左下角
-          let p1 = new Cesium.Cartesian3(json.positions[0], json.positions[1], json.positions[2]);
+          let p1 = new Cesium.Cartesian3(
+            json.positions[0],
+            json.positions[1],
+            json.positions[2]
+          );
           //右上角
-          let p2 = new Cesium.Cartesian3(json.positions[3], json.positions[4], json.positions[5]);
+          let p2 = new Cesium.Cartesian3(
+            json.positions[3],
+            json.positions[4],
+            json.positions[5]
+          );
           p1 = this.$_cartesian3ToLongLat(p1);
           p2 = this.$_cartesian3ToLongLat(p2);
           positions[0].push([p1.lng, p1.lat]);
@@ -1057,25 +1335,49 @@ export default {
           polygonG = polygon(positions);
           center = centerOfMass(polygonG);
           //计算边界框长度
-          let xB = Cesium.Cartesian3.distance(Cesium.Cartesian3.fromDegrees(p1.lng, p1.lat), Cesium.Cartesian3.fromDegrees(p2.lng, p1.lat));
-          let yB = Cesium.Cartesian3.distance(Cesium.Cartesian3.fromDegrees(p1.lng, p1.lat), Cesium.Cartesian3.fromDegrees(p1.lng, p2.lat));
+          let xB = Cesium.Cartesian3.distance(
+            Cesium.Cartesian3.fromDegrees(p1.lng, p1.lat),
+            Cesium.Cartesian3.fromDegrees(p2.lng, p1.lat)
+          );
+          let yB = Cesium.Cartesian3.distance(
+            Cesium.Cartesian3.fromDegrees(p1.lng, p1.lat),
+            Cesium.Cartesian3.fromDegrees(p1.lng, p2.lat)
+          );
           //加上边界框长度的最大值
           this.destinationHeight += Number(xB > yB ? xB : yB);
-          destination = Cesium.Cartesian3.fromDegrees(center.geometry.coordinates[0], center.geometry.coordinates[1], this.destinationHeight);
+          destination = Cesium.Cartesian3.fromDegrees(
+            center.geometry.coordinates[0],
+            center.geometry.coordinates[1],
+            this.destinationHeight
+          );
           break;
         case "circle":
         case "cylinder":
         case "ellipsoid":
           //计算中心点
           position = graphic.centerPosition;
-          lla = this.$_cartesian3ToLongLat(new Cesium.Cartesian3(position.x, position.y, position.z));
+          lla = this.$_cartesian3ToLongLat(
+            new Cesium.Cartesian3(position.x, position.y, position.z)
+          );
           //生成视角位置
-          destination = Cesium.Cartesian3.fromDegrees(lla.lng, lla.lat, this.destinationHeight);
+          destination = Cesium.Cartesian3.fromDegrees(
+            lla.lng,
+            lla.lat,
+            this.destinationHeight
+          );
           break;
         case "model":
-          let Cartesian3 = new Cesium.Cartesian3(json.positions[0], json.positions[1], json.positions[2]);
+          let Cartesian3 = new Cesium.Cartesian3(
+            json.positions[0],
+            json.positions[1],
+            json.positions[2]
+          );
           center = this.$_cartesian3ToLongLat(Cartesian3);
-          destination = Cesium.Cartesian3.fromDegrees(center.lng, center.lat, this.destinationHeight);
+          destination = Cesium.Cartesian3.fromDegrees(
+            center.lng,
+            center.lat,
+            this.destinationHeight
+          );
           break;
       }
       let camera = viewer.camera;
@@ -1092,10 +1394,14 @@ export default {
       }
     },
     $_getCenter(json) {
-      let positions = [[]], center, polygonG, position, lla;
-      const {style} = json;
+      let positions = [[]],
+        center,
+        polygonG,
+        position,
+        lla;
+      const { style } = json;
       //extrudedHeight拉伸高度，offsetHeight离地高度，radiusX圆的半径
-      const {extrudedHeight, offsetHeight, radiusX} = style;
+      const { extrudedHeight, offsetHeight, radiusX } = style;
       switch (json.type) {
         case "polyline":
         case "polygon":
@@ -1131,20 +1437,28 @@ export default {
         case "billboard":
           //计算中心点
           position = json.centerPosition;
-          lla = this.$_cartesian3ToLongLat(new Cesium.Cartesian3(position.x, position.y, position.z));
+          lla = this.$_cartesian3ToLongLat(
+            new Cesium.Cartesian3(position.x, position.y, position.z)
+          );
           center = {
             geometry: {
               coordinates: [lla.lng, lla.lat]
             }
-          }
+          };
           break;
         case "model":
-          let Cartesian3 = new Cesium.Cartesian3(json.positions[0], json.positions[1], json.positions[2]);
+          let Cartesian3 = new Cesium.Cartesian3(
+            json.positions[0],
+            json.positions[1],
+            json.positions[2]
+          );
           center = this.$_cartesian3ToLongLat(Cartesian3);
           break;
       }
       //加上拉伸高度、离地高度、半径
-      center.geometry.coordinates.push((extrudedHeight || 0) + (offsetHeight || 0) + (radiusX * 2 || 0));
+      center.geometry.coordinates.push(
+        (extrudedHeight || 0) + (offsetHeight || 0) + (radiusX * 2 || 0)
+      );
       return center;
     },
     $_updateGraphicList(graphics) {
@@ -1169,23 +1483,29 @@ export default {
         //开始添加数据
         vm.addSource = true;
         if (type === "circle") {
-          if (data.style.hasOwnProperty("extrudedHeight") && data.style.extrudedHeight > 0) {
+          if (
+            data.style.hasOwnProperty("extrudedHeight") &&
+            data.style.extrudedHeight > 0
+          ) {
             type = "cone";
           }
         }
         if (type === "polygon") {
-          if (data.style.hasOwnProperty("extrudedHeight") && data.style.extrudedHeight > 0) {
+          if (
+            data.style.hasOwnProperty("extrudedHeight") &&
+            data.style.extrudedHeight > 0
+          ) {
             type = "polygonCube";
           }
         }
-        const {attributes} = e
+        const { attributes } = e;
         if (attributes.hasOwnProperty("__enableFlash")) {
           let color = e.style.color;
           let flashStyle = e.attributes.__flashStyle;
           color.alpha = flashStyle.flashAlpha;
           let newFlashP2D = vm.$_bezierSpline(e.positions, true);
           let newPolygon = new Cesium.Graphic({
-            type: 'polygon',
+            type: "polygon",
             positions: newFlashP2D,
             style: {
               color: color
@@ -1200,7 +1520,8 @@ export default {
         } else {
           e.attributes.title = e.attributes.title || vm.$_getTitle(type);
           data.attributes.title = e.attributes.title;
-          let hasData = false, index = 0;
+          let hasData = false,
+            index = 0;
           for (let i = 0; i < vm.dataSourceCopy.length; i++) {
             if (vm.dataSourceCopy[i].id === data.id) {
               hasData = true;
@@ -1216,7 +1537,7 @@ export default {
             let editPanelValues = vm.$_getEditPanelValuesFromJSON(data);
             vm.$refs.editPanel.$_setEditPanelValues(editPanelValues);
             //数据添加完毕
-            vm.$nextTick(function () {
+            vm.$nextTick(function() {
               vm.addSource = false;
             });
             vm.$emit("change", vm.dataSourceCopy);
@@ -1224,9 +1545,9 @@ export default {
           }
         }
       } else if (vm.drawMode === "addGraphic") {
-        vm.drawMode = "point"
+        vm.drawMode = "point";
       } else if (vm.drawMode === "addFlashGraphic") {
-        vm.drawMode = "point"
+        vm.drawMode = "point";
         let flashStyle = e.attributes.__flashStyle;
         window["flog_" + e.id] = flashStyle.flog;
         window["alpha_" + e.id] = flashStyle.flashAlpha;
@@ -1234,22 +1555,26 @@ export default {
         window["alphaSpace_" + e.id] = flashStyle.alphaSpace;
         window["flashTime_" + e.id] = flashStyle.flashTime;
         window["flashRunningTime_" + e.id] = 0;
-        window["interval_" + e.id] = setInterval(function () {
+        window["interval_" + e.id] = setInterval(function() {
           if (window["flog_" + e.id]) {
-            window["alpha_" + e.id] = window["alpha_" + e.id] - window["alphaSpace_" + e.id];
+            window["alpha_" + e.id] =
+              window["alpha_" + e.id] - window["alphaSpace_" + e.id];
             if (window["alpha_" + e.id] <= 0) {
               window["alpha_" + e.id] = 0;
               window["flog_" + e.id] = false;
             }
           } else {
-            window["alpha_" + e.id] = window["alpha_" + e.id] + window["alphaSpace_" + e.id];
+            window["alpha_" + e.id] =
+              window["alpha_" + e.id] + window["alphaSpace_" + e.id];
             if (window["alpha_" + e.id] >= window["alphaEnd_" + e.id]) {
               window["flog_" + e.id] = true;
             }
           }
           e.style.color.alpha = window["alpha_" + e.id].toFixed(2);
           window["flashRunningTime_" + e.id] += 100;
-          if (window["flashRunningTime_" + e.id] > window["flashTime_" + e.id]) {
+          if (
+            window["flashRunningTime_" + e.id] > window["flashTime_" + e.id]
+          ) {
             clearInterval(window["interval_" + e.id]);
             e.show = false;
             delete window["flog_" + e.id];
@@ -1269,7 +1594,7 @@ export default {
         let editPanelValues = vm.$_getEditPanelValuesFromJSON(data);
         vm.$refs.editPanel.$_setEditPanelValues(editPanelValues);
         //数据添加完毕
-        vm.$nextTick(function () {
+        vm.$nextTick(function() {
           vm.addSource = false;
         });
         vm.$emit("change", vm.dataSourceCopy);
@@ -1295,7 +1620,9 @@ export default {
         if (!hasData) {
           if (!data.attributes.hasOwnProperty("title")) {
             let graphic = vm.$_getGraphicByID(data.id);
-            data.attributes.title = graphic.attributes.title = vm.$_getTitle(data.type);
+            data.attributes.title = graphic.attributes.title = vm.$_getTitle(
+              data.type
+            );
           }
           vm.dataSourceCopy.push(data);
         }
@@ -1304,9 +1631,10 @@ export default {
     //初始化组件
     $_init(dataSource, vueIndex, vueKey) {
       //复制数据源
-      this.dataSourceCopy = dataSource || JSON.parse(JSON.stringify(this.dataSource));
+      this.dataSourceCopy =
+        dataSource || JSON.parse(JSON.stringify(this.dataSource));
       if (this.dataSourceCopy.length === 0) {
-        this.$nextTick(function () {
+        this.$nextTick(function() {
           this.$_setIconMode("mouse");
         });
       }
@@ -1319,18 +1647,24 @@ export default {
         this.$_newGraphicLayer({
           vueIndex: vueIndex,
           vueKey: vueKey,
-          finishEdit: function (e) {
+          finishEdit: function(e) {
             for (let i = 0; i < vm.dataSourceCopy.length; i++) {
               if (vm.dataSourceCopy[i].id === e.id) {
                 vm.isUpdateByEditValues = false;
                 if (e.style.extrudedHeight) {
-                  vm.dataSourceCopy[i].style.extrudedHeight = e.style.extrudedHeight;
-                  vm.dataSourceCopy[i].style.color = [e.style._lastChangeColor.red, e.style._lastChangeColor.green, e.style._lastChangeColor.blue, e.style._lastChangeColor.alpha];
+                  vm.dataSourceCopy[i].style.extrudedHeight =
+                    e.style.extrudedHeight;
+                  vm.dataSourceCopy[i].style.color = [
+                    e.style._lastChangeColor.red,
+                    e.style._lastChangeColor.green,
+                    e.style._lastChangeColor.blue,
+                    e.style._lastChangeColor.alpha
+                  ];
                 }
                 if (e.style.radius) {
                   vm.dataSourceCopy[i].style.radius = e.style.radius;
                 }
-                vm.$nextTick(function () {
+                vm.$nextTick(function() {
                   vm.isUpdateByEditValues = true;
                 });
                 break;
@@ -1338,7 +1672,7 @@ export default {
             }
           },
           getGraphic: this.$_getGraphic,
-          revokeModel: function (e) {
+          revokeModel: function(e) {
             //撤销模型的同时，删除标绘列表
             let index = undefined;
             for (let i = 0; i < vm.dataSourceCopy.length; i++) {
@@ -1352,7 +1686,7 @@ export default {
               vm.dataSourceCopy.splice(index, 1);
             }
           },
-          revokePoint: function (e) {
+          revokePoint: function(e) {
             //撤销点、广告牌、文字的同时，删除标绘列表
             let index = undefined;
             for (let i = 0; i < vm.dataSourceCopy.length; i++) {
@@ -1385,11 +1719,15 @@ export default {
       //获取设置面板显示参数
       if (this.dataSourceCopy.length > 0) {
         if (this.dataSourceCopy[0].type !== "group") {
-          this.editPanelValues = this.$_getEditPanelValuesFromJSON(this.dataSourceCopy[0]);
+          this.editPanelValues = this.$_getEditPanelValuesFromJSON(
+            this.dataSourceCopy[0]
+          );
         }
       }
       //设置点击事件
-      this.viewer.screenSpaceEventHandler.setInputAction(function onLeftClick(movement) {
+      this.viewer.screenSpaceEventHandler.setInputAction(function onLeftClick(
+        movement
+      ) {
         let pickedFeature = vm.viewer.scene.pick(movement.position);
         let worldPosition = vm.viewer.scene.pickPosition(movement.position);
         if (Cesium.defined(pickedFeature) && !vm.isStartDrawing) {
@@ -1401,16 +1739,19 @@ export default {
             vm.clickTime = 0;
           } else if (vm.clickTime === 1) {
             //单击标绘对象，在clickInterval毫秒后，弹框
-            vm.firstClickFlag = setTimeout(function () {
+            vm.firstClickFlag = setTimeout(function() {
               vm.$_setPopUp(pickedFeature, false, worldPosition);
               //重置点击次数
               vm.clickTime = 0;
             }, vm.clickInterval);
           }
         }
-      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      },
+      Cesium.ScreenSpaceEventType.LEFT_CLICK);
       //设置双击事件
-      this.viewer.screenSpaceEventHandler.setInputAction(function onLeftClick(movement) {
+      this.viewer.screenSpaceEventHandler.setInputAction(function onLeftClick(
+        movement
+      ) {
         let pickedFeature = vm.viewer.scene.pick(movement.position);
         if (Cesium.defined(pickedFeature) && !vm.isStartDrawing) {
           if (pickedFeature.hasOwnProperty("id")) {
@@ -1421,7 +1762,8 @@ export default {
             vm.enablePopup = false;
           }
         }
-      }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+      },
+      Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
     },
     $_setPopUp(graphic, isGraphic, worldPosition) {
       let center;
@@ -1430,7 +1772,7 @@ export default {
       if (isGraphic) {
         attributes = graphic.attributes;
       } else {
-        let g = this.$_getGraphicByID(graphic.primitive.id)
+        let g = this.$_getGraphicByID(graphic.primitive.id);
         attributes = g.attributes || undefined;
       }
       //使用点击时的坐标
@@ -1446,7 +1788,9 @@ export default {
         if (isGraphic) {
           center = this.$_getCenter(graphic);
         } else {
-          center = this.$_getCenter(this.$_getGraphicByID(graphic.primitive.id));
+          center = this.$_getCenter(
+            this.$_getGraphicByID(graphic.primitive.id)
+          );
         }
         if (!center) {
           return;
@@ -1461,20 +1805,22 @@ export default {
         };
       }
       if (attributes) {
-        Object.keys(attributes).forEach(function (key) {
+        Object.keys(attributes).forEach(function(key) {
           vm.popup.properties[key] = attributes[key];
-        })
+        });
         let properties = JSON.parse(JSON.stringify(this.popup.properties));
         delete properties.title;
-        this.popup.container = getPopupHtml("underline",
-            {properties: properties},
-            {
-              fields: Object.keys(properties),
-              title: this.popup.properties.title,
-              style: {
-                containerStyle: {width: "360px"}
-              }
-            });
+        this.popup.container = getPopupHtml(
+          "underline",
+          { properties: properties },
+          {
+            fields: Object.keys(properties),
+            title: this.popup.properties.title,
+            style: {
+              containerStyle: { width: "360px" }
+            }
+          }
+        );
         this.enablePopup = true;
       }
     },
@@ -1486,9 +1832,9 @@ export default {
       } else {
         this.isEdit = true;
       }
-    },
-  },
-}
+    }
+  }
+};
 </script>
 
 <style scoped>

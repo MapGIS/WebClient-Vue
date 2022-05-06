@@ -41,7 +41,7 @@
               <mapgis-ui-empty
                 :image="emptyImage"
                 :image-style="imageStyle"
-                v-if="projectorList && projectorList.length === 0"
+                v-if="emptyImage && projectorList && projectorList.length === 0"
               >
                 <span slot="description" class="empty-style">
                   请新建投放
@@ -160,7 +160,7 @@
 </template>
 
 <script>
-import emptyImage from "../../../assets/image/empty.png";
+import { emptyImage } from "../../UI/Base64Image/base64Image";
 import { newGuid } from "../../Utils/util";
 import VueOptions from "./components/OperationsItem.vue";
 import OperationsItem from "./components/OperationsItem.vue";
@@ -341,7 +341,7 @@ export default {
         textAlign: "center",
         borderBottom: "1px solid #F0F0F0"
       },
-      emptyImage: emptyImage,
+      emptyImage: undefined,
       imageStyle: {
         height: "150px",
         margin: "0 auto"
@@ -367,6 +367,7 @@ export default {
   created() {},
   mounted() {
     this.mount();
+    this.emptyImage = emptyImage();
   },
   destroyed() {
     this.unmount();
@@ -515,6 +516,14 @@ export default {
      * 点击列表项
      */
     _clickListItem(item, index) {
+      if (!item) {
+        return;
+      }
+      // 如果是点击删除按钮触发的，这个item已经被删除，则不需要往后走
+      const projector = this.projectorList.find(pro => pro.id === item.id);
+      if (!projector) {
+        return;
+      }
       this.activeIndex = index;
       this.currentEditProjector = item;
     },
