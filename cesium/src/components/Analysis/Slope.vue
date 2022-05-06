@@ -65,6 +65,10 @@ export default {
                 ];
             },
         },
+        gradual: {
+            type: Boolean,
+            default: true
+        }
     },
     watch: {
         rampColors: {
