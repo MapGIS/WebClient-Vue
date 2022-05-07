@@ -128,7 +128,12 @@ export default {
       const res = this.Cesium.ReImg.fromCanvas(canvas);
       //res.downloadPng(this.imgName);
       const base64 = res.toBase64();
-      this.downloadFileByBase64(base64, this.imgName);
+      this.downloadFileByBase64(
+        base64,
+        this.imgName,
+        canvas.clientHeight,
+        canvas.clientWidth
+      );
     },
     dataURLtoBlob(dataurl) {
       const arr = dataurl.split(",");
@@ -149,18 +154,40 @@ export default {
       clickEvent.initEvent("click", true, true);
       a.dispatchEvent(clickEvent);
     },
-    downloadFileByBase64(base64, name) {
+    downloadFileByBase64(base64, name, height, width) {
       const { mime } = this;
       if (mime.includes("image/")) {
         const blob = this.dataURLtoBlob(base64);
         const imgUrl = URL.createObjectURL(blob);
         this.downloadFile(imgUrl, name);
       } else if (mime.includes("pdf")) {
+        const imgHRatio = height / width;
         //l:横向， p：纵向
         //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
-        var pdf = new jsPDF("l", "pt", "a4");
-        //x位置，y位置，宽，高
-        pdf.addImage(base64, "PNG", 40, 40, 761.89, 515.28);
+        let pdf = new jsPDF("p", "pt", "a4");
+        let pdfHeight = pdf.internal.pageSize.height;
+        let pdfWidth = pdf.internal.pageSize.width;
+        const pdfInnerHRatio = (pdfHeight - 20) / (pdfWidth - 20);
+        if (imgHRatio <= pdfInnerHRatio) {
+          // 横向
+          pdf = new jsPDF("l", "pt", "a4");
+          pdfHeight = pdf.internal.pageSize.height;
+          pdfWidth = pdf.internal.pageSize.width;
+        }
+        // 四边预留10px的白边
+        const pdfInnerHeight = pdfHeight - 2 * 10;
+        const pdfInnerWidth = pdfWidth - 2 * 10;
+        const pWidth = pdfInnerHeight / imgHRatio;
+        if (pWidth < pdfInnerWidth) {
+          const xStart = (pdfWidth - pWidth) / 2;
+          //x位置，y位置，宽，高
+          pdf.addImage(base64, "PNG", xStart, 10, pWidth, pdfInnerHeight);
+        } else {
+          const pHeight = pdfInnerWidth * imgHRatio;
+          const yStart = (pdfHeight - pHeight) / 2;
+          //x位置，y位置，宽，高
+          pdf.addImage(base64, "PNG", 10, yStart, pdfInnerWidth, pHeight);
+        }
         pdf.save(name);
       }
     }
