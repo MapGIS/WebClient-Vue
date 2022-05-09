@@ -33,7 +33,7 @@
         class="full-width flex"
         v-if="type === 'Image' && uploadUrl && uploadUrl.length > 0"
       >
-        <mapgis-ui-input v-model="valueCopy" allowClear />
+        <mapgis-ui-input v-model="valueCopy" @change="$_change" allowClear />
         <mapgis-ui-upload-image
           :uploadUrl="uploadUrl"
           :showUploadList="false"
