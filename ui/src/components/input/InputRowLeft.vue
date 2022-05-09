@@ -37,11 +37,7 @@
         <mapgis-ui-upload-image
           :uploadUrl="uploadUrl"
           :showUploadList="false"
-          @image-url="
-            val => {
-              valueCopy = val;
-            }
-          "
+          @image-url="$_updateImgUrl"
         ></mapgis-ui-upload-image>
       </div>
     </div>
@@ -148,6 +144,7 @@ export default {
     },
     $_updateImgUrl(url) {
       this.valueCopy = url;
+      this.$emit("change", this.valueCopy);
     }
   },
   mounted() {
