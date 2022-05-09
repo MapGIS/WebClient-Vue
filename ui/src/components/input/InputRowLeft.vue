@@ -11,7 +11,7 @@
       :style="{
         paddingRight: paddingRight,
         marginLeft: marginLeft,
-        width: enableButton ? 'calc(100% - 156px)' : width,
+        width: enableButton ? 'calc(100% - 156px)' : width
       }"
     >
       <mapgis-ui-input
@@ -37,11 +37,7 @@
         <mapgis-ui-upload-image
           :uploadUrl="uploadUrl"
           :showUploadList="false"
-          @image-url="
-            (val) => {
-              valueCopy = val;
-            }
-          "
+          @image-url="$_updateImgUrl"
         ></mapgis-ui-upload-image>
       </div>
     </div>
@@ -56,64 +52,64 @@ export default {
   name: "mapgis-ui-input-row-left",
   model: {
     prop: "value",
-    event: "change",
+    event: "change"
   },
   props: {
     title: {
-      type: String,
+      type: String
     },
     value: {
-      type: [String, Number],
+      type: [String, Number]
     },
     type: {
       type: String,
-      default: "Text",
+      default: "Text"
     },
     fontSize: {
       type: String,
-      default: "12px",
+      default: "12px"
     },
     paddingLeft: {
       type: String,
-      default: "10px",
+      default: "10px"
     },
     paddingRight: {
       type: String,
-      default: "0",
+      default: "0"
     },
     inputWidth: {
       type: String,
-      default: "10px",
+      default: "10px"
     },
     enableButton: {
       type: Boolean,
-      default: false,
+      default: false
     },
     marginLeft: {
       type: String,
-      default: "0",
+      default: "0"
     },
     width: {
       type: String,
-      default: "calc(100% - 82px)",
+      default: "calc(100% - 82px)"
     },
     uploadUrl: {
       type: String,
-      default: "",
-    },
+      default: ""
+    }
   },
   data() {
     return {
-      valueCopy: undefined,
+      valueCopy: undefined
     };
   },
   watch: {
     value: {
-      handler: function () {
+      handler: function() {
         this.valueCopy = this.value;
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   methods: {
     $_change(e) {
@@ -148,11 +144,12 @@ export default {
     },
     $_updateImgUrl(url) {
       this.valueCopy = url;
-    },
+      this.$emit("change", this.valueCopy);
+    }
   },
   mounted() {
     this.valueCopy = this.value;
-  },
+  }
 };
 </script>
 
