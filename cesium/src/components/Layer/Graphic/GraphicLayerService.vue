@@ -720,6 +720,7 @@ export default {
           };
           switch (editPanelValues.materialType) {
             case "Color":
+              style.material = undefined;
               style.color = Cesium.Color.fromAlpha(
                 Cesium.Color.fromCssColorString(editPanelValues.color),
                 editPanelValues.opacity / 100
@@ -763,6 +764,8 @@ export default {
             case "flash":
             case "Color":
               style = {
+                materialType: undefined,
+                material: undefined,
                 color: Cesium.Color.fromAlpha(
                   Cesium.Color.fromCssColorString(editPanelValues.color),
                   editPanelValues.opacity / 100
@@ -795,6 +798,8 @@ export default {
           switch (editPanelValues.materialType) {
             case "Color":
               style = {
+                materialType: undefined,
+                material: undefined,
                 color: Cesium.Color.fromAlpha(
                   Cesium.Color.fromCssColorString(editPanelValues.color),
                   editPanelValues.opacity / 100
@@ -852,6 +857,7 @@ export default {
             editPanelValues.materialType || "Color";
           switch (editPanelValues.materialType) {
             case "Color":
+              style.material = undefined;
               style.color = Cesium.Color.fromAlpha(
                 Cesium.Color.fromCssColorString(editPanelValues.materialColor),
                 editPanelValues.materialOpacity / 100
@@ -916,6 +922,7 @@ export default {
           };
           switch (editPanelValues.materialType) {
             case "Color":
+              style.material = undefined;
               style.color = Cesium.Color.fromAlpha(
                 Cesium.Color.fromCssColorString(editPanelValues.materialColor),
                 editPanelValues.materialOpacity / 100
