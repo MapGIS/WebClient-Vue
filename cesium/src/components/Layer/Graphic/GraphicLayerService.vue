@@ -783,6 +783,10 @@ export default {
                   repeat: new Cesium.Cartesian2(
                     editPanelValues.repeatX,
                     editPanelValues.repeatY
+                  ),
+                  color: Cesium.Color.fromAlpha(
+                    Cesium.Color.WHITE,
+                    editPanelValues.opacity / 100
                   )
                 },
                 height: editPanelValues.height,
@@ -815,6 +819,10 @@ export default {
                   repeat: new Cesium.Cartesian2(
                     editPanelValues.repeatX,
                     editPanelValues.repeatY
+                  ),
+                  color: Cesium.Color.fromAlpha(
+                    Cesium.Color.WHITE,
+                    editPanelValues.opacity / 100
                   )
                 },
                 stRotation: (Math.PI / 180) * editPanelValues.stRotation
