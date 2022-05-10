@@ -117,6 +117,7 @@ module.exports = {
             title: "样式&主题",
             collapsable: false,
             children: [
+              ["/style/theme_switch.md", "主题切换"],
               ["/style/css/less2scss.md", "Less & Sass"],
               ["/style/css/less.md", "Less常见问题"],
               ["/style/css/sass.md", "Sass常见问题"]
@@ -126,9 +127,9 @@ module.exports = {
             title: "组件开发",
             collapsable: false,
             children: [
-              ["/plugin_components/onemap.md", "移植组件"],
-              ["/plugin_components/form_model.md", "弹框表单样式修改说明"],
               ["/plugin_components/new_form_model.md", "组件开发样式规范说明"],
+              ["/plugin_components/form_model.md", "弹框表单样式修改说明"],
+              ["/plugin_components/onemap.md", "移植组件"],
             ]
           },
           {

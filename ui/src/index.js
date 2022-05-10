@@ -22,11 +22,12 @@ const install = function(Vue, options) {
   options = options || {};
   let theme = options.theme || "light";
   let layout = options.layout || "admin";
+  let payload = options.payload || {};
   // require("./style.scss");
   require("./util/style/theme/antd.less");
   require("./style.scss");
   setLayout(layout);
-  setTheme(theme);
+  setTheme(theme, payload);
   setLayoutSettingVisible(true);
   Vue.use(antDirective);
   Vue.use(vcolorpicker);
