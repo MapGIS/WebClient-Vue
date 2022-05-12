@@ -91,7 +91,7 @@
         <mapgis-ui-group-tab>
           <span slot="title">
             摄像头参数
-            <mapgis-ui-tooltip slot="handle" placement="bottomRight">
+            <mapgis-ui-tooltip slot="handle" placement="top">
               <template slot="title">
                 <span>{{ info }}</span>
               </template>
