@@ -1,9 +1,3 @@
-import {
-  isLogarithmicDepthBufferEnable,
-  setLogarithmicDepthBufferEnable,
-  isDepthTestAgainstTerrainEnable,
-  setDepthTestAgainstTerrainEnable,
-} from "../../../WebGlobe/util";
 export default {
   props: {
     modelUrl: {
@@ -26,9 +20,6 @@ export default {
   },
   data() {
     return {
-      isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
-      //是否开启缓存区
-      isLogarithmicDepthBufferEnable: undefined,
       modelPrimitive: undefined,
     };
   },
@@ -38,7 +29,6 @@ export default {
      * 投放视频
      */
     putProjector(projector) {
-      this._openSceneSetting();
       this._addCameraMarker(projector, this.modelUrl, this.modelOffset);
       let scenePro =
         this.viewer.scene.visualAnalysisManager.getVisualAnalysisByID(
@@ -210,7 +200,7 @@ export default {
           Cesium.Model.fromGltf(modelObj)
         );
         modelPrimitive.readyPromise.then(() => {
-          console.log(modelPrimitive);
+          // console.log(modelPrimitive);
           // 获取模型的包围球
           const { boundingSphere } = modelPrimitive;
           const { heading, pitch } = params.orientation;
@@ -371,56 +361,6 @@ export default {
           break;
       }
       return proType;
-    },
-    /**
-     * 设置depthTestAgainstTerrain和logarithmicDepthBuffer
-     */
-    _openSceneSetting() {
-      const { viewer } = this;
-      this.isDepthTestAgainstTerrainEnable =
-        isDepthTestAgainstTerrainEnable(viewer);
-      if (!this.isDepthTestAgainstTerrainEnable) {
-        // 如果深度检测没有开启，则开启
-        setDepthTestAgainstTerrainEnable(true, viewer);
-      }
-      //缓存区设置
-      this.isLogarithmicDepthBufferEnable =
-        isLogarithmicDepthBufferEnable(viewer);
-      if (
-        navigator.userAgent.indexOf("Linux") > 0 &&
-        navigator.userAgent.indexOf("Firefox") > 0
-      ) {
-        setLogarithmicDepthBufferEnable(false, viewer);
-      } else {
-        // 其他浏览器还是设置为true，不然会导致分析结果不正确
-        setLogarithmicDepthBufferEnable(true, viewer);
-      }
-    },
-    /**
-     * 恢复depthTestAgainstTerrain和logarithmicDepthBuffer设置
-     */
-    _restoreSceneSetting() {
-      const { viewer } = this;
-      if (
-        this.isDepthTestAgainstTerrainEnable !== undefined &&
-        this.isDepthTestAgainstTerrainEnable !==
-          isDepthTestAgainstTerrainEnable(viewer)
-      ) {
-        setDepthTestAgainstTerrainEnable(
-          this.isDepthTestAgainstTerrainEnable,
-          viewer
-        );
-      }
-      if (
-        this.isLogarithmicDepthBufferEnable !== undefined &&
-        this.isLogarithmicDepthBufferEnable !==
-          isLogarithmicDepthBufferEnable(viewer)
-      ) {
-        setLogarithmicDepthBufferEnable(
-          this.isLogarithmicDepthBufferEnable,
-          viewer
-        );
-      }
     },
   },
 };

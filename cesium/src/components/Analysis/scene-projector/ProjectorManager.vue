@@ -20,11 +20,16 @@
           @change="_tabChange"
           size="small"
         >
-          <mapgis-ui-tab-pane
-            key="1"
-            tab="投放列表"
-            class="control-content list-pane"
-          >
+          <mapgis-ui-tab-pane key="1" class="control-content list-pane">
+            <span slot="tab">
+              投放列表
+              <mapgis-ui-tooltip slot="handle" placement="bottomRight">
+                <template slot="title">
+                  <span>{{ info }}</span>
+                </template>
+                <mapgis-ui-iconfont type="mapgis-info"></mapgis-ui-iconfont>
+              </mapgis-ui-tooltip>
+            </span>
             <mapgis-ui-list
               v-if="
                 currentProjectorOverlayLayer &&
@@ -331,6 +336,7 @@ export default {
   },
   data() {
     return {
+      info: "如需投放到地形上,请开启深度检测",
       reflush: true,
       projectorOverlayLayerListCopy: [], //图层数组
       layerSelectOptions: [], //图层选中框信息
@@ -352,16 +358,13 @@ export default {
       selectedIds: [], //选中projector的id集合
       pagination: {
         onChange: page => {
-          console.log(page);
+          // console.log(page);
           this.pagination.current = page;
         },
         current: 1,
         size: "small",
         pageSize: 20
-      },
-      isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
-      //是否开启缓存区
-      isLogarithmicDepthBufferEnable: undefined
+      }
     };
   },
   created() {},
