@@ -24,6 +24,7 @@ $white: #fff;
 $black: #000;
 $shadow: var(--shadow);
 $deep-shadow: var(--deep-shadow);
+$div-shadow: var(--div-shadow);
 
 // Color used by default to control hover and active backgrounds
 $selected-color: var(--selected-color); // equal rgba($primary-color, 0.15)
@@ -610,7 +611,7 @@ $tree-node-hover-bg: $item-hover-bg;
 $tree-node-selected-bg: $primary-2;
 
 // Collapse
-$collapse-header-bg: $background-color-light;
+$collapse-header-bg: #fff0;
 $collapse-content-bg: transparent;
 
 // Skeleton

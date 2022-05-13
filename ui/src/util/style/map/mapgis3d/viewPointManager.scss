@@ -15,14 +15,14 @@
     .viewpoint-item {
       display: inline-block;
       vertical-align: top;
-      width: 140px;
-      height: 125px;
-      margin-bottom: 6px;
+      width: 136px;
+      // height: 125px;
+      margin-bottom: 8px;
       text-align: center;
         .item-image {
           position: relative;
           width: 100%;
-          height: 92px;
+          height: 100px;
           box-sizing: border-box;
           cursor: pointer;
           img {
@@ -62,15 +62,15 @@
           font-size: 14px;
           text-align: center;
           width: 100%;
-          height: 33px;
-          line-height: 33px;
+          height: 32px;
+          line-height: 32px;
           word-wrap: break-word;
           white-space: pre-wrap;
           position: relative;
           .item-more-icon {
             position: absolute;
-            right: -6px;
-            line-height: 33px;
+            right: -5px;
+            line-height: 32px;
             cursor: pointer;
           }
         }
@@ -82,7 +82,7 @@
             }
           }
           .item-name {
-            text-decoration: underline;
+            // text-decoration: underline;
           }
         }
         &.active {
@@ -96,7 +96,7 @@
           }
         }
         &:nth-child(odd) {
-          margin-right: 8px;
+          margin-right: 16px;
         }
     }
   }
@@ -125,7 +125,7 @@
     line-height: 48px;
     border-top: 1px solid #f0f0f0;
     text-align: center;
-    padding: 0px 10px;
+    padding: 0px 8px;
     box-sizing: border-box;
   }
 }

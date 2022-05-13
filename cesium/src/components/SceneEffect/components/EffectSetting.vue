@@ -19,16 +19,16 @@
             </mapgis-ui-col>
         </mapgis-ui-row>
 
-        <div class="dividerWrapper"><div class="divider" /></div>
+        <!-- <div class="dividerWrapper"><div class="divider" /></div> -->
 
         <mapgis-ui-switch-panel
-            size="small"
+            size="default"
             label="场景泛光"
             :checked="bloom"
             @changeChecked="enableBloom"
         >
             <mapgis-ui-input-number-panel
-                size="small"
+                size="large"
                 label="亮度"
                 :value="bloomBrt"
                 :range="bloomBrtRange"
@@ -37,7 +37,7 @@
             />
             
             <mapgis-ui-input-number-panel
-                size="small"
+                size="large"
                 label="对比度"
                 :value="bloomCtrst"
                 :range="bloomCtrstRange"

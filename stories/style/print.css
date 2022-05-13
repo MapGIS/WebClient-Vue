@@ -16,3 +16,12 @@
   z-index: 3000;
   border: 4px solid #000000 !important;
 }
+.mapgis-custom-scale-card-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--heading-color)
+}
+.mapgis-ui-collapse-card-header {
+  line-height: 32px;
+  margin: 8px 0;
+}

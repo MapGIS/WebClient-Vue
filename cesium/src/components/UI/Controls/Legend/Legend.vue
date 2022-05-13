@@ -108,12 +108,14 @@ export default {
 .mapgis-legend .legend-area {
   width: 180px;
   height: 220px;
-  margin-top: 10px;
+  margin-top: 4px;
+  margin-left: 4px;
   overflow: auto;
 }
 
 .mapgis-legend .legend-area li {
   display: flex;
+  margin-top: 4px;
 }
 
 .mapgis-legend .legend-area li img {

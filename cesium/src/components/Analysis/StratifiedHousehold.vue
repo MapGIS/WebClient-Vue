@@ -16,7 +16,7 @@
             class="mapgis-3d-stratified-household-layers"
             :disabled="disableLayerSelect"
             :autoWidth="true"
-            size="small"
+            size="default"
             @change="handleSelectChange"
             placeholder="请选择图层"
           >
@@ -102,6 +102,7 @@
                     iconfont: true,
                     'iconfont-disabled': !enableStratifiedHouse
                   }"
+                  style="marginLeft:8px;"
                   @click="
                     s.click({
                       title,

@@ -3,6 +3,8 @@
     <mapgis-ui-select-panel
         label="开始时间字段"
         v-model="featureStyle.startTimeField"
+        :labelCol="24"
+        :wrapperCol="24"
         :selectOptions="dataFields"
         :disabled="isDisabled"
         @change="val => onFieldChange(val, 'startTimeField') ">
@@ -10,6 +12,8 @@
     <mapgis-ui-select-panel
         label="结束时间字段"
         v-model="featureStyle.endTimeField"
+        :labelCol="24"
+        :wrapperCol="24"
         :selectOptions="dataFields"
         :disabled="isDisabled"
         :placeholder="placeholder"
@@ -18,44 +22,45 @@
     <mapgis-ui-select-panel
         label="高程字段"
         v-model="featureStyle.heightField"
+        :labelCol="24"
+        :wrapperCol="24"
         :selectOptions="dataFields"
         :disabled="isDisabled"
         :placeholder="placeholder"
         @change="val => onFieldChange(val, 'heightField') ">
     </mapgis-ui-select-panel>
     <mapgis-ui-input-number-panel
-        size="small"
+        size="large"
         label="高程比"
         v-model="featureStyle.heightRatio"
         :placeholder="placeholder"
         @change="val => onHeightScale(val,  'heightRatio')"/>
 
     <mapgis-ui-switch-panel
+        size="small"
         :labelCol="{ span: 3 }"
         :wrapperCol="{ span: 20 }"
         layout="horizontal"
         label="建筑生长"
-        :height="'154px'"
         :checked="featureStyle.isGrowHeight"
         @changeChecked="changeGrowHeight"
     ></mapgis-ui-switch-panel>
 
-    <mapgis-ui-range-picker @change="onDateChange" v-model="dataRange" style="margin:7px 0"></mapgis-ui-range-picker>
+    <mapgis-ui-range-picker @change="onDateChange" v-model="dataRange" style="margin:8px 0"></mapgis-ui-range-picker>
 
     <mapgis-ui-colors-setting
         v-model="colorsCopy"
         :rangeField="'时间段'"
-        style="margin-top: 7px"
+        style="margin-top: 8px"
         v-if='colorsCopy.length > 0'
         @change="colorChanged"
         @input="colorInput"
     >
     </mapgis-ui-colors-setting>
     <mapgis-ui-setting-footer>
-      <mapgis-ui-button type="primary" @click="onCommitOptions"
-      >确认
-      </mapgis-ui-button
-      >
+      <mapgis-ui-button type="primary" @click="onCommitOptions">
+        确认
+      </mapgis-ui-button>
       <mapgis-ui-button @click="remove" :disabled="disabled">取消</mapgis-ui-button>
     </mapgis-ui-setting-footer>
   </div>

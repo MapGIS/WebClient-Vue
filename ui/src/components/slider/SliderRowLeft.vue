@@ -78,7 +78,7 @@ export default {
   text-align: left;
   height: 32px;
   line-height: 32px;
-  margin: 10px 0;
+  margin: 8px 0;
 }
 
 .mapgis-ui-slider-row-left-title, .mapgis-ui-slider-row-left-container {
@@ -88,16 +88,17 @@ export default {
 }
 
 .mapgis-ui-slider-row-left-title {
-  width: 70px;
+  width: 80px;
   text-align: left;
   padding-left: 10px;
-  font-size: 12px;
-  font-weight: bolder;
+  font-size: 14px;
+  /* font-weight: bolder; */
+  color: var(--heading-color)
 }
 
 .mapgis-ui-slider-row-left-container {
   padding-right: 10px;
-  width: calc(100% - 74px);
+  width: calc(100% - 84px);
 }
 
 .mapgis-ui-slider-row-left-slider {

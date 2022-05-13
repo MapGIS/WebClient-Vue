@@ -1,7 +1,7 @@
 <template>
     <div class="light-setting">
         <mapgis-ui-switch-panel
-            size="small"
+            size="default"
             label="太阳光照"
             :checked="sunlight"
             @changeChecked="enableSunlight"
@@ -10,6 +10,8 @@
                 label="光照颜色"
                 :color="lightColor"
                 :disableAlpha="false"
+                :labelCol="24"
+                :wrapperCol="24"
                 @input="
                     (val) =>
                         (lightColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
@@ -17,10 +19,10 @@
             />
         </mapgis-ui-switch-panel>
 
-        <div class="dividerWrapper"><div class="divider" /></div>
+        <!-- <div class="dividerWrapper"><div class="divider" /></div> -->
 
         <mapgis-ui-input-number-panel
-            size="small"
+            size="large"
             label="模型亮度"
             v-model="lightIntensity"
             :range="[1,200]"

@@ -1,13 +1,13 @@
 <template>
     <div class="camera-setting">
         <mapgis-ui-switch-panel
-            size="small"
+            size="default"
             label="地下模式"
             :checked="undgrd"
             @changeChecked="enableUndgrd"
         >
             <mapgis-ui-input-number-panel
-                size="small"
+                size="large"
                 label="地表透明度"
                 :value="groundAlpha"
                 :range="range"
@@ -16,10 +16,10 @@
             />
         </mapgis-ui-switch-panel>
         
-        <div class="dividerWrapper"><div class="divider" /></div>
+        <!-- <div class="dividerWrapper"><div class="divider" /></div> -->
 
         <mapgis-ui-input-number-panel
-            size="small"
+            size="large"
             label="FOV设置"
             :value="fov"
             :range="fovRange"

@@ -29,7 +29,7 @@
           />
           <mapgis-ui-input
             @change="$_changeTitle"
-            style="width: 60%;margin-left: 17px;margin-right: 3px;"
+            style="width: 60%;margin-left: 20px;margin-right: 3px;"
             v-show="editTitleGraphicId === row.id"
             v-model="row.attributes.title"
           />
@@ -454,14 +454,14 @@
             v-show="addAttribute"
           >
             <div>
-              <span style="font-size: 12px;">属性名</span>
+              <span style="font-size: 14px;">属性名</span>
               <mapgis-ui-input
                 class="mapgis-ui-graphic-edit-addAttribute-input"
                 v-model="attributeKey"
               />
             </div>
-            <div style="padding-top: 10px;">
-              <span style="font-size: 12px;">属性值</span>
+            <div style="padding-top: 8px;">
+              <span style="font-size: 14px;">属性值</span>
               <mapgis-ui-input
                 class="mapgis-ui-graphic-edit-addAttribute-input"
                 v-model="attributeValue"

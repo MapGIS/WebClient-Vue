@@ -1,17 +1,19 @@
 <template>
   <div class="mapgis-3d-m3d-menu-searchlight">
-    <mapgis-ui-divider> 探照灯设置 </mapgis-ui-divider>
-
+    <mapgis-ui-divider style="fontSize:14px"> 探照灯设置 </mapgis-ui-divider>
+    <div class="mapgis-3d-m3d-menu-search-light">
     <mapgis-ui-color-pick-panel
       transparent
       label="颜色"
       v-model="searchlightColor"
       :disableAlpha="false"
+      :labelCol="24"
+      :wrapperCol="24"
     />
 
     <mapgis-ui-input-number-panel
       transparent
-      size="small"
+      size="large"
       label="混合系数"
       v-model="mixFactor"
       :range="[0, 1000]"
@@ -20,7 +22,7 @@
 
     <mapgis-ui-input-number-panel
       transparent
-      size="small"
+      size="large"
       label="持续时间"
       v-model="duration"
       :range="[0, 10000]"
@@ -29,7 +31,7 @@
 
     <mapgis-ui-input-number-panel
       transparent
-      size="small"
+      size="large"
       label="类型"
       v-model="type"
       :range="[0, 100000]"
@@ -38,14 +40,27 @@
 
     <mapgis-ui-input-number-panel
       transparent
-      size="small"
+      size="large"
       label="宽度"
       v-model="width"
       :range="[0, 100000]"
     >
     </mapgis-ui-input-number-panel>
-
     <mapgis-ui-tooltip title="点击第一次设置灯光位置，点击第二次设置灯光的方向">
+        <mapgis-ui-button
+          @click="handleDraw"
+          :style="{ width: '100%',marginBottom:'8px' }"
+        >
+          交互绘制激活</mapgis-ui-button
+        >
+      </mapgis-ui-tooltip>
+    </div>
+    <mapgis-ui-setting-footer>
+      
+      <mapgis-ui-button type="primary" @click="addEffect">执行探照灯</mapgis-ui-button>
+      <mapgis-ui-button @click="removeEffect">删除探照灯</mapgis-ui-button>
+    </mapgis-ui-setting-footer>
+    <!-- <mapgis-ui-tooltip title="点击第一次设置灯光位置，点击第二次设置灯光的方向">
       <mapgis-ui-button
         @click="handleDraw"
         :style="{ width: '100%' }"
@@ -64,7 +79,7 @@
       :style="{ width: '100%', marginTop: '4px', display: 'block' }"
       @click="removeEffect"
       >删除探照灯</mapgis-ui-button
-    >
+    > -->
   </div>
 </template>
 
@@ -254,5 +269,9 @@ export default {
 .mapgis-3d-m3d-menu-searchlight {
   height: 100%;
   width: 100%;
+}
+.mapgis-3d-m3d-menu-search-light {
+  height: 248px;
+  overflow-y: auto;
 }
 </style>

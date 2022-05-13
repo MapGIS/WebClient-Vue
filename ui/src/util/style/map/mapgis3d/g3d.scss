@@ -81,13 +81,18 @@
       color: transparent;
     }
   }
+  .mapgis-ui-collapse-card-extra {
+    .anticon {
+      line-height: 36px;
+    }
+  }
 }
 
 .mapgis-3d-g3d-document {
   display: block;
   height: fit-content;
   &-tree {
-    max-height: 360px;
+    max-height: 356px;
     min-width: 200px;
     /* max-width: 300px; */
     overflow-y: scroll;
@@ -130,7 +135,7 @@
 
 .mapgis-3d-m3d-menu-explosion {
   &-direction {
-    height: 100px;
+    height: 123px;
     .anticon {
       font-size: 14px;
     }

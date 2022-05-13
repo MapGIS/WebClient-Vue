@@ -67,7 +67,7 @@
                 :type="item.type"
                 @click="item.click"
                 :class="item.className"
-                style="margin: 0 12px"
+                style="margin: 0 8px"
             >
               <mapgis-ui-iconfont
                   :type="item.icon"

@@ -31,7 +31,7 @@
                                :width="width"
         />
       </div>
-      <mapgis-ui-row class="mapgis-ui-project-add-story-row">
+      <mapgis-ui-row class="mapgis-ui-project-add-story-row" v-show="!showStoryEdit">
         <mapgis-ui-col span="24">
           <mapgis-ui-button @click="$_addStory" type="primary" class="mapgis-ui-project-add-story">
             新建故事
@@ -291,8 +291,8 @@ export default {
 
 .mapgis-ui-project-add-story {
   width: 100%;
-  height: 40px;
-  background: #1890FF;
+  height: 32px;
+  /* background: #1890FF; */
 }
 
 .mapgis-ui-project-panel-content {
@@ -306,6 +306,6 @@ export default {
 
 .mapgis-ui-project-panel-back {
   padding: 8px;
-  border-bottom: 1px solid rgb(217, 217, 217);
+  border-bottom: 1px solid var(--border-color-split);
 }
 </style>

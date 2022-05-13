@@ -202,12 +202,16 @@
     color: $panel-text-color;
   }
   .range {
+    display: inline-block;
     width: 100%;
     line-height: 32px;
     font-size: 12px;
     font-family: Microsoft YaHei;
     // font-weight: 400;
     color: $panel-option-color;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow:ellipsis;
   }
   .left {
   }
@@ -219,8 +223,8 @@
 
 @include b(select-panel) {
   //background: $panel-inner-color;
-  border-radius: 1px;
-  padding: 7px;
+  // border-radius: 1px;
+  padding: 0 0 8px 0;
 
   &-transparent {
     background: transparent;

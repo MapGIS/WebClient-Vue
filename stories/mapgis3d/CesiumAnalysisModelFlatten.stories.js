@@ -34,14 +34,15 @@ const Template = (args, { argTypes }) => ({
             :maximumScreenSpaceError="maximumScreenSpaceError" 
             :url="m3dUrl" 
         />
-        
-        <mapgis-3d-model-flatten
-            :vueKey="vueKey" 
-            :vueIndex="vueIndex"
-            :M3Ds="M3DsArr"
-            :noOneMap="noOneMapFlag"
-        >
-        </mapgis-3d-model-flatten>
+        <mapgis-ui-card customPosition="top-left" class="storybook-ui-card">
+          <mapgis-3d-model-flatten
+              :vueKey="vueKey" 
+              :vueIndex="vueIndex"
+              :M3Ds="M3DsArr"
+              :noOneMap="noOneMapFlag"
+          >
+          </mapgis-3d-model-flatten>
+        </mapgis-ui-card>
     </mapgis-web-scene>
     `,
 });

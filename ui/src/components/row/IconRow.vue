@@ -120,7 +120,7 @@ export default {
 <style scoped>
 .mapgis-ui-icon-row-container {
   text-align: left;
-  font-size: 17px;
+  font-size: 14px;
   cursor: pointer;
 }
 
@@ -131,8 +131,8 @@ export default {
 }
 
 .mapgis-ui-icon-row-img {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 }
 
 .mapgis-ui-icon-row-group {

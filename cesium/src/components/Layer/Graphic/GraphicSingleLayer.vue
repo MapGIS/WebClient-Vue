@@ -1840,7 +1840,7 @@ export default {
 <style scoped>
 /*--------------标绘容器--------------*/
 .mapgis-3d-graphic-container {
-  margin-top: -20px;
+  /* margin-top: -20px; */
   width: 332px;
   max-height: 785px;
   padding: 10px 15px;

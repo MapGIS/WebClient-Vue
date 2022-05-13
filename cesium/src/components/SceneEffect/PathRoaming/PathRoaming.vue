@@ -2,49 +2,9 @@
   <div>
     <slot>
       <div class="mapgis-path-roaming">
-        <div class="roaming-actions">
-          <mapgis-ui-button
-            class="roaming-action"
-            :title="playTitle"
-            type="primary"
-            @click="onClickStartOrPauseOrResume"
-          >
-            {{ playTitle }}
-          </mapgis-ui-button>
-          <mapgis-ui-button
-            class="roaming-action"
-            type="primary"
-            :disabled="!isStart"
-            @click="onClickStop"
-          >
-            停止
-          </mapgis-ui-button>
-        </div>
-        <div class="roaming-options">
-          <mapgis-ui-checkbox
-            :checked="isLoopCopy"
-            @change="e => onCheckBoxChange(e.target.checked, 'isLoop')"
-          >
-            循环
-          </mapgis-ui-checkbox>
-          <mapgis-ui-checkbox
-            :checked="showPathCopy"
-            @change="e => onCheckBoxChange(e.target.checked, 'showPath')"
-          >
-            显示路径
-          </mapgis-ui-checkbox>
-          <mapgis-ui-checkbox
-            :checked="showInfoCopy"
-            @change="e => onCheckBoxChange(e.target.checked, 'showInfo')"
-          >
-            显示提示信息
-          </mapgis-ui-checkbox>
-        </div>
         <mapgis-ui-setting-form
-          class="roadming-setting"
-          :itemLayout="'grid'"
-          :labelCol="{ span: 6 }"
-          :wrapperCol="{ span: 18 }"
+          :layout="layout"
+          size="default"
         >
           <mapgis-ui-form-item label="移动速度">
             <mapgis-ui-row>
@@ -72,78 +32,33 @@
               </mapgis-ui-col>
             </mapgis-ui-row>
           </mapgis-ui-form-item>
-          <mapgis-ui-form-item label="方位角" v-show="animationTypeCopy !== 1">
-            <mapgis-ui-row>
-              <mapgis-ui-col :span="15">
-                <mapgis-ui-slider
-                  class="slider-body"
-                  v-model="headingCopy"
-                  :min="-180"
-                  :max="180"
-                  :disabled="animationTypeCopy === 1 ? true : false"
-                  @change="val => onEffectsChange(val, 'heading')"
-                />
-              </mapgis-ui-col>
-              <mapgis-ui-col :span="9">
-                <mapgis-ui-input-number
-                  class="slider-number"
-                  v-model="headingCopy"
-                  :min="-180"
-                  :max="180"
-                  :disabled="animationTypeCopy === 1 ? true : false"
-                  @change="val => onEffectsChange(val, 'heading')"
-                />
-              </mapgis-ui-col>
-            </mapgis-ui-row>
-          </mapgis-ui-form-item>
-          <mapgis-ui-form-item label="俯仰角" v-show="animationTypeCopy === 2">
-            <mapgis-ui-row>
-              <mapgis-ui-col :span="15">
-                <mapgis-ui-slider
-                  class="slider-body"
-                  v-model="pitchCopy"
-                  :min="-180"
-                  :max="180"
-                  :disabled="animationTypeCopy !== 2 ? true : false"
-                  @change="val => onEffectsChange(val, 'pitch')"
-                />
-              </mapgis-ui-col>
-              <mapgis-ui-col :span="9">
-                <mapgis-ui-input-number
-                  class="slider-number"
-                  v-model="pitchCopy"
-                  :min="-180"
-                  :max="180"
-                  :disabled="animationTypeCopy !== 2 ? true : false"
-                  @change="val => onEffectsChange(val, 'pitch')"
-                />
-              </mapgis-ui-col>
-            </mapgis-ui-row>
-          </mapgis-ui-form-item>
-          <mapgis-ui-form-item label="距离" v-show="animationTypeCopy !== 1">
-            <mapgis-ui-row>
-              <mapgis-ui-col :span="15">
-                <mapgis-ui-slider
-                  class="slider-body"
-                  v-model="rangeCopy"
-                  :min="1"
-                  :max="200"
-                  :disabled="animationTypeCopy === 1 ? true : false"
-                  @change="val => changeRange(val)"
-                />
-              </mapgis-ui-col>
-              <mapgis-ui-col :span="9">
-                <mapgis-ui-input-number
-                  class="slider-number"
-                  v-model="rangeCopy"
-                  :min="1"
-                  :max="200"
-                  :disabled="animationTypeCopy === 1 ? true : false"
-                  @change="val => changeRange(val)"
-                />
-              </mapgis-ui-col>
-            </mapgis-ui-row>
-          </mapgis-ui-form-item>
+          <mapgis-ui-input-number-panel
+            v-show="animationTypeCopy !== 1"
+            size="large"
+            label="方位角"
+            :range="[-180,180]"
+            v-model="headingCopy"
+            :disabled="animationTypeCopy === 1 ? true : false"
+            @change="val => onEffectsChange(val, 'heading')"
+          />
+          <mapgis-ui-input-number-panel
+            v-show="animationTypeCopy === 2"
+            size="large"
+            label="俯仰角"
+            :range="[-180,180]"
+            v-model="pitchCopy"
+            :disabled="animationTypeCopy !== 2 ? true : false"
+            @change="val => onEffectsChange(val, 'pitch')"
+          />
+          <mapgis-ui-input-number-panel
+            v-show="animationTypeCopy !== 1"
+            size="large"
+            label="距离"
+            :range="[1,200]"
+            v-model="rangeCopy"
+            :disabled="animationTypeCopy === 1 ? true : false"
+            @change="val => changeRange(val)"
+          />
           <mapgis-ui-form-item label="视角">
             <mapgis-ui-row>
               <mapgis-ui-col :span="24">
@@ -197,7 +112,34 @@
             >
           </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
+        <div>
+          <mapgis-ui-checkbox
+            style="line-height:32px;"
+            :checked="isLoopCopy"
+            @change="e => onCheckBoxChange(e.target.checked, 'isLoop')"
+          >
+            循环
+          </mapgis-ui-checkbox>
+          <mapgis-ui-checkbox
+            style="line-height:32px;"
+            :checked="showPathCopy"
+            @change="e => onCheckBoxChange(e.target.checked, 'showPath')"
+          >
+            显示路径
+          </mapgis-ui-checkbox>
+          <mapgis-ui-checkbox
+            style="line-height:32px;"
+            :checked="showInfoCopy"
+            @change="e => onCheckBoxChange(e.target.checked, 'showInfo')"
+          >
+            显示提示信息
+          </mapgis-ui-checkbox>
+        </div>
       </div>
+      <mapgis-ui-setting-footer>
+        <mapgis-ui-button type="primary" :title="playTitle" @click="onClickStartOrPauseOrResume">{{ playTitle }}</mapgis-ui-button>
+        <mapgis-ui-button type="primary" :disabled="!isStart" @click="onClickStop">停止</mapgis-ui-button>
+      </mapgis-ui-setting-footer>
     </slot>
   </div>
 </template>
@@ -208,6 +150,10 @@ export default {
   inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
+    layout: {
+      type: String,
+      default: "vertical" // 'horizontal' 'vertical' 'inline'
+    },
     positions: {
       type: Array,
       required: true,
@@ -550,6 +496,11 @@ export default {
 </script>
 
 <style scoped>
+.mapgis-path-roaming {
+	max-height: calc(80vh);
+	overflow-y: auto;
+	overflow-x: hidden;
+}
 .roaming-actions {
   padding: 12px 0;
   display: flex;
@@ -562,7 +513,7 @@ export default {
   padding-bottom: 12px;
 }
 .mapgis-ui-checkbox-wrapper {
-  font-size: 12px;
+  /* font-size: 12px; */
 }
 .roadming-setting {
   padding-top: 8px;

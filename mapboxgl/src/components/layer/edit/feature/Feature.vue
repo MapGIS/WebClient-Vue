@@ -126,6 +126,7 @@ export default {
 .mapgis-mvt-editor-feature-wrapper .mapgis-ui-form-item {
   /* overflow-y: scroll; */
   margin-bottom: 0px;
+  padding-bottom: 8px;
 }
 .mapgis-mvt-editor-feature {
 }

@@ -106,7 +106,7 @@ export default {
   padding: 12px;
 }
 .path-item {
-  border-radius: 6px;
+  border-radius: 3px;
 }
 .path-item:last-child {
   margin-bottom: 0;

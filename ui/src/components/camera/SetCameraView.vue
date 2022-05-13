@@ -92,7 +92,7 @@ export default {
       },
       mainStyle: {
         height: "32px",
-        width: "213px",
+        width: "192px",
       },
       titleStyle: {
         paddingLeft: "9px"
@@ -161,7 +161,7 @@ export default {
 
 .mapgis-ui-set-camera-set-camera-content {
   width: 100%;
-  height: 225px;
+  height: 240px;
   border-radius: 3px;
   padding-top: 1px;
 }

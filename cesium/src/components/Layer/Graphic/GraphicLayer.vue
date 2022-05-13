@@ -710,7 +710,7 @@ export default {
 }
 
 .mapgis-3d-graphic-layers-select-container:hover {
-  height: 68px;
+  height: 75px;
 }
 
 .mapgis-3d-graphic-layers-select {

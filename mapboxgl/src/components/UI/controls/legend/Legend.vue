@@ -16,7 +16,7 @@
         <div class="legend-area">
             <li v-for="(legend, index) in legends" :key="index">
                 <img :src="'data:image/png;base64,' + legend.imageData" />
-                <span>{{ legend.label }}</span>
+                <span style="marginLeft:4px;">{{ legend.label }}</span>
             </li>
         </div>
     </div>
@@ -103,12 +103,14 @@ export default {
 .mapgis-legend .legend-area {
     width: 180px;
     height: 220px;
-    margin-top: 10px;
+    margin-top: 4px;
+    margin-left: 4px;
     overflow: auto;
 }
 
 .mapgis-legend .legend-area li {
     display: flex;
+    margin-top: 4px;
 }
 
 .mapgis-legend .legend-area li img {

@@ -102,10 +102,10 @@
           </mapgis-ui-col>
         </mapgis-ui-row>
 
-        <div class="dividerWrapper"><div class="divider" /></div>
+        <!-- <div class="dividerWrapper"><div class="divider" /></div> -->
 
         <mapgis-ui-input-number-panel
-            size="small"
+            size="large"
             label="亮度"
             :value="layerbrightness"
             :range="lyrBrtRange"
@@ -114,7 +114,7 @@
         />
 
         <mapgis-ui-input-number-panel
-            size="small"
+            size="large"
             label="对比度"
             :value="layercontrast"
             :range="lyrBrtRange"
@@ -123,7 +123,7 @@
         />
 
         <mapgis-ui-input-number-panel
-            size="small"
+            size="large"
             label="色调"
             :value="layerhue"
             :range="lyrHueRange"
@@ -132,7 +132,7 @@
         />
 
         <mapgis-ui-input-number-panel
-            size="small"
+            size="large"
             label="饱和度"
             :value="layersaturation"
             :range="lyrBrtRange"

@@ -274,15 +274,16 @@ export default {
 .mapgis-ui-graphic-icons-panel {
   width: 100%;
   height: auto;
-  background: #FFFFFF;
-  border: 1px solid #DCDCDC;
-  margin: 10px 0;
+  /* background: #FFFFFF; */
+  border: 1px solid var(--border-color-split);
+  margin-bottom: 8px;
+  border-radius: 2px;
 }
 
 .mapgis-ui-graphic-icons-head {
   width: 100%;
   height: 32px;
-  border-bottom: 1px solid #DCDCDC;
+  border-bottom: 1px solid var(--border-color-split);
 }
 
 .mapgis-ui-graphic-icons-container {

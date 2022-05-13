@@ -20,7 +20,7 @@
           </div>
         </mapgis-ui-col>
         <mapgis-ui-col v-bind="wrapperCol" class="right-range">
-          <div class="right range" v-show="rangeShow">{{ range[0] }} ~ {{ range[1] }}</div>
+          <div class="right range" v-show="rangeShow" :title="range[0]+' ~ '+range[1]">{{ range[0] }} ~ {{ range[1] }}</div>
         </mapgis-ui-col>
       </mapgis-ui-row>
       <mapgis-ui-row>
