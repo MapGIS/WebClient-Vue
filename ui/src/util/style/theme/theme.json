@@ -228,6 +228,7 @@
     "borderColorBase": "rgba(255, 255, 255, 0.15)",
     "borderColorSplit": "rgba(255, 255, 255, 0.12)",
     "shadowColor": "rgba(0, 0, 0, 0.3)",
+    "tooltipShadowColor": "rgba(0, 0, 0, 0.3)",
     "placeholderColor": "rgba(225, 225, 225, 0.3)",
     "btnPrimaryColor": "#333",
     "buttonBorderDefaultColor": "#2D3A52",

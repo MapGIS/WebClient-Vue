@@ -123,7 +123,7 @@ export default {
       tabBarStyle: {
         margin: "0px",
         textAlign: "center",
-        borderBottom: "1px solid #F0F0F0"
+        // borderBottom: "1px solid #F0F0F0"
       },
       show: true,
       hover: false,

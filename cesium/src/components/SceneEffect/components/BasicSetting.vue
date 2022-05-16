@@ -481,6 +481,6 @@ export default {
     left: 16px;
     right: 16px;
     margin: 6px 0;
-    background: #f0f0f0;
+    /* background: #f0f0f0; */
 }
 </style>

@@ -9,9 +9,15 @@
           <mapgis-ui-form-item label="移动速度">
             <mapgis-ui-row>
               <mapgis-ui-col :span="24">
-                <mapgis-ui-input
+                <!-- <mapgis-ui-input
                   v-model.number="speedCopy"
                   type="number"
+                  :min="1"
+                  addon-after="公里/小时"
+                  :disabled="isStart ? true : false"
+                /> -->
+                <mapgis-ui-input-number-addon
+                  v-model.number="speedCopy"
                   :min="1"
                   addon-after="公里/小时"
                   :disabled="isStart ? true : false"
@@ -22,9 +28,15 @@
           <mapgis-ui-form-item label="附加高程">
             <mapgis-ui-row>
               <mapgis-ui-col :span="24">
-                <mapgis-ui-input
+                <!-- <mapgis-ui-input
                   v-model.number="exHeightCopy"
                   type="number"
+                  :min="0"
+                  addon-after="米"
+                  :disabled="isStart ? true : false"
+                /> -->
+                <mapgis-ui-input-number-addon
+                  v-model.number="exHeightCopy"
                   :min="0"
                   addon-after="米"
                   :disabled="isStart ? true : false"

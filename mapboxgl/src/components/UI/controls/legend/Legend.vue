@@ -94,9 +94,9 @@ export default {
     width: fit-content;
     height: fit-content;
     padding: 12px;
-    border: 1px solid #333;
+    border: 1px solid var(--border-color-split);
     border-radius: 3px;
-    background: #fff;
+    background: var(--background);
     overflow: auto;
 }
 

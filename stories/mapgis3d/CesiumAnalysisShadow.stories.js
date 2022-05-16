@@ -64,7 +64,6 @@ const Template = (args, { argTypes }) => ({
             :minHeight="minHeight"
             :stretchHeight="stretchHeight"
             :enableShadowRatio="enableShadowRatio"
-            :style="{backgroundColor:'#FFFFFF'}"
         >
         </mapgis-3d-shadow>
       </mapgis-ui-card>

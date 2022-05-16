@@ -1,5 +1,6 @@
 <template>
     <div class="mapgis-3d-ponding-simulation">
+        <div class="mapgis-3d-ponding-simulation-content">
         <!-- <label class="title-label">参数设置</label> -->
         <mapgis-ui-group-tab title="参数设置"/>
         <mapgis-ui-input-number-panel
@@ -179,6 +180,7 @@
                 :slider="true"
             />
         </mapgis-ui-switch-panel>
+        </div>
         <mapgis-ui-setting-footer>
             <mapgis-ui-tooltip placement="bottom">
                 <template slot="title">
@@ -881,6 +883,12 @@ export default {
     top: 10px;
     left: 10px; */
     padding: 4px;
+    background: var(--card-background);
+}
+.mapgis-3d-ponding-simulation-content {
+    max-height: calc(70vh);
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 .mapgis-ui-form-item {

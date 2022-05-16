@@ -24,6 +24,7 @@
             v-model="actionMenuVisible"
             trigger="click"
             overlayClassName="scene-roaming-path-item-popover"
+            :getPopupContainer="triggerNode => {return triggerNode.parentNode;}"
           >
             <mapgis-ui-list slot="content" :gutter="10">
               <mapgis-ui-list-item @click="onRenamePath">
@@ -142,19 +143,24 @@ export default {
   padding-left: 8px;
   cursor: pointer;
 }
-.scene-roaming-path-item-popover .mapgis-ui-popover-inner {
+/* .scene-roaming-path-item-popover .mapgis-ui-popover-inner {
   overflow: hidden;
-}
-.scene-roaming-path-item-popover
+} */
+/* .scene-roaming-path-item-popover
   .mapgis-ui-popover-inner
   .mapgis-ui-popover-inner-content {
   padding: 0;
-}
+} */
 .scene-roaming-path-item-popover
   .mapgis-ui-popover-inner
   .mapgis-ui-popover-inner-content
   .mapgis-ui-list-item {
+  width: 100px;
   padding: 8px 25px;
+}
+
+::v-deep .mapgis-ui-popover-inner-content {
+  padding: 0;
 }
 
 .scene-roaming-path-item-popover
