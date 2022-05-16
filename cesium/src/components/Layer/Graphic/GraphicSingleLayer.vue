@@ -1773,7 +1773,7 @@ export default {
         attributes = graphic.attributes;
       } else {
         let g = this.$_getGraphicByID(graphic.primitive.id);
-        attributes = g.attributes || undefined;
+        attributes = g && g.attributes ? g.attributes : undefined;
       }
       //使用点击时的坐标
       if (worldPosition) {

@@ -1,4 +1,8 @@
-import { FillStyle, LineStyle, PointStyle } from "@mapgis/webclient-es6-service/base/style";
+import {
+  FillStyle,
+  LineStyle,
+  PointStyle,
+} from "@mapgis/webclient-es6-service/base/style";
 import bbox from "@turf/bbox";
 
 import VueOptions from "../../Base/Vue/VueOptions";
@@ -20,67 +24,67 @@ export default {
     // uniform unique range random gradual
     type: {
       type: String,
-      default: "uniform"
+      default: "uniform",
     },
     field: {
       type: String,
-      default: ""
+      default: "",
     },
     autoReset: {
       type: Boolean,
-      default: true
+      default: true,
     },
     offsetHeight: {
       type: Number,
-      default: 4000
+      default: 4000,
     },
     themeOptions: {
       type: Object,
-      default: function() {
+      default: function () {
         return {
           hasMaterial: false,
           // PolylineTrailLink PolylineArrow PolylineDash Image CircleWave，默认为PolylineTrailLink材质
           materialType: "",
           layerStyle: {
-            color: '#FF3300',
-            outlineColor: '#FFFFFF',
+            color: "#FF3300",
+            outlineColor: "#FFFFFF",
             outlineWidth: 1,
             opacity: 1,
           },
           styleGroups: [{}],
-          gradualLayerStyle: {}
-        }
-      }
+          gradualLayerStyle: {},
+        };
+      },
     },
     filter: {
       type: Object,
-      default: function() {
+      default: function () {
         return {
           filedName: "",
-          filedRange: []
-        }
-      }
+          filedRange: [],
+        };
+      },
     },
     filterOptions: {
       type: Object,
-      default: function() {
+      default: function () {
         return {
           hasMaterial: false,
           materialType: "",
           layerStyle: {
-            color: '#FF3300',
-            outlineColor: '#FFFFFF',
+            color: "#FF3300",
+            outlineColor: "#FFFFFF",
             outlineWidth: 1,
             opacity: 1,
           },
           styleGroups: [{}],
-          gradualLayerStyle: {}
-        }
-      }
+          gradualLayerStyle: {},
+        };
+      },
     },
     enableHighlight: {
       type: Boolean,
-      default: false
+      default: false,
     },
     highlightStyle: {
       type: Object,
@@ -98,33 +102,33 @@ export default {
           },
           polygon: {
             color: "#ffff00",
-            outlineColor: '#ffffff',
+            outlineColor: "#ffffff",
             outlineWidth: 1,
             opacity: 1,
-          }
-        }
-      }
+          },
+        };
+      },
     },
     visible: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   methods: {
     $_setHeight(entities) {
       const { viewer } = this;
       const vm = this;
       viewer.camera.changed.addEventListener(function () {
-        const height = (viewer.camera.positionCartographic.height/1000).toFixed(2);
+        const height = viewer.camera.positionCartographic.height / 1000;
         vm.$_changeVisible(entities, height);
       });
     },
     $_changeVisible(entities, height) {
       if (!Array.isArray(entities)) return;
       if (this.visible && height < this.offsetHeight) {
-        entities.forEach(item => item.show = true);
+        entities.forEach((item) => (item.show = true));
       } else {
-        entities.forEach(item => item.show = false);
+        entities.forEach((item) => (item.show = false));
       }
     },
     async createCesiumObject() {
@@ -151,21 +155,24 @@ export default {
         const centerX = (this.bbox[0] + this.bbox[2]) / 2;
         const centerY = (this.bbox[1] + this.bbox[3]) / 2;
         this.viewer.camera.flyTo({
-          destination: Cesium.Cartesian3.fromDegrees(centerX, centerY, this.offsetHeight/2),
-          duration: 2
-        })
-      };
+          destination: Cesium.Cartesian3.fromDegrees(
+            centerX,
+            centerY,
+            this.offsetHeight / 2
+          ),
+          duration: 2,
+        });
+      }
       this.$emit("bbox", { bbox: this.bbox });
     },
     parseClick(payload) {
-      if (this.enableHighlight)
-        this.highlight(payload);
-      this.$emit("themeClick", {entity: payload});
+      if (this.enableHighlight) this.highlight(payload);
+      this.$emit("themeClick", { entity: payload });
     },
     parseHover(payload) {
-      if (this.enableTips)
-        this.changePopup(payload);
-      this.$emit("themeHover", {entity: payload});
+      if (this.enableHighlight) this.highlight(payload);
+      if (this.enableTips) this.changePopup(payload);
+      this.$emit("themeHover", { entity: payload });
     },
     // 根据dataSource获取当前geojson的全部entities
     $_findAllEntities(dataSource) {
@@ -175,9 +182,26 @@ export default {
     // 构造16进制随机颜色
     $_setRandomColor() {
       let colorStr = "";
-      const randomArr = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'];
-      for(let i = 0; i < 6; i++){
-        colorStr += randomArr[Math.ceil(Math.random() * (15-0) + 0)];
+      const randomArr = [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+      ];
+      for (let i = 0; i < 6; i++) {
+        colorStr += randomArr[Math.ceil(Math.random() * (15 - 0) + 0)];
       }
       const randomColor = `#${colorStr}`;
       return randomColor;
@@ -195,7 +219,7 @@ export default {
           color,
           outlineColor,
           outlineWidth,
-        }
+        };
       } else if (entity.polyline && !entity.polygon) {
         const { width, outlineWidth } = layerStyle;
         tempLayerStyle = {
@@ -210,33 +234,33 @@ export default {
           color,
           outlineColor,
           outlineWidth,
-          opacity
+          opacity,
         };
-      };
+      }
       return tempLayerStyle;
     },
     // 16进制颜色转为RGB
-    $_set16ToRgb(str){
+    $_set16ToRgb(str) {
       const reg = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/;
       if (!reg.test(str)) {
         return;
       }
-      let newStr = (str.toLowerCase()).replace(/\#/g, '')
+      let newStr = str.toLowerCase().replace(/\#/g, "");
       let len = newStr.length;
       if (len == 3) {
-        let t = '';
+        let t = "";
         for (let i = 0; i < len; i++) {
-          t += newStr.slice(i,i+1).concat(newStr.slice(i,i+1));
+          t += newStr.slice(i, i + 1).concat(newStr.slice(i, i + 1));
         }
         newStr = t;
       }
       //将字符串分隔，两个两个的分隔
       let arr = [];
-      for(var i = 0; i < 6; i = i+2){
-        let s = newStr.slice(i, i+2);
+      for (var i = 0; i < 6; i = i + 2) {
+        let s = newStr.slice(i, i + 2);
         arr.push(parseInt("0x" + s));
       }
-      return 'rgb(' + arr.join(",")  + ')';
+      return "rgb(" + arr.join(",") + ")";
     },
     // RGB转为16进制颜色
     $_setRgbTo16(str) {
@@ -244,8 +268,8 @@ export default {
       if (!reg.test(str)) {
         return;
       }
-      let arr = str.slice(4, str.length-1).split(",");
-      let color = '#';
+      let arr = str.slice(4, str.length - 1).split(",");
+      let color = "#";
       for (let i = 0; i < arr.length; i++) {
         let t = Number(arr[i]).toString(16);
         // 十进制中的0-15转为16进制只有一位，需要补齐一个"0"
@@ -258,51 +282,72 @@ export default {
     },
     // 构造渐变样式，包括颜色、透明度
     $_setGradualStyle(gradualLayerStyle) {
-      let { range, color, outlineColor, outlineWidth, opacity, startColor, endColor, startOpacity, endOpacity } = gradualLayerStyle;
+      let {
+        range,
+        color,
+        outlineColor,
+        outlineWidth,
+        opacity,
+        startColor,
+        endColor,
+        startOpacity,
+        endOpacity,
+      } = gradualLayerStyle;
       let step = range.length - 1;
       const minRange = Math.min(...range);
       const maxRange = Math.max(...range);
-      const normalizeRange = range.map(item => {
-        return (item - minRange)/(maxRange - minRange);
-      })
+      const normalizeRange = range.map((item) => {
+        return (item - minRange) / (maxRange - minRange);
+      });
       // 生成均匀渐变颜色
       let gradualColor = [];
       if (startColor && endColor) {
         let startColorRGB = this.$_set16ToRgb(startColor);
         let endColorRGB = this.$_set16ToRgb(endColor);
-        let [ startR, startG, startB ] = startColorRGB.slice(4, startColorRGB.length-1).split(",");
-        let [ endR, endG, endB ] = endColorRGB.slice(4, endColorRGB.length-1).split(",");
+        let [startR, startG, startB] = startColorRGB
+          .slice(4, startColorRGB.length - 1)
+          .split(",");
+        let [endR, endG, endB] = endColorRGB
+          .slice(4, endColorRGB.length - 1)
+          .split(",");
         let sR = (endR - startR) / (step - 1);
         let sG = (endG - startG) / (step - 1);
         let sB = (endB - startB) / (step - 1);
         for (let i = 0; i < step; i++) {
-          let hex = 'rgb('+ parseInt(Number(startR) + sR * i) + ',' + parseInt(Number(startG) + sG * i) + ',' + parseInt(Number(startB) + sB * i) + ')';
+          let hex =
+            "rgb(" +
+            parseInt(Number(startR) + sR * i) +
+            "," +
+            parseInt(Number(startG) + sG * i) +
+            "," +
+            parseInt(Number(startB) + sB * i) +
+            ")";
           hex = this.$_setRgbTo16(hex);
           gradualColor.push(hex);
-        };
-      };
+        }
+      }
       // 生成均匀渐变透明度
       let gradualOpacity = [];
       if (startOpacity && endOpacity) {
         let sO = (endOpacity - startOpacity) / (step - 1);
-        for (let j = 0; j < step; j ++) {
+        for (let j = 0; j < step; j++) {
           let tempOpacity = startOpacity + sO * j;
           gradualOpacity.push(tempOpacity);
-        };
+        }
         // gradualOpacity = range.map(item => {
         //   return startOpacity + (item - minRange)/(maxRange - minRange)*(endOpacity - startOpacity);
         // });
-      };
+      }
       let gradualStyle = [];
-      for (let k = 0; k < range.length-1; k++) {
+      for (let k = 0; k < range.length - 1; k++) {
         let style = {
           color: gradualColor[k] ? gradualColor[k] : color,
           outlineColor: gradualColor[k] ? gradualColor[k] : outlineColor,
           outlineWidth: outlineWidth ? outlineWidth : 0,
-          opacity: gradualOpacity[k] ? gradualOpacity[k] : opacity
+          opacity: gradualOpacity[k] ? gradualOpacity[k] : opacity,
         };
         gradualStyle.push(style);
-      };
+      }
       return gradualStyle;
     },
     // 根据字段名称，获取字段的最大最小值
@@ -316,7 +361,7 @@ export default {
         min = tempValue < min ? tempValue : min;
         max = tempValue > max ? tempValue : max;
         valueArr.push[tempValue];
-      };
+      }
       return { min, max };
     },
     // 根据渲染规则中的属性字段值查找对应entities
@@ -327,14 +372,14 @@ export default {
       for (let i = 0; i < entities.length; i++) {
         let entity = entities[i];
         let propertyName = entity._properties._propertyNames;
-        if (!propertyName.some(item => item === field)) {
+        if (!propertyName.some((item) => item === field)) {
           break;
         }
         for (let j = 0; j < valueArr.length; j++) {
           if (entity._properties[field]._value == valueArr[j]) {
             fieldEntities.push(entity);
           }
-        };
+        }
       }
       return fieldEntities;
     },
@@ -345,7 +390,7 @@ export default {
       for (let i = 0; i < entities.length; i++) {
         let entity = entities[i];
         let propertyName = entity._properties._propertyNames;
-        if (!propertyName.some(item => item === field)) {
+        if (!propertyName.some((item) => item === field)) {
           break;
         }
         const entityValue = entity._properties[field]._value;
@@ -374,13 +419,15 @@ export default {
                 duration,
                 direction,
                 image,
-                color: colorRGB
-              }
-              entity.polyline.material = new Cesium.PolylineTrailLinkMaterialProperty(trailLinkMaterial);
+                color: colorRGB,
+              };
+              entity.polyline.material =
+                new Cesium.PolylineTrailLinkMaterialProperty(trailLinkMaterial);
               entity.polyline.width = style.width;
               break;
             case "PolylineArrow":
-              entity.polyline.material = new Cesium.PolylineArrowMaterialProperty(colorRGB);
+              entity.polyline.material =
+                new Cesium.PolylineArrowMaterialProperty(colorRGB);
               entity.polyline.width = style.width;
               break;
             case "PolylineDash":
@@ -389,26 +436,33 @@ export default {
                 color: colorRGB,
                 gapColor: gapColorRGB,
                 dashLength,
-                dashPattern
-              }
-              entity.polyline.material = new Cesium.PolylineDashMaterialProperty(dashMaterial);
+                dashPattern,
+              };
+              entity.polyline.material =
+                new Cesium.PolylineDashMaterialProperty(dashMaterial);
               entity.polyline.width = style.width;
               break;
-            case "Image": 
+            case "Image":
               let imageMaterial = {
                 image,
-                repeat: new Cesium.Cartesian2(material.repeatX, material.repeatY),
+                repeat: new Cesium.Cartesian2(
+                  material.repeatX,
+                  material.repeatY
+                ),
                 color: colorRGB,
-                transparent: false
-              }
-              entity.polygon.material = new Cesium.ImageMaterialProperty(imageMaterial);
+                transparent: false,
+              };
+              entity.polygon.material = new Cesium.ImageMaterialProperty(
+                imageMaterial
+              );
               let imageMaterialLine = {
                 duration,
                 direction,
                 image,
-                color: colorRGB
-              }
-              entity.polyline.material = new Cesium.PolylineTrailLinkMaterialProperty(imageMaterialLine);
+                color: colorRGB,
+              };
+              entity.polyline.material =
+                new Cesium.PolylineTrailLinkMaterialProperty(imageMaterialLine);
               entity.polyline.width = style.outlineWidth;
               break;
             case "CircleWave":
@@ -422,8 +476,8 @@ export default {
                   duration,
                   gradient,
                   color: colorRGB,
-                  count
-              })
+                  count,
+                }),
               });
               break;
             default:
@@ -431,9 +485,10 @@ export default {
                 duration,
                 direction,
                 image,
-                color: colorRGB
-              }
-              entity.polyline.material = new Cesium.PolylineTrailLinkMaterialProperty(defaultMaterial);
+                color: colorRGB,
+              };
+              entity.polyline.material =
+                new Cesium.PolylineTrailLinkMaterialProperty(defaultMaterial);
               entity.polyline.width = style.width;
           }
         } else {
@@ -447,15 +502,23 @@ export default {
               material: Cesium.Color.fromCssColorString(style.color),
             });
           } else if (entity.polyline && !entity.polygon) {
-            entity.polyline.material = new Cesium.ColorMaterialProperty(Cesium.Color.fromCssColorString(style.color));
+            entity.polyline.material = new Cesium.ColorMaterialProperty(
+              Cesium.Color.fromCssColorString(style.color)
+            );
             entity.polyline.width = style.width;
           } else if (entity.polygon) {
-            entity.polyline.material = new Cesium.ColorMaterialProperty(Cesium.Color.fromCssColorString(style.outlineColor));
+            entity.polyline.material = new Cesium.ColorMaterialProperty(
+              Cesium.Color.fromCssColorString(style.outlineColor)
+            );
             entity.polyline.width = style.outlineWidth;
-            entity.polygon.material = new Cesium.ColorMaterialProperty(Cesium.Color.fromCssColorString(style.color).withAlpha(style.opacity));
-          };
+            entity.polygon.material = new Cesium.ColorMaterialProperty(
+              Cesium.Color.fromCssColorString(style.color).withAlpha(
+                style.opacity
+              )
+            );
+          }
         }
       }
     },
-  }
-}
+  },
+};

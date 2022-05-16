@@ -126,7 +126,7 @@ export default {
 
 .mapgis-ui-icon-row-more-tool {
   position: absolute;
-  right: 0;
+  right: 4px;
   top: 0;
 }
 

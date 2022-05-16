@@ -20,7 +20,12 @@
 | vueKey             | String        | default   | mapgis-web-scene 组件的 ID，当使用多个 mapgis-web-scene 组件时，需要指定该值，来唯一标识 mapgis-web-scene 组件，<br/>同时 mapgis-web-scene 插槽中的组件也需要传入相同的 vueKey，让组件知道应该作用于哪一个 mapgis-web-scene。 | 否       |
 | vueIndex           | Number        |           | 当 mapgis-web-scene 插槽中使用了多个相同组件时，例如多个 mapgis-3d-igs-doc-layer 组件，用来区分组件的标识符。                                                                                                                 | 否       |
 | usePrimitive       | Boolean       | false     | 设置 usePrimitive 为 true，底层将使用 primitive 的方式加载 marker，在数据量大的时候会改善卡顿的现象。                                                                                                                         | 否       |
-| primitiveList      | Object,String |           | usePrimitive 为 true 时，使用该属性传入加载的 geojson 数据，必传。                                                                                                                                                            | 否       |
+| enableCluster      | Boolean       | false     | 是否开启聚类，可以改善卡顿和图标叠加的现象。                                                                                                                                                                                  | 否       |
+| geojson            | Object,String |           | usePrimitive 为 true 或者 enableCluster 时，使用该属性传入加载的 geojson 数据，必传。                                                                                                                                         | 否       |
+| enableCircle       | Boolean       | false     | 是否开启动态圆特效。                                                                                                                                                                                                          | 否       |
+| radius             | Number        | 500000.0  | 动态圆特效的初始半径。                                                                                                                                                                                                        | 否       |
+| circleColor        | String        | "#FF8C00" | 动态圆特效的颜色。                                                                                                                                                                                                            | 否       |
+| maxCircleNumber    | Number        | 100       | 允许加载的最大动态圆特效数目，不建议同时加载过多，否则容易卡顿。                                                                                                                                                              | 否       |
 
 ## 槽
 
@@ -41,3 +46,8 @@
 - **描述** marker 的鼠标移出事件
 - **Payload** `{ DynamicMarkerLastActive }`
 - `DynamicMarkerLastActive` 移出的 marker 信息
+
+### `@click`
+
+- **描述** marker 的鼠标点击事件
+- **Payload** 点击的 marker 信息

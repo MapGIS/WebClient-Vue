@@ -213,6 +213,7 @@ export default {
                 viewer,
                 Cesium,
                 rampColorsCopy,
+                gradual
             } = this;
             const vm = this;
 
@@ -231,8 +232,8 @@ export default {
             );
             const colors = [];
             const ramp = [];
-            rampColorsCopy.forEach(({ max, color }) => {
-                ramp.push((max / 90).toFixed(2));
+            rampColorsCopy.forEach(({ min, max, color }) => {
+                ramp.push((min / 90).toFixed(2));
                 colors.push(color);
             });
             const rampColor = this._transformColor(colors);
@@ -248,6 +249,7 @@ export default {
                         new Cesium.TerrainAnalyse(viewer, {
                             slopeRampColor: rampColor,
                             slopeRamp: ramp,
+                            gradual
                         });
 
                     aspectSlopeAnalysis.changeColorTable(rampColor,'slope')

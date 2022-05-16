@@ -55,7 +55,9 @@ const Template = (args, {argTypes}) => ({
       ></mapgis-3d-ogc-wmts-layer>
       <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true"/>
       <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-aspect-slope/>
+        <mapgis-3d-aspect-slope
+            v-bind="$props"
+        />
       </mapgis-ui-card>
       </mapgis-web-scene>
     `,
@@ -101,4 +103,5 @@ export const 坡向坡度 = Template.bind({});
         {min: 240, max: 300, color: "rgba(96, 125, 139, 0.5)"},
         {min: 300, max: 360, color: "rgba(76, 175, 80, 0.5)"},
     ],
+    gradual: true
 };

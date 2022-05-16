@@ -88,7 +88,17 @@
             </mapgis-ui-form-item>
           </div>
         </mapgis-ui-setting-form>
-        <mapgis-ui-group-tab title="摄像头参数"></mapgis-ui-group-tab>
+        <mapgis-ui-group-tab>
+          <span slot="title">
+            摄像头参数
+            <mapgis-ui-tooltip slot="handle" placement="top">
+              <template slot="title">
+                <span>{{ info }}</span>
+              </template>
+              <mapgis-ui-iconfont type="mapgis-info"></mapgis-ui-iconfont>
+            </mapgis-ui-tooltip>
+          </span>
+        </mapgis-ui-group-tab>
         <mapgis-ui-setting-form
           :layout="layout"
           size="default"
@@ -439,6 +449,7 @@ export default {
   },
   data() {
     return {
+      info: "如需投放到地形上,请开启深度检测",
       settingsCopy: {},
       proType: undefined, //投影类型
       protocols: ["m3u8", "mp4"], // video协议集合
@@ -566,23 +577,23 @@ export default {
      * 获取播放对象
      */
     _getPlayer(val) {
-      console.log(val);
+      // console.log(val);
       const player = val;
       player.on("loadstart", () => {
         //开始加载
-        console.log("loadstart");
+        // console.log("loadstart");
       });
       player.on("waiting", () => {
-        console.log("waiting");
+        // console.log("waiting");
       });
       player.on("pause", () => {
-        console.log("pause");
+        // console.log("pause");
         if (this.scenePro) {
           this.scenePro.isPaused = true;
         }
       });
       player.on("play", () => {
-        console.log("play");
+        // console.log("play");
         if (this.scenePro) {
           this.scenePro.isPaused = false;
         }

@@ -31,6 +31,7 @@ const Template = (args, { argTypes }) => ({
         :height="height"
         :text="text"
         :iconUrl="iconUrl"
+        :enableCircle="true"
         @mouseEnter="mouseEnter"
         @mouseLeave="mouseLeave"
         ></mapgis-3d-marker>
@@ -38,14 +39,25 @@ const Template = (args, { argTypes }) => ({
       <template>
         <mapgis-3d-marker
           :key="'primitive'"
-          :usePrimitive="true"
-          :primitiveList="'http://localhost:8895/geojson/cityResource/education.json'"
+          :enableCluster="true"
+          :geojson="'http://localhost:8895/geojson/cityResource/education.json'"
           :height="0"
           :iconUrl="'http://localhost:8895/img/poi-route.png'"
-          :iconWidth="20"
-          :iconHeight="20"
-          @mouseEnter="mouseEnter"
-          @mouseLeave="mouseLeave"
+          :iconWidth="32"
+          :iconHeight="32"
+        ></mapgis-3d-marker>
+      </template>
+      <template>
+        <mapgis-3d-marker
+          :key="'hospital'"
+          :usePrimitive="true"
+          :circleColor="circleColors"
+          :geojson="'http://localhost:8895/geojson/cityResource/hospitalization.json'"
+          :height="0"
+          :iconUrl="'http://localhost:8895/img/poi-zhuan.png'"
+          :iconWidth="32"
+          :iconHeight="32"
+          @click="click"
         ></mapgis-3d-marker>
       </template>
     </mapgis-web-scene>
@@ -61,7 +73,8 @@ const Template = (args, { argTypes }) => ({
       token:{
         key: "tk",
         value: "f5347cab4b28410a6e8ba5143e3d5a35"
-      }
+      },
+      circleColors: '#ff0000'
     }
   },
   methods: {
@@ -70,6 +83,9 @@ const Template = (args, { argTypes }) => ({
     },
     mouseLeave(icon){
       console.log("mouseLeave",icon);
+    },
+    click(icon){
+      console.log("click",icon);
     }
   }
 });

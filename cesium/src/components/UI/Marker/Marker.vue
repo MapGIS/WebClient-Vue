@@ -93,6 +93,19 @@ export default {
       type: Function
     },
     /**
+     * 是否开启聚类 todo
+     */
+    enableCluster: {
+      type: Boolean,
+      default: false
+    },
+    /**
+     * 聚类 和 primitive 加载时必传，加载使用的数据
+     */
+    geojson:{
+      type: [ Object , String ]
+    },
+    /**
      * 设置usePrimitive为true，底层将使用primitive的方式加载marker，在数据量大的时候会改善卡顿的现象
      */
     usePrimitive: {
@@ -100,10 +113,39 @@ export default {
       default: false
     },
     /**
-     * usePrimitive为true时，使用primitiveList属性传入加载的geojson数据，必传
+     * 是否开启动态圆特效
      */
-    primitiveList:{
-      type: [ Object , String ]
+    enableCircle:{
+      type: Boolean,
+      default: false
+    },
+    /** 
+     * 动态圆特效的初始半径
+     */
+    radius:{
+      type: Number,
+      default: 500000.0
+    },
+    // /**
+    //  * 是否根据相机变化调整圆特效的半径大小
+    //  */
+    // radiusChange:{
+    //   type: Boolean,
+    //   default: false
+    // },
+    /**
+     * 动态圆特效的颜色
+     */
+    circleColor:{
+      type: String,
+      default: "#FF8C00"
+    },
+    /** 
+     * 允许加载的最大圆特效数目，不建议超过300，否则容易卡顿
+     */
+    maxCircleNumber: {
+      type: Number,
+      default: 100
     }
   },
   data() {
@@ -112,7 +154,9 @@ export default {
       isMoveIn: false,
       isMoveOut: true,
       DynamicMarkerHandler: undefined,
-      DynamicMarkerLastActive: undefined
+      DynamicMarkerLastActive: undefined,
+      // initH: 0,
+      // circleRadius: this.radius,
     };
   },
   provide() {
@@ -164,17 +208,28 @@ export default {
         let options = MarkerManager.options;
         viewer = vm.viewer || viewer;
         if(options.entity){
-          viewer.entities.remove(options.entity);
+          if(vm.enableCluster){
+            viewer.dataSources.remove(options.entity.dataSource);
+          }else{
+            viewer.entities.remove(options.entity);
+          }
+          vm.enableCircle && viewer.scene.primitives.remove(options.entity.circle);
         }
         if(options.primitive){
           viewer.scene.primitives.remove(options.primitive.icon);
           viewer.scene.primitives.remove(options.primitive.label);
+          vm.enableCircle && viewer.scene.primitives.remove(options.primitive.circle);
         }
         vueCesium.MarkerManager.deleteSource(vueKey, vueIndex);
         
         vm.DynamicMarkerHandler.removeInputAction(
-        vm.$_markerMouseAction,
+          vm.$_markerMouseAction,
           Cesium.ScreenSpaceEventType.MOUSE_MOVE
+          // Cesium.ScreenSpaceEventType.LEFT_CLICK
+        );
+        vm.DynamicMarkerHandler.removeInputAction(
+          vm.$_markerClickAction,
+          Cesium.ScreenSpaceEventType.LEFT_CLICK
         );
         vm.DynamicMarkerHandler = undefined;
 
@@ -236,18 +291,37 @@ export default {
       this.DynamicMarkerHandler.removeInputAction(
         vm.$_markerMouseAction,
         Cesium.ScreenSpaceEventType.MOUSE_MOVE
+        // Cesium.ScreenSpaceEventType.LEFT_CLICK
       );
       this.DynamicMarkerHandler.setInputAction(
         vm.$_markerMouseAction,
         Cesium.ScreenSpaceEventType.MOUSE_MOVE
+        // Cesium.ScreenSpaceEventType.LEFT_CLICK
       );
+
+      this.DynamicMarkerHandler.removeInputAction(
+        vm.$_markerClickAction,
+        Cesium.ScreenSpaceEventType.LEFT_CLICK
+      );
+      this.DynamicMarkerHandler.setInputAction(
+        vm.$_markerClickAction,
+        Cesium.ScreenSpaceEventType.LEFT_CLICK
+      );
+
+      // //监听相机的移动
+      // vm.initH = viewerMarker.camera.positionCartographic.height;
+      // viewerMarker.camera.moveEnd.addEventListener(vm.$_changeRadius);
     },
+    // $_changeRadius(){
+    //   let cameraH = this.viewer.camera.positionCartographic.height;
+    //   this.circleRadius =this.radiusChange ? this.radius * cameraH / this.initH : this.radius;
+    //   console.log('circleRadius',this.circleRadius);
+    // },
     $_hasId(id) {
       let { vueCesium } = this;
       let marker = {};
       marker.flag = false;
       let markerManagers = vueCesium.MarkerManager[this.vueKey];
-      // console.log('markerManagers',markerManagers);
       for (let i = 0; i < markerManagers.length; i++) {
         if(this.usePrimitive && markerManagers[i].options.primitive){
           let primitiveCol = markerManagers[i].options.primitive;
@@ -269,6 +343,41 @@ export default {
       }
       return marker;
     },
+    $_markerClickAction(ev){
+      const { Cesium, viewer } = this;
+      const vm = this;
+      let scene = viewer.scene;
+      if (scene.mode !== Cesium.SceneMode.MORPHING) {
+        let pickedObject = scene.pick(ev.position);
+        if (
+          Cesium.defined(pickedObject) &&
+          pickedObject.hasOwnProperty("id")
+        ) {
+          // console.log('clickedObject',pickedObject);
+          if (
+            !this.usePrimitive && 
+            pickedObject.id.label &&
+            vm.$_hasId(pickedObject.id.id).flag
+          ) {
+            let label = vm.$_hasId(pickedObject.id.id).label;
+            vm.$emit("click", label);
+          } else if (
+            !this.usePrimitive  &&
+            this.enableCircle &&
+            pickedObject.primitive
+          ){
+            vm.$emit("click", pickedObject.primitive);
+          } else if (
+            this.usePrimitive &&
+            typeof pickedObject.id === 'string' &&
+            vm.$_hasId(pickedObject.id).flag
+          ){
+            let iconLabel = vm.$_hasId(pickedObject.id).iconLabel;
+            vm.$emit("click", iconLabel);
+          };
+        }
+      }
+    },
     $_markerMouseAction(movement) {
       const { Cesium, viewer } = this;
       const vm = this;
@@ -277,11 +386,13 @@ export default {
         this.DynamicMarkerLastActive || undefined;
       if (scene.mode !== Cesium.SceneMode.MORPHING) {
         let pickedObject = scene.pick(movement.endPosition);
-        // console.log('pickedObject',pickedObject);
+        // let pickedObject = scene.pick(movement.position);
         if (
           Cesium.defined(pickedObject) &&
           pickedObject.hasOwnProperty("id")
         ) {
+          // console.log('pickedObject',pickedObject);
+
           if (
             !this.usePrimitive && 
             pickedObject.id.label &&
@@ -300,7 +411,25 @@ export default {
               vm.$emit("mouseEnter", label);
               this.DynamicMarkerLastActive = label;
             }
-          }else if(
+          } else if (
+            !this.usePrimitive  &&
+            this.enableCircle &&
+            pickedObject.primitive
+          ){
+            if (!vm.isMoveIn) {
+              vm.isMoveIn = true;
+              vm.isMoveOut = false;
+              let iconLabel = pickedObject.primitive;
+              if (
+                this.DynamicMarkerLastActive &&
+                this.DynamicMarkerLastActive != iconLabel
+              ) {
+                vm.$emit("mouseLeave", this.DynamicMarkerLastActive);
+              }
+              vm.$emit("mouseEnter", iconLabel);
+              this.DynamicMarkerLastActive = iconLabel;
+            }
+          } else if (
             this.usePrimitive &&
             typeof pickedObject.id === 'string' &&
             vm.$_hasId(pickedObject.id).flag
@@ -329,15 +458,23 @@ export default {
         }
       }
     },
-    $_append(label) {
+    async $_append(label) {
       const vm = this;
+      let geojson;
+      geojson = this.geojson;
+      if( typeof geojson === 'string'){
+          const res = await axios.get(geojson);
+          geojson = res.data;
+      };
+      let iconLabel;
       if(!this.usePrimitive){
-        let iconLabel = this.$_addLabelIcon(
+        iconLabel = this.$_addLabelIcon(
           //文本内容
           this.text,
           //经度、纬度、高度
           this.longitude,
           this.latitude,
+          geojson,
           this.height,
           //文字大小、字体
           this.fontSize + " " + this.fontFamily,
@@ -356,13 +493,11 @@ export default {
         label.fid = this.fid;
         label.changeEvent = this.changeEvent;
         iconLabel.markLabel = label;
-        //存储icon结果
-        this.$_addIcon(iconLabel);
       } else {
-        this.$_addLabelIconByPrimitive(
+        iconLabel = this.$_addLabelIconByPrimitive(
           //文本内容
           this.text,
-          this.primitiveList,
+          geojson,
           this.height,
           //文字大小、字体
           this.fontSize + " " + this.fontFamily,
@@ -372,15 +507,14 @@ export default {
           this.iconUrl,
           this.iconWidth,
           this.iconHeight,
-        ).then(function(data){
-        //存储icon结果
-          vm.$_addIcon(data);
-        })     
+        )
       }
+      //存储icon结果
+      this.$_addIcon(iconLabel);
     },
 
     /**
-     * @修改说明 添加图标注记
+     * @修改说明 使用entity方式添加图标注记
      * @修改人 龚跃健
      * @修改时间 2022/1/21
      * 添加图标注记
@@ -402,6 +536,7 @@ export default {
       text,
       lon,
       lat,
+      geojson,
       height,
       font,
       fillColor,
@@ -412,11 +547,13 @@ export default {
       nearDist,
       attribute
     ) {
+      const vm = this;
       if (!this.Cesium) {
         console.log("Cesium缺失");
         return null;
       }
-      if (!lon || !lat) {
+      if ((!lon || !lat ) && !geojson) {
+        console.log('缺少marker位置信息');
         return null;
       }
       text = text || "";
@@ -432,75 +569,195 @@ export default {
       nearDist = nearDist || 1;
       attribute = attribute || "";
       name = name || "pictureLabel";
-      const labelIcon = this.viewer.entities.add({
-        name: text,
-        position: this.Cesium.Cartesian3.fromDegrees(lon, lat, height),
-        billboard: {
-          // 图标
-          image: iconUrl,
-          width: iconWidth,
-          height: iconHeight,
-          // heightReference: this.root.HeightReference.CLAMP_TO_GROUND,
-          // 随远近缩放
-          // pixelOffset:new this.root.Cartesian2(0.0, -image.height),
-          pixelOffsetScaleByDistance: new this.Cesium.NearFarScalar(
-            1.5e5,
-            3.0,
-            1.5e7,
-            0.5
-          ),
-          // 随远近隐藏
-          translucencyByDistance: new this.Cesium.NearFarScalar(
-            1.5e5,
-            1.0,
-            1.5e7,
-            0.0
-          ),
-          // 定位点
-          // verticalOrigin: this.root.VerticalOrigin.BOTTOM
-          horizontalOrigin: this.Cesium.HorizontalOrigin.TOP
-        },
-        label: {
-          // 文字标签
-          text: text,
-          font: font,
-          style: this.Cesium.LabelStyle.FILL_AND_OUTLINE,
-          fillColor: fillColor,
-          outlineWidth: 1,
-          verticalOrigin: this.Cesium.VerticalOrigin.BOTTOM, // 垂直方向以底部来计算标签的位置
-          horizontalOrigin: this.Cesium.HorizontalOrigin.BOTTOM, // 原点在下方
-          // pixelOffset: lPixelOffset, // 偏移量
-          // heightReference : this.root.HeightReference.CLAMP_TO_GROUND ,
-          // 随远近缩放
-          pixelOffset: new this.Cesium.Cartesian2(0.0, -iconHeight / 4), // x,y方向偏移 相对于屏幕
-          pixelOffsetScaleByDistance: new this.Cesium.NearFarScalar(
-            1.5e2,
-            3.0,
-            1.5e7,
-            0.5
-          ),
-          // 随远近隐藏
-          translucencyByDistance: new this.Cesium.NearFarScalar(
-            1.5e5,
-            1.0,
-            1.5e7,
-            0.0
-          )
-        },
-        description: attribute
-      });
-      labelIcon.billboard.translucencyByDistance = new this.Cesium.NearFarScalar(
-        1.5e5,
-        1.0,
-        1.5e7,
-        1.0
-      ); // 不随距离的远近改变透明度
-      // labelIcon.pixelOffsetScaleByDistance = new Cesium.NearFarScalar(1.5e2, 0.0, 8.0e6, 10.0);// 随远近改变大小
-      labelIcon.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY;
-      labelIcon.name = name;
-      return labelIcon;
+
+      if( this.enableCluster ){
+        let circles;
+        if( this.enableCircle ){
+          circles = viewer.scene.primitives.add( new Cesium.PrimitiveCollection());
+          // console.log('circles',circles);
+        }
+        let dataSource = new Cesium.CustomDataSource('marker');
+        //添加聚类数据
+        geojson.features.forEach(function(item,index){
+          // console.log('item of geojson',item);
+          let lon = item.geometry.coordinates[0];
+          let lat = item.geometry.coordinates[1];
+
+          dataSource.entities.add({
+            id: index,
+            position: vm.Cesium.Cartesian3.fromDegrees(lon, lat, height),
+            billboard: {
+              id: "icon_" + index,
+              // 图标
+              image: iconUrl,
+              width: iconWidth,
+              height: iconHeight,
+              horizontalOrigin: vm.Cesium.HorizontalOrigin.TOP
+            }
+          });
+        });
+
+        //开启及设置聚类
+        dataSource.clustering.enabled = true;
+        dataSource.clustering.pixelRange = 15;
+        dataSource.clustering.minimumClusterSize = 2;
+        
+        let preLength = 0;
+        let i = 0;
+        dataSource.clustering.clusterEvent.addEventListener((clusteredEntities, cluster , clusters) => {
+          // console.log('clusteredEntities',clusteredEntities);
+          // console.log('clusters',clusters && clusters.length);
+
+          cluster.label.show = false;
+          cluster.billboard.show = true;
+          cluster.billboard.image = iconUrl;
+          cluster.billboard.width = iconWidth;
+          cluster.billboard.height = iconHeight;
+          cluster.billboard.id = 'cluster_icon_' + i++;
+          cluster.billboard.entities = clusteredEntities;
+          // console.log('vm.enableCircle',vm.enableCircle);
+          
+          if(vm.enableCircle && clusters && (clusters.length !== preLength)){
+            if( clusters.length > vm.maxCircleNumber){
+              console.log('动态圆特效数目超出设置的范围');
+              return null;  
+            }
+            preLength = clusters.length;
+
+            vm.viewer.scene.globe.enableLighting = true;
+
+            circles.removeAll();
+            clusters.forEach(function(item){
+              // console.log('item',item);
+              circles.add(new Cesium.Primitive({
+                geometryInstances: new Cesium.GeometryInstance({
+                  geometry: new Cesium.EllipseGeometry({
+                    center : item.position,
+                    height: 0,
+                    semiMinorAxis: vm.radius,
+                    semiMajorAxis: vm.radius,
+                  }),
+                }),
+                appearance: new Cesium.MaterialAppearance({
+                    material: Cesium.Material.fromType('CircleWaveMaterial',{
+                      duration: 1000,
+                      gradient: 0.5,
+                      color: Cesium.Color.fromCssColorString(vm.circleColor),
+                      count: 4
+                    })
+                }),
+              }));
+            })
+          }
+
+          vm.$emit('cluster',clusteredEntities, cluster , clusters)
+        })
+
+        this.viewer.dataSources.add(dataSource);
+
+        return {dataSource: dataSource, circle:circles};
+
+      }else {
+        const labelIcon = this.viewer.entities.add({
+          name: text,
+          position: this.Cesium.Cartesian3.fromDegrees(lon, lat, height),
+          billboard: {
+            // 图标
+            image: iconUrl,
+            width: iconWidth,
+            height: iconHeight,
+            // heightReference: this.root.HeightReference.CLAMP_TO_GROUND,
+            // 随远近缩放
+            // pixelOffset:new this.root.Cartesian2(0.0, -image.height),
+            pixelOffsetScaleByDistance: new this.Cesium.NearFarScalar(
+              1.5e5,
+              3.0,
+              1.5e7,
+              0.5
+            ),
+            // 随远近隐藏
+            translucencyByDistance: new this.Cesium.NearFarScalar(
+              1.5e5,
+              1.0,
+              1.5e7,
+              0.0
+            ),
+            // 定位点
+            // verticalOrigin: this.root.VerticalOrigin.BOTTOM
+            horizontalOrigin: this.Cesium.HorizontalOrigin.TOP
+          },
+          label: {
+            // 文字标签
+            text: text,
+            font: font,
+            style: this.Cesium.LabelStyle.FILL_AND_OUTLINE,
+            fillColor: fillColor,
+            outlineWidth: 1,
+            verticalOrigin: this.Cesium.VerticalOrigin.BOTTOM, // 垂直方向以底部来计算标签的位置
+            horizontalOrigin: this.Cesium.HorizontalOrigin.BOTTOM, // 原点在下方
+            // pixelOffset: lPixelOffset, // 偏移量
+            // heightReference : this.root.HeightReference.CLAMP_TO_GROUND ,
+            // 随远近缩放
+            pixelOffset: new this.Cesium.Cartesian2(0.0, -iconHeight / 4), // x,y方向偏移 相对于屏幕
+            pixelOffsetScaleByDistance: new this.Cesium.NearFarScalar(
+              1.5e2,
+              3.0,
+              1.5e7,
+              0.5
+            ),
+            // 随远近隐藏
+            translucencyByDistance: new this.Cesium.NearFarScalar(
+              1.5e5,
+              1.0,
+              1.5e7,
+              0.0
+            )
+          },
+          description: attribute
+        });
+  
+        let circle;
+        if( this.enableCircle && !this.enableCluster ){
+          // this.viewer.clock.shouldAnimate = true;
+          this.viewer.scene.globe.enableLighting = true;
+  
+          circle = this.viewer.scene.primitives.add(
+            new Cesium.Primitive({
+              geometryInstances: new Cesium.GeometryInstance({
+                geometry: new Cesium.EllipseGeometry({
+                  center : new Cesium.Cartesian3.fromDegrees(lon, lat, height),
+                  height: 0,
+                  semiMinorAxis: vm.radius,
+                  semiMajorAxis: vm.radius,
+                }),
+              }),
+              appearance: new Cesium.MaterialAppearance({
+                  material: Cesium.Material.fromType('CircleWaveMaterial',{
+                    duration: 1000,
+                    gradient: 0.5,
+                    color: Cesium.Color.fromCssColorString(vm.circleColor),
+                    count: 4
+                  })
+              }),
+            })
+          );
+          // console.log('circle',circle);
+        }
+  
+        labelIcon.billboard.translucencyByDistance = new this.Cesium.NearFarScalar(
+          1.5e5,
+          1.0,
+          1.5e7,
+          1.0
+        ); // 不随距离的远近改变透明度
+        // labelIcon.pixelOffsetScaleByDistance = new Cesium.NearFarScalar(1.5e2, 0.0, 8.0e6, 10.0);// 随远近改变大小
+        labelIcon.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY;
+        labelIcon.name = name;
+        labelIcon.circle = circle;
+        return labelIcon;
+      }
     },
-    async $_addLabelIconByPrimitive(
+    $_addLabelIconByPrimitive(
       text,
       geojson,
       height,
@@ -515,13 +772,10 @@ export default {
         return null;
       }
       if (!geojson) {
+        console.log("缺少数据");
         return null;
       }
-      
-      if( typeof geojson === 'string'){
-          const res = await axios.get(geojson);
-          geojson = res.data;
-      }    
+      const vm = this;
 
       let Cesium = this.Cesium || window.Cesium;
       let viewer = this.viewer || viewer;
@@ -534,13 +788,20 @@ export default {
       iconWidth = iconWidth || 27;
       iconHeight = iconHeight || 32;
 
-      var billboards = viewer.scene.primitives.add(new Cesium.BillboardCollection());
-      var labels;
+      let billboards = viewer.scene.primitives.add(new Cesium.BillboardCollection());
+      let labels;
+      let circles;
 
       if( text !== ""){
         labels = viewer.scene.primitives.add(new Cesium.LabelCollection());
       }
-      
+
+      if(this.enableCircle){
+        circles = viewer.scene.primitives.add( new Cesium.PrimitiveCollection());
+        // console.log('circles',circles);
+      }
+
+      circles.removeAll();
       geojson.features.forEach(function(item,index){
         // console.log('item of geojson',item);
         let lon = item.geometry.coordinates[0];
@@ -565,7 +826,7 @@ export default {
           disableDepthTestDistance: Number.POSITIVE_INFINITY
         });
 
-        if( labels ) {
+        if ( labels ) {
           labels.add({
             id : 'label_' + index,
             position : Cesium.Cartesian3.fromDegrees(lon, lat, height),
@@ -588,22 +849,51 @@ export default {
               1.5e7,
               0.5
             ),
-          }) 
+          }); 
+        };
+        
+        if ( vm.enableCircle ){
+          // console.log('geojson.features.length',geojson.features.length);
+          if(geojson.features.length > vm.maxCircleNumber){ 
+            console.log('动态圆特效数目超出设置的范围',geojson.features.length);
+            return null;   
+          }
+
+          circles.add(new Cesium.Primitive({
+            geometryInstances: new Cesium.GeometryInstance({
+              geometry: new Cesium.EllipseGeometry({
+                center : new Cesium.Cartesian3.fromDegrees(lon, lat, height),
+                height: 0,
+                semiMinorAxis: vm.radius,
+                semiMajorAxis: vm.radius,
+              }),
+            }),
+            appearance: new Cesium.MaterialAppearance({
+                material: Cesium.Material.fromType('CircleWaveMaterial',{
+                  duration: 1000,
+                  gradient: 0.5,
+                  color: Cesium.Color.fromCssColorString(vm.circleColor),
+                  count: 4
+                })
+            }),
+          }));
         }
 
       });
 
-      var iconLableCollection = {
+      let iconLableCollection = {
         icon: billboards,
-        label: labels
-      }
+        label: labels,
+        circle: circles
+      };
+
       return iconLableCollection;
     },
     $_addIcon(iconLabel) {
       const { vueKey, vueIndex } = this;
       let vueCesium = this.vueCesium || window.vueCesium;
-      var key = this.usePrimitive ? 'primitive' : 'entity';
-      // console.log('iconLabel',this.usePrimitive,iconLabel);
+      let key = this.usePrimitive ? 'primitive' : 'entity';
+      // console.log('iconLabel',iconLabel);
       vueCesium.MarkerManager.changeOptions(vueKey, vueIndex, key, iconLabel);
     },
     togglePopup() {
