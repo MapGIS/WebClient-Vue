@@ -442,7 +442,18 @@ export default {
           if (next){
             vm.viewer.scene.mode = 1
           } else {
-            vm.viewer.scene.mode = 3
+            vm.viewer.scene.mode = 3;
+            let rectangle3D = vm.viewer.camera.computeViewRectangle();
+            // 若地球不在屏幕视野范围内，则恢复初始视角
+            if (!rectangle3D) {
+                let { north, south, east, west } = Cesium.Camera.DEFAULT_VIEW_RECTANGLE;
+                let lon = Cesium.Math.toDegrees((east + west) / 2);
+                let lat = Cesium.Math.toDegrees((north + south) / 2);
+                const height = 16846164;
+                vm.viewer.camera.setView({
+                    destination: Cesium.Cartesian3.fromDegrees(lon, lat, height)
+                })
+            }
           }
       }
     },
