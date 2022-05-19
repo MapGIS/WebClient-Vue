@@ -299,3 +299,8 @@ export { default as MapgisUiTimelinePanel } from "./layout/panel/TimelinePanel.v
 
 //plot
 export { default as MapgisUiPlotAnimation } from "./components/plot/Animation.vue";
+export { default as MapgisUiPlotAttribute } from "./components/plot/Attribute.vue";
+export { default as MapgisUiPlotScript } from "./components/plot/Script.vue";
+export { default as MapgisUiPlotScriptList } from "./components/plot/ScriptList.vue";
+export { default as MapgisUiPlotSymbol } from "./components/plot/Symbol.vue";
+export { default as MapgisUiPlotTimeline } from "./components/plot/Timeline.vue";

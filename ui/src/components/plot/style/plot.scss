@@ -183,6 +183,7 @@
 }
 
 .plot-timeline-panel {
+    user-select: none;
     
     .timeline-setting-panel {
         height: 48px;
@@ -238,7 +239,6 @@
             align-items: flex-end;
             position: relative;
     
-    
             .timeline-needle {
                 height: 100%;
                 position: absolute;
@@ -293,8 +293,9 @@
                     justify-content: space-evenly;
                     align-items: flex-end;
     
-                    &:last-child {
+                    &-last {
                         width: 1px;
+                        height: 12px;
                         background: $text-color;
                     }
                 }

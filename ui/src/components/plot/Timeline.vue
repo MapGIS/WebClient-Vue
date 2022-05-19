@@ -3,6 +3,11 @@
     <div class="timeline-setting-panel">
       <mapgis-ui-space>
         <mapgis-ui-iconfont
+          :class="['play-btn', { 'btn-active': startBtn === true }]"
+          type="mapgis-zuo"
+          @click.capture.stop="start"
+        />
+        <mapgis-ui-iconfont
           :class="['play-btn', { 'btn-active': backBtn === true }]"
           type="mapgis-arrow-left-filling"
           @click.capture.stop="backward"
@@ -16,6 +21,11 @@
           :class="['play-btn', { 'btn-active': forwardBtn === true }]"
           type="mapgis-arrow-right-filling"
           @click.capture.stop="forward"
+        />
+        <mapgis-ui-iconfont
+          :class="['play-btn', { 'btn-active': endBtn === true }]"
+          type="mapgis-you"
+          @click.capture.stop="end"
         />
       </mapgis-ui-space>
 
@@ -35,12 +45,15 @@
             v-model="speedCopy"
             :formatter="value => `${value}X`"
             :parser="value => value.replace('X', '')"
+            :step="speedStep"
+            :min="minSpeed"
+            :max="maxSpeed"
           />
         </template>
       </mapgis-ui-tooltip>
 
-      <mapgis-ui-tooltip>
-        <div class="timeline-select">
+      <mapgis-ui-tooltip :visible="showInterval">
+        <div class="timeline-select" @mouseenter="() => (showInterval = true)">
           播放间隔
         </div>
         <template #title>
@@ -50,7 +63,8 @@
             :selectOptions="intervalOptions"
             :placeholder="intervalPlaceholder"
             :wrapperCol="24"
-            @change="intervalChange"
+            @mouseenter.native="() => (showInterval = true)"
+            @mouseleave.native="closeIntervalPanel"
           />
         </template>
       </mapgis-ui-tooltip>
@@ -78,11 +92,12 @@
             :key="item"
           />
         </div>
-        <div class="time-tick time-tick-lg">
+        <div class="time-tick time-tick-lg-last">
           <span class="time-mark">240</span>
         </div>
         <div class="timeline-needle">
           <img src="./style/images/u196.png" class="timeline-needle-top" />
+          <!-- <mapgis-ui-iconfont type="mapgis-down" class="timeline-needle-top" /> -->
           <div class="timeline-needle-bottom"></div>
         </div>
       </div>
@@ -92,16 +107,10 @@
 
 <script>
 import moment from "moment";
-import Div from "../div/Div.vue";
 
 export default {
   name: "mapgis-ui-plot-timeline",
   props: {
-    /** 时间轴的宽度 */
-    width: {
-      type: Number,
-      default: null
-    },
     currentTime: {
       type: String,
       default: "2022-02"
@@ -123,23 +132,16 @@ export default {
       type: Number,
       default: 60
     },
-    /** 滑动条标记值 */
-    marks: {
-      type: Object
+    duration: {
+      type: Number,
+      default: 24
     },
-    /** 滑动条步长 */
-    step: {
-      type: Number || Null,
-      default: 1
-    },
-    /** 滑动条格式化 */
-    tipFormatter: {
-      type: Function
-    },
-    isPlaying: {
-      type: Boolean,
-      default: false
-    },
+
+    // isPlaying: {
+    //   type: Boolean,
+    //   default: false
+    // },
+
     /** 选择的时间间隔 */
     interval: {
       type: String,
@@ -176,13 +178,10 @@ export default {
       type: Number,
       default: 50
     },
-    resetActive: {
+    /**定义按钮的初始激活状态 */
+    startActive: {
       type: Boolean,
       default: false
-    },
-    enableBackforward: {
-      type: Boolean,
-      default: true
     },
     backActive: {
       type: Boolean,
@@ -196,8 +195,11 @@ export default {
       type: Boolean,
       default: false
     },
-    /** 是否禁用暂停选项 */
-    disabled: {
+    endActive: {
+      type: Boolean,
+      default: false
+    },
+    loop: {
       type: Boolean,
       default: false
     }
@@ -214,11 +216,24 @@ export default {
       deep: true,
       immediate: true
     },
+    valueCopy: {
+      handler(next) {
+        this.valueChange();
+        this.$emit("change", next);
+      },
+      deep: true
+    },
     speed: {
       handler(next) {
         this.speedCopy = next;
       },
       immediate: true
+    },
+    speedCopy: {
+      handler(next) {
+        this.$emit("speedChange", next);
+      },
+      deep: true
     },
     interval: {
       handler(next) {
@@ -227,12 +242,19 @@ export default {
       deep: true,
       immediate: true
     },
-    isPlaying: {
+    intervalCopy: {
       handler(next) {
-        this.isPlayingCopy = next;
+      this.$emit("intervalChange", next);
+      // console.log("intervalChange", next);
       },
-      immediate: true
+      deep: true
     },
+    // isPlaying: {
+    //   handler(next) {
+    //     this.isPlayingCopy = next;
+    //   },
+    //   immediate: true
+    // },
     resetActive: {
       handler(next) {
         this.resetBtn = next;
@@ -260,225 +282,182 @@ export default {
       speedCopy: this.speed,
       intervalCopy: this.interval,
 
-      isPlayingCopy: this.isPlaying,
+      // isPlayingCopy: this.isPlaying,
 
-      resetBtn: this.resetActive,
+      startBtn: this.startActive,
       backBtn: this.backActive,
       pauseBtn: this.pauseActive,
-      forwardBtn: this.forwardActive
+      forwardBtn: this.forwardActive,
+      endBtn: this.endActive,
+
+      // 时间轴
+      percent: undefined,
+      raf: undefined,
+      lasttime: undefined,
+      curtime: undefined,
+      showInterval: false
     };
   },
   created() {
     moment.locale();
   },
   mounted() {
-    let img = document.querySelector(".timeline-needle-top");
-    let ele = document.querySelector(".timeline-needle");
-    let bar = document.querySelector(".timeline-bar");
+    this.mount();
 
-    ele.onmousedown =  function(ev) {
-      // ele.setCapture();
-      var initL = parseFloat(ele.style.left) || 0;
-      var initX = ev.clientX - initL;
-      console.log("initL", initL);
-
-      img.onmousemove= function(ev) {
-        var left = ev.clientX - initX;
-        console.log("mousemove", ev, ele.style.left);
-        ele.style.left = left + 'px';
-      };
-
-      ele.onmousemove= function(ev) {
-        var left = ev.clientX - initX;
-        console.log("mousemove", ev, ele.style.left);
-        ele.style.left = left + 'px';
-      };
-
-      bar.onmousemove= function(ev) {
-        var left = ev.clientX - initX;
-        console.log("mousemove", ev, ele.style.left);
-        ele.style.left = left + 'px';
-      };
-
-      document.onmouseup= function() {
-        ele.onmousemove = null;
-        bar.onmousemove = null;
-        img.onmousemove = null;
-        document.onmouseup = null;
-        // ele.releaseCapture();
-      };
-
-    };
+    //实现时间轴的播放功能
+    // this.timelinePlay();
   },
   methods: {
-    resetSpeed() {
-      this.resetBtn = true;
-      this.$emit("resetSpeed");
+    mount() {
+      const vm = this;
+      //实现时间轴的拖拽功能
+      let ele = document.querySelector(".timeline-needle");
+      let bar = document.querySelector(".timeline-bar");
+
+      ele.onmousedown = function(ev) {
+        ev.preventDefault();
+        let width = parseFloat(window.getComputedStyle(bar).width);
+        let initL = parseFloat(ele.style.left) || 0;
+        let initX = ev.clientX - initL;
+
+        document.onmousemove = function(ev) {
+          let left = ev.clientX - initX;
+          left = left < 0 ? 0 : left;
+          left = left > width ? width : left;
+          vm.percent = left / width;
+          vm.valueCopy = vm.percent * (vm.max - vm.min) + vm.min;
+        };
+
+        document.onmouseup = function() {
+          document.onmouseup = null;
+          document.onmousemove = null;
+        };
+      };
     },
-    decelerate() {
-      this.resetBtn = false;
-      this.$emit("decelerate");
-    },
-    accelerate() {
-      this.resetBtn = false;
-      this.$emit("accelerate");
-    },
-    speedChange(e) {
-      this.resetBtn = false;
-      if (this.enableBackforward) {
-        if (e > 0) {
-          this.forward();
-        } else if (e === 0) {
-          this.pause();
+    // timelinePlay() {
+    //   const vm = this;
+    //   let ele = document.querySelector(".timeline-needle");
+    //   let bar = document.querySelector(".timeline-bar");
+    //   let width = parseFloat(window.getComputedStyle(bar).width);
+    //   let left = parseFloat(ele.style.left) || 0;
+
+    //   //经过的时间（秒数）
+    //   vm.lasttime = vm.lasttime || Date.now();
+    //   vm.curtime = Date.now();
+    //   let diff = (vm.curtime - vm.lasttime) / 1000;
+    //   vm.lasttime = vm.curtime;
+    //   // console.log("diff", diff);
+    //   left += width * (diff / vm.duration);
+
+    //   if (left >= width) {
+    //     if (vm.loop) {
+    //       left = 0;
+    //     } else {
+    //       left = width;
+    //       cancelAnimationFrame(vm.raf);
+    //     }
+    //   }
+    //   ele.style.left = left + "px";
+    //   vm.percent = left / width;
+    //   vm.valueCopy = vm.percent * (vm.max - vm.min) + vm.min;
+
+    //   vm.raf = requestAnimationFrame(vm.timelinePlay);
+    // },
+    startPlay() {
+      const vm = this;
+      this.isPlaying = true;
+      //经过的时间（秒数）
+      if (!this.lasttime) {
+        this.lasttime = Date.now();
+      }
+
+      let curtime = Date.now();
+      let diff = (curtime - this.lasttime) / 1000;
+      this.lasttime = curtime;
+      // console.log("diff", diff);
+      this.valueCopy += (vm.max - vm.min) * (diff / vm.duration) * vm.speedCopy;
+      console.log("value", this.valueCopy);
+
+      if (vm.valueCopy >= vm.max) {
+        if (vm.loop) {
+          vm.valueCopy = vm.min;
         } else {
-          this.backward();
+          vm.valueCopy = vm.max;
+          vm.stopPlay();
+
+          return;
         }
       }
-      this.$emit("speedChange", e);
+      // this.valueChange();
+      this.raf = requestAnimationFrame(vm.startPlay);
+    },
+    stopPlay() {
+      const vm = this;
+      this.isPlaying = false;
+      this.lasttime = undefined;
+      cancelAnimationFrame(vm.raf);
+    },
+    valueChange() {
+      this.percent = (this.valueCopy - this.min) / (this.max - this.min);
+      let ele = document.querySelector(".timeline-needle");
+      let bar = document.querySelector(".timeline-bar");
+      let width = parseFloat(window.getComputedStyle(bar).width);
+      let left = this.percent * width;
+      ele.style.left = left + "px";
+    },
+    closeIntervalPanel() {
+      const vm = this;
+      setTimeout(() => {
+        vm.showInterval = false;
+        // console.log("effextive");
+      }, 1000);
+    },
+    start() {
+      this.startBtn = true;
+      this.backBtn = false;
+      this.pauseBtn = false;
+      this.forwardBtn = false;
+      this.endBtn = false;
+      this.$emit("start");
+
+      this.valueCopy = this.min;
     },
     backward() {
+      this.startBtn = false;
       this.backBtn = true;
       this.pauseBtn = false;
       this.forwardBtn = false;
+      this.endBtn = false;
       this.$emit("backward");
     },
     pause() {
-      this.pauseBtn = true;
+      this.startBtn = false;
       this.backBtn = false;
+      this.pauseBtn = true;
       this.forwardBtn = false;
+      this.endBtn = false;
       this.$emit("pause");
+      this.stopPlay()
     },
     forward() {
-      this.forwardBtn = true;
+      this.startBtn = false;
       this.backBtn = false;
       this.pauseBtn = false;
+      this.forwardBtn = true;
+      this.endBtn = false;
       this.$emit("forward");
+      this.startPlay();
     },
-    startPlay() {
-      this.isPlayingCopy = true;
-      this.$emit("startPlay");
+    end() {
+      this.startBtn = false;
+      this.backBtn = false;
+      this.pauseBtn = false;
+      this.forwardBtn = false;
+      this.endBtn = true;
+      this.$emit("end");
+
+      this.valueCopy = this.max;
     },
-    stopPlay() {
-      this.isPlayingCopy = false;
-      this.$emit("stopPlay");
-    },
-    intervalChange(e) {
-      this.$emit("intervalChange", e);
-    },
-    valueChange(e) {
-      this.$emit("change", e);
-    }
   }
 };
 </script>
-
-<style scoped>
-.mapgis-ui-timeline-panel {
-  position: absolute;
-  height: 62px;
-  display: flex;
-  padding: 0 !important;
-}
-
-::v-deep .mapgis-ui-card-small > .mapgis-ui-card-body {
-  padding: 8px;
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.animationContainer {
-  display: flex;
-  /*width: 676px;*/
-  height: 32px;
-}
-
-.reset-btn {
-  font-size: 32px;
-  border: none;
-}
-
-.reset-btn-active {
-  color: #0081e2;
-}
-
-.speed-slider-toolbar {
-  position: relative;
-  width: 152px;
-  margin-left: 20px;
-}
-
-.center-line {
-  position: absolute;
-  left: 50%;
-  top: 6px;
-  display: inline-block;
-  width: 1px;
-  height: 18px;
-  background-color: hsl(0deg 17% 20% / 79%);
-  z-index: 100;
-  cursor: pointer;
-}
-
-.speed-change-btn {
-  position: absolute;
-  top: 0;
-  font-size: 17px;
-  color: hsl(0deg 17% 20% / 79%);
-  z-index: 100;
-  user-select: none;
-  cursor: pointer;
-}
-
-.minus {
-  left: 10px;
-}
-
-.plus {
-  right: 10px;
-}
-
-.speed-slider {
-  line-height: normal;
-}
-
-::v-deep .speed-slider > .mapgis-ui-select-selection--single {
-  height: 30px;
-}
-
-::v-deep .mapgis-ui-slider {
-  margin: 4px 6px 4px;
-  padding: unset;
-}
-
-::v-deep .speed-slider > .mapgis-ui-slider-handle {
-  border: unset;
-  border-radius: 0;
-  width: 6px;
-  height: 22px;
-  /* background: url("./slider.png"); */
-  background-size: contain;
-  outline: 0;
-  margin-top: 0px;
-}
-
-::v-deep .speed-slider > .mapgis-ui-slider-rail {
-  height: 22px;
-}
-
-::v-deep .speed-slider > .mapgis-ui-slider-track {
-  height: 22px;
-  background-color: unset;
-}
-
-::v-deep .mapgis-ui-slider:hover .mapgis-ui-slider-track {
-  background-color: unset;
-}
-
-.disabled {
-  cursor: not-allowed;
-}
-
-.timeline-slider {
-  width: 100%;
-}
-</style>
