@@ -209,6 +209,7 @@ export class EchartsLayer {
           api.dispatchAction({
             type: "CesiumRoma",
           });
+          self._visible();
         }
 
         function moveEndHandler(type, target) {
@@ -246,6 +247,7 @@ export class EchartsLayer {
           api.dispatchAction({
             type: "CesiumRoma",
           });
+          self._visible();
         }
 
         function zoomEndHandler() {
@@ -255,6 +257,7 @@ export class EchartsLayer {
           api.dispatchAction({
             type: "CesiumRoma",
           });
+          self._visible();
         }
 
         function postHandler(type, target) {
@@ -294,6 +297,14 @@ export class EchartsLayer {
           var handler = new Cesium.ScreenSpaceEventHandler(self.scene.canvas);
           handler.setInputAction(
             () => self.scene.postRender.addEventListener(postHandler),
+            Cesium.ScreenSpaceEventType.MOUSE_MOVE
+          );
+          handler.setInputAction(
+            () => self.scene.postRender.addEventListener(postHandler),
+            Cesium.ScreenSpaceEventType.WHEEL
+          );
+          handler.setInputAction(
+            () => self.scene.postRender.addEventListener(postHandler),
             Cesium.ScreenSpaceEventType.LEFT_DOWN
           );
           handler.setInputAction(
@@ -313,6 +324,10 @@ export class EchartsLayer {
 
           if (self.initStats == false) {
             self.initStats = true;
+            handler.setInputAction(
+              zoomStartHandler,
+              Cesium.ScreenSpaceEventType.MOUSE_MOVE
+            );
             handler.setInputAction(
               zoomStartHandler,
               Cesium.ScreenSpaceEventType.WHEEL
