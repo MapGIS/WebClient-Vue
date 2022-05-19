@@ -6,7 +6,7 @@
     }"
   >
     <mapgis-ui-row>
-      <mapgis-ui-col :span="labelCol" class="left">
+      <mapgis-ui-col :span="labelCol" class="left" v-if="showLabel">
         <div class="label-sm">
           {{ label }}
         </div>
@@ -29,6 +29,10 @@ export default {
     label: {
       type: String,
       default: "标题"
+    },
+    showLabel: {
+      type: Boolean,
+      default: true
     },
     value: {
       type: String,

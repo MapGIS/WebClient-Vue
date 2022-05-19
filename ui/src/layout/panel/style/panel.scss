@@ -89,6 +89,26 @@
   }
 }
 
+@include b(title-collapse) {
+  @include e(parameter, "-") {
+    &-transparent {
+      background: transparent;
+    }
+    // background: $panel-inner-color;
+    // margin: 4px;
+    border-radius: 4px;
+    overflow: hidden;
+    max-height: 0px;
+    transition: max-height 0.5s;
+    -moz-transition: max-height 0.5s; /* Firefox 4 */
+    -webkit-transition: max-height 0.5s; /* Safari and Chrome */
+    -o-transition: max-height 0.5s; /* Opera */
+  }
+  .front{
+    padding-right: 4px;
+  }
+}
+
 @include b(input-number-panel) {
   //background: $panel-inner-color;
   border-radius: 3px;

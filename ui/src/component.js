@@ -225,6 +225,7 @@ export { default as MapgisUiNavBarItem } from "./layout/navs/NavBarItem.vue";
 export { default as MapgisUiProSetting } from "./layout/base/BaseSetting.vue";
 export { default as MapgisUiProlayout } from "./layout/base/BaseLayout.vue";
 export { default as MapgisUiSwitchPanel } from "./layout/panel/SwitchPanel.vue";
+export { default as MapgisUiTitleCollapse } from "./layout/panel/TitleCollapse.vue";
 export { default as MapgisUiInputNumberPanel } from "./layout/panel/InputNumberPanel.vue";
 export { default as MapgisUiColorPickPanel } from "./layout/panel/ColorPickPanel.vue";
 export { default as MapgisUiSelectPanel } from "./layout/panel/SelectPanel.vue";
@@ -295,3 +296,6 @@ export { default as MapgisUiSelectRow } from "./components/select/SelectRow";
 export { default as MapgisUiSelectRowLeft } from "./components/select/SelectRowLeft";
 
 export { default as MapgisUiTimelinePanel } from "./layout/panel/TimelinePanel.vue";
+
+//plot
+export { default as MapgisUiPlotAnimation } from "./components/plot/Animation.vue";

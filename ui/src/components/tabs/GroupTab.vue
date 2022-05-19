@@ -1,6 +1,9 @@
 <template>
   <div class="mapgis-ui-group-tab" :class="classes">
     <!-- <hr /> -->
+    <span>
+      <slot name="front"></slot>
+    </span>
     <span class="title">
       <slot name="title">{{ title }}</slot>
     </span>
@@ -37,6 +40,10 @@ export default {
       type: Boolean,
       default: true
     },
+    hasLeftMargin: {
+      type: Boolean,
+      default: false
+    },
     isTitleBold: {
       type: Boolean,
       default: true
@@ -50,6 +57,7 @@ export default {
           [`is-${this.size}`]: !!this.size,
           'has-top-margin': this.hasTopMargin,
           'has-bottom-margin': this.hasBottomMargin,
+          'has-left-margin': this.hasLeftMargin,
           'is-title-bold': this.isTitleBold
         }
       ]

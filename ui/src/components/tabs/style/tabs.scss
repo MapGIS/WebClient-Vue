@@ -116,6 +116,9 @@
     &.has-bottom-margin {
       margin-bottom: 4px;
     }
+    &.has-left-margin {
+      margin-left: 8px;
+    }
   }
   &.is-small {
     font-size: 14px;
@@ -124,6 +127,9 @@
     }
     &.has-bottom-margin {
       margin-bottom: 6px;
+    }
+    &.has-left-margin {
+      margin-left: 12px;
     }
   }
   &.is-default {
@@ -134,6 +140,9 @@
     &.has-bottom-margin {
       margin-bottom: 8px;
     }
+    &.has-left-margin {
+      margin-left: 16px;
+    }
   }
   &.is-large {
     font-size: 16px;
@@ -142,6 +151,9 @@
     }
     &.has-bottom-margin {
       margin-bottom: 8px;
+    }
+    &.has-left-margin {
+      margin-left: 16px;
     }
   }
   hr {

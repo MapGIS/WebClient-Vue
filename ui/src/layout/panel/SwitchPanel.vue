@@ -1,6 +1,6 @@
 <template>
   <div class="mapgis-ui-switch-panel">
-    <mapgis-ui-group-tab :title="label" :isTitleBold="isTitleBold">
+    <mapgis-ui-group-tab :title="label" :isTitleBold="isTitleBold" :hasTopMargin="hasTopMargin" :hasBottomMargin="hasBottomMargin">
       <mapgis-ui-switch
         slot="handle"
         class="mapgis-ui-switch-panel-switch"
@@ -82,6 +82,14 @@ export default {
       default: false
     },
     isTitleBold: {
+      type: Boolean,
+      default: true
+    },
+    hasTopMargin: {
+      type: Boolean,
+      default: true
+    },
+    hasBottomMargin: {
       type: Boolean,
       default: true
     },

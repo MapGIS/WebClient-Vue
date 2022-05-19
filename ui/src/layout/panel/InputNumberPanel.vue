@@ -36,6 +36,7 @@
             :min="range[0]"
             :max="range[1]"
             :step="step"
+            :disabled="disabled"
           >
           </mapgis-ui-input-number>
         </mapgis-ui-col>
@@ -70,6 +71,7 @@
           :min="range[0]"
           :max="range[1]"
           :step="step"
+          :disabled="disabled"
         >
         </mapgis-ui-input-number>
       </mapgis-ui-col>
@@ -97,6 +99,7 @@
               :min="range[0]"
               :max="range[1]"
               :step="step"
+              :disabled="disabled"
           />
         </mapgis-ui-space>
         <mapgis-ui-input-number
@@ -105,6 +108,7 @@
           :min="range[0]"
           :max="range[1]"
           :step="step"
+          :disabled="disabled"
         />
       </mapgis-ui-col>
     </mapgis-ui-row>
@@ -132,7 +136,7 @@ export default {
     },
     range: {
       type: Array,
-      default: () => [0, 100]
+      default: () => [-Infinity, Infinity]
     },
     rangeShow:{
       type:Boolean,
@@ -160,6 +164,10 @@ export default {
     slider:{
       type:Boolean,
       default:true
+    },
+    disabled:{
+      type:Boolean,
+      default:false
     },
     transparent: {
       type: Boolean,

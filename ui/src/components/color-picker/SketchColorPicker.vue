@@ -101,10 +101,15 @@ export default {
       return (this.addonBefore && this.addonBefore.length > 0) || (this.$slots && this.$slots.addonBefore);
     }
   },
+  model: {
+    prop: "color",
+    event: "change"
+  },
   methods: {
     onColorChange(val) {
       this.getPickColor(val);
       this.$emit("input", val, this.extraValue);
+      this.$emit("change", val.hex, this.extraValue);
     },
     // 颜色拾取器选中事件回调
     getPickColor(val) {
