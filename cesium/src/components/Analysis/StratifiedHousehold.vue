@@ -606,7 +606,7 @@ export default {
       if (find && find.options.originStyles) {
         find.options.originStyles.forEach((s, i) => {
           let m3dlayer = g3dLayer.getLayer(`${i}`);
-          // m3dlayer.style = s;
+          m3dlayer.style = s;
         });
       }
     },
@@ -828,16 +828,16 @@ export default {
         vueKey,
         innerVueIndex,
         "pickerTilesetStyle",
-        // m3dlayer.style
+        m3dlayer.style
       );
       /**
        * @修改说明 使用组件传入的高亮颜色
        * @修改人 龚跃健
        * @修改时间 2022/1/13
        */
-      // m3dlayer.style = new Cesium.Cesium3DTileStyle({
-      //   color: layerHighlightColor
-      // });
+      m3dlayer.style = new Cesium.Cesium3DTileStyle({
+        color: layerHighlightColor
+      });
     },
     handleDynamicQuery() {
       this.featurevisible = false;

@@ -2,6 +2,7 @@
 	<div>
 		<slot>
 			<div class="mapgis-widget-overlay-analysis">
+				<slot name="selectLayer" />
 				<mapgis-ui-group-tab title="叠加参数设置" id="title-space"/>
 				<mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false">
 					<!-- 2.叠加参数设置 -->
@@ -34,11 +35,11 @@
 						<mapgis-ui-checkbox style="line-height:32px;" :default-checked="overlayAdd" @change="sendOverlayAdd">将结果图层添加到视图中</mapgis-ui-checkbox>
 					</mapgis-ui-form-model-item>
 				</mapgis-ui-form-model>
-				<mapgis-ui-setting-footer>
-					<mapgis-ui-button type="primary" @click="run">分析</mapgis-ui-button>
-					<mapgis-ui-button @click="cancel">重置</mapgis-ui-button>
-				</mapgis-ui-setting-footer>
 			</div>
+			<mapgis-ui-setting-footer>
+				<mapgis-ui-button type="primary" @click="run">分析</mapgis-ui-button>
+				<mapgis-ui-button @click="cancel">重置</mapgis-ui-button>
+			</mapgis-ui-setting-footer>
 		</slot>
 	</div>
 </template>
@@ -269,7 +270,10 @@ export default {
 
 <style scoped>
 .mapgis-widget-overlay-analysis {
-	height: auto;
+	/* height: auto; */
+	max-height: calc(60vh);
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 .mapgis-ui-form-item {
 	/* width: 300px; */

@@ -422,7 +422,7 @@ export default {
 <style scoped>
 .mapgis-widget-buffer-analysis {
 	/* height: auto; */
-	max-height: calc(50vh);
+	max-height: calc(60vh);
 	overflow-y: auto;
 	overflow-x: hidden;
 }

@@ -878,11 +878,11 @@ export default {
 
 <style scoped>
 .mapgis-3d-ponding-simulation {
-    width: 320px;
+    /* width: 320px; */
     /* position: absolute;
     top: 10px;
     left: 10px; */
-    padding: 4px;
+    /* padding: 4px; */
     background: var(--card-background);
 }
 .mapgis-3d-ponding-simulation-content {

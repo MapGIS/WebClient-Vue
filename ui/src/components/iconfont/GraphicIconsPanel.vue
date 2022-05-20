@@ -28,7 +28,7 @@
              :key="index"
              v-for="(icon, index) in iconsInfo"
              @click="$_startDraw(icon.type)"
-             :style="{outline: icon.type === currentIconType ? '1px solid #1890FF' : 'none',margin: enableOneMap ? '10px 9px' : enableMapStory ? '10px 13.7px' : '10px 17px'}"
+             :style="{outline: icon.type === currentIconType ? '1px solid #1890FF' : 'none',margin: enableOneMap ? '10px 7px' : enableMapStory ? '10px 13.7px' : '10px 16px'}"
         >
           <img @click="$_startDraw(icon.type)"
                class="mapgis-ui-graphic-icon"

@@ -542,6 +542,16 @@ export default {
     padding: 0;
 }
 
+/* ::v-deep
+    .mapgis-ui-collapse-borderless {
+    background-color: #fff0;
+} */
+::v-deep
+    .mapgis-ui-collapse-borderless {
+    background-color: #fff0;
+    border: 0;
+}
+
 ::v-deep .mapgis-ui-spin-spinning {
     position: absolute;
 }

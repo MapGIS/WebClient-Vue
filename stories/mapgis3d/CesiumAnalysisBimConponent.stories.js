@@ -43,7 +43,7 @@ const Template = (args, { argTypes }) => ({
   },
   template: `<mapgis-web-scene @load="handleMapload" style="height:95vh">    
     <mapgis-3d-m3d-layer v-bind="m3d" />
-    <mapgis-3d-bim-component v-bind="$props" />
+    <mapgis-3d-bim-component style="position: absolute;top: 10px;left: 10px;" v-bind="$props" />
     <mapgis-3d-statebar />
   </mapgis-web-scene>`,
 });

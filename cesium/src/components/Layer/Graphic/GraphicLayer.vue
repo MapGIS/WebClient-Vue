@@ -699,9 +699,9 @@ export default {
 
 <style scoped>
 .mapgis-3d-graphic-layers-select-container {
-  width: 332px;
+  /* width: 332px; */
   height: 46px;
-  padding: 7px 15px;
+  padding: 7px 0px;
   transition: height 0.8s;
   -moz-transition: height 0.8s; /* Firefox 4 */
   -webkit-transition: height 0.8s; /* Safari and Chrome */

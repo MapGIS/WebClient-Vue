@@ -341,7 +341,7 @@ export default {
       tabBarStyle: {
         margin: "0",
         textAlign: "center",
-        borderBottom: "1px solid #F0F0F0"
+        // borderBottom: "1px solid #F0F0F0"
       },
       emptyImage: undefined,
       imageStyle: {
@@ -761,7 +761,7 @@ export default {
 <style scoped>
 .projector-layer-select-div {
   width: 100%;
-  padding: 8px 16px;
+  padding: 8px 0;
   border-bottom: 1px solid var(--border-color-split);
 }
 .list-pane {

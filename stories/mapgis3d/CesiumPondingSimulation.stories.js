@@ -39,7 +39,7 @@ const Template = (args, { argTypes }) => ({
             @updateValue="e=>{sliderValue = e}"
             :pondingTime="time"
             :multiSpeed="mltSpeed"
-            style="position: absolute; top: 10px; left: 10px;"
+            style="position: absolute; top: 10px; left: 10px;width:320px;"
         />
         <mapgis-3d-ponding-simulation-timeline 
             :value="sliderValue" 

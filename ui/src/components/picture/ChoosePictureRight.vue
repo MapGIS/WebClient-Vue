@@ -45,10 +45,10 @@
       </div>
     </mapgis-ui-row>
     <mapgis-ui-row v-show="showAddInternetImg" style="margin-top: 10px;padding-left: 7px;">
-      <mapgis-ui-col span="17">
+      <mapgis-ui-col span="15">
         <mapgis-ui-input placeholder="请输入图片的Url地址" v-model="internetImg"/>
       </mapgis-ui-col>
-      <mapgis-ui-col span="7" style="padding-left: 12px">
+      <mapgis-ui-col span="8" style="padding-left: 12px">
         <mapgis-ui-button type="primary" @click="$_addInternetImg">确定</mapgis-ui-button>
       </mapgis-ui-col>
     </mapgis-ui-row>

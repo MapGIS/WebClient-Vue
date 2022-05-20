@@ -27,7 +27,7 @@ const Template = (args, {argTypes}) => ({
                                url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752"/>
       <mapgis-3d-m3d-layer
           :url="m3d" vueIndex="test_building_layer"/>
-      <mapgis-3d-building-grow vueIndex="test_building_layer" v-if="loadedM3d"/>
+      <mapgis-3d-building-grow style="position: absolute;bottom: 100px;left: 10px;" vueIndex="test_building_layer" v-if="loadedM3d"/>
       </mapgis-web-scene>
     `,
 });

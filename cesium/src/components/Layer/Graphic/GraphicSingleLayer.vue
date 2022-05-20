@@ -11,7 +11,7 @@
         @startDrawModel="$_startDrawModel"
       />
     </div>
-    <div>
+    <div class="mapgis-ui-graphic-edit-panel">
       <mapgis-ui-graphic-edit-panel
         ref="editPanel"
         :editPanelValues="editPanelValues"
@@ -1841,12 +1841,16 @@ export default {
 /*--------------标绘容器--------------*/
 .mapgis-3d-graphic-container {
   /* margin-top: -20px; */
-  width: 332px;
+  /* width: 332px; */
   max-height: 785px;
-  padding: 10px 15px;
+  /* padding: 10px 15px; */
 }
 
 /deep/ .mapgis-ui-select-selection-selected-value {
   text-align: left;
+}
+
+.mapgis-ui-graphic-edit-panel {
+  padding-bottom: 8px;
 }
 </style>

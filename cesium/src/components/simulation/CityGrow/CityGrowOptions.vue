@@ -1,62 +1,64 @@
 <template>
-  <div class="mapgis-city-grow-options">
-    <mapgis-ui-select-panel
-        label="开始时间字段"
-        v-model="featureStyle.startTimeField"
-        :labelCol="24"
-        :wrapperCol="24"
-        :selectOptions="dataFields"
-        :disabled="isDisabled"
-        @change="val => onFieldChange(val, 'startTimeField') ">
-    </mapgis-ui-select-panel>
-    <mapgis-ui-select-panel
-        label="结束时间字段"
-        v-model="featureStyle.endTimeField"
-        :labelCol="24"
-        :wrapperCol="24"
-        :selectOptions="dataFields"
-        :disabled="isDisabled"
-        :placeholder="placeholder"
-        @change="val => onFieldChange(val, 'endTimeField') ">
-    </mapgis-ui-select-panel>
-    <mapgis-ui-select-panel
-        label="高程字段"
-        v-model="featureStyle.heightField"
-        :labelCol="24"
-        :wrapperCol="24"
-        :selectOptions="dataFields"
-        :disabled="isDisabled"
-        :placeholder="placeholder"
-        @change="val => onFieldChange(val, 'heightField') ">
-    </mapgis-ui-select-panel>
-    <mapgis-ui-input-number-panel
-        size="large"
-        label="高程比"
-        v-model="featureStyle.heightRatio"
-        :placeholder="placeholder"
-        @change="val => onHeightScale(val,  'heightRatio')"/>
+  <div>
+    <div class="mapgis-city-grow-options">
+      <mapgis-ui-select-panel
+          label="开始时间字段"
+          v-model="featureStyle.startTimeField"
+          :labelCol="24"
+          :wrapperCol="24"
+          :selectOptions="dataFields"
+          :disabled="isDisabled"
+          @change="val => onFieldChange(val, 'startTimeField') ">
+      </mapgis-ui-select-panel>
+      <mapgis-ui-select-panel
+          label="结束时间字段"
+          v-model="featureStyle.endTimeField"
+          :labelCol="24"
+          :wrapperCol="24"
+          :selectOptions="dataFields"
+          :disabled="isDisabled"
+          :placeholder="placeholder"
+          @change="val => onFieldChange(val, 'endTimeField') ">
+      </mapgis-ui-select-panel>
+      <mapgis-ui-select-panel
+          label="高程字段"
+          v-model="featureStyle.heightField"
+          :labelCol="24"
+          :wrapperCol="24"
+          :selectOptions="dataFields"
+          :disabled="isDisabled"
+          :placeholder="placeholder"
+          @change="val => onFieldChange(val, 'heightField') ">
+      </mapgis-ui-select-panel>
+      <mapgis-ui-input-number-panel
+          size="large"
+          label="高程比"
+          v-model="featureStyle.heightRatio"
+          :placeholder="placeholder"
+          @change="val => onHeightScale(val,  'heightRatio')"/>
 
-    <mapgis-ui-switch-panel
-        size="small"
-        :labelCol="{ span: 3 }"
-        :wrapperCol="{ span: 20 }"
-        layout="horizontal"
-        label="建筑生长"
-        :checked="featureStyle.isGrowHeight"
-        @changeChecked="changeGrowHeight"
-    ></mapgis-ui-switch-panel>
+      <mapgis-ui-switch-panel
+          size="small"
+          :labelCol="{ span: 3 }"
+          :wrapperCol="{ span: 20 }"
+          layout="horizontal"
+          label="建筑生长"
+          :checked="featureStyle.isGrowHeight"
+          @changeChecked="changeGrowHeight"
+      ></mapgis-ui-switch-panel>
 
-    <mapgis-ui-range-picker @change="onDateChange" v-model="dataRange" style="margin:8px 0"></mapgis-ui-range-picker>
+      <mapgis-ui-range-picker @change="onDateChange" v-model="dataRange" style="margin:8px 0"></mapgis-ui-range-picker>
 
-    <mapgis-ui-colors-setting
-        v-model="colorsCopy"
-        :rangeField="'时间段'"
-        style="margin-top: 8px"
-        v-if='colorsCopy.length > 0'
-        @change="colorChanged"
-        @input="colorInput"
-    >
-    </mapgis-ui-colors-setting>
+      <mapgis-ui-colors-setting
+          v-model="colorsCopy"
+          :rangeField="'时间段'"
+          style="margin-top: 8px"
+          v-if='colorsCopy.length > 0'
+          @change="colorChanged"
+          @input="colorInput"
+      >
+      </mapgis-ui-colors-setting>
+    </div>
     <mapgis-ui-setting-footer>
       <mapgis-ui-button type="primary" @click="onCommitOptions">
         确认
@@ -437,7 +439,7 @@ export default {
 
 <style scoped>
 .mapgis-city-grow-options {
-  max-height: calc(60vh);
+  max-height: calc(50vh);
   overflow-y: auto;
 }
 

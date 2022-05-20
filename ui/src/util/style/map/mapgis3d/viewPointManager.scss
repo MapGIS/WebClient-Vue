@@ -2,7 +2,7 @@
 @import "../../theme/theme.scss";
 
 .mapgis-3d-viewpoint-manager{
-  width: 326px;
+  width: 296px;
   height: fit-content;
   background: var(--card-background);
   .viewpoint-item-wrapper {
@@ -16,14 +16,14 @@
     .viewpoint-item {
       display: inline-block;
       vertical-align: top;
-      width: 136px;
+      width: 120px;
       // height: 125px;
       margin-bottom: 8px;
       text-align: center;
         .item-image {
           position: relative;
           width: 100%;
-          height: 100px;
+          height: 88px;
           box-sizing: border-box;
           cursor: pointer;
           img {
@@ -42,7 +42,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.2);
           }
           .item-locate {
             display: none;
