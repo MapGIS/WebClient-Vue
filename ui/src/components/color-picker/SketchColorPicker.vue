@@ -20,8 +20,9 @@
         <span
           v-if="hasAddonBefore"
           class="mapgis-ui-input-group-addon addon-before"
-          >{{ addonBefore }}</span
         >
+          <slot name="addonBefore">{{addonBefore}}</slot>
+        </span>
         <div
           class="color-container"
           :style="{
@@ -97,13 +98,18 @@ export default {
       }
     },
     hasAddonBefore() {
-      return this.addonBefore && this.addonBefore.length > 0;
+      return (this.addonBefore && this.addonBefore.length > 0) || (this.$slots && this.$slots.addonBefore);
     }
+  },
+  model: {
+    prop: "color",
+    event: "change"
   },
   methods: {
     onColorChange(val) {
       this.getPickColor(val);
       this.$emit("input", val, this.extraValue);
+      this.$emit("change", val.hex, this.extraValue);
     },
     // 颜色拾取器选中事件回调
     getPickColor(val) {
@@ -132,6 +138,7 @@ export default {
 
 .addon-before {
   height: 32px;
+  line-height: 32px;
   width: fit-content;
 }
 </style>

@@ -13,13 +13,11 @@
         :animated="false"
         :tabBarStyle="tabBarStyle"
         default-active-key="1"
-        :tabBarGutter="0"
       >
         <mapgis-ui-tab-pane
           key="1"
           tab="基本设置"
           class="control-content"
-          style="padding: 12px"
         >
           <basic-setting
             ref="attr"
@@ -125,7 +123,7 @@ export default {
       tabBarStyle: {
         margin: "0px",
         textAlign: "center",
-        borderBottom: "1px solid #F0F0F0"
+        // borderBottom: "1px solid #F0F0F0"
       },
       show: true,
       hover: false,
@@ -174,12 +172,13 @@ export default {
 <style scoped>
 .setting-control {
   height: fit-content;
+  background: var(--card-background);
 }
 
 .control-content {
-  max-height: 480px;
+  max-height: 580px;
   overflow: auto;
-  padding: 10px;
+  padding: 4px;
 }
 
 ::v-deep .mapgis-ui-spin-spinning {

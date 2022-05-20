@@ -18,7 +18,6 @@
           :tabBarStyle="tabBarStyle"
           :active-key="activeKey"
           @change="_tabChange"
-          size="small"
         >
           <mapgis-ui-tab-pane key="1" class="control-content list-pane">
             <span slot="tab">
@@ -97,21 +96,18 @@
                 :show-total="total => `共${total}条数据`"
               ></mapgis-ui-pagination>
               <!-- 批量操作 -->
-              <div class="buttons">
-                <div v-show="isBatch" class="full-width">
+              <mapgis-ui-setting-footer>
+                <div v-show="isBatch">
                   <mapgis-ui-button
                     @click="_cancelPutProjectors"
-                    class="control-button"
                     >取消投放</mapgis-ui-button
                   >
                   <mapgis-ui-button
                     @click="_putProjectors"
-                    class="control-button"
                     >投放视频</mapgis-ui-button
                   >
                   <mapgis-ui-button
                     @click="_deleteProjectors"
-                    class="control-button"
                     >删除</mapgis-ui-button
                   >
                 </div>
@@ -124,16 +120,16 @@
                     新建投放视频
                   </mapgis-ui-button>
                 </div>
-              </div>
+              </mapgis-ui-setting-footer>
             </div>
           </mapgis-ui-tab-pane>
           <mapgis-ui-tab-pane
             key="2"
             tab="设置面板"
-            class="control-content"
             id="parameter-formList"
           >
             <mapgis-3d-projector-setting
+              class="control-content"
               v-if="
                 currentEditProjector &&
                   Object.keys(currentEditProjector).length > 0
@@ -345,7 +341,7 @@ export default {
       tabBarStyle: {
         margin: "0",
         textAlign: "center",
-        borderBottom: "1px solid #F0F0F0"
+        // borderBottom: "1px solid #F0F0F0"
       },
       emptyImage: undefined,
       imageStyle: {
@@ -765,7 +761,8 @@ export default {
 <style scoped>
 .projector-layer-select-div {
   width: 100%;
-  padding: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color-split);
 }
 .list-pane {
   position: relative;
@@ -808,11 +805,12 @@ export default {
   border-top: 1px solid var(--border-color-split);
 }
 .control-content {
-  max-height: 394px;
-  overflow: hidden;
-  overflow-y: auto;
-  padding-top: 10px;
-  height: 394px;
+  /* max-height: 394px; */
+  /* overflow: hidden;
+  overflow-y: auto; */
+  /* padding-top: 10px; */
+  /* height: 394px; */
+  height: calc(60vh);
 }
 
 .list-active {

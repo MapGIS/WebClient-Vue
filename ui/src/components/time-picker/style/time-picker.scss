@@ -5,6 +5,15 @@
 $timepicker-prefix-cls: $ant-prefix + "-time-picker";
 $timepicker-item-height: 32px;
 
+@include b(time-picker-panel) {
+  &-input {
+    background: var(--background-light);
+  }
+  &-inner {
+    background-color: var(--background-light);
+  }
+}
+
 .#{timepicker-prefix-cls}-panel {
   // .reset-component;
 

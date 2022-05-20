@@ -108,6 +108,7 @@ export { default as MapgisUiInputSearch } from "./components/input/Search.vue";
 export { default as MapgisUiInputGroup } from "./components/input/Group.vue";
 export { default as MapgisUiInputPassword } from "./components/input/Password.vue";
 export { default as MapgisUiInputNumber } from "./components/input/Number.vue";
+export { default as MapgisUiInputNumberAddon } from "./components/input/NumberAddon.vue";
 export { default as MapgisUiSettingForm } from "./components/form/SettingForm.vue";
 export { default as MapgisUiFormModel } from "./components/form-model/Form.vue";
 export { default as MapgisUiFormModelItem } from "./components/form-model/FormItem.vue";
@@ -178,6 +179,7 @@ export { default as MapgisUiTree } from "./components/tree/Tree.vue";
 export { default as MapgisUiVideo } from "./components/media/Video.vue";
 
 // Feedback
+export { default as MapgisUiAlert } from "./components/alert/Alert.vue";
 export { default as MapgisUiDrawer } from "./components/drawer/Drawer.vue";
 export { default as MapgisUiModal } from "./components/modal";
 export { default as MapgisUiProgress } from "./components/progress/Progress.vue";
@@ -223,6 +225,7 @@ export { default as MapgisUiNavBarItem } from "./layout/navs/NavBarItem.vue";
 export { default as MapgisUiProSetting } from "./layout/base/BaseSetting.vue";
 export { default as MapgisUiProlayout } from "./layout/base/BaseLayout.vue";
 export { default as MapgisUiSwitchPanel } from "./layout/panel/SwitchPanel.vue";
+export { default as MapgisUiTitleCollapse } from "./layout/panel/TitleCollapse.vue";
 export { default as MapgisUiInputNumberPanel } from "./layout/panel/InputNumberPanel.vue";
 export { default as MapgisUiColorPickPanel } from "./layout/panel/ColorPickPanel.vue";
 export { default as MapgisUiSelectPanel } from "./layout/panel/SelectPanel.vue";
@@ -293,3 +296,11 @@ export { default as MapgisUiSelectRow } from "./components/select/SelectRow";
 export { default as MapgisUiSelectRowLeft } from "./components/select/SelectRowLeft";
 
 export { default as MapgisUiTimelinePanel } from "./layout/panel/TimelinePanel.vue";
+
+//plot
+export { default as MapgisUiPlotAnimation } from "./components/plot/Animation.vue";
+export { default as MapgisUiPlotAttribute } from "./components/plot/Attribute.vue";
+export { default as MapgisUiPlotScript } from "./components/plot/Script.vue";
+export { default as MapgisUiPlotScriptList } from "./components/plot/ScriptList.vue";
+export { default as MapgisUiPlotSymbol } from "./components/plot/Symbol.vue";
+export { default as MapgisUiPlotTimeline } from "./components/plot/Timeline.vue";

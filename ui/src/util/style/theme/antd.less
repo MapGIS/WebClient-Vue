@@ -84,7 +84,7 @@
 // The background colors for active and hover states for things like
 // list items or table cells.
 @item-active-bg: @primary-1;
-@item-hover-bg: @primary-1;
+@item-hover-bg: var(--select-item-hover-bg);
 
 // LINK
 @link-color: @primary-6;
@@ -102,6 +102,8 @@
 @disabled-color: var(--disabled-text-color);
 @disabled-color-dark: fade(@white, 35%);
 @--disabled-bg: var(--disabled-bg-color);
+
+@time-picker-selected-bg: var(--background-base);
 
 // Shadow
 @shadow-color: var(--shadow-color);
@@ -204,7 +206,7 @@
 
 // Tooltip
 // Tooltip text color
-@tooltip-color: #fff;
+@tooltip-color: var(--heading-color);
 // Tooltip background color
 @tooltip-bg: var(--tooltip-background);
 // Tooltip arrow color
@@ -256,7 +258,7 @@
 @table-body-sort-bg: rgba(0, 0, 0, 0.01);
 @table-row-hover-bg: @select-item-hover-bg;
 @table-selected-row-color: inherit;
-@table-selected-row-bg: #fafafa;
+@table-selected-row-bg: var(--background-light);
 @table-body-selected-sort-bg: @table-selected-row-bg;
 @table-selected-row-hover-bg: @table-selected-row-bg;
 @table-expanded-row-bg: #fbfbfb;
@@ -269,7 +271,7 @@
 // TimePicker
 
 // Badge
-@badge-text-color: @component-background;
+@badge-text-color: var(--badge-text-color);
 
 // Rate
 // @rate-star-color: @yellow-6;
@@ -349,16 +351,17 @@
 // Message
 
 // Alert
-@alert-success-border-color: @success-3;
-@alert-success-bg-color: @success-1;
+@alert-success-border-color: var(--success-border-color);
+@alert-success-bg-color: var(--success-bg-color);
 @alert-success-icon-color: @success-color;
-@alert-info-border-color: @info-3;
-@alert-info-bg-color:@info-1;
+@alert-info-border-color: var(--info-border-color);
+@alert-info-bg-color: var(--info-bg-color);
 @alert-info-icon-color: @info-color;
-@alert-warning-border-color: @warning-3;
-@alert-warning-bg-color: @warning-1;
-@alert-error-border-color: @danger-3;
-@alert-error-bg-color: @danger-1;
+@alert-warning-border-color: var(--warning-border-color);
+@alert-warning-bg-color: var(--warning-bg-color);
+@alert-warning-icon-color: var(--warning-color);
+@alert-error-border-color: var(--error-border-color);
+@alert-error-bg-color: var(--error-bg-color);
 @alert-error-icon-color: @--red-6;
 
 // List

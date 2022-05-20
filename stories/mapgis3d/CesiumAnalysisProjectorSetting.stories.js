@@ -58,8 +58,8 @@ const Template = (args, { argTypes }) => ({
   template: `
       <mapgis-web-scene style="height: 95vh" v-on:load="handleLoad">
       <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"></mapgis-3d-m3d-layer>
-      <mapgis-ui-card v-if="isM3DLoaded" class="storybook-ui-card" style="max-height:500px;overflow-y:auto">
-      <mapgis-3d-projector-setting :settings="settings" :modelUrl="modelUrl" :modelOffset="modelOffset" :hideVPInvisible="hideVPInvisible"></mapgis-3d-projector-setting>
+      <mapgis-ui-card v-if="isM3DLoaded" class="storybook-ui-card">
+      <mapgis-3d-projector-setting style="height:70vh;" :settings="settings" :modelUrl="modelUrl" :modelOffset="modelOffset" :hideVPInvisible="hideVPInvisible"></mapgis-3d-projector-setting>
       </mapgis-ui-card>
       </mapgis-web-scene>
     `,

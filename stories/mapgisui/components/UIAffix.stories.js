@@ -20,9 +20,9 @@ const Template = (args, { argTypes }) => ({
   },
   template: `<div style="height:400px;">
     <mapgis-ui-affix v-bind="$props">
-      <button type="primary" @click="top += 10">
+      <mapgis-ui-button type="primary" @click="top += 10">
         固定位置
-      </button>
+      </mapgis-ui-button>
     </mapgis-ui-affix>
   </div>`,
 });

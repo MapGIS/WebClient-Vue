@@ -2,20 +2,31 @@
 
 ``` vue
 <div>
-    <mapgis-ui-input-number-panel v-bind="$props">
-    </mapgis-ui-input-number-panel>
-    <br>
-    <mapgis-ui-input-number-panel tooltip="这是提示">
-    </mapgis-ui-input-number-panel>
-    <br>
-    <mapgis-ui-input-number-panel size="small" label="持续时间（毫秒）">
-    </mapgis-ui-input-number-panel>
+    <mapgis-ui-input-number-panel
+        tooltip="这是提示"
+        label="最大分段数"
+        v-bind="$props"
+    />
+    <mapgis-ui-input-number-panel
+        size="medium"
+        label="最大分段数"
+        :labelCol="{ span: 6 }"
+        :wrapperCol="{ span: 18 }"
+    />
+    <mapgis-ui-input-number-panel
+        size="small"
+        label="最大分段数"
+    />
 </div>
 ```
 
-| 黑暗                            | 浅色                              |
+<!-- | 黑暗                            | 浅色                              |
 | :------------------------------ | :-------------------------------- |
-| ![dark](./dark_inputnumber.png) | ![light](./light_inputnumber.png) |
+| ![dark](./dark_inputnumber.png) | ![light](./light_inputnumber.png) | -->
+
+| 大布局                            | 中布局                            | 小布局                            |
+| :-------------------------------- | :-------------------------------- | :-------------------------------- |
+| ![large](./large_inputnumberpanel.png) | ![light](./medium_inputnumberpanel.png) | ![light](./small_inputnumberpanel.png) |
 
 ## 属性
 
@@ -44,16 +55,19 @@
 - **非侦听属性**
 - **描述:** 标题
 
+### `slider`
+
+- **类型:** `Boolean`
+- **非侦听属性**
+- **描述:** 是否显示滑动条
+- **默认:** `true`
+
 ### `size`
 
 - **类型:** `String`
 - **非侦听属性**
-- **描述:** 显示布局大小, large 或者 small
+- **描述:** 显示布局大小, large、medium 或者 small
 - **默认:** `large`
-
-| 大布局                            | 小布局                            |
-| :-------------------------------- | :-------------------------------- |
-| ![large](./large_inputnumber.png) | ![light](./small_inputnumber.png) |
 
 ### `labelCol`
 

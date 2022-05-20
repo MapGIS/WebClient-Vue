@@ -4,8 +4,8 @@
       <div class="mapgis-widget-projector">
         <mapgis-ui-group-tab title="基本信息"></mapgis-ui-group-tab>
         <mapgis-ui-setting-form
-          :label-width="50"
-          :wrapper-width="224"
+          :layout="layout"
+          size="default"
           class="mapgis-ui-setting-form"
         >
           <mapgis-ui-form-item label="名称">
@@ -24,7 +24,7 @@
             />
           </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
-        <mapgis-ui-group-tab title="数据源" :has-top-margin="false" />
+        <mapgis-ui-group-tab title="数据源" :hasTopMargin="false" :hasBottomMargin="false" :isTitleBold="false"/>
         <div class="projector-style">
           <div v-show="showVideoDiv">
             <mapgis-ui-video
@@ -48,8 +48,8 @@
           </mapgis-ui-empty>
         </div>
         <mapgis-ui-setting-form
-          :label-width="50"
-          :wrapper-width="224"
+          :layout="layout"
+          size="default"
           class="mapgis-ui-setting-form"
         >
           <mapgis-ui-form-item label="数据类型">
@@ -100,153 +100,196 @@
           </span>
         </mapgis-ui-group-tab>
         <mapgis-ui-setting-form
-          :label-width="50"
-          :wrapper-width="224"
+          :layout="layout"
+          size="default"
           class="mapgis-ui-setting-form"
         >
           <mapgis-ui-form-item>
-            <div slot="label" class="form-label">
-              <span>位置</span>
-              <mapgis-ui-iconfont
-                class="iconfont-btn"
-                type="mapgis-target-lock"
-                @click="_getCameraPosition"
-              ></mapgis-ui-iconfont>
-            </div>
-            <mapgis-ui-input
-              addon-before="X"
-              type="number"
-              :min="0"
-              :step="0.0001"
-              v-model.number="params.cameraPosition.x"
-            />
-            <mapgis-ui-input
-              addon-before="Y"
-              type="number"
-              :min="0"
-              :step="0.0001"
-              v-model.number="params.cameraPosition.y"
-            />
-            <mapgis-ui-input
-              addon-before="Z"
-              type="number"
-              :min="0"
-              :step="0.0001"
-              v-model.number="params.cameraPosition.z"
-            />
+            <mapgis-ui-group-tab title="位置" :isTitleBold="false" :hasTopMargin="false" :hasBottomMargin="false">
+              <mapgis-ui-tooltip slot="handle" title="定位">
+                <mapgis-ui-iconfont
+                  class="iconfont-btn"
+                  type="mapgis-target-lock"
+                  @click="_getCameraPosition"
+                />
+              </mapgis-ui-tooltip>
+            </mapgis-ui-group-tab>
+            <mapgis-ui-row :gutter="8">
+              <mapgis-ui-col :span="12">	
+                <mapgis-ui-input-number-addon
+                  :min="0"
+                  :step="0.0001"
+                  v-model.number="params.cameraPosition.x"
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="X">
+                    <mapgis-ui-iconfont type="mapgis-xzhouyidong"/>
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input-number-addon>
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="12">
+                <mapgis-ui-input-number-addon
+                  :min="0"
+                  :step="0.0001"
+                  v-model.number="params.cameraPosition.y"
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="Y">
+                    <mapgis-ui-iconfont type="mapgis-yzhouyidong"/>
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input-number-addon>
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="12" style="paddingTop:8px;">
+                <mapgis-ui-input-number-addon
+                  :min="0"
+                  :step="0.0001"
+                  v-model.number="params.cameraPosition.z"
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="Z">
+                    <mapgis-ui-iconfont type="mapgis-Zzhouyidong"/>
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input-number-addon>
+              </mapgis-ui-col>
+            </mapgis-ui-row>
           </mapgis-ui-form-item>
           <mapgis-ui-form-item>
-            <div slot="label" class="form-label">
-              <span>朝向</span>
-              <mapgis-ui-iconfont
-                class="iconfont-btn"
-                type="mapgis-target-lock"
-                @click="_getTargetPosition"
-              ></mapgis-ui-iconfont>
-            </div>
-            <mapgis-ui-input
-              addon-before="方位角"
-              type="number"
-              :min="0"
-              :max="360"
-              :step="0.1"
-              v-model.number="params.orientation.heading"
-              @change="val => onChangeSetting(val.target.value, 'heading')"
-            />
-            <mapgis-ui-slider
-              v-model="params.orientation.heading"
-              :min="0"
-              :max="360"
-              size="small"
-              :step="0.1"
-              :tooltipVisible="false"
-              @change="val => onChangeSetting(val, 'heading')"
-            />
-            <mapgis-ui-input
-              addon-before="俯仰角"
-              type="number"
-              :min="-90"
-              :max="90"
-              :step="0.1"
-              v-model.number="params.orientation.pitch"
-              @change="val => onChangeSetting(val.target.value, 'pitch')"
-            />
-            <mapgis-ui-slider
-              v-model="params.orientation.pitch"
-              :min="-90"
-              :max="90"
-              :step="0.1"
-              size="small"
-              :tooltipVisible="false"
-              @change="val => onChangeSetting(val, 'pitch')"
-            />
-            <mapgis-ui-input
-              addon-before="翻滚角"
-              type="number"
-              :min="0"
-              :max="360"
-              :step="0.1"
-              v-model.number="params.orientation.roll"
-              @change="val => onChangeSetting(val.target.value, 'roll')"
-            />
-            <mapgis-ui-slider
-              v-model="params.orientation.roll"
-              :min="0"
-              :max="360"
-              :step="0.1"
-              size="small"
-              :tooltipVisible="false"
-              @change="val => onChangeSetting(val, 'roll')"
-            />
+            <mapgis-ui-group-tab title="朝向" :isTitleBold="false" :hasTopMargin="false" :hasBottomMargin="false">
+              <mapgis-ui-tooltip slot="handle" title="定位">
+                <mapgis-ui-iconfont
+                  class="iconfont-btn"
+                  type="mapgis-target-lock"
+                  @click="_getTargetPosition"
+                />
+              </mapgis-ui-tooltip>
+            </mapgis-ui-group-tab>
+            <mapgis-ui-row :gutter="8">
+              <mapgis-ui-col :span="12">
+                <mapgis-ui-input-number-addon
+                  :min="0"
+                  :max="360"
+                  :step="0.1"
+                  v-model.number="params.orientation.heading"
+                  @change="val => onChangeSetting(val, 'heading')"
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="方位角">
+                    <mapgis-ui-iconfont type="mapgis-fangwei"/>
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input-number-addon>
+                <mapgis-ui-slider
+                  v-model="params.orientation.heading"
+                  :min="0"
+                  :max="360"
+                  size="small"
+                  :step="0.1"
+                  :tooltipVisible="false"
+                  @change="val => onChangeSetting(val, 'heading')"
+                />
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="12">
+                <mapgis-ui-input-number-addon
+                  :min="-90"
+                  :max="90"
+                  :step="0.1"
+                  v-model.number="params.orientation.pitch"
+                  @change="val => onChangeSetting(val, 'pitch')"
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="俯仰角">
+                    <mapgis-ui-iconfont type="mapgis-fushi"/>
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input-number-addon>
+                <mapgis-ui-slider
+                  v-model="params.orientation.pitch"
+                  :min="-90"
+                  :max="90"
+                  :step="0.1"
+                  size="small"
+                  :tooltipVisible="false"
+                  @change="val => onChangeSetting(val, 'pitch')"
+                />
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="12" style="paddingTop:8px;">
+                <mapgis-ui-input-number-addon
+                  :min="0"
+                  :max="360"
+                  :step="0.1"
+                  v-model.number="params.orientation.roll"
+                  @change="val => onChangeSetting(val, 'roll')"
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="翻滚角">
+                    <mapgis-ui-iconfont type="mapgis-Zzhouxuanzhuan"/>
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input-number-addon>
+                <mapgis-ui-slider
+                  v-model="params.orientation.roll"
+                  :min="0"
+                  :max="360"
+                  :step="0.1"
+                  size="small"
+                  :tooltipVisible="false"
+                  @change="val => onChangeSetting(val, 'roll')"
+                />
+              </mapgis-ui-col>
+            </mapgis-ui-row>
           </mapgis-ui-form-item>
           <mapgis-ui-form-item label="视角">
-            <div class="item-left">
-              <mapgis-ui-input
-                addon-before="水平"
-                type="number"
-                :min="0"
-                :max="180"
-                :step="0.1"
-                v-model.number="params.hFOV"
-                @change="
-                  val => onChangeSetting(val.target.value, 'horizontAngle')
-                "
-              />
-              <mapgis-ui-slider
-                v-model="params.hFOV"
-                :min="0"
-                :max="180"
-                :step="0.1"
-                size="small"
-                :tooltipVisible="false"
-                @change="val => onChangeSetting(val, 'horizontAngle')"
-              />
-            </div>
-            <div class="item-right">
-              <mapgis-ui-input
-                addon-before="垂直"
-                type="number"
-                :min="0"
-                :max="180"
-                :step="0.1"
-                v-model.number="params.vFOV"
-                @change="
-                  val => onChangeSetting(val.target.value, 'verticalAngle')
-                "
-              />
-              <mapgis-ui-slider
-                v-model="params.vFOV"
-                :min="0"
-                :max="180"
-                :step="0.1"
-                size="small"
-                :tooltipVisible="false"
-                @change="val => onChangeSetting(val, 'verticalAngle')"
-              />
-            </div>
+            <mapgis-ui-row :gutter="8">
+              <mapgis-ui-col :span="12">
+                <mapgis-ui-input-number-addon
+                  :min="0"
+                  :max="180"
+                  :step="0.1"
+                  v-model.number="params.hFOV"
+                  @change="
+                    val => onChangeSetting(val, 'horizontAngle')
+                  "
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="水平">
+                    <mapgis-ui-iconfont type="mapgis-shuiping"/>
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input-number-addon>
+                <mapgis-ui-slider
+                  v-model="params.hFOV"
+                  :min="0"
+                  :max="180"
+                  :step="0.1"
+                  :tooltipVisible="false"
+                  @change="val => onChangeSetting(val, 'horizontAngle')"
+                />
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="12">
+                <mapgis-ui-input-number-addon
+                  :min="0"
+                  :max="180"
+                  :step="0.1"
+                  v-model.number="params.vFOV"
+                  @change="
+                    val => onChangeSetting(val, 'verticalAngle')
+                  "
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="垂直">
+                    <mapgis-ui-iconfont type="mapgis-chuizhi"/>
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input-number-addon>
+                <mapgis-ui-slider
+                  v-model="params.vFOV"
+                  :min="0"
+                  :max="180"
+                  :step="0.1"
+                  size="small"
+                  :tooltipVisible="false"
+                  @change="val => onChangeSetting(val, 'verticalAngle')"
+                />
+              </mapgis-ui-col>
+            </mapgis-ui-row>
           </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
-        <mapgis-ui-row>
+        <mapgis-ui-group-tab title="显示锥体线" :isTitleBold="true" :hasTopMargin="false" :hasBottomMargin="false" style="paddingBottom:8px;">
+          <mapgis-ui-switch
+            slot="handle"
+            size="small"
+            v-model="params.hintLineVisible"
+            @change="val => onChangeSetting(val, 'showLine')"
+          />
+        </mapgis-ui-group-tab>
+        <!-- <mapgis-ui-row>
           <mapgis-ui-col :span="8">
             <p class="switch-label">显示锥体线</p>
           </mapgis-ui-col>
@@ -258,14 +301,15 @@
               @change="val => onChangeSetting(val, 'showLine')"
             />
           </mapgis-ui-col>
-        </mapgis-ui-row>
+        </mapgis-ui-row> -->
+
+      </div>
         <mapgis-ui-setting-footer>
           <mapgis-ui-button type="primary" @click="_okClick"
             >确定</mapgis-ui-button
           >
           <mapgis-ui-button @click="_cancelClick">取消</mapgis-ui-button>
         </mapgis-ui-setting-footer>
-      </div>
     </slot>
   </div>
 </template>
@@ -313,7 +357,11 @@ export default {
     disabledImageUrlInput: {
       type: Boolean,
       default: false
-    }
+    },
+    layout: {
+			type: String,
+			default: "vertical" // 'horizontal' 'vertical' 'inline'
+		},
   },
   watch: {
     settings: {
@@ -766,9 +814,14 @@ export default {
 };
 </script>
 <style scoped>
+.mapgis-widget-projector {
+  max-height: calc(100% - 55px);
+  overflow-y: auto;
+	overflow-x: hidden;
+}
 .projector-style {
   text-align: center;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .full-width {
@@ -797,7 +850,7 @@ export default {
 }
 
 .switch-label {
-  font-size: 12px;
+  /* font-size: 12px; */
 }
 
 .switch {
@@ -805,6 +858,7 @@ export default {
 }
 
 .empty {
+  margin: 0;
   border: 1px dashed var(--button-border-default-color);
   border-radius: 4px;
 }
@@ -817,10 +871,11 @@ export default {
 }
 
 .iconfont-btn {
-  border-radius: 4px;
-  margin-top: 3px;
-  padding: 3px;
-  border: 1px solid var(--primary-5);
+  /* border-radius: 4px; */
+  /* margin-top: 3px; */
+  /* padding: 3px; */
+  /* border: 1px solid var(--primary-5); */
+  font-size:16px;
   color: var(--text-color);
   background-color: transparent;
   border-color: var(--button-border-default-color);
@@ -834,6 +889,6 @@ export default {
 }
 
 ::v-deep .mapgis-ui-input {
-  padding: 4px 2px;
+  /* padding: 4px 2px; */
 }
 </style>

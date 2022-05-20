@@ -262,7 +262,8 @@ export default {
   left: calc(50% - 400px);
   width: 800px;
   height: 70px;
-  background: rgb(255, 255, 255);
+  /* background: rgb(255, 255, 255); */
+  background: var(--background);
   z-index: 1;
   border-radius: 10px;
   -webkit-box-shadow: #666 0 0 10px;

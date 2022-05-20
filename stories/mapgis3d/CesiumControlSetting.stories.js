@@ -40,7 +40,6 @@ export const 场景设置 = Template.bind({});
         top:"10px",
         left:"10px",
         width:"320px",
-        background:"#fff"
     }
 };
 场景设置.parameters = {

@@ -1,19 +1,24 @@
 <template>
   <div class="mapgis-mvt-editor">
-    <mapgis-ui-radio-group v-model="action" button-style="solid">
+    <!-- <mapgis-ui-radio-group v-model="action" button-style="solid">
       <mapgis-ui-radio-button class="action-type" value="single">
         单级别配置
       </mapgis-ui-radio-button>
       <mapgis-ui-radio-button disabled class="action-type" value="multi">
         分级别配置
       </mapgis-ui-radio-button>
-    </mapgis-ui-radio-group>
-    <single-action
-      v-if="action === 'single'"
-      :layerid="layerid"
-      @edit-change="onEditChange"
-    />
-    <multi-action v-else :layerid="layerid" />
+    </mapgis-ui-radio-group> -->
+    <mapgis-ui-tabs v-model="action">
+      <mapgis-ui-tab-pane key="single" tab="单级别配置">
+        <single-action
+          :layerid="layerid"
+          @edit-change="onEditChange"
+        />
+      </mapgis-ui-tab-pane>
+      <mapgis-ui-tab-pane disabled key="multi" tab="分级别配置">
+        <multi-action :layerid="layerid" />
+      </mapgis-ui-tab-pane>
+    </mapgis-ui-tabs>
   </div>
 </template>
 

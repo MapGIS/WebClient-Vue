@@ -67,7 +67,7 @@ export default {
     },
     fontSize: {
       type: String,
-      default: "12px"
+      default: "14px",
     },
     paddingLeft: {
       type: String,
@@ -91,7 +91,7 @@ export default {
     },
     width: {
       type: String,
-      default: "calc(100% - 82px)"
+      default: "calc(100% - 94px)",
     },
     uploadUrl: {
       type: String,
@@ -158,7 +158,7 @@ export default {
   text-align: left;
   height: 32px;
   line-height: 32px;
-  margin: 10px 0;
+  margin: 8px 0;
 }
 
 .mapgis-ui-input-row-left-title,
@@ -169,10 +169,11 @@ export default {
 }
 
 .mapgis-ui-input-row-left-title {
-  width: 70px;
+  width: 80px;
   text-align: left;
   font-size: 12px;
-  font-weight: bolder;
+  /* font-weight: bolder; */
+  color: var(--heading-color)
 }
 
 .mapgis-ui-input-row-left-input {

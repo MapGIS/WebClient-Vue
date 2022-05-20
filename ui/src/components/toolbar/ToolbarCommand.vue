@@ -1,5 +1,5 @@
 <template>
-  <mapgis-ui-tooltip :key="title" placement="bottom" :title="title">
+  <mapgis-ui-tooltip :key="title" placement="top" :title="title">
     <div
       v-if="icon.startsWith('<svg')"
       :class="{
@@ -68,7 +68,7 @@ export default {
      */
     hoverBordered: {
       type: Boolean,
-      default: true
+      default: false
     },
     /**
      * 大小， 可选`large` , `small`

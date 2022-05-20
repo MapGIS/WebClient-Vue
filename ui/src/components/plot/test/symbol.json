@@ -1,0 +1,102 @@
+[
+  {
+    "children": [
+      {
+        "title": "最近使用",
+        "icon": [
+          "./style/images/u429.png",
+          "./style/images/u420.png",
+          "./style/images/u426.png",
+          "./style/images/u435.png",
+          "./style/images/u432.png",
+          "./style/images/u420.png",
+          "./style/images/u420.png",
+          "./style/images/u420.png",
+          "./style/images/u423.png"
+        ]
+      },
+      {
+        "title": "其他",
+        "icon": [
+          "./style/images/u432.png",
+          "./style/images/u420.png",
+          "./style/images/u423.png"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "规则",
+    "children": [
+      {
+        "title": "一类线",
+        "icon": [
+          "./style/images/u429.png",
+          "./style/images/u426.png",
+          "./style/images/u420.png"
+        ]
+      },
+      {
+        "title": "一类区",
+        "icon": [
+          "./style/images/u429.png",
+          "./style/images/u426.png",
+          "./style/images/u420.png"
+        ]
+      },
+      {
+        "title": "二类线",
+        "icon": [
+          "./style/images/u429.png",
+          "./style/images/u426.png",
+          "./style/images/u420.png"
+        ]
+      },
+      {
+        "title": "二类区",
+        "icon": [
+          "./style/images/u429.png",
+          "./style/images/u426.png",
+          "./style/images/u420.png"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "分类名称",
+    "children": [
+      {
+        "title": "一类线",
+        "icon": [
+          "./style/images/u429.png",
+          "./style/images/u426.png",
+          "./style/images/u420.png"
+        ]
+      },
+      {
+        "title": "一类区",
+        "icon": [
+          "./style/images/u429.png",
+          "./style/images/u426.png",
+          "./style/images/u420.png"
+        ]
+      },
+      {
+        "title": "二类线",
+        "icon": [
+          "./style/images/u429.png",
+          "./style/images/u426.png",
+          "./style/images/u420.png"
+        ]
+      },
+      {
+        "title": "二类区",
+        "icon": [
+          "./style/images/u429.png",
+          "./style/images/u426.png",
+          "./style/images/u420.png"
+        ]
+      }
+    ]
+  }
+]

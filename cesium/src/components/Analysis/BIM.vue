@@ -16,7 +16,7 @@
             class="mapgis-3d-bim-component-layers"
             :disabled="disableLayerSelect"
             :autoWidth="true"
-            size="small"
+            size="default"
             @change="handleSelectChange"
             placeholder="请选择图层"
           >
@@ -46,7 +46,7 @@
       <mapgis-ui-row class="mapgis-3d-bim-component-document">
         <mapgis-ui-input-search
           style="margin-bottom: 8px"
-          size="small"
+          size="default"
           placeholder="搜索"
           @change="onChange"
         />

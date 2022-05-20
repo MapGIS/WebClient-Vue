@@ -12,32 +12,35 @@
             ></mapgis-ui-toolbar-command>
           </mapgis-ui-toolbar>
         </mapgis-ui-group-tab>
-        <mapgis-ui-setting-form>
-          <mapgis-ui-form-item label="x方向采样点数">
-            <mapgis-ui-input
-              v-model.number="xPaneNumCopy"
-              type="number"
-              min="0"
-            />
-          </mapgis-ui-form-item>
-          <mapgis-ui-form-item label="y方向采样点数">
-            <mapgis-ui-input
-              v-model.number="yPaneNumCopy"
-              type="number"
-              min="0"
-            />
-          </mapgis-ui-form-item>
+        <mapgis-ui-setting-form :layout="layout" size="default">
+          <mapgis-ui-row :gutter="8">
+            <mapgis-ui-col :span="12">	
+              <mapgis-ui-form-item label="x方向采样点数">
+                <mapgis-ui-input-number-addon
+                  v-model.number="xPaneNumCopy"
+                  min="0"
+                />
+              </mapgis-ui-form-item>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="12">
+              <mapgis-ui-form-item label="y方向采样点数">
+                <mapgis-ui-input-number-addon
+                  v-model.number="yPaneNumCopy"
+                  min="0"
+                />
+              </mapgis-ui-form-item>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
           <mapgis-ui-form-item label="填挖规整高度">
-            <mapgis-ui-input
+            <mapgis-ui-input-number-addon
               v-model.number="heightCopy"
-              type="number"
               min="0"
-              addon-after="(米)"
+              addon-after="米"
             />
           </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
         <mapgis-ui-group-tab title="样式设置"></mapgis-ui-group-tab>
-        <mapgis-ui-setting-form>
+        <mapgis-ui-setting-form :layout="layout" size="default">
           <mapgis-ui-form-item label="边线">
             <mapgis-ui-sketch-color-picker
               :color.sync="lineColorCopy"
@@ -52,43 +55,43 @@
           </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
         <mapgis-ui-group-tab title="填挖结果"></mapgis-ui-group-tab>
-        <mapgis-ui-setting-form>
+        <mapgis-ui-setting-form :layout="layout" size="default">
           <mapgis-ui-form-item label="高程范围">
             <mapgis-ui-input
               v-model.number="result.height"
               disabled
-              addon-after="(米)"
+              addon-after="米"
             />
           </mapgis-ui-form-item>
           <mapgis-ui-form-item label="表面积">
             <mapgis-ui-input
               v-model.number="result.surfaceArea"
               disabled
-              addon-after="(平方米)"
+              addon-after="平方米"
             />
           </mapgis-ui-form-item>
           <mapgis-ui-form-item label="挖体积">
             <mapgis-ui-input
               v-model.number="result.cutVolume"
               disabled
-              addon-after="(立方米)"
+              addon-after="立方米"
             />
           </mapgis-ui-form-item>
           <mapgis-ui-form-item label="填体积">
             <mapgis-ui-input
               v-model.number="result.fillVolume"
               disabled
-              addon-after="(立方米)"
+              addon-after="立方米"
             />
           </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
+      </div>
         <mapgis-ui-setting-footer>
           <mapgis-ui-button type="primary" @click="analysis"
             >分析</mapgis-ui-button
           >
           <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
         </mapgis-ui-setting-footer>
-      </div>
     </slot>
     <mapgis-ui-mask
       v-if="useMask"
@@ -111,6 +114,15 @@ export default {
   name: "mapgis-3d-analysis-cut-fill",
   inject: ["Cesium", "vueCesium", "viewer"],
   props: {
+    /**
+     * @type String
+     * @default "vertical"
+     * @description 表单布局
+     */
+    layout: {
+      type: String,
+      default: "vertical" // 'horizontal' 'vertical' 'inline'
+    },
     ...VueOptions,
     /**
      * @type Number
@@ -598,6 +610,7 @@ export default {
 .mapgis-widget-cut-fill-analysis {
   max-height: calc(50vh);
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 ::v-deep .mapgis-ui-form-item {
@@ -605,14 +618,14 @@ export default {
 }
 
 ::v-deep .mapgis-ui-form label {
-  font-size: 12px;
+  /* font-size: 12px; */
 }
 
 ::v-deep .mapgis-ui-form-item-label {
-  line-height: 40px;
+  /* line-height: 40px; */
 }
 
 ::v-deep .mapgis-ui-input {
-  padding: 4px 11px;
+  /* padding: 4px 11px; */
 }
 </style>

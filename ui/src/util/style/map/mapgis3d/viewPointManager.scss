@@ -2,8 +2,9 @@
 @import "../../theme/theme.scss";
 
 .mapgis-3d-viewpoint-manager{
-  width: 326px;
+  width: 296px;
   height: fit-content;
+  background: var(--card-background);
   .viewpoint-item-wrapper {
     width: 100%;
     height: fit-content;
@@ -15,14 +16,14 @@
     .viewpoint-item {
       display: inline-block;
       vertical-align: top;
-      width: 140px;
-      height: 125px;
-      margin-bottom: 6px;
+      width: 120px;
+      // height: 125px;
+      margin-bottom: 8px;
       text-align: center;
         .item-image {
           position: relative;
           width: 100%;
-          height: 92px;
+          height: 88px;
           box-sizing: border-box;
           cursor: pointer;
           img {
@@ -32,6 +33,7 @@
             width: 100%;
             height: 100%;
             border: solid 1px #f0f0f0;
+            border: solid 1px var(--border-color-split);
             border-radius: 5px;
           }
           .item-mask {
@@ -40,7 +42,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.2);
           }
           .item-locate {
             display: none;
@@ -62,15 +64,15 @@
           font-size: 14px;
           text-align: center;
           width: 100%;
-          height: 33px;
-          line-height: 33px;
+          height: 32px;
+          line-height: 32px;
           word-wrap: break-word;
           white-space: pre-wrap;
           position: relative;
           .item-more-icon {
             position: absolute;
-            right: -6px;
-            line-height: 33px;
+            right: -5px;
+            line-height: 32px;
             cursor: pointer;
           }
         }
@@ -82,7 +84,7 @@
             }
           }
           .item-name {
-            text-decoration: underline;
+            // text-decoration: underline;
           }
         }
         &.active {
@@ -96,14 +98,14 @@
           }
         }
         &:nth-child(odd) {
-          margin-right: 8px;
+          margin-right: 16px;
         }
     }
   }
   .item-more-tool {
     width: 88px;
     height: 80px;
-    background: #ffffff;
+    background: var(--background);
     box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2);
     border-radius: 3px;
     position: fixed;
@@ -115,17 +117,19 @@
       line-height: 40px;
       color: $text-color;
       &:hover{
-        background: #e7f4ff;
-        color: #0081e2;
+        // background: #e7f4ff;
+        background: var(--primary-2);
+        // color: #0081e2;
+        color: var(--primary-color);
       }
     }
   }
   .viewpoint-footer {
     /* height: 48px; */
     line-height: 48px;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid var(--border-color-split);
     text-align: center;
-    padding: 0px 10px;
+    padding: 0px 8px;
     box-sizing: border-box;
   }
 }

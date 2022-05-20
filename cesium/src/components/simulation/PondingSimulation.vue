@@ -1,25 +1,42 @@
 <template>
     <div class="mapgis-3d-ponding-simulation">
-        <label class="title-label">参数设置</label>
-
+        <div class="mapgis-3d-ponding-simulation-content">
+        <!-- <label class="title-label">参数设置</label> -->
+        <mapgis-ui-group-tab title="参数设置"/>
         <mapgis-ui-input-number-panel
             label="日降雨量(毫米)"
-            size="small"
+            size="large"
             v-model="rainFall"
             :range="[0, 2000]"
-            :rangeShow="false"
+            :rangeShow="true"
             :step="10"
-            :slider="false"
-            :labelCol="{ span: 12 }"
-            :wrapperCol="{ span: 12 }"
+            :slider="true"
         />
+        <mapgis-ui-form :layout="layout">
+            <mapgis-ui-form-item label="降雨等级">
+                <mapgis-ui-select v-model="rainOption">
+                    <mapgis-ui-select-option :value="0">
+                        小雨
+                    </mapgis-ui-select-option>
+                    <mapgis-ui-select-option :value="1">
+                        中雨
+                    </mapgis-ui-select-option>
+                    <mapgis-ui-select-option :value="2">
+                        大雨
+                    </mapgis-ui-select-option>
+                    <mapgis-ui-select-option :value="3">
+                        暴雨
+                    </mapgis-ui-select-option>
+                </mapgis-ui-select>
+            </mapgis-ui-form-item>
+        </mapgis-ui-form>
 
-        <mapgis-ui-radio-group v-model="rainOption" class="padding">
+        <!-- <mapgis-ui-radio-group v-model="rainOption" class="padding">
             <mapgis-ui-radio :value="0"> 小雨 </mapgis-ui-radio>
             <mapgis-ui-radio :value="1"> 中雨 </mapgis-ui-radio>
             <mapgis-ui-radio :value="2"> 大雨 </mapgis-ui-radio>
             <mapgis-ui-radio :value="3"> 暴雨 </mapgis-ui-radio>
-        </mapgis-ui-radio-group>
+        </mapgis-ui-radio-group> -->
 
         <mapgis-3d-draw
             v-on:drawCreate="handleDrawCreate"
@@ -27,9 +44,10 @@
             :drawStyle="drawStyleCopy"
             :enableControl="enableControl"
         >
-            <label class="title-label">仿真区域</label>
+            <!-- <label class="title-label">仿真区域</label> -->
+            <mapgis-ui-group-tab title="仿真区域"/>
 
-            <mapgis-ui-radio-group v-model="radioValue" class="padding">
+            <mapgis-ui-radio-group v-model="radioValue" class="padding" >
                 <mapgis-ui-radio :value="1">绘制区域</mapgis-ui-radio>
                 <mapgis-ui-radio :value="2">输入区域</mapgis-ui-radio>
             </mapgis-ui-radio-group>
@@ -38,7 +56,7 @@
                 <mapgis-ui-tooltip
                     v-for="(item, i) in draws"
                     :key="i"
-                    placement="bottom"
+                    placement="top"
                 >
                     <template slot="title">
                         <span>{{ item.tip }}</span>
@@ -48,7 +66,7 @@
                         :type="item.type"
                         @click="item.click"
                         :class="item.className"
-                        style="margin-right: 12px"
+                        style="margin: 0 8px"
                     >
                         <mapgis-ui-iconfont
                             :type="item.icon"
@@ -60,121 +78,109 @@
             </div>
 
             <div v-if="radioValue === 2">
-                <mapgis-ui-row class="padding">
-                    <mapgis-ui-col span="4">
-                        <label>圆心</label>
-                    </mapgis-ui-col>
-                    <mapgis-ui-col span="20">
-                        <mapgis-ui-space>
-                            <mapgis-ui-input
-                                v-model.number="circleCenter.longitude"
-                                placeholder="经度"
-                                allow-clear
-                            />
-                            <mapgis-ui-input
-                                v-model.number="circleCenter.latitude"
-                                placeholder="纬度"
-                                allow-clear
-                            />
-                        </mapgis-ui-space>
-                    </mapgis-ui-col>
-                </mapgis-ui-row>
-
-                <mapgis-ui-row class="padding">
-                    <mapgis-ui-col span="4">
-                        <label>半径</label>
-                    </mapgis-ui-col>
-                    <mapgis-ui-col span="20">
-                        <mapgis-ui-input
-                            v-model.number="radius"
-                            type="number"
-                            min="0"
-                            addon-after="(米)"
-                        />
-                    </mapgis-ui-col>
-                </mapgis-ui-row>
+                <mapgis-ui-setting-form :layout="layout" size="default">
+                    <mapgis-ui-form-item label="圆心">
+                    <mapgis-ui-row :gutter="8">
+                        <mapgis-ui-col :span="12">	
+                        <mapgis-ui-input-number-addon
+                            v-model.number="circleCenter.longitude"
+                            placeholder="经度"
+                            allow-clear
+                        >
+                            <mapgis-ui-tooltip slot="addonBefore" title="经度">
+                                <mapgis-ui-iconfont type="mapgis-xzhouyidong"/>
+                            </mapgis-ui-tooltip>
+                        </mapgis-ui-input-number-addon>
+                        </mapgis-ui-col>
+                        <mapgis-ui-col :span="12">
+                        <mapgis-ui-input-number-addon
+                            v-model.number="circleCenter.latitude"
+                            placeholder="纬度"
+                            allow-clear
+                        >
+                            <mapgis-ui-tooltip slot="addonBefore" title="纬度">
+                                <mapgis-ui-iconfont type="mapgis-yzhouyidong"/>
+                            </mapgis-ui-tooltip>
+                        </mapgis-ui-input-number-addon>
+                        </mapgis-ui-col>
+                    </mapgis-ui-row>
+                    </mapgis-ui-form-item>
+                    <mapgis-ui-form-item label="半径">
+                    <mapgis-ui-input-number-addon
+                        v-model.number="radius"
+                        min="0"
+                        addon-after="米"
+                    />
+                    </mapgis-ui-form-item>
+                </mapgis-ui-setting-form>
             </div>
         </mapgis-3d-draw>
 
-        <mapgis-ui-collapse expand-icon-position="left" :bordered="false">
-            <template #expandIcon="props">
-                <mapgis-ui-iconfont
-                    type="mapgis-chevrons-down"
-                    :rotate="props.isActive ? 180 : 0"
-                    style="left: 6px; font-size: 14px; color: #0081e2"
-                />
-            </template>
-            <mapgis-ui-collapse-panel :style="collapseStyle">
-                <div slot="header">
-                    <label style="color: #0081e2; margin-left: 16px"
-                        >展开详细参数</label
-                    >
-                </div>
+        <mapgis-ui-switch-panel
+            size="default"
+            label="详细参数"
+            v-model="showDetailPara"
+        >
+            <mapgis-ui-group-tab title="积水参数设置"/>
 
-                <label class="title-label">积水参数设置</label>
+            <!-- <mapgis-ui-input-number-panel
+                label="积水高度(米)"
+                size="small"
+                v-model="maxHeightCopy"
+                :range="[startHeightCopy, maxH]"
+                :rangeShow="false"
+                :step="heightStep"
+                :slider="false"
+                :labelCol="{ span: 12 }"
+                :wrapperCol="{ span: 12 }"
+            />
+            <mapgis-ui-input-number-panel
+                label="积水上涨速度(米/秒)"
+                size="small"
+                v-model="floodSpeedCopy"
+                :range="[0, 500]"
+                :rangeShow="false"
+                :step="100"
+                :slider="false"
+                :labelCol="{ span: 12 }"
+                :wrapperCol="{ span: 12 }"
+            /> -->
 
-                <!-- <mapgis-ui-input-number-panel
-                    label="积水高度(米)"
-                    size="small"
-                    v-model="maxHeightCopy"
-                    :range="[startHeightCopy, maxH]"
-                    :rangeShow="false"
-                    :step="heightStep"
-                    :slider="false"
-                    :labelCol="{ span: 12 }"
-                    :wrapperCol="{ span: 12 }"
-                />
-                <mapgis-ui-input-number-panel
-                    label="积水上涨速度(米/秒)"
-                    size="small"
-                    v-model="floodSpeedCopy"
-                    :range="[0, 500]"
-                    :rangeShow="false"
-                    :step="100"
-                    :slider="false"
-                    :labelCol="{ span: 12 }"
-                    :wrapperCol="{ span: 12 }"
-                /> -->
+            <mapgis-ui-color-pick-panel
+                label="积水颜色"
+                :color="floodColorCopy"
+                @input="
+                    (val) =>
+                        (floodColorCopy = `rgba(${val.rgba.r},${val.rgba.g},${val.rgba.b},${val.rgba.a})`)
+                "
+                :disableAlpha="false"
+                :labelCol="24"
+                :wrapperCol="24"
+            />
 
-                <mapgis-ui-color-pick-panel
-                    label="积水颜色"
-                    :color="floodColorCopy"
-                    @input="
-                        (val) =>
-                            (floodColorCopy = `rgba(${val.rgba.r},${val.rgba.g},${val.rgba.b},${val.rgba.a})`)
-                    "
-                    :disableAlpha="false"
-                    :labelCol="12"
-                    :wrapperCol="12"
-                />
+            <mapgis-ui-input-number-panel
+                label="排水体积(m³)"
+                size="large"
+                v-model="drainageVol"
+                :range="[0, 100]"
+                :rangeShow="true"
+                :step="1"
+                :slider="true"
+            />
 
-                <mapgis-ui-input-number-panel
-                    label="排水体积(m³)"
-                    size="small"
-                    v-model="drainageVol"
-                    :range="[0, 100]"
-                    :rangeShow="false"
-                    :step="1"
-                    :slider="false"
-                    :labelCol="{ span: 12 }"
-                    :wrapperCol="{ span: 12 }"
-                />
+            <!-- <label class="title-label">雨参数设置</label> -->
+            <mapgis-ui-group-tab title="雨参数设置"/>
 
-                <label class="title-label">雨参数设置</label>
-
-                <mapgis-ui-input-number-panel
-                    size="small"
-                    label="雨角度"
-                    v-model="angle"
-                    :range="[-30, 30]"
-                    :step="10"
-                    :slider="false"
-                    :labelCol="{ span: 12 }"
-                    :wrapperCol="{ span: 12 }"
-                />
-            </mapgis-ui-collapse-panel>
-        </mapgis-ui-collapse>
-
+            <mapgis-ui-input-number-panel
+                size="large"
+                label="雨角度"
+                v-model="angle"
+                :range="[-30, 30]"
+                :step="10"
+                :slider="true"
+            />
+        </mapgis-ui-switch-panel>
+        </div>
         <mapgis-ui-setting-footer>
             <mapgis-ui-tooltip placement="bottom">
                 <template slot="title">
@@ -262,6 +268,10 @@ export default {
         },
     },
     props:{
+        layout: {
+			type: String,
+			default: "vertical" // 'horizontal' 'vertical' 'inline'
+		},
         //积水上涨的时间
         pondingTime:{
             type:Number,
@@ -358,7 +368,8 @@ export default {
             pond: false,
             timer: undefined,
 
-            isLogarithmicDepthBufferEnable: undefined
+            isLogarithmicDepthBufferEnable: undefined,
+            showDetailPara: false,
         };
     },
     destroyed() {
@@ -867,11 +878,21 @@ export default {
 
 <style scoped>
 .mapgis-3d-ponding-simulation {
-    width: 320px;
+    /* width: 320px; */
     /* position: absolute;
     top: 10px;
     left: 10px; */
-    padding: 10px;
+    /* padding: 4px; */
+    background: var(--card-background);
+}
+.mapgis-3d-ponding-simulation-content {
+    max-height: calc(70vh);
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.mapgis-ui-form-item {
+	margin-bottom: 0px;
 }
 
 .title-label {
@@ -903,7 +924,9 @@ export default {
 }
 
 .padding {
-    padding: 10px 6px;
+    /* padding: 10px 6px; */
+    line-height: 32px;
+    padding-bottom: 8px;
 }
 
 .mapgis-ui-setting-footer {

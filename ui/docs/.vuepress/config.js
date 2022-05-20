@@ -87,8 +87,9 @@ module.exports = {
               },
               ["/api/panel/switch.md", "开关"],
               ["/api/panel/inputnumber.md", "数值输入"],
+              ["/api/panel/inputnumberaddon.md", "数值输入-前后缀"],
               ["/api/panel/select.md", "选择器"],
-              ["/api/panel/select.md", "颜色选取"],
+              ["/api/panel/color_pick.md", "颜色选取"],
               ["/api/panel/tab.md", "页面切换"],
               {
                 title: "颜色",
@@ -116,6 +117,7 @@ module.exports = {
             title: "样式&主题",
             collapsable: false,
             children: [
+              ["/style/theme_switch.md", "主题切换"],
               ["/style/css/less2scss.md", "Less & Sass"],
               ["/style/css/less.md", "Less常见问题"],
               ["/style/css/sass.md", "Sass常见问题"]
@@ -124,7 +126,11 @@ module.exports = {
           {
             title: "组件开发",
             collapsable: false,
-            children: [["/plugin_components/onemap.md", "移植组件"]]
+            children: [
+              ["/plugin_components/new_form_model.md", "组件开发样式规范说明"],
+              ["/plugin_components/form_model.md", "弹框表单样式修改说明"],
+              ["/plugin_components/onemap.md", "移植组件"],
+            ]
           },
           {
             title: "版本",

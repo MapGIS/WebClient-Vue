@@ -25,7 +25,7 @@ export default {
     },
     fontSize: {
       type: String,
-      default: "12px"
+      default: "14px"
     },
     paddingLeft: {
       type: String,
@@ -37,11 +37,11 @@ export default {
     },
     margin: {
       type: String,
-      default: "10px 0"
+      default: "8px 0"
     },
     width: {
       type: String,
-      default: "70px"
+      default: "80px"
     },
   }
 }
@@ -61,16 +61,17 @@ export default {
 }
 
 .mapgis-ui-title-row-left-title {
-  width: 70px;
+  width: 80px;
   text-align: left;
   padding-left: 10px;
-  font-size: 12px;
-  font-weight: bolder;
+  font-size: 14px;
+  /* font-weight: bold; */
+  color: var(--heading-color)
 }
 
 .mapgis-ui-title-row-left-value {
   padding-right: 10px;
-  font-size: 12px;
-  width: calc(100% - 74px);
+  font-size: 14px;
+  width: calc(100% - 84px);
 }
 </style>

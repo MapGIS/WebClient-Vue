@@ -99,21 +99,23 @@ export default {
   width: fit-content;
   height: fit-content;
   padding: 12px;
-  border: 1px solid #333;
+  border: 1px solid var(--border-color-split);
   border-radius: 3px;
-  background: #fff;
+  background: var(--background);
   overflow: auto;
 }
 
 .mapgis-legend .legend-area {
   width: 180px;
   height: 220px;
-  margin-top: 10px;
+  margin-top: 4px;
+  margin-left: 4px;
   overflow: auto;
 }
 
 .mapgis-legend .legend-area li {
   display: flex;
+  margin-top: 4px;
 }
 
 .mapgis-legend .legend-area li img {

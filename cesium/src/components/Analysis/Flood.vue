@@ -12,29 +12,26 @@
             ></mapgis-ui-toolbar-command>
           </mapgis-ui-toolbar>
         </mapgis-ui-group-tab>
-        <mapgis-ui-setting-form>
+        <mapgis-ui-setting-form :layout="layout" size="default">
           <mapgis-ui-form-item label="淹没最低高度">
-            <mapgis-ui-input
+            <mapgis-ui-input-number-addon
               v-model.number="startHeightCopy"
-              type="number"
               :max="maxHeightCopy"
-              addon-after="(米)"
+              addon-after="米"
             />
           </mapgis-ui-form-item>
           <mapgis-ui-form-item label="淹没最高高度">
-            <mapgis-ui-input
+            <mapgis-ui-input-number-addon
               v-model.number="maxHeightCopy"
-              type="number"
               :min="startHeightCopy"
-              addon-after="(米)"
+              addon-after="米"
             />
           </mapgis-ui-form-item>
           <mapgis-ui-form-item label="洪水上涨速度">
-            <mapgis-ui-input
+            <mapgis-ui-input-number-addon
               v-model.number="floodSpeedCopy"
-              type="number"
               min="0"
-              addon-after="(米/秒)"
+              addon-after="米/秒"
             />
           </mapgis-ui-form-item>
           <mapgis-ui-form-item label="颜色">
@@ -68,6 +65,15 @@ export default {
   inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
+    /**
+     * @type String
+     * @default "vertical"
+     * @description 表单布局
+     */
+    layout: {
+      type: String,
+      default: "vertical" // 'horizontal' 'vertical' 'inline'
+    },
     /**
      * @type Number
      * @default 0
@@ -462,14 +468,14 @@ export default {
 }
 
 ::v-deep .mapgis-ui-form label {
-  font-size: 12px;
+  /* font-size: 12px; */
 }
 
 ::v-deep .mapgis-ui-form-item-label {
-  line-height: 40px;
+  /* line-height: 40px; */
 }
 
 ::v-deep .mapgis-ui-input {
-  padding: 4px 11px;
+  /* padding: 4px 11px; */
 }
 </style>

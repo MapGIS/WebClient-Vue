@@ -55,7 +55,7 @@ export default {
   text-align: left;
   height: 32px;
   line-height: 32px;
-  margin: 10px 0;
+  margin: 8px 0;
 }
 
 .mapgis-ui-color-picker-left-title, .mapgis-ui-color-picker-left-color {
@@ -65,15 +65,16 @@ export default {
 }
 
 .mapgis-ui-color-picker-left-title {
-  width: 70px;
+  width: 80px;
   text-align: left;
   padding-left: 10px;
-  font-size: 12px;
-  font-weight: bolder;
+  font-size: 14px;
+  /* font-weight: bolder; */
+  color: var(--heading-color)
 }
 
 .mapgis-ui-color-picker-left-color {
   padding-right: 10px;
-  width: calc(100% - 74px);
+  width: calc(100% - 84px);
 }
 </style>

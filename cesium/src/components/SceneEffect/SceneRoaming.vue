@@ -3,30 +3,6 @@
     <slot>
       <div class="mapgis-widget-scene-roaming">
         <div v-if="!roaming">
-          <mapgis-ui-button
-            v-if="!interactiveAdding"
-            type="primary"
-            class="full-width"
-            @click="onAddPathStart"
-          >
-            添加路线
-          </mapgis-ui-button>
-          <div v-else class="add-path-status">
-            <mapgis-ui-button
-              @click="onAddPathCancel"
-              class="add-path-status-action"
-            >
-              取消
-            </mapgis-ui-button>
-            <mapgis-ui-button
-              type="primary"
-              class="add-path-status-action"
-              @click="onAddPathComplete"
-              :disabled="addedPositions.length < 2"
-            >
-              完成
-            </mapgis-ui-button>
-          </div>
           <div v-if="!interactiveAdding" class="path-container">
             <mapgis-ui-group-tab :title="pathTotal">
               <mapgis-ui-toolbar slot="handle" :bordered="false">
@@ -55,8 +31,8 @@
           <div v-else class="path-container">
             <mapgis-ui-group-tab title="基本信息"></mapgis-ui-group-tab>
             <mapgis-ui-setting-form
-              :label-width="50"
-              :wrapper-width="224"
+              :layout="layout"
+              size="default"
               class="mapgis-ui-setting-form"
             >
               <mapgis-ui-form-item label="名称">
@@ -86,14 +62,41 @@
               :description="emptyDescription"
             />
           </div>
+          <mapgis-ui-setting-footer>
+            <div v-if="!interactiveAdding" class="full-width">
+              <mapgis-ui-button
+                @click="onAddPathStart"
+                type="primary"
+                class="full-width"
+              >
+                添加路线
+              </mapgis-ui-button>
+            </div>
+            <div v-else>
+              <mapgis-ui-button
+                @click="onAddPathCancel"
+              >
+                取消
+              </mapgis-ui-button>
+              <mapgis-ui-button
+                type="primary"
+                @click="onAddPathComplete"
+                :disabled="addedPositions.length < 2"
+              >
+                完成
+              </mapgis-ui-button>
+            </div>
+          </mapgis-ui-setting-footer>
         </div>
         <div v-else>
-          <div class="header" @click="onGotoHome">
-            <div>
-              <mapgis-ui-iconfont class="return" type="mapgis-left" />
+          <mapgis-ui-group-tab>
+            <div slot="title" class="header" @click="onGotoHome">
+              <div>
+                <mapgis-ui-iconfont class="return" type="mapgis-left" />
+              </div>
+              <div class="name">{{ roamingPath.name }}</div>
             </div>
-            <div class="name">{{ roamingPath.name }}</div>
-          </div>
+          </mapgis-ui-group-tab>
           <path-roaming
             ref="refPathRoaming"
             :positions="roamingPath.path"
@@ -126,6 +129,10 @@ export default {
   components: { PathItem, PathRoaming },
   props: {
     ...VueOptions,
+    layout: {
+      type: String,
+      default: "vertical" // 'horizontal' 'vertical' 'inline'
+    },
     speed: {
       type: Number,
       default: 10
@@ -439,7 +446,7 @@ export default {
   width: calc(50% - 4px);
 }
 .path-container .path-list {
-  width: 280px;
+  /* width: 280px; */
   margin: 0 auto;
 }
 

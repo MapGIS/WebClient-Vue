@@ -82,20 +82,20 @@
                     'mapgis-3d-particle-effects-opearation',
                     { 'mapgis-3d-particle-effects-isBatch': isBatch === true }
                   ]"
-                  v-show="enterIndex === index || activeIndex === index"
+                  v-if="enterIndex === index || activeIndex === index"
                 >
-                  <mapgis-ui-tooltip title="删除">
-                    <mapgis-ui-iconfont
-                      type="mapgis-shanchu"
-                      style="font-size: 16px;padding-right: 4px"
-                      @click.capture.stop="onClearParticle(index)"
-                    ></mapgis-ui-iconfont>
-                  </mapgis-ui-tooltip>
                   <mapgis-ui-tooltip title="配置">
                     <mapgis-ui-iconfont
                       type="mapgis-shezhiditu"
-                      style="font-size: 16px"
+                      style="font-size:16px;width:27px;margin:0 4px;"
                       @click.capture.stop="setParticleParameter(index)"
+                    ></mapgis-ui-iconfont>
+                  </mapgis-ui-tooltip>
+                  <mapgis-ui-tooltip title="删除">
+                    <mapgis-ui-iconfont
+                      type="mapgis-shanchu"
+                      style="font-size:16px;width:27px;margin:0 4px;"
+                      @click.capture.stop="onClearParticle(index)"
                     ></mapgis-ui-iconfont>
                   </mapgis-ui-tooltip>
                 </div>
@@ -121,19 +121,11 @@
                 :show-total="total => `共${total}条数据`"
               ></mapgis-ui-pagination>
               <!-- 批量操作 -->
-              <div class="buttons">
-                <div v-show="isBatch" class="full-width">
-                  <mapgis-ui-button @click="allVisible" class="control-button"
-                    >可见
-                  </mapgis-ui-button>
-                  <mapgis-ui-button @click="allInvisible" class="control-button"
-                    >不可见
-                  </mapgis-ui-button>
-                  <mapgis-ui-button @click="allDelete" class="control-button"
-                    >删除
-                  </mapgis-ui-button>
-                </div>
-              </div>
+              <mapgis-ui-setting-footer v-show="isBatch">
+                <mapgis-ui-button @click="allVisible">可见</mapgis-ui-button>
+                <mapgis-ui-button @click="allInvisible">不可见</mapgis-ui-button>
+                <mapgis-ui-button @click="allDelete">删除</mapgis-ui-button>
+              </mapgis-ui-setting-footer>
             </div>
           </mapgis-ui-tab-pane>
           <mapgis-ui-tab-pane
@@ -147,26 +139,29 @@
               label="发射类型"
               v-model="emitterTypeCopy"
               :selectOptions="emitterOptions"
+              :labelCol="24"
+              :wrapperCol="24"
               @change="onEmitterChange"
             >
             </mapgis-ui-select-panel>
+
             <mapgis-ui-input-number-panel
               class="mapgis-ui-number-style"
-              size="small"
+              size="large"
               label="发射速率(个/秒)"
               v-model="emissionRateCopy"
               @change="val => onChangeEffect(val, 'emissionRate')"
             />
             <mapgis-ui-input-number-panel
               class="mapgis-ui-number-style"
-              size="small"
+              size="large"
               label="尺寸(像素)"
               :range="[2, 60]"
               v-model="imageSizeCopy"
               @change="val => onChangeEffect(val, 'imageSize')"
             />
             <mapgis-ui-input-number-panel
-              size="small"
+              size="large"
               label="最小存在时间(秒)"
               :range="[0.1, 30.0]"
               v-model="minimumParticleLifeCopy"
@@ -174,7 +169,7 @@
               @change="val => onChangeEffect(val, 'minimumParticleLife')"
             />
             <mapgis-ui-input-number-panel
-              size="small"
+              size="large"
               class="mapgis-ui-number-style"
               label="最大存在时间(秒)"
               :range="[0.1, 30.0]"
@@ -183,14 +178,14 @@
               @change="val => onChangeEffect(val, 'maximumParticleLife')"
             />
             <mapgis-ui-input-number-panel
-              size="small"
+              size="large"
               label="最小速度(个/秒)"
               :range="[0, 30]"
               v-model="minimumSpeedCopy"
               @change="val => onChangeEffect(val, 'minimumSpeed')"
             />
             <mapgis-ui-input-number-panel
-              size="small"
+              size="large"
               class="mapgis-ui-number-style"
               label="最大速度(个/秒)"
               :range="[0, 30]"
@@ -198,7 +193,7 @@
               @change="val => onChangeEffect(val, 'maximumSpeed')"
             />
             <mapgis-ui-input-number-panel
-              size="small"
+              size="large"
               label="初始比例"
               :range="[0.0, 10.0]"
               :step="0.5"
@@ -206,7 +201,7 @@
               @change="val => onChangeEffect(val, 'startScale')"
             />
             <mapgis-ui-input-number-panel
-              size="small"
+              size="large"
               class="mapgis-ui-number-style"
               label="结束比例"
               :range="[0.0, 10.0]"

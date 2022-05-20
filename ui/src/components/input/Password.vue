@@ -8,8 +8,8 @@ import ThemeMixin from "../../mixin/ThemeMixin";
 
 export const inputPasswordProps = {
   ...inputProps,
-  prefixCls: PropTypes.string.def('ant-input-password'),
-  inputPrefixCls: PropTypes.string.def('ant-input'),
+  prefixCls: PropTypes.string.def('mapgis-ui-input-password'),
+  inputPrefixCls: PropTypes.string.def('mapgis-ui-input'),
   action: PropTypes.string.def('click'),
   visibilityToggle: PropTypes.bool.def(true)
 };

@@ -3,7 +3,7 @@
         <slot>
             <div class="mapgis-widget-slope-analysis">
                 <mapgis-ui-group-tab title="坡度图例设置">
-                    <mapgis-ui-tooltip slot="handle" placement="bottomRight">
+                    <mapgis-ui-tooltip slot="tip" placement="top">
                         <template slot="title">
                             <span>{{ info }}</span>
                         </template>

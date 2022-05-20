@@ -674,7 +674,7 @@ form {
   white-space: normal;
   .mapgis-ui-form-item {
     .mapgis-ui-form-item-label label {
-      color: $text-color;
+      color: $heading-color;
     }
   }
   &.mini {
@@ -754,18 +754,20 @@ form {
   }
   &.mapgis-ui-form-vertical.compact {
     .mapgis-ui-form-item {
-      padding-bottom: 0;
+      padding-bottom: 8px;
     }
     .mapgis-ui-slider {
-      margin-top: 0;
+      margin-top: 8px;
+      margin-bottom: 4px;
       &.mapgis-ui-slider-with-marks {
-        margin-top: 0;
+        margin-top: 8px;
+        margin-bottom: 4px;
       }
     }
   }
   &.compact {
     .mapgis-ui-form-item {
-      margin-bottom: 12px;
+      margin-bottom: 0px;
     }
   }
   &.no-last-margin-bottom {

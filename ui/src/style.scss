@@ -24,6 +24,7 @@
 @import "./components/pageheader/style/pageheader.scss";
 @import "./components/pagination/style/pagination.scss";
 @import "./components/toolbar/style/toolbar.scss";
+@import "./components/steps/style/steps.scss";
 
 /* MapGIS Design - Data Entry */
 @import "./components/cascader/style/cascader.scss";
@@ -63,6 +64,7 @@
 @import "./components/tree/style/tree.scss";
 
 /* MapGIS Design - Feedback */
+@import "./components/alert/style/alert.scss";
 @import "./components/drawer/style/drawer.scss";
 @import "./components/message/style/message.scss";
 @import "./components/modal/style/modal.scss";
@@ -128,5 +130,5 @@
 /* MapGIS Design Row */
 @import "./components/row/style/ProjectRow";
 
-
-
+/* MapGIS Design - Plot */
+@import "./components/plot/style/plot.scss";

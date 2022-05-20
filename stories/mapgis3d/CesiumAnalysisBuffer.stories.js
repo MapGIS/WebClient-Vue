@@ -77,6 +77,14 @@ const Template = (args, { argTypes }) => ({
     `,
 });
 
+{/* <mapgis-web-scene style="height: 95vh">
+<mapgis-ui-borderbox1 class="storybook-ui-card" style="height:60vh;">
+  <mapgis-3d-analysis-buffer v-bind="$props" @listenLayer="showLayer" @listenFeature="showFeature" @listenBufferAdd="showAdd"/>
+</mapgis-ui-borderbox1>
+<mapgis-3d-igs-dynamic-layer v-if="finishedLayer && addResultToLayer" :baseUrl="this.baseUrl" :gdbps="resultLayer"></mapgis-3d-igs-dynamic-layer>
+<mapgis-3d-geojson-layer v-if="finishedFeature && addResultToLayer" :layerStyle="layerStyle" :baseUrl="resultFeature"/>
+</mapgis-web-scene> */}
+
 export const Buffer = Template.bind({});
 Buffer.args = {
   srcType: "Layer",

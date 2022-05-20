@@ -89,6 +89,7 @@
                 "
                 :type="icon"
                 class="iconfont"
+                style="marginLeft:8px;"
                 @click="
                   () =>
                     handleActiveItemKey({

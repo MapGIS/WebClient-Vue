@@ -1,8 +1,8 @@
 <template>
   <div>
     <slot>
-      <mapgis-ui-group-tab title="模型" :has-top-margin="false">
-        <mapgis-ui-tooltip slot="handle" placement="bottomRight">
+      <mapgis-ui-group-tab title="模型">
+        <mapgis-ui-tooltip slot="tip" placement="top">
           <template slot="title">
             <span>{{ info }}</span>
           </template>
@@ -18,7 +18,7 @@
             v-for="(option, index) in checkboxOptions"
             :key="`model-${index}`"
           >
-            <mapgis-ui-checkbox :value="option.value">
+            <mapgis-ui-checkbox :value="option.value" style="line-height:32px;" >
               {{ option.label }}
             </mapgis-ui-checkbox>
           </mapgis-ui-row>
@@ -44,7 +44,7 @@
         </mapgis-ui-radio-group>
       </mapgis-ui-row>
       <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
-      <mapgis-ui-setting-form :label-width="72">
+      <mapgis-ui-setting-form :layout="layout" size="default">
         <mapgis-ui-form-item label="剖面颜色">
           <mapgis-ui-sketch-color-picker
             :color.sync="colorCopy"
@@ -60,7 +60,8 @@
             style="width: 100%"
           />
         </mapgis-ui-form-item>
-        <mapgis-ui-form-item label="剖切距离">
+        
+        <!-- <mapgis-ui-form-item label="剖切距离">
           <mapgis-ui-slider
             v-model="distanceCopy"
             :min="min"
@@ -68,8 +69,16 @@
             @change="setDistance"
             :disabled="readonly"
           />
-        </mapgis-ui-form-item>
+        </mapgis-ui-form-item> -->
       </mapgis-ui-setting-form>
+      <mapgis-ui-input-number-panel
+          size="large"
+          label="剖切距离"
+          :range="[min, max]"
+          v-model="distanceCopy"
+          @change="setDistance"
+          :disabled="readonly"
+        />
       <mapgis-ui-setting-footer>
         <mapgis-ui-button type="primary" @click="startClipping">
           分析
@@ -112,7 +121,11 @@ export default {
     distance: {
       type: Number,
       default: 0
-    }
+    },
+    layout: {
+      type: String,
+      default: "vertical" // 'horizontal' 'vertical' 'inline'
+    },
   },
   data() {
     return {
@@ -611,11 +624,11 @@ export default {
 
 <style scoped>
 ::v-deep .mapgis-ui-checkbox-wrapper {
-  font-size: 12px;
+  /* font-size: 12px; */
 }
 
 ::v-deep .mapgis-ui-radio-wrapper {
-  font-size: 12px;
+  /* font-size: 12px; */
 }
 
 .model {
@@ -624,6 +637,6 @@ export default {
 }
 
 .checkbox {
-  font-size: 12px;
+  /* font-size: 12px; */
 }
 </style>

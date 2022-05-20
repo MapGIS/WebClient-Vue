@@ -584,8 +584,8 @@ export default {
 <style scoped>
 .mapgis-city-grow {
   position: absolute;
-  left: 10px;
-  bottom: 10px;
+  /* left: 10px;
+  bottom: 10px; */
   margin: 0px auto;
 }
 

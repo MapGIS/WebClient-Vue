@@ -50,8 +50,8 @@ const Template = (args, { argTypes }) => ({
     };
   },
   methods: {
-    setCustomTheme(themeData) {
-      setTheme(themeData || { ...this.$props, style: this.defaultStyle });
+    setCustomTheme(themeData, payload) {
+      setTheme(themeData || { ...this.$props, style: this.defaultStyle }, payload);
     },
     success() {
       this.$message.success("This is a success message");
@@ -187,7 +187,7 @@ const Template = (args, { argTypes }) => ({
   },
   template: `<div>
     <div style="margin-bottom: 15px;">
-      <mapgis-ui-button type="primary" @click="setCustomTheme()">改变主题颜色</mapgis-ui-button>
+      <mapgis-ui-button type="primary" @click="setCustomTheme('dark', {colorGroup:['#e69d87', '#759aa0', '#1890ff', '#8dc1a9', '#ea7e53']})">改变主题颜色</mapgis-ui-button>
     </div>
     <div style="display: flex;flex-direction: column; margin-bottom: 15px;">
       <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="text-align: right; padding-right: 8px;">{{ ('basicComponent.avatar.title') }}：</label><mapgis-ui-avatar icon="user" /></div>
@@ -247,10 +247,10 @@ const Template = (args, { argTypes }) => ({
     });
   },
   beforeDestroy() {
-    this.clearStyle();
+    // this.clearStyle();
   },
   destroyed() {
-    this.clearStyle();
+    // this.clearStyle();
     console.log("组件销毁");
   },
 });
