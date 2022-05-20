@@ -547,7 +547,7 @@ export default {
     },
     changeLayerVisible(layers) {
       layers = layers || this.layerList;
-      const { vueKey, vueIndex } = this;
+      const { vueKey, vueIndex, show } = this;
       let find = vueCesium.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find) {
         let m3ds = find.source;
@@ -562,7 +562,7 @@ export default {
               m3d.show = false;
             }
           } else {
-            m3d.show = true;
+            m3d.show = show;
           }
         });
       }

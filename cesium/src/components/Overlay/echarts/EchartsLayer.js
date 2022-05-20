@@ -189,6 +189,9 @@ export class EchartsLayer {
             return;
           }
           self._unvisible();
+          if (!self.map) {
+            self.map = map;
+          }
           var offsetEl = self.map.canvas;
 
           var mapOffset = [
@@ -211,6 +214,9 @@ export class EchartsLayer {
         function moveEndHandler(type, target) {
           if (rendering) {
             return;
+          }
+          if (!self.map) {
+            self.map = map;
           }
           var offsetEl = self.map.canvas;
 
@@ -260,6 +266,9 @@ export class EchartsLayer {
           }
           if (rendering) {
             return;
+          }
+          if (!self.map) {
+            self.map = map;
           }
           var offsetEl = self.map.canvas;
 
@@ -332,9 +341,6 @@ export class EchartsLayer {
             //cesiumMap.scene.camera.moveEnd.addEventListener(moveEndHandler);
           }
         }
-
-        this._oldMoveHandler = moveHandler;
-        this._oldZoomEndHandler = zoomEndHandler;
 
         var roam = mapModel.get("roam");
         if (roam && roam !== "scale") {

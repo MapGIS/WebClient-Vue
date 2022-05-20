@@ -16,10 +16,10 @@ export default {
     url: {
       type: String,
     },
-    // scale: {
-    //   type: Number,
-    //   default: 1,
-    // },
+    scale: {
+      type: Number,
+      default: 1,
+    },
     requestVertexNormals: {
       type: Boolean,
       default: false,
@@ -41,6 +41,9 @@ export default {
         this.unmount();
       }
     },
+    scale: function (next) {
+      this.changeScale();
+    },
   },
   methods: {
     mount() {
@@ -52,6 +55,10 @@ export default {
         getDocLayerIndexes:vm._handleTerrianLoaded
       });
       this.$emit("load", this);
+    },
+    changeScale() {
+      const { viewer } = this;
+      viewer.scene.globe.terrainExaggeration = this.scale;
     },
     unmount() {
       const { viewer, vueKey, vueIndex } = this;
