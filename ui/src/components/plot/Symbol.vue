@@ -8,6 +8,7 @@
           <mapgis-ui-title-collapse
             :title="icons.title"
             :key="key"
+            :collapse="collapse"
             :hasTopMargin="false"
             :hasBottomMargin="false"
             class="class-content"
@@ -34,6 +35,11 @@ export default {
     data: {
       type: Array,
       required: true
+    },
+    // 控制图标折叠面板默认是折叠还是展开，该参数为true时折叠
+    collapse: {
+      type: Boolean,
+      default: true
     }
   },
   watch: {

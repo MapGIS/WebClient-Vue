@@ -36,6 +36,7 @@ export default {
       type: String,
       default: "标题"
     },
+    // 控制图标折叠面板默认是折叠还是展开，该参数为true时折叠
     collapse: {
       type: Boolean,
       default: false
