@@ -58,6 +58,7 @@
             :isTitleBold="false"
             :hasTopMargin="false"
             :hasBottomMargin="false"
+            size="small"
           />
         </div>
       </mapgis-ui-title-collapse>

@@ -17,6 +17,8 @@ export function updataPopupPosition(
   if (!cartesian) return;
   let scene = viewer.scene;
   let camera = viewer.camera;
+  // let canvas = scene.canvas;
+  // let ellipsoid = scene.globe.ellipsoid;
 
   let rect = camera.computeViewRectangle();
   let Cesium = options.Cesium || window["Cesium"];
@@ -42,8 +44,19 @@ export function updataPopupPosition(
     carto = Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesian);
     longitude = Cesium.Math.toDegrees(carto.longitude);
     latitude = Cesium.Math.toDegrees(carto.latitude);
+    // console.log('longitude,east,west,latitude,south,north',longitude,east,west,latitude,south,north);
   }
 
+  var cartesian_lb = Cesium.Cartesian3.fromDegrees(west, south);
+  var cartesian_rt = Cesium.Cartesian3.fromDegrees(east, north);
+  var px_lb = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
+    scene,
+    cartesian_lb
+  );
+  var px_rt = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
+    scene,
+    cartesian_rt
+  );
   var px_position = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
     scene,
     cartesian
@@ -62,10 +75,10 @@ export function updataPopupPosition(
   }
 
   if (
-    longitude < west ||
-    longitude > east ||
-    latitude > north ||
-    latitude < south
+    px_position.x < px_lb.x ||
+    px_position.x > px_rt.x ||
+    px_position.y > px_lb.y ||
+    px_position.y < px_rt.y
   ) {
     res = false;
   }
