@@ -1,5 +1,5 @@
 <template>
-    <div :style="{ width: `${width}px`,height:'80px' }">
+    <div :style="{ width: `${width}px` }">
         <mapgis-ui-timeline-panel
             v-model="sliderValue"
             :max="pondingTime"
