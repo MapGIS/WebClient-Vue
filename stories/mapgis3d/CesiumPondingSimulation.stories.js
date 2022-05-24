@@ -47,7 +47,7 @@ const Template = (args, { argTypes }) => ({
             @updateTime="e=>{time = e}"
             @updateSpeed="e=>{mltSpeed = e}"
             @play="addSimulation"
-            style="position: absolute;bottom: 30px; right: 50%;margin-right:-280px;"
+            style="position: absolute;bottom: 90px; right: 50%;margin-right:-280px;"
         />
     </mapgis-web-scene>
     `,

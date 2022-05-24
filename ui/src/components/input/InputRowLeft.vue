@@ -11,7 +11,7 @@
       :style="{
         paddingRight: paddingRight,
         marginLeft: marginLeft,
-        width: enableButton ? 'calc(100% - 156px)' : width
+        width: enableButton ? 'calc(100% - 154px)' : width
       }"
     >
       <mapgis-ui-input

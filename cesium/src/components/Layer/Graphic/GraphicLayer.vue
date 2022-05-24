@@ -40,7 +40,7 @@
       v-show="showEditTitle"
       title="修改标题"
       :enableButton="true"
-      paddingLeft="16px"
+      paddingLeft="0px"
       class="mapgis-ui-graphic-layers-edit-title"
       @finish="$_finishEditTitle"
       v-model="currenSelectLayer"
@@ -720,7 +720,7 @@ export default {
 
 .mapgis-ui-graphic-layers-edit-title {
   height: 40px !important;
-  width: 332px;
+  /* width: 332px; */
 }
 
 .mapgis-ui-graphic-layers-toll-bar {
