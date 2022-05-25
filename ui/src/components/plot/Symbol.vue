@@ -6,7 +6,7 @@
         <div class="class-title" v-if="item.title">{{ item.title }}</div>
         <template v-for="(icons, key) in item.children">
           <mapgis-ui-title-collapse
-            :title="icons.title"
+            :title="icons.type"
             :key="key"
             :collapse="collapse"
             :hasTopMargin="false"
@@ -14,12 +14,12 @@
             class="class-content"
           >
             <div
-              v-for="(src, i) in icons.icon"
+              v-for="(icon, i) in icons.icon"
               :key="key + '_' + i"
               class="icon-wrapper"
-              @click="onIconClick(src, icons)"
+              @click="onIconClick(icon, icons)"
             >
-              <img :src="src" />
+              <img :src="icon.src" />
             </div>
           </mapgis-ui-title-collapse>
         </template>
@@ -59,11 +59,11 @@ export default {
   methods: {
     onSearch(value) {
       this.$emit("search", value);
-      console.log("search", value);
+      // console.log("search", value);
     },
     onIconClick(icon, icons) {
       this.$emit("click", { icon: icon, iconCol: icons });
-      console.log("click", { icon: icon, iconCol: icons });
+      // console.log("click", { icon: icon, iconCol: icons });
     }
   }
 };

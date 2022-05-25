@@ -4,7 +4,7 @@
       <mapgis-ui-space>
         <mapgis-ui-iconfont
           :class="['play-btn', { 'btn-active': startBtn === true }]"
-          type="mapgis-zuo"
+          type="mapgis-fuwei"
           @click.capture.stop="start"
         />
         <mapgis-ui-iconfont
@@ -24,7 +24,7 @@
         />
         <mapgis-ui-iconfont
           :class="['play-btn', { 'btn-active': endBtn === true }]"
-          type="mapgis-you"
+          type="mapgis-zhongzhi"
           @click.capture.stop="end"
         />
       </mapgis-ui-space>
@@ -223,6 +223,12 @@ export default {
       },
       deep: true
     },
+    width: {
+      handler() {
+        this.valueChange();
+      },
+      deep: true
+    },
     speed: {
       handler(next) {
         this.speedCopy = next;
@@ -244,8 +250,8 @@ export default {
     },
     intervalCopy: {
       handler(next) {
-      this.$emit("intervalChange", next);
-      // console.log("intervalChange", next);
+        this.$emit("intervalChange", next);
+        // console.log("intervalChange", next);
       },
       deep: true
     },
@@ -295,7 +301,8 @@ export default {
       raf: undefined,
       lasttime: undefined,
       curtime: undefined,
-      showInterval: false
+      showInterval: false,
+      width: undefined
     };
   },
   created() {
@@ -310,13 +317,19 @@ export default {
   methods: {
     mount() {
       const vm = this;
+      let bar = document.querySelector(".timeline-bar");
+      vm.width = parseFloat(window.getComputedStyle(bar).width);
+      window.onresize = function() {
+        let bar = document.querySelector(".timeline-bar");
+        vm.width = parseFloat(window.getComputedStyle(bar).width);
+      };
+
       //实现时间轴的拖拽功能
       let ele = document.querySelector(".timeline-needle");
-      let bar = document.querySelector(".timeline-bar");
 
       ele.onmousedown = function(ev) {
         ev.preventDefault();
-        let width = parseFloat(window.getComputedStyle(bar).width);
+        let width = vm.width;
         let initL = parseFloat(ele.style.left) || 0;
         let initX = ev.clientX - initL;
 
@@ -375,20 +388,31 @@ export default {
       let diff = (curtime - this.lasttime) / 1000;
       this.lasttime = curtime;
       // console.log("diff", diff);
-      this.valueCopy += (vm.max - vm.min) * (diff / vm.duration) * vm.speedCopy;
-      console.log("value", this.valueCopy);
+      if (this.forwardBtn) {
+        vm.valueCopy += (vm.max - vm.min) * (diff / vm.duration) * vm.speedCopy;
+        if (vm.valueCopy >= vm.max) {
+          if (vm.loop) {
+            vm.valueCopy = vm.min;
+          } else {
+            vm.valueCopy = vm.max;
+            vm.stopPlay();
 
-      if (vm.valueCopy >= vm.max) {
-        if (vm.loop) {
-          vm.valueCopy = vm.min;
-        } else {
-          vm.valueCopy = vm.max;
-          vm.stopPlay();
-
-          return;
+            return;
+          }
+        }
+      } else {
+        vm.valueCopy -= (vm.max - vm.min) * (diff / vm.duration) * vm.speedCopy;
+        if (vm.valueCopy <= vm.min) {
+          if (vm.loop) {
+            vm.valueCopy = vm.max;
+          } else {
+            vm.valueCopy = vm.min;
+            vm.stopPlay();
+            return;
+          }
         }
       }
-      // this.valueChange();
+      // console.log("value", vm.valueCopy);
       this.raf = requestAnimationFrame(vm.startPlay);
     },
     stopPlay() {
@@ -400,8 +424,7 @@ export default {
     valueChange() {
       this.percent = (this.valueCopy - this.min) / (this.max - this.min);
       let ele = document.querySelector(".timeline-needle");
-      let bar = document.querySelector(".timeline-bar");
-      let width = parseFloat(window.getComputedStyle(bar).width);
+      let width = this.width;
       let left = this.percent * width;
       ele.style.left = left + "px";
     },
@@ -429,6 +452,7 @@ export default {
       this.forwardBtn = false;
       this.endBtn = false;
       this.$emit("backward");
+      this.startPlay();
     },
     pause() {
       this.startBtn = false;
@@ -437,7 +461,7 @@ export default {
       this.forwardBtn = false;
       this.endBtn = false;
       this.$emit("pause");
-      this.stopPlay()
+      this.stopPlay();
     },
     forward() {
       this.startBtn = false;

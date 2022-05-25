@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg width="200" version="1.1" height="200" id="svg2" sodipodi:docname="0101.svg"
+    inkscape:version="1.1 (c68e22c387, 2021-05-23)" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg"
+    xmlns:svg="http://www.w3.org/2000/svg" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <sodipodi:namedview id="namedview6" pagecolor="#ffffff" bordercolor="#111111" borderopacity="1"
+        inkscape:pageshadow="0" inkscape:pageopacity="0" inkscape:pagecheckerboard="1" showgrid="false"
+        showguides="false" inkscape:zoom="1.965" inkscape:cx="76.590331" inkscape:cy="58.524173"
+        inkscape:window-width="1920" inkscape:window-height="986" inkscape:window-x="-11" inkscape:window-y="-11"
+        inkscape:window-maximized="1" inkscape:current-layer="svg2" />
+    <defs id="defs3009" />
+    <metadata id="metadata7">
+        <rdf:RDF>
+            <cc:Work rdf:about="">
+                <dc:format>image/svg+xml</dc:format>
+                <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+                <dc:title />
+            </cc:Work>
+        </rdf:RDF>
+    </metadata>
+    <msbl Angle="90" Attitude="0" Type="msbl_regularpoint" xOrigin="0.5" yOrigin="0.5" Name="" id="dsc2994" />
+    <_3D Model="" id="_3D3024" />
+    <ellipse style="fill:#ff0000;stroke-width:1.5184" id="path12927" cx="101.01779" cy="100.25446" rx="100" ry="100" />
+</svg>

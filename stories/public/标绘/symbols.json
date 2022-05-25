@@ -1,0 +1,267 @@
+{
+  "name": "图标配置",
+  "children": [
+    {
+      "name": "其他",
+      "children": [
+        {
+          "id": 1,
+          "name": "",
+          "type": "msbl_RegularLine1",
+          "src": "标绘/icon/其他/airRoute.svg"
+        },
+        {
+          "id": 2,
+          "name": "",
+          "type": "msbl_regularpoint",
+          "src": "标绘/icon/其他/attackDirection.svg"
+        },
+        {
+          "id": 3,
+          "name": "",
+          "type": "msbl_cannonGroup",
+          "src": "标绘/icon/其他/cannonGroup.svg"
+        },
+        {
+          "id": 4,
+          "name": "",
+          "type": "msbl_FigureFan",
+          "src": "标绘/icon/其他/figureFan.svg"
+        },
+        {
+          "id": 5,
+          "name": "",
+          "type": "msbl_kidney",
+          "src": "标绘/icon/其他/kidneyArea.svg"
+        },
+        {
+          "id": 6,
+          "name": "",
+          "type": "msbl_doublearrow",
+          "src": "标绘/icon/其他/multiArrow.svg"
+        },
+        {
+          "id": 7,
+          "name": "",
+          "type": "msbl_multiArrow",
+          "src": "标绘/icon/其他/multiArrow3.svg"
+        },
+        {
+          "id": 8,
+          "name": "",
+          "type": "msbl_multiArrow",
+          "src": "标绘/icon/其他/multiArrow4.svg"
+        },
+        {
+          "id": 9,
+          "name": "",
+          "type": "msbl_multiArrow",
+          "src": "标绘/icon/其他/multiArrow5.svg"
+        },
+        {
+          "id": 10,
+          "name": "",
+          "type": "msbl_singleArrow",
+          "src": "标绘/icon/其他/singleArrow1.svg"
+        },
+        {
+          "id": 11,
+          "name": "",
+          "type": "msbl_squadarrow",
+          "src": "标绘/icon/其他/singleArrow2.svg"
+        }
+      ]
+    },
+    {
+      "name": "新编规则",
+      "children": [
+        {
+          "id": 12,
+          "name": "",
+          "type": "simplepoint",
+          "src": "标绘/icon/新编规则/新修规则点.svg"
+        },
+        {
+          "id": 13,
+          "name": "",
+          "type": "simpleline",
+          "src": "标绘/icon/新编规则/新修规则线.svg"
+        },
+        {
+          "id": 14,
+          "name": "",
+          "type": "simpleline",
+          "src": "标绘/icon/新编规则/新修规则线填充.svg"
+        },
+        {
+          "id": 15,
+          "name": "",
+          "type": "simplearea",
+          "src": "标绘/icon/新编规则/新修规则面.svg"
+        }
+      ]
+    },
+    {
+      "name": "规则",
+      "children": [
+        {
+          "name": "一类区",
+          "children": [
+            {
+              "id": 16,
+              "name": "",
+              "type": "msbl_RegularSurface",
+              "src": "标绘/icon/规则/一类区/0401.svg"
+            },
+            {
+              "id": 17,
+              "name": "",
+              "type": "msbl_RegularSurface",
+              "src": "标绘/icon/规则/一类区/自定义贴地区.svg"
+            }
+          ]
+        },
+        {
+          "name": "一类线",
+          "children": [
+            {
+              "id": 18,
+              "name": "",
+              "type": "msbl_RegularLine1",
+              "src": "标绘/icon/规则/一类线/0201.svg"
+            },
+            {
+              "id": 19,
+              "name": "",
+              "type": "msbl_RegularLine1",
+              "src": "标绘/icon/规则/一类线/0202.svg"
+            },
+            {
+              "id": 20,
+              "name": "",
+              "type": "msbl_RegularLine1",
+              "src": "标绘/icon/规则/一类线/0203.svg"
+            },
+            {
+              "id": 21,
+              "name": "",
+              "type": "msbl_RegularLine1",
+              "src": "标绘/icon/规则/一类线/0204.svg"
+            }
+          ]
+        },
+        {
+          "name": "二类区",
+          "children": [
+            {
+              "id": 22,
+              "name": "",
+              "type": "msbl_KidneyArea",
+              "src": "标绘/icon/规则/二类区/0501.svg"
+            },
+            {
+              "id": 23,
+              "name": "",
+              "type": "msbl_KidneyArea",
+              "src": "标绘/icon/规则/二类区/0502.svg"
+            },
+            {
+              "id": 24,
+              "name": "",
+              "type": "msbl_KidneyArea",
+              "src": "标绘/icon/规则/二类区/0503.svg"
+            },
+            {
+              "id": 25,
+              "name": "",
+              "type": "msbl_KidneyArea",
+              "src": "标绘/icon/规则/二类区/事故控制区域.svg"
+            }
+          ]
+        },
+        {
+          "name": "二类线",
+          "children": [
+            {
+              "id": 26,
+              "name": "",
+              "type": "msbl_RegularLine2",
+              "src": "标绘/icon/规则/二类线/0301.svg"
+            },
+            {
+              "id": 27,
+              "name": "",
+              "type": "msbl_RegularLine2",
+              "src": "标绘/icon/规则/二类线/0302.svg"
+            },
+            {
+              "id": 28,
+              "name": "",
+              "type": "msbl_RegularLine2",
+              "src": "标绘/icon/规则/二类线/0303.svg"
+            },
+            {
+              "id": 29,
+              "name": "",
+              "type": "msbl_RegularLine2",
+              "src": "标绘/icon/规则/二类线/0304.svg"
+            },
+            {
+              "id": 30,
+              "name": "",
+              "type": "msbl_RegularLine2",
+              "src": "标绘/icon/规则/二类线/0305.svg"
+            },
+            {
+              "id": 31,
+              "name": "",
+              "type": "msbl_RegularLine2",
+              "src": "标绘/icon/规则/二类线/0306.svg"
+            },
+            {
+              "id": 32,
+              "name": "",
+              "type": "msbl_RegularLine2",
+              "src": "标绘/icon/规则/二类线/生态隔离线.svg"
+            }
+          ]
+        },
+        {
+          "name": "常规点",
+          "children": [
+            {
+              "id": 33,
+              "name": "",
+              "type": "msbl_regularpoint",
+              "src": "标绘/icon/规则/常规点/0101.svg"
+            },
+            {
+              "id": 34,
+              "name": "",
+              "type": "msbl_regularpoint",
+              "src": "标绘/icon/规则/常规点/0102.svg"
+            },
+            {
+              "id": 35,
+              "name": "",
+              "type": "msbl_regularpoint",
+              "src": "标绘/icon/规则/常规点/0103.svg"
+            },
+            {
+              "id": 36,
+              "name": "",
+              "type": "msbl_regularpoint",
+              "src": "标绘/icon/规则/常规点/0104.svg"
+            },
+            {
+              "id": 37,
+              "name": "",
+              "type": "msbl_regularpoint",
+              "src": "标绘/icon/规则/常规点/武警.svg"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

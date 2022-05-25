@@ -1,0 +1,33 @@
+﻿<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<svg width="200"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" version="1.1"
+    xmlns="http://www.w3.org/2000/svg" height="200"
+    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+    xmlns:cc="http://creativecommons.org/ns#" sodipodi:docname="03010105_1.svg" id="svg2" inkscape:version="0.91 r13725"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:svg="http://www.w3.org/2000/svg"
+    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape">
+    <sodipodi:namedview inkscape:zoom="1.18" objecttolerance="10" inkscape:window-x="0" inkscape:window-y="0" bordercolor="#666666" id="namedview18" inkscape:pageopacity="0" guidetolerance="10" inkscape:window-maximized="0" pagecolor="#ffffff" inkscape:window-width="640" showgrid="false" inkscape:cx="85.169492" inkscape:cy="100" inkscape:window-height="480" borderopacity="1" inkscape:pageshadow="2" gridtolerance="10" inkscape:current-layer="svg2"/>
+    <defs id="defs3009"/>
+    <msbl Angle="180" Attitude="0" AboveAxisIDs="g4157" xOrigin="0.10684096" Type="msbl_RegularLine1" yOrigin="0.50105795" Name="" id="dsc2994" Axis1_ID="g3205"/>
+    <_3D Model="" id="_3D3024"/>
+    <g origin="45,100" id="g3026">
+        <path FillColorSameAsStroke="1" style="fill:#ff0000;fill-opacity:1;stroke:none" id="path4175" d="M 45,112 0,100 45,88 Z"/>
+    </g>
+    <g id="g3205">
+        <path style="fill:none;stroke:#ff0000;stroke-width:8;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" id="path4177-8" d="m 200,100 -29,0 m -42,0 -23,0 m -42,0 -19,0"/>
+    </g>
+    <g id="g3206">
+        <path style="fill:none;stroke:#ff0000;stroke-width:7.99999952;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" id="path3862" d="m 106,90.000231 -31.422223,0 C 74.577777,90.000231 64,90.149373 64,100 c 0,9.85063 10.577777,10 10.577777,10 L 106,110 Z"/>
+    </g>
+    <g id="g3207">
+        <path style="fill:none;stroke:#ff0000;stroke-width:7.99999952;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" id="path3862-1" d="m 171,90.000229 -31.42222,0 c 0,0 -10.57778,0.149144 -10.57778,9.999771 0,9.85063 10.57778,10 10.57778,10 L 171,110 Z"/>
+    </g>
+    <g origin="57,100" id="g4157" transform="translate(-4,0)">
+        <path connector-curvature="0" nodetypes="ccccc" inkscape:connector-curvature="0" style="opacity:0.8;fill:#ffffff;fill-opacity:0.78431373;stroke:none;stroke-width:8;stroke-miterlimit:4;stroke-dasharray:none" id="path3033" d="m 57,17 0,32 65,0 0,-32 z"/>
+        <path connector-curvature="0" nodetypes="ccccc" inkscape:connector-curvature="0" style="fill:none;stroke:#ff0000;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" id="path3971" d="m 57,100 0,-83 65,0 0,32 -65,0"/>
+        <text x="79.262184" y="45.884533" sodipodi:linespacing="125%" style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:25.72963333px;line-height:125%;font-family:SimHei;-inkscape-font-specification:SimHei;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:8;stroke-miterlimit:4;stroke-dasharray:none" id="text3005" xml:space="preserve" linespacing="125%" transform="scale(1.1271478,0.88719509)">
+            <tspan x="79.262184" y="45.884533" role="line" id="tspan3007">国家</tspan>
+        </text>
+    </g>
+</svg>

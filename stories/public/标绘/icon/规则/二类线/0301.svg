@@ -1,0 +1,23 @@
+﻿<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<!-- Created with Inkscape (http://www.inkscape.org/) --><svg width="200"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" version="1.1" xmlns="http://www.w3.org/2000/svg"
+    height="200" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+    xmlns:cc="http://creativecommons.org/ns#" sodipodi:docname="02150200.svg" id="svg2" inkscape:version="0.91 r13725"
+    xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:svg="http://www.w3.org/2000/svg"
+    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape">
+    <sodipodi:namedview inkscape:zoom="1.18" objecttolerance="10" inkscape:window-x="-8" inkscape:window-y="-8"
+        bordercolor="#666666" id="namedview18" inkscape:pageopacity="0" guidetolerance="10"
+        inkscape:window-maximized="1" pagecolor="#ffffff" inkscape:window-width="1920" showgrid="false"
+        inkscape:cx="100" inkscape:cy="99.152542" inkscape:window-height="1023" borderopacity="1"
+        inkscape:pageshadow="2" gridtolerance="10" inkscape:current-layer="svg2" />
+    <msbl Angle="90" Attitude="1" ExtendIDs="g4208" Type="msbl_RegularLine2" Axis2_Y="0.5" Name="" id="dsc2994" />
+    <_3D Model="" id="_3D3024" />
+    <g UseStyle="Extend" id="g4208">
+        <path connector-curvature="0" nodetypes="cccc" inkscape:connector-curvature="0"
+            style="fill:none;fill-rule:evenodd;stroke:#ff0000;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:"
+            id="path4144" d="m 0,85 200,0" />
+        <path connector-curvature="0" nodetypes="cccc" inkscape:connector-curvature="0"
+            style="fill:none;fill-rule:evenodd;stroke:#ff0000;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:"
+            id="path4145" d="m 0,115 200,0" />
+    </g>
+</svg>

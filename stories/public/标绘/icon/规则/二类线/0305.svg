@@ -1,0 +1,18 @@
+﻿<?xml version='1.0' encoding='UTF-8' standalone='no'?><!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg width="200"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" version="1.1"
+    xmlns="http://www.w3.org/2000/svg" height="200"
+    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+    xmlns:cc="http://creativecommons.org/ns#" sodipodi:docname="02152605.svg" id="svg2" inkscape:version="0.91 r13725"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:svg="http://www.w3.org/2000/svg"
+    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape">
+    <defs id="defs9"/>
+    <sodipodi:namedview inkscape:zoom="3.337544" objecttolerance="10" inkscape:window-x="-8" inkscape:window-y="-8" bordercolor="#666666" id="namedview23" inkscape:pageopacity="0" guidetolerance="10" inkscape:window-maximized="1" pagecolor="#ffffff" inkscape:window-width="1920" showgrid="false" inkscape:cx="82.610708" inkscape:cy="93.079585" inkscape:window-height="1023" borderopacity="1" inkscape:pageshadow="2" gridtolerance="10" inkscape:current-layer="svg2"/>
+    <msbl Angle="90" Attitude="1" Type="msbl_RegularLine2" Axis2_Y="0.5" Name="" id="dsc2994"/>
+    <_3D Model="" id="_3D3024"/>
+    <path KeepColor="1" inkscape:connector-curvature="0" style="fill:#00c8c8;fill-opacity:0.32367147;stroke:none" id="path6792" d="M 145.85309,38.05642 56.14265,37.534745 c 3.156614,35.463848 6.381084,71.148895 -10.343382,115.029245 l 100.046642,0.51351 c 2.20809,-38.00077 2.38598,-76.316819 0.008,-115.02108 z"/>
+    <path KeepColor="1" style="fill:none;stroke:#00c8c8;stroke-width:1.99999988;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path6791" d="m 144.73145,37.665162 c 2.16224,38.704254 2.00056,77.020318 0,115.029228 M 55.024023,37.665162 c 3.134702,35.594269 6.065618,71.279328 -9.108939,115.029228"/>
+    <path sodipodi:nodetypes="cc" UseStyle="Extend" inkscape:connector-curvature="0" style="fill:none;stroke:#ff0000;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" id="path3818" d="m 0,105 200,0"/>
+    <path sodipodi:nodetypes="cc" UseStyle="Extend" inkscape:connector-curvature="0" style="fill:none;stroke:#ff0000;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:30, 4;stroke-dashoffset:0;stroke-opacity:1" id="path3818-3" d="m 0,90 200,0"/>
+</svg>
