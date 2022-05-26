@@ -929,7 +929,7 @@ export default {
                 mapPosition.y,
                 mapPosition.z
               ),
-              tolerance: 20,
+              tolerance: 0.0001,
               layerIndex: String(layerIndex)
             }
           );
