@@ -18,7 +18,8 @@ export default {
       bbox: undefined,
       entities: [],
       tempFilterEntities: [],
-      tempHighlightEntities: []
+      tempHighlightEntities: [],
+      tempHighlightInfos: undefined
     }
   },
   watch: {
@@ -44,8 +45,7 @@ export default {
     },
     highlightStyle: {
       handler(value) {
-        this.$_drawTheme(this.parseClick);
-        this.$_drawTheme(this.parseHover);
+        this.highlight(this.tempHighlightInfos);
       },
       deep: true
     },
@@ -114,11 +114,12 @@ export default {
     // 点击高亮实现
     highlight(payload) {
       const { entities, currentClickInfo } = payload;
-      const vm = this;
+      const pickEntity = entities[0].id;
       const { vueKey, vueIndex, vueCesium, highlightStyle } = this;
       const { point, line, polygon } = highlightStyle;
       let style;
-      vm.currentClickInfo = currentClickInfo;
+      this.currentClickInfo = currentClickInfo;
+      this.tempHighlightInfos = payload;
       let find = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
       if (!entities || entities.length <= 0 || !find) return;
       this.$_drawTheme(this.tempHighlightEntities);
@@ -126,7 +127,7 @@ export default {
       this.tempHighlightEntities = [];
       for (let i = 0; i < find.source.entities.values.length; i++) {
         let entity = find.source.entities.values[i];
-        if (entity.id == vm.activeId) {
+        if (entity.id == pickEntity.id) {
           this.tempHighlightEntities.push(entity);
           if (entity.billboard) {
             style = point;
