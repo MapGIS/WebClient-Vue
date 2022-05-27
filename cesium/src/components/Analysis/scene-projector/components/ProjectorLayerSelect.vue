@@ -209,6 +209,7 @@ export default {
   margin-bottom: 12px;
   position: absolute;
   z-index: 1000;
+  background: var(--data-card-background);
 }
 .card-content {
   line-height: 28px;

@@ -11,7 +11,7 @@
       :style="{
         paddingRight: paddingRight,
         marginLeft: marginLeft,
-        width: enableButton ? 'calc(100% - 142px)' : width
+        width: enableButton ? 'calc(100% - 154px)' : width
       }"
     >
       <mapgis-ui-input
@@ -169,7 +169,7 @@ export default {
 }
 
 .mapgis-ui-input-row-left-title {
-  width: 68px;
+  width: 80px;
   text-align: left;
   font-size: 12px;
   /* font-weight: bolder; */
