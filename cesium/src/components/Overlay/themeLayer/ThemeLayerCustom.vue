@@ -114,6 +114,7 @@ export default {
     // 点击高亮实现
     highlight(payload) {
       const { entities, currentClickInfo } = payload;
+      const pickEntity = entities[0].id;
       const { vueKey, vueIndex, vueCesium, highlightStyle } = this;
       const { point, line, polygon } = highlightStyle;
       let style;
@@ -126,7 +127,7 @@ export default {
       this.tempHighlightEntities = [];
       for (let i = 0; i < find.source.entities.values.length; i++) {
         let entity = find.source.entities.values[i];
-        if (entity.id == this.activeId) {
+        if (entity.id == pickEntity.id) {
           this.tempHighlightEntities.push(entity);
           if (entity.billboard) {
             style = point;

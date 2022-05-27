@@ -86,6 +86,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    enableHighlightHover: {
+      type: Boolean,
+      default: false,
+    },
     highlightStyle: {
       type: Object,
       default: () => {
@@ -167,12 +171,28 @@ export default {
     },
     parseClick(payload) {
       if (this.enableHighlight) this.highlight(payload);
-      this.$emit("themeClick", { entity: payload });
+      const { vueKey, vueIndex, vueCesium } = this;
+      let find = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
+      const pickEntity = payload.entities[0].id;
+      for (let i = 0; i < find.source.entities.values.length; i++) {
+        let entity = find.source.entities.values[i];
+        if (entity.id == pickEntity.id) {
+          this.$emit("themeClick", { entity: payload });
+        }
+      }
     },
     parseHover(payload) {
-      if (this.enableHighlight) this.highlight(payload);
+      if (this.enableHighlightHover) this.highlight(payload);
       if (this.enableTips) this.changePopup(payload);
-      this.$emit("themeHover", { entity: payload });
+      const { vueKey, vueIndex, vueCesium } = this;
+      let find = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
+      const pickEntity = payload.entities[0].id;
+      for (let i = 0; i < find.source.entities.values.length; i++) {
+        let entity = find.source.entities.values[i];
+        if (entity.id == pickEntity.id) {
+          this.$emit("themeHover", { entity: payload });
+        }
+      }
     },
     // 根据dataSource获取当前geojson的全部entities
     $_findAllEntities(dataSource) {
