@@ -3,14 +3,24 @@
     <mapgis-ui-plot-symbol
       :data="symbolData"
       @click="clickIcon"
+      @search="searchIcon"
       v-if="symbolData"
     ></mapgis-ui-plot-symbol>
-    <mapgis-ui-plot-attribute v-if="showAttribute"></mapgis-ui-plot-attribute>
+    <mapgis-ui-plot-attribute
+      class="attribute-panel"
+      v-if="showStylePanel"
+      v-model="styleData"
+      @changeComponentStyle="changeStyle"
+      @changeStyle="changeStyle"
+      :svg="svg"
+    ></mapgis-ui-plot-attribute>
   </div>
 </template>
 
 <script>
 import { SymbolManager, DrawTool } from "@mapgis/webclient-es6-service";
+import axios from "axios";
+
 export default {
   name: "mapgis-3d-plot",
   props: {
@@ -25,12 +35,23 @@ export default {
   },
   data() {
     return {
-      showAttribute: false,
       symbolData: undefined,
+      showStylePanel: false,
+      styleData: undefined,
+      // 图元绘制工具
       drawTool: undefined,
       // 符号管理器
       manager: undefined,
-      handler: undefined
+      handler: undefined,
+      // 符号
+      symbol: undefined,
+      symbols: undefined,
+      // 图元
+      plot: undefined,
+      // 记录是否完成绘制
+      isDraw: false,
+      svg: undefined,
+      searchResult: undefined
     };
   },
   mounted() {
@@ -38,22 +59,30 @@ export default {
   },
   methods: {
     mount() {
-      // const vm = this;
-      this.drawTool = new DrawTool(this.layer);
+      const vm = this;
+      this.drawTool = new DrawTool(this.layer, {
+        addedPlot: function(plot) {
+          vm.isDraw = true;
+          vm.plot = plot;
+        }
+      });
       this.getSymbol();
-      this.handler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
-      this.handler.setInputAction((ev)=>{
-        // vm.drawTool.stopDraw();
-        var primitive = viewer.scene.pick(ev.position);
-        console.log('primitive', primitive);
-        
-      },Cesium.ScreenSpaceEventType.RIGHT_CLICK)
+
+      this.layer.pickPlot = function(plot) {
+        vm.plot = plot;
+        // console.log('plot.getStyle()',plot.getStyle());
+
+        vm.parseStyleJson(plot.getStyle());
+      };
+      this.layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
     },
     getSymbol() {
       const vm = this;
       // console.log("symbolUrl", this.symbolUrl);
       this.manager = new SymbolManager(this.symbolUrl);
       this.manager.getSymbols().then(function(symbols) {
+        // console.log("symbols", symbols);
+        vm.symbols = [];
         viewer.scene.globe.depthTestAgainstTerrain = false;
         let symbolData = [];
         let symbolCls;
@@ -76,6 +105,7 @@ export default {
                 type: iconT,
                 icon: clsChildren[iconT]
               });
+              vm.symbols = [...vm.symbols, ...clsChildren[iconT]];
             });
           } else {
             symbolCls = {
@@ -86,17 +116,114 @@ export default {
                 }
               ]
             };
+            vm.symbols = [...vm.symbols, ...item.children];
           }
           symbolData.push(symbolCls);
         });
         vm.symbolData = symbolData;
       });
     },
-    clickIcon(data) {
-      let leaf = this.manager.getLeafByID(data.icon.id);
-      console.log("leaf", data.icon.id);
+    /**
+     * 获取符号对应svg
+     */
+    async getSvg(url) {
+      const res = await axios({
+        method: "get",
+        url: url,
+        dataType: "text",
+        timeout: 1000
+      });
+
+      const xml = await new DOMParser().parseFromString(
+        res.data,
+        "image/svg+xml"
+      );
+      return xml.documentElement;
+    },
+    async clickIcon(data) {
+      const vm = this;
+      this.isDraw = false;
+      this.svg = await this.getSvg(data.icon.src);
+      this.symbol = this.manager.getLeafByID(data.icon.id);
+      this.symbol.getElement().then(function(res) {
+        vm.symbol.style = res.getStyleJSON();
+        let json = res.getStyleJSON();
+        vm.parseStyleJson(json);
+      });
       this.drawTool.stopDraw();
-      this.drawTool.drawPlot(leaf);
+      this.drawTool.drawPlot(vm.symbol);
+    },
+    parseStyleJson(json) {
+      // console.log("json", json);
+      for (var node in json.nodeStyles) {
+        if (node.indexOf("tspan") === -1) {
+          json.nodeStyles[node]["strokeColor"] =
+            json.nodeStyles[node].strokeStyle;
+          delete json.nodeStyles[node].strokeStyle;
+        }
+      }
+      json = this.remove2dAttributes(json);
+      this.showStylePanel = true;
+      this.styleData = json;
+      // console.log("json", json);
+    },
+    remove2dAttributes(json) {
+      delete json.compareLine;
+      delete json.compareLineWidth;
+      delete json.compareLineColor;
+
+      for (var node in json.nodeStyles) {
+        if (node.indexOf("tspan") !== -1) {
+          delete json.nodeStyles[node].fontStyle;
+          delete json.nodeStyles[node].fontVariant;
+          delete json.nodeStyles[node].fontWeight;
+          delete json.nodeStyles[node].strokeStyle;
+          delete json.nodeStyles[node].lineWidth;
+        }
+
+        delete json.nodeStyles[node].lineCap;
+        delete json.nodeStyles[node].lineJoin;
+        delete json.nodeStyles[node].miterLimit;
+      }
+      return json;
+    },
+    changeStyle(e) {
+      if (e.key == "strokeColor") {
+        e.key = "strokeStyle";
+      }
+      if (e.name && this.isDraw) {
+        return this.plot.setStyle(e.key, e.value, e.name);
+      } else if (e.name && !this.isDraw) {
+        return (this.symbol.style.nodeStyles[e.name][e.key] = e.value);
+      }
+      return this.plot.setStyle(e.key, e.value);
+    },
+    searchIcon(e) {
+      //删除上次存储的查询结果
+      if (this.searchResult) {
+        this.symbolData.shift();
+      }
+
+      let result = this.symbols.filter(s => {
+        if (`${s.id}`.indexOf(e) > -1 || s.name.indexOf(e) > 1) return true;
+      });
+
+      if (result.length > 0) {
+        this.searchResult = {
+          children: [
+            {
+              type: "查询结果",
+              icon: result,
+              collapse: false
+            }
+          ]
+        };
+      } else {
+        this.searchResult = {
+          title: "没有查询到相应的图标！"
+        };
+      }
+      this.symbolData.unshift(this.searchResult);
     }
   }
 };
@@ -108,13 +235,12 @@ export default {
   left: 0px;
   top: 0px;
   background: #fff;
-  /* width: 320px; */
-  /* max-height: 400px; */
-  /* padding: 0 16px; */
-  /* border: 1px solid #fff; */
-  /* border-radius: 2px; */
-  /* box-shadow: 1px 1px 6px #f0f0f0; */
-  /* overflow-y: auto; */
-  /* overflow-x: hidden; */
+}
+
+.attribute-panel {
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  background: #fff;
 }
 </style>

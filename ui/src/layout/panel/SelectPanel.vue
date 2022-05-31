@@ -12,11 +12,23 @@
         </div>
       </mapgis-ui-col>
       <mapgis-ui-col :span="wrapperCol" class="right-panel">
-        <mapgis-ui-select v-model="selected" size="default">
-          <mapgis-ui-select-option v-for="item in selectOptions" :key="item">
-            {{ item }}
-          </mapgis-ui-select-option>
-        </mapgis-ui-select>
+        <template v-if="selectOptions.constructor == Array">
+          <mapgis-ui-select v-model="selected" size="default">
+            <mapgis-ui-select-option v-for="item in selectOptions" :key="item">
+              {{ item }}
+            </mapgis-ui-select-option>
+          </mapgis-ui-select>
+        </template>
+        <template v-else-if="selectOptions.constructor == Object">
+          <mapgis-ui-select v-model="selected" size="default">
+            <mapgis-ui-select-option
+              v-for="(value, key) in selectOptions"
+              :key="key"
+            >
+              {{ value }}
+            </mapgis-ui-select-option>
+          </mapgis-ui-select>
+        </template>
       </mapgis-ui-col>
     </mapgis-ui-row>
   </div>
@@ -35,11 +47,11 @@ export default {
       default: true
     },
     value: {
-      type: String,
+      type: [String, Number],
       default: ""
     },
     selectOptions: {
-      type: Array,
+      type: [Array, Object],
       default: () => {
         return [];
       }
@@ -71,7 +83,7 @@ export default {
   },
   data() {
     return {
-      selected: this.value
+      selected: this.selectOptions.constructor == Array ? this.value : this.selectOptions[this.value],
     };
   },
   methods: {}

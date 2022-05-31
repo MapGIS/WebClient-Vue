@@ -109,7 +109,9 @@ export default {
     onColorChange(val) {
       this.getPickColor(val);
       this.$emit("input", val, this.extraValue);
-      this.$emit("change", val.hex, this.extraValue);
+      let rgba = val.rgba;
+      let color = this.colorObjectToRgba(rgba, this.disableAlpha)
+      this.$emit("change", color, this.extraValue);
     },
     // 颜色拾取器选中事件回调
     getPickColor(val) {

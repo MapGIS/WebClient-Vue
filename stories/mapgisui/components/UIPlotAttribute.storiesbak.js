@@ -1,9 +1,9 @@
 import MapgisUiPlotAttribute from "../../../ui/src/components/plot/Attribute.vue";
-import dataT from '../../../ui/src/components/plot/test/attribute.json'
+import dataT from '../../../ui/src/components/plot/test/attributeOld.json'
 // import MarkDown from "../../../ui/docs/guide/base.md";
 
 export default {
-  title: "界面/标绘/属性设置(可配置)",
+  title: "界面/标绘/属性设置",
   component: MapgisUiPlotAttribute,
   argTypes: {
 
@@ -21,30 +21,36 @@ const Template = (args, { argTypes }) => ({
   template: `<div style="height:400px;">
     <mapgis-ui-plot-attribute 
       v-bind="$props" 
+      @changeJoin="join"
+      @changeCap="cap"
       @changeComponent="component"
+      @changeCompareLine="compare"
+      @changeWidth="width"
       @changeColor="color"
+      @changeOpacity="opacity"
       @changeText="text"
-      @changeBoolean="boolean"
-      @changeNumber="number"
-      @changeSelect="select"
-      @change="dataF"
+      @changeProperties="property"
+      @changeName="name"
     >
     </mapgis-ui-plot-attribute>
   </div>`,
   methods:{
-    dataF(e){
-      console.log('dataF',e);
+    join(e){
+      console.log('join',e);
+    },
+    cap(e){
+      console.log('cap',e);
     },
     component(e){
       console.log('component',e);
     },
-    boolean(e){
-      console.log('boolean',e);
+    compare(e){
+      console.log('compare',e);
     },
-    number(e){
-      console.log('number',e);
+    opacity(e){
+      console.log('opacity',e);
     },
-    select(e){
+    width(e){
       console.log('width',e);
     },
     color(e){
@@ -52,14 +58,19 @@ const Template = (args, { argTypes }) => ({
     },
     text(e){
       console.log('text',e);
+    },
+    property(e){
+      console.log('property',e);
+    },
+    name(e){
+      console.log('name',e);
     }
   }
 });
 
 export const Setting = Template.bind({});
 Setting.args = {
-  data: dataT,
-  // config: configT
+  data: dataT
 };
 
 // Setting.parameters = {

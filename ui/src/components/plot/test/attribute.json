@@ -1,62 +1,46 @@
 {
-    "id":"symbol-attribute",
-    "name":"符号属性",
-    "properties":{
-        "显示":true,
-        "符号类型": "msbl_RegularLine1",
-        "数字": 123
-    },
-    "components":[
-        {   
-            "title":"线部件",
-            "icon":"",
-            "style":{
-                "LineStyle":{
-                    "width": 1.0 ,
-                    "cap": "锐利",
-                    "join": "尖角",
-                    "color": "#0FFF00",
-                    "opacity": 1.0,
-                    "compareLine":"无衬线",
-                    "compareLineColor": "#00FF00",
-                    "compareLineWidth": 2.0
-                }
-            }
-        },        
-        {
-            "title":"箭头部件",
-            "icon":"",
-            "style":{
-                "LineStyle":{
-                    "width": 2.0 ,
-                    "cap": "锐利",
-                    "join": "圆角",
-                    "color": "#FFFF00",
-                    "opacity": 1.0,
-                    "compareLine":"内衬线",
-                    "compareLineColor": "#00FF00",
-                    "compareLineWidth": 2.0
-                },
-                "FillStyle":{
-                    "color": "#00FFFF",
-                    "opacity": 1.0,
-                    "outlineColor":"#00FF00",
-                    "outlineOpacity": 1.0,
-                    "outlineWidth": 2.0,
-                    "outlineJoin": "尖角",
-                    "compareLine":"内衬线",
-                    "compareLineColor": "#00FF00",
-                    "compareLineWidth": 2.0
-                },
-                "TextStyle":{
-                    "color": "#00FFFF",
-                    "opacity": 1.0,
-                    "text": "this is a test",
-                    "fontFamily": "Microsoft YaHei",
-                    "fontSize": "14px",
-                    "fontWeight": 400
-                }
-            }
+    "symbolId": 22,
+    "symbolName": "",
+    "show": true,
+    "featureId": "f73227b3-44b0-4040-8629-f89a0e992d74",
+    "compareLine": 0,
+    "compareLineWidth": 6,
+    "compareLineColor": "#099563",
+    "dimModHeight": 500,
+    "dimModAttitude": 1,
+    "isOpenWall": true,
+    "wallColor": "rgba(255,0,0,0.3)",
+    "nodeStyles": {
+        "tspan3918": {
+            "fillStyle": "rgba(0,0,0,1)",
+            "fillRule": "nonzero",
+            "fontStyle": "normal",
+            "fontVariant": "normal",
+            "fontWeight": "normal",
+            "fontSize": "15.86400509px",
+            "fontFamily": "\"Arial\"",
+            "strokeStyle": "none",
+            "lineCap": "butt",
+            "lineJoin": "miter",
+            "miterLimit": 4,
+            "lineWidth": 1
+        },
+        "path3000-17": {
+            "strokeColor": "rgba(255,0,0,1)",
+            "lineCap": "butt",
+            "lineJoin": "miter",
+            "miterLimit": 4,
+            "lineWidth": 10,
+            "fillRule": "nonzero"
+        },
+        "rect4184": {
+            "strokeColor": "rgba(255,0,0,1)",
+            "lineCap": "square",
+            "lineJoin": "miter",
+            "miterLimit": 4,
+            "lineWidth": 10,
+            "fillStyle": "rgba(255,255,255,0.5)",
+            "fillRule": "nonzero"
         }
-    ]
+    }
 }

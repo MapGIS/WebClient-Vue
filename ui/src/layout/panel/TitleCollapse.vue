@@ -1,6 +1,11 @@
 <template>
   <div class="mapgis-ui-title-collapse">
-    <mapgis-ui-group-tab :title="title" :isTitleBold="isTitleBold" :hasTopMargin="hasTopMargin" :hasBottomMargin="hasBottomMargin">
+    <mapgis-ui-group-tab
+      :title="title"
+      :isTitleBold="isTitleBold"
+      :hasTopMargin="hasTopMargin"
+      :hasBottomMargin="hasBottomMargin"
+    >
       <mapgis-ui-iconfont
         v-if="!innerCollapse"
         slot="front"
@@ -68,13 +73,20 @@ export default {
   },
   data() {
     return {
-      maxHeight: 40,
+      maxHeight: "0px",
       innerCollapse: this.collapse
     };
   },
   watch: {
     collapse(next) {
       this.innerCollapse = next;
+      const { height = "fit-content" } = this;
+
+      if (!this.innerCollapse) {
+        this.maxHeight = height;
+      } else {
+        this.maxHeight = "0px";
+      }
     }
   },
   mounted() {
@@ -84,7 +96,7 @@ export default {
     }
   },
   methods: {
-    changeCollapse () {
+    changeCollapse() {
       const vm = this;
       this.innerCollapse = !this.innerCollapse;
       const { height = "fit-content" } = this;

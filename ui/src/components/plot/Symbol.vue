@@ -8,7 +8,7 @@
           <mapgis-ui-title-collapse
             :title="icons.type"
             :key="key"
-            :collapse="collapse"
+            :collapse=" icons.collapse === undefined ? collapse : icons.collapse "
             :hasTopMargin="false"
             :hasBottomMargin="false"
             class="class-content"
