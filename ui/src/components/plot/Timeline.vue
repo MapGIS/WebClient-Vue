@@ -6,26 +6,31 @@
           :class="['play-btn', { 'btn-active': startBtn === true }]"
           type="mapgis-fuwei"
           @click.capture.stop="start"
+          v-if="enableStart"
         />
         <mapgis-ui-iconfont
           :class="['play-btn', { 'btn-active': backBtn === true }]"
           type="mapgis-arrow-left-filling"
           @click.capture.stop="backward"
+          v-if="enableBack"
         />
         <mapgis-ui-iconfont
           :class="['play-btn', { 'btn-active': pauseBtn === true }]"
           type="mapgis-pause"
           @click.capture.stop="pause"
+          v-if="enablePause"
         />
         <mapgis-ui-iconfont
           :class="['play-btn', { 'btn-active': forwardBtn === true }]"
           type="mapgis-arrow-right-filling"
           @click.capture.stop="forward"
+          v-if="enableForward"
         />
         <mapgis-ui-iconfont
           :class="['play-btn', { 'btn-active': endBtn === true }]"
           type="mapgis-zhongzhi"
           @click.capture.stop="end"
+          v-if="enableEnd"
         />
       </mapgis-ui-space>
 
@@ -136,12 +141,6 @@ export default {
       type: Number,
       default: 24
     },
-
-    // isPlaying: {
-    //   type: Boolean,
-    //   default: false
-    // },
-
     /** 选择的时间间隔 */
     interval: {
       type: String,
@@ -178,6 +177,27 @@ export default {
       type: Number,
       default: 50
     },
+    /**定义按钮的显示状态 */
+    enableStart: {
+      type: Boolean,
+      default: true
+    },
+    enableBack: {
+      type: Boolean,
+      default: true
+    },
+    enablePause: {
+      type: Boolean,
+      default: true
+    },
+    enableForward: {
+      type: Boolean,
+      default: true
+    },
+    enableEnd: {
+      type: Boolean,
+      default: true
+    },
     /**定义按钮的初始激活状态 */
     startActive: {
       type: Boolean,
@@ -199,6 +219,15 @@ export default {
       type: Boolean,
       default: false
     },
+    // 是否禁用暂停按钮的功能
+    disablePause: {
+      type: Boolean,
+      default: false
+    },
+    disableForward: {
+      type: Boolean,
+      default: false
+    },
     loop: {
       type: Boolean,
       default: false
@@ -209,6 +238,20 @@ export default {
     event: "change"
   },
   watch: {
+    disableForward: {
+      handler(next) {
+        this.disableForwardCopy = next;
+      },
+      deep: true,
+      immediate: true
+    },
+    disablePause: {
+      handler(next) {
+        this.disablePauseCopy = next;
+      },
+      deep: true,
+      immediate: true
+    },
     value: {
       handler(next) {
         this.valueCopy = next;
@@ -255,15 +298,9 @@ export default {
       },
       deep: true
     },
-    // isPlaying: {
-    //   handler(next) {
-    //     this.isPlayingCopy = next;
-    //   },
-    //   immediate: true
-    // },
-    resetActive: {
+    startActive: {
       handler(next) {
-        this.resetBtn = next;
+        this.startBtn = next;
       }
     },
     backActive: {
@@ -280,15 +317,18 @@ export default {
       handler(next) {
         this.pauseBtn = next;
       }
-    }
+    },
+    endActive: {
+      handler(next) {
+        this.endBtn = next;
+      }
+    },
   },
   data() {
     return {
       valueCopy: this.value,
       speedCopy: this.speed,
       intervalCopy: this.interval,
-
-      // isPlayingCopy: this.isPlaying,
 
       startBtn: this.startActive,
       backBtn: this.backActive,
@@ -302,7 +342,10 @@ export default {
       lasttime: undefined,
       curtime: undefined,
       showInterval: false,
-      width: undefined
+      // 时间轴的宽度
+      width: undefined,
+      disablePauseCopy: this.disablePause,
+      disableForwardCopy: this.disableForward
     };
   },
   created() {
@@ -310,9 +353,6 @@ export default {
   },
   mounted() {
     this.mount();
-
-    //实现时间轴的播放功能
-    // this.timelinePlay();
   },
   methods: {
     mount() {
@@ -347,38 +387,9 @@ export default {
         };
       };
     },
-    // timelinePlay() {
-    //   const vm = this;
-    //   let ele = document.querySelector(".timeline-needle");
-    //   let bar = document.querySelector(".timeline-bar");
-    //   let width = parseFloat(window.getComputedStyle(bar).width);
-    //   let left = parseFloat(ele.style.left) || 0;
-
-    //   //经过的时间（秒数）
-    //   vm.lasttime = vm.lasttime || Date.now();
-    //   vm.curtime = Date.now();
-    //   let diff = (vm.curtime - vm.lasttime) / 1000;
-    //   vm.lasttime = vm.curtime;
-    //   // console.log("diff", diff);
-    //   left += width * (diff / vm.duration);
-
-    //   if (left >= width) {
-    //     if (vm.loop) {
-    //       left = 0;
-    //     } else {
-    //       left = width;
-    //       cancelAnimationFrame(vm.raf);
-    //     }
-    //   }
-    //   ele.style.left = left + "px";
-    //   vm.percent = left / width;
-    //   vm.valueCopy = vm.percent * (vm.max - vm.min) + vm.min;
-
-    //   vm.raf = requestAnimationFrame(vm.timelinePlay);
-    // },
+    //实现时间轴的播放功能
     startPlay() {
       const vm = this;
-      this.isPlaying = true;
       //经过的时间（秒数）
       if (!this.lasttime) {
         this.lasttime = Date.now();
@@ -389,6 +400,7 @@ export default {
       this.lasttime = curtime;
       // console.log("diff", diff);
       if (this.forwardBtn) {
+        // 前进
         vm.valueCopy += (vm.max - vm.min) * (diff / vm.duration) * vm.speedCopy;
         if (vm.valueCopy >= vm.max) {
           if (vm.loop) {
@@ -396,18 +408,18 @@ export default {
           } else {
             vm.valueCopy = vm.max;
             vm.stopPlay();
-
             return;
           }
         }
       } else {
+        // 后退
         vm.valueCopy -= (vm.max - vm.min) * (diff / vm.duration) * vm.speedCopy;
         if (vm.valueCopy <= vm.min) {
           if (vm.loop) {
             vm.valueCopy = vm.max;
           } else {
             vm.valueCopy = vm.min;
-            vm.stopPlay();
+            vm.stopPlay();  
             return;
           }
         }
@@ -417,7 +429,6 @@ export default {
     },
     stopPlay() {
       const vm = this;
-      this.isPlaying = false;
       this.lasttime = undefined;
       cancelAnimationFrame(vm.raf);
     },
@@ -455,6 +466,9 @@ export default {
       this.startPlay();
     },
     pause() {
+      if(this.disablePauseCopy){
+        return;
+      }
       this.startBtn = false;
       this.backBtn = false;
       this.pauseBtn = true;
@@ -464,6 +478,9 @@ export default {
       this.stopPlay();
     },
     forward() {
+      if(this.disableForwardCopy){
+        return;
+      }
       this.startBtn = false;
       this.backBtn = false;
       this.pauseBtn = false;

@@ -15,6 +15,7 @@ const Template = (args, { argTypes }) => ({
     return {
       // terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/terrain",
       terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/武汉地形",
+      // terrainUrl: "http://192.168.81.98:6163/igs/rest/g3d/wuhan_srtm",
       m3dUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
       rasterUrl:"http://t4.tianditu.com/DataServer?T=img_w&L={z}&Y={y}&X={x}&tk=2ddaabf906d4b5418aed0078e1657029",
       maximumScreenSpaceError: 8,
@@ -22,13 +23,13 @@ const Template = (args, { argTypes }) => ({
       //ponding-simulation
       time: undefined,
       pond: undefined,
-      sliderValue: undefined,
+      cost: undefined,
       mltSpeed: undefined
     };
   },
   template: `
   <mapgis-web-scene
-        style="height: 100vh"
+        style="height: 95vh"
         v-on:load="handleLoad"
     >
         <mapgis-3d-raster-layer :url="rasterUrl" />
@@ -36,18 +37,17 @@ const Template = (args, { argTypes }) => ({
         <mapgis-3d-ponding-simulation
             ref="simulation"
             @isPonding="e=>{pond = e}"
-            @updateValue="e=>{sliderValue = e}"
+            @costTime="e=>{cost = e}"
             :pondingTime="time"
             :multiSpeed="mltSpeed"
             style="position: absolute; top: 10px; left: 10px;width:320px;"
         />
         <mapgis-3d-ponding-simulation-timeline 
-            :value="sliderValue" 
+            :costTime="cost" 
             :isPlaying="pond" 
             @updateTime="e=>{time = e}"
             @updateSpeed="e=>{mltSpeed = e}"
             @play="addSimulation"
-            style="position: absolute;bottom: 90px; right: 50%;margin-right:-280px;"
         />
     </mapgis-web-scene>
     `,

@@ -254,9 +254,9 @@ export default {
                 vm.rainOption = 3;
             }
         },
-        sliderValue:{
+        costTime:{
             handler:function(e){
-                this.$emit('updateValue',e)
+                this.$emit('costTime',e)
             },
             immediate:true
         },
@@ -284,7 +284,7 @@ export default {
     },
     data() {
         return {
-            sliderValue: 0,
+            costTime: 0,
 
             drawStyleCopy: {
                 color: "#FF8C00",
@@ -750,18 +750,18 @@ export default {
                 //下雨
                 vm.addrain();
                 vm.pond = true;
-                vm.sliderValue = 0;
+                vm.costTime = 0;
                 clearInterval(vm.timer);
 
                 //console.log('pondingTime',vm.pondingTime)
 
                 vm.timer = setInterval(() => {
-                    if (vm.sliderValue >= vm.pondingTime) {
+                    if (vm.costTime >= vm.pondingTime) {
                         clearInterval(vm.timer);
                         vm.removeRain();
                         vm.pond = false;    
                     }else{
-                        vm.sliderValue += 1 * vm.multiSpeed;
+                        vm.costTime += 1 * vm.multiSpeed;
                     }
                 }, 1000);
 
@@ -840,7 +840,7 @@ export default {
             this.removeRain();
             this.removeDraw();
             this.isSimulation = false;
-            this.sliderValue = 0;
+            this.costTime = 0;
             clearInterval(this.timer);
             this.loopCount = 0;
 

@@ -48,6 +48,7 @@
     .tab-item {
         width: 32px;
         height: 32px;
+        text-align: center;
         border: 1px solid $border-color-base;
         &:hover{
             border: 1px solid $success-color;
@@ -184,6 +185,8 @@
 
 .plot-timeline-panel {
     user-select: none;
+    display: flex;
+    justify-content: center;
     
     .timeline-setting-panel {
         height: 48px;
