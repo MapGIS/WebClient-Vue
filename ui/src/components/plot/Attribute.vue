@@ -254,6 +254,7 @@ export default {
     },
     $_parseComponent() {
       const vm = this;
+      if(!this.svg) console.log('缺少图标的svg元素！');
       let svgContainer = document.querySelectorAll(".tab-item");
       svgContainer.forEach(node => {
         let nodeL = node.querySelectorAll("svg");

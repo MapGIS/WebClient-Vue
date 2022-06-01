@@ -68,11 +68,15 @@ export default {
       });
       this.getSymbol();
 
-      this.layer.pickPlot = function(plot) {
+      this.layer.pickPlot = async function(plot) {
+        vm.isDraw = true;
         vm.plot = plot;
-        // console.log('plot.getStyle()',plot.getStyle());
-
-        vm.parseStyleJson(plot.getStyle());
+        // console.log('plot',plot);
+        vm.svg = vm.svg || await vm.getSvg(plot._elem._symbol._src);
+        vm.symbol = vm.symbol || plot._elem._symbol;
+        let json = plot.getStyle();
+        vm.symbol.style = vm.symbol.style || json;
+        vm.parseStyleJson(json);
       };
       this.layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
     },
