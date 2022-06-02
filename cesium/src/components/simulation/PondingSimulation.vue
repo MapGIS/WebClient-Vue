@@ -841,6 +841,7 @@ export default {
             this.removeDraw();
             this.isSimulation = false;
             this.costTime = 0;
+            this.pond = false;
             clearInterval(this.timer);
             this.loopCount = 0;
 

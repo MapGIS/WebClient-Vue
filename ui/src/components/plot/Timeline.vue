@@ -76,7 +76,7 @@
     </div>
 
     <div class="timeline-main">
-      <div class="timeline-bar">
+      <div class="timeline-bar" ref="timebar">
         <div
           class="time-tick time-tick-lg"
           v-for="item in [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220]"
@@ -100,7 +100,7 @@
         <div class="time-tick time-tick-lg-last">
           <span class="time-mark">240</span>
         </div>
-        <div class="timeline-needle">
+        <div class="timeline-needle" style="left: 0px;">
           <img src="./style/images/u196.png" class="timeline-needle-top" />
           <!-- <mapgis-ui-iconfont type="mapgis-down" class="timeline-needle-top" /> -->
           <div class="timeline-needle-bottom"></div>
@@ -220,6 +220,10 @@ export default {
       default: false
     },
     // 是否禁用暂停按钮的功能
+    disableBackward: {
+      type: Boolean,
+      default: false
+    },
     disablePause: {
       type: Boolean,
       default: false
@@ -241,6 +245,13 @@ export default {
     disableForward: {
       handler(next) {
         this.disableForwardCopy = next;
+      },
+      deep: true,
+      immediate: true
+    },
+    disableBackward: {
+      handler(next) {
+        this.disableBackwardCopy = next;
       },
       deep: true,
       immediate: true
@@ -344,6 +355,7 @@ export default {
       showInterval: false,
       // 时间轴的宽度
       width: undefined,
+      disableBackwardCopy: this.disableBackward,
       disablePauseCopy: this.disablePause,
       disableForwardCopy: this.disableForward
     };
@@ -357,11 +369,13 @@ export default {
   methods: {
     mount() {
       const vm = this;
-      let bar = document.querySelector(".timeline-bar");
-      vm.width = parseFloat(window.getComputedStyle(bar).width);
+      // let bar = document.querySelector(".timeline-bar");
+      vm.width = vm.$refs.timebar.clientWidth ;
+      // console.log("vm.$refs.width", vm.$refs.timebar.clientWidth);
+      // console.log("window.getComputedStyle(bar).width", window.getComputedStyle(bar).width);
+      // console.log("parseFloat(window.getComputedStyle(bar).width || 0) ", parseFloat(window.getComputedStyle(bar).width || 0) );
       window.onresize = function() {
-        let bar = document.querySelector(".timeline-bar");
-        vm.width = parseFloat(window.getComputedStyle(bar).width);
+        vm.width = vm.$refs.timebar.clientWidth ;
       };
 
       //实现时间轴的拖拽功能
@@ -386,6 +400,8 @@ export default {
           document.onmousemove = null;
         };
       };
+
+      this.$emit('loaded',this);
     },
     //实现时间轴的播放功能
     startPlay() {
@@ -411,7 +427,7 @@ export default {
             return;
           }
         }
-      } else {
+      } else if (this.backBtn) {
         // 后退
         vm.valueCopy -= (vm.max - vm.min) * (diff / vm.duration) * vm.speedCopy;
         if (vm.valueCopy <= vm.min) {
@@ -437,7 +453,8 @@ export default {
       let ele = document.querySelector(".timeline-needle");
       let width = this.width;
       let left = this.percent * width;
-      ele.style.left = left + "px";
+      // console.log("width, left", width, left);
+      document.querySelector(".timeline-needle").style.left = left + "px";
     },
     closeIntervalPanel() {
       const vm = this;
@@ -457,6 +474,10 @@ export default {
       this.valueCopy = this.min;
     },
     backward() {
+      if (this.disableBackwardCopy) {
+        this.$emit("backward");
+        return;
+      }
       this.startBtn = false;
       this.backBtn = true;
       this.pauseBtn = false;
@@ -466,7 +487,8 @@ export default {
       this.startPlay();
     },
     pause() {
-      if(this.disablePauseCopy){
+      if (this.disablePauseCopy) {
+        this.$emit("pause");
         return;
       }
       this.startBtn = false;
@@ -478,7 +500,8 @@ export default {
       this.stopPlay();
     },
     forward() {
-      if(this.disableForwardCopy){
+      if (this.disableForwardCopy) {
+        this.$emit("forward");
         return;
       }
       this.startBtn = false;

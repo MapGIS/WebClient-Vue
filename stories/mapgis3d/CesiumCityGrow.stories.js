@@ -20,10 +20,12 @@ const Template = (args, { argTypes }) => ({
     }
   },
   template: `
-    <mapgis-web-scene style="height:95vh"
-                      v-on:load="handleLoad">
+    <mapgis-web-scene 
+      style="height:95vh"
+      v-on:load="handleLoad"
+    >
         <mapgis-rastertile-layer v-if="false" layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
-        <mapgis-3d-city-grow  v-bind="$props"  style="position: absolute; bottom: 10px; left: 10px;"/>
+        <mapgis-3d-city-grow  v-bind="$props"/>
     </mapgis-web-scene>
     `,
 });
@@ -31,7 +33,7 @@ const Template = (args, { argTypes }) => ({
 export const cityGrow = Template.bind({});
 cityGrow.args = {
   // width:720,
-  baseUrl:"http://192.168.21.191:6163/igs/rest/mrfs/docs/shengZhenBaiMo/0/0",
+  baseUrl:"http://192.168.199.71:8089/igs/rest/mrfs/docs/shengZhenBaiMo/0/0",
   featureStyle:{
     startTimeField:"startTime",
     endTimeField:"endTime",
