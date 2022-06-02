@@ -217,13 +217,11 @@ export default {
   position: absolute;
   left: 0px;
   top: 0px;
-  background: #fff;
 }
 
 .attribute-panel {
   position: fixed;
   top: 0px;
   right: 0px;
-  background: #fff;
 }
 </style>

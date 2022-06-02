@@ -1,6 +1,9 @@
 <template>
   <div>
     <div class="plot-script-panel">
+      <mapgis-ui-group-tab title="<< 返回脚本列表" :isTitleBold="false" size="small">
+      </mapgis-ui-group-tab>
+      <mapgis-ui-divider />
       <mapgis-ui-group-tab
         :title="nameCopy"
         :isTitleBold="false"
@@ -8,14 +11,12 @@
         v-if="!editState"
       >
         <mapgis-ui-space :size="16" slot="handle">
-          <!-- <img src="./style/images/u40.svg" class="icon"/> -->
-          <img
-            src="./style/images/u372.svg"
+          <mapgis-ui-iconfont
+            type="mapgis-play-circle-fill"
             class="icon-lg"
             @click="playScript"
           />
-          <img src="./style/images/u128.svg" class="icon" @click="editScript" />
-          <!-- <img src="./style/images/u127.svg" class="icon"/> -->
+          <mapgis-ui-iconfont type="mapgis-bianji" class="icon" @click="editScript" />
         </mapgis-ui-space>
       </mapgis-ui-group-tab>
       <mapgis-ui-group-tab 

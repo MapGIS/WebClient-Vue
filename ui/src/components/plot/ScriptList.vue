@@ -1,50 +1,56 @@
 <template>
-  <div>
-    <div class="plot-script-list-panel">
-      <mapgis-ui-list
-        item-layout="horizontal"
-        size="small"
-        :data-source="scriptListCopy"
-        :split="false"
-      >
-        <mapgis-ui-list-item
-          :class="{ 'list-active': activeIndex === index }"
-          :key="index"
-          slot="renderItem"
-          slot-scope="item, index"
-          @click="clickScript(index)"
+  <div class="plot-script-list-panel">
+    <mapgis-ui-tabs
+      :animated="false"
+      :tabBarStyle="{ marginBottom: '8px' }"
+      default-active-key="1"
+    >
+      <mapgis-ui-space slot="tabBarExtraContent" :size="16">
+        <mapgis-ui-iconfont type="mapgis-daoru"></mapgis-ui-iconfont>
+        <mapgis-ui-iconfont type="mapgis-daochu"></mapgis-ui-iconfont>
+      </mapgis-ui-space>
+      <mapgis-ui-tab-pane key="1" tab="脚本列表" class="control-content">
+        <mapgis-ui-list
+          item-layout="horizontal"
+          size="small"
+          :data-source="scriptListCopy"
+          :split="false"
         >
-          <mapgis-ui-group-tab
-            :title="item.name"
-            :isTitleBold="false"
-            :hasTopMargin="false"
-            :hasBottomMargin="false"
-            v-if="!editState"
+          <mapgis-ui-list-item
+            :class="{ 'list-active': activeIndex === index }"
+            :key="index"
+            slot="renderItem"
+            slot-scope="item, index"
+            @click="clickScript(index)"
           >
-            <mapgis-ui-space :size="16" slot="handle" >
-              <img src="./style/images/u40.svg" class="icon" @click="play(index)"/>
-              <img
-                src="./style/images/u128.svg"
-                class="icon"
-                @click="edit(index)"
-              />
-              <img src="./style/images/u127.svg" class="icon" @click="remove(index)"/>
-            </mapgis-ui-space>
-          </mapgis-ui-group-tab>
-        </mapgis-ui-list-item>
-      </mapgis-ui-list>
-      <mapgis-ui-group-tab
-        title="添加脚本"
-        :isTitleBold="false"
-        :hasTopMargin="false"
-        class="plot-script-list-panel-footer"
-        @click="addScript"
-      >
-        <div slot="front" class="front">
-          <img src="./style/images/u77.svg" class="icon" />
-        </div>
-      </mapgis-ui-group-tab>
-    </div>
+            <mapgis-ui-group-tab
+              :title="item.name"
+              :isTitleBold="false"
+              :hasTopMargin="false"
+              :hasBottomMargin="false"
+              v-if="!editState"
+            >
+              <mapgis-ui-space :size="16" slot="handle">
+                <mapgis-ui-iconfont type="mapgis-play-circle-fill" class="icon-lg" @click="play(index)"/>
+                <mapgis-ui-iconfont type="mapgis-bianji" class="icon" @click="edit(index)"/>
+                <mapgis-ui-iconfont type="mapgis-shanchu" class="icon" @click="remove(index)"/>
+              </mapgis-ui-space>
+            </mapgis-ui-group-tab>
+          </mapgis-ui-list-item>
+        </mapgis-ui-list>
+        <mapgis-ui-group-tab
+          title="添加脚本"
+          :isTitleBold="false"
+          :hasTopMargin="false"
+          class="plot-script-list-panel-footer"
+          @click="addScript"
+        >
+          <div slot="front" class="front">
+            <img src="./style/images/u77.svg" class="icon" />
+          </div>
+        </mapgis-ui-group-tab>
+      </mapgis-ui-tab-pane>
+    </mapgis-ui-tabs>
   </div>
 </template>
 

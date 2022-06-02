@@ -16,6 +16,7 @@
         overflow-y: auto;
         overflow-x: hidden;
         user-select: none;
+        background-color: $card-background;
     }
 }
 
@@ -34,14 +35,18 @@
 
 .front {
     padding-right: 4px;
+    display: flex;
 }
 
 .icon{
     width: 16px;
     height: 16px;
+    font-size: 16px;
     &-lg {
-        width: 24px;
-        height: 24px;
+        width: 22px;
+        height: 22px;
+        font-size: 22px;
+        display: block;
     }
 }
 
@@ -89,6 +94,10 @@
 }
 
 .plot-script-panel {
+
+    .mapgis-ui-divider{
+        margin: 0px;
+    }
 
     &-header {
         padding: 0 8px;

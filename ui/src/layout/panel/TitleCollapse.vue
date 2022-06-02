@@ -5,19 +5,18 @@
       :isTitleBold="isTitleBold"
       :hasTopMargin="hasTopMargin"
       :hasBottomMargin="hasBottomMargin"
+      @click.native="changeCollapse"
     >
       <mapgis-ui-iconfont
         v-if="!innerCollapse"
         slot="front"
         type="mapgis-chevrons-up"
-        @click="changeCollapse"
         class="front"
       />
       <mapgis-ui-iconfont
         v-else
         slot="front"
         type="mapgis-chevrons-down"
-        @click="changeCollapse"
         class="front"
       />
     </mapgis-ui-group-tab>
