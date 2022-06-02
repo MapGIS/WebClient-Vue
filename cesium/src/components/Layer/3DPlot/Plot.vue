@@ -12,14 +12,12 @@
       v-model="styleData"
       @changeComponentStyle="changeStyle"
       @changeStyle="changeStyle"
-      :svg="svg"
     ></mapgis-ui-plot-attribute>
   </div>
 </template>
 
 <script>
 import { SymbolManager, DrawTool } from "@mapgis/webclient-es6-service";
-import axios from "axios";
 
 export default {
   name: "mapgis-3d-plot",
@@ -50,7 +48,6 @@ export default {
       plot: undefined,
       // 记录是否完成绘制
       isDraw: false,
-      svg: undefined,
       searchResult: undefined
     };
   },
@@ -72,11 +69,10 @@ export default {
         vm.isDraw = true;
         vm.plot = plot;
         // console.log('plot',plot);
-        vm.svg = vm.svg || await vm.getSvg(plot._elem._symbol._src);
         vm.symbol = vm.symbol || plot._elem._symbol;
         let json = plot.getStyle();
         vm.symbol.style = vm.symbol.style || json;
-        vm.parseStyleJson(json);
+        vm.parseStyleJson(json, plot._elem._symbol._src);
       };
       this.layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
     },
@@ -127,37 +123,19 @@ export default {
         vm.symbolData = symbolData;
       });
     },
-    /**
-     * 获取符号对应svg
-     */
-    async getSvg(url) {
-      const res = await axios({
-        method: "get",
-        url: url,
-        dataType: "text",
-        timeout: 1000
-      });
-
-      const xml = await new DOMParser().parseFromString(
-        res.data,
-        "image/svg+xml"
-      );
-      return xml.documentElement;
-    },
     async clickIcon(data) {
       const vm = this;
       this.isDraw = false;
-      this.svg = await this.getSvg(data.icon.src);
       this.symbol = this.manager.getLeafByID(data.icon.id);
       this.symbol.getElement().then(function(res) {
         vm.symbol.style = res.getStyleJSON();
         let json = res.getStyleJSON();
-        vm.parseStyleJson(json);
+        vm.parseStyleJson(json, data.icon.src);
       });
       this.drawTool.stopDraw();
       this.drawTool.drawPlot(vm.symbol);
     },
-    parseStyleJson(json) {
+    parseStyleJson(json, svgUrl) {
       // console.log("json", json);
       for (var node in json.nodeStyles) {
         if (node.indexOf("tspan") === -1) {
@@ -166,6 +144,7 @@ export default {
           delete json.nodeStyles[node].strokeStyle;
         }
       }
+      json["symbolUrl"] = svgUrl;
       json = this.remove2dAttributes(json);
       this.showStylePanel = true;
       this.styleData = json;

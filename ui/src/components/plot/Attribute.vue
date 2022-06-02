@@ -175,6 +175,7 @@
 
 <script>
 import { styleAttributes, groupArr } from "./test/config";
+import axios from 'axios';
 
 export default {
   name: "mapgis-ui-plot-attribute",
@@ -234,6 +235,7 @@ export default {
       styleAttributes: this.attributeConfig,
       active: 0,
       nodesName: undefined,
+      svgT: undefined,
       componentName: undefined,
       group: undefined
     };
@@ -252,9 +254,14 @@ export default {
         }
       }
     },
-    $_parseComponent() {
+    async $_parseComponent() {
       const vm = this;
-      if(!this.svg) console.log('缺少图标的svg元素！');
+      this.svgT = this.svg || await this.getSvg(this.dataCopy.symbolUrl);
+      // console.log('this.svgT', this.svgT, this.dataCopy.symbolUrl);
+      
+      if(!this.svgT) {
+        return console.log('缺少符号的svg元素！')}
+      ;
       let svgContainer = document.querySelectorAll(".tab-item");
       svgContainer.forEach(node => {
         let nodeL = node.querySelectorAll("svg");
@@ -265,10 +272,28 @@ export default {
 
       let keyArr = Object.keys(vm.dataCopy[vm.nodesName]);
       keyArr.forEach((key, index) => {
-        let svgDom = vm.svg;
+        let svgDom = vm.svgT;
         const cloneDom = vm.getSvgDomByKey(svgDom, key, 30, 30);
         svgContainer[index].appendChild(cloneDom);
       });
+    },
+        /**
+     * 获取符号对应svg
+     */
+    async getSvg(url) {
+      if(!url){ return console.log("缺少符号的svgUrl")}
+      const res = await axios({
+        method: "get",
+        url: url,
+        dataType: "text",
+        timeout: 1000
+      });
+
+      const xml = await new DOMParser().parseFromString(
+        res.data,
+        "image/svg+xml"
+      );
+      return xml.documentElement;
     },
     getSvgDomByKey(svgDom, key, width, height) {
       const cloneDom = svgDom.cloneNode(true);
@@ -310,6 +335,7 @@ export default {
         }
       });
     },
+    // 根据传入的数据决定渲染的分类
     $_parseGroup() {
       const vm = this;
       let nodeObj = {};
@@ -332,6 +358,7 @@ export default {
       }
       // console.log("vm.group", vm.group);
     },
+    // 切换部件
     changeComponent(nodeStyle, name, index) {
       this.active = index;
       this.componentName = name;
