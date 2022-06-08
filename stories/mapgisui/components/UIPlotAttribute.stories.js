@@ -1,6 +1,7 @@
 import MapgisUiPlotAttribute from "../../../ui/src/components/plot/Attribute.vue";
 import dataT from '../../../ui/src/components/plot/test/attribute.json'
 // import MarkDown from "../../../ui/docs/guide/base.md";
+import '../../style/card.css'
 
 export default {
   title: "界面/标绘/属性设置(可配置)",
@@ -28,6 +29,7 @@ const Template = (args, { argTypes }) => ({
       @changeNumber="number"
       @changeSelect="select"
       @change="dataF"
+      class="storybook-ui-panel"
     >
     </mapgis-ui-plot-attribute>
   </div>`,

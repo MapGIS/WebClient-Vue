@@ -12,10 +12,10 @@
     <defs id="defs3009" />
     <msbl Angle="180" Attitude="0" AboveAxisIDs="g3205,g3215" Type="msbl_RegularLine2" Axis2_Y="0.5" Name=""
         id="dsc2994" />
-<!--    <_3D Model="" id="_3D3024" />-->
+    <_3D Model="" id="_3D3024" />
     <g UseStyle="Duplicate" id="g3215">
         <path
-            style="fill:none;fill-rule:evenodd;stroke:#ffff00;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+            style="fill:none;fill-rule:evenodd;stroke:#ff0000;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
             id="path4137" d="M 42,60 58,90 M 158,60 142,90" />
     </g>
     <g UseStyle="Duplicate" id="g3205">

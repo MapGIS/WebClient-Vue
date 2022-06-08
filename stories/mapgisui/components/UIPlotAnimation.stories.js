@@ -1,6 +1,7 @@
 import MapgisUiPlotAnimation from "../../../ui/src/components/plot/Animation.vue";
 import animationL from '../../../ui/src/components/plot/test/animation.json'
 // import MarkDown from "../../../ui/docs/guide/base.md";
+import '../../style/card.css'
 
 export default {
   title: "界面/标绘/动画设置",
@@ -22,6 +23,7 @@ const Template = (args, { argTypes }) => ({
     <mapgis-ui-plot-animation 
       v-bind="$props" 
       @change="animationD"
+      class="storybook-ui-panel"
     >
     </mapgis-ui-plot-animation>
   </div>`,

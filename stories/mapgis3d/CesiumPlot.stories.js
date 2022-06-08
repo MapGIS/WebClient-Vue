@@ -1,10 +1,7 @@
-import {
-  PlotLayer3DGroup,
-  PlotLayer3D,
-} from "@mapgis/webclient-es6-service";
 import Mapgis3dPlot from "../../cesium/src/components/Layer/3DPlot/Plot.vue";
+import Mapgis3dPlotLayer from "../../cesium/src/components/Layer/3DPlot/PlotLayer.vue";
+import '../style/card.css'
 // import Markdown from "../../cesium/docs/api/layer/Graphic/GraphicLayer.md";
-import axios from "axios";
 
 export default {
   title: "三维/图层/标绘",
@@ -14,15 +11,17 @@ export default {
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { Mapgis3dPlot },
+  components: { Mapgis3dPlot,Mapgis3dPlotLayer },
   template: `<mapgis-web-scene style="height:95vh" @load="handleLoad">
-      <mapgis-3d-plot v-bind="$props" :layer="layer1"/>
+        <mapgis-3d-plot-layer @loaded="handleLoaded" :dataSource="jsonUrl"></mapgis-3d-plot-layer>
+        <mapgis-3d-plot v-bind="$props" :layer="layer1" v-if="layer1" class="storybook-ui-card"/>
   </mapgis-web-scene>`,
   data() {
     return {
       layer1: undefined,
       Cesium: undefined,
-      viewer: undefined
+      viewer: undefined,
+      jsonUrl: "http://localhost:8895/标绘/test.json",
     };
   },
   methods: {
@@ -30,24 +29,10 @@ const Template = (args, { argTypes }) => ({
       const { component,Cesium } = e;
       this.Cesium = Cesium;
       this.viewer = component.viewer;
-      // console.log('eee',e);
-      let plotLayerMap = new PlotLayer3DGroup(this.viewer);
-      this.layer1 = new PlotLayer3D(this.Cesium, this.viewer);
-      plotLayerMap.addLayer(this.layer1);
-
-      this.getData();
     },
-
-    async getData(){
-      const res = await axios({
-        method: "get",
-        url: 'http://localhost:8895/标绘/test.json',
-        dataType: "text",
-        timeout: 1000
-      });
-      console.log('res',res);
-      this.layer1.fromJSON(res.data);
-    }
+    handleLoaded(e) {
+      this.layer1 = e.layer;
+    },
   },
 });
 

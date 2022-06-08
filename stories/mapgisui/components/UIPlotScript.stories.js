@@ -1,6 +1,7 @@
 import MapgisUiPlotScript from "../../../ui/src/components/plot/Script.vue";
 import animationL from '../../../ui/src/components/plot/test/animation.json'
 // import MarkDown from "../../../ui/docs/guide/base.md";
+import '../../style/card.css'
 
 export default {
   title: "界面/标绘/脚本",
@@ -20,6 +21,7 @@ const Template = (args, { argTypes }) => ({
   template: `<div style="height:400px;">
     <mapgis-ui-plot-script 
       v-bind="$props" 
+      class="storybook-ui-panel"
     >
     </mapgis-ui-plot-script>
   </div>`,

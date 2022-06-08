@@ -22,10 +22,10 @@
             r="11.0" id="circle5072" />
     </g>
     <g zondyPlotSymbolItem:pose="1" zondyPlotSymbolItem:type="13"    zondyPlotSymbolItem:markerOrigin="57,100" id="g4157">
-        <path
+        <path 
             style="opacity:0.8;fill:#ffffff;fill-opacity:0.78431373;stroke:none;stroke-width:13.99164867;stroke-miterlimit:4;stroke-dasharray:none"
             id="path3033" d="m 57,17 0,32 65,0 0,-32 z" />
-        <path
+        <path 
             style="fill:none;stroke:#ff0000;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
             id="path3971" d="m 57,100 0,-83 65,0 0,32 -65,0" />
         <text x="79.262184" y="45.884533"
@@ -45,10 +45,10 @@
             style="fill:none;fill-rule:evenodd;stroke:#ff0000;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
             id="path4178" d="M 0,100 100,50 200,100" />
     </g> -->
-    <g zondyPlotSymbolItem:pose="0" zondyPlotSymbolItem:type="11"  style="fill:none;fill-opacity:1;stroke:#ff0000;stroke-opacity:1" id="g4137">
+     <!-- <g zondyPlotSymbolItem:pose="0" zondyPlotSymbolItem:type="11"  style="fill:none;fill-opacity:1;stroke:#ff0000;stroke-opacity:1" id="g4137">
         <path  style="fill:none;fill-rule:evenodd;stroke:#ff0000;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1" id="path4174" d="m 0,60 200,0"/>
         <path  style="fill:none;fill-rule:evenodd;stroke:#ff0000;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1" id="path4174-6" d="m 0,105 200,0"/>
-    </g>
+    </g> -->
     <!-- <path zondyPlotSymbolItem:pose="0" zondyPlotSymbolItem:type="13"  style="fill:none;fill-rule:evenodd;stroke:#ff0000;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" id="path4221" d="m 5,55 0,95"/> -->
     <!-- <path zondyPlotSymbolItem:pose="0" zondyPlotSymbolItem:type="13" style="fill:none;fill-rule:evenodd;stroke:#ff0000;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" id="path4221-2" d="m 195,55 0,95"/> -->
 </svg>

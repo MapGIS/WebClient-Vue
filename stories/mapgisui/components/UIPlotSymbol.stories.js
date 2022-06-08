@@ -1,6 +1,7 @@
 import MapgisUiPlotSymbol from "../../../ui/src/components/plot/Symbol.vue";
 import symbolD from '../../../ui/src/components/plot/test/symbol.json'
 // import MarkDown from "../../../ui/docs/guide/base.md";
+import '../../style/card.css'
 
 export default {
   title: "界面/标绘/图标配置",
@@ -19,7 +20,8 @@ const Template = (args, { argTypes }) => ({
   },
   template: `<div style="height:400px;">
     <mapgis-ui-plot-symbol 
-      v-bind="$props" 
+      v-bind="$props"  
+      class="storybook-ui-panel"
     >
     </mapgis-ui-plot-symbol>
   </div>`,

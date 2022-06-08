@@ -28,7 +28,7 @@
 import { SymbolManager, DrawTool } from "@mapgis/webclient-es6-service";
 
 export default {
-  name: "mapgis-3d-plot",
+  name: "mapgis-2d-plot",
   props: {
     layer: {
       type: Object,
@@ -39,6 +39,14 @@ export default {
       required: true
     }
   },
+  // watch: {
+  //   layer: {
+  //     handler: function(lyr) {
+  //       console.log('layer---',lyr);
+  //     },
+  //     immediate: true,
+  //   }
+  // },
   data() {
     return {
       symbolData: undefined,
@@ -60,7 +68,9 @@ export default {
     };
   },
   mounted() {
-    this.mount();
+    // if (this.layer) {
+      this.mount();
+    // }
   },
   methods: {
     mount() {
@@ -73,7 +83,7 @@ export default {
       });
       this.getSymbol();
 
-      this.layer.pickPlot = async function(plot) {
+      this.layer.pickPlot = function(plot) {
         vm.isDraw = true;
         vm.plot = plot;
         // console.log('plot',plot);
@@ -82,7 +92,7 @@ export default {
         vm.symbol.style = vm.symbol.style || json;
         vm.parseStyleJson(json, plot._elem._symbol._src);
       };
-      this.layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
+      // this.layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
     },
     getSymbol() {
       const vm = this;
@@ -91,7 +101,6 @@ export default {
       this.manager.getSymbols().then(function(symbols) {
         // console.log("symbols", symbols);
         vm.symbols = [];
-        viewer.scene.globe.depthTestAgainstTerrain = false;
         let symbolData = [];
         let symbolCls;
         symbols.children.forEach(item => {
@@ -129,15 +138,18 @@ export default {
           symbolData.push(symbolCls);
         });
         vm.symbolData = symbolData;
+        // console.log("vm.symbolData", vm.symbolData);
       });
     },
-    async clickIcon(data) {
+    clickIcon(data) {
       const vm = this;
       this.isDraw = false;
       this.symbol = this.manager.getLeafByID(data.icon.id);
       this.symbol.getElement().then(function(res) {
         vm.symbol.style = res.getStyleJSON();
         let json = res.getStyleJSON();
+        // console.log('styleJson', json);
+
         vm.parseStyleJson(json, data.icon.src);
       });
       this.drawTool.stopDraw();
@@ -153,29 +165,17 @@ export default {
         }
       }
       json["symbolUrl"] = svgUrl;
-      json = this.remove2dAttributes(json);
+      json = this.remove3dAttributes(json);
       this.showStylePanel = true;
       this.styleData = json;
       // console.log("json", json);
     },
-    remove2dAttributes(json) {
-      delete json.compareLine;
-      delete json.compareLineWidth;
-      delete json.compareLineColor;
+    remove3dAttributes(json) {
+      delete json.dimModHeight;
+      delete json.dimModAttitude;
+      delete json.isOpenWall;
+      delete json.wallColor;
 
-      for (var node in json.nodeStyles) {
-        if (node.indexOf("tspan") !== -1) {
-          delete json.nodeStyles[node].fontStyle;
-          delete json.nodeStyles[node].fontVariant;
-          delete json.nodeStyles[node].fontWeight;
-          delete json.nodeStyles[node].strokeStyle;
-          delete json.nodeStyles[node].lineWidth;
-        }
-
-        delete json.nodeStyles[node].lineCap;
-        delete json.nodeStyles[node].lineJoin;
-        delete json.nodeStyles[node].miterLimit;
-      }
       return json;
     },
     changeStyle(e) {
