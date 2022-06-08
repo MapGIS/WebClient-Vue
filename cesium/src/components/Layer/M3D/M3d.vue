@@ -263,10 +263,20 @@ export default {
     },
     unmount() {
       const { vueCesium, vueKey, vueIndex } = this;
-      this.unbindSource();
+      this.removeLayer();
+      // 直接调用cesium底层MapGISM3DSet的destroy方法会导致地球卡死的问题，目前改用统一的layers管理图层，移除图层并销毁内存中的资源
+      // this.unbindSource();
       this.unbindPopupEvent();
       this.$emit("unload", { component: this });
       vueCesium.M3DIgsManager.deleteSource(vueKey, vueIndex);
+    },
+    removeLayer() {
+      const { url, layerIndex } = this;
+      if (url.indexOf('SceneServer') != -1) {
+        viewer.scene.layers.removeSceneLayerByID(layerIndex);
+      } else {
+        viewer.scene.layers.removeM3DLayerByID(layerIndex);
+      }
     },
     unbindSource() {
       const { viewer, vueCesium, vueKey, vueIndex } = this;
