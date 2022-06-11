@@ -100,7 +100,20 @@ export const 综合查询 = Template.bind({});
       showType: "normal",
       clusterMaxCount: "1000",
       allSearchName: "NAME",
-      allShows: "NAME:名称,ADDRESS:地址,TELEPHONE:联系方式,PAC:邮政编码",
+      defaultShowField: [
+        {
+          fieldName: "ADDRESS",
+          showName: "地址",
+        },
+        {
+          fieldName: "TELEPHONE",
+          showName: "联系方式",
+        },
+        {
+          fieldName: "PAC",
+          showName: "邮政编码",
+        },
+      ],
       queryTable: [
         {
           gdbp:
@@ -161,21 +174,17 @@ export const 综合查询 = Template.bind({});
             "TO_STATEID",
             "mpLayer",
           ],
-          showAttrsAndTitle: [
+          showField: [
             {
-              attr: "NAME",
+              fieldName: "NAME",
               showName: "名称",
             },
             {
-              attr: "ADDRESS",
+              fieldName: "ADDRESS",
               showName: "地址",
             },
             {
-              attr: "TELEPHONE",
-              showName: "联系方式",
-            },
-            {
-              attr: "PAC",
+              fieldName: "PAC",
               showName: "邮政编码",
             },
           ],
@@ -239,22 +248,18 @@ export const 综合查询 = Template.bind({});
             "TO_STATEID",
             "mpLayer",
           ],
-          showAttrsAndTitle: [
+          showField: [
             {
-              attr: "NAME",
+              fieldName: "NAME",
               showName: "名称",
             },
             {
-              attr: "ADDRESS",
+              fieldName: "ADDRESS",
               showName: "地址",
             },
             {
-              attr: "TELEPHONE",
+              fieldName: "TELEPHONE",
               showName: "联系方式",
-            },
-            {
-              attr: "PAC",
-              showName: "邮政编码",
             },
           ],
           allUse: false,
@@ -318,24 +323,7 @@ export const 综合查询 = Template.bind({});
             "TO_STATEID",
             "mpLayer",
           ],
-          showAttrsAndTitle: [
-            {
-              attr: "NAME",
-              showName: "名称",
-            },
-            {
-              attr: "ADDRESS",
-              showName: "地址",
-            },
-            {
-              attr: "TELEPHONE",
-              showName: "联系方式",
-            },
-            {
-              attr: "PAC",
-              showName: "邮政编码",
-            },
-          ],
+          showField: [],
           allUse: false,
         },
         {
@@ -394,21 +382,21 @@ export const 综合查询 = Template.bind({});
             "TO_STATEID",
             "mpLayer",
           ],
-          showAttrsAndTitle: [
+          showField: [
             {
-              attr: "NAME",
+              fieldName: "NAME",
               showName: "名称",
             },
             {
-              attr: "ADDRESS",
+              fieldName: "ADDRESS",
               showName: "地址",
             },
             {
-              attr: "TELEPHONE",
+              fieldName: "TELEPHONE",
               showName: "联系方式",
             },
             {
-              attr: "PAC",
+              fieldName: "PAC",
               showName: "邮政编码",
             },
           ],
@@ -472,21 +460,21 @@ export const 综合查询 = Template.bind({});
             "TO_STATEID",
             "mpLayer",
           ],
-          showAttrsAndTitle: [
+          showField: [
             {
-              attr: "NAME",
+              fieldName: "NAME",
               showName: "名称",
             },
             {
-              attr: "ADDRESS",
+              fieldName: "ADDRESS",
               showName: "地址",
             },
             {
-              attr: "TELEPHONE",
+              fieldName: "TELEPHONE",
               showName: "联系方式",
             },
             {
-              attr: "PAC",
+              fieldName: "PAC",
               showName: "邮政编码",
             },
           ],
@@ -570,21 +558,21 @@ export const 综合查询 = Template.bind({});
             "TO_STATEID",
             "mpLayer",
           ],
-          showAttrsAndTitle: [
+          showField: [
             {
-              attr: "NAME",
+              fieldName: "NAME",
               showName: "名称",
             },
             {
-              attr: "ADDRESS",
+              fieldName: "ADDRESS",
               showName: "地址",
             },
             {
-              attr: "TELEPHONE",
+              fieldName: "TELEPHONE",
               showName: "联系方式",
             },
             {
-              attr: "PAC",
+              fieldName: "PAC",
               showName: "邮政编码",
             },
           ],
@@ -649,21 +637,21 @@ export const 综合查询 = Template.bind({});
             "TO_STATEID",
             "mpLayer",
           ],
-          showAttrsAndTitle: [
+          showField: [
             {
-              attr: "NAME",
+              fieldName: "NAME",
               showName: "名称",
             },
             {
-              attr: "ADDRESS",
+              fieldName: "ADDRESS",
               showName: "地址",
             },
             {
-              attr: "TELEPHONE",
+              fieldName: "TELEPHONE",
               showName: "联系方式",
             },
             {
-              attr: "PAC",
+              fieldName: "PAC",
               showName: "邮政编码",
             },
           ],
@@ -728,21 +716,21 @@ export const 综合查询 = Template.bind({});
             "TO_STATEID",
             "mpLayer",
           ],
-          showAttrsAndTitle: [
+          showField: [
             {
-              attr: "NAME",
+              fieldName: "NAME",
               showName: "名称",
             },
             {
-              attr: "ADDRESS",
+              fieldName: "ADDRESS",
               showName: "地址",
             },
             {
-              attr: "TELEPHONE",
+              fieldName: "TELEPHONE",
               showName: "联系方式",
             },
             {
-              attr: "PAC",
+              fieldName: "PAC",
               showName: "邮政编码",
             },
           ],
@@ -807,21 +795,21 @@ export const 综合查询 = Template.bind({});
             "TO_STATEID",
             "mpLayer",
           ],
-          showAttrsAndTitle: [
+          showField: [
             {
-              attr: "NAME",
+              fieldName: "NAME",
               showName: "名称",
             },
             {
-              attr: "ADDRESS",
+              fieldName: "ADDRESS",
               showName: "地址",
             },
             {
-              attr: "TELEPHONE",
+              fieldName: "TELEPHONE",
               showName: "联系方式",
             },
             {
-              attr: "PAC",
+              fieldName: "PAC",
               showName: "邮政编码",
             },
           ],
@@ -886,21 +874,21 @@ export const 综合查询 = Template.bind({});
             "TO_STATEID",
             "mpLayer",
           ],
-          showAttrsAndTitle: [
+          showField: [
             {
-              attr: "NAME",
+              fieldName: "NAME",
               showName: "名称",
             },
             {
-              attr: "ADDRESS",
+              fieldName: "ADDRESS",
               showName: "地址",
             },
             {
-              attr: "TELEPHONE",
+              fieldName: "TELEPHONE",
               showName: "联系方式",
             },
             {
-              attr: "PAC",
+              fieldName: "PAC",
               showName: "邮政编码",
             },
           ],
@@ -965,21 +953,21 @@ export const 综合查询 = Template.bind({});
             "TO_STATEID",
             "mpLayer",
           ],
-          showAttrsAndTitle: [
+          showField: [
             {
-              attr: "NAME",
+              fieldName: "NAME",
               showName: "名称",
             },
             {
-              attr: "ADDRESS",
+              fieldName: "ADDRESS",
               showName: "地址",
             },
             {
-              attr: "TELEPHONE",
+              fieldName: "TELEPHONE",
               showName: "联系方式",
             },
             {
-              attr: "PAC",
+              fieldName: "PAC",
               showName: "邮政编码",
             },
           ],
