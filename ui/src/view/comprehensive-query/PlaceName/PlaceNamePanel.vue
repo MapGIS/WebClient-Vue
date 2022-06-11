@@ -146,15 +146,18 @@ export default {
   },
   beforeCreate() {},
   mounted() {
-    const { showAttrsAndTitle } = this.selectedItem;
+    let { showField } = this.selectedItem;
+    if (showField.length<=0) {
+      showField = this.config.defaultShowField
+    }
     const fields = [];
     const configs = [];
-    for (let j = 0; j < showAttrsAndTitle.length; j += 1) {
-      const filed = showAttrsAndTitle[j].attr;
+    for (let j = 0; j < showField.length; j += 1) {
+      const filed = showField[j].fieldName;
       fields.push(filed);
       configs.push({
         name: filed,
-        title: showAttrsAndTitle[j].showName,
+        title: showField[j].showName,
       });
     }
     this.fieldConfigs = configs;
