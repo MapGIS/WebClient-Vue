@@ -1,11 +1,15 @@
 <template>
   <div>
     <div class="plot-script-panel">
-      <mapgis-ui-group-tab title="<< 返回脚本列表" :isTitleBold="false" size="small">
+      <mapgis-ui-group-tab
+        title="<< 返回脚本列表"
+        :isTitleBold="false"
+        size="small"
+      >
       </mapgis-ui-group-tab>
       <mapgis-ui-divider />
       <mapgis-ui-group-tab
-        :title="nameCopy"
+        :title="animationListCopy.timeLineName || '脚本名称'"
         :isTitleBold="false"
         class="plot-script-panel-header"
         v-if="!editState"
@@ -16,20 +20,21 @@
             class="icon-lg"
             @click="playScript"
           />
-          <mapgis-ui-iconfont type="mapgis-bianji" class="icon" @click="editScript" />
+          <mapgis-ui-iconfont
+            type="mapgis-bianji"
+            class="icon"
+            @click="editScript"
+          />
         </mapgis-ui-space>
       </mapgis-ui-group-tab>
-      <mapgis-ui-group-tab 
-        class="script-title-edit"
-        v-else 
-      >
+      <mapgis-ui-group-tab class="script-title-edit" v-else>
         <mapgis-ui-input v-model="nameToEdit" size="small" slot="title" />
         <mapgis-ui-space :size="16" slot="handle">
           <mapgis-ui-iconfont
             type="mapgis-check"
             @click="
               () => {
-                nameCopy = nameToEdit;
+                animationListCopy.timeLineName = nameToEdit;
                 editState = false;
               }
             "
@@ -45,7 +50,7 @@
         class="plot-script-panel-content"
         item-layout="horizontal"
         size="small"
-        :data-source="animationListCopy"
+        :data-source="animationListCopy.animations"
         :split="false"
       >
         <mapgis-ui-list-item
@@ -55,7 +60,7 @@
           slot-scope="item, index"
           @click="editAnimation(index)"
         >
-          <div class="list-item">{{ item.name }}</div>
+          <div class="list-item">{{ item.animationName }}</div>
         </mapgis-ui-list-item>
       </mapgis-ui-list>
 
@@ -78,63 +83,64 @@
               :key="index"
               @click="addAnimation(key)"
             >
-              {{ key }}
+              {{ value }}
             </mapgis-ui-menu-item>
           </mapgis-ui-menu>
         </template>
       </mapgis-ui-dropdown>
+      <mapgis-ui-divider v-if="activeIndex !== undefined" />
     </div>
-    <!-- <mapgis-ui-divider></mapgis-ui-divider> -->
     <mapgis-ui-plot-animation
-      :animationList="defaultAnimation"
-      v-model="animationListCopy[activeIndex].animation"
+      v-model="animationListCopy.animations[activeIndex]"
       v-if="activeIndex !== undefined"
     ></mapgis-ui-plot-animation>
   </div>
 </template>
 
 <script>
+import { LOG } from '../../view/clouddisk/util/fileType';
 export default {
   name: "mapgis-ui-plot-script",
   props: {
-    name: {
-      type: String,
-      default: "脚本"
-    },
     animationList: {
-      type: Array
-    },
-    defaultAnimation: {
-      type: Object
+      type: Object,
+      required: true
     }
   },
   watch: {
     animationList: {
-      handler: function(arr) {
-        this.animationListCopy = arr;
+      handler: function(obj) {
+        this.animationListCopy = obj;
       },
       deep: true,
       immediate: true
     },
-    animationListCopy: {
-      handler: function(arr) {
-        console.log(arr);
-        this.$emit("change", arr);
-      },
-      deep: true,
-      immediate: true
-    }
+    // animationListCopy: {
+    //   handler: function(obj) {
+    //     this.$emit("change", obj);
+    //   },
+    //   deep: true,
+    //   immediate: true
+    // }
   },
   created() {
     this.animationListCopy = this.animationList;
   },
   data() {
     return {
-      nameCopy: this.name,
-      animationListCopy: this.animationList,
+      animationListCopy: undefined,
       activeIndex: undefined,
       editState: false,
-      nameToEdit: this.nameCopy
+      nameToEdit: '',
+      defaultAnimation: {
+        none: "无动画",
+        "scale-animation": "比例动画",
+        "attribute-animation": "属性动画",
+        "visible-animation": "显隐动画",
+        "blink-animation": "闪烁动画",
+        "grow-animation": "生长动画",
+        "path-animation": "路径动画"
+      }
     };
   },
   methods: {
@@ -143,21 +149,24 @@ export default {
       this.$emit("play");
     },
     editScript() {
-      this.nameToEdit = this.nameCopy;
+      this.nameToEdit = this.animationListCopy.timeLineName;
       this.editState = true;
       this.$emit("edit");
     },
     editAnimation(index) {
+      console.log('11');
+      
       this.activeIndex = index;
     },
-    addAnimation(animationType) {
+    addAnimation(type) {
       const vm = this;
-      // console.log("add",animationType);
-      this.animationListCopy.push({
-        name: "动画" + (vm.animationListCopy.length + 1),
-        animation: { [animationType]: vm.defaultAnimation[animationType] }
-      });
-      this.activeIndex = vm.animationListCopy.length - 1;
+      console.log("add",type);
+      let animation = {
+        animationName: "动画" + (vm.animationListCopy.animations.length + 1),
+        animationType: type
+      };
+      this.animationListCopy.animations.push(animation);
+      this.activeIndex = this.animationListCopy.animations.length - 1;
     }
   }
 };

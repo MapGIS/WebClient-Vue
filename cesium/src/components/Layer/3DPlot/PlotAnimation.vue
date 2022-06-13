@@ -64,7 +64,7 @@ export default {
       manager.getSymbols().then(function() {
         vm.timeline = new TimeLine(vm.layers, {});
         axios.get(vm.data).then(res => {
-          console.log("timeline", vm.data, res);
+          // console.log("timeline", vm.data, res.data);
 
           vm.timeline.fromJSON(res.data);
         });
@@ -74,6 +74,7 @@ export default {
       this.timeline.restore();
     },
     backward() {
+      this.timeline.play();
       this.timeline.reversed(true);
     },
     pause() {
@@ -81,6 +82,7 @@ export default {
     },
     forward() {
       this.timeline.play();
+      this.timeline.reversed(false);
     },
     end() {},
     setSpeed(e) {
