@@ -305,4 +305,5 @@ export { default as MapgisUiPlotScriptList } from "./components/plot/ScriptList.
 export { default as MapgisUiPlotSymbol } from "./components/plot/Symbol.vue";
 export { default as MapgisUiSvgManager } from "./components/plot/SVGManager.vue";
 export { default as MapgisUiSVGSettingPanel } from "./components/plot/SVGSettingPanel.vue";
+export { default as MapgisUiFileManager } from "./components/plot/FileManager.vue";
 export { default as MapgisUiPlotTimeline } from "./components/plot/Timeline.vue";
