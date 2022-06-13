@@ -174,7 +174,7 @@
 </template>
 
 <script>
-import { styleAttributes, groupArr } from "./test/config";
+import { styleAttributes, groupArr } from "./test/attributeConfig";
 import axios from 'axios';
 
 export default {

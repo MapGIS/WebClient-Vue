@@ -55,6 +55,7 @@
 
 <script>
 import { uuid } from "../../util/common/util";
+import { rgbToHex } from "../../util/common/color-util.js";
 
 export default {
   name: "mapgis-ui-colors-setting",
@@ -109,11 +110,19 @@ export default {
     },
     tableData: {
       handler: function() {
+        const vm = this;
         this.emitValue = this.tableData.map(({ min, max, color }) => ({
           min,
           max,
           color
         }));
+        if (this.value instanceof Array) {
+          this.emitValue = [];
+          this.tableData.forEach(item => {
+            let hex = rgbToHex(item.color);
+            vm.emitValue.push(hex);
+          });
+        }
         this.$emit('change', this.emitValue);
         this.$emit("input", this.emitValue);
       },
@@ -163,6 +172,7 @@ export default {
      * 初始化列表数据
      */
     initTableData() {
+      const vm = this;
       if (!this.value || this.value.length === 0) {
         return;
       }
@@ -172,6 +182,15 @@ export default {
         max,
         color
       }));
+      if (this.value instanceof Array) {
+        this.tableData = [];
+        this.value.forEach(color => {
+          vm.tableData.push({
+            key: uuid(),
+            color: color
+          });
+        });
+      }
     },
 
     /**

@@ -4,7 +4,7 @@ import '../style/card.css'
 // import Markdown from "../../cesium/docs/api/layer/Graphic/GraphicLayer.md";
 
 export default {
-  title: "三维/图层/标绘",
+  title: "三维/图层/标绘/三维标绘",
   component: Mapgis3dPlot,
   argTypes: {},
 };

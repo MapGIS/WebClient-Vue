@@ -1,8 +1,12 @@
 <template>
-  <span/>
+  <span />
 </template>
 <script>
-import { PlotLayer2DGroup, PlotLayer2D } from "@mapgis/webclient-es6-service";
+import {
+  PlotLayer2DGroup,
+  PlotLayer2D,
+  SymbolManager
+} from "@mapgis/webclient-es6-service";
 import { FabricLayer } from "@mapgis/webclient-es6-mapboxgl";
 import axios from "axios";
 
@@ -57,7 +61,7 @@ export default {
     },
     show: {
       handler: function(val) {
-        if(!this.layer || !this.layers) return;
+        if (!this.layer || !this.layers) return;
         if (val) {
           this.layers.removeLayer(this.layer);
           this.layers.addLayer(this.layer);
@@ -75,12 +79,18 @@ export default {
   methods: {
     mount() {
       const { map } = this;
-      const canvas = new FabricLayer(map, PlotLayer2DGroup);
-      this.layers = this.layers || canvas.getFabricCanvas();
-      this.layer = this.layer || new PlotLayer2D();
-      this.layers.addLayer(this.layer);
-
-      this.$emit("loaded", { component: this, layer: this.layer });
+      const vm = this;
+      let manager = new SymbolManager(
+        "http://localhost:8895/标绘/symbols.json"
+      );
+      manager.getSymbols().then(function() {
+        const canvas = new FabricLayer(map, PlotLayer2DGroup);
+        vm.layers = vm.layers || canvas.getFabricCanvas();
+        vm.layer = vm.layer || new PlotLayer2D();
+        vm.layers.addLayer(vm.layer);
+        
+        vm.$emit("loaded", { component: vm, layer: vm.layer });
+      });
     },
     async $_getData(url) {
       const res = await axios({
@@ -104,7 +114,14 @@ export default {
      * @return {*}
      */
     fromJSON(json) {
-      console.log('fromJSON',json);
+      // console.log("fromJSON", json);
+      // const vm = this;
+      // let manager = new SymbolManager(
+      //   "http://localhost:8895/标绘/symbols.json"
+      // );
+      // manager.getSymbols().then(function() {
+      //   vm.layer && vm.layer.fromJSON(json);
+      // });
       this.layer && this.layer.fromJSON(json);
     },
     /**

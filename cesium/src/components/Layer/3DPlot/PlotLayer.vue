@@ -1,9 +1,13 @@
 <template>
-  <span/>
+  <span />
 </template>
 
 <script>
-import { PlotLayer3DGroup, PlotLayer3D } from "@mapgis/webclient-es6-service";
+import {
+  PlotLayer3DGroup,
+  PlotLayer3D,
+  SymbolManager
+} from "@mapgis/webclient-es6-service";
 import axios from "axios";
 
 export default {
@@ -28,7 +32,7 @@ export default {
     pickEventType: {
       type: Number,
       default() {
-        const {Cesium} = this;
+        const { Cesium } = this;
         return Cesium.ScreenSpaceEventType.LEFT_CLICK;
       }
     },
@@ -58,7 +62,8 @@ export default {
     dataSource: {
       handler: async function(json) {
         if (!json) return;
-        if (!this.layer) this.layer = this.layer || new PlotLayer3D(this.Cesium, this.viewer);
+        if (!this.layer)
+          this.layer = this.layer || new PlotLayer3D(this.Cesium, this.viewer);
         if (typeof json === "string") {
           let data = await this.$_getData(json);
           return this.fromJSON(data);
@@ -87,7 +92,7 @@ export default {
     },
     show: {
       handler: function(val) {
-        if(!this.layer || !this.layers) return;
+        if (!this.layer || !this.layers) return;
         if (val) {
           this.layers.removeLayer(this.layer);
           this.layers.addLayer(this.layer);
@@ -110,11 +115,18 @@ export default {
   methods: {
     mount() {
       const { viewer, Cesium } = this;
-      this.layers = this.layers || new PlotLayer3DGroup(viewer);
-      this.layer = this.layer || new PlotLayer3D(Cesium, viewer);
-      this.layers.addLayer(this.layer);
+      const vm = this;
+      let manager = new SymbolManager(
+        "http://localhost:8895/标绘/symbols.json"
+      );
+      manager.getSymbols().then(function() {
+        viewer.scene.globe.depthTestAgainstTerrain = false;
+        vm.layers = vm.layers || new PlotLayer3DGroup(viewer);
+        vm.layer = vm.layer || new PlotLayer3D(Cesium, viewer);
+        vm.layers.addLayer(vm.layer);
 
-      this.$emit("loaded", { component: this, layer: this.layer });
+        vm.$emit("loaded", { component: vm, layer: vm.layer });
+      });
     },
     async $_getData(url) {
       const res = await axios({
@@ -139,6 +151,13 @@ export default {
      * @return {*}
      */
     fromJSON(json) {
+      // const vm = this;
+      // let manager = new SymbolManager(
+      //   "http://localhost:8895/标绘/symbols.json"
+      // );
+      // manager.getSymbols().then(function() {
+      //   vm.layer.fromJSON(json);
+      // });
       this.layer.fromJSON(json);
     },
     /**

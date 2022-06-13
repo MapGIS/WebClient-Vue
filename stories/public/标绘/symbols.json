@@ -73,39 +73,28 @@
       ]
     },
     {
-      "name": "新编扩展",
-      "children": [
-        {
-          "id": 12,
-          "name": "",
-          "type": "simpleline",
-          "src": "标绘/icon/新编扩展/工具线.svg"
-        }
-      ]
-    },
-    {
       "name": "新编规则",
       "children": [
         {
-          "id": 13,
+          "id": 12,
           "name": "",
           "type": "simplepoint",
           "src": "标绘/icon/新编规则/新修规则点.svg"
         },
         {
-          "id": 14,
+          "id": 13,
           "name": "",
           "type": "simpleline",
           "src": "标绘/icon/新编规则/新修规则线.svg"
         },
         {
-          "id": 15,
+          "id": 14,
           "name": "",
           "type": "simpleline",
           "src": "标绘/icon/新编规则/新修规则线填充.svg"
         },
         {
-          "id": 16,
+          "id": 15,
           "name": "",
           "type": "simplearea",
           "src": "标绘/icon/新编规则/新修规则面.svg"
@@ -119,13 +108,13 @@
           "name": "一类区",
           "children": [
             {
-              "id": 17,
+              "id": 16,
               "name": "",
               "type": "msbl_RegularSurface",
               "src": "标绘/icon/规则/一类区/0401.svg"
             },
             {
-              "id": 18,
+              "id": 17,
               "name": "",
               "type": "msbl_RegularSurface",
               "src": "标绘/icon/规则/一类区/自定义贴地区.svg"
@@ -136,25 +125,25 @@
           "name": "一类线",
           "children": [
             {
-              "id": 19,
+              "id": 18,
               "name": "",
               "type": "msbl_RegularLine1",
               "src": "标绘/icon/规则/一类线/0201.svg"
             },
             {
-              "id": 20,
+              "id": 19,
               "name": "",
               "type": "msbl_RegularLine1",
               "src": "标绘/icon/规则/一类线/0202.svg"
             },
             {
-              "id": 21,
+              "id": 20,
               "name": "",
               "type": "msbl_RegularLine1",
               "src": "标绘/icon/规则/一类线/0203.svg"
             },
             {
-              "id": 22,
+              "id": 21,
               "name": "",
               "type": "msbl_RegularLine1",
               "src": "标绘/icon/规则/一类线/0204.svg"
@@ -165,25 +154,25 @@
           "name": "二类区",
           "children": [
             {
-              "id": 23,
+              "id": 22,
               "name": "",
               "type": "msbl_KidneyArea",
               "src": "标绘/icon/规则/二类区/0501.svg"
             },
             {
-              "id": 24,
+              "id": 23,
               "name": "",
               "type": "msbl_KidneyArea",
               "src": "标绘/icon/规则/二类区/0502.svg"
             },
             {
-              "id": 25,
+              "id": 24,
               "name": "",
               "type": "msbl_KidneyArea",
               "src": "标绘/icon/规则/二类区/0503.svg"
             },
             {
-              "id": 26,
+              "id": 25,
               "name": "",
               "type": "msbl_KidneyArea",
               "src": "标绘/icon/规则/二类区/事故控制区域.svg"
@@ -194,43 +183,43 @@
           "name": "二类线",
           "children": [
             {
-              "id": 27,
+              "id": 26,
               "name": "",
               "type": "msbl_RegularLine2",
               "src": "标绘/icon/规则/二类线/0301.svg"
             },
             {
-              "id": 28,
+              "id": 27,
               "name": "",
               "type": "msbl_RegularLine2",
               "src": "标绘/icon/规则/二类线/0302.svg"
             },
             {
-              "id": 29,
+              "id": 28,
               "name": "",
               "type": "msbl_RegularLine2",
               "src": "标绘/icon/规则/二类线/0303.svg"
             },
             {
-              "id": 30,
+              "id": 29,
               "name": "",
               "type": "msbl_RegularLine2",
               "src": "标绘/icon/规则/二类线/0304.svg"
             },
             {
-              "id": 31,
+              "id": 30,
               "name": "",
               "type": "msbl_RegularLine2",
               "src": "标绘/icon/规则/二类线/0305.svg"
             },
             {
-              "id": 32,
+              "id": 31,
               "name": "",
               "type": "msbl_RegularLine2",
               "src": "标绘/icon/规则/二类线/0306.svg"
             },
             {
-              "id": 33,
+              "id": 32,
               "name": "",
               "type": "msbl_RegularLine2",
               "src": "标绘/icon/规则/二类线/生态隔离线.svg"
@@ -241,31 +230,31 @@
           "name": "常规点",
           "children": [
             {
-              "id": 34,
+              "id": 33,
               "name": "",
               "type": "msbl_regularpoint",
               "src": "标绘/icon/规则/常规点/0101.svg"
             },
             {
-              "id": 35,
+              "id": 34,
               "name": "",
               "type": "msbl_regularpoint",
               "src": "标绘/icon/规则/常规点/0102.svg"
             },
             {
-              "id": 36,
+              "id": 35,
               "name": "",
               "type": "msbl_regularpoint",
               "src": "标绘/icon/规则/常规点/0103.svg"
             },
             {
-              "id": 37,
+              "id": 36,
               "name": "",
               "type": "msbl_regularpoint",
               "src": "标绘/icon/规则/常规点/0104.svg"
             },
             {
-              "id": 38,
+              "id": 37,
               "name": "",
               "type": "msbl_regularpoint",
               "src": "标绘/icon/规则/常规点/武警.svg"
@@ -273,6 +262,17 @@
           ]
         }
       ]
-    }
+    },
+    {
+        "name": "新编扩展",
+        "children": [
+          {
+            "id": 101,
+            "name": "",
+            "type": "simpleline",
+            "src": "标绘/icon/新编扩展/工具线.svg"
+          }
+        ]
+      }
   ]
 }
