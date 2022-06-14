@@ -1,18 +1,25 @@
 <template>
   <div>
     <mapgis-ui-plot-symbol
-        :data="symbolData"
+        :data="symbolsConfig"
+        :format="true"
         @click="clickIcon"
+        @chooseFolder="chooseFolder"
     ></mapgis-ui-plot-symbol>
     <mapgis-ui-svg-setting-panel
-      :url="svgUrl"
+        style="position: absolute;right: 20px;top: 66px;"
+        :url="svgUrl"
+        @importSVG="importSVG"
+        @exportConfig="exportConfig"
     ></mapgis-ui-svg-setting-panel>
   </div>
 </template>
 
 <script>
 import {SymbolManager} from "../../../../../WebClient-JavaScript/src/service";
+import symbolsConfig from "./symbols";
 import axios from "axios";
+import {saveAs} from "file-saver";
 
 export default {
   name: "mapgis-ui-svg-manager",
@@ -25,10 +32,46 @@ export default {
   data() {
     return {
       symbolData: [],
-      svgUrl: undefined
+      svgUrl: undefined,
+      symbolsConfig: symbolsConfig,
+      currentFolderId: undefined
     }
   },
   methods: {
+    exportConfig() {
+      let json = JSON.stringify(this.symbolsConfig);
+      const blob = new Blob([json], {
+        type: "application/json;charset=utf-8"
+      });
+      saveAs(blob, "标绘符号配置文件" + ".json");
+    },
+    importSVG(fileContent, name) {
+      console.log("fileContent, name", fileContent)
+      console.log("fileContent, name", name)
+      let {symbols} = symbolsConfig;
+      for (let i = 0; i < symbols.length; i++) {
+        let {items} = symbols[i];
+        for (let j = 0; j < items.length; j++) {
+          if (items[j].id === this.currentFolderId) {
+            console.log("-------", items[j]);
+            items[j].items.push({
+              "id": 112211,
+              //名称
+              "name": "测试",
+              //类型
+              "type": "simplepoint",
+              //相对路径
+              "path": this.symbolsConfig.rootPath + symbols[i].path + items[j].path + name
+            });
+            break;
+          }
+        }
+      }
+    },
+    chooseFolder(id) {
+      console.log("------id", id)
+      this.currentFolderId = id;
+    },
     clickIcon(data) {
       this.svgUrl = data.icon.src;
     },
@@ -89,6 +132,7 @@ export default {
         symbolData.push(symbolCls);
       });
       vm.symbolData = symbolData;
+      console.log("symbolData", symbolData)
     });
   }
 }

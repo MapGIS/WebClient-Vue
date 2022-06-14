@@ -16,26 +16,28 @@
         <mapgis-ui-row style="margin: 10px 0">
           <span>类型: </span><br>
           <div
-              :style="{borderColor: type === 0 ? 'rgb(24,144,255)' : 'rgb(217, 217, 217)',color: type === 0 ? 'rgb(24,144,255)' : 'black'}"
+              :class="{'mapgis-ui-svg-setting-panel-active': type === 0}"
               class="mapgis-ui-svg-setting-panel-check-one" @click="selectSymbolType('点')">点
           </div>
           <div
-              :style="{borderColor: type === 1 ? 'rgb(24,144,255)' : 'rgb(217, 217, 217)',color: type === 1 ? 'rgb(24,144,255)' : 'black'}"
+              :class="{'mapgis-ui-svg-setting-panel-active': type === 1}"
               class="mapgis-ui-svg-setting-panel-check-one" @click="selectSymbolType('线')">线
           </div>
           <div
-              :style="{borderColor: type === 2 ? 'rgb(24,144,255)' : 'rgb(217, 217, 217)',color: type === 2 ? 'rgb(24,144,255)' : 'black'}"
+              style="margin-right: 0;"
+              :class="{'mapgis-ui-svg-setting-panel-active': type === 2}"
               class="mapgis-ui-svg-setting-panel-check-one" @click="selectSymbolType('区')">区
           </div>
         </mapgis-ui-row>
         <mapgis-ui-row style="margin: 10px 0">
           <span>姿态: </span><br>
           <div
-              :style="{borderColor: pose === 0 ? 'rgb(24,144,255)' : 'rgb(217, 217, 217)',color: type === 0 ? 'rgb(24,144,255)' : 'black'}"
+              style="margin-right: 20px"
+              :class="{'mapgis-ui-svg-setting-panel-active': pose === 0}"
               class="mapgis-ui-svg-setting-panel-check-two" @click="selectSymbolPose('平躺')">平躺
           </div>
           <div
-              :style="{borderColor: pose === 1 ? 'rgb(24,144,255)' : 'rgb(217, 217, 217)',color: type === 1 ? 'rgb(24,144,255)' : 'black'}"
+              :class="{'mapgis-ui-svg-setting-panel-active': pose === 1}"
               class="mapgis-ui-svg-setting-panel-check-two" @click="selectSymbolPose('站立')">站立
           </div>
         </mapgis-ui-row>
@@ -112,8 +114,11 @@
     </div>
     <div class="mapgis-ui-svg-setting-panel-bottom">
       <mapgis-ui-row>
+        <input style="display: none" type="file" :id="inputId" accept=".svg" />
         <mapgis-ui-button style="float: right;margin-top: 7px;margin-right: 10px;">取消</mapgis-ui-button>
-        <mapgis-ui-button style="float: right;margin-top: 7px;margin-right: 10px;"  @click="getNewSvg" type="primary">确定</mapgis-ui-button>
+        <mapgis-ui-button style="float: right;margin-top: 7px;margin-right: 10px;"  @click="getNewSvg">确定</mapgis-ui-button>
+        <mapgis-ui-button style="float: right;margin-top: 7px;margin-right: 10px;"  @click="importSVG">导入图片</mapgis-ui-button>
+        <mapgis-ui-button style="float: right;margin-top: 7px;margin-right: 10px;"  @click="exportConfig">导出配置文件</mapgis-ui-button>
       </mapgis-ui-row>
     </div>
   </div>
@@ -180,10 +185,32 @@ export default {
       markerOffset: 0,
       prevSvg: undefined,
       prevStroke: undefined,
-      prevFill: undefined
+      prevFill: undefined,
+      inputId: "mapgisFileImport" + parseInt(String(Math.random() * 10000)),
     }
   },
   methods: {
+    exportConfig() {
+      this.$emit("exportConfig");
+    },
+    importSVG() {
+      let inputFile = document.getElementById(this.inputId), that = this;
+      inputFile.click();
+      inputFile.onchange = function() {
+        let File = inputFile.files[0];
+        let name = inputFile.files[0].name;
+        // 使用 FileReader 来读取文件
+        let reader = new FileReader();
+        // 读取纯文本文件,且编码格式为 utf-8
+        reader.readAsText(File, "UTF-8");
+        // 读取文件
+        reader.onload = function(e) {
+          let fileContent = e.target.result;
+          that.$emit("importSVG", fileContent, name);
+          inputFile.value = "";
+        };
+      };
+    },
     /**
      * @description 获取SVG图片的dom元素
      * @param url {String} svg的url
@@ -692,7 +719,6 @@ export default {
   width: 236px;
   height: 470px;
   float: left;
-  border: 1px solid rgb(217, 217, 217);
   border-right: none;
 }
 
@@ -700,13 +726,11 @@ export default {
   width: 528px;
   height: 470px;
   float: left;
-  border: 1px solid rgb(217, 217, 217);
 }
 
 .mapgis-ui-svg-setting-panel-bottom {
   width: 100%;
   height: 50px;
-  border: 1px solid rgb(217, 217, 217);
   border-top: none;
   margin-top: 470px;
 }
@@ -715,7 +739,6 @@ export default {
   width: 236px;
   height: 236px;
   padding: 18px;
-  background: rgb(247, 248, 250);
 }
 
 .mapgis-ui-svg-setting-panel-svg-outer {
@@ -725,32 +748,29 @@ export default {
 }
 
 .mapgis-ui-svg-setting-panel-svg-config {
-  width: 216px;
+  width: 236px;
   height: 163px;
   padding: 0 10px;
 }
 
 .mapgis-ui-svg-setting-panel-check-one {
-  border: 1px solid rgb(217, 217, 217);
   width: 60px;
   height: 30px;
   display: inline-block;
   text-align: center;
   line-height: 30px;
-  margin-right: 2px;
+  margin-right: 18px;
   margin-top: 3px;
   cursor: pointer;
   border-radius: 2px;
 }
 
 .mapgis-ui-svg-setting-panel-check-two {
-  border: 1px solid rgb(217, 217, 217);
-  width: 92px;
+  width: 98px;
   height: 30px;
   display: inline-block;
   text-align: center;
   line-height: 30px;
-  margin-right: 3px;
   margin-top: 3px;
   cursor: pointer;
   border-radius: 2px;
@@ -766,7 +786,6 @@ export default {
 .mapgis-ui-svg-setting-panel-svg-basic {
   width: 526px;
   height: 236px;
-  background: rgb(247, 248, 250);
   padding: 18px;
 }
 
@@ -789,7 +808,6 @@ export default {
   width: 180px;
   height: 180px;
   float: left;
-  background: rgb(247, 248, 250);
   margin-top: 10px;
 }
 
@@ -799,5 +817,10 @@ export default {
   margin: 12px 0;
   float: left;
   padding-left: 12px;
+}
+
+.mapgis-ui-svg-setting-panel-active {
+  color: rgb(24,144,255);
+  border-color: rgb(24,144,255);
 }
 </style>
