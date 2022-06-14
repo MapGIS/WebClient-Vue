@@ -147,7 +147,7 @@ export default {
   beforeCreate() {},
   mounted() {
     let { showField } = this.selectedItem;
-    if (showField.length<=0) {
+    if (showField.length <= 0) {
       showField = this.config.defaultShowField
     }
     const fields = [];
@@ -320,7 +320,7 @@ export default {
         igsParams.gdbp = this.selectedItem.gdbp;
         igsParams.srsIds = "WGS1984_度";
       }
-      const combine = this.config.combine === "true";
+      const combine = JSON.parse(this.config.combine);
       this.spinning = true;
       try {
         const igsRes = await Feature.FeatureQuery.query(igsParams, combine);
