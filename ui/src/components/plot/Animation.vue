@@ -281,9 +281,9 @@ export default {
         return [
           "compareLineColor",
           "wallColor",
-          "wallGradColor",
+          // "wallGradColor",
           "strokeStyle",
-          "fillGradColor",
+          // "fillGradColor",
           "fillStyle",
           "compareLineWidth",
           "dimModHeight",

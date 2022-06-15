@@ -70,7 +70,7 @@ export default {
         return [
           "compareLineColor",
           "strokeStyle",
-          "fillGradColor",
+          // "fillGradColor",
           "fillStyle",
           "compareLineWidth",
           "lineWidth"

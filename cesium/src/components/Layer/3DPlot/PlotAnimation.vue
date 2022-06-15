@@ -69,9 +69,9 @@ export default {
       default: () => {
         return [
           "wallColor",
-          "wallGradColor",
+          // "wallGradColor",
           "strokeStyle",
-          "fillGradColor",
+          // "fillGradColor",
           "fillStyle",
           "dimModHeight",
           "lineWidth"
