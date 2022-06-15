@@ -40,6 +40,9 @@ export default {
     dataSource: {
       type: [String, Object, Array]
     },
+    symbolUrl: {
+      type: String
+    },
     // 标绘图层的可见性
     show: {
       type: Boolean,
@@ -61,22 +64,16 @@ export default {
   watch: {
     dataSource: {
       handler: async function(json) {
-        if (!json) return;
-        if (!this.layer)
-          this.layer = this.layer || new PlotLayer3D(this.Cesium, this.viewer);
-        if (typeof json === "string") {
-          let data = await this.$_getData(json);
-          return this.fromJSON(data);
+        if (typeof json === "object") {
+          this.dataSourceCopy = json;
         }
-        this.dataSourceCopy = json;
-        this.fromJSON(json);
       },
       deep: true,
       immediate: true
     },
     pickPlot: {
       handler: function(func) {
-        if (!func) return;
+        if (!func || !this.layer) return;
         this.layer.pickPlot = func;
       },
       deep: true,
@@ -84,7 +81,7 @@ export default {
     },
     pickEventType: {
       handler: function(type) {
-        if (!type) return;
+        if (!type || !this.layer) return;
         this.layer.pickEventType = type;
       },
       deep: true,
@@ -104,6 +101,7 @@ export default {
     },
     editable: {
       handler: function(val) {
+        if (!this.layer) return;
         this.layer.editable = val;
       },
       immediate: true
@@ -112,32 +110,42 @@ export default {
   mounted() {
     this.mount();
   },
+  destroyed() {
+    this.unmount();
+  },
   methods: {
     mount() {
       const { viewer, Cesium } = this;
       const vm = this;
-      let manager = new SymbolManager(
-        "http://localhost:8895/标绘/symbols.json"
-      );
+      let manager = new SymbolManager(this.symbolUrl);
       manager.getSymbols().then(function() {
         viewer.scene.globe.depthTestAgainstTerrain = false;
         vm.layers = vm.layers || new PlotLayer3DGroup(viewer);
         vm.layer = vm.layer || new PlotLayer3D(Cesium, viewer);
         vm.layers.addLayer(vm.layer);
 
+        if (!vm.dataSourceCopy) {
+          axios({
+            method: "get",
+            url: vm.dataSource,
+            dataType: "text",
+            timeout: 1000
+          }).then(res => {
+            vm.dataSourceCopy = res.data;
+            vm.fromJSON(vm.dataSourceCopy);
+          });
+        } else {
+          vm.fromJSON(vm.dataSourceCopy);
+        }
+
         vm.$emit("loaded", { component: vm, layer: vm.layer });
       });
     },
-    async $_getData(url) {
-      const res = await axios({
-        method: "get",
-        url: url,
-        dataType: "text",
-        timeout: 1000
-      });
-      this.dataSourceCopy = res.data;
-      console.log("res.data", res.data);
-      return res.data;
+    unmount(){
+      this.layer.removeAll()
+      this.layers.removeLayer(this.layer);
+      this.layer = undefined;
+      this.layers = undefined;
     },
     /**
      * @description: 导出图层数据(json对象)
@@ -152,9 +160,7 @@ export default {
      */
     fromJSON(json) {
       // const vm = this;
-      // let manager = new SymbolManager(
-      //   "http://localhost:8895/标绘/symbols.json"
-      // );
+      // let manager = new SymbolManager(this.symbolUrl);
       // manager.getSymbols().then(function() {
       //   vm.layer.fromJSON(json);
       // });

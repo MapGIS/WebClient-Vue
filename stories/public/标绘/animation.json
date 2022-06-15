@@ -1,11 +1,11 @@
 {
-  "timeLineName": "",
+  "timeLineName": "脚本测试",
   "animations": [
     {
       "animationType": "blink-animation",
       "duration": 1000,
-      "featureIds": "bfb20e80-5c16-41dc-892a-a97977861405",
-      "animationName": "某xx进攻路线",
+      "featureIds": "d1a27f94-51b6-44e9-9bbf-02e607d963e9",
+      "animationName": "某xx进攻路线_闪烁动画",
       "easing": "Linear",
       "delay": 0,
       "endDelay": 0,
@@ -18,14 +18,14 @@
     {
       "animationType": "path-animation",
       "duration": 3000,
-      "featureIds": "bfb20e80-5c16-41dc-892a-a97977861405",
-      "animationName": "某xx进攻路线",
+      "featureIds": "d1a27f94-51b6-44e9-9bbf-02e607d963e9",
+      "animationName": "某xx进攻路线_路径动画",
       "easing": "Linear",
       "delay": 0,
       "endDelay": 0,
       "loop": 1,
       "timelineOffset": 2000,
-      "symbolBindId": "0f21fa93-4d56-49d4-b558-07a789c653d9",
+      "symbolBindId": "25843cca-bd01-4585-8209-1da41166c83a",
       "animationCoords": [],
       "showPath": true,
       "pathStyle": { "fill": "none", "strokeStyle": "#00ff00", "lineWidth": 5 },
@@ -35,8 +35,8 @@
     {
       "animationType": "grow-animation",
       "duration": 3000,
-      "featureIds": "5bba970e-e61a-4528-8bb8-de6ce220433d",
-      "animationName": "某xx进攻路线",
+      "featureIds": "d4e75ccf-a281-46da-bed0-3c17ade95a45",
+      "animationName": "某xx进攻路线_生长动画",
       "easing": "Linear",
       "delay": 0,
       "endDelay": 0,
@@ -49,8 +49,8 @@
     {
       "animationType": "grow-animation",
       "duration": 3000,
-      "featureIds": "7e7a7f9b-bf29-4e0a-a1ab-85413d658fca",
-      "animationName": "某xx进攻路线",
+      "featureIds": "1cbb53e5-1994-4560-8c8a-73ee90dc5edf",
+      "animationName": "某xx进攻路线_生长动画",
       "easing": "Sine",
       "delay": 0,
       "endDelay": 0,
@@ -63,8 +63,8 @@
     {
       "animationType": "scale-animation",
       "duration": 3000,
-      "featureIds": "b4c64df0-8a09-4630-9cf3-8cf7d51a2de5",
-      "animationName": "某xx进攻路线",
+      "featureIds": "b6f46e7b-0efe-4a04-9cbd-fe387aa7c168",
+      "animationName": "某xx进攻路线_比例动画",
       "easing": "Linear",
       "delay": 0,
       "endDelay": 0,
@@ -75,7 +75,7 @@
     {
       "animationType": "blink-animation",
       "duration": 3000,
-      "featureIds": "8b2ad378-3245-44bb-a734-57ace1bdb273",
+      "featureIds": "961a64a1-5d84-4271-bb6d-4f0848a40c56",
       "animationName": "某xx进攻路线",
       "easing": "Linear",
       "delay": 0,
@@ -89,7 +89,7 @@
     {
       "animationType": "blink-animation",
       "duration": 3000,
-      "featureIds": "1824547b-d297-4d02-a800-3f75b54a493e",
+      "featureIds": "ac14b069-dd3b-44f7-9abc-65f8273ae2a0",
       "animationName": "某xx进攻路线",
       "easing": "Linear",
       "delay": 0,

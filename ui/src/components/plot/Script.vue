@@ -5,11 +5,12 @@
         title="<< 返回脚本列表"
         :isTitleBold="false"
         size="small"
+        @click.native="showScriptList"
       >
       </mapgis-ui-group-tab>
       <mapgis-ui-divider />
       <mapgis-ui-group-tab
-        :title="animationListCopy.timeLineName || '脚本名称'"
+        :title="scriptCopy.timeLineName"
         :isTitleBold="false"
         class="plot-script-panel-header"
         v-if="!editState"
@@ -18,27 +19,19 @@
           <mapgis-ui-iconfont
             type="mapgis-play-circle-fill"
             class="icon-lg"
-            @click="playScript"
+            @click.native="playScript"
           />
           <mapgis-ui-iconfont
             type="mapgis-bianji"
             class="icon"
-            @click="editScript"
+            @click.native="editScript"
           />
         </mapgis-ui-space>
       </mapgis-ui-group-tab>
       <mapgis-ui-group-tab class="script-title-edit" v-else>
         <mapgis-ui-input v-model="nameToEdit" size="small" slot="title" />
         <mapgis-ui-space :size="16" slot="handle">
-          <mapgis-ui-iconfont
-            type="mapgis-check"
-            @click="
-              () => {
-                animationListCopy.timeLineName = nameToEdit;
-                editState = false;
-              }
-            "
-          />
+          <mapgis-ui-iconfont type="mapgis-check" @click="editScriptName" />
           <mapgis-ui-iconfont
             type="mapgis-close"
             @click="() => (editState = false)"
@@ -50,7 +43,7 @@
         class="plot-script-panel-content"
         item-layout="horizontal"
         size="small"
-        :data-source="animationListCopy.animations"
+        :data-source="scriptCopy.animations"
         :split="false"
       >
         <mapgis-ui-list-item
@@ -91,47 +84,68 @@
       <mapgis-ui-divider v-if="activeIndex !== undefined" />
     </div>
     <mapgis-ui-plot-animation
-      v-model="animationListCopy.animations[activeIndex]"
+      :animation="scriptCopy.animations[activeIndex]"
+      :attrsItemOptions="attrsItemOptions"
+      @change="animationChange"
       v-if="activeIndex !== undefined"
     ></mapgis-ui-plot-animation>
   </div>
 </template>
 
 <script>
-import { LOG } from '../../view/clouddisk/util/fileType';
 export default {
   name: "mapgis-ui-plot-script",
   props: {
-    animationList: {
+    script: {
       type: Object,
       required: true
+    },
+    plotId: {
+      type: String
+    },
+    attrsItemOptions: {
+      type: Array,
+      default: () => {
+        return [
+          "compareLineColor",
+          "wallColor",
+          "wallGradColor",
+          "strokeStyle",
+          "fillGradColor",
+          "fillStyle",
+          "compareLineWidth",
+          "dimModHeight",
+          "lineWidth"
+        ];
+      }
     }
   },
   watch: {
-    animationList: {
+    script: {
       handler: function(obj) {
-        this.animationListCopy = obj;
+        this.scriptCopy = obj;
       },
       deep: true,
       immediate: true
     },
-    // animationListCopy: {
+    // scriptCopy: {
     //   handler: function(obj) {
     //     this.$emit("change", obj);
+    //     console.log("scriptchange", obj);
     //   },
     //   deep: true,
     //   immediate: true
     // }
   },
   created() {
-    this.animationListCopy = this.animationList;
+    this.scriptCopy = this.script;
   },
   data() {
     return {
-      animationListCopy: undefined,
+      scriptCopy: undefined,
       activeIndex: undefined,
       editState: false,
-      nameToEdit: '',
+      nameToEdit: "",
       defaultAnimation: {
         none: "无动画",
         "scale-animation": "比例动画",
@@ -149,24 +163,47 @@ export default {
       this.$emit("play");
     },
     editScript() {
-      this.nameToEdit = this.animationListCopy.timeLineName;
+      this.nameToEdit = this.scriptCopy.timeLineName;
       this.editState = true;
       this.$emit("edit");
     },
+    editScriptName() {
+      this.scriptCopy.timeLineName = this.nameToEdit;
+      this.editState = false;
+      this.$emit("change", this.scriptCopy);
+    },
     editAnimation(index) {
-      console.log('11');
-      
       this.activeIndex = index;
     },
     addAnimation(type) {
       const vm = this;
-      console.log("add",type);
+      // console.log("add",type);
       let animation = {
-        animationName: "动画" + (vm.animationListCopy.animations.length + 1),
-        animationType: type
+        animationName: "动画" + (vm.scriptCopy.animations.length + 1),
+        animationType: type,
+        featureIds: vm.plotId
       };
-      this.animationListCopy.animations.push(animation);
-      this.activeIndex = this.animationListCopy.animations.length - 1;
+      this.scriptCopy.animations.push(animation);
+      this.activeIndex = this.scriptCopy.animations.length - 1;
+
+      // this.$emit("add", { index: this.activeIndex, script: this.scriptCopy });
+    },
+    animationChange(e) {
+      const vm = this;
+      let event = 'animationChange';
+      let length = Object.keys(this.scriptCopy.animations[vm.activeIndex]).length;
+      if(length == 3){
+        event = 'add';
+      }
+      this.scriptCopy.animations[vm.activeIndex] = e;
+      this.$emit(event, { index: this.activeIndex, script: this.scriptCopy });
+      // console.log(
+      //   "change-----script",event,
+      //   this.scriptCopy.animations[vm.activeIndex]
+      // );
+    },
+    showScriptList() {
+      this.$emit("return", true);
     }
   }
 };

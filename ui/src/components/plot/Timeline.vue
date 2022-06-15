@@ -333,7 +333,7 @@ export default {
       handler(next) {
         this.endBtn = next;
       }
-    },
+    }
   },
   data() {
     return {
@@ -366,16 +366,19 @@ export default {
   mounted() {
     this.mount();
   },
+  destroyed() {
+    this.unmount();
+  },
   methods: {
     mount() {
       const vm = this;
       // let bar = document.querySelector(".timeline-bar");
-      vm.width = vm.$refs.timebar.clientWidth ;
+      vm.width = vm.$refs.timebar.clientWidth;
       // console.log("vm.$refs.width", vm.$refs.timebar.clientWidth);
       // console.log("window.getComputedStyle(bar).width", window.getComputedStyle(bar).width);
       // console.log("parseFloat(window.getComputedStyle(bar).width || 0) ", parseFloat(window.getComputedStyle(bar).width || 0) );
       window.onresize = function() {
-        vm.width = vm.$refs.timebar.clientWidth ;
+        vm.width = vm.$refs.timebar.clientWidth;
       };
 
       //实现时间轴的拖拽功能
@@ -401,7 +404,11 @@ export default {
         };
       };
 
-      this.$emit('loaded',this);
+      this.$emit("loaded", this);
+    },
+    unmount() {
+      this.stopPlay();
+      this.raf = undefined;
     },
     //实现时间轴的播放功能
     startPlay() {
@@ -435,7 +442,7 @@ export default {
             vm.valueCopy = vm.max;
           } else {
             vm.valueCopy = vm.min;
-            vm.stopPlay();  
+            vm.stopPlay();
             return;
           }
         }
@@ -521,7 +528,7 @@ export default {
       this.$emit("end");
 
       this.valueCopy = this.max;
-    },
+    }
   }
 };
 </script>

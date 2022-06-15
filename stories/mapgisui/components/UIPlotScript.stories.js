@@ -29,7 +29,7 @@ const Template = (args, { argTypes }) => ({
 
 export const Script = Template.bind({});
 Script.args = {
-  animationList: ScriptD,
+  script: ScriptD,
 };
 
 // Script.parameters = {

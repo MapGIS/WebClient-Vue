@@ -1,0 +1,16 @@
+<svg width="200" height="200" version="1.1" xmlns="http://www.w3.org/2000/svg"
+      xmlns:zondyPlotSymbol="https://www.mapgis.com" xmlns:zondyPlotSymbolItem="https://www.mapgis.com"
+      zondyPlotSymbol:version="1.0" zondyPlotSymbol:id="svg003" zondyPlotSymbol:name="" zondyPlotSymbol:desc=""
+      zondyPlotSymbol:type="simpleline" zondyPlotSymbol:pose="1">
+      <path style="fill:#ffb380;stroke:#ff0000;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;paint-order:fill markers stroke"
+            id="path77" d="M 0.00402749,100.49998 100.437001,100 M 120,100 200,100" zondyPlotSymbolItem:type="10">
+      </path>
+      <g zondyPlotSymbolItem:type="13" zondyPlotSymbolItem:pose="1" zondyPlotSymbolItem:markerOrigin="74,100">
+            <path style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+                  id="path3255" d="M 70,100 70.1875,80 H 93.146941 L 92.012979,63.987899 70,63.825904 Z"></path>
+            <text style="text-anchor:start;font-style:normal;font-weight:normal;font-size:16.1558px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.403896"
+                  id="text12448" transform="scale(1.1412374,0.87624187)" x="60.507683" y="88.767441">
+                  <tspan id="tspan12446" x="60.507683" y="88.767441">12</tspan>
+            </text>
+      </g>
+</svg>

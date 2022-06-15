@@ -5,9 +5,14 @@
       "type": "string",
       "default": ""
     },
+    "featureIds": {
+      "name": "图元id",
+      "type": "string",
+      "default": ""
+    },
     "duration": {
       "name": "动画时长",
-      "type": "number",
+      "type": "time",
       "range": [0, null],
       "default": 3000
     },
@@ -24,12 +29,12 @@
       "default": "Linear"
     },
     "delay": {
-      "type": "number",
+      "type": "time",
       "range": [0, null],
       "default": 0
     },
     "endDelay": {
-      "type": "number",
+      "type": "time",
       "range": [0, null],
       "default": 0
     },
@@ -43,7 +48,7 @@
     "timelineOffset": {
       "name":"时间轴偏移",
       "desc": "描述动画在时间轴上的偏移",
-      "type": "number",
+      "type": "time",
       "range": [0, null],
       "default": 0
     }

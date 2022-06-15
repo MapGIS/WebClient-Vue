@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg width="200"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" version="1.1"
+    xmlns="http://www.w3.org/2000/svg" height="200"
+    xmlns:cc="http://creativecommons.org/ns#" id="svg2"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:svg="http://www.w3.org/2000/svg">
+    <defs id="defs4">
+        <linearGradient id="linearGradient3777">
+            <stop offset="0" style="stop-color:#000000;stop-opacity:1" id="stop3779"/>
+            <stop offset="1" style="stop-color:#000000;stop-opacity:0" id="stop3781"/>
+        </linearGradient>
+    </defs>
+     <g id="layer1" transform="translate(-312.22581,-364.7048)">
+        <path style="fill:#ffff64;fill-opacity:0.70588235;fill-rule:nonzero;stroke:#ff0000;stroke-width:6;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" id="path2994" d="m 61.78125,11.21875 c -28.246661,0 -51.125,22.878339 -51.125,51.125 0,20.016268 11.498147,37.349903 28.25,45.75 -3.795897,7.63256 -5.96875,16.2096 -5.96875,25.3125 0,31.46943 25.530568,56.96875 57,56.96875 31.46943,0 56.96875,-25.49932 56.96875,-56.96875 l -0.0625,-2.84375 c -0.25769,-5.14411 -1.2279,-10.09664 -2.75,-14.78125 C 168.49465,114.05568 187.75,93.715078 187.75,68.875 l -0.0625,-2.34375 c -1.25367,-25.025859 -21.88026,-44.6875 -46.9375,-44.6875 -13.66077,0 -25.9709,5.823434 -34.5625,15.125 -8.839043,-15.433003 -25.466219,-25.75 -44.40625,-25.75 z" transform="translate(312.22581,364.7048)"/>
+    </g>
+    <msbl xOrigin="0.5" Type="combinationcircle" yOrigin="0.5" Name="" id="dsc2995"/>
+    <_3D Model="test.3ds" id="_3D3024"/>
+</svg>

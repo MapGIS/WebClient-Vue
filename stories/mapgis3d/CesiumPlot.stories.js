@@ -13,7 +13,7 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { Mapgis3dPlot,Mapgis3dPlotLayer },
   template: `<mapgis-web-scene style="height:95vh" @load="handleLoad">
-        <mapgis-3d-plot-layer @loaded="handleLoaded" :dataSource="jsonUrl"></mapgis-3d-plot-layer>
+        <mapgis-3d-plot-layer @loaded="handleLoaded" :dataSource="jsonUrl" v-bind="$props"></mapgis-3d-plot-layer>
         <mapgis-3d-plot v-bind="$props" :layer="layer1" v-if="layer1" class="storybook-ui-card"/>
   </mapgis-web-scene>`,
   data() {

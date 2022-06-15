@@ -46,6 +46,22 @@
                 : Infinity
             "
           />
+          <mapgis-ui-input-number
+            v-else-if="info.type == 'time'"
+            v-model="animationCopy[param]"
+            :formatter="value => `${value / 1000}s`"
+            :parser="value => value.replace('s', '') * 1000"
+            :min="
+              info.range && info.range[0] !== (undefined || null)
+                ? info.range[0]
+                : -Infinity
+            "
+            :max="
+              info.range && info.range[1] !== (undefined || null)
+                ? info.range[1]
+                : Infinity
+            "
+          />
           <mapgis-ui-input
             v-else-if="info.type == 'string'"
             v-model="animationCopy[param]"
@@ -84,6 +100,22 @@
                 : Infinity
             "
           />
+          <mapgis-ui-input-number
+            v-else-if="pInfo.type == 'time'"
+            v-model="animationCopy[aniParam]"
+            :formatter="value => `${value / 1000}s`"
+            :parser="value => value.replace('s', '') * 1000"
+            :min="
+              pInfo.range && pInfo.range[0] !== (undefined || null)
+                ? pInfo.range[0]
+                : -Infinity
+            "
+            :max="
+              pInfo.range && pInfo.range[1] !== (undefined || null)
+                ? pInfo.range[1]
+                : Infinity
+            "
+          />
           <mapgis-ui-input
             v-else-if="pInfo.type == 'string'"
             v-model="animationCopy[aniParam]"
@@ -96,11 +128,14 @@
             :hasBottomMargin="false"
             :hasTopMargin="false"
           />
-          <mapgis-ui-colors-setting
-            v-else-if="pInfo.type == 'array-color'"
-            v-model="animationCopy[aniParam]"
-            :showNumber="false"
-          />
+          <template v-else-if="pInfo.type == 'array-color'">
+            <mapgis-ui-colors-setting
+              v-if="animationCopy[aniParam].length > 0"
+              v-model="animationCopy[aniParam]"
+              :showNumber="false"
+            />
+            <mapgis-ui-iconfont v-else type="mapgis-plus" @click="addColor(aniParam)"></mapgis-ui-iconfont>
+          </template>
           <mapgis-ui-input
             v-else-if="
               pInfo.type == 'array-number' || pInfo.type == 'array-coordinates'
@@ -128,11 +163,27 @@
               v-model="animationCopy[aniParam][key]"
               :showLabel="false"
               :wrapperCol="24"
-              :selectOptions="obj.multi"
+              :selectOptions="attrsItemOptions"
             />
             <mapgis-ui-input-number
               v-else-if="obj.type == 'number'"
               v-model="animationCopy[aniParam][key]"
+              :min="
+                obj.range && obj.range[0] !== (undefined || null)
+                  ? obj.range[0]
+                  : -Infinity
+              "
+              :max="
+                obj.range && obj.range[1] !== (undefined || null)
+                  ? obj.range[1]
+                  : Infinity
+              "
+            />
+            <mapgis-ui-input-number
+              v-else-if="obj.type == 'time'"
+              v-model="animationCopy[aniParam][key]"
+              :formatter="value => `${value / 1000}s`"
+              :parser="value => value.replace('s', '') * 1000"
               :min="
                 obj.range && obj.range[0] !== (undefined || null)
                   ? obj.range[0]
@@ -172,7 +223,10 @@
               />
               <mapgis-ui-input
                 v-else
-                :value="animationCopy[aniParam].value && animationCopy[aniParam].value.join(',')"
+                :value="
+                  animationCopy[aniParam].value &&
+                    animationCopy[aniParam].value.join(',')
+                "
                 @change="
                   changeArray(
                     $event.target.value,
@@ -220,17 +274,32 @@ export default {
           "path-animation": "路径动画"
         };
       }
+    },
+    attrsItemOptions: {
+      type: Array,
+      default: () => {
+        return [
+          "compareLineColor",
+          "wallColor",
+          "wallGradColor",
+          "strokeStyle",
+          "fillGradColor",
+          "fillStyle",
+          "compareLineWidth",
+          "dimModHeight",
+          "lineWidth"
+        ];
+      }
     }
   },
-  model: {
-    prop: "animation",
-    event: "change"
-  },
+  // model: {
+  //   prop: "animation",
+  //   event: "change"
+  // },
   watch: {
     animation: {
       handler: function(obj) {
         this.animationCopy = this.initData(obj);
-        // console.log('initDataaaaaaaaa',this.animationCopy);
       },
       deep: true,
       immediate: true
@@ -250,9 +319,6 @@ export default {
       animationParams: undefined
     };
   },
-  // mounted() {
-  //   console.log("config", this.animationConfig);
-  // },
   methods: {
     changeType(e) {
       this.$emit("changeType", { type: e, data: this.animationCopy });
@@ -280,6 +346,9 @@ export default {
     },
     changeColor(color, param, key) {
       this.animationCopy[param][key] = rgbToHex(color);
+    },
+    addColor(param){
+      this.animationCopy[param] = ["#40A9FF"]
     },
     /**处理传入的动画数据 */
     initData(data) {
