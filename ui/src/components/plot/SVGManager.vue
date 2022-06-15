@@ -1,16 +1,32 @@
 <template>
   <div>
-    <mapgis-ui-plot-symbol
-        :data="symbolsConfig"
-        :format="true"
-        @click="clickIcon"
-        @chooseFolder="chooseFolder"
-    ></mapgis-ui-plot-symbol>
+    <div class="mapgis-ui-svg-manager-file">
+      <mapgis-ui-plot-symbol
+          style="height: 510px;"
+          :data="symbolsConfig"
+          :format="true"
+          @click="clickIcon"
+          @chooseFolder="chooseFolder"
+      ></mapgis-ui-plot-symbol>
+      <div class="mapgis-ui-svg-manager-file-right">
+        <mapgis-ui-row class="mapgis-ui-svg-manager-file-right-row">
+          <input style="display: none" type="file" :id="inputId" accept=".svg"/>
+          <mapgis-ui-button @click="importSVG">新增</mapgis-ui-button>
+        </mapgis-ui-row>
+        <mapgis-ui-row class="mapgis-ui-svg-manager-file-right-row">
+          <mapgis-ui-button>修改</mapgis-ui-button>
+        </mapgis-ui-row>
+        <mapgis-ui-row class="mapgis-ui-svg-manager-file-right-row">
+          <mapgis-ui-button>删除</mapgis-ui-button>
+        </mapgis-ui-row>
+        <mapgis-ui-row class="mapgis-ui-svg-manager-file-right-row">
+          <mapgis-ui-button @click="exportConfig">导出配置</mapgis-ui-button>
+        </mapgis-ui-row>
+      </div>
+    </div>
     <mapgis-ui-svg-setting-panel
         style="position: absolute;right: 20px;top: 66px;"
         :url="svgUrl"
-        @importSVG="importSVG"
-        @exportConfig="exportConfig"
     ></mapgis-ui-svg-setting-panel>
   </div>
 </template>
@@ -34,7 +50,8 @@ export default {
       symbolData: [],
       svgUrl: undefined,
       symbolsConfig: symbolsConfig,
-      currentFolderId: undefined
+      currentFolderId: undefined,
+      inputId: "mapgisFileImport" + parseInt(String(Math.random() * 10000)),
     }
   },
   methods: {
@@ -46,30 +63,40 @@ export default {
       saveAs(blob, "标绘符号配置文件" + ".json");
     },
     importSVG(fileContent, name) {
-      console.log("fileContent, name", fileContent)
-      console.log("fileContent, name", name)
-      let {symbols} = symbolsConfig;
-      for (let i = 0; i < symbols.length; i++) {
-        let {items} = symbols[i];
-        for (let j = 0; j < items.length; j++) {
-          if (items[j].id === this.currentFolderId) {
-            console.log("-------", items[j]);
-            items[j].items.push({
-              "id": 112211,
-              //名称
-              "name": "测试",
-              //类型
-              "type": "simplepoint",
-              //相对路径
-              "path": this.symbolsConfig.rootPath + symbols[i].path + items[j].path + name
-            });
-            break;
+      let {symbols} = symbolsConfig, inputFile = document.getElementById(this.inputId), that = this;
+      inputFile.click();
+      inputFile.onchange = function () {
+        let File = inputFile.files[0];
+        let name = inputFile.files[0].name;
+        // 使用 FileReader 来读取文件
+        let reader = new FileReader();
+        // 读取纯文本文件,且编码格式为 utf-8
+        reader.readAsText(File, "UTF-8");
+        // 读取文件
+        reader.onload = function (e) {
+          let fileContent = e.target.result;
+          for (let i = 0; i < symbols.length; i++) {
+            let {items} = symbols[i];
+            for (let j = 0; j < items.length; j++) {
+              if (items[j].id === that.currentFolderId) {
+                items[j].items.push({
+                  "id": 112211,
+                  //名称
+                  "name": name,
+                  //类型
+                  "type": "simplepoint",
+                  //相对路径
+                  "path": that.symbolsConfig.rootPath + symbols[i].path + items[j].path + name
+                });
+                break;
+              }
+            }
           }
-        }
-      }
+          inputFile.value = "";
+        };
+      };
     },
     chooseFolder(id) {
-      console.log("------id", id)
       this.currentFolderId = id;
     },
     clickIcon(data) {
@@ -139,5 +166,25 @@ export default {
 </script>
 
 <style scoped>
+.mapgis-ui-svg-manager-file {
+  position: relative;
+  width: 450px;
+  height: 510px;
+  border: 1px solid red;
+}
 
+.mapgis-ui-svg-manager-file-right {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 130px;
+  height: 510px;
+  border: 1px solid blue;
+}
+
+.mapgis-ui-svg-manager-file-right-row {
+  height: 50px;
+  text-align: center;
+  line-height: 50px;
+}
 </style>

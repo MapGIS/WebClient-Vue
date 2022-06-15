@@ -20,7 +20,7 @@
                 class="icon-wrapper"
                 @click="onIconClick(icon, icons)"
             >
-              <img :src="icon.src"/>
+              <img :src="baseUrl + icon.src"/>
             </div>
           </mapgis-ui-title-collapse>
         </template>
@@ -45,6 +45,10 @@ export default {
     format: {
       type: Boolean,
       default: false
+    },
+    baseUrl: {
+      type: String,
+      default: ""
     }
   },
   watch: {

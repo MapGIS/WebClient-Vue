@@ -114,11 +114,8 @@
     </div>
     <div class="mapgis-ui-svg-setting-panel-bottom">
       <mapgis-ui-row>
-        <input style="display: none" type="file" :id="inputId" accept=".svg" />
         <mapgis-ui-button style="float: right;margin-top: 7px;margin-right: 10px;">取消</mapgis-ui-button>
         <mapgis-ui-button style="float: right;margin-top: 7px;margin-right: 10px;"  @click="getNewSvg">确定</mapgis-ui-button>
-        <mapgis-ui-button style="float: right;margin-top: 7px;margin-right: 10px;"  @click="importSVG">导入图片</mapgis-ui-button>
-        <mapgis-ui-button style="float: right;margin-top: 7px;margin-right: 10px;"  @click="exportConfig">导出配置文件</mapgis-ui-button>
       </mapgis-ui-row>
     </div>
   </div>
@@ -126,7 +123,6 @@
 
 <script>
 import axios from "axios";
-import {saveAs} from "file-saver";
 
 export default {
   name: "mapgis-ui-svg-setting-panel",
@@ -134,12 +130,19 @@ export default {
     //svg的url
     url: {
       type: String
+    },
+    baseUrl: {
+      type: String
     }
   },
   watch: {
     url: {
       handler: function (obj) {
-        this.getSvg(this.url);
+        let url = this.url;
+        if(this.baseUrl){
+          url = this.baseUrl + url;
+        }
+        this.getSvg(url);
       },
       deep: true,
       immediate: true
@@ -185,32 +188,10 @@ export default {
       markerOffset: 0,
       prevSvg: undefined,
       prevStroke: undefined,
-      prevFill: undefined,
-      inputId: "mapgisFileImport" + parseInt(String(Math.random() * 10000)),
+      prevFill: undefined
     }
   },
   methods: {
-    exportConfig() {
-      this.$emit("exportConfig");
-    },
-    importSVG() {
-      let inputFile = document.getElementById(this.inputId), that = this;
-      inputFile.click();
-      inputFile.onchange = function() {
-        let File = inputFile.files[0];
-        let name = inputFile.files[0].name;
-        // 使用 FileReader 来读取文件
-        let reader = new FileReader();
-        // 读取纯文本文件,且编码格式为 utf-8
-        reader.readAsText(File, "UTF-8");
-        // 读取文件
-        reader.onload = function(e) {
-          let fileContent = e.target.result;
-          that.$emit("importSVG", fileContent, name);
-          inputFile.value = "";
-        };
-      };
-    },
     /**
      * @description 获取SVG图片的dom元素
      * @param url {String} svg的url
@@ -702,6 +683,7 @@ export default {
     }
   },
   mounted() {
+    axios.defaults.withCredentials = true;
   }
 }
 </script>
