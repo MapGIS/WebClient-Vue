@@ -1,7 +1,7 @@
 import Mapgis3dPlotAnimation from "../../cesium/src/components/Layer/3DPlot/PlotAnimation.vue";
 import Mapgis3dPlotLayer from "../../cesium/src/components/Layer/3DPlot/PlotLayer.vue";
-import "../style/card.css";
 import { SymbolManager } from "@mapgis/webclient-es6-service";
+import "../style/card.css";
 // import Markdown from "../../cesium/docs/api/layer/Graphic/GraphicLayer.md";
 
 export default {

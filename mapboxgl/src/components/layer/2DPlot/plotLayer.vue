@@ -22,10 +22,18 @@ export default {
     dataSource: {
       type: [String, Object, Array]
     },
+    symbolUrl: {
+      type: String
+    },
     // 标绘图层的可见性
     show: {
       type: Boolean,
       default: true
+    },
+    // 标绘图层的可编辑性
+    editable: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -39,14 +47,9 @@ export default {
     dataSource: {
       handler: async function(json) {
         if (!json) return;
-        if (!this.layer) this.layer = this.layer || new PlotLayer2D();
-
-        if (typeof json === "string") {
-          let data = await this.$_getData(json);
-          return this.fromJSON(data);
+        if (typeof json === "object") {
+          this.dataSourceCopy = json;
         }
-        this.dataSourceCopy = json;
-        this.fromJSON(json);
       },
       deep: true,
       immediate: true
@@ -71,36 +74,53 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    editable: {
+      handler: function(val) {
+        if (!this.layer) return;
+        this.layer.editable = val;
+      },
+      immediate: true
     }
   },
   mounted() {
     this.mount();
   },
+  destroyed() {
+    this.unmount();
+  },
   methods: {
     mount() {
       const { map } = this;
       const vm = this;
-      let manager = new SymbolManager(
-        "http://localhost:8895/标绘/symbols.json"
-      );
+      let manager = new SymbolManager(this.symbolUrl);
       manager.getSymbols().then(function() {
         const canvas = new FabricLayer(map, PlotLayer2DGroup);
         vm.layers = vm.layers || canvas.getFabricCanvas();
         vm.layer = vm.layer || new PlotLayer2D();
         vm.layers.addLayer(vm.layer);
-        
+
+        if (!vm.dataSourceCopy) {
+          axios({
+            method: "get",
+            url: vm.dataSource,
+            dataType: "text",
+            timeout: 1000
+          }).then(res => {
+            vm.dataSourceCopy = res.data;
+            vm.fromJSON(vm.dataSourceCopy);
+          });
+        } else {
+          vm.fromJSON(vm.dataSourceCopy);
+        }
+
         vm.$emit("loaded", { component: vm, layer: vm.layer });
       });
     },
-    async $_getData(url) {
-      const res = await axios({
-        method: "get",
-        url: url,
-        dataType: "text",
-        timeout: 1000
-      });
-      this.dataSourceCopy = res.data;
-      return res.data;
+    unmount() {
+      this.layers.removeLayer(this.layer);
+      this.layer = undefined;
+      this.layers = undefined;
     },
     /**
      * @description: 导出json对象
@@ -116,9 +136,7 @@ export default {
     fromJSON(json) {
       // console.log("fromJSON", json);
       // const vm = this;
-      // let manager = new SymbolManager(
-      //   "http://localhost:8895/标绘/symbols.json"
-      // );
+      // let manager = new SymbolManager(this.symbolUrl);
       // manager.getSymbols().then(function() {
       //   vm.layer && vm.layer.fromJSON(json);
       // });

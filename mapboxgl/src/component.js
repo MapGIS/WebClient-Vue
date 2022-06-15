@@ -84,3 +84,4 @@ export { default as Mapgis2DComprehensiveQuery } from "./components/service/comp
 // 标绘
 export { default as Mapgis2dPlot } from "./components/layer/2DPlot/plot.vue";
 export { default as Mapgis2dPlotLayer } from "./components/layer/2DPlot/plotLayer.vue";
+export { default as Mapgis2DPlotAnimation } from "./components/layer/2DPlot/plotAnimation.vue";

@@ -64,6 +64,7 @@ export default {
   watch: {
     dataSource: {
       handler: async function(json) {
+        if (!json) return;
         if (typeof json === "object") {
           this.dataSourceCopy = json;
         }

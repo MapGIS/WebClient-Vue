@@ -1,5 +1,5 @@
 <template>
-  <div class="mapgis-3d-plot-animation">
+  <div class="mapgis-2d-plot-animation">
     <mapgis-ui-plot-script-list
       v-if="scriptListCopy && showScriptList"
       :scriptList="scriptListCopy"
@@ -9,7 +9,7 @@
       @addScript="addList"
       @removeScript="removeList"
       @import="importList"
-      class="mapgis-3d-plot-animation-panel"
+      class="mapgis-2d-plot-animation-panel"
     ></mapgis-ui-plot-script-list>
     <mapgis-ui-plot-script
       :script="scriptListCopy[activeIndex]"
@@ -21,7 +21,7 @@
       @add="addScript"
       @change="scriptChange"
       @animationChange="animationChange"
-      class="mapgis-3d-plot-animation-panel"
+      class="mapgis-2d-plot-animation-panel"
     ></mapgis-ui-plot-script>
 
     <mapgis-ui-plot-timeline
@@ -45,8 +45,8 @@ import { TimeLine, SymbolManager } from "@mapgis/webclient-es6-service";
 import axios from "axios";
 
 export default {
-  name: "mapgis-3d-plot-animation",
-  inject: ["viewer", "Cesium"],
+  name: "mapgis-2d-plot-animation",
+  inject: ["map"],
   props: {
     layer: {
       type: Object,
@@ -68,12 +68,11 @@ export default {
       type: Array,
       default: () => {
         return [
-          "wallColor",
-          "wallGradColor",
+          "compareLineColor",
           "strokeStyle",
           "fillGradColor",
           "fillStyle",
-          "dimModHeight",
+          "compareLineWidth",
           "lineWidth"
         ];
       }
@@ -126,20 +125,16 @@ export default {
   methods: {
     mount() {
       const vm = this;
+      this.layer.editable = true;
       this.layer.pickPlot = function(plot) {
-        vm.plotId = plot.id;
         // console.log("plot", plot);
+        vm.plotId = plot.element.featureId;
         let json = plot.getStyle();
+        // console.log("plot.getStyle", json);
         vm.nodeNames = Object.keys(json.nodeStyles);
         // console.log("plotId/nodeNames", vm.plotId, "/", vm.nodeNames);
       };
-      this.layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
 
-      // this.manager =
-      //   this.manager ||
-      //   new SymbolManager("http://localhost:8895/标绘/symbols.json");
-
-      // this.manager.getSymbols().then(function() {
       this.timeline = this.timeline || new TimeLine(this.layers, {});
       if (this.scriptListCopy) {
         this.activeIndex = 0;
@@ -155,7 +150,6 @@ export default {
           vm.timeline.fromJSON(res.data);
         });
       }
-      // });
     },
     start() {
       this.timeline.restore();
@@ -250,11 +244,12 @@ export default {
 </script>
 
 <style scoped>
-.mapgis-3d-plot-animation-panel {
+.mapgis-2d-plot-animation-panel {
   position: absolute;
   top: 10px;
   left: 10px;
   max-height: 550px;
   overflow-y: scroll;
+  z-index: 1;
 }
 </style>
