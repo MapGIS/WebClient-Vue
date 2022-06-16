@@ -1,5 +1,5 @@
 <template>
-  <div class="plot-panel">
+  <div class="mapgis-3d-plot">
     <slot
       name="symbol"
       :data="symbolData"
@@ -12,10 +12,11 @@
         @click="clickIcon"
         @search="searchIcon"
         v-if="symbolData"
+        class="mapgis-3d-plot-panel"
       ></mapgis-ui-plot-symbol>
     </slot>
     <mapgis-ui-plot-attribute
-      class="plot-panel-attribute"
+      :class="['plot-panel-attribute', 'mapgis-3d-plot-panel']"
       v-if="showStylePanel"
       v-model="styleData"
       @changeComponentStyle="changeStyle"

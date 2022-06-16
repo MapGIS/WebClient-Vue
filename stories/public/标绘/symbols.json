@@ -7,7 +7,7 @@
         {
           "id": 101,
           "name": "",
-          "type": "1",
+          "type": "simpleline",
           "src": "标绘/icon/常用/工具线.svg"
         }
       ]

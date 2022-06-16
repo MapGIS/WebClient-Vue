@@ -1,88 +1,86 @@
 <template>
-  <div>
-    <div class="plot-script-panel">
+  <div class="plot-script-panel">
+    <mapgis-ui-group-tab
+      title="<< 返回脚本列表"
+      :isTitleBold="false"
+      size="small"
+      @click.native="showScriptList"
+    >
+    </mapgis-ui-group-tab>
+    <mapgis-ui-divider />
+    <mapgis-ui-group-tab
+      :title="scriptCopy.timeLineName"
+      :isTitleBold="false"
+      class="plot-script-panel-header"
+      v-if="!editState"
+    >
+      <mapgis-ui-space :size="16" slot="handle">
+        <mapgis-ui-iconfont
+          type="mapgis-play-circle-fill"
+          class="icon-lg"
+          @click.native="playScript"
+        />
+        <mapgis-ui-iconfont
+          type="mapgis-bianji"
+          class="icon"
+          @click.native="editScript"
+        />
+      </mapgis-ui-space>
+    </mapgis-ui-group-tab>
+    <mapgis-ui-group-tab class="script-title-edit" v-else>
+      <mapgis-ui-input v-model="nameToEdit" size="small" slot="title" />
+      <mapgis-ui-space :size="16" slot="handle">
+        <mapgis-ui-iconfont type="mapgis-check" @click="editScriptName" />
+        <mapgis-ui-iconfont
+          type="mapgis-close"
+          @click="() => (editState = false)"
+        />
+      </mapgis-ui-space>
+    </mapgis-ui-group-tab>
+
+    <mapgis-ui-list
+      class="plot-script-panel-content"
+      item-layout="horizontal"
+      size="small"
+      :data-source="scriptCopy.animations"
+      :split="false"
+    >
+      <mapgis-ui-list-item
+        :class="{ 'list-active': activeIndex === index }"
+        :key="index"
+        slot="renderItem"
+        slot-scope="item, index"
+        @click="editAnimation(index)"
+      >
+        <div class="list-item">{{ item.animationName }}</div>
+      </mapgis-ui-list-item>
+    </mapgis-ui-list>
+
+    <mapgis-ui-dropdown :trigger="['click']">
       <mapgis-ui-group-tab
-        title="<< 返回脚本列表"
+        title="添加动画"
         :isTitleBold="false"
-        size="small"
-        @click.native="showScriptList"
+        :hasTopMargin="false"
+        class="plot-script-panel-footer"
       >
-      </mapgis-ui-group-tab>
-      <mapgis-ui-divider />
-      <mapgis-ui-group-tab
-        :title="scriptCopy.timeLineName"
-        :isTitleBold="false"
-        class="plot-script-panel-header"
-        v-if="!editState"
-      >
-        <mapgis-ui-space :size="16" slot="handle">
-          <mapgis-ui-iconfont
-            type="mapgis-play-circle-fill"
-            class="icon-lg"
-            @click.native="playScript"
-          />
-          <mapgis-ui-iconfont
-            type="mapgis-bianji"
-            class="icon"
-            @click.native="editScript"
-          />
-        </mapgis-ui-space>
-      </mapgis-ui-group-tab>
-      <mapgis-ui-group-tab class="script-title-edit" v-else>
-        <mapgis-ui-input v-model="nameToEdit" size="small" slot="title" />
-        <mapgis-ui-space :size="16" slot="handle">
-          <mapgis-ui-iconfont type="mapgis-check" @click="editScriptName" />
-          <mapgis-ui-iconfont
-            type="mapgis-close"
-            @click="() => (editState = false)"
-          />
-        </mapgis-ui-space>
+        <div slot="front" class="front">
+          <img src="./style/images/u77.svg" class="icon" />
+        </div>
       </mapgis-ui-group-tab>
 
-      <mapgis-ui-list
-        class="plot-script-panel-content"
-        item-layout="horizontal"
-        size="small"
-        :data-source="scriptCopy.animations"
-        :split="false"
-      >
-        <mapgis-ui-list-item
-          :class="{ 'list-active': activeIndex === index }"
-          :key="index"
-          slot="renderItem"
-          slot-scope="item, index"
-          @click="editAnimation(index)"
-        >
-          <div class="list-item">{{ item.animationName }}</div>
-        </mapgis-ui-list-item>
-      </mapgis-ui-list>
-
-      <mapgis-ui-dropdown :trigger="['click']">
-        <mapgis-ui-group-tab
-          title="添加动画"
-          :isTitleBold="false"
-          :hasTopMargin="false"
-          class="plot-script-panel-footer"
-        >
-          <div slot="front" class="front">
-            <img src="./style/images/u77.svg" class="icon" />
-          </div>
-        </mapgis-ui-group-tab>
-
-        <template #overlay>
-          <mapgis-ui-menu>
-            <mapgis-ui-menu-item
-              v-for="(value, key, index) in defaultAnimation"
-              :key="index"
-              @click="addAnimation(key)"
-            >
-              {{ value }}
-            </mapgis-ui-menu-item>
-          </mapgis-ui-menu>
-        </template>
-      </mapgis-ui-dropdown>
-      <mapgis-ui-divider v-if="activeIndex !== undefined" />
-    </div>
+      <template #overlay>
+        <mapgis-ui-menu>
+          <mapgis-ui-menu-item
+            v-for="(value, key, index) in defaultAnimation"
+            :key="index"
+            @click="addAnimation(key)"
+          >
+            {{ value }}
+          </mapgis-ui-menu-item>
+        </mapgis-ui-menu>
+      </template>
+    </mapgis-ui-dropdown>
+    <mapgis-ui-divider v-if="activeIndex !== undefined" />
     <mapgis-ui-plot-animation
       :animation="scriptCopy.animations[activeIndex]"
       :attrsItemOptions="attrsItemOptions"
@@ -127,7 +125,7 @@ export default {
       },
       deep: true,
       immediate: true
-    },
+    }
     // scriptCopy: {
     //   handler: function(obj) {
     //     this.$emit("change", obj);
@@ -190,10 +188,11 @@ export default {
     },
     animationChange(e) {
       const vm = this;
-      let event = 'animationChange';
-      let length = Object.keys(this.scriptCopy.animations[vm.activeIndex]).length;
-      if(length == 3){
-        event = 'add';
+      let event = "animationChange";
+      let length = Object.keys(this.scriptCopy.animations[vm.activeIndex])
+        .length;
+      if (length == 3) {
+        event = "add";
       }
       this.scriptCopy.animations[vm.activeIndex] = e;
       this.$emit(event, { index: this.activeIndex, script: this.scriptCopy });

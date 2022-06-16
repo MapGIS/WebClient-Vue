@@ -23,20 +23,35 @@
       @animationChange="animationChange"
       class="mapgis-2d-plot-animation-panel"
     ></mapgis-ui-plot-script>
-
-    <mapgis-ui-plot-timeline
-      v-model="value"
+    <slot
+      name="timeline"
+      :value="value"
+      :change="e => { value = e;}"
       v-show="showTimeline"
       ref="timeline"
       :forwardActive="forwardActive"
-      :duration="10"
-      @start="start"
-      @backward="backward"
-      @pause="pause"
-      @forward="forward"
-      @end="end"
-      @speedChange="setSpeed"
-    ></mapgis-ui-plot-timeline>
+      :start="start"
+      :backward="backward"
+      :pause="pause"
+      :forward="forward"
+      :end="end"
+      :speedChange="setSpeed"
+    >
+      <mapgis-ui-plot-timeline
+        :value="value"
+        @change="e => { value = e;}"
+        v-show="showTimeline"
+        ref="timeline"
+        :forwardActive="forwardActive"
+        :duration="10"
+        @start="start"
+        @backward="backward"
+        @pause="pause"
+        @forward="forward"
+        @end="end"
+        @speedChange="setSpeed"
+      ></mapgis-ui-plot-timeline>
+    </slot>
   </div>
 </template>
 
@@ -245,9 +260,9 @@ export default {
 
 <style scoped>
 .mapgis-2d-plot-animation-panel {
-  position: absolute;
+  /* position: absolute;
   top: 10px;
-  left: 10px;
+  left: 10px; */
   max-height: 550px;
   overflow-y: scroll;
   z-index: 1;

@@ -139,6 +139,11 @@
             }
         }
     }
+
+    & > .plot-animation-panel{
+        padding: 0px;
+        width: 100%;
+    }
 }
 
 .plot-script-list-panel {

@@ -21,7 +21,8 @@ const Template = (args, { argTypes }) => ({
               :data="slotProps.data"
               @click="slotProps.click"
               @search="slotProps.search"
-              ></mapgis-ui-plot-symbol>
+              class="mapgis-2d-plot-panel"
+            ></mapgis-ui-plot-symbol>
           </template>
         </mapgis-2d-plot>
   </mapgis-web-map>`,

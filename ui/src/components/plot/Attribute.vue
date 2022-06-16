@@ -1,6 +1,6 @@
 <template>
-  <mapgis-ui-setting-form size="default" :colon="true" layout="vertical">
-    <div class="plot-attribute-panel">
+  <div class="plot-attribute-panel">
+    <mapgis-ui-setting-form size="default" :colon="true" layout="vertical">
       <!--设置面板-->
       <template v-for="(collapse, grpIdx) in groupArr">
         <mapgis-ui-title-collapse
@@ -169,13 +169,13 @@
           </mapgis-ui-row>
         </mapgis-ui-title-collapse>
       </template>
-    </div>
-  </mapgis-ui-setting-form>
+    </mapgis-ui-setting-form>
+  </div>
 </template>
 
 <script>
 import { styleAttributes, groupArr } from "./test/attributeConfig";
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   name: "mapgis-ui-plot-attribute",
@@ -256,12 +256,12 @@ export default {
     },
     async $_parseComponent() {
       const vm = this;
-      this.svgT = this.svg || await this.getSvg(this.dataCopy.symbolUrl);
+      this.svgT = this.svg || (await this.getSvg(this.dataCopy.symbolUrl));
       // console.log('this.svgT', this.svgT, this.dataCopy.symbolUrl);
-      
-      if(!this.svgT) {
-        return console.log('缺少符号的svg元素！')}
-      ;
+
+      if (!this.svgT) {
+        return console.log("缺少符号的svg元素！");
+      }
       let svgContainer = document.querySelectorAll(".tab-item");
       svgContainer.forEach(node => {
         let nodeL = node.querySelectorAll("svg");
@@ -277,7 +277,7 @@ export default {
         svgContainer[index].appendChild(cloneDom);
       });
     },
-        /**
+    /**
      * 获取符号对应svg
      */
     async getSvg(url) {

@@ -99,6 +99,22 @@
       "blinkColors": [],
       "isBlinkGrad": true,
       "endStatus": true
+    },
+    {
+      "animationType": "attribute-animation",
+      "duration": 3000,
+      "featureIds": "ac14b069-dd3b-44f7-9abc-65f8273ae2a0",
+      "animationName": "某xx进攻路线_属性动画",
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 500,
+      "timelineOffset": 5000,
+      "attrsItem":{
+        "attrName":"strokeStyle",
+        "ids":"path2578",
+        "value":["#ff0000","#cccccc"]
+      }
     }
   ]
 }

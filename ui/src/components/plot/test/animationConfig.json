@@ -46,7 +46,7 @@
       "default": 1
     },
     "timelineOffset": {
-      "name":"时间轴偏移",
+      "name": "时间轴偏移",
       "desc": "描述动画在时间轴上的偏移",
       "type": "time",
       "range": [0, null],
@@ -81,7 +81,7 @@
       "limitNumberItems": ["compareLineWidth", "dimModHeight", "lineWidth"],
       "options": {
         "attrsItem": {
-          "name":"属性",
+          "name": "属性",
           "type": "object",
           "collapse": false,
           "default": {},
@@ -100,10 +100,6 @@
                 "dimModHeight",
                 "lineWidth"
               ]
-            },
-            "ids": {
-              "name": "部件名称",
-              "type": "string"
             },
             "value": {
               "name": "属性值",
@@ -227,11 +223,6 @@
           "type": "object",
           "collapse": true,
           "children": {
-            "fill": {
-              "name": "填充",
-              "type": "string",
-              "default": "none"
-            },
             "strokeStyle": {
               "name": "笔画颜色",
               "type": "color",

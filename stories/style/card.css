@@ -10,19 +10,28 @@
   padding: 4px;
 }
 
-.storybook-ui-panel {
+.storybook-ui-panel,
+.mapgis-2d-plot-animation-panel,
+.mapgis-3d-plot-animation-panel {
   position: absolute;
   top: 10px;
   left: 10px;
   z-index: 1000;
-  width: 320px;
   border: 1px solid #d3d3d3;
   border-radius: 2px;
-  box-shadow: 1px 1px 6px #d3d3d3;
+  max-height: 600px;
+  /* box-shadow: 1px 1px 6px #d3d3d3; */
 }
 
 .storybook-ui-card > .plot-panel-attribute {
   position: fixed;
   top: 10px;
   right: 10px;
+}
+
+.mapgis-2d-plot-panel,
+.mapgis-3d-plot-panel {
+  border: 1px solid #d3d3d3;
+  border-radius: 2px;
+  max-height: 600px;
 }
