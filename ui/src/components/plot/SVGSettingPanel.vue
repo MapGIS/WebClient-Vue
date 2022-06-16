@@ -49,7 +49,7 @@
         <div>大小: {{ svgWidth }} * {{ svgHeight }}</div>
         <div>
           鼠标位置: X {{ mouseX }} Y {{ mouseY }}
-          <span style="float: right;cursor: pointer;color: #00a0e9;">复制SVG代码</span>
+          <span style="float: right;cursor: pointer;color: #00a0e9;" @click="copy">复制SVG代码</span>
         </div>
         <div class="mapgis-ui-svg-setting-panel-svg-content">
           {{ outerHTML }}
@@ -62,7 +62,7 @@
             :style="{'overflow-y': Object.keys(parts).length > 4 ? 'scroll' : 'none'}"
           >
             <div
-                :style="{background: part.id === currentPart.id ? 'rgb(24,144,255)' : 'rgb(247,248,250)',color: part.id === currentPart.id ? 'white' : 'black'}"
+                :style="{background: part.id === currentPart.id ? 'rgb(24,144,255)' : 'none',color: part.id === currentPart.id ? 'white' : 'rgba(225, 225, 225, 1)'}"
                 style="padding: 12px 20px;cursor: pointer" @click="setCurrentPart(part)" :key="index"
                 v-for="(part,index) in parts">
               {{ part.id }}
@@ -114,8 +114,8 @@
     </div>
     <div class="mapgis-ui-svg-setting-panel-bottom">
       <mapgis-ui-row>
-        <mapgis-ui-button style="float: right;margin-top: 7px;margin-right: 10px;">取消</mapgis-ui-button>
-        <mapgis-ui-button style="float: right;margin-top: 7px;margin-right: 10px;"  @click="getNewSvg">确定</mapgis-ui-button>
+<!--        <mapgis-ui-button style="float: right;margin-top: 7px;margin-right: 10px;">取消</mapgis-ui-button>-->
+        <mapgis-ui-button style="float: right;margin-top: 7px;margin-right: 10px;"  @click="getNewSvg">下载符号</mapgis-ui-button>
       </mapgis-ui-row>
     </div>
   </div>
@@ -133,6 +133,9 @@ export default {
     },
     baseUrl: {
       type: String
+    },
+    svgXML: {
+      type: String
     }
   },
   watch: {
@@ -143,6 +146,19 @@ export default {
           url = this.baseUrl + url;
         }
         this.getSvg(url);
+      },
+      deep: true,
+      immediate: true
+    },
+    svgXML: {
+      handler: function () {
+        if(this.svgXML){
+          this.screenOuterHTML = this.svgXML;
+          this.$nextTick(function () {
+            let svgDom = document.getElementById("SVGICON").children;
+            this.getChild(svgDom[0]);
+          })
+        }
       },
       deep: true,
       immediate: true
@@ -192,6 +208,18 @@ export default {
     }
   },
   methods: {
+    copy() {
+      const input = document.createElement("input");
+      input.setAttribute('readonly', 'readonly'); // 设置为只读, 防止在 ios 下拉起键盘
+      // input.setAttribute('value', value); // textarea 不能用此方式赋值, 否则无法复制内容
+      input.value = this.outerHTML;
+      document.body.appendChild(input);
+      input.setSelectionRange(0, 9999); // 防止 ios 下没有全选内容而无法复制
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+      this.$message.success("已经复制内容到剪贴板!");
+    },
     /**
      * @description 获取SVG图片的dom元素
      * @param url {String} svg的url
@@ -208,6 +236,7 @@ export default {
           res.data,
           "image/svg+xml"
       );
+      this.screenOuterHTML = xml.documentElement.outerHTML;
       this.getChild(xml.documentElement);
       this.svgWidth = xml.documentElement.width.baseVal.valueAsString;
       this.svgHeight = xml.documentElement.height.baseVal.valueAsString;
@@ -376,13 +405,25 @@ export default {
       svg.setAttribute("height", "200");
       svg.setAttribute("version", "1.1");
       svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-      svg.setAttribute("xmlns:zondyPlotSymbol", "http://www.w3.org/2000/svg");
-      svg.setAttribute("xmlns:zondyPlotSymbolItem", "http://www.w3.org/2000/svg");
+      svg.setAttribute("xmlns:zondyPlotSymbol", "https://www.mapgis.com");
+      svg.setAttribute("xmlns:zondyPlotSymbolItem", "https://www.mapgis.com");
       svg.setAttribute("zondyPlotSymbol:version", "1.0");
       svg.setAttribute("zondyPlotSymbol:id", "svg003");
       svg.setAttribute("zondyPlotSymbol:name", "");
       svg.setAttribute("zondyPlotSymbol:desc", "");
-      svg.setAttribute("zondyPlotSymbol:type", this.type);
+      let type = "";
+      switch (this.type) {
+        case 0:
+          type = "simplepoint";
+          break;
+        case 1:
+          type = "simpleline";
+          break;
+        case 2:
+          type = "simplearea";
+          break;
+      }
+      svg.setAttribute("zondyPlotSymbol:type", type);
       svg.setAttribute("zondyPlotSymbol:pose", this.pose);
 
       return svg;
@@ -488,7 +529,6 @@ export default {
     },
     getChild(svg) {
       this.svg = svg;
-      this.screenOuterHTML = this.svg.outerHTML;
       this.$nextTick(function () {
         let svgDom = document.getElementById("SVGICON").children;
         if (svgDom.length > 0) {

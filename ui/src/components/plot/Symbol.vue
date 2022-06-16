@@ -18,6 +18,7 @@
                 v-for="(icon, i) in icons.icon"
                 :key="key + '_' + i"
                 class="icon-wrapper"
+                :class="{'icon-wrapper-active': icon.id === currentIconID}"
                 @click="onIconClick(icon, icons)"
             >
               <img :src="baseUrl + icon.src"/>
@@ -66,7 +67,8 @@ export default {
   },
   data() {
     return {
-      dataCopy: undefined
+      dataCopy: undefined,
+      currentIconID: undefined
     };
   },
   methods: {
@@ -113,9 +115,15 @@ export default {
       // console.log("search", value);
     },
     onIconClick(icon, icons) {
+      this.currentIconID = icon.id;
       this.$emit("click", {icon: icon, iconCol: icons});
       // console.log("click", { icon: icon, iconCol: icons });
     }
   }
 };
 </script>
+<style scoped>
+.icon-wrapper-active {
+  border: 1px solid #4f90f5;
+}
+</style>
