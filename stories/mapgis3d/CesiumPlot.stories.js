@@ -14,7 +14,7 @@ const Template = (args, { argTypes }) => ({
   components: { Mapgis3dPlot,Mapgis3dPlotLayer },
   template: `<mapgis-web-scene style="height:95vh">
         <mapgis-3d-plot-layer @loaded="handleLoaded" :dataSource="jsonUrl" v-bind="$props"></mapgis-3d-plot-layer>
-        <mapgis-3d-plot v-bind="$props" :layer="layer1" v-if="vueIndex && vueKey" class="storybook-ui-card"/>
+        <mapgis-3d-plot v-bind="$props" :vueIndex="vueIndex" :vueKey="vueKey" v-if="vueIndex && vueKey" class="storybook-ui-card"/>
   </mapgis-web-scene>`,
   data() {
     return {
