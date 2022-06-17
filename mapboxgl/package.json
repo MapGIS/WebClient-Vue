@@ -31,6 +31,7 @@
     "@mapgis/mapbox-gl-draw-radius": "^1.0.0",
     "@mapgis/mapbox-gl-inspect": "^10.5.6",
     "@mapgis/webclient-es6-service": "^15.6.0",
+    "@mapgis/webclient-es6-mapboxgl": "^15.6.1",
     "@mapgis/webclient-store": "^10.5.5",
     "@mapgis/webclient-vue-ui": "^15.6.0",
     "@turf/turf": "^6.5.0",
