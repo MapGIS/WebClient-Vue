@@ -41,7 +41,7 @@ const Template = (args, { argTypes }) => ({
     let interval = setInterval(function () {
       if(window.canvas){
         clearInterval(interval);
-        window.manager = new SymbolManager("http://localhost:8895/symbols.json");
+        window.manager = new SymbolManager(`http://${window.webclient.ip}:${window.webclient.port}/标绘/symbols.json`);
         window.manager.getSymbols().then(function () {
           let ttt = {
             "type": "FeatureCollection",
