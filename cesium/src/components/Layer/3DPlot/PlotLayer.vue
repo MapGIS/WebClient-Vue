@@ -19,7 +19,7 @@ export default {
       default: "default"
     },
     vueIndex: {
-      type: Number,
+      type: [Number, String],
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
       }
@@ -38,7 +38,7 @@ export default {
     },
     // 标绘图层json对象
     dataSource: {
-      type: [String, Object, Array]
+      type: [String, Object]
     },
     symbolUrl: {
       type: String

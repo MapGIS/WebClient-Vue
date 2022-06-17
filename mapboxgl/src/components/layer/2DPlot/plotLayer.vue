@@ -14,13 +14,22 @@ export default {
   name: "mapgis-2d-plot-layer",
   inject: ["map"],
   props: {
-    //点击回调事件
+    vueKey: {
+      type: String,
+      default: "default"
+    },
+    vueIndex: {
+      type: [Number, String],
+      default() {
+        return Number((Math.random() * 100000000).toFixed(0));
+      }
+    },//点击回调事件
     pickPlot: {
       type: Function
     },
     // 标绘图层数据
     dataSource: {
-      type: [String, Object, Array]
+      type: [String, Object]
     },
     symbolUrl: {
       type: String

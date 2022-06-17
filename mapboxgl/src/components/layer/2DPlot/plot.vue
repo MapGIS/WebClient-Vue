@@ -70,7 +70,7 @@ export default {
   },
   mounted() {
     // if (this.layer) {
-      this.mount();
+    this.mount();
     // }
   },
   methods: {
@@ -94,7 +94,10 @@ export default {
         vm.symbol.style = vm.symbol.style || json;
         vm.parseStyleJson(json, plot._elem._symbol._src);
       };
-      // this.layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
+      this.$emit("loaded", this);
+    },
+    toJSON() {
+      return this.layer && this.layer.toJSON();
     },
     getSymbol() {
       const vm = this;

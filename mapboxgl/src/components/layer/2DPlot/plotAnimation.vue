@@ -9,6 +9,7 @@
       @addScript="addList"
       @removeScript="removeList"
       @import="importList"
+      @export="exportList"
       class="mapgis-2d-plot-animation-panel"
     ></mapgis-ui-plot-script-list>
     <mapgis-ui-plot-script
@@ -71,7 +72,7 @@ export default {
       type: Object
     },
     data: {
-      type: [String, Object]
+      type: [String, Object, Array]
     },
     script: {
       type: [String, Object]
@@ -234,6 +235,9 @@ export default {
     },
     importList(scriptList) {
       this.scriptListCopy = scriptList;
+    },
+    exportList(scriptList) {
+      this.$emit('export',scriptList) ;
     },
     scriptChange(e) {
       this.scriptListCopy[this.activeIndex] = e.script;

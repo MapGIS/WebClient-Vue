@@ -35,7 +35,7 @@ export default {
       type: String
     },
     vueIndex: {
-      type: Number
+      type: [Number, String]
     },
     symbolUrl: {
       type: String,
@@ -90,6 +90,10 @@ export default {
       );
       return PlotSymbolManager && PlotSymbolManager.source;
     },
+    toJSON() {
+      let layer = this.getLayer();
+      return layer && layer.toJSON();
+    },
     mount() {
       const vm = this;
       let layer = this.getLayer();
@@ -117,6 +121,7 @@ export default {
         };
         layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
       }
+      this.$emit("loaded", this);
     },
     getSymbol() {
       const vm = this;

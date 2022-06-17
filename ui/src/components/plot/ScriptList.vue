@@ -196,7 +196,7 @@ export default {
      */
     exportClick() {
       this.exportJSON(this.scriptListCopy, "script-list.json");
-      this.$emit("export");
+      this.$emit("export", this.scriptListCopy);
     },
     exportJSON(data, filename) {
       // console.log(data, "exportJSON");
