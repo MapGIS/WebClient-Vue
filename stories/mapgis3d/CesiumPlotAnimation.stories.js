@@ -13,32 +13,25 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { Mapgis3dPlotAnimation, Mapgis3dPlotLayer },
-  template: `<mapgis-web-scene style="height:95vh" @load="handleLoad">
+  template: `<mapgis-web-scene style="height:95vh">
         <mapgis-3d-plot-layer @loaded="handleLoaded" :dataSource="jsonUrl" :symbolUrl="symbolUrl"></mapgis-3d-plot-layer>
-        <mapgis-3d-plot-animation v-bind="$props" :layer="layer1" :layers="layers1" v-if="layer1 && layers1"/>
+        <mapgis-3d-plot-animation v-bind="$props" :vueKey="vueKey" :vueKey="vueKey" v-if="vueKey && vueKey"/>
   </mapgis-web-scene>`,
   data() {
     return {
-      layer1: undefined,
-      layers1: undefined,
-      Cesium: undefined,
-      viewer: undefined,
+      vueIndex: undefined,
+      vueKey: undefined,
       jsonUrl: "http://localhost:8895/标绘/test.json",
       symbolUrl: "http://localhost:8895/标绘/symbols.json",
     };
   },
   methods: {
-    handleLoad(e) {
-      const { component, Cesium } = e;
-      this.Cesium = Cesium;
-      this.viewer = component.viewer;
-    },
     handleLoaded(e) {
       const vm = this;
       let manager = new SymbolManager(this.symbolUrl);
       manager.getSymbols().then(function () {
-        vm.layer1 = e.layer;
-        vm.layers1 = e.component.layers;
+        vm.vueIndex = e.vueIndex;
+        vm.vueKey = e.vueKey;
       });
     },
   },

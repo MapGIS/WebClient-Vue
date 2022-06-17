@@ -120,6 +120,12 @@ export function initVueCesium() {
   window.vueCesium.BimManager = window.vueCesium.BimManager || new BimManager();
   window.vueCesium.RotateManager =
     window.vueCesium.RotateManager || new RotateManager();
+  window.vueCesium.PlotLayerManager =
+      window.vueCesium.PlotLayerManager || new PlotLayerManager();
+  window.vueCesium.PlotLayerGroupManager =
+      window.vueCesium.PlotLayerGroupManager || new PlotLayerGroupManager();
+  window.vueCesium.PlotAnimationManager =
+      window.vueCesium.PlotAnimationManager || new PlotAnimationManager();
 
   //在window.vueCesium下添加取得WebGlobe对象的方法
   window.vueCesium.getViewer = function (vueKey) {
@@ -336,3 +342,6 @@ export class GraphicsLayerManager extends BaseManager {}
 export class BimManager extends BaseManager {}
 export class AspectSlopeAnalysisManager extends BaseManager {}
 export class RotateManager extends BaseManager {}
+export class PlotLayerManager extends BaseManager {}
+export class PlotLayerGroupManager extends BaseManager {}
+export class PlotAnimationManager extends BaseManager {}

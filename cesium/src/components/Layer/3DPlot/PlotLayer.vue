@@ -56,8 +56,6 @@ export default {
   },
   data() {
     return {
-      layer: undefined,
-      layers: undefined,
       dataSourceCopy: undefined
     };
   },
@@ -74,28 +72,32 @@ export default {
     },
     pickPlot: {
       handler: function(func) {
-        if (!func || !this.layer) return;
-        this.layer.pickPlot = func;
+        let layer = this.getLayer();
+        if (!func || !layer) return;
+        layer.pickPlot = func;
       },
       deep: true,
       immediate: true
     },
     pickEventType: {
       handler: function(type) {
-        if (!type || !this.layer) return;
-        this.layer.pickEventType = type;
+        let layer = this.getLayer();
+        if (!type || !layer) return;
+        layer.pickEventType = type;
       },
       deep: true,
       immediate: true
     },
     show: {
       handler: function(val) {
-        if (!this.layer || !this.layers) return;
+        let layer = this.getLayer();
+        let layers = this.getLayers();
+        if (!layer || !layers) return;
         if (val) {
-          this.layers.removeLayer(this.layer);
-          this.layers.addLayer(this.layer);
+          layers.removeLayer(layer);
+          layers.addLayer(layer);
         } else {
-          this.layers.removeLayer(this.layer);
+          layers.removeLayer(layer);
         }
       },
       immediate: true
@@ -112,7 +114,7 @@ export default {
     this.mount();
   },
   destroyed() {
-    // this.unmount();
+    this.unmount();
   },
   methods: {
     mount() {
@@ -121,9 +123,23 @@ export default {
       let manager = new SymbolManager(this.symbolUrl);
       manager.getSymbols().then(function() {
         viewer.scene.globe.depthTestAgainstTerrain = false;
-        vm.layers = vm.layers || new PlotLayer3DGroup(viewer);
-        vm.layer = vm.layer || new PlotLayer3D(Cesium, viewer);
-        vm.layers.addLayer(vm.layer);
+        let layer = window.vueCesium.PlotLayerManager.findSource(
+            vm.vueKey,
+            vm.vueIndex
+        );
+        if(!layer) {
+          layer = new PlotLayer3D(Cesium, viewer);
+          window.vueCesium.PlotLayerManager.addSource(vm.vueKey, vm.vueIndex, layer);
+        }
+        let layers = window.vueCesium.PlotLayerGroupManager.findSource(
+            vm.vueKey,
+            vm.vueIndex
+        );
+        if(!layers) {
+          layers = new PlotLayer3DGroup(viewer);
+          window.vueCesium.PlotLayerGroupManager.addSource(vm.vueKey, vm.vueIndex, layers);
+        }
+        layers.addLayer(layer);
 
         if (!vm.dataSourceCopy) {
           axios({
@@ -133,26 +149,44 @@ export default {
             timeout: 1000
           }).then(res => {
             vm.dataSourceCopy = res.data;
-            vm.fromJSON(vm.dataSourceCopy);
+            vm.fromJSON(JSON.parse(JSON.stringify(vm.dataSourceCopy)));
           });
         } else {
-          vm.fromJSON(vm.dataSourceCopy);
+          vm.fromJSON(JSON.parse(JSON.stringify(vm.dataSourceCopy)));
         }
 
-        vm.$emit("loaded", { component: vm, layer: vm.layer });
+        vm.$emit("loaded", { vueKey: vm.vueKey, vueIndex: vm.vueIndex });
       });
     },
     unmount(){
-      this.layer.removeAll()
-      this.layers.removeLayer(this.layer);
-      this.layer = undefined;
-      this.layers = undefined;
+      let layer = this.getLayer();
+      let layers = this.getLayers();
+
+      if(layer && layers) {
+        layer.removeAll()
+        layers.removeLayer(layer);
+      }
+    },
+    getLayer() {
+      let layerManager = window.vueCesium.PlotLayerManager.findSource(
+          this.vueKey,
+          this.vueIndex
+      );
+      return layerManager && layerManager.source;
+    },
+    getLayers() {
+      let PlotLayerGroupManager = window.vueCesium.PlotLayerGroupManager.findSource(
+          this.vueKey,
+          this.vueIndex
+      );
+      return PlotLayerGroupManager && PlotLayerGroupManager.source;
     },
     /**
      * @description: 导出图层数据(json对象)
      */
     toJSON() {
-      return this.layer.toJSON();
+      let layer = this.getLayer();
+      return layer && layer.toJSON();
     },
     /**
      * @description: 加载json对象
@@ -160,12 +194,8 @@ export default {
      * @return {*}
      */
     fromJSON(json) {
-      // const vm = this;
-      // let manager = new SymbolManager(this.symbolUrl);
-      // manager.getSymbols().then(function() {
-      //   vm.layer.fromJSON(json);
-      // });
-      this.layer.fromJSON(json);
+      let layer = this.getLayer();
+      layer && layer.fromJSON(json);
     },
     /**
      * @description: 添加标绘图元对象
@@ -173,7 +203,8 @@ export default {
      * @return {*}
      */
     addPlot(plot) {
-      this.layer.addPlot(plot);
+      let layer = this.getLayer();
+      layer && layer.addPlot(plot);
     },
     /**
      * @description: 删除标绘图元对象
@@ -181,13 +212,15 @@ export default {
      * @return {*}
      */
     removePlot(plot) {
-      this.layer.removePlot(plot);
+      let layer = this.getLayer();
+      layer && layer.removePlot(plot);
     },
     /**
      * @description 移除图层下的所有标绘图元
      */
     removeAll() {
-      this.layer.removeAll();
+      let layer = this.getLayer();
+      layer && layer.removeAll();
     },
     /**
      * @description: 通过标绘图元id移除标绘图元对象
@@ -195,7 +228,8 @@ export default {
      * @return {*}
      */
     removePlotByID(id) {
-      this.layer.removePlotByID(id);
+      let layer = this.getLayer();
+      layer && layer.removePlotByID(id);
     },
     /**
      * @description: 根据标绘图元id获取标绘图元对象
@@ -203,7 +237,8 @@ export default {
      * @return {*}
      */
     getPlotByID(uid) {
-      return this.layer.getPlotByID(uid);
+      let layer = this.getLayer();
+      return layer && layer.getPlotByID(uid);
     }
   }
 };
