@@ -12,26 +12,22 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { Mapgis3dPlot,Mapgis3dPlotLayer },
-  template: `<mapgis-web-scene style="height:95vh" @load="handleLoad">
+  template: `<mapgis-web-scene style="height:95vh">
         <mapgis-3d-plot-layer @loaded="handleLoaded" :dataSource="jsonUrl" v-bind="$props"></mapgis-3d-plot-layer>
-        <mapgis-3d-plot v-bind="$props" :layer="layer1" v-if="layer1" class="storybook-ui-card"/>
+        <mapgis-3d-plot v-bind="$props" :layer="layer1" v-if="vueIndex && vueKey" class="storybook-ui-card"/>
   </mapgis-web-scene>`,
   data() {
     return {
       layer1: undefined,
-      Cesium: undefined,
-      viewer: undefined,
+      vueIndex: undefined,
+      vueKey: undefined,
       jsonUrl: "http://localhost:8895/标绘/test.json",
     };
   },
   methods: {
-    handleLoad(e){
-      const { component,Cesium } = e;
-      this.Cesium = Cesium;
-      this.viewer = component.viewer;
-    },
     handleLoaded(e) {
-      this.layer1 = e.layer;
+      this.vueIndex = e.vueIndex;
+      this.vueKey = e.vueKey;
     },
   },
 });

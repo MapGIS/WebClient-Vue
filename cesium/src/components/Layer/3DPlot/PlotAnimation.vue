@@ -109,7 +109,6 @@ export default {
   watch: {
     data: {
       handler: async function(e) {
-        console.log("------------------data")
         const vm = this;
         // let json;
         switch (typeof e) {
@@ -128,7 +127,6 @@ export default {
       immediate: true
     },
     value(e) {
-      console.log("------------------value")
       let timeline = this.getPlotAnimation()
       timeline && timeline.seek(e * 1000);
     }
@@ -245,16 +243,18 @@ export default {
       timeline && timeline.setSpeed(e);
     },
     playScript(e) {
-      console.log("--------play")
-      let index = this.activeIndex;
-      this.activeIndex = e ? e.index : this.activeIndex;
-      if (index !== this.activeIndex) {
-        this.initTimeline();
-      } else {
-        let timeline = this.getPlotAnimation();
-        timeline && timeline.restore();
-      }
-      // this.$refs.timeline.forward();
+      // console.log("--------play")
+      // let index = this.activeIndex;
+      // this.activeIndex = e ? e.index : this.activeIndex;
+      // if (index !== this.activeIndex) {
+      //   this.initTimeline();
+      // } else {
+      //   let timeline = this.getPlotAnimation();
+      //   timeline && timeline.restore();
+      // }
+      // // this.$refs.timeline.forward();
+      let timeline = this.getPlotAnimation();
+      timeline && timeline.restore();
       this.forward();
     },
     clickList(e) {

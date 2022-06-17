@@ -31,9 +31,11 @@ import { SymbolManager, DrawTool } from "@mapgis/webclient-es6-service";
 export default {
   name: "mapgis-3d-plot",
   props: {
-    layer: {
-      type: Object,
-      required: true
+    vueKey: {
+      type: String
+    },
+    vueIndex: {
+      type: Number
     },
     symbolUrl: {
       type: String,
@@ -45,10 +47,6 @@ export default {
       symbolData: undefined,
       showStylePanel: false,
       styleData: undefined,
-      // 图元绘制工具
-      drawTool: undefined,
-      // 符号管理器
-      manager: undefined,
       handler: undefined,
       // 符号
       symbol: undefined,
@@ -64,32 +62,72 @@ export default {
     this.mount();
   },
   methods: {
+    getLayer() {
+      let layerManager = window.vueCesium.PlotLayerManager.findSource(
+          this.vueKey,
+          this.vueIndex
+      );
+      return layerManager && layerManager.source;
+    },
+    getLayers() {
+      let PlotLayerGroupManager = window.vueCesium.PlotLayerGroupManager.findSource(
+          this.vueKey,
+          this.vueIndex
+      );
+      return PlotLayerGroupManager && PlotLayerGroupManager.source;
+    },
+    getDrawTool() {
+      let DrawToolManager = window.vueCesium.DrawToolManager.findSource(
+          this.vueKey,
+          this.vueIndex
+      );
+      return DrawToolManager && DrawToolManager.source;
+    },
+    getSymbolManager() {
+      let PlotSymbolManager = window.vueCesium.PlotSymbolManager.findSource(
+          this.vueKey,
+          this.vueIndex
+      );
+      return PlotSymbolManager && PlotSymbolManager.source;
+    },
     mount() {
       const vm = this;
-      this.drawTool = new DrawTool(this.layer, {
-        addedPlot: function(plot) {
+      let layer = this.getLayer();
+      if(layer) {
+        let drawTool = this.getDrawTool();
+        if(!drawTool) {
+          drawTool = new DrawTool(layer, {
+            addedPlot: function(plot) {
+              vm.isDraw = true;
+              vm.plot = plot;
+            }
+          });
+          window.vueCesium.DrawToolManager.addSource(this.vueKey, this.vueIndex, drawTool);
+        }
+        this.getSymbol();
+
+        layer.pickPlot = async function(plot) {
           vm.isDraw = true;
           vm.plot = plot;
-        }
-      });
-      this.getSymbol();
-
-      this.layer.pickPlot = async function(plot) {
-        vm.isDraw = true;
-        vm.plot = plot;
-        // console.log('plot',plot);
-        vm.symbol = vm.symbol || plot._elem._symbol;
-        let json = plot.getStyle();
-        vm.symbol.style = vm.symbol.style || json;
-        vm.parseStyleJson(json, plot._elem._symbol._src);
-      };
-      this.layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
+          // console.log('plot',plot);
+          vm.symbol = vm.symbol || plot._elem._symbol;
+          let json = plot.getStyle();
+          vm.symbol.style = vm.symbol.style || json;
+          vm.parseStyleJson(json, plot._elem._symbol._src);
+        };
+        layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
+      }
     },
     getSymbol() {
       const vm = this;
       // console.log("symbolUrl", this.symbolUrl);
-      this.manager = new SymbolManager(this.symbolUrl);
-      this.manager.getSymbols().then(function(symbols) {
+      let manager = this.getSymbolManager();
+      if(!manager) {
+        manager = new SymbolManager(this.symbolUrl);
+        window.vueCesium.PlotSymbolManager.addSource(this.vueKey, this.vueIndex, manager);
+      }
+
+      manager.getSymbols().then(function(symbols) {
         // console.log("symbols", symbols);
         vm.symbols = [];
         viewer.scene.globe.depthTestAgainstTerrain = false;
@@ -135,14 +173,20 @@ export default {
     async clickIcon(data) {
       const vm = this;
       this.isDraw = false;
-      this.symbol = this.manager.getLeafByID(data.icon.id);
+      let manager = this.getSymbolManager();
+      if(!manager) return;
+      this.symbol = manager.getLeafByID(data.icon.id);
       this.symbol.getElement().then(function(res) {
         vm.symbol.style = res.getStyleJSON();
         let json = res.getStyleJSON();
         vm.parseStyleJson(json, data.icon.src);
       });
-      this.drawTool.stopDraw();
-      this.drawTool.drawPlot(vm.symbol);
+
+      let drawTool = this.getDrawTool();
+      if(drawTool) {
+        drawTool.stopDraw();
+        drawTool.drawPlot(vm.symbol);
+      }
     },
     parseStyleJson(json, svgUrl) {
       // console.log("json", json);
