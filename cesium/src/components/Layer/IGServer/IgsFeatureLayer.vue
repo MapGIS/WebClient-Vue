@@ -1,28 +1,30 @@
 <template>
-  <span/>
+  <div>
+  </div>
 </template>
 <script>
 import clonedeep from "lodash.clonedeep";
+import PopupMixin from "../Mixin/PopupVirtual";
+import BaseLayer from "../../Layer/GeoJSON/BaseLayer";
 
 export default {
   name: "mapgis-3d-igs-feature-layer",
   inject: ["Cesium", "vueCesium", "viewer"],
+  mixins: [BaseLayer, PopupMixin],
   props: {
     baseUrl: {
       type: String,
       default: null
     },
-    autoReset: {
-      type: Boolean,
-      default: true
+    gdbps: {
+      type: String,
+      default: null
     },
-    loadAll: {
-      type: Boolean,
-      default: false
-    },
-    setViewToExisting: {
-      type: Boolean,
-      default: false
+    renderer: {
+      type: Object,
+      default() {
+        return {}
+      }
     },
     filter: {
       type: Object,
@@ -31,34 +33,17 @@ export default {
     clampToGround: {
       type: Boolean,
       default: false
-    },
-    useSystemLib: {
-      type: Boolean,
-      default: false
-    },
-    systemLib: {
-      type: String,
-      default: 'MapGIS 10'
-    },
-    vueKey: {
-      type: String,
-      default: "default"
-    },
-    vueIndex: {
-      type: Number,
-      default() {
-        return Number((Math.random() * 100000000).toFixed(0));
-      }
-    },
-    featureStyle: {
-      type: Object,
-      default(){
-        return {}
-      }
     }
   },
   data() {
-    return {};
+    return {
+      layerIndex: undefined,
+      layer: undefined,
+      layerRange: [],
+      clickhandler: undefined,
+      hoverhandler: undefined,
+      tempHighlightdata: undefined
+    };
   },
   mounted() {
     this.mount();
@@ -73,139 +58,177 @@ export default {
         this.mount();
       },
     },
-    filter: {
-      handler: function () {
+    autoReset: {
+      handler(value) {
         this.unmount();
         this.mount();
       },
+      deep: true
     },
-    featureStyle: {
-      handler: function () {
-        this.unmount();
+    renderer: {
+      handler(value) {
         this.mount();
       },
+      deep: true
     }
   },
   methods: {
-    mount() {
+    async createCesiumObject() {
       let {viewer, vueCesium} = this;
+      let { baseUrl, gdbps, autoReset, renderer, filter} = this;
       let vm = this;
-      let layerIndex;
-      let options = {};
-      options = vm.initOptions(options);
-      // if (vm.baseUrl.indexOf("/g3d") > -1) {
-      //   layerIndex = viewer.scene.layers.appendG3DLayer(vm.baseUrl, {
-      //     ...options,
-      //     getDocLayerIndexes: vm._handleCallback
-      //   });
-      // } else {
-        layerIndex = viewer.scene.layers.appendVectorLayer(vm.baseUrl, {
-          ...options,
-          getDocLayerIndexes: vm._handleCallback
-        });
-      // }
-
-      vueCesium.IgsFeatureManager.addSource(
-          vm.vueKey,
-          vm.vueIndex,
-          layerIndex
+      let options = {
+        autoReset,
+        loadAll: true,
+        renderer,
+        clampToGround: false,
+        filter: filter
+      };
+      if (baseUrl.indexOf("/igs/rest/mrfs/layer") !== -1) {
+        options.layers = gdbps;
+      }
+      let transformRenderer = JSON.parse(JSON.stringify(renderer));
+      this.transformObject(transformRenderer);
+      options.renderer = transformRenderer;
+      return new Promise(
+        resolve => {
+          let layerIndex = viewer.scene.layers.appendFeatureLayer(baseUrl, {
+            ...options,
+            getDocLayerIndexes: vm.getDocLayer
+          });
+          resolve({ layerIndex: layerIndex });
+        },
+        reject => {}
       );
     },
+    getDocLayer(index) {
+      const vm = this;
+      const { vueIndex, vueKey, vueCesium, url } = this;
+      if (index) {
+        this.layerIndex = index;
+      }
+    },
+    mount() {
+      console.log("创建专题图");
+      let {viewer, vueCesium, vueKey, vueIndex, baseUrl, gdbps} = this;
+      let vm = this;
+
+      // 判断是否支持图像渲染像素化处理
+      viewer.shadows = true;
+      if (Cesium.FeatureDetection.supportsImageRenderingPixelated()) { 
+        viewer.resolutionScale = window.devicePixelRatio;
+      };
+      // 是否开启抗锯齿
+      viewer.scene.fxaa = true;
+      viewer.scene.postProcessStages.fxaa.enabled = true;
+
+      let promise = this.createCesiumObject();
+      promise.then(function (dataSource) {
+        vm.layer = viewer.scene.layers.getFeatureLayer(vm.layerIndex[0]);
+        let source = [vm.layer];
+        // 增加图层click和hover事件，在组件外部获得对应entity
+        vm.$_bindClickEvent(vm.parseClick);
+        vm.$_bindHoverEvent(vm.parseHover);
+        if (vm.enableClick) {
+          vm.clickhandler = vm.$_bindClickEvent(vm.clickHighlight);
+        }
+        if (vm.enableHover) {
+          vm.hoverhandler = vm.$_bindHoverEvent(vm.hoverHighlight);
+        }
+        if (source) {
+          vueCesium.IgsFeatureManager.addSource(vueKey, vueIndex, source, {
+            url: baseUrl,
+            layerIndex: dataSource.layerIndex,
+            clickhandler: vm.clickhandler,
+            hoverhandler: vm.hoverhandler,
+          });
+          vm.layerRange = vm.layer._layerRange;
+          vm.parseBBox(vm.layerRange);
+        }
+        vm.$emit("load", { data: vm });
+        if (vm.enableQuery) {
+          vm.queryPrimitive();
+        }
+      });
+    },
+    transformObject(renderer) {
+      renderer = renderer || {};
+      Object.keys(renderer).forEach( key => {
+        if (key == "distanceDisplayCondition") {
+          renderer[key] = new Cesium.DistanceDisplayCondition(renderer[key][0], renderer[key][1]);
+        }
+        if (typeof(renderer[key]) == "object") {
+          this.transformObject(renderer[key]);
+        }
+        if (key == "color") {
+          renderer[key] = Cesium.Color.fromCssColorString(renderer[key]);
+        }
+      })
+    },
     unmount() {
-      //图层移除
+      console.log("销毁专题图");
       let {viewer, vueCesium} = this;
-      const {vueKey, vueIndex} = this;
+      const {vueKey, vueIndex, layerIndex} = this;
       let find = vueCesium.IgsFeatureManager.findSource(vueKey, vueIndex);
       if (find && find.source) {
-        let findSource = find.source;
-        viewer.scene.layers.removeImageryLayerByID(findSource);
+        viewer.scene.layers.removeFeatureLayerByID(layerIndex);
+      }
+      if (find && find.clickhandler) {
+        find.clickhandler.destroy();
+      }
+      if (find && find.hoverhandler) {
+        find.hoverhandler.destroy();
       }
       vueCesium.IgsFeatureManager.deleteSource(vueKey, vueIndex);
+      this.$emit("unload", this);
     },
-    initOptions(options) {
-      const {Cesium} = this;
-      let {autoReset, filter, mapIndex, featureStyle, clampToGround, loadAll, setViewToExisting, useSystemLib, systemLib} = this;
-      if (autoReset) {
-        options.autoReset = autoReset;
-      }
-      if (filter) {
-        options.filter = filter;
-      }
-      if (featureStyle) {
-        let featureStyleCopy = clonedeep(featureStyle);
-        // if (Array.isArray(featureStyle)) {
-        //   // 先做key值替换
-        //   let tempArr = [];
-        //   featureStyleCopy.map((currentVal, index, array) => {
-        //     tempArr.push({
-        //       'type': currentVal.type, 'styleOptions': currentVal.parameters
-        //     })
-        //   })
-        //   tempArr.forEach((fs) => {
-        //     let styleOptions = fs.styleOptions;
-        //     if (styleOptions && styleOptions.color) {
-        //       let colorTrans = Cesium.Color.fromCssColorString(styleOptions.color);
-        //       styleOptions.color = colorTrans;
-        //     }
-        //     if (styleOptions && styleOptions.outlineColor) {
-        //       let outlineColorTemp = Cesium.Color.fromCssColorString(styleOptions.outlineColor);
-        //       styleOptions.outlineColor = outlineColorTemp;
-        //     }
-        //     fs.styleOptions = styleOptions;
-        //   })
-        //   options.style = tempArr;
-        // } else {
-          // 先做key值替换
-          featureStyleCopy = this.$_changeKey(featureStyleCopy);
-          let styleOptions = featureStyleCopy.styleOptions;
-          if (styleOptions && styleOptions.color) {
-            styleOptions.color = Cesium.Color.fromCssColorString(styleOptions.color);
-          }
-          if (styleOptions && styleOptions.outlineColor) {
-            let outlineColorTemp = Cesium.Color.fromCssColorString(styleOptions.outlineColor);
-            styleOptions.outlineColor = outlineColorTemp;
-          }
-          options.style = featureStyleCopy;
-        // }
-      }
-      if (mapIndex) {
-        options.mapIndex = mapIndex;
-      }
-      if (clampToGround) {
-        options.clampToGround = true;
-      }
-      if (useSystemLib) {
-        options.useSystemLib = true;
-      }
-      if (systemLib) {
-        options.systemLib = systemLib;
-      }
-      if (loadAll) {
-        options.loadAll = loadAll;
-      }
-      if (setViewToExisting) {
-        options.setViewToExisting = setViewToExisting;
-      }
-      options.pageCount = 0
-      return options;
+    // 鼠标点击高亮
+    clickHighlight(payload) {
+      this.highlight(payload);
     },
-
-    //该方法用于修改对象的key值
-    $_changeKey(oldFeatureStyle) {
-      let keyMap = {type: "type", parameters: "styleOptions"};
-      let newFeatureStyle = Object.keys(oldFeatureStyle).reduce((newData, key) => {
-        let newKey = keyMap[key] || key;
-        newData[newKey] = oldFeatureStyle[key];
-        return newData;
-      }, {});
-      return newFeatureStyle;
+    // 鼠标悬浮高亮
+    hoverHighlight(payload) {
+      this.highlight(payload);
     },
-
-    _handleCallback(indexs) {
-      let layerIndex = indexs;
-      //抛出load事件
-      this.$emit("loaded", {layerIndex: layerIndex});
-    }
+    // 高亮公共逻辑，若对点击、高亮有其它需求，可以在clickHighlight、hoverHighlight中扩展
+    highlight(payload) {
+      this.clearHighlight();
+      let symbolLayers = JSON.parse(JSON.stringify(this.highlightSymbol.symbolLayers));
+      this.transformObject(symbolLayers);
+      let {entities, iClickFeatures, movement, pickedFeature} = payload;
+      let {id, primitive} = pickedFeature;
+      var geometryInstances = primitive.geometryInstances;
+      for (let i = 0; i < geometryInstances.length; i++) {
+        if (geometryInstances[i].id === id) {
+          let pickExtendAttr = geometryInstances[i].extendAttr;
+          let attributes = primitive.getGeometryInstanceAttributes(id);
+          let beforeAttr = {color: attributes.color, show: attributes.show};
+          this.tempHighlightData = {pickedFeature, attributes: beforeAttr};
+          attributes.color = new Cesium.ColorGeometryInstanceAttribute.toValue(symbolLayers.material.color);
+          attributes.show = new Cesium.ShowGeometryInstanceAttribute.toValue(true);
+        };
+      };
+    },
+    // 清除click、hover高亮样式
+    clearHighlight() {
+      if (this.tempHighlightData) {
+        let {pickedFeature, attributes} = this.tempHighlightData;
+        let {id, primitive} = pickedFeature;
+        let highlightAttr = primitive.getGeometryInstanceAttributes(id);
+        highlightAttr.color = attributes.color;
+        highlightAttr.show = attributes.show;
+      }
+    },
+    // 组件回调
+    parseClick(payload) {
+      this.$emit("featureClick", {pick: payload});
+    },
+    parseHover(payload) {
+      this.$emit("featureHover", {pick: payload});
+    },
+    parseBBox(bbox) {
+      this.$emit("bbox", { bbox: bbox });
+    },
   }
 }
 </script>
