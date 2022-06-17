@@ -49,39 +49,109 @@ const Template = (args, { argTypes }) => ({
               {
                 "type": "Feature",
                 "properties": {
-                  "symbolId": 15,
-                  "symbolName": "",
                   "show": true,
-                  "featureId": "25fbe0d5-e1ca-417a-83ff-31405e778415",
+                  "featureId": "18ae26c4-2f7b-4d7e-8db0-ff4f9f8c49e3",
                   "isScaleByMap": true,
                   "compareLine": 0,
                   "compareLineWidth": 6,
                   "compareLineColor": "#099563",
+                  "symbolId": 3,
+                  "symbolName": "",
                   "symbolNodes": {
-                    "rect4154": {
+                    "irregular": {
                       "strokeStyle": "rgba(255,0,0,1)",
-                      "lineCap": "square",
+                      "lineCap": "butt",
                       "lineJoin": "miter",
                       "miterLimit": 4,
-                      "lineWidth": 8,
+                      "lineWidth": 4,
                       "fillStyleType": 1,
                       "fillGradType": 1,
-                      "fillGradColor": "rgba(0,0,0,0)",
-                      "fillStyle": "none",
-                      "fillRule": "nonzero"
+                      "fillGradColor": "rgba(255,255,100,0.70588235)",
+                      "fillStyle": "rgba(255,255,100,0.70588235)",
+                      "fillRule": "evenodd"
                     }
-                  },
-                  "domModAttributes": { "surfaceBorderWidth": 3 }
+                  }
                 },
                 "geometry": {
                   "type": "MultiPoint",
                   "coordinates": [
-                    [116.44411062141602, 39.643974446739286],
-                    [116.5419815782256, 39.68357355825482],
-                    [116.60596758280553, 39.63092408084513],
-                    [116.5727776225519, 39.58032246424675],
-                    [116.51616403871293, 39.544084553798534],
-                    [116.49223063320721, 39.572437761144904]
+                    [116.36185501768244, 39.73256769825403],
+                    [116.45931493656178, 39.752626536094425],
+                    [116.53755740664587, 39.73890269889742],
+                    [116.62129057638595, 39.80854927114092],
+                    [116.64599872483541, 39.84123772837549]
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {
+                  "show": true,
+                  "featureId": "543c7f4d-d71d-483a-9387-07d4b85d59af",
+                  "isScaleByMap": true,
+                  "compareLine": 0,
+                  "compareLineWidth": 6,
+                  "compareLineColor": "#099563",
+                  "symbolId": 2,
+                  "symbolName": "",
+                  "symbolNodes": {
+                    "irregular": {
+                      "strokeStyle": "rgba(255,0,0,1)",
+                      "lineCap": "butt",
+                      "lineJoin": "miter",
+                      "miterLimit": 4,
+                      "lineWidth": 4,
+                      "fillStyleType": 1,
+                      "fillGradType": 1,
+                      "fillGradColor": "rgba(255,255,100,0.70588235)",
+                      "fillStyle": "rgba(255,255,100,0.70588235)",
+                      "fillRule": "evenodd"
+                    }
+                  }
+                },
+                "geometry": {
+                  "type": "MultiPoint",
+                  "coordinates": [
+                    [116.34765159860672, 39.83741690017732],
+                    [116.41189424744567, 39.861974774546354],
+                    [116.45655898628195, 39.847618400046144],
+                    [116.49187529141045, 39.88589539178005]
+                  ]
+                }
+              },
+              {
+                "type": "Feature",
+                "properties": {
+                  "show": true,
+                  "featureId": "e6d5ca39-1525-431d-8b07-d896ee1708b7",
+                  "isScaleByMap": true,
+                  "compareLine": 0,
+                  "compareLineWidth": 6,
+                  "compareLineColor": "#099563",
+                  "symbolId": 5,
+                  "symbolName": "",
+                  "symbolNodes": {
+                    "irregular": {
+                      "strokeStyle": "rgba(255,0,0,1)",
+                      "lineCap": "butt",
+                      "lineJoin": "miter",
+                      "miterLimit": 4,
+                      "lineWidth": 4,
+                      "fillStyleType": 1,
+                      "fillGradType": 1,
+                      "fillGradColor": "rgba(255,255,100,0.70588235)",
+                      "fillStyle": "rgba(255,255,100,0.70588235)",
+                      "fillRule": "evenodd"
+                    }
+                  }
+                },
+                "geometry": {
+                  "type": "MultiPoint",
+                  "coordinates": [
+                    [116.11722785625255, 39.69386634411077],
+                    [116.18174357720125, 39.745614182422116],
+                    [116.22155114970053, 39.72344129205399],
+                    [116.27096744659741, 39.683300790403024]
                   ]
                 }
               }
@@ -100,16 +170,10 @@ const Template = (args, { argTypes }) => ({
               }
             });
           window.layer1.pickPlot = function (result) {
-            console.log("--------result", result)
           }
           setTimeout(function () {
+            window.layer1.editable = true;
             window.linkTool = new LinkTool(window.layer1,[window.viewer,window.canvas]);
-            // window.drawTool = new DrawTool(window.layer1, {
-            //   addedPlot: function (plot) {
-            //     console.log("已添加图元",plot)
-            //     window.plot = plot;
-            //   }
-            // });
             console.log("window.layer1",window.layer1)
           },1000);
         })
@@ -146,7 +210,6 @@ const Template = (args, { argTypes }) => ({
   template: `<div class="mapgis-link-test">
     <div class="mapbox-item top-left">
       <button @click="draw" style="position: absolute;left: 10px;top: 10px;z-index: 10000">绘制</button>
-      <button @click="setStyle" style="position: absolute;left: 60px;top: 10px;z-index: 10000">改样式</button>
       <mapgis-web-map crs="EPSG:3857"  @load="handle2dLoad">
         <mapgis-rastertile-layer :url="url2" layerId="raster_tdt" />
       </mapgis-web-map>
