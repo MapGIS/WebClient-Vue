@@ -1,3 +1,5 @@
+import {SymbolManager} from "../../../../../WebClient-JavaScript/src/service";
+
 export function initManager() {
   window.vueCesium = window.vueCesium || {};
 }
@@ -126,6 +128,8 @@ export function initVueCesium() {
       window.vueCesium.PlotLayerGroupManager || new PlotLayerGroupManager();
   window.vueCesium.PlotAnimationManager =
       window.vueCesium.PlotAnimationManager || new PlotAnimationManager();
+  window.vueCesium.PlotSymbolManager =
+      window.vueCesium.PlotSymbolManager || new PlotSymbolManager();
 
   //在window.vueCesium下添加取得WebGlobe对象的方法
   window.vueCesium.getViewer = function (vueKey) {
@@ -345,3 +349,4 @@ export class RotateManager extends BaseManager {}
 export class PlotLayerManager extends BaseManager {}
 export class PlotLayerGroupManager extends BaseManager {}
 export class PlotAnimationManager extends BaseManager {}
+export class PlotSymbolManager extends BaseManager {}
