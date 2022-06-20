@@ -109,9 +109,7 @@ export default {
       }
     },
     mount() {
-      console.log("创建专题图");
       let {viewer, vueCesium, vueKey, vueIndex, baseUrl, gdbps} = this;
-      let vm = this;
 
       // 判断是否支持图像渲染像素化处理
       viewer.shadows = true;
@@ -123,10 +121,9 @@ export default {
       viewer.scene.postProcessStages.fxaa.enabled = true;
 
       let promise = this.createCesiumObject();
+      let vm = this;
       promise.then(function (dataSource) {
-        vm.layer = viewer.scene.layers.getFeatureLayer(vm.layerIndex[0]);
-        let source = [vm.layer];
-        // 增加图层click和hover事件，在组件外部获得对应entity
+        // 增加图层click和hover事件，在组件外部获得对象
         vm.$_bindClickEvent(vm.parseClick);
         vm.$_bindHoverEvent(vm.parseHover);
         if (vm.enableClick) {
@@ -135,6 +132,8 @@ export default {
         if (vm.enableHover) {
           vm.hoverhandler = vm.$_bindHoverEvent(vm.hoverHighlight);
         }
+        vm.layer = viewer.scene.layers.getFeatureLayer(vm.layerIndex[0]);
+        let source = [vm.layer];
         if (source) {
           vueCesium.IgsFeatureManager.addSource(vueKey, vueIndex, source, {
             url: baseUrl,
@@ -166,7 +165,6 @@ export default {
       })
     },
     unmount() {
-      console.log("销毁专题图");
       let {viewer, vueCesium} = this;
       const {vueKey, vueIndex, layerIndex} = this;
       let find = vueCesium.IgsFeatureManager.findSource(vueKey, vueIndex);
@@ -181,43 +179,6 @@ export default {
       }
       vueCesium.IgsFeatureManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
-    },
-    // 鼠标点击高亮
-    clickHighlight(payload) {
-      this.highlight(payload);
-    },
-    // 鼠标悬浮高亮
-    hoverHighlight(payload) {
-      this.highlight(payload);
-    },
-    // 高亮公共逻辑，若对点击、高亮有其它需求，可以在clickHighlight、hoverHighlight中扩展
-    highlight(payload) {
-      this.clearHighlight();
-      let symbolLayers = JSON.parse(JSON.stringify(this.highlightSymbol.symbolLayers));
-      this.transformObject(symbolLayers);
-      let {entities, iClickFeatures, movement, pickedFeature} = payload;
-      let {id, primitive} = pickedFeature;
-      var geometryInstances = primitive.geometryInstances;
-      for (let i = 0; i < geometryInstances.length; i++) {
-        if (geometryInstances[i].id === id) {
-          let pickExtendAttr = geometryInstances[i].extendAttr;
-          let attributes = primitive.getGeometryInstanceAttributes(id);
-          let beforeAttr = {color: attributes.color, show: attributes.show};
-          this.tempHighlightData = {pickedFeature, attributes: beforeAttr};
-          attributes.color = new Cesium.ColorGeometryInstanceAttribute.toValue(symbolLayers.material.color);
-          attributes.show = new Cesium.ShowGeometryInstanceAttribute.toValue(true);
-        };
-      };
-    },
-    // 清除click、hover高亮样式
-    clearHighlight() {
-      if (this.tempHighlightData) {
-        let {pickedFeature, attributes} = this.tempHighlightData;
-        let {id, primitive} = pickedFeature;
-        let highlightAttr = primitive.getGeometryInstanceAttributes(id);
-        highlightAttr.color = attributes.color;
-        highlightAttr.show = attributes.show;
-      }
     },
     // 组件回调
     parseClick(payload) {

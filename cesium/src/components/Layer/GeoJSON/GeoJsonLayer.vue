@@ -30,7 +30,8 @@ export default {
       layerRange: [],
       clickhandler: undefined,
       hoverhandler: undefined,
-      tempHighlightdata: undefined
+      tempHighlightdata: undefined,
+      tempQueryDataArr: []
     };
   },
   mounted() {
@@ -92,9 +93,19 @@ export default {
     },
     onGeojsonLoaded(layer) {
       const vm = this;
-      const { vueIndex, vueKey, vueCesium, url } = this;
+      const { vueIndex, vueKey, vueCesium, baseUrl } = this;
       if (layer) {
-        this.layer = layer;
+        vm.layer = layer;
+        let source = layer;
+        vueCesium.GeojsonManager.addSource(vueKey, vueIndex, source, {
+          url: baseUrl,
+          layerIndex: vm.layerIndex,
+          clickhandler: vm.clickhandler,
+          hoverhandler: vm.hoverhandler,
+        });
+        vm.layerRange = vm.layer._layerRange;
+        vm.parseBBox(vm.layerRange);
+        vm.$emit("load", { data: vm });
       }
     },
     mount() {
@@ -112,8 +123,7 @@ export default {
 
       let promise = this.createCesiumObject();
       promise.then(function (dataSource) {
-        vm.layer = viewer.scene.layers.getGeojsonLayer(dataSource.layerIndex);
-        let source = [vm.layer];
+        // vm.layer = viewer.scene.layers.getGeojsonLayer(dataSource.layerIndex);
         // 增加图层click和hover事件，在组件外部获得对应entity
         vm.$_bindClickEvent(vm.parseClick);
         vm.$_bindHoverEvent(vm.parseHover);
@@ -123,17 +133,6 @@ export default {
         if (vm.enableHover) {
           vm.hoverhandler = vm.$_bindHoverEvent(vm.hoverHighlight);
         }
-        if (source) {
-          vueCesium.GeojsonManager.addSource(vueKey, vueIndex, source, {
-            url: baseUrl,
-            layerIndex: dataSource.layerIndex,
-            clickhandler: vm.clickhandler,
-            hoverhandler: vm.hoverhandler,
-          });
-          vm.layerRange = vm.layer._layerRange;
-          vm.parseBBox(vm.layerRange);
-        }
-        vm.$emit("load", { data: vm });
         if (vm.enableQuery) {
           vm.queryPrimitive();
         }
@@ -168,43 +167,6 @@ export default {
       }
       vueCesium.GeojsonManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
-    },
-    // 鼠标点击高亮
-    clickHighlight(payload) {
-      this.highlight(payload);
-    },
-    // 鼠标悬浮高亮
-    hoverHighlight(payload) {
-      this.highlight(payload);
-    },
-    // 高亮公共逻辑，若对点击、高亮有其它需求，可以在clickHighlight、hoverHighlight中扩展
-    highlight(payload) {
-      this.clearHighlight();
-      let symbolLayers = JSON.parse(JSON.stringify(this.highlightSymbol.symbolLayers));
-      this.transformObject(symbolLayers);
-      let {entities, iClickFeatures, movement, pickedFeature} = payload;
-      let {id, primitive} = pickedFeature;
-      var geometryInstances = primitive.geometryInstances;
-      for (let i = 0; i < geometryInstances.length; i++) {
-        if (geometryInstances[i].id === id) {
-          let pickExtendAttr = geometryInstances[i].extendAttr;
-          let attributes = primitive.getGeometryInstanceAttributes(id);
-          let beforeAttr = {color: attributes.color, show: attributes.show};
-          this.tempHighlightData = {pickedFeature, attributes: beforeAttr};
-          attributes.color = new Cesium.ColorGeometryInstanceAttribute.toValue(symbolLayers.material.color);
-          attributes.show = new Cesium.ShowGeometryInstanceAttribute.toValue(true);
-        };
-      };
-    },
-    // 清除click、hover高亮样式
-    clearHighlight() {
-      if (this.tempHighlightData) {
-        let {pickedFeature, attributes} = this.tempHighlightData;
-        let {id, primitive} = pickedFeature;
-        let highlightAttr = primitive.getGeometryInstanceAttributes(id);
-        highlightAttr.color = attributes.color;
-        highlightAttr.show = attributes.show;
-      }
     },
     // 组件回调
     parseClick(payload) {

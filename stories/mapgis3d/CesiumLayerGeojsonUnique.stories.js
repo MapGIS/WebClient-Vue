@@ -5,7 +5,7 @@ import Markdown from "../../cesium/docs/api/layer/Geojson/geojson.md";
 import MapgisThemeLegend from "../../cesium/src/components/Layer/IGServer/Legend.vue";
 
 export default {
-  title: "GeojsonLayer/单值专题图",
+  title: "三维/图层/geojson/单值专题图",
   component: MapgisThemeLegend,
   argTypes: {
     vueKey: {

@@ -5,7 +5,7 @@ import Markdown from "../../cesium/docs/api/layer/IGServer/IgsFeatureLayer.md";
 import MapgisThemeLegend from "../../cesium/src/components/Layer/IGServer/Legend.vue";
 
 export default {
-  title: "FeatureLayer/分段专题图",
+  title: "三维/图层/IGSFeatureLayer/分段专题图",
   component: MapgisThemeLegend,
   argTypes: {
     vueKey: {
@@ -69,6 +69,15 @@ export const 点 = Template.bind({});
     "http://192.168.81.98:8089/igs/rest/services/武汉市地图文档/FeatureServer/4",
     // "http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/4",
   autoReset: true,
+  enableClick: true,
+  enableHover: false,
+  highlightSymbol: {
+    type: 'point-3d',
+    symbolLayers: {
+      type: "icon",
+      material: { color: "#ffff00", },
+    }
+  },
   renderer: new ClassBreaksRenderer({
     type: "class-breaks",
     field: "lg",
@@ -97,7 +106,7 @@ export const 点 = Template.bind({});
         }),
       },
       {
-        maxValue: 9,
+        maxValue: 10,
         minValue: 5,
         symbol: new PointSymbol3D({
           type: 'point-3d',
@@ -119,6 +128,15 @@ export const 线 = Template.bind({});
     "http://192.168.81.98:8089/igs/rest/services/武汉市地图文档/FeatureServer/3",
     // "http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/3",
   autoReset: true,
+  enableClick: true,
+  enableHover: true,
+  highlightSymbol: {
+    type: 'line-3d',
+    symbolLayers: {
+      type: "line",
+      material: { color: "#ffff00", },
+    }
+  },
   renderer: new ClassBreaksRenderer({
     type: "class-breaks",
     field: "x",
@@ -134,7 +152,7 @@ export const 线 = Template.bind({});
     classBreakInfos: [
       {
         maxValue: 5,
-        minValue: 2,
+        minValue: 1,
         symbol: new LineSymbol3D({
           type: 'line-3d',
           symbolLayers: new LineSymbol3DLayer({
@@ -145,7 +163,7 @@ export const 线 = Template.bind({});
         }),
       },
       {
-        maxValue: 9,
+        maxValue: 10,
         minValue: 5,
         symbol: new LineSymbol3D({
           type: 'line-3d',
@@ -173,7 +191,6 @@ export const 区 = Template.bind({});
     symbolLayers: {
       type: "fill",
       material: { color: "#ffff00", },
-      outline: { color: "#000000", width: 1.0, },
     }
   },
   enableLegend: false,
@@ -186,7 +203,7 @@ export const 区 = Template.bind({});
       symbolLayers: new FillSymbol3DLayer({
         type: "fill",
         material: { color: "#ff0000", },
-        outline: { color: "#000000", width: 1.0, },
+        outline: { color: "#ffffff", width: 1.0, },
       })
     }),
     defaultLabel: "其他",
@@ -199,7 +216,7 @@ export const 区 = Template.bind({});
           symbolLayers: new FillSymbol3DLayer({
             type: "fill",
             material: { color: "#00ff00", },
-            outline: { color: "#000000", width: 1.0, },
+            outline: { color: "#ffffff", width: 1.0, },
           })
         }),
         label: "0-100"
@@ -212,7 +229,7 @@ export const 区 = Template.bind({});
           symbolLayers: new FillSymbol3DLayer({
             type: "fill",
             material: { color: "#0000ff", },
-            outline: { color: "#000000", width: 1.0, },
+            outline: { color: "#ffffff", width: 1.0, },
           })
         }),
         label: "100-130"
@@ -296,7 +313,7 @@ export const 区计算表达式 = Template.bind({});
       symbolLayers: new FillSymbol3DLayer({
         type: "fill",
         material: { color: "#ff0000", },
-        outline: { color: "#000000", width: 1.0, },
+        outline: { color: "#ffffff", width: 1.0, },
       })
     }),
     defaultLabel: "其他",
@@ -309,7 +326,7 @@ export const 区计算表达式 = Template.bind({});
           symbolLayers: new FillSymbol3DLayer({
             type: "fill",
             material: { color: "#00ff00", },
-            outline: { color: "#000000", width: 1.0, },
+            outline: { color: "#ffffff", width: 1.0, },
           })
         }),
       },
@@ -321,7 +338,7 @@ export const 区计算表达式 = Template.bind({});
           symbolLayers: new FillSymbol3DLayer({
             type: "fill",
             material: { color: "#0000ff", },
-            outline: { color: "#000000", width: 1.0, },
+            outline: { color: "#ffffff", width: 1.0, },
           })
         }),
       },
@@ -345,7 +362,7 @@ export const 区字段归一化 = Template.bind({});
       symbolLayers: new FillSymbol3DLayer({
         type: "fill",
         material: { color: "#ff0000", },
-        outline: { color: "#000000", width: 1.0, },
+        outline: { color: "#ffffff", width: 1.0, },
       })
     }),
     defaultLabel: "其他",
@@ -358,7 +375,7 @@ export const 区字段归一化 = Template.bind({});
           symbolLayers: new FillSymbol3DLayer({
             type: "fill",
             material: { color: "#00ff00", },
-            outline: { color: "#000000", width: 1.0, },
+            outline: { color: "#ffffff", width: 1.0, },
           })
         }),
       }
@@ -381,7 +398,7 @@ export const 区总和归一化 = Template.bind({});
       symbolLayers: new FillSymbol3DLayer({
         type: "fill",
         material: { color: "#ff0000", },
-        outline: { color: "#000000", width: 1.0, },
+        outline: { color: "#ffffff", width: 1.0, },
       })
     }),
     defaultLabel: "其他",
@@ -394,7 +411,7 @@ export const 区总和归一化 = Template.bind({});
           symbolLayers: new FillSymbol3DLayer({
             type: "fill",
             material: { color: "#00ff00", },
-            outline: { color: "#000000", width: 1.0, },
+            outline: { color: "#ffffff", width: 1.0, },
           })
         }),
       }
