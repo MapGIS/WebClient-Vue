@@ -6,11 +6,11 @@
       :click="clickIcon"
       :search="searchIcon"
       :baseUrl="baseUrl"
-      :format="true"
       v-if="symbolData"
     >
       <mapgis-ui-plot-symbol
         :data="symbolData"
+        :baseUrl="baseUrl"
         @click="clickIcon"
         @search="searchIcon"
         v-if="symbolData"
@@ -21,6 +21,7 @@
       :class="['plot-panel-attribute', 'mapgis-3d-plot-panel']"
       v-if="showStylePanel"
       v-model="styleData"
+      :baseUrl="baseUrl"
       @changeComponentStyle="changeStyle"
       @changeStyle="changeStyle"
     ></mapgis-ui-plot-attribute>
