@@ -16,7 +16,7 @@ const Template = (args, { argTypes }) => ({
   components: { Mapgis3dLink },
   data() {
     return {
-      link: false,
+      link: true,
       url1:
         "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
       url2: "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
