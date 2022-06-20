@@ -5,10 +5,12 @@
       :data="symbolData"
       :click="clickIcon"
       :search="searchIcon"
+      :baseUrl="baseUrl"
       v-if="symbolData"
     >
       <mapgis-ui-plot-symbol
         :data="symbolData"
+        :baseUrl="baseUrl"
         @click="clickIcon"
         @search="searchIcon"
         v-if="symbolData"
@@ -19,6 +21,7 @@
       :class="['plot-panel-attribute', 'mapgis-2d-plot-panel']"
       v-if="showStylePanel"
       v-model="styleData"
+      :baseUrl="baseUrl"
       @changeComponentStyle="changeStyle"
       @changeStyle="changeStyle"
     ></mapgis-ui-plot-attribute>
@@ -30,14 +33,25 @@ import { SymbolManager, DrawTool } from "@mapgis/webclient-es6-service";
 
 export default {
   name: "mapgis-2d-plot",
+  inject: ["map", "vueMap"],
   props: {
-    layer: {
-      type: Object,
-      required: true
+    vueKey: {
+      type: String
+    },
+    vueIndex: {
+      type: [Number, String]
     },
     symbolUrl: {
       type: String,
       required: true
+    },
+    fontUrl: {
+      type: String,
+      default: ''
+    },
+    baseUrl: {
+      type: String,
+      default: ''
     }
   },
   // watch: {
@@ -53,11 +67,6 @@ export default {
       symbolData: undefined,
       showStylePanel: false,
       styleData: undefined,
-      // 图元绘制工具
-      drawTool: undefined,
-      // 符号管理器
-      manager: undefined,
-      handler: undefined,
       // 符号
       symbol: undefined,
       symbols: undefined,
@@ -76,16 +85,23 @@ export default {
   methods: {
     mount() {
       const vm = this;
-      this.drawTool = new DrawTool(this.layer, {
-        addedPlot: function(plot) {
-          vm.isDraw = true;
-          vm.plot = plot;
+      let layer = this.getLayer();
+      if(layer){
+        let drawTool = this.getDrawTool();
+        if(!drawTool){
+          drawTool = new DrawTool(layer, {
+            addedPlot: function(plot) {
+              vm.isDraw = true;
+              vm.plot = plot;
+            }
+          });
+          window.vueMap.DrawToolManager.addSource(this.vueKey, this.vueIndex, drawTool);
         }
-      });
+      }
       this.getSymbol();
 
-      this.layer.editable = true;
-      this.layer.pickPlot = function(plot) {
+      layer.editable = true;
+      layer.pickPlot = function(plot) {
         vm.isDraw = true;
         vm.plot = plot;
         // console.log('plot',plot);
@@ -96,14 +112,65 @@ export default {
       };
       this.$emit("loaded", this);
     },
+    setPick() {
+      const vm = this;
+      let layer = this.getLayer();
+       layer.pickPlot = async function(plot) {
+          vm.isDraw = true;
+          vm.plot = plot;
+          // console.log('plot',plot);
+          vm.symbol = vm.symbol || plot._elem._symbol;
+          let json = plot.getStyle();
+          vm.symbol.style = vm.symbol.style || json;
+          vm.parseStyleJson(json, plot._elem._symbol._src);
+        };
+    },
+    getLayer() {
+      let vueMap = this.vueMap || window.vueMap;
+      if(!vueMap)return;
+      let layerManager = vueMap.PlotLayerManager.findSource(
+          this.vueKey,
+          this.vueIndex
+      );
+      return layerManager && layerManager.source;
+    },
+    getLayers() {
+      let PlotLayerGroupManager = window.vueMap.PlotLayerGroupManager.findSource(
+          this.vueKey,
+          this.vueIndex
+      );
+      return PlotLayerGroupManager && PlotLayerGroupManager.source;
+    },
+    getDrawTool() {
+      let DrawToolManager = window.vueMap.DrawToolManager.findSource(
+          this.vueKey,
+          this.vueIndex
+      );
+      return DrawToolManager && DrawToolManager.source;
+    },
+    getSymbolManager() {
+      let PlotSymbolManager = window.vueMap.PlotSymbolManager.findSource(
+          this.vueKey,
+          this.vueIndex
+      );
+      return PlotSymbolManager && PlotSymbolManager.source;
+    },
     toJSON() {
-      return this.layer && this.layer.toJSON();
+      let layer = this.getLayer();
+      return layer && layer.toJSON();
     },
     getSymbol() {
       const vm = this;
       // console.log("symbolUrl", this.symbolUrl);
-      this.manager = new SymbolManager(this.symbolUrl);
-      this.manager.getSymbols().then(function(symbols) {
+      let manager = this.getSymbolManager();
+      if(!manager) {
+        manager = new SymbolManager(this.symbolUrl,{
+          fontURL: vm.fontUrl,
+          baseUrl: vm.baseUrl
+        });
+        window.vueMap.PlotSymbolManager.addSource(this.vueKey, this.vueIndex, manager);
+      }
+      manager.getSymbols().then(function(symbols) {
         // console.log("symbols", symbols);
         vm.symbols = [];
         let symbolData = [];
@@ -149,7 +216,9 @@ export default {
     clickIcon(data) {
       const vm = this;
       this.isDraw = false;
-      this.symbol = this.manager.getLeafByID(data.icon.id);
+      let manager = this.getSymbolManager();
+      if(!manager) return;
+      this.symbol = manager.getLeafByID(data.icon.id);
       this.symbol.getElement().then(function(res) {
         vm.symbol.style = res.getStyleJSON();
         let json = res.getStyleJSON();
@@ -157,8 +226,11 @@ export default {
 
         vm.parseStyleJson(json, data.icon.src);
       });
-      this.drawTool.stopDraw();
-      this.drawTool.drawPlot(vm.symbol);
+      let drawTool = this.getDrawTool();
+      if(drawTool){
+        drawTool.stopDraw();
+        drawTool.drawPlot(vm.symbol);
+      }
     },
     parseStyleJson(json, svgUrl) {
       // console.log("json", json);

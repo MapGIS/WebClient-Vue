@@ -62,14 +62,17 @@ import axios from "axios";
 
 export default {
   name: "mapgis-2d-plot-animation",
-  inject: ["map"],
+  inject: ["map", "vueMap"],
   props: {
-    layer: {
-      type: Object,
-      required: true
+    vueKey: {
+      type: String,
+      default: "default"
     },
-    layers: {
-      type: Object
+    vueIndex: {
+      type: [Number, String],
+      default() {
+        return Number((Math.random() * 100000000).toFixed(0));
+      }
     },
     data: {
       type: [String, Object, Array]
@@ -96,11 +99,9 @@ export default {
   },
   data() {
     return {
-      timeline: undefined,
       value: 0,
       plotId: undefined,
       scriptListCopy: undefined,
-      manager: undefined,
       forwardActive: false,
       showScriptList: true,
       showTimeline: false,
@@ -129,7 +130,8 @@ export default {
       immediate: true
     },
     value(e) {
-      this.timeline.seek(e * 1000);
+      let timeline = this.getPlotAnimation()
+      timeline && timeline.seek(e * 1000);
     }
   },
   mounted() {
@@ -141,8 +143,9 @@ export default {
   methods: {
     mount() {
       const vm = this;
-      this.layer.editable = true;
-      this.layer.pickPlot = function(plot) {
+      let layer = this.getLayer();
+      layer.editable = true;
+      layer.pickPlot = function(plot) {
         // console.log("plot", plot);
         vm.plotId = plot.element.featureId;
         let json = plot.getStyle();
@@ -151,10 +154,15 @@ export default {
         // console.log("plotId/nodeNames", vm.plotId, "/", vm.nodeNames);
       };
 
-      this.timeline = this.timeline || new TimeLine(this.layers, {});
+      let layers = this.getLayers();
+      let timeline = this.getPlotAnimation();
+      if(!timeline) {
+        timeline = new TimeLine(layers, {});
+        window.vueMap.PlotAnimationManager.addSource(vm.vueKey, vm.vueIndex, timeline);
+      }
       if (this.scriptListCopy) {
         this.activeIndex = 0;
-        this.timeline.fromJSON(vm.scriptListCopy[vm.activeIndex]);
+        timeline.fromJSON(vm.scriptListCopy[vm.activeIndex]);
       } else {
         axios({
           method: "get",
@@ -163,47 +171,97 @@ export default {
         }).then(res => {
           vm.activeIndex = 0;
           vm.scriptListCopy = [res.data];
-          vm.timeline.fromJSON(res.data);
+          timeline.fromJSON(res.data);
         });
       }
+
+      this.$emit("loaded", this);
+    },
+    setPick() {
+      const vm = this;
+      let layer = this.getLayer();
+      layer.editable = true;
+      layer.pickPlot = function(plot) {
+        // console.log("plot", plot);
+        vm.plotId = plot.element.featureId;
+        let json = plot.getStyle();
+        // console.log("plot.getStyle", json);
+        vm.nodeNames = Object.keys(json.nodeStyles);
+        // console.log("plotId/nodeNames", vm.plotId, "/", vm.nodeNames);
+      };
+    },
+    getLayer() {
+      let layerManager = window.vueMap.PlotLayerManager.findSource(
+          this.vueKey,
+          this.vueIndex
+      );
+      return layerManager && layerManager.source;
+    },
+    getLayers() {
+      let PlotLayerGroupManager = window.vueMap.PlotLayerGroupManager.findSource(
+          this.vueKey,
+          this.vueIndex
+      );
+      return PlotLayerGroupManager && PlotLayerGroupManager.source;
+    },
+    getPlotAnimation() {
+      let PlotAnimationManager = window.vueMap.PlotAnimationManager.findSource(
+          this.vueKey,
+          this.vueIndex
+      );
+      return PlotAnimationManager && PlotAnimationManager.source;
     },
     start() {
-      this.timeline.restore();
+      let timeline = this.getPlotAnimation();
+      timeline.restore();
     },
     backward() {
-      this.timeline.reversed(true);
-      this.timeline.play();
+      let timeline = this.getPlotAnimation();
+      if(timeline){
+        timeline.reversed(true);
+        timeline.play();
+      }
     },
     pause() {
-      this.timeline.pause();
+      let timeline = this.getPlotAnimation();
+      timeline && timeline.pause();
     },
     forward() {
-      this.showTimeline = true;
-      this.forwardActive = true;
-      this.timeline.reversed(false);
-      this.timeline.play();
+      let timeline = this.getPlotAnimation();
+      if(timeline) {
+        this.showTimeline = true;
+        this.forwardActive = true;
+        timeline.reversed(false);
+        timeline.play();
+      }
     },
     clearTimeline() {
-      if (!this.timeline) return;
-      this.timeline.restore();
-      this.timeline.clear();
+      let timeline = this.getPlotAnimation();
+      if(timeline) {
+        timeline.restore();
+        timeline.clear();
+      }
     },
     initTimeline() {
-      this.clearTimeline();
-      this.timeline &&
-        this.timeline.fromJSON(this.scriptListCopy[this.activeIndex]);
+      let timeline = this.getPlotAnimation();
+      if(timeline) {
+        this.clearTimeline();
+        timeline.fromJSON(JSON.parse(JSON.stringify(this.scriptListCopy[this.activeIndex])));
+      }
     },
     end() {},
     setSpeed(e) {
-      this.timeline.setSpeed(e);
+      let timeline = this.getPlotAnimation();
+      timeline && timeline.setSpeed(e);
     },
     playScript(e) {
+      let timeline = this.getPlotAnimation();
       let index = this.activeIndex;
       this.activeIndex = e ? e.index : this.activeIndex;
       if (index !== this.activeIndex) {
         this.initTimeline();
       } else {
-        this.timeline.restore();
+        timeline.restore();
       }
       // this.$refs.timeline.forward();
       this.forward();
@@ -243,20 +301,26 @@ export default {
       this.scriptListCopy[this.activeIndex] = e.script;
     },
     animationChange(e) {
-      this.scriptListCopy[this.activeIndex] = e.script;
-      let data = JSON.parse(JSON.stringify(e.script.animations[e.index]));
-      // 单图层
-      const s = this.timeline.getAnimationById(data.featureIds);
-      // console.log("修改动画", s);
-      this.timeline.removeAnimation(s[0]);
-      this.timeline.addAnimationObject(data);
+      let timeline = this.getPlotAnimation();
+      if(timeline) {
+        this.scriptListCopy[this.activeIndex] = e.script;
+        let data = JSON.parse(JSON.stringify(e.script.animations[e.index]));
+        // 单图层
+        const s = timeline.getAnimationById(data.featureIds);
+        // console.log("修改动画", s);
+        timeline.removeAnimation(s[0]);
+        timeline.addAnimationObject(data);
+      }
     },
     addScript(e) {
-      // const vm = this;
-      this.scriptListCopy[this.activeIndex] = e.script;
-      let data = JSON.parse(JSON.stringify(e.script.animations[e.index]));
-      // console.log("adddddd", data);
-      this.timeline.addAnimationObject(data);
+      let timeline = this.getPlotAnimation();
+      if(timeline) {
+        // const vm = this;
+        this.scriptListCopy[this.activeIndex] = e.script;
+        let data = JSON.parse(JSON.stringify(e.script.animations[e.index]));
+        // console.log("adddddd", data);
+        timeline.addAnimationObject(data);
+      }
     }
   }
 };

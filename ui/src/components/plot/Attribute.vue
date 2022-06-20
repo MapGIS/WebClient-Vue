@@ -198,6 +198,10 @@ export default {
       default() {
         return groupArr;
       }
+    },
+    baseUrl: {
+      type: String,
+      default: ""
     }
   },
   model: {
@@ -282,6 +286,9 @@ export default {
      */
     async getSvg(url) {
       if(!url){ return console.log("缺少符号的svgUrl")}
+      if(this.baseUrl){
+        url = this.baseUrl + url;
+      }
       const res = await axios({
         method: "get",
         url: url,

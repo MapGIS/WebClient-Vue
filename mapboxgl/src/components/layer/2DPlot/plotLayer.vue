@@ -12,7 +12,7 @@ import axios from "axios";
 
 export default {
   name: "mapgis-2d-plot-layer",
-  inject: ["map"],
+  inject: ["map", "vueMap"],
   props: {
     vueKey: {
       type: String,
@@ -43,12 +43,18 @@ export default {
     editable: {
       type: Boolean,
       default: false
+    },
+    fontUrl: {
+      type: String,
+      default: ''
+    },
+    baseUrl: {
+      type: String,
+      default: ''
     }
   },
   data() {
     return {
-      layer: undefined,
-      layers: undefined,
       dataSourceCopy: undefined
     };
   },
@@ -65,20 +71,23 @@ export default {
     },
     pickPlot: {
       handler: function(func) {
-        if (!func || !this.layer) return;
-        this.layer.pickPlot = func;
+        let layer = this.getLayer();
+        if (!func || !layer) return;
+        layer.pickPlot = func;
       },
       deep: true,
       immediate: true
     },
     show: {
       handler: function(val) {
-        if (!this.layer || !this.layers) return;
+        let layer = this.getLayer();
+        let layers = this.getLayers();
+        if (!layer || !this.layers) return;
         if (val) {
-          this.layers.removeLayer(this.layer);
-          this.layers.addLayer(this.layer);
+          layers.removeLayer(layer);
+          layers.addLayer(layer);
         } else {
-          this.layers.removeLayer(this.layer);
+          layers.removeLayer(layer);
         }
       },
       deep: true,
@@ -86,8 +95,9 @@ export default {
     },
     editable: {
       handler: function(val) {
-        if (!this.layer) return;
-        this.layer.editable = val;
+        let layer = this.getLayer();
+        if (!layer) return;
+        layer.editable = val;
       },
       immediate: true
     }
@@ -102,12 +112,23 @@ export default {
     mount() {
       const { map } = this;
       const vm = this;
-      let manager = new SymbolManager(this.symbolUrl);
+      let manager = new SymbolManager(this.symbolUrl,{
+        fontURL: vm.fontUrl,
+        baseUrl: vm.baseUrl
+      });
       manager.getSymbols().then(function() {
-        const canvas = new FabricLayer(map, PlotLayer2DGroup);
-        vm.layers = vm.layers || canvas.getFabricCanvas();
-        vm.layer = vm.layer || new PlotLayer2D();
-        vm.layers.addLayer(vm.layer);
+        let layer = vm.getLayer();
+        if(!layer) {
+          layer = new PlotLayer2D();
+          window.vueMap.PlotLayerManager.addSource(vm.vueKey, vm.vueIndex, layer);
+        }
+        let layers = vm.getLayers();
+        if(!layers) {
+          const canvas = new FabricLayer(map, PlotLayer2DGroup);
+          layers = canvas.getFabricCanvas();
+          window.vueMap.PlotLayerGroupManager.addSource(vm.vueKey, vm.vueIndex, layers);
+        }
+        layers.addLayer(layer);
 
         if (!vm.dataSourceCopy) {
           axios({
@@ -123,19 +144,37 @@ export default {
           vm.fromJSON(vm.dataSourceCopy);
         }
 
-        vm.$emit("loaded", { component: vm, layer: vm.layer });
+        vm.$emit("loaded", { vueKey: vm.vueKey, vueIndex: vm.vueIndex });
       });
     },
     unmount() {
-      this.layers.removeLayer(this.layer);
-      this.layer = undefined;
-      this.layers = undefined;
+      let layer = this.getLayer();
+      let layers = this.getLayers();
+      
+      if(layer && layers) {
+        layers.removeLayer(layer);
+      }
+    },
+    getLayer() {
+      let layerManager = window.vueMap.PlotLayerManager.findSource(
+          this.vueKey,
+          this.vueIndex
+      );
+      return layerManager && layerManager.source;
+    },
+    getLayers() {
+      let PlotLayerGroupManager = window.vueMap.PlotLayerGroupManager.findSource(
+          this.vueKey,
+          this.vueIndex
+      );
+      return PlotLayerGroupManager && PlotLayerGroupManager.source;
     },
     /**
      * @description: 导出json对象
      */
     toJSON() {
-      return this.layer && this.layer.toJSON();
+      let layer = this.getLayer();
+      return layer && layer.toJSON();
     },
     /**
      * @description: 加载json对象
@@ -149,7 +188,8 @@ export default {
       // manager.getSymbols().then(function() {
       //   vm.layer && vm.layer.fromJSON(json);
       // });
-      this.layer && this.layer.fromJSON(json);
+      let layer = this.getLayer();
+      layer && layer.fromJSON(json);
     },
     /**
      * @description: 添加标绘图元对象
@@ -157,7 +197,8 @@ export default {
      * @return {*}
      */
     addPlot(plot) {
-      this.layer && this.layer.addPlot(plot);
+      let layer = this.getLayer();
+      layer && layer.addPlot(plot);
     },
     /**
      * @description: 删除标绘图元对象
@@ -165,7 +206,8 @@ export default {
      * @return {*}
      */
     removePlot(plot) {
-      this.layer && this.layer.removePlot(plot);
+      let layer = this.getLayer();
+      layer && layer.removePlot(plot);
     },
     /**
      * @description: 通过标绘图元id移除标绘图元对象
@@ -173,7 +215,8 @@ export default {
      * @return {*}
      */
     removePlotByID(id) {
-      this.layer && this.layer.removePlotByID(id);
+      let layer = this.getLayer();
+      layer && layer.removePlotByID(id);
     },
     /**
      * @description: 根据标绘图元id获取标绘图元对象
@@ -181,14 +224,16 @@ export default {
      * @return {*}
      */
     getPlotByID(uid) {
-      return this.layer && this.layer.getPlotByID(uid);
+      let layer = this.getLayer();
+      return layer && layer.getPlotByID(uid);
     },
     /**
      * @description: 获取图层Id
      * @return {String}
      */
     getLayerId() {
-      return this.layer && this.layer.getLayerId();
+      let layer = this.getLayer();
+      return layer && layer.getLayerId();
     }
   }
 };

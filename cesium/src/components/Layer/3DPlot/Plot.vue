@@ -5,6 +5,8 @@
       :data="symbolData"
       :click="clickIcon"
       :search="searchIcon"
+      :baseUrl="baseUrl"
+      :format="true"
       v-if="symbolData"
     >
       <mapgis-ui-plot-symbol
@@ -30,6 +32,7 @@ import { SymbolManager, DrawTool } from "@mapgis/webclient-es6-service";
 
 export default {
   name: "mapgis-3d-plot",
+  inject: ["viewer", "Cesium", "vueCesium"],
   props: {
     vueKey: {
       type: String
@@ -40,6 +43,14 @@ export default {
     symbolUrl: {
       type: String,
       required: true
+    },
+    fontUrl: {
+      type: String,
+      default: ''
+    },
+    baseUrl: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -63,7 +74,9 @@ export default {
   },
   methods: {
     getLayer() {
-      let layerManager = window.vueCesium.PlotLayerManager.findSource(
+      let vueCesium = this.vueCesium || window.vueCesium;
+      if(!vueCesium)return;
+      let layerManager = vueCesium.PlotLayerManager.findSource(
           this.vueKey,
           this.vueIndex
       );
@@ -94,6 +107,20 @@ export default {
       let layer = this.getLayer();
       return layer && layer.toJSON();
     },
+    setPick() {
+      const vm = this;
+      let layer = this.getLayer();
+       layer.pickPlot = async function(plot) {
+          vm.isDraw = true;
+          vm.plot = plot;
+          // console.log('plot',plot);
+          vm.symbol = vm.symbol || plot._elem._symbol;
+          let json = plot.getStyle();
+          vm.symbol.style = vm.symbol.style || json;
+          vm.parseStyleJson(json, plot._elem._symbol._src);
+        };
+        layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
+    },
     mount() {
       const vm = this;
       let layer = this.getLayer();
@@ -110,7 +137,7 @@ export default {
         }
         this.getSymbol();
 
-        layer.pickPlot = async function(plot) {
+        layer.pickPlot = function(plot) {
           vm.isDraw = true;
           vm.plot = plot;
           // console.log('plot',plot);
@@ -128,7 +155,10 @@ export default {
       // console.log("symbolUrl", this.symbolUrl);
       let manager = this.getSymbolManager();
       if(!manager) {
-        manager = new SymbolManager(this.symbolUrl);
+        manager = new SymbolManager(this.symbolUrl,{
+          fontURL: vm.fontUrl,
+          baseUrl: vm.baseUrl
+        });
         window.vueCesium.PlotSymbolManager.addSource(this.vueKey, this.vueIndex, manager);
       }
 

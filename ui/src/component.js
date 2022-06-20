@@ -302,7 +302,7 @@ export { default as MapgisUiPlotAnimation } from "./components/plot/Animation.vu
 export { default as MapgisUiPlotAttribute } from "./components/plot/Attribute.vue";
 export { default as MapgisUiPlotScript } from "./components/plot/Script.vue";
 export { default as MapgisUiPlotScriptList } from "./components/plot/ScriptList.vue";
-export { default as MapgisUiPlotSymbol } from "./components/plot/Symbol.vue";
+export { default as MapgisUiPlotSymbol } from "./components/plot/PlotSymbol.vue";
 export { default as MapgisUiSvgManager } from "./components/plot/SVGManager.vue";
 export { default as MapgisUiSVGSettingPanel } from "./components/plot/SVGSettingPanel.vue";
 export { default as MapgisUiFileManager } from "./components/plot/FileManager.vue";

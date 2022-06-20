@@ -1,4 +1,4 @@
-import MapgisUiPlotSymbol from "../../../ui/src/components/plot/Symbol.vue";
+import MapgisUiPlotSymbol from "../../../ui/src/components/plot/PlotSymbol.vue";
 import symbolD from '../../../ui/src/components/plot/test/symbol.json'
 // import MarkDown from "../../../ui/docs/guide/base.md";
 import '../../style/card.css'

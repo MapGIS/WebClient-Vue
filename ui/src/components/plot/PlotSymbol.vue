@@ -35,8 +35,7 @@ export default {
   name: "mapgis-ui-plot-symbol",
   props: {
     data: {
-      type: [Array, Object],
-      required: true
+      type: [Array, Object]
     },
     // 控制图标折叠面板默认是折叠还是展开，该参数为true时折叠
     collapse: {

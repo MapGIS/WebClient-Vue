@@ -14,6 +14,7 @@ import options from "./options";
 import withWatchers from "./mixins/withWatchers";
 import withPrivateMethods from "./mixins/withPrivateMethods";
 import withAsyncActions from "./mixins/withAsyncActions";
+import { initManager, initVueMap } from "./manager";
 
 import { addListener, removeListener } from "resize-detector";
 import debounce from "lodash/debounce";
@@ -56,6 +57,9 @@ export default {
       },
       get resize() {
         return this.resizeEvent;
+      },
+      get vueMap() {
+        return self.vueMap;
       }
     };
   },
@@ -95,7 +99,9 @@ export default {
   },
 
   created() {
-    const { company } = this;    
+    const { company } = this;   
+    initManager();
+    initVueMap(); 
     this.map = null;
     this.propsIsUpdating = {};
     if (company.indexOf("mapgis") >= 0) {
@@ -113,6 +119,7 @@ export default {
     this.$_loadMap().then(map => {
       const { actions, mapbox } = this;
       this.map = map;
+      this.vueMap = window.vueMap;
       if (this.RTLTextPluginUrl !== undefined) {
         this.mapbox.setRTLTextPlugin(
           this.RTLTextPluginUrl,

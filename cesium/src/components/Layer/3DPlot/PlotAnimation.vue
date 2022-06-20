@@ -99,7 +99,6 @@ export default {
       value: 0,
       plotId: undefined,
       scriptListCopy: undefined,
-      manager: undefined,
       forwardActive: false,
       showScriptList: true,
       showTimeline: false,
@@ -139,6 +138,17 @@ export default {
     this.clearTimeline();
   },
   methods: {
+    setPick() {
+      const vm = this;
+      let layer = this.getLayer();
+        layer.pickPlot = function(plot) {
+        vm.plotId = plot.id;
+        // console.log("plot", plot);
+        let json = plot.getStyle();
+        vm.nodeNames = Object.keys(json.nodeStyles);
+        // console.log("plotId/nodeNames", vm.plotId, "/", vm.nodeNames);
+      };
+    },
     mount() {
       const vm = this;
       let layer = this.getLayer();
@@ -177,6 +187,8 @@ export default {
           timeline.fromJSON(JSON.parse(JSON.stringify(res.data)));
         });
       }
+
+      this.$emit("loaded", this);
       // });
     },
     getLayer() {
@@ -245,17 +257,17 @@ export default {
     },
     playScript(e) {
       // console.log("--------play")
-      // let index = this.activeIndex;
-      // this.activeIndex = e ? e.index : this.activeIndex;
-      // if (index !== this.activeIndex) {
-      //   this.initTimeline();
-      // } else {
-      //   let timeline = this.getPlotAnimation();
-      //   timeline && timeline.restore();
-      // }
+      let index = this.activeIndex;
+      this.activeIndex = e ? e.index : this.activeIndex;
+      if (index !== this.activeIndex) {
+        this.initTimeline();
+      } else {
+        let timeline = this.getPlotAnimation();
+        timeline && timeline.restore();
+      }
       // // this.$refs.timeline.forward();
-      let timeline = this.getPlotAnimation();
-      timeline && timeline.restore();
+      // let timeline = this.getPlotAnimation();
+      // timeline && timeline.restore();
       this.forward();
     },
     clickList(e) {

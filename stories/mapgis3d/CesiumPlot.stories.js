@@ -14,20 +14,19 @@ const Template = (args, { argTypes }) => ({
   components: { Mapgis3dPlot,Mapgis3dPlotLayer },
   template: `<mapgis-web-scene style="height:95vh">
         <mapgis-3d-plot-layer @loaded="handleLoaded" :dataSource="jsonUrl" v-bind="$props"></mapgis-3d-plot-layer>
-        <mapgis-3d-plot v-bind="$props" :vueIndex="vueIndex" :vueKey="vueKey" v-if="vueIndex && vueKey" class="storybook-ui-card"/>
+        <mapgis-3d-plot v-bind="$props" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1 && vueKey1" class="storybook-ui-card"/>
   </mapgis-web-scene>`,
   data() {
     return {
-      layer1: undefined,
-      vueIndex: undefined,
-      vueKey: undefined,
+      vueIndex1: undefined,
+      vueKey1: undefined,
       jsonUrl: "http://localhost:8895/标绘/test.json",
     };
   },
   methods: {
     handleLoaded(e) {
-      this.vueIndex = e.vueIndex;
-      this.vueKey = e.vueKey;
+      this.vueIndex1 = e.vueIndex;
+      this.vueKey1 = e.vueKey;
     },
   },
 });

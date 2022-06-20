@@ -15,12 +15,12 @@ const Template = (args, { argTypes }) => ({
   components: { Mapgis3dPlotAnimation, Mapgis3dPlotLayer },
   template: `<mapgis-web-scene style="height:95vh">
         <mapgis-3d-plot-layer @loaded="handleLoaded" :dataSource="jsonUrl" :symbolUrl="symbolUrl"></mapgis-3d-plot-layer>
-        <mapgis-3d-plot-animation v-bind="$props" :vueIndex="vueIndex" :vueKey="vueKey" v-if="vueKey && vueKey"/>
+        <mapgis-3d-plot-animation v-bind="$props" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueKey1 && vueIndex1"/>
   </mapgis-web-scene>`,
   data() {
     return {
-      vueIndex: undefined,
-      vueKey: undefined,
+      vueIndex1: undefined,
+      vueKey1: undefined,
       jsonUrl: "http://localhost:8895/标绘/test.json",
       symbolUrl: "http://localhost:8895/标绘/symbols.json",
     };
@@ -30,8 +30,8 @@ const Template = (args, { argTypes }) => ({
       const vm = this;
       let manager = new SymbolManager(this.symbolUrl);
       manager.getSymbols().then(function () {
-        vm.vueIndex = e.vueIndex;
-        vm.vueKey = e.vueKey;
+        vm.vueIndex1 = e.vueIndex;
+        vm.vueKey1 = e.vueKey;
       });
     },
   },

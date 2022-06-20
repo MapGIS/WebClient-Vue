@@ -52,6 +52,14 @@ export default {
     editable: {
       type: Boolean,
       default: false
+    },
+    fontUrl: {
+      type: String,
+      default: ''
+    },
+    baseUrl: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -104,8 +112,9 @@ export default {
     },
     editable: {
       handler: function(val) {
-        if (!this.layer) return;
-        this.layer.editable = val;
+        let layer = this.getLayer();
+        if (!layer) return;
+        layer.editable = val;
       },
       immediate: true
     }
@@ -120,7 +129,10 @@ export default {
     mount() {
       const { viewer, Cesium } = this;
       const vm = this;
-      let manager = new SymbolManager(this.symbolUrl);
+      let manager = new SymbolManager(this.symbolUrl,{
+        fontURL: vm.fontUrl,
+        baseUrl: vm.baseUrl
+      });
       manager.getSymbols().then(function() {
         viewer.scene.globe.depthTestAgainstTerrain = false;
         let layer = window.vueCesium.PlotLayerManager.findSource(
