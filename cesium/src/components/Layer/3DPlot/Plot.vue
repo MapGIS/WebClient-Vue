@@ -63,6 +63,7 @@ export default {
   },
   methods: {
     getLayer() {
+      if(!window.vueCesium) return;
       let layerManager = window.vueCesium.PlotLayerManager.findSource(
           this.vueKey,
           this.vueIndex
