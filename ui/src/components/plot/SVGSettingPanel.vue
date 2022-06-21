@@ -11,7 +11,7 @@
         </mapgis-ui-row>
         <mapgis-ui-row style="margin: 10px 0">
           <span>名称:</span>
-          <mapgis-ui-input style="margin-top: 3px"/>
+          <mapgis-ui-input disabled style="margin-top: 3px" v-model="name"/>
         </mapgis-ui-row>
         <mapgis-ui-row style="margin: 10px 0">
           <span>类型: </span><br>
@@ -135,6 +135,9 @@ export default {
       type: String
     },
     svgXML: {
+      type: String
+    },
+    name: {
       type: String
     }
   },
