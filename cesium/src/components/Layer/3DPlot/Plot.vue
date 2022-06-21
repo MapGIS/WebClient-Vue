@@ -10,6 +10,7 @@
     >
       <mapgis-ui-plot-symbol
         :data="symbolData"
+        :format="true"
         :baseUrl="baseUrl"
         @click="clickIcon"
         @search="searchIcon"
@@ -167,7 +168,6 @@ export default {
         // console.log("symbols", symbols);
         vm.symbols = [];
         viewer.scene.globe.depthTestAgainstTerrain = false;
-        let symbolData = [];
         let symbolCls;
         symbols.children.forEach(item => {
           if (item.children[0].children) {
@@ -201,9 +201,8 @@ export default {
             };
             vm.symbols = [...vm.symbols, ...item.children];
           }
-          symbolData.push(symbolCls);
         });
-        vm.symbolData = symbolData;
+        vm.symbolData = symbols._config;
       });
     },
     async clickIcon(data) {
