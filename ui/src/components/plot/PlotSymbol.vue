@@ -106,7 +106,6 @@ export default {
           }
         }
       }
-      console.log("result",result)
       this.dataCopy = result;
     },
     onSearch(value) {

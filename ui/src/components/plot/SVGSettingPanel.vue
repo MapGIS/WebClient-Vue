@@ -11,7 +11,7 @@
         </mapgis-ui-row>
         <mapgis-ui-row style="margin: 10px 0">
           <span>名称:</span>
-          <mapgis-ui-input disabled style="margin-top: 3px" v-model="name"/>
+          <mapgis-ui-input style="margin-top: 3px" v-model="name"/>
         </mapgis-ui-row>
         <mapgis-ui-row style="margin: 10px 0">
           <span>类型: </span><br>
@@ -80,7 +80,7 @@
             </mapgis-ui-row>
             <mapgis-ui-row v-show="type !== 0 && type !== 2 && partType === 13">
               <span>姿态:</span> <br>
-              <mapgis-ui-select style="width: 310px;margin-top: 5px" default-value="轴线符号" @change="selectPartPose">
+              <mapgis-ui-select style="width: 310px;margin-top: 5px" default-value="平躺" @change="selectPartPose">
                 <mapgis-ui-select-option :key="index" v-for="(partPoseValue, index) in partPoses">{{
                     partPoseValue
                   }}
@@ -258,6 +258,7 @@ export default {
       this.currentPart.markerOrigin = this.originX + "," + this.originY;
       if(this.currentPart.type !== 13) {
         this.setHighLight(e.target);
+        this.outerHTML = e.target.outerHTML;
       }
     },
     setHighLight(svg) {
@@ -527,7 +528,7 @@ export default {
       const blob = new Blob([json], {
         type: "application/json;charset=utf-8"
       });
-      let title = json.name || "无标题";
+      let title = this.name || "无标题";
       saveAs(blob, title + ".svg");
     },
     getChild(svg) {
