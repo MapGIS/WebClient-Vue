@@ -1,149 +1,182 @@
 {
   "name": "图标配置",
-  "children": [
+  "rootPath": "",
+  "symbols": [
     {
+      "path": "常用/",
       "name": "常用",
-      "children": [
+      "id": "4c23ec23-b3cd-4bds-97b5-e786ea3da535",
+      "type": "folder",
+      "items": [
         {
-          "id": 101,
-          "name": "",
-          "type": "simpleline",
-          "src": "标绘/icon/常用/工具线.svg"
+          "path": "常用/",
+          "name": "常用",
+          "id": "e2b2d881-507b-415c-9fc7-14f6fbe57cee",
+          "type": "folder",
+          "items": [
+            {
+              "id": 101,
+              "name": "",
+              "type": "simpleline",
+              "path": "标绘/icon/常用/工具线.svg"
+            }
+          ]
         }
       ]
     },
     {
+      "path": "算法符号/",
       "name": "算法符号",
-      "children": [
+      "id": "6c23ac23-b3cd-4gds-97b5-e786as3da535",
+      "type": "folder",
+      "items": [
         {
+          "path": "其他/",
           "name": "其他",
-          "children": [
+          "id": "e7b2d881-507b-405c-9fc7-1ef6fbe57cee",
+          "type": "folder",
+          "items": [
             {
               "id": 2,
-              "name": "",
+              "name": "11111",
               "type": "combinationcircle",
-              "src": "标绘/icon/算法符号/其他/cannonGroup.svg"
+              "path": "标绘/icon/算法符号/其他/cannonGroup.svg"
             },
             {
               "id": 3,
               "name": "",
               "type": "sector",
-              "src": "标绘/icon/算法符号/其他/figureFan.svg"
+              "path": "标绘/icon/算法符号/其他/figureFan.svg"
             },
             {
               "id": 4,
               "name": "",
               "type": "kidney",
-              "src": "标绘/icon/算法符号/其他/kidneyArea.svg"
+              "path": "标绘/icon/算法符号/其他/kidneyArea.svg"
             },
             {
               "id": 5,
               "name": "",
               "type": "tailedsquadarrow",
-              "src": "标绘/icon/算法符号/其他/燕尾.svg"
+              "path": "标绘/icon/算法符号/其他/燕尾.svg"
             }
           ]
         },
         {
+          "path": "箭头符号/",
           "name": "箭头符号",
-          "children": [
+          "id": "e7b2d881-507b-405c-9fc7-1ef6fbe57cee",
+          "type": "folder",
+          "items": [
             {
               "id": 6,
               "name": "",
               "type": "doublearrow",
-              "src": "标绘/icon/算法符号/箭头符号/multiArrow.svg"
+              "path": "标绘/icon/算法符号/箭头符号/multiArrow.svg"
             },
             {
               "id": 7,
               "name": "",
               "type": "multiarrow",
-              "src": "标绘/icon/算法符号/箭头符号/multiArrow3.svg"
+              "path": "标绘/icon/算法符号/箭头符号/multiArrow3.svg"
             },
             {
               "id": 8,
               "name": "",
               "type": "multiarrow",
-              "src": "标绘/icon/算法符号/箭头符号/multiArrow4.svg"
+              "path": "标绘/icon/算法符号/箭头符号/multiArrow4.svg"
             },
             {
               "id": 9,
               "name": "",
               "type": "multiarrow",
-              "src": "标绘/icon/算法符号/箭头符号/multiArrow5.svg"
+              "path": "标绘/icon/算法符号/箭头符号/multiArrow5.svg"
             },
             {
               "id": 10,
               "name": "",
               "type": "singlearrow",
-              "src": "标绘/icon/算法符号/箭头符号/singleArrow1.svg"
+              "path": "标绘/icon/算法符号/箭头符号/singleArrow1.svg"
             },
             {
               "id": 11,
               "name": "",
               "type": "squadarrow",
-              "src": "标绘/icon/算法符号/箭头符号/singleArrow2.svg"
+              "path": "标绘/icon/算法符号/箭头符号/singleArrow2.svg"
             }
           ]
         }
       ]
     },
     {
+      "path": "规则符号/",
       "name": "规则符号",
-      "children": [
+      "id": "fba6e447-0363-4229-83b4-1097c6155905",
+      "type": "folder",
+      "items": [
         {
+          "path": "常规点/",
           "name": "常规点",
-          "children": [
+          "id": "cb405435-2b95-46e3-a913-8008169d851e",
+          "type": "folder",
+          "items": [
             {
               "id": 12,
               "name": "",
               "type": "simplepoint",
-              "src": "标绘/icon/规则符号/常规点/新修规则点.svg"
+              "path": "标绘/icon/规则符号/常规点/新修规则点.svg"
             },
             {
               "id": 13,
               "name": "",
               "type": "simplepoint",
-              "src": "标绘/icon/规则符号/常规点/武警.svg"
+              "path": "标绘/icon/规则符号/常规点/武警.svg"
             }
           ]
         },
         {
+          "path": "常规线/",
           "name": "常规线",
-          "children": [
+          "id": "bbc6a23a-ffa8-4504-9322-c8277ecbdafe",
+          "type": "folder",
+          "items": [
             {
               "id": 14,
               "name": "",
               "type": "simpleline",
-              "src": "标绘/icon/规则符号/常规线/撤离线.svg"
+              "path": "标绘/icon/规则符号/常规线/撤离线.svg"
             },
             {
               "id": 15,
               "name": "",
               "type": "simpleline",
-              "src": "标绘/icon/规则符号/常规线/新修规则线.svg"
+              "path": "标绘/icon/规则符号/常规线/新修规则线.svg"
             },
             {
               "id": 16,
               "name": "",
               "type": "simpleline",
-              "src": "标绘/icon/规则符号/常规线/新修规则线填充.svg"
+              "path": "标绘/icon/规则符号/常规线/新修规则线填充.svg"
             }
           ]
         },
         {
+          "path": "常规面/",
           "name": "常规面",
-          "children": [
+          "id": "1cf21491-2c7a-49db-870a-dd15d1b4ff9c",
+          "type": "folder",
+          "items": [
             {
               "id": 17,
               "name": "",
               "type": "simplearea",
-              "src": "标绘/icon/规则符号/常规面/新修规则面.svg"
+              "path": "标绘/icon/规则符号/常规面/新修规则面.svg"
             },
             {
               "id": 18,
               "name": "",
               "type": "simplearea",
-              "src": "标绘/icon/规则符号/常规面/贴地区.svg"
+              "path": "标绘/icon/规则符号/常规面/贴地区.svg"
             }
           ]
         }
