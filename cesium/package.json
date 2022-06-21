@@ -23,6 +23,7 @@
     ]
   },
   "dependencies": {
+    "@mapbox/mapbox-gl-style-spec": "13.23.1",
     "@mapgis/cesium": "^1.84.0",
     "@mapgis/webclient-es6-service": "^15.6.0",
     "@mapgis/webclient-store": "^10.5.5",
@@ -36,6 +37,7 @@
     "echarts-gl": "^2.0.9",
     "file-saver": "^2.0.5",
     "html2canvas": "^1.3.3",
+    "jspdf": "^2.5.1",
     "mapv": "^2.0.62",
     "moment": "^2.29.1",
     "node-sass": "^4.14.0",
@@ -47,8 +49,7 @@
     "vcolorpicker": "^1.1.0",
     "vuepress": "^1.8.2",
     "wangeditor-antd": "^1.0.7",
-    "webfont-matcher": "1.1.0",
-    "jspdf": "^2.5.1"
+    "webfont-matcher": "1.1.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.2.0",
