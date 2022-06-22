@@ -119,10 +119,12 @@ export default {
           case "string":
             break;
           case "object":
-            if (e instanceof Object) {
-              vm.scriptListCopy = [e];
-            } else {
+            if (e instanceof Array) {
               vm.scriptListCopy = e;
+              console.log('dtaaa',e);
+              
+            } else {
+              vm.scriptListCopy = [e];
             }
             break;
         }
