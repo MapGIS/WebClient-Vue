@@ -118,7 +118,7 @@ export default {
           case "object":
             if (e instanceof Array) {
               vm.scriptListCopy = e;
-              console.log('dtaaa',e);
+              // console.log('dtaaa',e);
               
             } else {
               vm.scriptListCopy = [e];
