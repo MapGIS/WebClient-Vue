@@ -1,7 +1,7 @@
 import Mapgis3dPlot from "../../cesium/src/components/Layer/3DPlot/Plot.vue";
 import Mapgis3dPlotLayer from "../../cesium/src/components/Layer/3DPlot/PlotLayer.vue";
+import Markdown from "../../cesium/docs/api/layer/3DPlot/Plot.md";
 import '../style/card.css'
-// import Markdown from "../../cesium/docs/api/layer/Graphic/GraphicLayer.md";
 
 export default {
   title: "三维/图层/标绘/三维标绘",
@@ -36,10 +36,10 @@ export const 三维标绘 = Template.bind({});
   symbolUrl: "http://localhost:8895/标绘/symbols.json",
 };
 
-// 三维标绘.parameters = {
-//   docs: {
-//     description: {
-//       component: Markdown,
-//     },
-//   },
-// };
+三维标绘.parameters = {
+  docs: {
+    description: {
+      component: Markdown,
+    },
+  },
+};

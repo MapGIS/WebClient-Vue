@@ -45,6 +45,7 @@
         ref="timeline"
         :forwardActive="forwardActive"
         :duration="10"
+        :enableEnd="false"
         @start="start"
         @backward="backward"
         @pause="pause"

@@ -1,7 +1,7 @@
 import Mapgis2dPlot from "../../mapboxgl/src/components/layer/2DPlot/plot.vue";
 import Mapgis2dPlotLayer from "../../mapboxgl/src/components/layer/2DPlot/plotLayer.vue";
+import Markdown from "../../mapboxgl/docs/api/Layers/2DPlot/Plot.md";
 import "../style/card.css";
-// import Markdown from "../../cesium/docs/api/layer/Graphic/GraphicLayer.md";
 
 export default {
   title: "二维/图层/标绘/二维标绘",
@@ -55,10 +55,10 @@ export const 二维标绘 = Template.bind({});
   symbolUrl: "http://localhost:8895/标绘/symbols.json",
 };
 
-// 二维标绘.parameters = {
-//   docs: {
-//     description: {
-//       component: Markdown,
-//     },
-//   },
-// };
+二维标绘.parameters = {
+  docs: {
+    description: {
+      component: Markdown,
+    },
+  },
+};

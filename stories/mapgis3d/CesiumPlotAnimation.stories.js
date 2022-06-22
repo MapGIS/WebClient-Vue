@@ -1,8 +1,8 @@
 import Mapgis3dPlotAnimation from "../../cesium/src/components/Layer/3DPlot/PlotAnimation.vue";
 import Mapgis3dPlotLayer from "../../cesium/src/components/Layer/3DPlot/PlotLayer.vue";
 import { SymbolManager } from "@mapgis/webclient-es6-service";
+import Markdown from "../../cesium/docs/api/layer/3DPlot/PlotAnimation.md";
 import "../style/card.css";
-// import Markdown from "../../cesium/docs/api/layer/Graphic/GraphicLayer.md";
 
 export default {
   title: "三维/图层/标绘/态势推演",
@@ -42,10 +42,10 @@ export const 态势推演 = Template.bind({});
   data: "http://localhost:8895/标绘/animation.json",
 };
 
-// 态势推演.parameters = {
-//   docs: {
-//     description: {
-//       component: Markdown,
-//     },
-//   },
-// };
+态势推演.parameters = {
+  docs: {
+    description: {
+      component: Markdown,
+    },
+  },
+};

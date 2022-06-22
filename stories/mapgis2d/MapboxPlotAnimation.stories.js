@@ -1,8 +1,8 @@
 import Mapgis2dPlotAnimation from "../../mapboxgl/src/components/layer/2DPlot/plotAnimation.vue";
 import Mapgis2dPlotLayer from "../../mapboxgl/src/components/layer/2DPlot/plotLayer.vue";
 import { SymbolManager } from "@mapgis/webclient-es6-service";
+import Markdown from "../../mapboxgl/docs/api/Layers/2DPlot/PlotAnimation.md";
 import "../style/card.css";
-// import Markdown from "../../cesium/docs/api/layer/Graphic/GraphicLayer.md";
 
 export default {
   title: "二维/图层/标绘/态势推演",
@@ -53,10 +53,10 @@ export const 态势推演 = Template.bind({});
   data: "http://localhost:8895/标绘/animation.json",
 };
 
-// 态势推演.parameters = {
-//   docs: {
-//     description: {
-//       component: Markdown,
-//     },
-//   },
-// };
+态势推演.parameters = {
+  docs: {
+    description: {
+      component: Markdown,
+    },
+  },
+};
