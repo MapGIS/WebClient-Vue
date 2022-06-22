@@ -61,7 +61,6 @@ export default {
       let find = window.vueCesium.Tileset3DManager.findSource(vueKey, vueIndex);
       if (find) {
         !viewer.isDestroyed() && viewer.scene.primitives.remove(find.source);
-        find.source.destroy && find.source.destroy();
       }
       this.$emit("unload");
       window.vueCesium.Tileset3DManager.deleteSource(vueKey, vueIndex);

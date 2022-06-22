@@ -193,6 +193,12 @@ export default {
         this.colorCopy = this.color;
       }
     },
+    colorCopy: {
+      immediate: true,
+      handler: function() {
+        this.changePlaneColor(this._edgeColor());
+      }
+    },
     time: {
       immediate: true,
       handler: function() {
@@ -340,6 +346,23 @@ export default {
       if (dynamicSectionAnalysis) {
         // 设置剖切面距离
         dynamicSectionAnalysis.distance = value;
+      }
+    },
+    /**
+     * 修改剖切面颜色
+     */
+    changePlaneColor(value) {
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.DynamicSectionAnalysisManager.findSource(
+        vueKey,
+        vueIndex
+      );
+      if (find) {
+        let { options } = find;
+        let { dynamicSectionAnalysis } = options;
+        if (dynamicSectionAnalysis) {
+          dynamicSectionAnalysis.changePlaneColor(value);
+        }
       }
     },
     /**
