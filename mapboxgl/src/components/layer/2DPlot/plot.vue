@@ -3,6 +3,7 @@
     <slot
       name="symbol"
       :data="symbolData"
+      :format="true"
       :click="clickIcon"
       :search="searchIcon"
       :baseUrl="baseUrl"
@@ -10,6 +11,7 @@
     >
       <mapgis-ui-plot-symbol
         :data="symbolData"
+        :format="true"
         :baseUrl="baseUrl"
         @click="clickIcon"
         @search="searchIcon"
@@ -173,7 +175,7 @@ export default {
       manager.getSymbols().then(function(symbols) {
         // console.log("symbols", symbols);
         vm.symbols = [];
-        let symbolData = [];
+        // let symbolData = [];
         let symbolCls;
         symbols.children.forEach(item => {
           if (item.children[0].children) {
@@ -207,9 +209,10 @@ export default {
             };
             vm.symbols = [...vm.symbols, ...item.children];
           }
-          symbolData.push(symbolCls);
+          // symbolData.push(symbolCls);
         });
-        vm.symbolData = symbolData;
+        vm.symbolData = symbols._config;
+        // vm.symbolData = symbolData;
         // console.log("vm.symbolData", vm.symbolData);
       });
     },

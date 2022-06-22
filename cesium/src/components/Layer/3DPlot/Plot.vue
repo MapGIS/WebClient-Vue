@@ -3,6 +3,7 @@
     <slot
       name="symbol"
       :data="symbolData"
+      :format="true"
       :click="clickIcon"
       :search="searchIcon"
       :baseUrl="baseUrl"
