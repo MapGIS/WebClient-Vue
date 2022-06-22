@@ -289,6 +289,7 @@ export default {
       if(this.baseUrl){
         url = this.baseUrl + url;
       }
+      axios.defaults.withCredentials = true;
       const res = await axios({
         method: "get",
         url: url,

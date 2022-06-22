@@ -154,6 +154,7 @@ export default {
         layers.addLayer(layer);
 
         if (!vm.dataSourceCopy) {
+          axios.defaults.withCredentials = true;
           axios({
             method: "get",
             url: vm.dataSource,

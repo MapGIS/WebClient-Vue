@@ -178,6 +178,7 @@ export default {
         this.activeIndex = 0;
         timeline.fromJSON(JSON.parse(JSON.stringify(vm.scriptListCopy[vm.activeIndex])));
       } else {
+        axios.defaults.withCredentials = true;
         axios({
           method: "get",
           url: vm.data,
