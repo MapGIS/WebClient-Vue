@@ -70,14 +70,14 @@
 | label     | String | 统一专题图标签                                                                            |
 | defaultSymbol     | Object | 单值分段专题图默认符号样式，用来绘制具有与给定中断值不匹配的要素                                                                            |
 | defaultLabel     | String | 单值、分段专题图默认标签，用来描述分配了默认符号的元素                                                                            |
-| uniqueValueInfos     | Array<Object> | 专题图单值信息，仅在renderer.type="unique-value"时使用                                                                            |
-| classBreakInfos     | Array<Object> | 专题图分段信息，仅在renderer.type="class-breaks"时使用                                                                            |
+| uniqueValueInfos     | Array | 专题图单值信息，仅在renderer.type="unique-value"时使用                                                                            |
+| classBreakInfos     | Array | 专题图分段信息，仅在renderer.type="class-breaks"时使用                                                                            |
 | normalizationType     | String | 专题图归一化类型，仅在render.type="class-breaks"时使用，可选 "field、"percent-of-total"                                                                            |
 | normalizationField | String | 专题图根据字段归一化，即分段字段属性值 / 归一化字段属性值，如果renderer中定义了normalizationField，则优先执行normalizationField按字段归一化，通过归一化出的结果和分段专题图停靠点的值进行比较，若仅定义normalizationType未定义normalizationField，则不进行归一化，使用场景：如 区域人口数 / 该区域面积，返回该区域人口密度，根据人口密度绘制分段专题图 |
 | normalizationTotal | Number | 专题图根据属性值总和归一化，即分段字段属性值 / 给定总和，如果renderer中定义了normalizationTotal，则优先执行normalizationTotal按字段值总和归一化，通过归一化出的结果和分段专题图停靠点的值进行比较，若仅定义normalizationType未定义normalizationTotal，则使用 分段字段属性值 / 分段字段属性值总和 进行归一化，使用场景：如 区域GDP总量 / 所有区域GDP总量和，返回该区域GDP占比，根据GDP占比绘制分段专题图 |
 | valueExpression | String | 专题图计算表达式，用来对要素中的单/多个属性进行数学计算，属性字段使用"$feature.field"表示，如"[($feature.lg + 2) * 10 - 20 / 2] / 5 + $feature.mpLayer"，如果renderer中定义了valueExpression，则优先执行valueExpression表达式，通过表达式计算出来的结果和单值/分段专题图停靠点的值进行比较 |
 | valueExpressionTitle | String | 专题图计算表达式标题                                                                  |
-| visualVariables | Array<Object> | 专题图视觉变量                                                           |
+| visualVariables | Array | 专题图视觉变量                                                           |
 
 其中 symbol 对象中包括以下属性：
 
@@ -132,7 +132,7 @@
 | normalizationType | String | 专题图视觉变量归一化类型，"field、percent-of-total" |
 | normalizationField | String | 专题图视觉变量归一化字段，将renderer中对应字段数据值除以归一化字段数据值 |
 | normalizationTotal | Number | 专题图视觉变量归一化总和，将renderer中对应字段数据值除以给定值，若normalizationTotal未定义，则使用 字段属性值 / 字段属性值总和 进行归一化 |
-| stops | Array<Object> | 专题图视觉变量颜色、透明度数组，定义在一系列停靠点中应用于要素的连续色带的颜色 |
+| stops | Array | 专题图视觉变量颜色、透明度数组，定义在一系列停靠点中应用于要素的连续色带的颜色 |
 
 stops中包括以下属性：
 

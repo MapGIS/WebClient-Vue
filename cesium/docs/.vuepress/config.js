@@ -92,6 +92,7 @@ module.exports = {
               ["/api/layer/PopupMixin/popup.md", "图层拾取"],
               ["/api/layer/IGServer/IgsDynamicLayer.md", "IGS二维矢量"],
               ["/api/layer/IGServer/IgsDocLayer.md", "IGS地图文档"],
+              ["/api/layer/IGServer/IgsFeatureLayer.md", "IGS Feature"],
               ["/api/layer/IGServer/IgsTileLayer.md", "IGS瓦片"],
               ["/api/provider/igsterrain.md", "IGS地形"],
 
@@ -116,7 +117,7 @@ module.exports = {
                 
               ["/api/layer/3DPlot/PlotLayer.md", "行业标绘图层"],
               ["/api/layer/3DPlot/Plot.md", "行业标绘绘制组件"],
-              ["/api/layer/3DPlot/plotAnimation.png", "态势推演组件"],
+              ["/api/layer/3DPlot/PlotAnimation.md", "态势推演组件"],
               ["/api/layer/3DPlot/PlotLink.md", "行业标绘二三维联动"],
               {
                 title: "可视化",
