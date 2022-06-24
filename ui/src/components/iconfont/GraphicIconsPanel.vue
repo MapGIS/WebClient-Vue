@@ -170,15 +170,16 @@ export default {
         {
           key: "point",
           value: "点"
-        },
-        {
-          key: "polyline",
-          value: "线"
-        },
-        {
-          key: "polygon",
-          value: "多边形"
         }
+        // TODO 绘制线面组合还有很多问题，暂时屏蔽
+        // {
+        //   key: "polyline",
+        //   value: "线"
+        // },
+        // {
+        //   key: "polygon",
+        //   value: "多边形"
+        // }
       ],
       modelUrl: undefined
     };
