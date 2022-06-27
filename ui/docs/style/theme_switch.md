@@ -18,6 +18,7 @@
 引入`mapgisui`后即可使用该方法
 
 示例1：`themeStyle`传入字符串：
+
 ```javascript
 import mapgisui from '@mapgis/webclient-vue-ui'
 
@@ -28,6 +29,7 @@ mapgisui.setTheme('dark', {
 ```
 
 示例2：`themeStyle`传入对象：
+
 ```javascript
 import mapgisui from '@mapgis/webclient-vue-ui'
 
@@ -87,6 +89,7 @@ mapgisui.setTheme('dark', {
 项目全局引入`mapgisui`时也可以指定主题样式等信息
 
 具体示例如下,在项目的主文件中引入并指定主题：
+
 ```javascript
 // main.js
 import mapgisui from '@mapgis/webclient-vue-ui'
