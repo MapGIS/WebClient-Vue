@@ -71,6 +71,14 @@ export default {
       let { viewer, vueCesium, vueKey, vueIndex } = this;
       const { baseUrl, themeOptions, enablePopup, enableTips, visible } = this;
       const vm = this;
+      // 判断是否支持图像渲染像素化处理
+      viewer.shadows = true;
+      if (Cesium.FeatureDetection.supportsImageRenderingPixelated()) { 
+        viewer.resolutionScale = window.devicePixelRatio;
+      };
+      // 是否开启抗锯齿
+      viewer.scene.fxaa = true;
+      viewer.scene.postProcessStages.fxaa.enabled = true;
       vm.$emit("load", { component: this });
       let promise = this.createCesiumObject();
       promise.then(function (dataSource) {

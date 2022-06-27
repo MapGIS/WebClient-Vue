@@ -75,13 +75,13 @@ export default {
   methods: {
     async createCesiumObject() {
       let {viewer, vueCesium} = this;
-      let { baseUrl, gdbps, autoReset, renderer, filter} = this;
+      let { baseUrl, gdbps, autoReset, renderer, filter, clampToGround} = this;
       let vm = this;
       let options = {
         autoReset,
         loadAll: true,
         renderer,
-        clampToGround: false,
+        clampToGround,
         filter: filter
       };
       if (baseUrl.indexOf("/igs/rest/mrfs/layer") !== -1) {
