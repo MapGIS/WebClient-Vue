@@ -1,7 +1,7 @@
 import { setTheme } from "../../../ui/src/util/style/theme/set-theme";
 
 export default {
-  title: "界面/主题/黑暗主题",
+  title: "界面/主题/主题切换",
   parameters: {
     viewMode: "story",
     previewTabs: {
@@ -256,4 +256,4 @@ const Template = (args, { argTypes }) => ({
   },
 });
 
-export const 黑暗主题 = Template.bind({});
+export const 主题切换 = Template.bind({});
