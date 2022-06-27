@@ -1,4 +1,5 @@
 import { setTheme } from "../../../ui/src/util/style/theme/set-theme";
+import Markdown from "../../../ui/docs/style/theme_switch.md";
 
 export default {
   title: "界面/主题/主题切换",
@@ -257,3 +258,11 @@ const Template = (args, { argTypes }) => ({
 });
 
 export const 主题切换 = Template.bind({});
+
+主题切换.parameters = {
+  docs: {
+    description: {
+      component: Markdown,
+    },
+  },
+};
