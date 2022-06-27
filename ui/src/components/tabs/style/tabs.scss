@@ -18,6 +18,9 @@
     margin: 0 16px 0 0;
     padding: 12px 4px;
   }
+  .mapgis-ui-tabs .mapgis-ui-tabs-small-bar .mapgis-ui-tabs-tab {
+    padding: 8px 4px;
+  }
 
   @include e(tab-prev tab-next, '-') {
     color: $text-color-secondary;

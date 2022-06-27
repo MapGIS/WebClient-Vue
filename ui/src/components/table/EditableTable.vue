@@ -46,7 +46,7 @@ import { oneOf } from "../../util/common/common-util";
 import MapgisUiEditableTableCell from "./EditableTableCell.js";
 
 export default {
-  name: "mapgis-ui-editable",
+  name: "mapgis-ui-editable-table",
   components: {
     MapgisUiEditableTableCell
   },
@@ -116,7 +116,7 @@ export default {
     addTool() {
       return {
         title: "新增",
-        icon: "plus",
+        icon: "mapgis-plus",
         method: this.add
       };
     },
@@ -124,7 +124,7 @@ export default {
     batchDelTool() {
       return {
         title: "批量删除",
-        icon: "delete",
+        icon: "mapgis-delete",
         method: this.batchDelete
       };
     },
