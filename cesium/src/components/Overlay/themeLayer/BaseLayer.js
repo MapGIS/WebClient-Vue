@@ -531,6 +531,7 @@ export default {
               Cesium.Color.fromCssColorString(style.outlineColor)
             );
             entity.polyline.width = style.outlineWidth;
+            entity.polyline.clampToGround = true;
             entity.polygon.material = new Cesium.ColorMaterialProperty(
               Cesium.Color.fromCssColorString(style.color).withAlpha(
                 style.opacity

@@ -22,6 +22,10 @@ export default {
         return {}
       }
     },
+    clampToGround: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -65,7 +69,7 @@ export default {
   methods: {
     async createCesiumObject() {
       let {viewer, vueCesium} = this;
-      let { baseUrl, gdbps, autoReset, renderer} = this;
+      let { baseUrl, gdbps, autoReset, renderer, clampToGround} = this;
       let vm = this;
       let options = {
         autoReset,
@@ -74,7 +78,7 @@ export default {
         getDocLayerIndexes: indexs => {
           this.layerIndex = indexs[0];
         },
-        clampToGround: false
+        clampToGround
       };
       let transformRenderer = JSON.parse(JSON.stringify(renderer));
       this.transformObject(transformRenderer);
