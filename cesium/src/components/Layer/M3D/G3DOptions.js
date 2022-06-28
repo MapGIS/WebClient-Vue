@@ -27,7 +27,20 @@ export default {
    */
   url: { type: String, required: true },
 
+  /**
+   * @description 图层透明度
+   */
   opacity: { type: Number, default: 1 },
+
+  /**
+   * @description 图层ID，用于修改指定图层透明度
+   */
+  opacityLayersArray: {
+    type: Array,
+    default() {
+      return [];
+    } 
+  },
 
   autoReset: { type: Boolean, default: true },
   /**

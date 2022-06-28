@@ -275,7 +275,19 @@ export default {
       }
     },
     opacity(next) {
-      this.changeLayerOpacity(next);
+      if (this.opacityLayersArray.length > 0) {
+        this.opacityLayersArray.forEach((item, index) => {
+          if (typeof item == "number") {
+            this.opacityLayersArray[index] = item.toString();
+          }
+        });
+        this.changeLayerOpacity(next, this.opacityLayersArray);
+      } else {
+        this.changeLayerOpacity(next);
+      }
+    },
+    opacityLayersArray(next) {
+      this.changeLayerOpacity(this.opacity, next);
     },
     layers(next) {
       this.layerIds = this.parseLayers(next);
@@ -414,6 +426,17 @@ export default {
           vm.parserVector();
           vm.resortLayers();
           vm.layerIds = vm.layerIds.concat(all);
+          // 修改全部/指定图层透明度
+          if (vm.opacityLayersArray.length > 0) {
+            vm.opacityLayersArray.forEach((item, index) => {
+              if (typeof item == "number") {
+                vm.opacityLayersArray[index] = item.toString();
+              }
+            });
+            vm.changeLayerOpacity(vm.opacity, vm.opacityLayersArray);
+          } else {
+            vm.changeLayerOpacity(vm.opacity);
+          }
         });
       }
     },
@@ -628,7 +651,7 @@ export default {
           }
         } else {
           if (layer) {
-            g3dLayer.translucencyByLayerIndex(index, opacity);
+            // g3dLayer.translucencyByLayerIndex(index, opacity);
           }
         }
       });

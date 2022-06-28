@@ -36,7 +36,7 @@ export default {
     },
     offsetHeight: {
       type: Number,
-      default: 4000,
+      default: 5000,
     },
     themeOptions: {
       type: Object,
@@ -156,16 +156,19 @@ export default {
     parseBBox(geojson) {
       this.bbox = bbox(geojson);
       if (this.bbox && this.autoReset) {
-        const centerX = (this.bbox[0] + this.bbox[2]) / 2;
-        const centerY = (this.bbox[1] + this.bbox[3]) / 2;
-        this.viewer.camera.flyTo({
-          destination: Cesium.Cartesian3.fromDegrees(
-            centerX,
-            centerY,
-            this.offsetHeight / 2
-          ),
-          duration: 2,
-        });
+        let [xMin, yMin, xMax, yMax] = this.bbox;
+        let center = new Cesium.Cartesian3.fromDegrees((xMin + xMax) / 2, (yMin + yMax) / 2);
+        let dr = new Cesium.Cartographic.fromDegrees(xMax, yMax);
+        let ul = new Cesium.Cartographic.fromDegrees(xMin, yMin);
+        let geodesic = new Cesium.EllipsoidGeodesic();
+        geodesic.setEndPoints(dr, ul);
+        let radius = geodesic.surfaceDistance;
+        let boundingSphere = {
+          center: center,
+          radius: radius
+        };
+        this.viewer.scene.camera.viewBoundingSphere(boundingSphere, new Cesium.HeadingPitchRange(0.0, -1.42, boundingSphere.radius));
+        this.viewer.scene.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
       }
       this.$emit("bbox", { bbox: this.bbox });
     },

@@ -163,7 +163,7 @@ export const 线数据material = Template.bind({});
   
   type: "range",
   field: "x",
-  autoReset: false,
+  autoReset: true,
   offsetHeight: 100,
   themeOptions: {
     hasMaterial: true,
