@@ -26,6 +26,7 @@
         @clickTool="$_clickTool"
         @changeAttributes="$_changeAttributes"
         @editTitle="$_editTitle"
+        @batchOperate="$_batchOperate"
       />
     </div>
     <mapgis-3d-popup
@@ -324,6 +325,47 @@ export default {
         graphic.attributes.title = title;
       }
       this.editTitle = flag;
+    },
+    $_batchOperate(param) {
+      if (!param || !param.selectedIds || param.selectedIds.length < 1) {
+        return;
+      }
+      let graphic;
+      const { operate, selectedIds } = param;
+      if (operate === "batchShow") {
+        for (let i = 0; i < selectedIds.length; i++) {
+          graphic = this.$_getGraphicByID(selectedIds[i]);
+          graphic.attributes.show = true;
+          graphic.show = true;
+        }
+      } else if (operate === "batchHide") {
+        for (let i = 0; i < selectedIds.length; i++) {
+          graphic = this.$_getGraphicByID(selectedIds[i]);
+          graphic.attributes.show = false;
+          graphic.show = false;
+        }
+      } else if (operate === "batchDelete") {
+        // TODO 等组模型功能能用的时候，这里还要再优化一下组模型相关的内容
+        for (let i = 0; i < selectedIds.length; i++) {
+          let index;
+          for (let j = 0; j < this.dataSourceCopy.length; j++) {
+            if (this.dataSourceCopy[j].id === selectedIds[i]) {
+              index = j;
+              break;
+            }
+          }
+          this.$refs.editPanel.isUpdatePanel = false;
+          this.addSource = true;
+          this.dataSourceCopy.splice(index, 1);
+          let graphicsLayer = this.$_getGraphicLayer(
+            this.vueIndex,
+            this.vueKey
+          );
+          graphicsLayer.removeGraphicByID(selectedIds[i]);
+          this.$refs.editPanel.isUpdatePanel = true;
+          this.addSource = false;
+        }
+      }
     },
     /**
      * 更多工具里面的按钮的点击事件

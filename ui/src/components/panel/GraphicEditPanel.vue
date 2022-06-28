@@ -4,6 +4,7 @@
       :tab-list="tabListNoTitle"
       :active-tab-key="noTitleKey"
       :bodyStyle="cardBodyStyle"
+      :tabBarStyle="tabBarStyle"
       @tabChange="key => onTabChange(key, 'noTitleKey')"
     >
       <!--标注列表-->
@@ -26,7 +27,20 @@
             :enableGroup="row.type === 'group'"
             :src="icons[row.type + 'Image']"
             :title="row.attributes.title"
-          />
+          >
+            <div
+              slot="checkbox"
+              class="item-checkbox"
+              v-if="row.type !== 'group'"
+            >
+              <mapgis-ui-checkbox
+                v-show="isBatch"
+                :checked="selectedIds.includes(row.id)"
+                @change="$_changeItemChecked(row.id, $event)"
+              >
+              </mapgis-ui-checkbox>
+            </div>
+          </mapgis-ui-icon-row>
           <mapgis-ui-input
             @change="$_changeTitle"
             class="mapgis-ui-graphic-edit-list-input"
@@ -51,9 +65,32 @@
               :top="gIndex < graphicGroups.length - 3 || gIndex < 3"
               :src="icons[graphic.type + 'Image']"
               :title="graphic.name"
-            />
+            >
+              <div slot="checkbox" class="item-checkbox">
+                <mapgis-ui-checkbox
+                  v-show="isBatch"
+                  :checked="selectedIds.includes(graphic.id)"
+                  @change="$_changeItemChecked(graphic.id, $event)"
+                >
+                </mapgis-ui-checkbox>
+              </div>
+            </mapgis-ui-icon-row>
           </div>
         </div>
+        <!-- 批量操作 -->
+        <mapgis-ui-setting-footer>
+          <div v-show="isBatch" class="footer-div">
+            <mapgis-ui-button @click="$_batchShow" class="footer-btn"
+              >显示</mapgis-ui-button
+            >
+            <mapgis-ui-button @click="$_batchHide" class="footer-btn"
+              >隐藏</mapgis-ui-button
+            >
+            <mapgis-ui-button @click="$_batchDelete" class="footer-btn"
+              >删除</mapgis-ui-button
+            >
+          </div>
+        </mapgis-ui-setting-footer>
       </div>
       <!--设置面板-->
       <div
@@ -502,6 +539,13 @@
           />
         </div>
       </div>
+      <mapgis-ui-checkbox
+        v-show="noTitleKey === 'list'"
+        slot="tabBarExtraContent"
+        @change="$_changeBatch"
+      >
+        批量操作
+      </mapgis-ui-checkbox>
     </mapgis-ui-card>
   </div>
 </template>
@@ -565,6 +609,8 @@ export default {
   },
   data() {
     return {
+      isBatch: false, //是否批量操作
+      selectedIds: [], //选中要素的id集合
       //切换面板参数
       tabListNoTitle: [
         {
@@ -581,6 +627,11 @@ export default {
       //tab框的body样式
       cardBodyStyle: {
         padding: "0"
+      },
+      tabBarStyle: {
+        margin: "0",
+        textAlign: "center"
+        // borderBottom: "1px solid #F0F0F0"
       },
       //标注列表一行中的图标样式
       iconStyle: {
@@ -748,6 +799,50 @@ export default {
       this.$nextTick(function() {
         this.isUpdatePanel = true;
       });
+    },
+    /**
+     * 是否批量操作
+     */
+    $_changeBatch({ target }) {
+      this.isBatch = target.checked;
+    },
+    /**
+     * 列表中checbox事件
+     */
+    $_changeItemChecked(id, event) {
+      const checked = event.target.checked;
+      if (checked) {
+        if (!this.selectedIds.includes(id)) {
+          this.selectedIds.push(id);
+        }
+      } else {
+        if (this.selectedIds.includes(id)) {
+          const index = this.selectedIds.indexOf(id);
+          if (index > -1) {
+            this.selectedIds.splice(index, 1);
+          }
+        }
+      }
+    },
+    $_batchShow() {
+      this.$emit("batchOperate", {
+        operate: "batchShow",
+        selectedIds: this.selectedIds
+      });
+    },
+    $_batchHide() {
+      this.$emit("batchOperate", {
+        operate: "batchHide",
+        selectedIds: this.selectedIds
+      });
+    },
+    $_batchDelete() {
+      this.$emit("batchOperate", {
+        operate: "batchDelete",
+        selectedIds: this.selectedIds
+      });
+      // 删除后，重置selectedIds
+      this.selectedIds = [];
     },
     onTabChange(key, type) {
       this[type] = key;
@@ -1393,5 +1488,29 @@ export default {
   width: calc(100% - 124px);
   margin-left: 20px;
   margin-right: 4px;
+}
+
+::v-deep .mapgis-ui-card-head {
+  padding: 0 11px;
+}
+
+.item-checkbox {
+  float: right;
+  margin-right: 5px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.footer-div {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.footer-btn {
+  margin: 0 8px;
+  width: 30%;
 }
 </style>
