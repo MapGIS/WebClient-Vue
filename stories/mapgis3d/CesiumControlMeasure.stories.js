@@ -101,8 +101,8 @@ const Template = (args, { argTypes }) => ({
         },
       ],
       measureOptions: {
-        //设置测量单位
-        unit: "meters",
+        //设置测量单位，可选"kilometers" | "meters"
+        unit: "kilometers",
         //设置测量图标参数
         pointIconWith: 16,
         pointIconHeight: 16,
