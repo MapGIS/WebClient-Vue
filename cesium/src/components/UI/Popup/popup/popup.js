@@ -74,14 +74,16 @@ export function updataPopupPosition(
     res = true;
   }
 
-  if (
-    px_position.x < px_lb.x ||
-    px_position.x > px_rt.x ||
-    px_position.y > px_lb.y ||
-    px_position.y < px_rt.y
-  ) {
-    res = false;
-  }
+  if (px_lb && px_rt) {
+    if (
+      px_position.x < px_lb.x ||
+      px_position.x > px_rt.x ||
+      px_position.y > px_lb.y ||
+      px_position.y < px_rt.y
+    ) {
+      res = false;
+    }
+  } 
 
   // 近距离下全部显示，不考虑椭球的避让
   if (scene.globe.ellipsoid.cartesianToCartographic(i).height < 1000) {
