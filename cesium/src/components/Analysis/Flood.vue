@@ -59,6 +59,7 @@ import {
   isDepthTestAgainstTerrainEnable,
   setDepthTestAgainstTerrainEnable
 } from "../WebGlobe/util";
+import {getPolygonSamplePoints} from "../Utils/util";
 
 export default {
   name: "mapgis-3d-analysis-flood",
@@ -112,12 +113,12 @@ export default {
     },
     /**
      * @type Number
-     * @default 500
+     * @default 80
      * @description 洪水淹没速度，单位 米/秒
      */
     floodSpeed: {
       type: Number,
-      default: 500
+      default: 80
     },
     /**
      * @type Number
@@ -154,19 +155,39 @@ export default {
     frequency: {
       type: Number,
       default: 500
-    }
+    },
+    /**
+     * @type Number
+     * @default 500
+     * @description 采样点个数
+     */
+    step: {
+      type: Number,
+      default: 500
+    },
+    /**
+     * @type Number
+     * @default -200
+     * @description 默认偏移高度，只会生效一次
+     */
+    defaultOffsetHeight: {
+      type: Number,
+      default: -200
+    },
   },
   data() {
     return {
       startHeightCopy: 0, //洪水淹没水体起始高度
       maxHeightCopy: 2000,
       floodColorCopy: "rgba(149,232,249,0.5)",
-      floodSpeedCopy: 500,
+      floodSpeedCopy: 80,
       positions: null,
       recalculate: false,
       isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
       mHeight: 2000, // 淹没最高高度变化前的值
-      timer: null
+      timer: null,
+      changeMaxHeight: false,
+      changeStartHeight: false
     };
   },
   created() {},
@@ -198,6 +219,16 @@ export default {
       },
       immediate: true
     },
+    startHeightCopy: {
+      handler() {
+        const options = this._getSourceOptions();
+        if(!options) return;
+        const { floodAnalysis } = options;
+        if (!floodAnalysis) return;
+        this.changeStartHeight = true;
+      },
+      immediate: true
+    },
     maxHeight: {
       handler() {
         this.maxHeightCopy = this.maxHeight;
@@ -224,6 +255,7 @@ export default {
         if (!floodAnalysis) {
           return;
         }
+        this.changeMaxHeight = true;
         if (!this.timer) {
           this.timer = setTimeout(() => {
             if (this.timer) clearTimeout(this.timer);
@@ -309,7 +341,39 @@ export default {
         callback: result => {
           this.remove();
           this.positions = result.positions;
-          this._doAnalysis();
+          let cartP = [];
+          for (let i = 0; i < result.positions.length; i++) {
+            let cartPosition = Cesium.Cartographic.fromCartesian(result.positions[i]);
+            cartP.push([Cesium.Math.toDegrees(cartPosition.longitude), Cesium.Math.toDegrees(cartPosition.latitude)]);
+          }
+          let positions = getPolygonSamplePoints({
+            positions: cartP,
+            step: this.step
+          });
+          let positionsC = [], that = this;
+          for (let i = 0; i < positions.length; i++) {
+            positionsC.push(Cesium.Cartesian3.fromDegrees(positions[i][0], positions[i][1], 0));
+          }
+          let sampleElevationTool = new Cesium.SampleElevationTool(viewer, positionsC, 'terrain', function (sampleResult) {
+            let max = sampleResult[0].height;
+            let min = sampleResult[0].height;
+            for (let i = 1; i < sampleResult.length; i++) {
+              if(max < sampleResult[i].height){
+                max = sampleResult[i].height;
+              }
+              if(min > sampleResult[i].height){
+                min = sampleResult[i].height;
+              }
+            }
+            if(!that.changeMaxHeight){
+              that.maxHeightCopy = Number(max) + that.defaultOffsetHeight;
+            }
+            if(!that.changeStartHeight){
+              that.startHeightCopy = Number(min);
+            }
+            that._doAnalysis();
+          }, {level: 12});
+          sampleElevationTool.start();
         }
       });
     },
@@ -342,7 +406,7 @@ export default {
       //设置洪水淹没区域最低开始高度
       floodAnalysis.minHeight = Number(minHeight);
       //设置洪水淹没区域最高高度
-      floodAnalysis.maxHeight = Number(maxHeightCopy);
+      floodAnalysis.maxHeight = this.maxHeightCopy || Number(maxHeightCopy);
       // 设置洪水上涨速度
       floodAnalysis.floodSpeed = Number(floodSpeedCopy);
       // 洪水淹没区域最低高度
@@ -385,6 +449,7 @@ export default {
         vueKey,
         vueIndex
       );
+      if(!find) return;
       const { options } = find;
       return options;
     },
