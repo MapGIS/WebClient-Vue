@@ -215,18 +215,18 @@
                    v-if="type === 'MapgisUiThemeList' || type === 'MapgisUiThemeListSymbol'">
       <div class="mix-row-theme-list-title">
         <mapgis-ui-row type="flex">
-          <mapgis-ui-col :span="type === 'MapgisUiThemeList' ? 3 : 2">
+          <mapgis-ui-col :span="type === 'MapgisUiThemeList' ? 4 : 2">
             <p v-if="type === 'MapgisUiThemeList'" class="mix-row-list-p" style="padding-left: 12px;">颜色</p>
             <p v-if="type === 'MapgisUiThemeListSymbol'" class="mix-row-list-p" style="padding-left: 12px;">半径</p>
           </mapgis-ui-col>
-          <mapgis-ui-col :span="type === 'MapgisUiThemeList' ? 4 : 3">
-            <p class="mix-row-list-p" :style="{paddingLeft: type === 'MapgisUiThemeList' ? '29px' : '11px'}">字段名</p>
+          <mapgis-ui-col :span="type === 'MapgisUiThemeList' ? 4 : 4">
+            <p class="mix-row-list-p" :style="{paddingLeft: type === 'MapgisUiThemeList' ? '8px' : '8px'}">字段名</p>
           </mapgis-ui-col>
           <mapgis-ui-col :span="type === 'MapgisUiThemeList' ? 12 : 14">
-            <p class="mix-row-list-p" style="padding-left: 19px;">分段值</p>
+            <p class="mix-row-list-p" style="padding-left: 0px;">分段值</p>
           </mapgis-ui-col>
-          <mapgis-ui-col :span="type === 'MapgisUiThemeList' ? 5 : 3">
-            <p class="mix-row-list-p" :style="{paddingLeft: type === 'MapgisUiThemeList' ? '33px' : '22px'}">操作</p>
+          <mapgis-ui-col :span="type === 'MapgisUiThemeList' ? 4 : 4">
+            <p class="mix-row-list-p" :style="{paddingLeft: type === 'MapgisUiThemeList' ? '12px' : '4px'}">操作</p>
           </mapgis-ui-col>
         </mapgis-ui-row>
       </div>
@@ -251,6 +251,7 @@
                     :color="listProps.colors[index]"
                     :size="listProps.size"
                     :showBorder="customProps.showBorder"
+                    :showColorText="customProps.showColorText || false"
                     :colorStyle="listProps.style"
                     @input="$_changeColor"
                     v-if="type === 'MapgisUiThemeList'"
@@ -278,6 +279,7 @@
                         v-model="listProps.startData"
                         v-bind:title="String(listProps.startData)"
                         v-if="index === 0"
+                        @change="$_inputChange(index)"
                         :size="listProps.size"
                         class="mix-row-input"
                     />
@@ -285,6 +287,7 @@
                         v-model="listProps.dataSource[index - 1]"
                         v-bind:title="String(listProps.dataSource[index - 1])"
                         v-if="index > 0"
+                        @change="$_inputChange(index)"
                         :size="listProps.size"
                         class="mix-row-input"
                     />
@@ -304,7 +307,7 @@
                         class="mix-row-input"
                     />
                   </mapgis-ui-col>
-                  <mapgis-ui-col :span="2">
+                  <mapgis-ui-col :span="6">
                     <img class="mix-row-add"
                          :class="{mixRowImgSmall: listProps.size === 'small',mixRowLarge: listProps.size === 'large'}"
                          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABEZJREFUWEe1V01sVUUU/s68vtomxY2BWMVEEwNRU9/rzLxdVVi4EAjGRdlIVARd4EZAILIBE6PBqDX4kxjE/7iAhbHiT2IMGOvGzkxfjaXWhXHhT6CykSZN2r45Zl7ufbnvcu/70Xo3792ZM9/57jlnvjlD6PJxzq313t8khFgP4GZmvgbAvBDiEjNPSinnu4GkTowjp6NCiFFm3tRqDTN/BuDzYrE4XiqVfmuH35JAcMzMxwCMAljbDiw1fxnA+0T0npRyOm9tLoHJyclNQoiTAG7t0nGW+T6l1CtZE5kEjDF7iej19AIi+sp7P0tEF4hoFsCs956ZeWOhUNgYfoko/N6f4eyYUuqZqzDTA9baRwC8kxwnoovM/KxS6rVOomGM2UNEJwD0p+x3KaXebcJOvhhjRonodGrRB729vQeHhoYupp2HGgljWZVvjBkkoi8B3Jlcx8w7tNZn4rFGCpxzJWauppxkhi3YGGMOENHh8J+Zj2utX8qKjrX2KIBQyI2HiMpxYTYIWGtfBrAvYTeulMrKZd3EOXcu3pJEdF5KuTkvPc6555j56cT8mFJqf3ivE5ienl6/srISvv666IvC/r1Xa/1TC9COCQQMa60BoCK8yz09PeWgE3UC1tqDAF6InTHzg1rrj1oVXDcRiHw8DuDNBOZ+pdRYTOB7AJVo8lOl1PZWzrtNQYxljPmFiG6phz5KGznnbmfmmaz8rGYEItInmXlPjNvX1zcYCGxn5k8S4X9Ca/3G/xGBSF3PxdhCiK2BwKPMfCoe9N5vrlQq56O87SSi3Xlkkrughc0ppdSHYb5arW6o1WpzCdtdZK09BOB4PEhE64KwVKvVG2u1WpDbNe2i0Wb+SqFQuK1cLv8+MTGxpr+//++E/aFAoGkHLC4uXjsyMnIlOglDbXR7Cqb5zBPRHeGj8gg0aX84VMrl8s8BJaidEGLbf0mB9/5srJKZKZiamtrivQ9NRP1J1sBq74K8IgxNx6XELngqT9eThLoVomgbvsjMB5L1VhciY8xZItoaCcQZKeWOdoX3bwgYY+aIaEPADq2b1npbTKCpASGiLVLKL1YzBdbaJilm5rreZB5GAL5VSt29ygTyD6NIdJqOYyJqmYpuUuCcO83MobGNn+bjOCqQrhoSa+1OALFk743VLh21jhuSKApPAhhLghDR81LKI1npCGoZxoPKZc1nNCKh+B7TWr/V2AmdMA41ERFpWZgxlnPuvqgDuiuFf1gp1eg76rsui3lWZxzZfRwaKO/9N8Vi8Y+FhYU/w/jAwMDg8vLyDUKIewCUADyQwv0rHGpSyvG0v9yLSU6H3E4erppn5jlm3l2pVL7LWtzuahYK82EAD8X9YhcMFgG8WigUTuTVSG4K0k6ipjXcGULz0u5y+iMRfQ3gbaXUD+0Id3Q7ToLMzMxcv7S0JL336xJHdf16DuDC8PDwr+2cJuf/AZGKXgkO+31+AAAAAElFTkSuQmCC"
@@ -551,7 +554,8 @@ export default {
     customProps: {
       default() {
         return {
-          showBorder: true
+          showBorder: true,
+          showColorText: false
         };
       }
     },
@@ -829,6 +833,7 @@ export default {
         if (this.listProps.dataSource[index] <= this.listProps.dataSource[index - 1]) {
         }
       }
+      this.$emit("change", "MapgisUiThemeList");
     },
     $_addRange(index) {
       let startData;
@@ -858,7 +863,8 @@ export default {
         this.listProps.colors.splice(index + 1, 0, this.listProps.colors[index]);
       }
       this.listProps.radiusArray.splice(index + 1, 0, false);
-      this.listProps.radius.splice(index + 1, 0, this.listProps.radius[index]);
+      // this.listProps.radius.splice(index + 1, 0, this.listProps.radius[index]);
+      this.$emit("change", "MapgisUiThemeList");
     },
     $_deleteRange(index) {
       if (this.listProps.rangeLevel > 2) {
@@ -866,6 +872,7 @@ export default {
         this.listProps.rangeLevel--;
         this.listProps.colors.splice(index, 1);
       }
+      this.$emit("change", "MapgisUiThemeList");
     },
     $_changeColor(e, extraValue) {
       this.$set(this.listProps.colors, extraValue, e.hex);
