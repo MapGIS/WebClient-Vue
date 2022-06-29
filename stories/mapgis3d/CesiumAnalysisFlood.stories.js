@@ -35,7 +35,7 @@ export default {
     floodSpeed: {
       description: "洪水淹没速度，单位 米/秒",
       table: {
-        defaultValue: { summary: "500" },
+        defaultValue: { summary: "80" },
       },
       control: "number",
     },
@@ -154,7 +154,7 @@ export const 洪水淹没 = Template.bind({});
   minHeight: 0,
   maxHeight: 2000,
   floodColor: "rgba(149,232,249,0.5)",
-  floodSpeed: 500,
+  floodSpeed: 80,
   specularIntensity: 2,
   amplitude: 10,
   animationSpeed: 0.01,

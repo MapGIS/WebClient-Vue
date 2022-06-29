@@ -1,3 +1,5 @@
+import * as turf from "@turf/turf";
+
 export const checkType = val =>
   Object.prototype.toString.call(val).slice(8, -1);
 
@@ -25,6 +27,7 @@ export const getDocumentByClassName = (htmlCollection, className) => {
   }
   return temp;
 };
+
 /**
  * 判断传入的对象是否是方法。
  * @param {*} value
@@ -115,6 +118,7 @@ export function lnglatValidator(longitude, latitude) {
   }
   return true;
 }
+
 /**
  * 普通对象 {x: number, y: number } 转换为 Cesium.Cartesian2 对象
  * @param {Object} val
@@ -159,6 +163,7 @@ export function makeCartesian3Array(vals) {
     ? Cesium.Cartesian3.fromDegreesArrayHeights(coordinates)
     : vals;
 }
+
 /**
  * 普通数组 [lng, lat, ……，lng, lat] 转换为 Cesium.Cartesian2 数组
  * @param {Array} vals
@@ -208,6 +213,7 @@ export function makePolygonHierarchy(val) {
 
   return val;
 }
+
 /**
  * 普通对象 {near: number, nearValue: number, far: number, farValue: number} 转 Cesium.NearFarScalar 对象。
  * @param {Object} val
@@ -219,6 +225,7 @@ export function makeNearFarScalar(val) {
     new Cesium.NearFarScalar(val.near, val.nearValue, val.far, val.farValue)
   );
 }
+
 /**
  * 普通对象 {near: number, far: number} 转 Cesium.DistanceDisplayCondition 对象。
  * @param {Object} val
@@ -227,6 +234,7 @@ export function makeNearFarScalar(val) {
 export function makeDistanceDisplayCondition(val) {
   return val && new Cesium.DistanceDisplayCondition(val.near, val.far);
 }
+
 /**
  * 普通对象或数组 [r, g, b, a] 或字符串转 Cesium.Color 对象。
  * @param {String|Array|Object} val
@@ -339,8 +347,8 @@ export function makeOptions(val) {
       const result = {};
       Object.assign(result, val);
       result &&
-        result.markerColor &&
-        (result.markerColor = makeColor(result.markerColor));
+      result.markerColor &&
+      (result.markerColor = makeColor(result.markerColor));
       result && result.stroke && (result.stroke = makeColor(result.stroke));
       result && result.fill && (result.fill = makeColor(result.fill));
       return result;
@@ -417,10 +425,10 @@ export function Platform() {
 }
 
 export function captureScreenshot(viewer, showSplitter = false) {
-  const { when } = Cesium;
+  const {when} = Cesium;
   const deferred = when.defer();
   const scene = viewer.scene;
-  var removeCallback = scene.postRender.addEventListener(function() {
+  var removeCallback = scene.postRender.addEventListener(function () {
     removeCallback();
     try {
       const cesiumCanvas = viewer.scene.canvas;
@@ -492,7 +500,7 @@ export function last(array) {
  * 随机生成一个guid
  * @returns {string}
  */
-export const newGuid = function() {
+export const newGuid = function () {
   let guid = "";
   for (let i = 1; i <= 32; i++) {
     let n = Math.floor(Math.random() * 16.0).toString(16);
@@ -541,4 +549,42 @@ export function getCamera(viewer) {
   camera.pitch = viewer.scene.camera.pitch;
   camera.roll = viewer.scene.camera.roll;
   return camera;
+}
+
+export function getPolygonSamplePoints(options) {
+  options = options || {};
+  let {positions} = options;
+  let {step} = options;
+  if (!positions || !step) return;
+  let line = turf.lineString(positions);
+  let bbox = turf.bbox(line);
+  let bboxPolygon = turf.bboxPolygon(bbox);
+  let {coordinates} = bboxPolygon.geometry;
+  let points = coordinates[0];
+  let width = points[1][0] - points[0][0];
+  let height = points[3][1] - points[0][1];
+  let widthStep = width / step;
+  let heightStep = height / step;
+  let ps = [],result=[], startP = [points[0][0], points[0][1]];
+  for (let i = 0; i < step; i++) {
+    startP[0] = points[0][0];
+    for (let j = 0; j < step; j++) {
+      startP[0] += widthStep;
+      ps.push([startP[0], startP[1]]);
+    }
+    startP[1] += heightStep;
+  }
+  let pArr = [];
+  for (let i = 0; i < positions.length; i++) {
+    pArr.push(positions[i]);
+  }
+  let polygon = turf.polygon([pArr]);
+  for (let i = 0; i < ps.length; i++) {
+    let point = turf.point([ps[i][0], ps[i][1]]);
+    let flag = turf.booleanPointInPolygon(point, polygon);
+    if (flag) {
+      result.push(ps[i]);
+    }
+  }
+  return result;
 }
