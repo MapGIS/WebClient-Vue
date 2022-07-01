@@ -22,7 +22,7 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       symbolData: [],
-      symbolUrl: "http://localhost:8895/SVGManager.json",
+      symbolUrl: `http://${window.webclient.staticIP}:8895/SVGManager.json`,
     };
   },
   methods: {

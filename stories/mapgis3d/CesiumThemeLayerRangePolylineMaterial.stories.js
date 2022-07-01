@@ -35,7 +35,7 @@ const Template = (args, {argTypes}) => ({
               color: "#ff0000",
             },
             material: {
-              image: "http://localhost:8895/material/arrow_1.png",
+              image: `http://${window.webclient.staticIP}:8895/material/arrow_1.png`,
               direction: 1.0,
               duration: 100000,
               gapColor: "#ffffff",
@@ -56,7 +56,7 @@ const Template = (args, {argTypes}) => ({
               color: "#00ff00",
             },
             material: {
-              image: "http://localhost:8895/material/arrow_1.png",
+              image: `http://${window.webclient.staticIP}:8895/material/arrow_1.png`,
               direction: 1.0,
               duration: 100000,
               gapColor: "#ffffff",
@@ -77,7 +77,7 @@ const Template = (args, {argTypes}) => ({
               color: "#0000ff",
             },
             material: {
-              image: "http://localhost:8895/material/arrow_1.png",
+              image: `http://${window.webclient.staticIP}:8895/material/arrow_1.png`,
               direction: 1.0,
               duration: 100000,
               gapColor: "#ffffff",
@@ -98,7 +98,7 @@ const Template = (args, {argTypes}) => ({
               color: "#ff00ff",
             },
             material: {
-              image: "http://localhost:8895/material/arrow_1.png",
+              image: `http://${window.webclient.staticIP}:8895/material/arrow_1.png`,
               direction: 1.0,
               duration: 100000,
               gapColor: "#ffffff",
@@ -125,7 +125,7 @@ const Template = (args, {argTypes}) => ({
         @themeHover="handleHover"
       />
       // <mapgis-3d-theme-layer-custom 
-      //   baseUrl="http://localhost:8895/geojson/roadClass1.json"
+      //   baseUrl='http://loca${window.webclient.staticIP}lhost:8895/geojson/roadClass1.json'
       //   :themeOptions="themeOptions1"
       //   :type="type1"
       //   :field="field1"
@@ -136,19 +136,19 @@ const Template = (args, {argTypes}) => ({
       //   @themeHover="handleHover"
       // />
       // <mapgis-3d-theme-layer-custom 
-      //   baseUrl="http://localhost:8895/geojson/roadClass2.json"
+      //   baseUrl='http://${window.webclient.staticIP}:8895/geojson/roadClass2.json'
       //   :themeOptions="themeOptions2"
       //   :type="type1"
       //   :field="field1"
       // />
       // <mapgis-3d-theme-layer-custom 
-      //   baseUrl="http://localhost:8895/geojson/roadClass3.json"
+      //   baseUrl='http://${window.webclient.staticIP}:8895/geojson/roadClass3.json'
       //   :themeOptions="themeOptions3"
       //   :type="type1"
       //   :field="field1"
       // />
       // <mapgis-3d-theme-layer-custom 
-      //   baseUrl="http://localhost:8895/geojson/roadClass4.json"
+      //   baseUrl='http://${window.webclient.staticIP}:8895/geojson/roadClass4.json'
       //   :themeOptions="themeOptions4"
       //   :type="type1"
       //   :field="field1"
@@ -159,7 +159,7 @@ const Template = (args, {argTypes}) => ({
 export const 线数据material = Template.bind({});
 线数据material.args = {
   // baseUrl: `http://${window.webclient.ip}/static/data/geojson/省级行政区.geojson`,
-  baseUrl: `http://localhost:8895/geojson/metro.json`,
+  baseUrl: `http://${window.webclient.staticIP}:8895/geojson/metro.json`,
   
   type: "range",
   field: "x",
@@ -178,7 +178,7 @@ export const 线数据material = Template.bind({});
           color: "#ff0000",
         },
         material: {
-          image: "http://localhost:8895/img/arrow_1.png",
+          image: `http://${window.webclient.staticIP}:8895/img/arrow_1.png`,
           direction: 1.0,
           duration: 100000,
           gapColor: "ffffff",
@@ -195,7 +195,7 @@ export const 线数据material = Template.bind({});
           color: "#00ff00",
         },
         material: {
-          image: "http://localhost:8895/img/arrow_1.png",
+          image: `http://${window.webclient.staticIP}:8895/img/arrow_1.png`,
           direction: 2.0,
           duration: 1000,
           gapColor: "ffffff",
@@ -212,7 +212,7 @@ export const 线数据material = Template.bind({});
           color: "#0000ff",
         },
         material: {
-          image: "http://localhost:8895/img/LinkPulse.png",
+          image: `http://${window.webclient.staticIP}:8895/img/LinkPulse.png`,
           direction: 1.0,
           duration: 1000,
           gapColor: "ffffff",
