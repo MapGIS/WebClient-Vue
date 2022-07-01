@@ -72,8 +72,32 @@ export const styleAttributes = {
     type: "nodes", //符号部件
     groupId: 4,
   },
+  fillStyleType: {
+    title: "填充类型",
+    type: "select",
+    groupId: 6,
+    options: {
+      0: "无填充",
+      1: "实填充",
+      2: "渐变填充",
+    },
+  },
   fillStyle: {
     title: "填充颜色",
+    type: "color",
+    groupId: 6,
+  },
+  fillGradType: {
+    title: "渐变类型",
+    type: "select",
+    groupId: 6,
+    options: {
+      1: "线性渐变",
+      2: "辐射渐变",
+    },
+  },
+  fillGradColor: {
+    title: "填充渐变颜色",
     type: "color",
     groupId: 6,
   },
