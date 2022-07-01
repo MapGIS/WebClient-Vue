@@ -63,7 +63,7 @@ export const 点 = Template.bind({});
         type: "icon",
         material: { color: "#ffff00" },
         outline: { color: "#ff0000", width: 1.0 },
-        size: 100.0,
+        size: 20.0,
       })
     }),
     defaultLabel: "标签",

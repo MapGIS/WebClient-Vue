@@ -108,14 +108,15 @@ export const 点 = Template.bind({});
         type: "icon",
         material: { color: "#ff0000" },
         outline: { color: "#000000", width: 1.0 },
-        size: 200.0
+        resource: {primitive: "circle"},
+        size: 20.0
       })
     }),
     defaultLabel: "其他",
     classBreakInfos: [
       {
         maxValue: 5,
-        minValue: 2,
+        minValue: -5,
         symbol: new PointSymbol3D({
           type: 'point-3d',
           symbolLayers: new IconSymbol3DLayer({
@@ -127,7 +128,7 @@ export const 点 = Template.bind({});
         }),
       },
       {
-        maxValue: 9,
+        maxValue: 15,
         minValue: 5,
         symbol: new PointSymbol3D({
           type: 'point-3d',
@@ -203,6 +204,12 @@ export const 区 = Template.bind({});
   baseUrl:
     "http://localhost:8895/geojson/populationSizeGeoJson_2017.json",
   autoReset: true,
+  enablePopup: true,
+  popupOptions: {
+    "title": 'name',
+    "popupType": 'rich-text',
+    "scrollNum": 6
+  },
   enableClick: true,
   enableHover: false,
   highlightSymbol: {
@@ -642,6 +649,21 @@ export const 点符号svg = Template.bind({});
   baseUrl:
     "http://localhost:8895/geojson/metroStation.json",
   autoReset: true,
+  enablePopup: true,
+  popupOptions: {
+    "title": 'n',
+    "popupType": 'rich-text',
+    "scrollNum": 6
+  },
+  enableClick: true,
+  enableHover: false,
+  highlightSymbol: {
+    type: 'point-3d',
+    symbolLayers: {
+      type: "icon",
+      material: { color: "#ffffff", },
+    }
+  },
   enableLegend: true,
   renderer: new ClassBreaksRenderer({
     type: "class-breaks",

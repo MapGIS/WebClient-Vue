@@ -1,8 +1,15 @@
-import PopupMixin from "../../Layer/Mixin/PopupVirtual";
+import Popup from "../../UI/Popup/Popup.vue";
+import PopupContent from "../../UI/Geojson/Popup";
+
+import PopupMixin from "../Mixin/PopupVirtual";
 
 export default {
   mixins: [PopupMixin],
   inject: ["Cesium", "vueCesium", "viewer"],
+  components: {
+    Popup,
+    PopupContent,
+  },
   props: {
     vueKey: {
       type: String,
@@ -51,7 +58,23 @@ export default {
       default: true
     }
   },
+  data() {
+    return {
+      gemotryAttribute: undefined,
+      popVisiable: false,
+      forceRender: true,
+      visiblePop: true,
+      checkTypeResult: 0
+    }
+  },
   watch: {
+    gemotryAttribute: {
+      handler: function (value) {
+        if (value) {
+          this.popVisiable = true
+        }
+      },
+    },
     enableQuery: {
       handler: function (value) {
         if (value) {
@@ -161,6 +184,22 @@ export default {
         }
       }
     },
+    // 检查专题要素类型
+    checkType() {
+      let symbol = this.renderer.symbol || this.renderer.defaultSymbol;
+      let symbolLayers = symbol.symbolLayers;
+      if (!symbolLayers.resource) {
+        this.checkTypeResult = 0;
+        return;
+      }
+      if (symbolLayers.resource.herf) {
+        this.checkTypeResult = 1;
+      } else if(symbolLayers.resource.primitive = "billboard") {
+        this.checkTypeResult = 2;
+      } else {
+        this.checkTypeResult = 0;
+      }
+    },
     // 鼠标点击高亮
     clickHighlight(payload) {
       this.highlight(payload);
@@ -176,10 +215,25 @@ export default {
       this.transformObject(symbolLayers);
       let {entities, iClickFeatures, movement, pickedFeature} = payload;
       let {id, primitive} = pickedFeature;
+
+      if (this.checkTypeResult == 1 || this.checkTypeResult == 2) {
+        this.gemotryAttribute = [{
+          layer: {id: "矢量图层"},
+          properties: primitive.extendAttr
+        }];
+        let oldPickedFeature = {color: pickedFeature.primitive._color};
+        primitive._color = symbolLayers.material.color;
+        this.tempHighlightData = {pickedFeature, oldPickedFeature};
+        return;
+      }
       var geometryInstances = primitive.geometryInstances;
       for (let i = 0; i < geometryInstances.length; i++) {
         if (geometryInstances[i].id === id) {
           let pickExtendAttr = geometryInstances[i].extendAttr;
+          this.gemotryAttribute = [{
+            layer: {id: "矢量图层"},
+            properties: pickExtendAttr
+          }];
           let attributes = primitive.getGeometryInstanceAttributes(id);
           let beforeAttr = {color: attributes.color, show: attributes.show};
           this.tempHighlightData = {pickedFeature, attributes: beforeAttr, pickExtendAttr};
@@ -190,14 +244,30 @@ export default {
     },
     // 清除click、hover高亮样式
     clearHighlight() {
-      if (this.tempHighlightData) {
-        let {pickedFeature, attributes} = this.tempHighlightData;
-        let {id, primitive} = pickedFeature;
-        let highlightAttr = primitive.getGeometryInstanceAttributes(id);
-        highlightAttr.color = attributes.color;
-        highlightAttr.show = attributes.show;
+      if (!this.tempHighlightData) {
+        return;
       }
-      if (!this.enableQuery && this.tempQueryDataArr.length == 0) {
+      switch (this.checkTypeResult) {
+        case 0: {
+          let {pickedFeature, attributes} = this.tempHighlightData;
+          let {id, primitive} = pickedFeature;
+          let highlightAttr = primitive.getGeometryInstanceAttributes(id);
+          highlightAttr.color = attributes.color;
+          highlightAttr.show = attributes.show;
+          break;
+        }
+        case 1: {
+          let {pickedFeature, oldPickedFeature} = this.tempHighlightData;
+          pickedFeature.primitive._color = oldPickedFeature.color;
+          break;
+        }
+        case 2: {
+          let {pickedFeature, oldPickedFeature} = this.tempHighlightData;
+          pickedFeature.primitive._color = oldPickedFeature.color;
+          break;
+        }
+      }
+      if (!this.enableQuery && this.tempQueryDataArr && this.tempQueryDataArr.length == 0) {
         this.clearQuery();
       }
     },
