@@ -15,6 +15,7 @@ Vue.use(MapgisCesiumComponents, {});
 
 window.webclient = {
   ip: "develop.smaryun.com",
+  staticIP: "192.168.82.89",
   port: "6163",
 };
 

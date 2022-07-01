@@ -663,7 +663,7 @@ export const 点符号svg = Template.bind({});
       symbolLayers: new IconSymbol3DLayer({
         type: "icon",
         material: { color: "#ffffff" },
-        resource: { herf: `http://${window.webclient.ip}:8895/img/Church.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
+        resource: { herf: `http://${window.webclient.staticIP}:8895/img/Church.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
         size: 10.0
       })
     }),
@@ -677,7 +677,7 @@ export const 点符号svg = Template.bind({});
           symbolLayers: new IconSymbol3DLayer({
             type: "icon",
             material: { color: "#ffffff", },
-            resource: { herf: `http://${window.webclient.ip}:8895/img/Museum.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
+            resource: { herf: `http://${window.webclient.staticIP}:8895/img/Museum.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
             size: 10.0
           })
         }),
@@ -691,7 +691,7 @@ export const 点符号svg = Template.bind({});
           symbolLayers: new IconSymbol3DLayer({
             type: "icon",
             material: { color: "#ffffff", },
-            resource: { herf: `http://${window.webclient.ip}:8895/img/Hotel.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
+            resource: { herf: `http://${window.webclient.staticIP}:8895/img/Hotel.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
             size: 10.0
           })
         }),
@@ -705,7 +705,7 @@ export const 点符号svg = Template.bind({});
           symbolLayers: new IconSymbol3DLayer({
             type: "icon",
             material: { color: "#ffffff", },
-            resource: { herf: `http://${window.webclient.ip}:8895/img/Park.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
+            resource: { herf: `http://${window.webclient.staticIP}:8895/img/Park.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
             size: 10.0
           })
         }),
@@ -719,7 +719,7 @@ export const 点符号svg = Template.bind({});
           symbolLayers: new IconSymbol3DLayer({
             type: "icon",
             material: { color: "#ffffff", },
-            resource: { herf: `http://${window.webclient.ip}:8895/img/Restaurant.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
+            resource: { herf: `http://${window.webclient.staticIP}:8895/img/Restaurant.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
             size: 10.0
           })
         }),

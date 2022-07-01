@@ -35,7 +35,7 @@ export const 基础 = Template.bind({});
 基础.args = {
   // url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
   url: "http://192.168.88.204:8089/M3D/2.0/M3DAttributeTest_BIN/zondy.mcj",
-  // url: "http://localhost:8895/结果矿体/结果矿体.mcj",
+  // url: `http://${window.webclient.staticIP}:8895/结果矿体/结果矿体.mcj`,
   // url: "http://192.168.81.98:8089/igs/rest/services/分层分户_0/M3dServer",
   show: true,
   opacity: 1.0,
