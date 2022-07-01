@@ -137,10 +137,6 @@
           "name": "闪烁渐变",
           "type": "boolean",
           "default": true
-        },
-        "endStatus": {
-          "type": "boolean",
-          "default": true
         }
       }
     },
