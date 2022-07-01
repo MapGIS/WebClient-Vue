@@ -331,12 +331,14 @@
               <mapgis-ui-col :span="17">
                 <mapgis-ui-slider
                     v-model="listProps.radius[index]"
+                    @change="$_sliderChange(index)"
                     class="mix-row-radius-slider"
                 />
               </mapgis-ui-col>
               <mapgis-ui-col :span="4">
                 <mapgis-ui-input-number
                     v-model="listProps.radius[index]"
+                    @change="$_sliderChange(index)"
                     :size="listProps.size"
                     style="width: 70%"
                 />
@@ -833,7 +835,13 @@ export default {
         if (this.listProps.dataSource[index] <= this.listProps.dataSource[index - 1]) {
         }
       }
-      this.$emit("change", "MapgisUiThemeList");
+      this.$emit("change", this.type);
+    },
+    $_sliderChange(index) {
+      this.$emit("change", this.type);
+      this.$nextTick(() => {
+        this.$set(this.listProps.radiusArray, index, !this.listProps.radiusArray[index]);
+      })
     },
     $_addRange(index) {
       let startData;
@@ -864,7 +872,7 @@ export default {
       }
       this.listProps.radiusArray.splice(index + 1, 0, false);
       // this.listProps.radius.splice(index + 1, 0, this.listProps.radius[index]);
-      this.$emit("change", "MapgisUiThemeList");
+      this.$emit("change", this.type);
     },
     $_deleteRange(index) {
       if (this.listProps.rangeLevel > 2) {
@@ -872,7 +880,7 @@ export default {
         this.listProps.rangeLevel--;
         this.listProps.colors.splice(index, 1);
       }
-      this.$emit("change", "MapgisUiThemeList");
+      this.$emit("change", this.type);
     },
     $_changeColor(e, extraValue) {
       this.$set(this.listProps.colors, extraValue, e.hex);
