@@ -39,7 +39,7 @@ const Template = (args, { argTypes }) => ({
         zoom: 8,
         center: [116.19, 40.01],
       },
-      jsonUrl: "http://localhost:8895/标绘/test.json",
+      jsonUrl: `http://${window.webclient.staticIP}:8895/标绘/test.json`,
     };
   },
   methods: {
@@ -52,7 +52,8 @@ const Template = (args, { argTypes }) => ({
 
 export const 二维标绘 = Template.bind({});
 二维标绘.args = {
-  symbolUrl: "http://localhost:8895/标绘/symbols.json",
+  symbolUrl: `http://${window.webclient.staticIP}:8895/标绘/symbols.json`,
+  // symbolUrl: `http://localhost:8895/标绘/symbols.json`,
 };
 
 二维标绘.parameters = {

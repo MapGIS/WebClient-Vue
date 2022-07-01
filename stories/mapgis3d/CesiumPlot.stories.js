@@ -20,7 +20,7 @@ const Template = (args, { argTypes }) => ({
     return {
       vueIndex1: undefined,
       vueKey1: undefined,
-      jsonUrl: "http://localhost:8895/标绘/test.json",
+      jsonUrl: `http://${window.webclient.staticIP}:8895/标绘/test.json`,
     };
   },
   methods: {
@@ -33,7 +33,8 @@ const Template = (args, { argTypes }) => ({
 
 export const 三维标绘 = Template.bind({});
 三维标绘.args = {
-  symbolUrl: "http://localhost:8895/标绘/symbols.json",
+  symbolUrl: `http://${window.webclient.staticIP}:8895/标绘/symbols.json`,
+  // symbolUrl: `http://localhost:8895/标绘/symbols.json`,
 };
 
 三维标绘.parameters = {

@@ -179,7 +179,7 @@ const Template = (args, { argTypes }) => ({
       ];
       const promises = images.map((i) => {
         return new Promise((resolve) => {
-          map.loadImage(`http://localhost:8895/img/${i}.png`, (err, image) => {
+          map.loadImage(`http://${window.webclient.staticIP}:8895/img/${i}.png`, (err, image) => {
             if (err) throw err;
             map.addImage(i, image);
             resolve();
