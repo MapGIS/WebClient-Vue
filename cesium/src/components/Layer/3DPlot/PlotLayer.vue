@@ -159,16 +159,16 @@ export default {
             method: "get",
             url: vm.dataSource,
             dataType: "text",
-            timeout: 1000
+            timeout: 2000
           }).then(res => {
             vm.dataSourceCopy = res.data;
             vm.fromJSON(JSON.parse(JSON.stringify(vm.dataSourceCopy)));
+            vm.$emit("loaded", { vueKey: vm.vueKey, vueIndex: vm.vueIndex });
           });
         } else {
           vm.fromJSON(JSON.parse(JSON.stringify(vm.dataSourceCopy)));
+          vm.$emit("loaded", { vueKey: vm.vueKey, vueIndex: vm.vueIndex });
         }
-
-        vm.$emit("loaded", { vueKey: vm.vueKey, vueIndex: vm.vueIndex });
       });
     },
     unmount(){
