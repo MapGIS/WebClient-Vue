@@ -2,15 +2,20 @@
   <div>
     <div class="mapgis-ui-svg-manager-file">
       <mapgis-ui-plot-symbol
-          style="height: 510px;"
-          :data="symbolsConfig"
-          :format="true"
-          @click="clickIcon"
-          @chooseFolder="chooseFolder"
+        style="height: 510px;"
+        :data="symbolsConfig"
+        :format="true"
+        @click="clickIcon"
+        @chooseFolder="chooseFolder"
       ></mapgis-ui-plot-symbol>
       <div class="mapgis-ui-svg-manager-file-right">
         <mapgis-ui-row class="mapgis-ui-svg-manager-file-right-row">
-          <input style="display: none" type="file" :id="inputId" accept=".svg"/>
+          <input
+            style="display: none"
+            type="file"
+            :id="inputId"
+            accept=".svg"
+          />
           <mapgis-ui-button @click="importSVG">新增</mapgis-ui-button>
         </mapgis-ui-row>
         <mapgis-ui-row class="mapgis-ui-svg-manager-file-right-row">
@@ -25,17 +30,17 @@
       </div>
     </div>
     <mapgis-ui-svg-setting-panel
-        style="position: absolute;right: 20px;top: 66px;"
-        :url="svgUrl"
+      style="position: absolute;right: 20px;top: 66px;"
+      :url="svgUrl"
     ></mapgis-ui-svg-setting-panel>
   </div>
 </template>
 
 <script>
-import {SymbolManager} from "../../../../../WebClient-JavaScript/src/service";
+import { SymbolManager } from "@mapgis/webclient-es6-service";
 import symbolsConfig from "./symbols";
 import axios from "axios";
-import {saveAs} from "file-saver";
+import { saveAs } from "file-saver";
 
 export default {
   name: "mapgis-ui-svg-manager",
@@ -43,7 +48,7 @@ export default {
     symbolUrl: {
       type: String,
       required: true
-    },
+    }
   },
   data() {
     return {
@@ -51,8 +56,8 @@ export default {
       svgUrl: undefined,
       symbolsConfig: symbolsConfig,
       currentFolderId: undefined,
-      inputId: "mapgisFileImport" + parseInt(String(Math.random() * 10000)),
-    }
+      inputId: "mapgisFileImport" + parseInt(String(Math.random() * 10000))
+    };
   },
   methods: {
     exportConfig() {
@@ -63,9 +68,11 @@ export default {
       saveAs(blob, "标绘符号配置文件" + ".json");
     },
     importSVG(fileContent, name) {
-      let {symbols} = symbolsConfig, inputFile = document.getElementById(this.inputId), that = this;
+      let { symbols } = symbolsConfig,
+        inputFile = document.getElementById(this.inputId),
+        that = this;
       inputFile.click();
-      inputFile.onchange = function () {
+      inputFile.onchange = function() {
         let File = inputFile.files[0];
         let name = inputFile.files[0].name;
         // 使用 FileReader 来读取文件
@@ -73,20 +80,24 @@ export default {
         // 读取纯文本文件,且编码格式为 utf-8
         reader.readAsText(File, "UTF-8");
         // 读取文件
-        reader.onload = function (e) {
+        reader.onload = function(e) {
           let fileContent = e.target.result;
           for (let i = 0; i < symbols.length; i++) {
-            let {items} = symbols[i];
+            let { items } = symbols[i];
             for (let j = 0; j < items.length; j++) {
               if (items[j].id === that.currentFolderId) {
                 items[j].items.push({
-                  "id": 112211,
+                  id: 112211,
                   //名称
-                  "name": name,
+                  name: name,
                   //类型
-                  "type": "simplepoint",
+                  type: "simplepoint",
                   //相对路径
-                  "path": that.symbolsConfig.rootPath + symbols[i].path + items[j].path + name
+                  path:
+                    that.symbolsConfig.rootPath +
+                    symbols[i].path +
+                    items[j].path +
+                    name
                 });
                 break;
               }
@@ -111,16 +122,16 @@ export default {
       });
 
       const xml = await new DOMParser().parseFromString(
-          res.data,
-          "image/svg+xml"
+        res.data,
+        "image/svg+xml"
       );
       return xml.documentElement;
-    },
+    }
   },
   mounted() {
     let manager = new SymbolManager(this.symbolUrl);
     let vm = this;
-    manager.getSymbols().then(function (symbols) {
+    manager.getSymbols().then(function(symbols) {
       vm.symbols = [];
       let symbolData = [];
       let symbolCls;
@@ -159,10 +170,10 @@ export default {
         symbolData.push(symbolCls);
       });
       vm.symbolData = symbolData;
-      console.log("symbolData", symbolData)
+      console.log("symbolData", symbolData);
     });
   }
-}
+};
 </script>
 
 <style scoped>

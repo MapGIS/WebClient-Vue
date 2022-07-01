@@ -1,4 +1,4 @@
-import {SymbolManager} from "../../../../../WebClient-JavaScript/src/service";
+import { SymbolManager } from "@mapgis/webclient-es6-service";
 
 export function initManager() {
   window.vueMap = window.vueMap || {};
@@ -7,15 +7,15 @@ export function initManager() {
 export function initVueMap() {
   window.vueMap = window.vueMap || {};
   window.vueMap.PlotLayerManager =
-      window.vueMap.PlotLayerManager || new PlotLayerManager();
+    window.vueMap.PlotLayerManager || new PlotLayerManager();
   window.vueMap.PlotLayerGroupManager =
-      window.vueMap.PlotLayerGroupManager || new PlotLayerGroupManager();
+    window.vueMap.PlotLayerGroupManager || new PlotLayerGroupManager();
   window.vueMap.PlotAnimationManager =
-      window.vueMap.PlotAnimationManager || new PlotAnimationManager();
+    window.vueMap.PlotAnimationManager || new PlotAnimationManager();
   window.vueMap.PlotSymbolManager =
-      window.vueMap.PlotSymbolManager || new PlotSymbolManager();
+    window.vueMap.PlotSymbolManager || new PlotSymbolManager();
   window.vueMap.DrawToolManager =
-      window.vueMap.DrawToolManager || new DrawToolManager();
+    window.vueMap.DrawToolManager || new DrawToolManager();
 }
 
 export class BaseManager {
@@ -35,7 +35,7 @@ export class BaseManager {
       parent: vueKey,
       key: vueIndex,
       source: source,
-      options: options,
+      options: options
     });
   }
 
@@ -122,7 +122,7 @@ export class BaseManager {
     if (find) {
       findSource = {
         ...find,
-        index: index,
+        index: index
       };
     }
     return findSource;
@@ -135,7 +135,7 @@ export class BaseManager {
 
   flatAllSource() {
     let flat = [];
-    Object.keys(this).forEach((k) => {
+    Object.keys(this).forEach(k => {
       if (k !== "vueKey") {
         flat = flat.concat(this[k]);
       }

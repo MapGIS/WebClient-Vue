@@ -1,4 +1,4 @@
-import {SymbolManager} from "../../../../../WebClient-JavaScript/src/service";
+import { SymbolManager } from "@mapgis/webclient-es6-service";
 
 export function initManager() {
   window.vueCesium = window.vueCesium || {};
@@ -123,13 +123,13 @@ export function initVueCesium() {
   window.vueCesium.RotateManager =
     window.vueCesium.RotateManager || new RotateManager();
   window.vueCesium.PlotLayerManager =
-      window.vueCesium.PlotLayerManager || new PlotLayerManager();
+    window.vueCesium.PlotLayerManager || new PlotLayerManager();
   window.vueCesium.PlotLayerGroupManager =
-      window.vueCesium.PlotLayerGroupManager || new PlotLayerGroupManager();
+    window.vueCesium.PlotLayerGroupManager || new PlotLayerGroupManager();
   window.vueCesium.PlotAnimationManager =
-      window.vueCesium.PlotAnimationManager || new PlotAnimationManager();
+    window.vueCesium.PlotAnimationManager || new PlotAnimationManager();
   window.vueCesium.PlotSymbolManager =
-      window.vueCesium.PlotSymbolManager || new PlotSymbolManager();
+    window.vueCesium.PlotSymbolManager || new PlotSymbolManager();
 
   //在window.vueCesium下添加取得WebGlobe对象的方法
   window.vueCesium.getViewer = function (vueKey) {
