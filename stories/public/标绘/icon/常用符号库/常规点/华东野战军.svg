@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="200"
+   version="1.1"
+   height="200"
+   id="svg2"
+   zondyPlotSymbol:version="1.0"
+   zondyPlotSymbol:id="svg003"
+   zondyPlotSymbol:name="华东野战军"
+   zondyPlotSymbol:desc=""
+   zondyPlotSymbol:type="simplepoint"
+   zondyPlotSymbol:pose="1"
+   sodipodi:docname="华东野战军.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:zondyPlotSymbol="https://www.mapgis.com">
+  <defs
+     id="defs10">
+    <rect
+       x="162.63456"
+       y="26.516504"
+       width="24.306796"
+       height="40.12831"
+       id="rect85054" />
+    <rect
+       x="19.220779"
+       y="44.675325"
+       width="139.48052"
+       height="55.064935"
+       id="rect52042" />
+    <rect
+       x="20.519481"
+       y="50.12987"
+       width="132.72727"
+       height="45.194805"
+       id="rect46456" />
+  </defs>
+  <sodipodi:namedview
+     id="namedview8"
+     pagecolor="#ffffff"
+     bordercolor="#111111"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     showgrid="false"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="49.851028"
+     inkscape:cy="56.038212"
+     inkscape:window-width="1920"
+     inkscape:window-height="986"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <rect
+     style="fill:#ff0000;stroke:#ffffff;stroke-width:3"
+     id="rect13106"
+     width="176.88312"
+     height="45"
+     x="12.727272"
+     y="24" />
+  <text
+     xml:space="preserve"
+     id="text52040"
+     style="font-size:25px;line-height:1.25;font-family:SimHei;-inkscape-font-specification:SimHei;white-space:pre;shape-inside:url(#rect52042);display:inline;fill:#ffffff"
+     transform="translate(5.4149802,-14.624585)"><tspan
+       x="19.220703"
+       y="69.285156"
+       id="tspan13967">华东野战军</tspan></text>
+  <path
+     style="fill:none;stroke:#ffffff;stroke-width:3"
+     d="M 160,23.869475 V 69.601698"
+     id="path55317"
+     sodipodi:nodetypes="cc" />
+  <text
+     xml:space="preserve"
+     id="text85052"
+     style="font-size:6px;line-height:1.25;font-family:SimHei;-inkscape-font-specification:SimHei;white-space:pre;shape-inside:url(#rect85054);fill:#ffffff"
+     transform="matrix(2.4096916,0,0,1.8685015,-223.24983,-17.830898)"><tspan
+       x="162.63477"
+       y="32.421875"
+       id="tspan13969">粟
+</tspan><tspan
+       x="162.63477"
+       y="39.921875"
+       id="tspan13971">裕</tspan></text>
+</svg>

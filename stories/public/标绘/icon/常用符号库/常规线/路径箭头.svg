@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="200" version="1.1" height="200" id="svg2" zondyPlotSymbol:version="1.0" zondyPlotSymbol:id="svg003"
+   zondyPlotSymbol:name="" zondyPlotSymbol:desc="" zondyPlotSymbol:type="simpleline" zondyPlotSymbol:pose="0"
+   xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:zondyPlotSymbol="https://www.mapgis.com" xmlns:zondyPlotSymbolItem="https://www.mapgis.com">
+   <defs id="defs9864" />
+   <path zondyPlotSymbolItem:type="10"
+      style="fill:none;stroke:#ff0000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;image-rendering:auto"
+      id="path4174" d="M 0,100 H 101.78761 170" />
+   <path style="fill:#ff0000" d="M 170,100 157.90337,113.32418 200,100 158.20298,87.406914 Z" id="path2338"
+      zondyPlotSymbolItem:pose="0" zondyPlotSymbolItem:type="13" zondyPlotSymbolItem:markerOrigin="170,100" />
+</svg>

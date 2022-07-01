@@ -1,0 +1,49 @@
+﻿<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<!-- Created with Inkscape (http://www.inkscape.org/) --><svg width="200"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" version="1.1" xmlns="http://www.w3.org/2000/svg"
+    height="200" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+    xmlns:cc="http://creativecommons.org/ns#" sodipodi:docname="03010101_1.svg" id="svg2" inkscape:version="0.91 r13725"
+    xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:svg="http://www.w3.org/2000/svg"
+    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape">
+    <sodipodi:namedview inkscape:zoom="2.828427" objecttolerance="10" inkscape:window-x="-8" inkscape:window-y="-8"
+        bordercolor="#666666" id="namedview3092" inkscape:pageopacity="0" guidetolerance="10"
+        inkscape:window-maximized="1" pagecolor="#ffffff" inkscape:window-width="1920" showgrid="false"
+        inkscape:cx="86.482489" inkscape:cy="103.31739" inkscape:window-height="1027" borderopacity="1"
+        inkscape:pageshadow="2" gridtolerance="10" inkscape:current-layer="svg2" />
+    <defs id="defs3009" />
+    <msbl Angle="180" BelowAxisIDs="g3030,g3031" Attitude="0" AboveAxisIDs="g4157" Type="msbl_RegularLine1"
+        Name="" id="dsc2994" Axis1_ID="g3205" />
+    <_3D dd="m 45,112 -45,-12 45,-12 z" Model="" id="_3D3024" d="M 45,112 0,100 45,88 Z" />
+    <g inkscape:transform-center-x="7.5043697" inkscape:transform-center-y="0.00390625" origin="45,100" id="g3026">
+        <path FillColorSameAsStroke="1" inkscape:connector-curvature="0" style="fill:#ff0000;fill-opacity:1;stroke:none"
+            id="path4175" d="M 45,112 0,100 45,88 Z" />
+    </g>
+    <g  id="g3205">
+        <path style="fill:none;stroke:#ff0000;stroke-width:8;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+            id="path4177-8" d="m 200.0,100.0 -155,0" />
+    </g>
+    <g style="stroke:#ff0000;stroke-opacity:1" id="g3030">
+        <circle cx="86.543449" cy="118.92623"
+            style="fill:none;stroke:#ff0000;stroke-width:8;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+            id="path4992" r="11.0" />
+    </g>
+    <g style="stroke:#ff0000;stroke-opacity:1" id="g3031">
+        <circle cx="144.54346" cy="118.92623"
+            style="fill:none;stroke:#ff0000;stroke-width:8;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+            r="11.0" id="circle5072" />
+    </g>
+    <g origin="57,100" id="g4157">
+        <!-- <path sodipodi:nodetypes="ccccc" inkscape:connector-curvature="0"
+            style="opacity:0.8;fill:#ffffff;fill-opacity:0.78431373;stroke:none;stroke-width:13.99164867;stroke-miterlimit:4;stroke-dasharray:none"
+            id="path3033" d="m 57,17 0,32 65,0 0,-32 z" /> -->
+        <path sodipodi:nodetypes="ccccc" inkscape:connector-curvature="0"
+            style="fill:none;stroke:#ff0000;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+            id="path3971" d="m 57,100 0,-83 65,0 0,32 -65,0" />
+            <text x="79.262184" y="45.884533"
+            sodipodi:linespacing="125%"
+            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:25.72963333px;line-height:125%;font-family:SimHei;-inkscape-font-specification:SimHei;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;text-anchor:middle;stroke-width:13.99164867;stroke-miterlimit:4;stroke-dasharray:none"
+            id="text3005" xml:space="preserve" transform="scale(1.1271478,0.88719509)">
+            <tspan sodipodi:role="line" x="79.262184" y="45.884533" id="tspan3007">队号</tspan>
+        </text>
+    </g>
+</svg>

@@ -1,182 +1,374 @@
 {
-  "name": "图标配置",
+  "name": "淮海战役",
   "rootPath": "",
   "symbols": [
     {
-      "path": "常用/",
-      "name": "常用",
-      "id": "4c23ec23-b3cd-4bds-97b5-e786ea3da535",
+      "path": "常用符号库/",
+      "name": "常用符号库",
+      "id": "5bde21fe-f90e-11ec-9052-ac74b1ee4018",
       "type": "folder",
       "items": [
         {
-          "path": "常用/",
-          "name": "常用",
-          "id": "e2b2d881-507b-415c-9fc7-14f6fbe57cee",
+          "path": "基础符号/",
+          "name": "基础符号",
+          "id": "5be40178-f90e-11ec-9bce-ac74b1ee4018",
           "type": "folder",
           "items": [
             {
-              "id": 101,
-              "name": "",
-              "type": "simpleline",
-              "path": "标绘/icon/常用/工具线.svg"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "path": "算法符号/",
-      "name": "算法符号",
-      "id": "6c23ac23-b3cd-4gds-97b5-e786as3da535",
-      "type": "folder",
-      "items": [
-        {
-          "path": "其他/",
-          "name": "其他",
-          "id": "e7b2d881-507b-405c-9fc7-1ef6fbe57cee",
-          "type": "folder",
-          "items": [
+              "id": 1,
+              "name": "三角形",
+              "type": "triangle",
+              "path": "标绘/icon/常用符号库/基础符号/三角形.svg"
+            },
             {
               "id": 2,
-              "name": "11111",
-              "type": "combinationcircle",
-              "path": "标绘/icon/算法符号/其他/cannonGroup.svg"
+              "name": "",
+              "type": "simplearea",
+              "path": "标绘/icon/常用符号库/基础符号/任意区.svg"
             },
             {
               "id": 3,
               "name": "",
-              "type": "sector",
-              "path": "标绘/icon/算法符号/其他/figureFan.svg"
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/基础符号/医院.svg"
             },
             {
               "id": 4,
               "name": "",
-              "type": "kidney",
-              "path": "标绘/icon/算法符号/其他/kidneyArea.svg"
+              "type": "simpleline",
+              "path": "标绘/icon/常用符号库/基础符号/工具线.svg"
             },
             {
               "id": 5,
-              "name": "",
-              "type": "tailedsquadarrow",
-              "path": "标绘/icon/算法符号/其他/燕尾.svg"
+              "name": "折线",
+              "type": "pathway",
+              "path": "标绘/icon/常用符号库/基础符号/折线.svg"
+            },
+            {
+              "id": 6,
+              "name": "文本",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/基础符号/文本-中.svg"
+            },
+            {
+              "id": 7,
+              "name": "文本",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/基础符号/文本-小.svg"
+            },
+            {
+              "id": 8,
+              "name": "文本",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/基础符号/文本-特大.svg"
+            },
+            {
+              "id": 9,
+              "name": "文本",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/基础符号/文本.svg"
             }
           ]
         },
         {
-          "path": "箭头符号/",
-          "name": "箭头符号",
-          "id": "e7b2d881-507b-405c-9fc7-1ef6fbe57cee",
+          "path": "常规点/",
+          "name": "常规点",
+          "id": "5be40179-f90e-11ec-bacc-ac74b1ee4018",
           "type": "folder",
           "items": [
             {
-              "id": 6,
-              "name": "",
-              "type": "doublearrow",
-              "path": "标绘/icon/算法符号/箭头符号/multiArrow.svg"
-            },
-            {
-              "id": 7,
-              "name": "",
-              "type": "multiarrow",
-              "path": "标绘/icon/算法符号/箭头符号/multiArrow3.svg"
-            },
-            {
-              "id": 8,
-              "name": "",
-              "type": "multiarrow",
-              "path": "标绘/icon/算法符号/箭头符号/multiArrow4.svg"
-            },
-            {
-              "id": 9,
-              "name": "",
-              "type": "multiarrow",
-              "path": "标绘/icon/算法符号/箭头符号/multiArrow5.svg"
-            },
-            {
               "id": 10,
-              "name": "",
-              "type": "singlearrow",
-              "path": "标绘/icon/算法符号/箭头符号/singleArrow1.svg"
+              "name": "100T",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/100T.svg"
             },
             {
               "id": 11,
-              "name": "",
-              "type": "squadarrow",
-              "path": "标绘/icon/算法符号/箭头符号/singleArrow2.svg"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "path": "规则符号/",
-      "name": "规则符号",
-      "id": "fba6e447-0363-4229-83b4-1097c6155905",
-      "type": "folder",
-      "items": [
-        {
-          "path": "常规点/",
-          "name": "常规点",
-          "id": "cb405435-2b95-46e3-a913-8008169d851e",
-          "type": "folder",
-          "items": [
+              "name": "181师",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/181师.svg"
+            },
             {
               "id": 12,
-              "name": "",
+              "name": "6T",
               "type": "simplepoint",
-              "path": "标绘/icon/规则符号/常规点/新修规则点.svg"
+              "path": "标绘/icon/常用符号库/常规点/6T.svg"
             },
             {
               "id": 13,
-              "name": "",
+              "name": "中原野战军",
               "type": "simplepoint",
-              "path": "标绘/icon/规则符号/常规点/武警.svg"
+              "path": "标绘/icon/常用符号库/常规点/中原野战军.svg"
+            },
+            {
+              "id": 14,
+              "name": "华东野战军",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/华东野战军.svg"
+            },
+            {
+              "id": 15,
+              "name": "华野9纵",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/华野9纵.svg"
+            },
+            {
+              "id": 16,
+              "name": "坦克旅",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/坦克旅.svg"
+            },
+            {
+              "id": 17,
+              "name": "山东兵团",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/山东兵团.svg"
+            },
+            {
+              "id": 18,
+              "name": "徐州剿总",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/徐州剿总.svg"
+            },
+            {
+              "id": 19,
+              "name": "指挥室",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/指挥室.svg"
+            },
+            {
+              "id": 20,
+              "name": "江淮2旅",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/江淮2旅.svg"
+            },
+            {
+              "id": 21,
+              "name": "第100军",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/第100军.svg"
+            },
+            {
+              "id": 22,
+              "name": "第13兵团",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/第13兵团.svg"
+            },
+            {
+              "id": 23,
+              "name": "第25军",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/第25军.svg"
+            },
+            {
+              "id": 24,
+              "name": "第3绥区",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/第3绥区.svg"
+            },
+            {
+              "id": 25,
+              "name": "第56军",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/第56军-无底座.svg"
+            },
+            {
+              "id": 26,
+              "name": "第56军",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/第56军.svg"
+            },
+            {
+              "id": 27,
+              "name": "第63军",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/第63军.svg"
+            },
+            {
+              "id": 28,
+              "name": "第7兵团",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/第7兵团.svg"
+            },
+            {
+              "id": 29,
+              "name": "第8军",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/第8军 - 底座.svg"
+            },
+            {
+              "id": 30,
+              "name": "第八军",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/第8军.svg"
+            },
+            {
+              "id": 31,
+              "name": "苏北兵团",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/苏北兵团.svg"
+            },
+            {
+              "id": 32,
+              "name": "鲁中南纵",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/鲁中南纵.svg"
+            },
+            {
+              "id": 33,
+              "name": "鲁保1旅",
+              "type": "simplepoint",
+              "path": "标绘/icon/常用符号库/常规点/鲁保1旅.svg"
             }
           ]
         },
         {
           "path": "常规线/",
           "name": "常规线",
-          "id": "bbc6a23a-ffa8-4504-9322-c8277ecbdafe",
+          "id": "5be6b21c-f90e-11ec-9078-ac74b1ee4018",
           "type": "folder",
           "items": [
             {
-              "id": 14,
+              "id": 34,
               "name": "",
-              "type": "simpleline",
-              "path": "标绘/icon/规则符号/常规线/撤离线.svg"
+              "type": "msbl_RegularLine1",
+              "path": "标绘/icon/常用符号库/常规线/0202.svg"
             },
             {
-              "id": 15,
-              "name": "",
+              "id": 35,
+              "name": "坦克进攻1",
               "type": "simpleline",
-              "path": "标绘/icon/规则符号/常规线/新修规则线.svg"
+              "path": "标绘/icon/常用符号库/常规线/坦克进攻-1.svg"
             },
             {
-              "id": 16,
+              "id": 36,
               "name": "",
               "type": "simpleline",
-              "path": "标绘/icon/规则符号/常规线/新修规则线填充.svg"
+              "path": "标绘/icon/常用符号库/常规线/坦克进攻.svg"
+            },
+            {
+              "id": 37,
+              "name": "",
+              "type": "simpleline",
+              "path": "标绘/icon/常用符号库/常规线/堑壕-延伸.svg"
+            },
+            {
+              "id": 38,
+              "name": "",
+              "type": "simpleline",
+              "path": "标绘/icon/常用符号库/常规线/堑壕.svg"
+            },
+            {
+              "id": 39,
+              "name": "",
+              "type": "simpleline",
+              "path": "标绘/icon/常用符号库/常规线/撤离线.svg"
+            },
+            {
+              "id": 40,
+              "name": "",
+              "type": "simpleline",
+              "path": "标绘/icon/常用符号库/常规线/新修规则线填充.svg"
+            },
+            {
+              "id": 41,
+              "name": "",
+              "type": "simpleline",
+              "path": "标绘/icon/常用符号库/常规线/路径箭头.svg"
+            },
+            {
+              "id": 42,
+              "name": "",
+              "type": "simpleline",
+              "path": "标绘/icon/常用符号库/常规线/进攻.svg"
+            },
+            {
+              "id": 43,
+              "name": "",
+              "type": "simpleline",
+              "path": "标绘/icon/常用符号库/常规线/防守.svg"
             }
           ]
         },
         {
           "path": "常规面/",
           "name": "常规面",
-          "id": "1cf21491-2c7a-49db-870a-dd15d1b4ff9c",
+          "id": "5be6b21d-f90e-11ec-bed9-ac74b1ee4018",
           "type": "folder",
           "items": [
             {
-              "id": 17,
+              "id": 44,
               "name": "",
               "type": "simplearea",
-              "path": "标绘/icon/规则符号/常规面/新修规则面.svg"
+              "path": "标绘/icon/常用符号库/常规面/新修规则面.svg"
             },
             {
-              "id": 18,
+              "id": 45,
               "name": "",
               "type": "simplearea",
-              "path": "标绘/icon/规则符号/常规面/贴地区.svg"
+              "path": "标绘/icon/常用符号库/常规面/贴地区.svg"
+            }
+          ]
+        },
+        {
+          "path": "算法符号/",
+          "name": "算法符号",
+          "id": "5be6b21e-f90e-11ec-ba04-ac74b1ee4018",
+          "type": "folder",
+          "items": [
+            {
+              "id": 46,
+              "name": "",
+              "type": "singlearrow",
+              "path": "标绘/icon/常用符号库/算法符号/分队-刀尾.svg"
+            },
+            {
+              "id": 47,
+              "name": "",
+              "type": "tailedsquadarrow",
+              "path": "标绘/icon/常用符号库/算法符号/分队-燕尾.svg"
+            },
+            {
+              "id": 48,
+              "name": "分队齐尾",
+              "type": "squadarrow",
+              "path": "标绘/icon/常用符号库/算法符号/分队-齐尾.svg"
+            },
+            {
+              "id": 49,
+              "name": "",
+              "type": "doublearrow",
+              "path": "标绘/icon/常用符号库/算法符号/双箭.svg"
+            },
+            {
+              "id": 50,
+              "name": "",
+              "type": "multiarrow",
+              "path": "标绘/icon/常用符号库/算法符号/多箭.svg"
+            },
+            {
+              "id": 51,
+              "name": "",
+              "type": "sector",
+              "path": "标绘/icon/常用符号库/算法符号/扇形.svg"
+            },
+            {
+              "id": 52,
+              "name": "阵列",
+              "type": "assaultarrow",
+              "path": "标绘/icon/常用符号库/算法符号/阵列.svg"
+            },
+            {
+              "id": 53,
+              "name": "",
+              "type": "kidney",
+              "path": "标绘/icon/常用符号库/算法符号/集结地.svg"
+            },
+            {
+              "id": 54,
+              "name": "",
+              "type": "combinationcircle",
+              "path": "标绘/icon/常用符号库/算法符号/高跑群.svg"
             }
           ]
         }

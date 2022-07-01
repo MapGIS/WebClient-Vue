@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="200" version="1.1" height="200" id="svg2" zondyPlotSymbol:version="1.0" zondyPlotSymbol:id="svg003"
+    zondyPlotSymbol:name="" zondyPlotSymbol:desc="" zondyPlotSymbol:type="simpleline" zondyPlotSymbol:pose="0"
+    sodipodi:docname="坦克进攻.svg" inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg"
+    xmlns:svg="http://www.w3.org/2000/svg" xmlns:zondyPlotSymbol="https://www.mapgis.com" xmlns:zondyPlotSymbolItem="https://www.mapgis.com">
+    <defs id="defs5" />
+    <sodipodi:namedview id="namedview3" pagecolor="#ffffff" bordercolor="#111111" borderopacity="1"
+        inkscape:pageshadow="0" inkscape:pageopacity="0" inkscape:pagecheckerboard="1" showgrid="false"
+        inkscape:zoom="4" inkscape:cx="87.375" inkscape:cy="100" inkscape:window-width="1920"
+        inkscape:window-height="986" inkscape:window-x="-11" inkscape:window-y="-11" inkscape:window-maximized="1"
+        inkscape:current-layer="svg2" />
+    <path zondyPlotSymbolItem:type="10"
+        style="fill:none;stroke:#ff0000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+        d="M 0,100 200,100" id="path874" sodipodi:nodetypes="cc" />
+    <g id="g21830" zondyPlotSymbolItem:pose="1" zondyPlotSymbolItem:type="13"
+        zondyPlotSymbolItem:markerOrigin="100,100">
+        <path style="fill:#ff0000" d="m 95,60.019387 4.999996,0.183664 H 105 l -5,-12.192643 z" id="path2338"
+          sodipodi:nodetypes="ccccc" />
+        <path
+            style="fill:none;stroke:#ff0000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+            d="M 100,100 V 60" id="path1700" sodipodi:nodetypes="cc" />
+        <path
+        transform="translate(0,-5)"
+            style="fill:none;stroke:#ff0000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+            d="m 70,80 h 60" id="path1702" sodipodi:nodetypes="cc" />
+        <path
+         transform="translate(0,-5)"
+            style="fill:none;stroke:#ff0000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+            d="m 130,80 10,-15 10,15 -10,15 z" id="path1704" sodipodi:nodetypes="ccccc" />
+        <path
+         transform="translate(0,-5)"
+            style="fill:none;stroke:#ff0000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+            d="M 50,80 60,65 70,80 60,95 Z" id="path19216" sodipodi:nodetypes="ccccc" />
+    </g>
+</svg>

@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="200" version="1.1" height="200" id="svg2" 
-   xmlns="http://www.w3.org/2000/svg"
-  xmlns:zondyPlotSymbol="https://www.mapgis.com" xmlns:zondyPlotSymbolItem="https://www.mapgis.com"
-   zondyPlotSymbol:version="1.0" 
-   zondyPlotSymbol:id="svg003" 
-   zondyPlotSymbol:name="" 
-   zondyPlotSymbol:desc=""
-   zondyPlotSymbol:type="simplepoint" 
-   zondyPlotSymbol:pose="0">
-   <defs id="defs9864" />
+<svg width="200" version="1.1" height="200" id="svg2" xmlns="http://www.w3.org/2000/svg"
+   xmlns:zondyPlotSymbol="https://www.mapgis.com" xmlns:zondyPlotSymbolItem="https://www.mapgis.com"
+   zondyPlotSymbol:version="1.0" zondyPlotSymbol:id="svg003" zondyPlotSymbol:name="" zondyPlotSymbol:desc=""
+   zondyPlotSymbol:type="simpleline" zondyPlotSymbol:pose="0">
    <path zondyPlotSymbolItem:type="10"
       style="fill:none;stroke:#ff0000;stroke-width:6.13107;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;image-rendering:auto"
       id="path4174" d="M 0,100 H 75 m 53.57521,0 h 56.52237" />
    <path style="fill:#ff0000" d="m 185.09804,100 -15.58276,12.95685 31.11675,-12.06197 -30.81714,-13.855294 z"
-      id="path2338" zondyPlotSymbolItem:pose="0" zondyPlotSymbolItem:type="12"
+      id="path2338" zondyPlotSymbolItem:pose="0" zondyPlotSymbolItem:type="13"
       zondyPlotSymbolItem:markerOrigin="185.098,100" />
-   <g id="g9307" zondyPlotSymbolItem:pose="0" zondyPlotSymbolItem:type="12">
+   <g id="g9307" zondyPlotSymbolItem:pose="0" zondyPlotSymbolItem:type="13">
       <path
          style="fill:none;stroke:#ff0000;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          d="m 75,80 v 40" id="path4168" />
