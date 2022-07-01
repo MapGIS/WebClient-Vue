@@ -5,16 +5,184 @@
             "type": "Feature",
             "properties": {
                 "transformAngle": 0,
-                "transformSizeX": 12,
-                "transformSizeY": 12,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
                 "show": true,
-                "featureId": "2ac4430a-d148-4c38-bb5b-47382a70fd0e",
-                "isScaleByMap": true,
+                "featureId": "5857ad84-729d-403a-b9fe-3af8e8c72abf",
                 "compareLine": 0,
                 "compareLineWidth": 6,
                 "compareLineColor": "#099563",
-                "symbolId": 18,
-                "symbolName": "徐州剿总",
+                "symbolId": 15,
+                "symbolName": "华野9纵",
+                "symbolNodes": {
+                    "rect4184": {
+                        "strokeStyle": "none",
+                        "lineCap": "square",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,0.5)",
+                        "fillStyle": "rgba(255,255,255,0.5)",
+                        "fillRule": "nonzero"
+                    },
+                    "path4137-0": {
+                        "strokeStyle": "rgba(255,0,0,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "evenodd"
+                    },
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,1)",
+                        "fillStyle": "rgba(0,0,0,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "37.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "strokeStyle": "none",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 1,
+                        "text": "华野9纵"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.26116520567435,
+                        35.09210011807991
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "show": true,
+                "featureId": "35a1a288-7a82-40b9-b047-668edc6a38a4",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 53,
+                "symbolName": "",
+                "symbolNodes": {
+                    "irregular": {
+                        "strokeStyle": "rgba(255,0,0,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 4,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "nonzero"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 2000,
+                    "isOpenWall": true,
+                    "isWallGradColor": false,
+                    "wallColor": "rgba(255,0,0,0.3)",
+                    "wallGradColor": "rgba(255,0,0,0.3)"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.88853905300114,
+                        34.89556986878618
+                    ],
+                    [
+                        117.96694414825454,
+                        35.07774718367962
+                    ],
+                    [
+                        118.94686283861078,
+                        35.03483899055031
+                    ],
+                    [
+                        118.46159268739123,
+                        35.09743950070642
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "d59526d0-1353-4bb7-9b1c-c35ceb920d0a",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 6,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan3100": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.56954576512105,
+                        34.2924537259785
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "9b629d0f-7551-41d8-8608-c71b369f635a",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 22,
+                "symbolName": "第13兵团",
                 "symbolNodes": {
                     "rect13106": {
                         "strokeStyle": "rgba(255,255,255,1)",
@@ -40,7 +208,7 @@
                         "fillStyle": "none",
                         "fillRule": "nonzero"
                     },
-                    "tspan25177": {
+                    "tspan7535": {
                         "fillStyleType": 1,
                         "fillGradType": 1,
                         "fillGradColor": "rgba(255,255,255,1)",
@@ -49,11 +217,11 @@
                         "fontStyle": "normal",
                         "fontVariant": "normal",
                         "fontWeight": "normal",
-                        "fontSize": "25px",
+                        "fontSize": "32px",
                         "fontFamily": "\"SimHei\"",
-                        "text": "徐州剿总"
+                        "text": "第13兵团"
                     },
-                    "tspan25179,tspan25181": {
+                    "tspan7537,tspan7539": {
                         "fillStyleType": 1,
                         "fillGradType": 1,
                         "fillGradColor": "rgba(255,255,255,1)",
@@ -64,11 +232,11 @@
                         "fontWeight": "normal",
                         "fontSize": "6px",
                         "fontFamily": "\"SimHei\"",
-                        "text": "刘 ,峙"
+                        "text": "李 ,弥"
                     }
                 },
                 "domModAttributes": {
-                    "dimModHeight": 7000,
+                    "dimModHeight": 0,
                     "dimModAttitude": "1"
                 }
             },
@@ -76,8 +244,8 @@
                 "type": "MultiPoint",
                 "coordinates": [
                     [
-                        117.21094705837538,
-                        34.47600511554581
+                        117.78868135494665,
+                        34.274200857836156
                     ]
                 ]
             }
@@ -86,70 +254,61 @@
             "type": "Feature",
             "properties": {
                 "transformAngle": 0,
-                "transformSizeX": 12,
-                "transformSizeY": 12,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
                 "show": true,
-                "featureId": "15a7b742-3933-42a6-88c5-7d0edf3fd1ec",
-                "isScaleByMap": true,
+                "featureId": "f1cd42a7-0e72-419d-b1cc-0698d5f5b92b",
                 "compareLine": 0,
                 "compareLineWidth": 6,
                 "compareLineColor": "#099563",
-                "symbolId": 14,
-                "symbolName": "华东野战军",
+                "symbolId": 15,
+                "symbolName": "华野9纵",
                 "symbolNodes": {
-                    "rect13106": {
-                        "strokeStyle": "rgba(255,255,255,1)",
-                        "lineCap": "butt",
+                    "rect4184": {
+                        "strokeStyle": "none",
+                        "lineCap": "square",
                         "lineJoin": "miter",
                         "miterLimit": 4,
-                        "lineWidth": 3,
+                        "lineWidth": 10,
                         "fillStyleType": 1,
                         "fillGradType": 1,
-                        "fillGradColor": "rgba(255,0,0,1)",
-                        "fillStyle": "rgba(255,0,0,1)",
+                        "fillGradColor": "rgba(255,255,255,0.5)",
+                        "fillStyle": "rgba(255,255,255,0.5)",
                         "fillRule": "nonzero"
                     },
-                    "path55317": {
-                        "strokeStyle": "rgba(255,255,255,1)",
+                    "path4137-0": {
+                        "strokeStyle": "rgba(255,0,0,1)",
                         "lineCap": "butt",
                         "lineJoin": "miter",
                         "miterLimit": 4,
-                        "lineWidth": 3,
+                        "lineWidth": 10,
                         "fillStyleType": 0,
                         "fillGradType": 1,
                         "fillGradColor": "rgba(0,0,0,0)",
                         "fillStyle": "none",
-                        "fillRule": "nonzero"
+                        "fillRule": "evenodd"
                     },
-                    "tspan13967": {
+                    "tspan5195": {
                         "fillStyleType": 1,
                         "fillGradType": 1,
-                        "fillGradColor": "rgba(255,255,255,1)",
-                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillGradColor": "rgba(0,0,0,1)",
+                        "fillStyle": "rgba(0,0,0,1)",
                         "fillRule": "nonzero",
                         "fontStyle": "normal",
                         "fontVariant": "normal",
                         "fontWeight": "normal",
-                        "fontSize": "25px",
+                        "fontSize": "37.3333px",
                         "fontFamily": "\"SimHei\"",
-                        "text": "华东野战军"
-                    },
-                    "tspan13969,tspan13971": {
-                        "fillStyleType": 1,
-                        "fillGradType": 1,
-                        "fillGradColor": "rgba(255,255,255,1)",
-                        "fillStyle": "rgba(255,255,255,1)",
-                        "fillRule": "nonzero",
-                        "fontStyle": "normal",
-                        "fontVariant": "normal",
-                        "fontWeight": "normal",
-                        "fontSize": "6px",
-                        "fontFamily": "\"SimHei\"",
-                        "text": "粟 ,裕"
+                        "strokeStyle": "none",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 1,
+                        "text": "华野9纵"
                     }
                 },
                 "domModAttributes": {
-                    "dimModHeight": 7000,
+                    "dimModHeight": 0,
                     "dimModAttitude": "1"
                 }
             },
@@ -157,8 +316,288 @@
                 "type": "MultiPoint",
                 "coordinates": [
                     [
-                        118.26744032432714,
-                        35.16958084851823
+                        118.45360822390731,
+                        35.036505276268855
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "f5a75050-c730-4824-b768-61be32403fdb",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        115.06876872052213,
+                        34.44844857162958
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "7bae4649-16c7-416d-a9d7-cdf27601f966",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 9,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.22895043263128,
+                        34.38091705964738
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "35dc813f-b764-43ab-8790-95d6c06eb3cb",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 23,
+                "symbolName": "第25军",
+                "symbolNodes": {
+                    "rect4184": {
+                        "strokeStyle": "none",
+                        "lineCap": "square",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,0.5)",
+                        "fillStyle": "rgba(255,255,255,0.5)",
+                        "fillRule": "nonzero"
+                    },
+                    "path4137-0": {
+                        "strokeStyle": "rgba(0,0,255,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "evenodd"
+                    },
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,1)",
+                        "fillStyle": "rgba(0,0,0,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "43.677px",
+                        "fontFamily": "\"SimHei\"",
+                        "strokeStyle": "none",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 1.16991,
+                        "text": "第25军"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.620668928315,
+                        34.367735971515316
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "757d1baf-44d6-4274-b2fa-56d89db1b95c",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 27,
+                "symbolName": "第63军",
+                "symbolNodes": {
+                    "rect4184": {
+                        "strokeStyle": "none",
+                        "lineCap": "square",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,0.5)",
+                        "fillStyle": "rgba(255,255,255,0.5)",
+                        "fillRule": "nonzero"
+                    },
+                    "path4137-0": {
+                        "strokeStyle": "rgba(0,0,255,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "evenodd"
+                    },
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,1)",
+                        "fillStyle": "rgba(0,0,0,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "43.677px",
+                        "fontFamily": "\"SimHei\"",
+                        "strokeStyle": "none",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 1.16991,
+                        "text": "第63军"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.22148788557504,
+                        34.41092819837377
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "show": true,
+                "featureId": "8db9a2d0-037e-4490-ba32-ce3681b1a31f",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 53,
+                "symbolName": "",
+                "symbolNodes": {
+                    "irregular": {
+                        "strokeStyle": "rgba(255,0,0,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 4,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "nonzero"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 2000,
+                    "isOpenWall": true,
+                    "isWallGradColor": false,
+                    "wallColor": "rgba(255,0,0,0.3)",
+                    "wallGradColor": "rgba(255,0,0,0.3)"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.0792612307605,
+                        35.04185392013696
+                    ],
+                    [
+                        117.29815746362476,
+                        35.17639473481237
+                    ],
+                    [
+                        117.71980512016398,
+                        35.07004576358753
                     ]
                 ]
             }
@@ -171,7 +610,6 @@
                 "transformSizeY": 12,
                 "show": true,
                 "featureId": "0ce249cc-062b-498b-9c9b-b14d7ea0c9f0",
-                "isScaleByMap": true,
                 "compareLine": 0,
                 "compareLineWidth": 6,
                 "compareLineColor": "#099563",
@@ -230,7 +668,7 @@
                     }
                 },
                 "domModAttributes": {
-                    "dimModHeight": 7000,
+                    "dimModHeight": 0,
                     "dimModAttitude": "1"
                 }
             },
@@ -251,8 +689,2505 @@
                 "transformSizeX": 1,
                 "transformSizeY": 1,
                 "show": true,
+                "featureId": "badf76fe-7a38-4605-bd83-7a162a1f59bd",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 6,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan3100": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.72057741148863,
+                        34.276497452268984
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "b17ca35e-2860-4de5-b75e-fec15c770151",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 15,
+                "symbolName": "华野9纵",
+                "symbolNodes": {
+                    "rect4184": {
+                        "strokeStyle": "none",
+                        "lineCap": "square",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,0.5)",
+                        "fillStyle": "rgba(255,255,255,0.5)",
+                        "fillRule": "nonzero"
+                    },
+                    "path4137-0": {
+                        "strokeStyle": "rgba(255,0,0,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "evenodd"
+                    },
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,1)",
+                        "fillStyle": "rgba(0,0,0,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "37.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "strokeStyle": "none",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 1,
+                        "text": "华野9纵"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.82850337961207,
+                        35.035240429126944
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "d384cd3a-55da-4f2a-a27c-ba20ba7404fe",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        115.67812836091805,
+                        34.41648579003587
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "b43ad7bb-6c9a-404d-9d79-b78bf4fcfaf0",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 9,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.34065006398085,
+                        34.328932603141666
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "feec582a-3707-4bc5-a93c-3d7c5403db2b",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 27,
+                "symbolName": "第63军",
+                "symbolNodes": {
+                    "rect4184": {
+                        "strokeStyle": "none",
+                        "lineCap": "square",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,0.5)",
+                        "fillStyle": "rgba(255,255,255,0.5)",
+                        "fillRule": "nonzero"
+                    },
+                    "path4137-0": {
+                        "strokeStyle": "rgba(0,0,255,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "evenodd"
+                    },
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,1)",
+                        "fillStyle": "rgba(0,0,0,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "43.677px",
+                        "fontFamily": "\"SimHei\"",
+                        "strokeStyle": "none",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 1.16991,
+                        "text": "第63军"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.33666998183759,
+                        34.354575036588336
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "show": true,
+                "featureId": "2c19d045-fae3-4266-aaca-d59e0670bab8",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 53,
+                "symbolName": "",
+                "symbolNodes": {
+                    "irregular": {
+                        "strokeStyle": "rgba(255,0,0,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 4,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "nonzero"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 2000,
+                    "isOpenWall": true,
+                    "isWallGradColor": false,
+                    "wallColor": "rgba(255,0,0,0.3)",
+                    "wallGradColor": "rgba(255,0,0,0.3)"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.30725127405239,
+                        34.60549622570535
+                    ],
+                    [
+                        117.5253811574673,
+                        34.4333750284708
+                    ],
+                    [
+                        117.72902272725251,
+                        34.57623327501261
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "1ee0b5c3-2afd-4586-92bb-75da96be95e0",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 15,
+                "symbolName": "华野9纵",
+                "symbolNodes": {
+                    "rect4184": {
+                        "strokeStyle": "none",
+                        "lineCap": "square",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,0.5)",
+                        "fillStyle": "rgba(255,255,255,0.5)",
+                        "fillRule": "nonzero"
+                    },
+                    "path4137-0": {
+                        "strokeStyle": "rgba(255,0,0,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "evenodd"
+                    },
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,1)",
+                        "fillStyle": "rgba(0,0,0,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "37.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "strokeStyle": "none",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 1,
+                        "text": "华野9纵"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.4041512075481,
+                        35.10838545605862
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "a75282fe-94aa-488b-afb2-37c4227bd0c8",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        116.37272240371917,
+                        34.42531245226396
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "93796f95-3598-453d-a1c6-83b6fcccf954",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 6,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan3100": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.85356694617818,
+                        34.22782562692658
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "b73688fa-5a9b-473a-a2c2-46f673bc9e35",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 9,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.57039369477147,
+                        33.537061703189714
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "show": true,
+                "featureId": "30978630-d601-4285-81b6-7d92db50f3fd",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 53,
+                "symbolName": "",
+                "symbolNodes": {
+                    "irregular": {
+                        "strokeStyle": "rgba(255,0,0,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 4,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "nonzero"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 2000,
+                    "isOpenWall": true,
+                    "isWallGradColor": false,
+                    "wallColor": "rgba(255,0,0,0.3)",
+                    "wallGradColor": "rgba(255,0,0,0.3)"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.45874497238793,
+                        34.56969136255409
+                    ],
+                    [
+                        118.29303236669749,
+                        34.590348090006565
+                    ],
+                    [
+                        118.41590332308166,
+                        34.63702077565193
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "77ec11b2-a1f1-49ab-a39a-9c261bad2096",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 15,
+                "symbolName": "华野9纵",
+                "symbolNodes": {
+                    "rect4184": {
+                        "strokeStyle": "none",
+                        "lineCap": "square",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,0.5)",
+                        "fillStyle": "rgba(255,255,255,0.5)",
+                        "fillRule": "nonzero"
+                    },
+                    "path4137-0": {
+                        "strokeStyle": "rgba(255,0,0,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "evenodd"
+                    },
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,1)",
+                        "fillStyle": "rgba(0,0,0,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "37.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "strokeStyle": "none",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 1,
+                        "text": "华野9纵"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.5695560691084,
+                        35.07858394818081
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "be42eac4-8a96-40ef-adf5-32fdcd5c2b6b",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.29947769367622,
+                        33.317558487113914
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "987f007b-9ab8-458d-bf1e-84e50cbfccd5",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 6,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan3100": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.92460163432358,
+                        34.307106038226486
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "b73688fa-5a9b-473a-a2c2-46f673bc9e35",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 9,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.57039369477147,
+                        33.537061703189714
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "show": true,
+                "featureId": "3e1d33eb-906c-40d7-a9a0-433e5a23f6e0",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 53,
+                "symbolName": "",
+                "symbolNodes": {
+                    "irregular": {
+                        "strokeStyle": "rgba(255,0,0,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 4,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "nonzero"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 2000,
+                    "isOpenWall": true,
+                    "isWallGradColor": false,
+                    "wallColor": "rgba(255,0,0,0.3)",
+                    "wallGradColor": "rgba(255,0,0,0.3)"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.6526748267839,
+                        34.411818455713515
+                    ],
+                    [
+                        118.17681685006248,
+                        34.42591539580531
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "eb768027-2b83-4ea8-adb6-f33421566d49",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 15,
+                "symbolName": "华野9纵",
+                "symbolNodes": {
+                    "rect4184": {
+                        "strokeStyle": "none",
+                        "lineCap": "square",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,0.5)",
+                        "fillStyle": "rgba(255,255,255,0.5)",
+                        "fillRule": "nonzero"
+                    },
+                    "path4137-0": {
+                        "strokeStyle": "rgba(255,0,0,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "evenodd"
+                    },
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,1)",
+                        "fillStyle": "rgba(0,0,0,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "37.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "strokeStyle": "none",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 1,
+                        "text": "华野9纵"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.00800380834255,
+                        34.95081349769429
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "947c3842-d3e8-4457-9d46-ed3a55c35927",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        119.37888659722721,
+                        34.64590105798623
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "018d4f74-8a3b-44db-89e1-805cc56f996d",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 9,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.43960172785981,
+                        34.49506238423484
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "show": true,
+                "featureId": "ae47f2ac-4d2c-47f1-8fd9-509a60171c27",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 53,
+                "symbolName": "",
+                "symbolNodes": {
+                    "irregular": {
+                        "strokeStyle": "rgba(255,0,0,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 4,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "nonzero"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 2000,
+                    "isOpenWall": true,
+                    "isWallGradColor": false,
+                    "wallColor": "rgba(255,0,0,0.3)",
+                    "wallGradColor": "rgba(255,0,0,0.3)"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.54629304418495,
+                        34.271109882156104
+                    ],
+                    [
+                        117.77789650458655,
+                        34.20855943441084
+                    ],
+                    [
+                        118.1191137920494,
+                        34.31681331731379
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "4ff506ce-4824-40f3-808e-c75c06e6604e",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 15,
+                "symbolName": "华野9纵",
+                "symbolNodes": {
+                    "rect4184": {
+                        "strokeStyle": "none",
+                        "lineCap": "square",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,0.5)",
+                        "fillStyle": "rgba(255,255,255,0.5)",
+                        "fillRule": "nonzero"
+                    },
+                    "path4137-0": {
+                        "strokeStyle": "rgba(255,0,0,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "evenodd"
+                    },
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,1)",
+                        "fillStyle": "rgba(0,0,0,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "37.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "strokeStyle": "none",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 1,
+                        "text": "华野9纵"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.16318302494875,
+                        34.967375986003034
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "72521f2f-3058-4219-982a-85ee370f78d2",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.51007153848514,
+                        35.09323254644865
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "5bd5928b-a5e2-4c31-83ba-ce81ef81e97f",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 9,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.36298902942188,
+                        34.60093066491628
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "372ae4fb-ef0f-40d9-9016-90d75523c168",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 15,
+                "symbolName": "华野9纵",
+                "symbolNodes": {
+                    "rect4184": {
+                        "strokeStyle": "none",
+                        "lineCap": "square",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,0.5)",
+                        "fillStyle": "rgba(255,255,255,0.5)",
+                        "fillRule": "nonzero"
+                    },
+                    "path4137-0": {
+                        "strokeStyle": "rgba(255,0,0,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "evenodd"
+                    },
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,1)",
+                        "fillStyle": "rgba(0,0,0,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "37.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "strokeStyle": "none",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 1,
+                        "text": "华野9纵"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.57742323563097,
+                        35.041116864171265
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "3156135a-7e0b-4296-8ba7-a9d26a5ef930",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        115.28870827061928,
+                        34.092290703256566
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "2395ff16-a2a5-4aa4-8539-db4414daf6aa",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 9,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.62052649840732,
+                        34.372915709800445
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "5b66db10-5913-4677-a99d-2f9ca194fded",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 17,
+                "symbolName": "山东兵团",
+                "symbolNodes": {
+                    "rect13106": {
+                        "strokeStyle": "rgba(255,255,255,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 3,
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,0,0,1)",
+                        "fillStyle": "rgba(255,0,0,1)",
+                        "fillRule": "nonzero"
+                    },
+                    "path55317": {
+                        "strokeStyle": "rgba(255,255,255,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 3,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "nonzero"
+                    },
+                    "tspan4881": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "32px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "山东兵团"
+                    },
+                    "tspan4883,tspan4885,tspan4887": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "6px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "谭 ,震 ,林"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.36805035795207,
+                        35.17261174981206
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 12,
+                "transformSizeY": 12,
+                "show": true,
+                "featureId": "15a7b742-3933-42a6-88c5-7d0edf3fd1ec",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 14,
+                "symbolName": "华东野战军",
+                "symbolNodes": {
+                    "rect13106": {
+                        "strokeStyle": "rgba(255,255,255,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 3,
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,0,0,1)",
+                        "fillStyle": "rgba(255,0,0,1)",
+                        "fillRule": "nonzero"
+                    },
+                    "path55317": {
+                        "strokeStyle": "rgba(255,255,255,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 3,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "nonzero"
+                    },
+                    "tspan13967": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "25px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "华东野战军"
+                    },
+                    "tspan13969,tspan13971": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "6px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "粟 ,裕"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.26744032432714,
+                        35.16958084851823
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 12,
+                "transformSizeY": 12,
+                "show": true,
+                "featureId": "2ac4430a-d148-4c38-bb5b-47382a70fd0e",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 18,
+                "symbolName": "徐州剿总",
+                "symbolNodes": {
+                    "rect13106": {
+                        "strokeStyle": "rgba(255,255,255,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 3,
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,255,1)",
+                        "fillStyle": "rgba(0,0,255,1)",
+                        "fillRule": "nonzero"
+                    },
+                    "path55317": {
+                        "strokeStyle": "rgba(255,255,255,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 3,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "nonzero"
+                    },
+                    "tspan25177": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "25px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州剿总"
+                    },
+                    "tspan25179,tspan25181": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "6px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "刘 ,峙"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.21094705837538,
+                        34.47600511554581
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "d63f67aa-86ea-420b-bddd-1b34fda23e33",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 23,
+                "symbolName": "第25军",
+                "symbolNodes": {
+                    "rect4184": {
+                        "strokeStyle": "none",
+                        "lineCap": "square",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,0.5)",
+                        "fillStyle": "rgba(255,255,255,0.5)",
+                        "fillRule": "nonzero"
+                    },
+                    "path4137-0": {
+                        "strokeStyle": "rgba(0,0,255,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "evenodd"
+                    },
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,1)",
+                        "fillStyle": "rgba(0,0,0,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "43.677px",
+                        "fontFamily": "\"SimHei\"",
+                        "strokeStyle": "none",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 1.16991,
+                        "text": "第25军"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.33710834061394,
+                        34.566813847966245
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "48045819-7cf2-4808-8af7-fe68fdaffcb1",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 24,
+                "symbolName": "第3绥区",
+                "symbolNodes": {
+                    "rect13106": {
+                        "strokeStyle": "rgba(255,255,255,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 3,
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,255,1)",
+                        "fillStyle": "rgba(0,0,255,1)",
+                        "fillRule": "nonzero"
+                    },
+                    "path55317": {
+                        "strokeStyle": "rgba(255,255,255,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 3,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "nonzero"
+                    },
+                    "tspan2249": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "25px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "第3绥区"
+                    },
+                    "tspan2251,tspan2253,tspan2255": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "6px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "冯 ,治 ,安"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "0"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.50306393076664,
+                        34.59188605848925
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "bf516a50-45ce-4aba-a328-aa275ec9e932",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 27,
+                "symbolName": "第63军",
+                "symbolNodes": {
+                    "rect4184": {
+                        "strokeStyle": "none",
+                        "lineCap": "square",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,0.5)",
+                        "fillStyle": "rgba(255,255,255,0.5)",
+                        "fillRule": "nonzero"
+                    },
+                    "path4137-0": {
+                        "strokeStyle": "rgba(0,0,255,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "evenodd"
+                    },
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,1)",
+                        "fillStyle": "rgba(0,0,0,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "43.677px",
+                        "fontFamily": "\"SimHei\"",
+                        "strokeStyle": "none",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 1.16991,
+                        "text": "第63军"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.66681070101794,
+                        34.56515258039109
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "935c96bf-b525-469c-8529-a3f3b0ec9691",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 33,
+                "symbolName": "鲁保1旅",
+                "symbolNodes": {
+                    "path1042,path1556": {
+                        "strokeStyle": "rgba(0,0,255,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 3,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "nonzero"
+                    },
+                    "rect4145": {
+                        "strokeStyle": "none",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 3,
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero"
+                    },
+                    "tspan48787": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,1)",
+                        "fillStyle": "rgba(0,0,0,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "12.2209px",
+                        "fontFamily": "\"SimHei\"",
+                        "strokeStyle": "none",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 1.22209,
+                        "text": "鲁保1旅"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.35960555891155,
+                        34.603987587250565
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "341f0a19-0adf-40c5-952a-f899a7deeb5b",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 21,
+                "symbolName": "第100军",
+                "symbolNodes": {
+                    "rect4184": {
+                        "strokeStyle": "none",
+                        "lineCap": "square",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,0.5)",
+                        "fillStyle": "rgba(255,255,255,0.5)",
+                        "fillRule": "nonzero"
+                    },
+                    "path4137-0": {
+                        "strokeStyle": "rgba(0,0,255,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "evenodd"
+                    },
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,1)",
+                        "fillStyle": "rgba(0,0,0,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "43.677px",
+                        "fontFamily": "\"SimHei\"",
+                        "strokeStyle": "none",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 1.16991,
+                        "text": "第100军"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.50717780608745,
+                        34.35488273098077
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "a9920b34-ba3e-419f-96cc-a290a11d69ca",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.02960632903527,
+                        35.576740092878744
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "795619c0-70ea-4b5e-8735-832d93831628",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 9,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.71816060600422,
+                        34.5653490295292
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "afbd2d4d-987e-4c1f-b8a3-c064409c1f19",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 15,
+                "symbolName": "华野9纵",
+                "symbolNodes": {
+                    "rect4184": {
+                        "strokeStyle": "none",
+                        "lineCap": "square",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,0.5)",
+                        "fillStyle": "rgba(255,255,255,0.5)",
+                        "fillRule": "nonzero"
+                    },
+                    "path4137-0": {
+                        "strokeStyle": "rgba(255,0,0,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "evenodd"
+                    },
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,1)",
+                        "fillStyle": "rgba(0,0,0,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "37.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "strokeStyle": "none",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 1,
+                        "text": "华野9纵"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.69164822018756,
+                        35.0307378476256
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "bf5d1cd9-a087-4bb9-87c1-50ab632484fb",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        116.79723078984658,
+                        35.54988687537532
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "096c32dc-e760-49ed-a91d-29c020ce201d",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 9,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.28096885478327,
+                        34.61402274191388
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "addfb5b8-5445-447e-a437-c7c7c33ae92e",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.94926157807781,
+                        33.64478322118206
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "b13bce90-6a9e-4b4d-9845-0ba3f6df3c9c",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 9,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.39154742142176,
+                        34.61689729376199
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "fb161e5a-94b4-42f0-b324-aeac6a050e38",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        119.13892969321343,
+                        33.54838254395434
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "586ae59f-4ae9-4202-93b3-814286860dde",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 9,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.7662077399766,
+                        34.3050508925701
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "e6ca0bbd-ae1f-4722-8308-f274106336e1",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        119.3754417181769,
+                        33.23374134789508
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "e6c1d61d-0808-455c-b1c7-8a2e9afed730",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 9,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.03887708727844,
+                        34.317319324336616
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "afb4377b-6669-44fe-a0d6-3046d4d79a98",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        119.45803650330478,
+                        32.79397689900956
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
                 "featureId": "256614e3-dbf3-496a-b568-db2a5bdd4c4d",
-                "isScaleByMap": true,
                 "compareLine": 0,
                 "compareLineWidth": 6,
                 "compareLineColor": "#099563",
@@ -295,52 +3230,7 @@
                 "transformSizeX": 1,
                 "transformSizeY": 1,
                 "show": true,
-                "featureId": "b73688fa-5a9b-473a-a2c2-46f673bc9e35",
-                "isScaleByMap": true,
-                "compareLine": 0,
-                "compareLineWidth": 6,
-                "compareLineColor": "#099563",
-                "symbolId": 9,
-                "symbolName": "文本",
-                "symbolNodes": {
-                    "tspan5195": {
-                        "fillStyleType": 1,
-                        "fillGradType": 1,
-                        "fillGradColor": "rgba(0,0,0,1)",
-                        "fillStyle": "rgba(255,255,255,1)",
-                        "fillRule": "nonzero",
-                        "fontStyle": "normal",
-                        "fontVariant": "normal",
-                        "fontWeight": "normal",
-                        "fontSize": "40px",
-                        "fontFamily": "\"SimHei\"",
-                        "text": "徐州"
-                    }
-                },
-                "domModAttributes": {
-                    "dimModHeight": 0,
-                    "dimModAttitude": "1"
-                }
-            },
-            "geometry": {
-                "type": "MultiPoint",
-                "coordinates": [
-                    [
-                        117.57039369477147,
-                        33.537061703189714
-                    ]
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "transformAngle": 0,
-                "transformSizeX": 1,
-                "transformSizeY": 1,
-                "show": true,
                 "featureId": "4c114638-95a9-4636-902e-5322240c10f7",
-                "isScaleByMap": true,
                 "compareLine": 0,
                 "compareLineWidth": 6,
                 "compareLineColor": "#099563",
@@ -384,7 +3274,6 @@
                 "transformSizeY": 1,
                 "show": true,
                 "featureId": "9283a3fe-99ee-4bd0-89ba-de688eda974f",
-                "isScaleByMap": true,
                 "compareLine": 0,
                 "compareLineWidth": 6,
                 "compareLineColor": "#099563",
@@ -428,7 +3317,6 @@
                 "transformSizeY": 1,
                 "show": true,
                 "featureId": "f36d4050-f4eb-4921-98c1-af9df845cc54",
-                "isScaleByMap": true,
                 "compareLine": 0,
                 "compareLineWidth": 6,
                 "compareLineColor": "#099563",
@@ -472,7 +3360,6 @@
                 "transformSizeY": 1,
                 "show": true,
                 "featureId": "914ba5d6-7c6b-4338-8772-6d1f0b122993",
-                "isScaleByMap": true,
                 "compareLine": 0,
                 "compareLineWidth": 6,
                 "compareLineColor": "#099563",
@@ -516,7 +3403,6 @@
                 "transformSizeY": 1,
                 "show": true,
                 "featureId": "6e3479f7-2a04-4aa1-b680-29e776412e25",
-                "isScaleByMap": true,
                 "compareLine": 0,
                 "compareLineWidth": 6,
                 "compareLineColor": "#099563",
@@ -560,7 +3446,6 @@
                 "transformSizeY": 1,
                 "show": true,
                 "featureId": "19d95084-d252-4db6-bb52-c12dfa79b97c",
-                "isScaleByMap": true,
                 "compareLine": 0,
                 "compareLineWidth": 6,
                 "compareLineColor": "#099563",
@@ -603,580 +3488,7 @@
                 "transformSizeX": 1,
                 "transformSizeY": 1,
                 "show": true,
-                "featureId": "3156135a-7e0b-4296-8ba7-a9d26a5ef930",
-                "isScaleByMap": true,
-                "compareLine": 0,
-                "compareLineWidth": 6,
-                "compareLineColor": "#099563",
-                "symbolId": 8,
-                "symbolName": "文本",
-                "symbolNodes": {
-                    "tspan8117": {
-                        "fillStyleType": 1,
-                        "fillGradType": 1,
-                        "fillGradColor": "rgba(255,255,255,1)",
-                        "fillStyle": "rgba(255,255,255,1)",
-                        "fillRule": "nonzero",
-                        "fontStyle": "normal",
-                        "fontVariant": "normal",
-                        "fontWeight": "normal",
-                        "fontSize": "85.3333px",
-                        "fontFamily": "\"SimHei\"",
-                        "text": "徐州"
-                    }
-                },
-                "domModAttributes": {
-                    "dimModHeight": 0,
-                    "dimModAttitude": "1"
-                }
-            },
-            "geometry": {
-                "type": "MultiPoint",
-                "coordinates": [
-                    [
-                        115.28870827061928,
-                        34.092290703256566
-                    ]
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "transformAngle": 0,
-                "transformSizeX": 1,
-                "transformSizeY": 1,
-                "show": true,
-                "featureId": "f5a75050-c730-4824-b768-61be32403fdb",
-                "isScaleByMap": true,
-                "compareLine": 0,
-                "compareLineWidth": 6,
-                "compareLineColor": "#099563",
-                "symbolId": 8,
-                "symbolName": "文本",
-                "symbolNodes": {
-                    "tspan8117": {
-                        "fillStyleType": 1,
-                        "fillGradType": 1,
-                        "fillGradColor": "rgba(255,255,255,1)",
-                        "fillStyle": "rgba(255,255,255,1)",
-                        "fillRule": "nonzero",
-                        "fontStyle": "normal",
-                        "fontVariant": "normal",
-                        "fontWeight": "normal",
-                        "fontSize": "85.3333px",
-                        "fontFamily": "\"SimHei\"",
-                        "text": "徐州"
-                    }
-                },
-                "domModAttributes": {
-                    "dimModHeight": 0,
-                    "dimModAttitude": "1"
-                }
-            },
-            "geometry": {
-                "type": "MultiPoint",
-                "coordinates": [
-                    [
-                        115.06876872052213,
-                        34.44844857162958
-                    ]
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "transformAngle": 0,
-                "transformSizeX": 1,
-                "transformSizeY": 1,
-                "show": true,
-                "featureId": "d384cd3a-55da-4f2a-a27c-ba20ba7404fe",
-                "isScaleByMap": true,
-                "compareLine": 0,
-                "compareLineWidth": 6,
-                "compareLineColor": "#099563",
-                "symbolId": 8,
-                "symbolName": "文本",
-                "symbolNodes": {
-                    "tspan8117": {
-                        "fillStyleType": 1,
-                        "fillGradType": 1,
-                        "fillGradColor": "rgba(255,255,255,1)",
-                        "fillStyle": "rgba(255,255,255,1)",
-                        "fillRule": "nonzero",
-                        "fontStyle": "normal",
-                        "fontVariant": "normal",
-                        "fontWeight": "normal",
-                        "fontSize": "85.3333px",
-                        "fontFamily": "\"SimHei\"",
-                        "text": "徐州"
-                    }
-                },
-                "domModAttributes": {
-                    "dimModHeight": 0,
-                    "dimModAttitude": "1"
-                }
-            },
-            "geometry": {
-                "type": "MultiPoint",
-                "coordinates": [
-                    [
-                        115.67812836091805,
-                        34.41648579003587
-                    ]
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "transformAngle": 0,
-                "transformSizeX": 1,
-                "transformSizeY": 1,
-                "show": true,
-                "featureId": "a75282fe-94aa-488b-afb2-37c4227bd0c8",
-                "isScaleByMap": true,
-                "compareLine": 0,
-                "compareLineWidth": 6,
-                "compareLineColor": "#099563",
-                "symbolId": 8,
-                "symbolName": "文本",
-                "symbolNodes": {
-                    "tspan8117": {
-                        "fillStyleType": 1,
-                        "fillGradType": 1,
-                        "fillGradColor": "rgba(255,255,255,1)",
-                        "fillStyle": "rgba(255,255,255,1)",
-                        "fillRule": "nonzero",
-                        "fontStyle": "normal",
-                        "fontVariant": "normal",
-                        "fontWeight": "normal",
-                        "fontSize": "85.3333px",
-                        "fontFamily": "\"SimHei\"",
-                        "text": "徐州"
-                    }
-                },
-                "domModAttributes": {
-                    "dimModHeight": 0,
-                    "dimModAttitude": "1"
-                }
-            },
-            "geometry": {
-                "type": "MultiPoint",
-                "coordinates": [
-                    [
-                        116.37272240371917,
-                        34.42531245226396
-                    ]
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "transformAngle": 0,
-                "transformSizeX": 1,
-                "transformSizeY": 1,
-                "show": true,
-                "featureId": "be42eac4-8a96-40ef-adf5-32fdcd5c2b6b",
-                "isScaleByMap": true,
-                "compareLine": 0,
-                "compareLineWidth": 6,
-                "compareLineColor": "#099563",
-                "symbolId": 8,
-                "symbolName": "文本",
-                "symbolNodes": {
-                    "tspan8117": {
-                        "fillStyleType": 1,
-                        "fillGradType": 1,
-                        "fillGradColor": "rgba(255,255,255,1)",
-                        "fillStyle": "rgba(255,255,255,1)",
-                        "fillRule": "nonzero",
-                        "fontStyle": "normal",
-                        "fontVariant": "normal",
-                        "fontWeight": "normal",
-                        "fontSize": "85.3333px",
-                        "fontFamily": "\"SimHei\"",
-                        "text": "徐州"
-                    }
-                },
-                "domModAttributes": {
-                    "dimModHeight": 0,
-                    "dimModAttitude": "1"
-                }
-            },
-            "geometry": {
-                "type": "MultiPoint",
-                "coordinates": [
-                    [
-                        117.29947769367622,
-                        33.317558487113914
-                    ]
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "transformAngle": 0,
-                "transformSizeX": 1,
-                "transformSizeY": 1,
-                "show": true,
-                "featureId": "947c3842-d3e8-4457-9d46-ed3a55c35927",
-                "isScaleByMap": true,
-                "compareLine": 0,
-                "compareLineWidth": 6,
-                "compareLineColor": "#099563",
-                "symbolId": 8,
-                "symbolName": "文本",
-                "symbolNodes": {
-                    "tspan8117": {
-                        "fillStyleType": 1,
-                        "fillGradType": 1,
-                        "fillGradColor": "rgba(255,255,255,1)",
-                        "fillStyle": "rgba(255,255,255,1)",
-                        "fillRule": "nonzero",
-                        "fontStyle": "normal",
-                        "fontVariant": "normal",
-                        "fontWeight": "normal",
-                        "fontSize": "85.3333px",
-                        "fontFamily": "\"SimHei\"",
-                        "text": "徐州"
-                    }
-                },
-                "domModAttributes": {
-                    "dimModHeight": 0,
-                    "dimModAttitude": "1"
-                }
-            },
-            "geometry": {
-                "type": "MultiPoint",
-                "coordinates": [
-                    [
-                        119.37888659722721,
-                        34.64590105798623
-                    ]
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "transformAngle": 0,
-                "transformSizeX": 1,
-                "transformSizeY": 1,
-                "show": true,
-                "featureId": "72521f2f-3058-4219-982a-85ee370f78d2",
-                "isScaleByMap": true,
-                "compareLine": 0,
-                "compareLineWidth": 6,
-                "compareLineColor": "#099563",
-                "symbolId": 8,
-                "symbolName": "文本",
-                "symbolNodes": {
-                    "tspan8117": {
-                        "fillStyleType": 1,
-                        "fillGradType": 1,
-                        "fillGradColor": "rgba(255,255,255,1)",
-                        "fillStyle": "rgba(255,255,255,1)",
-                        "fillRule": "nonzero",
-                        "fontStyle": "normal",
-                        "fontVariant": "normal",
-                        "fontWeight": "normal",
-                        "fontSize": "85.3333px",
-                        "fontFamily": "\"SimHei\"",
-                        "text": "徐州"
-                    }
-                },
-                "domModAttributes": {
-                    "dimModHeight": 0,
-                    "dimModAttitude": "1"
-                }
-            },
-            "geometry": {
-                "type": "MultiPoint",
-                "coordinates": [
-                    [
-                        118.51007153848514,
-                        35.09323254644865
-                    ]
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "transformAngle": 0,
-                "transformSizeX": 1,
-                "transformSizeY": 1,
-                "show": true,
-                "featureId": "a9920b34-ba3e-419f-96cc-a290a11d69ca",
-                "isScaleByMap": true,
-                "compareLine": 0,
-                "compareLineWidth": 6,
-                "compareLineColor": "#099563",
-                "symbolId": 8,
-                "symbolName": "文本",
-                "symbolNodes": {
-                    "tspan8117": {
-                        "fillStyleType": 1,
-                        "fillGradType": 1,
-                        "fillGradColor": "rgba(255,255,255,1)",
-                        "fillStyle": "rgba(255,255,255,1)",
-                        "fillRule": "nonzero",
-                        "fontStyle": "normal",
-                        "fontVariant": "normal",
-                        "fontWeight": "normal",
-                        "fontSize": "85.3333px",
-                        "fontFamily": "\"SimHei\"",
-                        "text": "徐州"
-                    }
-                },
-                "domModAttributes": {
-                    "dimModHeight": 0,
-                    "dimModAttitude": "1"
-                }
-            },
-            "geometry": {
-                "type": "MultiPoint",
-                "coordinates": [
-                    [
-                        117.02960632903527,
-                        35.576740092878744
-                    ]
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "transformAngle": 0,
-                "transformSizeX": 1,
-                "transformSizeY": 1,
-                "show": true,
-                "featureId": "bf5d1cd9-a087-4bb9-87c1-50ab632484fb",
-                "isScaleByMap": true,
-                "compareLine": 0,
-                "compareLineWidth": 6,
-                "compareLineColor": "#099563",
-                "symbolId": 8,
-                "symbolName": "文本",
-                "symbolNodes": {
-                    "tspan8117": {
-                        "fillStyleType": 1,
-                        "fillGradType": 1,
-                        "fillGradColor": "rgba(255,255,255,1)",
-                        "fillStyle": "rgba(255,255,255,1)",
-                        "fillRule": "nonzero",
-                        "fontStyle": "normal",
-                        "fontVariant": "normal",
-                        "fontWeight": "normal",
-                        "fontSize": "85.3333px",
-                        "fontFamily": "\"SimHei\"",
-                        "text": "徐州"
-                    }
-                },
-                "domModAttributes": {
-                    "dimModHeight": 0,
-                    "dimModAttitude": "1"
-                }
-            },
-            "geometry": {
-                "type": "MultiPoint",
-                "coordinates": [
-                    [
-                        116.79723078984658,
-                        35.54988687537532
-                    ]
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "transformAngle": 0,
-                "transformSizeX": 1,
-                "transformSizeY": 1,
-                "show": true,
-                "featureId": "addfb5b8-5445-447e-a437-c7c7c33ae92e",
-                "isScaleByMap": true,
-                "compareLine": 0,
-                "compareLineWidth": 6,
-                "compareLineColor": "#099563",
-                "symbolId": 8,
-                "symbolName": "文本",
-                "symbolNodes": {
-                    "tspan8117": {
-                        "fillStyleType": 1,
-                        "fillGradType": 1,
-                        "fillGradColor": "rgba(255,255,255,1)",
-                        "fillStyle": "rgba(255,255,255,1)",
-                        "fillRule": "nonzero",
-                        "fontStyle": "normal",
-                        "fontVariant": "normal",
-                        "fontWeight": "normal",
-                        "fontSize": "85.3333px",
-                        "fontFamily": "\"SimHei\"",
-                        "text": "徐州"
-                    }
-                },
-                "domModAttributes": {
-                    "dimModHeight": 0,
-                    "dimModAttitude": "1"
-                }
-            },
-            "geometry": {
-                "type": "MultiPoint",
-                "coordinates": [
-                    [
-                        118.94926157807781,
-                        33.64478322118206
-                    ]
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "transformAngle": 0,
-                "transformSizeX": 1,
-                "transformSizeY": 1,
-                "show": true,
-                "featureId": "fb161e5a-94b4-42f0-b324-aeac6a050e38",
-                "isScaleByMap": true,
-                "compareLine": 0,
-                "compareLineWidth": 6,
-                "compareLineColor": "#099563",
-                "symbolId": 8,
-                "symbolName": "文本",
-                "symbolNodes": {
-                    "tspan8117": {
-                        "fillStyleType": 1,
-                        "fillGradType": 1,
-                        "fillGradColor": "rgba(255,255,255,1)",
-                        "fillStyle": "rgba(255,255,255,1)",
-                        "fillRule": "nonzero",
-                        "fontStyle": "normal",
-                        "fontVariant": "normal",
-                        "fontWeight": "normal",
-                        "fontSize": "85.3333px",
-                        "fontFamily": "\"SimHei\"",
-                        "text": "徐州"
-                    }
-                },
-                "domModAttributes": {
-                    "dimModHeight": 0,
-                    "dimModAttitude": "1"
-                }
-            },
-            "geometry": {
-                "type": "MultiPoint",
-                "coordinates": [
-                    [
-                        119.13892969321343,
-                        33.54838254395434
-                    ]
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "transformAngle": 0,
-                "transformSizeX": 1,
-                "transformSizeY": 1,
-                "show": true,
-                "featureId": "e6ca0bbd-ae1f-4722-8308-f274106336e1",
-                "isScaleByMap": true,
-                "compareLine": 0,
-                "compareLineWidth": 6,
-                "compareLineColor": "#099563",
-                "symbolId": 8,
-                "symbolName": "文本",
-                "symbolNodes": {
-                    "tspan8117": {
-                        "fillStyleType": 1,
-                        "fillGradType": 1,
-                        "fillGradColor": "rgba(255,255,255,1)",
-                        "fillStyle": "rgba(255,255,255,1)",
-                        "fillRule": "nonzero",
-                        "fontStyle": "normal",
-                        "fontVariant": "normal",
-                        "fontWeight": "normal",
-                        "fontSize": "85.3333px",
-                        "fontFamily": "\"SimHei\"",
-                        "text": "徐州"
-                    }
-                },
-                "domModAttributes": {
-                    "dimModHeight": 0,
-                    "dimModAttitude": "1"
-                }
-            },
-            "geometry": {
-                "type": "MultiPoint",
-                "coordinates": [
-                    [
-                        119.3754417181769,
-                        33.23374134789508
-                    ]
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "transformAngle": 0,
-                "transformSizeX": 1,
-                "transformSizeY": 1,
-                "show": true,
-                "featureId": "afb4377b-6669-44fe-a0d6-3046d4d79a98",
-                "isScaleByMap": true,
-                "compareLine": 0,
-                "compareLineWidth": 6,
-                "compareLineColor": "#099563",
-                "symbolId": 8,
-                "symbolName": "文本",
-                "symbolNodes": {
-                    "tspan8117": {
-                        "fillStyleType": 1,
-                        "fillGradType": 1,
-                        "fillGradColor": "rgba(255,255,255,1)",
-                        "fillStyle": "rgba(255,255,255,1)",
-                        "fillRule": "nonzero",
-                        "fontStyle": "normal",
-                        "fontVariant": "normal",
-                        "fontWeight": "normal",
-                        "fontSize": "85.3333px",
-                        "fontFamily": "\"SimHei\"",
-                        "text": "徐州"
-                    }
-                },
-                "domModAttributes": {
-                    "dimModHeight": 0,
-                    "dimModAttitude": "1"
-                }
-            },
-            "geometry": {
-                "type": "MultiPoint",
-                "coordinates": [
-                    [
-                        119.45803650330478,
-                        32.79397689900956
-                    ]
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "transformAngle": 0,
-                "transformSizeX": 1,
-                "transformSizeY": 1,
-                "show": true,
                 "featureId": "23cd381e-48a0-471d-b38f-dc8c552402fb",
-                "isScaleByMap": true,
                 "compareLine": 0,
                 "compareLineWidth": 6,
                 "compareLineColor": "#099563",
@@ -1220,7 +3532,6 @@
                 "transformSizeY": 1,
                 "show": true,
                 "featureId": "caebe978-54a6-4120-8423-08fe53b8b706",
-                "isScaleByMap": true,
                 "compareLine": 0,
                 "compareLineWidth": 6,
                 "compareLineColor": "#099563",
@@ -1252,6 +3563,1414 @@
                     [
                         117.42317211904678,
                         32.92035243345735
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "3156135a-7e0b-4296-8ba7-a9d26a5ef930",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        115.28870827061928,
+                        34.092290703256566
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "f5a75050-c730-4824-b768-61be32403fdb",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        115.06876872052213,
+                        34.44844857162958
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "d384cd3a-55da-4f2a-a27c-ba20ba7404fe",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        115.67812836091805,
+                        34.41648579003587
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "a75282fe-94aa-488b-afb2-37c4227bd0c8",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        116.37272240371917,
+                        34.42531245226396
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "be42eac4-8a96-40ef-adf5-32fdcd5c2b6b",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.29947769367622,
+                        33.317558487113914
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "947c3842-d3e8-4457-9d46-ed3a55c35927",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        119.37888659722721,
+                        34.64590105798623
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "72521f2f-3058-4219-982a-85ee370f78d2",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.51007153848514,
+                        35.09323254644865
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "a9920b34-ba3e-419f-96cc-a290a11d69ca",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.02960632903527,
+                        35.576740092878744
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "bf5d1cd9-a087-4bb9-87c1-50ab632484fb",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        116.79723078984658,
+                        35.54988687537532
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "addfb5b8-5445-447e-a437-c7c7c33ae92e",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.94926157807781,
+                        33.64478322118206
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "fb161e5a-94b4-42f0-b324-aeac6a050e38",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        119.13892969321343,
+                        33.54838254395434
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "e6ca0bbd-ae1f-4722-8308-f274106336e1",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        119.3754417181769,
+                        33.23374134789508
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "afb4377b-6669-44fe-a0d6-3046d4d79a98",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        119.45803650330478,
+                        32.79397689900956
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "23cd381e-48a0-471d-b38f-dc8c552402fb",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        119.40947457327016,
+                        32.40524233514837
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "caebe978-54a6-4120-8423-08fe53b8b706",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.42317211904678,
+                        32.92035243345735
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "256614e3-dbf3-496a-b568-db2a5bdd4c4d",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.19504487039819,
+                        34.23585315456168
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "4c114638-95a9-4636-902e-5322240c10f7",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        116.9769195112182,
+                        33.635693622912356
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "9283a3fe-99ee-4bd0-89ba-de688eda974f",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(108, 55, 55, 1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.30875983762154,
+                        33.94163640021106
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "f36d4050-f4eb-4921-98c1-af9df845cc54",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        116.49009644312495,
+                        33.92140859608317
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "914ba5d6-7c6b-4338-8772-6d1f0b122993",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        116.56200642603237,
+                        33.26576619842971
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "6e3479f7-2a04-4aa1-b680-29e776412e25",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        116.21198310093415,
+                        33.513446570542406
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "19d95084-d252-4db6-bb52-c12dfa79b97c",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        115.77551142374327,
+                        33.83758786883228
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "78b06561-295a-4a53-9ec3-d2f54e132a47",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.17077266754401,
+                        35.0957107631502
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "af4a5e0f-aa7d-4a66-93e1-2a7fe2ba02fd",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 8,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan8117": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "85.3333px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        118.76795597508531,
+                        34.537636617792025
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "show": true,
+                "featureId": "cc7b17a4-05c7-4063-8aad-ea2b0b87942d",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 53,
+                "symbolName": "",
+                "symbolNodes": {
+                    "irregular": {
+                        "strokeStyle": "rgba(255,0,0,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 4,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "nonzero"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 2000,
+                    "isOpenWall": true,
+                    "isWallGradColor": false,
+                    "wallColor": "rgba(255,0,0,0.3)",
+                    "wallGradColor": "rgba(255,0,0,0.3)"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.11235966620436,
+                        34.24319267649285
+                    ],
+                    [
+                        117.27215744852776,
+                        34.18376238966897
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "458e43ad-a14a-4e50-a0a1-933332b66cf0",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 27,
+                "symbolName": "第63军",
+                "symbolNodes": {
+                    "rect4184": {
+                        "strokeStyle": "none",
+                        "lineCap": "square",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,0.5)",
+                        "fillStyle": "rgba(255,255,255,0.5)",
+                        "fillRule": "nonzero"
+                    },
+                    "path4137-0": {
+                        "strokeStyle": "rgba(0,0,255,1)",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 10,
+                        "fillStyleType": 0,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,0)",
+                        "fillStyle": "none",
+                        "fillRule": "evenodd"
+                    },
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(0,0,0,1)",
+                        "fillStyle": "rgba(0,0,0,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "43.677px",
+                        "fontFamily": "\"SimHei\"",
+                        "strokeStyle": "none",
+                        "lineCap": "butt",
+                        "lineJoin": "miter",
+                        "miterLimit": 4,
+                        "lineWidth": 1.16991,
+                        "text": "第63军"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.18433851655627,
+                        34.18484433370625
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "8cadf3f4-c52e-4e0f-b868-9707c7e29ca4",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 6,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan3100": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.29472628374887,
+                        34.27700344976878
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "8fac69d5-cfdd-4ca3-8c9e-095172aa9e92",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 6,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan3100": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.35655655911418,
+                        34.223114246985425
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "855061cd-73f5-4b95-b365-bdd6c9a4a87f",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 9,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.17514074312287,
+                        34.10176038614673
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "4fd5459c-3b12-4ea3-b5d7-d21400c61964",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 9,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        117.0519950397447,
+                        33.89756492277932
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "1566a126-306f-484f-90c1-b7415035868e",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 9,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        116.9369808274867,
+                        34.190977475590905
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "transformAngle": 0,
+                "transformSizeX": 1,
+                "transformSizeY": 1,
+                "show": true,
+                "featureId": "5dead8d7-5a9e-4ed2-a4e0-2076f51a6cee",
+                "compareLine": 0,
+                "compareLineWidth": 6,
+                "compareLineColor": "#099563",
+                "symbolId": 9,
+                "symbolName": "文本",
+                "symbolNodes": {
+                    "tspan5195": {
+                        "fillStyleType": 1,
+                        "fillGradType": 1,
+                        "fillGradColor": "rgba(255,255,255,1)",
+                        "fillStyle": "rgba(255,255,255,1)",
+                        "fillRule": "nonzero",
+                        "fontStyle": "normal",
+                        "fontVariant": "normal",
+                        "fontWeight": "normal",
+                        "fontSize": "40px",
+                        "fontFamily": "\"SimHei\"",
+                        "text": "徐州"
+                    }
+                },
+                "domModAttributes": {
+                    "dimModHeight": 0,
+                    "dimModAttitude": "1"
+                }
+            },
+            "geometry": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        116.97372919018274,
+                        33.75684912669342
                     ]
                 ]
             }
