@@ -87,14 +87,14 @@ export const 点 = Template.bind({});
         type: "icon",
         material: { color: "#ff0000" },
         outline: { color: "#000000", width: 1.0 },
-        size: 200.0
+        size: 20.0
       })
     }),
     defaultLabel: "其他",
     classBreakInfos: [
       {
         maxValue: 5,
-        minValue: 2,
+        minValue: -5,
         symbol: new PointSymbol3D({
           type: 'point-3d',
           symbolLayers: new IconSymbol3DLayer({
@@ -106,7 +106,7 @@ export const 点 = Template.bind({});
         }),
       },
       {
-        maxValue: 10,
+        maxValue: 15,
         minValue: 5,
         symbol: new PointSymbol3D({
           type: 'point-3d',
@@ -184,6 +184,12 @@ export const 区 = Template.bind({});
     "http://192.168.81.98:8089/igs/rest/services/武汉市地图文档/FeatureServer/0",
     // "http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/0",
   autoReset: true,
+  enablePopup: true,
+  popupOptions: {
+    "title": 'name',
+    "popupType": 'rich-text',
+    "scrollNum": 6
+  },
   enableClick: true,
   enableHover: false,
   highlightSymbol: {
@@ -632,6 +638,21 @@ export const 点符号svg = Template.bind({});
     "http://192.168.81.98:8089/igs/rest/services/武汉市地图文档/FeatureServer/4",
     // "http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/4",
   autoReset: true,
+  enablePopup: true,
+  popupOptions: {
+    "title": 'n',
+    "popupType": 'rich-text',
+    "scrollNum": 6
+  },
+  enableClick: true,
+  enableHover: false,
+  highlightSymbol: {
+    type: 'point-3d',
+    symbolLayers: {
+      type: "icon",
+      material: { color: "#ffffff", },
+    }
+  },
   enableLegend: true,
   renderer: new ClassBreaksRenderer({
     type: "class-breaks",
@@ -642,7 +663,7 @@ export const 点符号svg = Template.bind({});
       symbolLayers: new IconSymbol3DLayer({
         type: "icon",
         material: { color: "#ffffff" },
-        resource: { herf: "http://localhost:8895/img/Church.svg", sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
+        resource: { herf: `http://${window.webclient.ip}:8895/img/Church.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
         size: 10.0
       })
     }),
@@ -656,7 +677,7 @@ export const 点符号svg = Template.bind({});
           symbolLayers: new IconSymbol3DLayer({
             type: "icon",
             material: { color: "#ffffff", },
-            resource: { herf: "http://localhost:8895/img/Museum.svg", sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
+            resource: { herf: `http://${window.webclient.ip}:8895/img/Museum.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
             size: 10.0
           })
         }),
@@ -670,7 +691,7 @@ export const 点符号svg = Template.bind({});
           symbolLayers: new IconSymbol3DLayer({
             type: "icon",
             material: { color: "#ffffff", },
-            resource: { herf: "http://localhost:8895/img/Hotel.svg", sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
+            resource: { herf: `http://${window.webclient.ip}:8895/img/Hotel.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
             size: 10.0
           })
         }),
@@ -684,7 +705,7 @@ export const 点符号svg = Template.bind({});
           symbolLayers: new IconSymbol3DLayer({
             type: "icon",
             material: { color: "#ffffff", },
-            resource: { herf: "http://localhost:8895/img/Park.svg", sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
+            resource: { herf: `http://${window.webclient.ip}:8895/img/Park.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
             size: 10.0
           })
         }),
@@ -698,7 +719,7 @@ export const 点符号svg = Template.bind({});
           symbolLayers: new IconSymbol3DLayer({
             type: "icon",
             material: { color: "#ffffff", },
-            resource: { herf: "http://localhost:8895/img/Restaurant.svg", sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
+            resource: { herf: `http://${window.webclient.ip}:8895/img/Restaurant.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
             size: 10.0
           })
         }),
