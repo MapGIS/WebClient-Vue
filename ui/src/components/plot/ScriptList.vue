@@ -114,11 +114,14 @@ export default {
   watch: {
     scriptList: {
       handler: function(arr) {
+        if (arr.length == 1 && Object.keys(arr[0]).length == 0) {
+          return;
+        }
         this.scriptListCopy = JSON.parse(JSON.stringify(arr));
       },
       deep: true,
       immediate: true
-    },
+    }
     // scriptListCopy: {
     //   handler: function(arr) {
     //     this.$emit("change", JSON.parse(JSON.stringify(arr)));
@@ -128,20 +131,18 @@ export default {
     //   immediate: true
     // }
   },
-  created() {
-    this.scriptListCopy = JSON.parse(JSON.stringify(this.scriptList));
-  },
+  // created() {
+  //   this.scriptListCopy = JSON.parse(JSON.stringify(this.scriptList));
+  // },
   data() {
     return {
       scriptListCopy: undefined,
       activeIndex: undefined,
       editState: false,
-      nameToEdit: "",
+      nameToEdit: ""
       // plotId: undefined,
       // showScriptList: true
     };
-  },
-  mounted() {
   },
   methods: {
     clickScript(index) {

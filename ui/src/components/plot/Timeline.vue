@@ -372,11 +372,7 @@ export default {
   methods: {
     mount() {
       const vm = this;
-      // let bar = document.querySelector(".timeline-bar");
-      vm.width = vm.$refs.timebar.clientWidth;
-      // console.log("vm.$refs.width", vm.$refs.timebar.clientWidth);
-      // console.log("window.getComputedStyle(bar).width", window.getComputedStyle(bar).width);
-      // console.log("parseFloat(window.getComputedStyle(bar).width || 0) ", parseFloat(window.getComputedStyle(bar).width || 0) );
+      this.getWindowWidth();
       window.onresize = function() {
         vm.width = vm.$refs.timebar.clientWidth;
       };
@@ -409,6 +405,13 @@ export default {
     unmount() {
       this.stopPlay();
       this.raf = undefined;
+    },
+    getWindowWidth() {
+      let bar = document.querySelector(".timeline-bar");
+      this.width = this.$refs.timebar.clientWidth;
+      // console.log("vm.$refs.width", vm.$refs.timebar.clientWidth);
+      // console.log("window.getComputedStyle(bar).width", window.getComputedStyle(bar).width);
+      // console.log("parseFloat(window.getComputedStyle(bar).width || 0) ", parseFloat(window.getComputedStyle(bar).width || 0) );
     },
     //实现时间轴的播放功能
     startPlay() {
