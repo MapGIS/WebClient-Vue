@@ -49,11 +49,11 @@ export default {
     },
     fontUrl: {
       type: String,
-      default: ''
+      default: ""
     },
     baseUrl: {
       type: String,
-      default: ''
+      default: ""
     }
   },
   data() {
@@ -78,31 +78,31 @@ export default {
   methods: {
     getLayer() {
       let vueCesium = this.vueCesium || window.vueCesium;
-      if(!vueCesium)return;
+      if (!vueCesium) return;
       let layerManager = vueCesium.PlotLayerManager.findSource(
-          this.vueKey,
-          this.vueIndex
+        this.vueKey,
+        this.vueIndex
       );
       return layerManager && layerManager.source;
     },
     getLayers() {
       let PlotLayerGroupManager = window.vueCesium.PlotLayerGroupManager.findSource(
-          this.vueKey,
-          this.vueIndex
+        this.vueKey,
+        this.vueIndex
       );
       return PlotLayerGroupManager && PlotLayerGroupManager.source;
     },
     getDrawTool() {
       let DrawToolManager = window.vueCesium.DrawToolManager.findSource(
-          this.vueKey,
-          this.vueIndex
+        this.vueKey,
+        this.vueIndex
       );
       return DrawToolManager && DrawToolManager.source;
     },
     getSymbolManager() {
       let PlotSymbolManager = window.vueCesium.PlotSymbolManager.findSource(
-          this.vueKey,
-          this.vueIndex
+        this.vueKey,
+        this.vueIndex
       );
       return PlotSymbolManager && PlotSymbolManager.source;
     },
@@ -113,40 +113,47 @@ export default {
     setPick() {
       const vm = this;
       let layer = this.getLayer();
-       layer.pickPlot = async function(plot) {
-          vm.isDraw = true;
-          vm.plot = plot;
-          // console.log('plot',plot);
-          vm.symbol = vm.symbol || plot._elem._symbol;
-          let json = plot.getStyle();
-          vm.symbol.style = vm.symbol.style || json;
-          vm.parseStyleJson(json, plot._elem._symbol._src);
-        };
-        layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
+      layer.pickPlot = async function(plot) {
+        vm.isDraw = true;
+        vm.plot = plot;
+        // console.log('plot',plot);
+        vm.symbol = vm.symbol || plot._elem._symbol;
+        let json = plot.getStyle();
+        vm.symbol.style = vm.symbol.style || json;
+        vm.parseStyleJson(json, plot._elem._symbol._src);
+      };
+      layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
     },
     mount() {
       const vm = this;
       let layer = this.getLayer();
-      if(layer) {
+      if (layer) {
         let drawTool = this.getDrawTool();
-        if(!drawTool) {
+        if (!drawTool) {
           drawTool = new DrawTool(layer, {
             addedPlot: function(plot) {
               vm.isDraw = true;
               vm.plot = plot;
+              let json = plot.getStyle();
+              vm.parseStyleJson(json, plot._elem._symbol._src);
+              // console.log("addedPlot--getStyle--json: ", json);
             }
           });
-          window.vueCesium.DrawToolManager.addSource(this.vueKey, this.vueIndex, drawTool);
+          window.vueCesium.DrawToolManager.addSource(
+            this.vueKey,
+            this.vueIndex,
+            drawTool
+          );
         }
         this.getSymbol();
-
+        // 由这个监听控制属性面板的开关
         layer.pickPlot = function(plot) {
           vm.isDraw = true;
           vm.plot = plot;
-          // console.log('plot',plot);
-          vm.symbol = vm.symbol || plot._elem._symbol;
           let json = plot.getStyle();
-          vm.symbol.style = vm.symbol.style || json;
+          // console.log("pickPlot---getStyl--json: ", json);
+          // vm.symbol = vm.symbol || plot._elem._symbol;
+          // vm.symbol.style = vm.symbol.style || json;
           vm.parseStyleJson(json, plot._elem._symbol._src);
         };
         layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
@@ -157,12 +164,16 @@ export default {
       const vm = this;
       // console.log("symbolUrl", this.symbolUrl);
       let manager = this.getSymbolManager();
-      if(!manager) {
-        manager = new SymbolManager(this.symbolUrl,{
+      if (!manager) {
+        manager = new SymbolManager(this.symbolUrl, {
           fontURL: vm.fontUrl,
           baseUrl: vm.baseUrl
         });
-        window.vueCesium.PlotSymbolManager.addSource(this.vueKey, this.vueIndex, manager);
+        window.vueCesium.PlotSymbolManager.addSource(
+          this.vueKey,
+          this.vueIndex,
+          manager
+        );
       }
 
       manager.getSymbols().then(function(symbols) {
@@ -210,8 +221,9 @@ export default {
       const vm = this;
       this.isDraw = false;
       let manager = this.getSymbolManager();
-      if(!manager) return;
+      if (!manager) return;
       this.symbol = manager.getLeafByID(data.icon.id);
+      // 调用primitive上的getStyleJSON
       this.symbol.getElement().then(function(res) {
         vm.symbol.style = res.getStyleJSON();
         let json = res.getStyleJSON();
@@ -219,13 +231,13 @@ export default {
       });
 
       let drawTool = this.getDrawTool();
-      if(drawTool) {
+      if (drawTool) {
         drawTool.stopDraw();
         drawTool.drawPlot(vm.symbol);
       }
     },
     parseStyleJson(json, svgUrl) {
-      // console.log("json", json);
+      // console.log("parseStyleJson", json);
       for (var node in json.nodeStyles) {
         if (node.indexOf("tspan") === -1) {
           json.nodeStyles[node]["strokeColor"] =
@@ -237,7 +249,6 @@ export default {
       json = this.remove2dAttributes(json);
       this.showStylePanel = true;
       this.styleData = json;
-      // console.log("json", json);
     },
     remove2dAttributes(json) {
       delete json.compareLine;

@@ -19,12 +19,24 @@ const Template = (args, { argTypes }) => ({
           <template #symbol="slotProps">
             <mapgis-ui-plot-symbol
               :data="slotProps.data"
+              :format="slotProps.format"
+              :baseUrl="slotProps.baseUrl"
               @click="slotProps.click"
               @search="slotProps.search"
               class="mapgis-2d-plot-panel"
             ></mapgis-ui-plot-symbol>
           </template>
-        </mapgis-2d-plot>
+        </mapgis-2d-plot>      
+        <mapgis-ui-space :size="8"  style="bottom:50px;left:10px;position:absolute;background:#fff;z-index:1"  v-if="vueIndex1 && vueKey1">
+          <mapgis-ui-iconfont type="mapgis-daoru" @click="importClick"/>
+          <input
+            type="file"
+            ref="importFile"
+            v-show="false"
+            @change="selectFile"
+          />
+          <mapgis-ui-iconfont type="mapgis-daochu" @click="exportClick"/>
+        </mapgis-ui-space>
   </mapgis-web-map>`,
   data() {
     return {
@@ -37,15 +49,75 @@ const Template = (args, { argTypes }) => ({
           [180, 90],
         ],
         zoom: 8,
-        center: [116.19, 40.01],
+        center: [116.19, 35.01],
       },
       jsonUrl: "http://localhost:8895/标绘/test.json",
+      jsonData: undefined,
+      layer: undefined,
     };
   },
   methods: {
     handleLoad(e) {
       this.vueIndex1 = e.vueIndex;
       this.vueKey1 = e.vueKey;
+      let vueMap = this.vueMap || window.vueMap;
+      if (!vueMap) return;
+      let layerManager = vueMap.PlotLayerManager.findSource(
+        this.vueKey1,
+        this.vueIndex1
+      );
+      this.layer = layerManager && layerManager.source;
+    },
+    /**
+     * 导入功能
+     */
+    importClick() {
+      this.$refs.importFile.click();
+    },
+    selectFile(e) {
+      const vm = this;
+      let reader = new FileReader();
+      reader.readAsText(e.target.files[0], "UTF-8");
+      reader.onload = function (res) {
+        vm.jsonData = JSON.parse(res.target.result);
+        vm.layer.fromJSON(vm.jsonData);
+      };
+    },
+    /**
+     * 导出功能
+     */
+    exportClick() {
+      let data = this.layer.toJSON();
+      this.exportJSON(data, "test.json");
+    },
+    exportJSON(data, filename) {
+      if (typeof data === "object") {
+        data = JSON.stringify(data, undefined, 4);
+      }
+      var blob = new Blob([data], { type: "text/json" }),
+        e = document.createEvent("MouseEvents"),
+        a = document.createElement("a");
+      a.download = filename;
+      a.href = window.URL.createObjectURL(blob);
+      a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
+      e.initMouseEvent(
+        "click",
+        true,
+        false,
+        window,
+        0,
+        0,
+        0,
+        0,
+        0,
+        false,
+        false,
+        false,
+        false,
+        0,
+        null
+      );
+      a.dispatchEvent(e);
     },
   },
 });

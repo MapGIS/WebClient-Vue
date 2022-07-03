@@ -43,18 +43,13 @@ export const styleAttributes = {
     type: "color",
     groupId: 3,
   },
-  isOpenWall: {
-    title: "开启墙体",
-    type: "boolean",
-    groupId: 2,
-  },
   dimModHeight: {
-    title: "墙体高度",
+    title: "模型高度",
     type: "number",
     groupId: 2,
   },
   dimModAttitude: {
-    title: "三维姿态",
+    title: "模型姿态",
     type: "select",
     groupId: 2,
     options: {
@@ -62,8 +57,23 @@ export const styleAttributes = {
       1: "直立",
     },
   },
+  isOpenWall: {
+    title: "开启墙体",
+    type: "boolean",
+    groupId: 2,
+  },
+  isWallGradColor: {
+    title: "开启墙渐变",
+    type: "boolean",
+    groupId: 2,
+  },
   wallColor: {
     title: "墙体颜色",
+    type: "color",
+    groupId: 2,
+  },
+  wallGradColor: {
+    title: "墙渐变颜色",
     type: "color",
     groupId: 2,
   },

@@ -176,6 +176,10 @@ export default {
     addAnimation(type) {
       const vm = this;
       // console.log("add",type);
+      if (!vm.plotId) {
+        this.$message.warning("没有选中动画绑定的图元对象！");
+        return;
+      }
       let animation = {
         animationName: "动画" + (vm.scriptCopy.animations.length + 1),
         animationType: type,

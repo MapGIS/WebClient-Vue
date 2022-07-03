@@ -30,7 +30,7 @@ const Template = (args, { argTypes }) => ({
           [180, 90],
         ],
         zoom: 8,
-        center: [116.19, 40.01],
+        center: [116.19, 35.01],
       },
       jsonUrl: "http://localhost:8895/标绘/test.json",
       symbolUrl: "http://localhost:8895/标绘/symbols.json",

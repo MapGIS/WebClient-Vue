@@ -1,4 +1,4 @@
- <template>
+<template>
   <div class="mapgis-3d-plot-animation">
     <mapgis-ui-plot-script-list
       v-if="scriptListCopy && showScriptList"
@@ -27,30 +27,36 @@
     <slot
       name="timeline"
       :value="value"
-      :change="e => { value = e;}"
+      :change="
+        e => {
+          value = e;
+        }
+      "
       v-show="showTimeline"
       ref="timeline"
-      :forwardActive="forwardActive"
+      :duration="totalTime"
+      :enableEnd="false"
       :start="start"
       :backward="backward"
       :pause="pause"
       :forward="forward"
-      :end="end"
       :speedChange="setSpeed"
     >
       <mapgis-ui-plot-timeline
         :value="value"
-        @change="e => { value = e;}"
+        @change="
+          e => {
+            value = e;
+          }
+        "
         v-show="showTimeline"
         ref="timeline"
-        :forwardActive="forwardActive"
-        :duration="10"
+        :duration="totalTime"
         :enableEnd="false"
         @start="start"
         @backward="backward"
         @pause="pause"
         @forward="forward"
-        @end="end"
         @speedChange="setSpeed"
       ></mapgis-ui-plot-timeline>
     </slot>
@@ -93,6 +99,10 @@ export default {
           "lineWidth"
         ];
       }
+    },
+    showTimeline: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -100,11 +110,10 @@ export default {
       value: 0,
       plotId: undefined,
       scriptListCopy: undefined,
-      forwardActive: false,
       showScriptList: true,
-      showTimeline: false,
       activeIndex: undefined,
-      nodeNames: undefined
+      nodeNames: undefined,
+      totalTime: 12
     };
   },
   watch: {
@@ -119,7 +128,6 @@ export default {
             if (e instanceof Array) {
               vm.scriptListCopy = e;
               // console.log('dtaaa',e);
-              
             } else {
               vm.scriptListCopy = [e];
             }
@@ -130,7 +138,7 @@ export default {
       immediate: true
     },
     value(e) {
-      let timeline = this.getPlotAnimation()
+      let timeline = this.getPlotAnimation();
       timeline && timeline.seek(e * 1000);
     }
   },
@@ -144,7 +152,7 @@ export default {
     setPick() {
       const vm = this;
       let layer = this.getLayer();
-        layer.pickPlot = function(plot) {
+      layer.pickPlot = function(plot) {
         vm.plotId = plot.id;
         // console.log("plot", plot);
         let json = plot.getStyle();
@@ -172,13 +180,19 @@ export default {
       let layers = this.getLayers();
 
       let timeline = this.getPlotAnimation();
-      if(!timeline) {
+      if (!timeline) {
         timeline = new TimeLine(layers, {});
-        window.vueCesium.PlotAnimationManager.addSource(vm.vueKey, vm.vueIndex, timeline);
+        window.vueCesium.PlotAnimationManager.addSource(
+          vm.vueKey,
+          vm.vueIndex,
+          timeline
+        );
       }
       if (this.scriptListCopy) {
         this.activeIndex = 0;
-        timeline.fromJSON(JSON.parse(JSON.stringify(vm.scriptListCopy[vm.activeIndex])));
+        timeline.fromJSON(
+          JSON.parse(JSON.stringify(vm.scriptListCopy[vm.activeIndex]))
+        );
       } else {
         axios.defaults.withCredentials = true;
         axios({
@@ -197,34 +211,35 @@ export default {
     },
     getLayer() {
       let layerManager = window.vueCesium.PlotLayerManager.findSource(
-          this.vueKey,
-          this.vueIndex
+        this.vueKey,
+        this.vueIndex
       );
       return layerManager && layerManager.source;
     },
     getLayers() {
       let PlotLayerGroupManager = window.vueCesium.PlotLayerGroupManager.findSource(
-          this.vueKey,
-          this.vueIndex
+        this.vueKey,
+        this.vueIndex
       );
       return PlotLayerGroupManager && PlotLayerGroupManager.source;
     },
     getPlotAnimation() {
       let PlotAnimationManager = window.vueCesium.PlotAnimationManager.findSource(
-          this.vueKey,
-          this.vueIndex
+        this.vueKey,
+        this.vueIndex
       );
       return PlotAnimationManager && PlotAnimationManager.source;
     },
     start() {
+      this.$refs.timeline.stopPlay();
       let timeline = this.getPlotAnimation();
       timeline && timeline.restore();
     },
     backward() {
       let timeline = this.getPlotAnimation();
-      if(timeline) {
-      timeline.reversed(true);
-      timeline.play();
+      if (timeline) {
+        timeline.reversed(true);
+        timeline.play();
       }
     },
     pause() {
@@ -233,28 +248,29 @@ export default {
     },
     forward() {
       let timeline = this.getPlotAnimation();
-      if(timeline) {
-        this.showTimeline = true;
-        this.forwardActive = true;
+      if (timeline) {
+        this.totalTime = timeline.getTotalTime() / 1000;
+        // console.log("this.totalTime", this.totalTime);
         timeline.reversed(false);
         timeline.play();
       }
     },
     clearTimeline() {
       let timeline = this.getPlotAnimation();
-      if(timeline) {
+      if (timeline) {
         timeline.restore();
         timeline.clear();
       }
     },
     initTimeline() {
       let timeline = this.getPlotAnimation();
-      if(timeline) {
+      if (timeline) {
         this.clearTimeline();
-        timeline.fromJSON(JSON.parse(JSON.stringify(this.scriptListCopy[this.activeIndex])));
+        timeline.fromJSON(
+          JSON.parse(JSON.stringify(this.scriptListCopy[this.activeIndex]))
+        );
       }
     },
-    end() {},
     setSpeed(e) {
       let timeline = this.getPlotAnimation();
       timeline && timeline.setSpeed(e);
@@ -269,10 +285,10 @@ export default {
         let timeline = this.getPlotAnimation();
         timeline && timeline.restore();
       }
-      // // this.$refs.timeline.forward();
+      this.$refs.timeline.forward();
       // let timeline = this.getPlotAnimation();
       // timeline && timeline.restore();
-      this.forward();
+      // this.forward();
     },
     clickList(e) {
       let index = this.activeIndex;
@@ -287,7 +303,6 @@ export default {
       this.scriptListCopy = e.list;
     },
     addList(scriptList) {
-      this.showTimeline = false;
       this.scriptListCopy = scriptList;
       this.activeIndex = scriptList.length - 1;
       this.initTimeline();
@@ -303,14 +318,14 @@ export default {
       this.scriptListCopy = scriptList;
     },
     exportList(scriptList) {
-      this.$emit('export',scriptList) ;
+      this.$emit("export", scriptList);
     },
     scriptChange(e) {
       this.scriptListCopy[this.activeIndex] = e.script;
     },
     animationChange(e) {
       let timeline = this.getPlotAnimation();
-      if(timeline) {
+      if (timeline) {
         this.scriptListCopy[this.activeIndex] = e.script;
         let data = JSON.parse(JSON.stringify(e.script.animations[e.index]));
         // 单图层
@@ -322,7 +337,7 @@ export default {
     },
     addScript(e) {
       let timeline = this.getPlotAnimation();
-      if(timeline) {
+      if (timeline) {
         // const vm = this;
         this.scriptListCopy[this.activeIndex] = e.script;
         let data = JSON.parse(JSON.stringify(e.script.animations[e.index]));
