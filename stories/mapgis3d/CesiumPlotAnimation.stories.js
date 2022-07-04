@@ -21,10 +21,10 @@ const Template = (args, { argTypes }) => ({
     return {
       vueIndex1: undefined,
       vueKey1: undefined,
-      jsonUrl: `http://${window.webclient.staticIP}:8895/标绘/test.json`,
-      symbolUrl: `http://${window.webclient.staticIP}:8895/标绘/symbols.json`,
-      // jsonUrl: `http://localhost:8895/标绘/test.json`,
-      // symbolUrl: `http://localhost:8895/标绘/symbols.json`,
+      // jsonUrl: `http://${window.webclient.staticIP}:8895/标绘/test.json`,
+      // symbolUrl: `http://${window.webclient.staticIP}:8895/标绘/symbols.json`,
+      jsonUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/test.json`,
+      symbolUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/symbols.json`,
     };
   },
   methods: {
@@ -41,7 +41,8 @@ const Template = (args, { argTypes }) => ({
 
 export const 态势推演 = Template.bind({});
 态势推演.args = {
-  data: `http://${window.webclient.staticIP}:8895/标绘/animation.json`,
+  // data: `http://${window.webclient.staticIP}:8895/标绘/animation.json`,
+  data: `http://${window.webclient.staticIP}:8086/storybook/标绘/animation.json`,
   // data: `http://localhost:8895/标绘/animation.json`,
 };
 

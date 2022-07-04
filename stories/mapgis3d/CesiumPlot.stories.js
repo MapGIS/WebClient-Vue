@@ -33,8 +33,8 @@ const Template = (args, { argTypes }) => ({
 
 export const 三维标绘 = Template.bind({});
 三维标绘.args = {
-  symbolUrl: `http://${window.webclient.staticIP}:8895/标绘/symbols.json`,
-  // symbolUrl: `http://localhost:8895/标绘/symbols.json`,
+  // symbolUrl: `http://${window.webclient.staticIP}:8895/标绘/symbols.json`,
+  symbolUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/symbols.json`,
 };
 
 三维标绘.parameters = {

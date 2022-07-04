@@ -52,8 +52,8 @@ const Template = (args, { argTypes }) => ({
 
 export const 二维标绘 = Template.bind({});
 二维标绘.args = {
-  symbolUrl: `http://${window.webclient.staticIP}:8895/标绘/symbols.json`,
-  // symbolUrl: `http://localhost:8895/标绘/symbols.json`,
+  // symbolUrl: `http://${window.webclient.staticIP}:8895/标绘/symbols.json`,
+  symbolUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/symbols.json`,
 };
 
 二维标绘.parameters = {
