@@ -136,11 +136,11 @@ export default {
       },
       deep: true,
       immediate: true
-    },
-    value(e) {
-      let timeline = this.getPlotAnimation();
-      timeline && timeline.seek(e * 1000);
     }
+    // value(e) {
+    //   let timeline = this.getPlotAnimation();
+    //   timeline && timeline.seek(e * 1000);
+    // }
   },
   mounted() {
     this.mount();
@@ -276,7 +276,6 @@ export default {
       timeline && timeline.setSpeed(e);
     },
     playScript(e) {
-      // console.log("--------play")
       let index = this.activeIndex;
       this.activeIndex = e ? e.index : this.activeIndex;
       if (index !== this.activeIndex) {
@@ -286,8 +285,6 @@ export default {
         timeline && timeline.restore();
       }
       this.$refs.timeline.forward();
-      // let timeline = this.getPlotAnimation();
-      // timeline && timeline.restore();
       // this.forward();
     },
     clickList(e) {
