@@ -69,7 +69,7 @@ import axios from "axios";
 
 export default {
   name: "mapgis-2d-plot-animation",
-  inject: ["map", "vueMap"],
+  inject: ["map"],
   props: {
     vueKey: {
       type: String,
@@ -139,11 +139,11 @@ export default {
       },
       deep: true,
       immediate: true
-    },
-    value(e) {
-      let timeline = this.getPlotAnimation();
-      timeline && timeline.seek(e * 1000);
     }
+    // value(e) {
+    //   let timeline = this.getPlotAnimation();
+    //   timeline && timeline.seek(e * 1000);
+    // }
   },
   mounted() {
     this.mount();
