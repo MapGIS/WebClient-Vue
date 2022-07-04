@@ -23,7 +23,7 @@ export default {
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
       }
-    },//点击回调事件
+    }, //点击回调事件
     pickPlot: {
       type: Function
     },
@@ -46,11 +46,11 @@ export default {
     },
     fontUrl: {
       type: String,
-      default: ''
+      default: ""
     },
     baseUrl: {
       type: String,
-      default: ''
+      default: ""
     }
   },
   data() {
@@ -81,16 +81,9 @@ export default {
     show: {
       handler: function(val) {
         let layer = this.getLayer();
-        let layers = this.getLayers();
-        if (!layer || !this.layers) return;
-        if (val) {
-          layers.removeLayer(layer);
-          layers.addLayer(layer);
-        } else {
-          layers.removeLayer(layer);
-        }
+        layer && layer.setVisible(val);
+        // console.log("showww-2d", val);
       },
-      deep: true,
       immediate: true
     },
     editable: {
@@ -106,27 +99,35 @@ export default {
     this.mount();
   },
   destroyed() {
-    // this.unmount();
+    this.unmount();
   },
   methods: {
     mount() {
       const { map } = this;
       const vm = this;
-      let manager = new SymbolManager(this.symbolUrl,{
+      let manager = new SymbolManager(this.symbolUrl, {
         fontURL: vm.fontUrl,
         baseUrl: vm.baseUrl
       });
       manager.getSymbols().then(function() {
         let layer = vm.getLayer();
-        if(!layer) {
+        if (!layer) {
           layer = new PlotLayer2D();
-          window.vueMap.PlotLayerManager.addSource(vm.vueKey, vm.vueIndex, layer);
+          window.vueMap.PlotLayerManager.addSource(
+            vm.vueKey,
+            vm.vueIndex,
+            layer
+          );
         }
         let layers = vm.getLayers();
-        if(!layers) {
+        if (!layers) {
           const canvas = new FabricLayer(map, PlotLayer2DGroup);
           layers = canvas.getFabricCanvas();
-          window.vueMap.PlotLayerGroupManager.addSource(vm.vueKey, vm.vueIndex, layers);
+          window.vueMap.PlotLayerGroupManager.addSource(
+            vm.vueKey,
+            vm.vueIndex,
+            layers
+          );
         }
         layers.addLayer(layer);
 
@@ -151,22 +152,22 @@ export default {
     unmount() {
       let layer = this.getLayer();
       let layers = this.getLayers();
-      
-      if(layer && layers) {
+
+      if (layer && layers) {
         layers.removeLayer(layer);
       }
     },
     getLayer() {
       let layerManager = window.vueMap.PlotLayerManager.findSource(
-          this.vueKey,
-          this.vueIndex
+        this.vueKey,
+        this.vueIndex
       );
       return layerManager && layerManager.source;
     },
     getLayers() {
       let PlotLayerGroupManager = window.vueMap.PlotLayerGroupManager.findSource(
-          this.vueKey,
-          this.vueIndex
+        this.vueKey,
+        this.vueIndex
       );
       return PlotLayerGroupManager && PlotLayerGroupManager.source;
     },
