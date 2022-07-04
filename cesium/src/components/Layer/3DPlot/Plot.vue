@@ -122,7 +122,7 @@ export default {
         vm.symbol.style = vm.symbol.style || json;
         vm.parseStyleJson(json, plot._elem._symbol._src);
       };
-      layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
+      // layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
     },
     mount() {
       const vm = this;
@@ -156,7 +156,7 @@ export default {
           // vm.symbol.style = vm.symbol.style || json;
           vm.parseStyleJson(json, plot._elem._symbol._src);
         };
-        layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
+        // layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
       }
       this.$emit("loaded", this);
     },

@@ -35,7 +35,7 @@ import { SymbolManager, DrawTool } from "@mapgis/webclient-es6-service";
 
 export default {
   name: "mapgis-2d-plot",
-  inject: ["map", "vueMap"],
+  inject: ["map"],
   props: {
     vueKey: {
       type: String
@@ -122,6 +122,7 @@ export default {
     setPick() {
       const vm = this;
       let layer = this.getLayer();
+      layer.editable = true;
       layer.pickPlot = async function(plot) {
         vm.isDraw = true;
         vm.plot = plot;
