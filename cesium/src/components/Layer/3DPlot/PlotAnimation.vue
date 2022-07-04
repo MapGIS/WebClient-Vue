@@ -170,13 +170,8 @@ export default {
         vm.nodeNames = Object.keys(json.nodeStyles);
         // console.log("plotId/nodeNames", vm.plotId, "/", vm.nodeNames);
       };
-      layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
+      // layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
 
-      // this.manager =
-      //   this.manager ||
-      //   new SymbolManager("http://localhost:8895/标绘/symbols.json");
-
-      // this.manager.getSymbols().then(function() {
       let layers = this.getLayers();
 
       let timeline = this.getPlotAnimation();
@@ -207,7 +202,6 @@ export default {
       }
 
       this.$emit("loaded", this);
-      // });
     },
     getLayer() {
       let layerManager = window.vueCesium.PlotLayerManager.findSource(
