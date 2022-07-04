@@ -29,8 +29,8 @@ const Template = (args, { argTypes }) => ({
           [-180, -90],
           [180, 90],
         ],
-        zoom: 8,
-        center: [116.19, 35.01],
+        zoom: 7,
+        center: [116.19, 34.01],
       },
       jsonUrl: `http://${window.webclient.staticIP}:8895/标绘/test.json`,
       symbolUrl: `http://${window.webclient.staticIP}:8895/标绘/symbols.json`,
@@ -52,8 +52,8 @@ const Template = (args, { argTypes }) => ({
 
 export const 态势推演 = Template.bind({});
 态势推演.args = {
-  // data: `http://${window.webclient.staticIP}:8895/标绘/animation.json`,
-  data: `http://localost:8895/标绘/animation.json`,
+  data: `http://${window.webclient.staticIP}:8895/标绘/animation.json`,
+  // data: `http://localost:8895/标绘/animation.json`,
 };
 
 态势推演.parameters = {
