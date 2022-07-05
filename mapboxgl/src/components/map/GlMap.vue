@@ -18,6 +18,8 @@ import { initManager, initVueMap } from "./manager";
 
 import { addListener, removeListener } from "resize-detector";
 import debounce from "lodash/debounce";
+import {PlotLayer2DGroup} from "@mapgis/webclient-es6-service";
+import { FabricLayer } from "@mapgis/webclient-es6-mapboxgl";
 
 export default {
   name: "mapgis-web-map",
@@ -119,6 +121,10 @@ export default {
     this.$_loadMap().then(map => {
       const { actions, mapbox } = this;
       this.map = map;
+      const canvas = new FabricLayer(map, PlotLayer2DGroup);
+      window.vueMap.MapManager.addSource(this.vueKey, this.vueIndex, map, {
+        canvas: canvas
+      });
       this.vueMap = window.vueMap;
       if (this.RTLTextPluginUrl !== undefined) {
         this.mapbox.setRTLTextPlugin(
