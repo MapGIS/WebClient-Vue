@@ -121,5 +121,6 @@ export { default as Mapgis3dBuildingGlow } from "./components/simulation/Buildin
 
 // 标绘
 export { default as Mapgis3DPlot } from "./components/Layer/3DPlot/Plot.vue";
+export { default as Mapgis3DPlotLink } from "./components/Layer/3DPlot/Plot3DLink.vue";
 export { default as Mapgis3DPlotLayer } from "./components/Layer/3DPlot/PlotLayer.vue";
 export { default as Mapgis3DPlotAnimation } from "./components/Layer/3DPlot/PlotAnimation.vue";

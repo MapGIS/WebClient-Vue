@@ -4,7 +4,7 @@ import {SymbolManager,PlotLayer3D,PlotLayer3DGroup,PlotLayer2D,PlotLayer2DGroup,
 import { FabricLayer } from "@mapgis/webclient-es6-mapboxgl";
 
 export default {
-  title: "三维/场景子组件/标绘二三维联动",
+  title: "二维/场景子组件/标绘二三维联动(组件)",
   component: Mapgis3dLink,
   argTypes: {
     timestamp: 100,
@@ -25,11 +25,15 @@ const Template = (args, { argTypes }) => ({
       vueKey1: undefined,
       jsonUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/test.json`,
       symbolUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/symbols.json`,
+      vueIndex: 12345,
+      containers:[{vueIndex:12345,vueKey: "default",type:"mapbox"},{vueIndex:12345,vueKey: "default",type:"cesium"}],
+      layers: [{vueIndex:23456,vueKey: "default"}]
     };
   },
   watch: {
     rect: function (next) {
       const { east, north, south, west } = next["2d"];
+      console.log(east, north, south, west);
       let map = this.map || window.map;
       let bbox = [
         [west, south],
@@ -46,48 +50,25 @@ const Template = (args, { argTypes }) => ({
     handleLoaded(e) {
       this.vueIndex1 = e.vueIndex;
       this.vueKey1 = e.vueKey;
-      let vueCesium = window.vueCesium;
-      if (!vueCesium) return;
-      let layerManager = vueCesium.PlotLayerManager.findSource(
-        this.vueKey1,
-        this.vueIndex1
-      );
-      window.layer = layerManager && layerManager.source;
-      setTimeout(function () {
-        let json = layer.toJSON()
-        let interval = setInterval(function () {
-          if(window.canvas){
-            clearInterval(interval);
-            window.layer.editable = true;
-            window.linkTool = new LinkTool(window.layer,[window.viewer,window.canvas]);
-          }
-        },100);
-      },2000)
     },
     changeMode() {
       this.link = !this.link;
     },
     handle2dLoad(e) {
       window.map = this.map = e.map;
-      const canvas = new FabricLayer(window.map, PlotLayer2DGroup);
-      const fabricCanvas = canvas.getFabricCanvas();
-      window.canvas = canvas;
-    },
-    threeload(e) {
-      window.cesium = e.Cesium;
-      window.viewer = e.component.viewer;
     }
   },
   template: `<div class="mapgis-link-test">
     <div class="mapbox-item top-left">
-      <mapgis-web-map crs="EPSG:3857"  @load="handle2dLoad">
+      <mapgis-web-map crs="EPSG:3857"  @load="handle2dLoad" :vueIndex="vueIndex">
+        <mapgis-2d-plot-layer :vueIndex="23456" :symbolUrl="symbolUrl" @loaded="handleLoaded" :dataSource="jsonUrl"></mapgis-2d-plot-layer>
+        <mapgis-2d-plot :symbolUrl="symbolUrl" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1 && vueKey1" class="storybook-ui-card"/>
+        <mapgis-2D-plot-link :layers="layers" :containers="containers"></mapgis-2D-plot-link>
         <mapgis-rastertile-layer :url="url2" layerId="raster_tdt" />
       </mapgis-web-map>
     </div>
     <div class="cesium-item top-right">
-      <mapgis-web-scene @load="threeload">
-        <mapgis-3d-plot-layer :symbolUrl="symbolUrl" @loaded="handleLoaded" :dataSource="jsonUrl"></mapgis-3d-plot-layer>
-        <mapgis-3d-plot :symbolUrl="symbolUrl" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1 && vueKey1" class="storybook-ui-card"/>
+      <mapgis-web-scene :vueIndex="vueIndex">
         <mapgis-3d-raster-layer :url="url1"> </mapgis-3d-raster-layer>
         <mapgis-3d-link :enable="link" v-model="rect" ></mapgis-3d-link>
       </mapgis-web-scene>
@@ -99,4 +80,5 @@ const Template = (args, { argTypes }) => ({
 export const 标绘二三维联动 = Template.bind({});
 标绘二三维联动.args = {
   timestamp: 1,
+  vueIndex: 12345,
 };
