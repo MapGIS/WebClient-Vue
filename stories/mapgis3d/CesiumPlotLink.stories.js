@@ -4,7 +4,7 @@ import {SymbolManager,PlotLayer3D,PlotLayer3DGroup,PlotLayer2D,PlotLayer2DGroup,
 import { FabricLayer } from "@mapgis/webclient-es6-mapboxgl";
 
 export default {
-  title: "三维/场景子组件/标绘二三维联动",
+  title: "三维/场景子组件/二三维联动/标绘(js)",
   component: Mapgis3dLink,
   argTypes: {
     timestamp: 100,
@@ -96,7 +96,7 @@ const Template = (args, { argTypes }) => ({
   </div>`,
 });
 
-export const 标绘二三维联动 = Template.bind({});
-标绘二三维联动.args = {
+export const 标绘 = Template.bind({});
+标绘.args = {
   timestamp: 1,
 };

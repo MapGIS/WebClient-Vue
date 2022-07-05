@@ -4,7 +4,7 @@ import {SymbolManager,PlotLayer3D,PlotLayer3DGroup,PlotLayer2D,PlotLayer2DGroup,
 import { FabricLayer } from "@mapgis/webclient-es6-mapboxgl";
 
 export default {
-  title: "三维/场景子组件/二三维联动/标绘(组件)",
+  title: "二维/场景子组件/二三维联动/态势推演",
   component: Mapgis3dLink,
   argTypes: {
     timestamp: 100,
@@ -25,8 +25,9 @@ const Template = (args, { argTypes }) => ({
       vueKey1: undefined,
       jsonUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/test.json`,
       symbolUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/symbols.json`,
+      data: `http://${window.webclient.ip}:${window.webclient.port}/标绘/animation.json`,
       vueIndex: 12345,
-      containers:[{vueIndex:12345,vueKey: "default",type:"cesium"},{vueIndex:12345,vueKey: "default",type:"mapbox"}],
+      containers:[{vueIndex:12345,vueKey: "default",type:"mapbox"},{vueIndex:12345,vueKey: "default",type:"cesium"}],
       layers: [{vueIndex:23456,vueKey: "default"}]
     };
   },
@@ -61,24 +62,24 @@ const Template = (args, { argTypes }) => ({
   template: `<div class="mapgis-link-test">
     <div class="mapbox-item top-left">
       <mapgis-web-map crs="EPSG:3857"  @load="handle2dLoad" :vueIndex="vueIndex">
+        <mapgis-2d-plot-layer :vueIndex="23456" :symbolUrl="symbolUrl" @loaded="handleLoaded" :dataSource="jsonUrl"></mapgis-2d-plot-layer>
+        <mapgis-2d-plot-animation :data="data" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueKey1 && vueIndex1"/>
+        <mapgis-2D-plot-link :layers="layers" :containers="containers"></mapgis-2D-plot-link>
         <mapgis-rastertile-layer :url="url2" layerId="raster_tdt" />
       </mapgis-web-map>
     </div>
     <div class="cesium-item top-right">
       <mapgis-web-scene :vueIndex="vueIndex">
-        <mapgis-3d-plot-layer :vueIndex="23456" :symbolUrl="symbolUrl" @loaded="handleLoaded" :dataSource="jsonUrl"></mapgis-3d-plot-layer>
-        <mapgis-3d-plot :symbolUrl="symbolUrl" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1 && vueKey1" class="storybook-ui-card"/>
         <mapgis-3d-raster-layer :url="url1"> </mapgis-3d-raster-layer>
         <mapgis-3d-link :enable="link" v-model="rect" ></mapgis-3d-link>
-        <mapgis-3D-plot-link :layers="layers" :containers="containers"></mapgis-3D-plot-link>
       </mapgis-web-scene>
     </div>
     <div :class="{'control-2d-3d': true, 'link-active': link}" v-on:click="changeMode"></div>
   </div>`,
 });
 
-export const 标绘 = Template.bind({});
-标绘.args = {
+export const 态势推演 = Template.bind({});
+态势推演.args = {
   timestamp: 1,
   vueIndex: 12345,
 };
