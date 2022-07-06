@@ -337,7 +337,14 @@ export default {
       const { vueCesium, vueKey, vueIndex } = this;
       const { viewer } = this;
       const { g3dLayerIndex } = this;
-
+      // 移除图层的时候，把高亮也移除
+      this.featurevisible = false;
+      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+      if (find && find.options) {
+        let { primitiveCollection } = find.options;
+        let last = find.options.feature;
+        primitiveCollection.remove(last);
+      }
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       g3dLayer.remove(true);
@@ -821,6 +828,10 @@ export default {
 
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+      if (!pickedFeature._content && pickedFeature.primitive) {
+        this.featurevisible = true;
+        return;
+      }
       let index = pickedFeature._content._tileset._layerIndex;
       vm.selectLayerIndex = index;
       vm.selectedKeys = [`${index}`];
@@ -918,16 +929,20 @@ export default {
               layerIndex = parseInt(layerIndex);
             }
           }
+          // 查询容差小数位数与坐标位数保持一致。提高查询精度
+          const latStr = lat.toString().split(".")[1];
+          const tolerance = Number(`0.${latStr}`) / Number(latStr);
 
           g3dLayer.Monomerization(
             function callback(result) {
+              vm.featurevisible = false;
+              let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+              if (find) {
+                let last = find.options.feature;
+                primitiveCollection.remove(last);
+              }
               if (result && result.length > 0) {
                 let feature = result[0];
-                let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
-                if (find) {
-                  let last = find.options.feature;
-                  primitiveCollection.remove(last);
-                }
                 vm.featurevisible = true;
                 vm.featureposition = {
                   longitude: lng,
@@ -935,6 +950,9 @@ export default {
                   height: height
                 };
                 vm.featureproperties = feature.property;
+                // _extrudedHeight和_height这样设置后才能贴模型
+                feature.geometryInstances.geometry._extrudedHeight = 0;
+                feature.geometryInstances.geometry._height = 100000;
                 primitiveCollection.add(feature);
                 vueCesium.G3DManager.changeOptions(
                   vueKey,
@@ -942,8 +960,6 @@ export default {
                   "feature",
                   feature
                 );
-              } else {
-                vm.featurevisible = false;
               }
             },
             {
@@ -952,7 +968,7 @@ export default {
                 mapPosition.y,
                 mapPosition.z
               ),
-              tolerance: 0.0001,
+              tolerance,
               layerIndex: String(layerIndex)
             }
           );
