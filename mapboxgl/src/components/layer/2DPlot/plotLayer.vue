@@ -31,9 +31,6 @@ export default {
     dataSource: {
       type: [String, Object]
     },
-    symbolUrl: {
-      type: String
-    },
     // 标绘图层的可见性
     show: {
       type: Boolean,
@@ -43,14 +40,6 @@ export default {
     editable: {
       type: Boolean,
       default: false
-    },
-    fontUrl: {
-      type: String,
-      default: ""
-    },
-    baseUrl: {
-      type: String,
-      default: ""
     }
   },
   data() {
@@ -105,10 +94,11 @@ export default {
     mount() {
       const { map } = this;
       const vm = this;
-      let manager = new SymbolManager(this.symbolUrl, {
-        fontURL: vm.fontUrl,
-        baseUrl: vm.baseUrl
-      });
+      let manager = this.getSymbolManager();
+      if (!manager) {
+        this.$message.warning("符号库未加载完成！");
+        return;
+      }
       manager.getSymbols().then(function() {
         let layer = vm.getLayer();
         if (!layer) {
@@ -155,7 +145,16 @@ export default {
 
       if (layer && layers) {
         layers.removeLayer(layer);
+        window.vueMap.PlotLayerGroupManager.deleteSource(
+          this.vueKey,
+          this.vueIndex
+        );
+        window.vueMap.PlotLayerManager.deleteSource(this.vueKey, this.vueIndex);
       }
+    },
+    getSymbolManager() {
+      let PlotSymbolManager = window.PlotSymbolManager;
+      return PlotSymbolManager;
     },
     getLayer() {
       let layerManager = window.vueMap.PlotLayerManager.findSource(

@@ -3,6 +3,7 @@ import Mapgis3dPlotLayer from "../../cesium/src/components/Layer/3DPlot/PlotLaye
 import { SymbolManager } from "@mapgis/webclient-es6-service";
 import Markdown from "../../cesium/docs/api/layer/3DPlot/PlotAnimation.md";
 import "../style/card.css";
+import * as axios from "axios";
 
 export default {
   title: "三维/图层/标绘/态势推演",
@@ -14,24 +15,38 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { Mapgis3dPlotAnimation, Mapgis3dPlotLayer },
   template: `<mapgis-web-scene style="height:95vh">
-        <mapgis-3d-plot-layer @loaded="handleLoaded" :dataSource="jsonUrl" :symbolUrl="symbolUrl"></mapgis-3d-plot-layer>
-        <mapgis-3d-plot-animation v-bind="$props" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueKey1 && vueIndex1"/>
+        <mapgis-3d-plot-layer @loaded="handleLoaded" :dataSource="jsonUrl" :symbolUrl="symbolUrl" v-if="manager"></mapgis-3d-plot-layer>
+        <mapgis-3d-plot-animation :data="dataSource" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1"/>
   </mapgis-web-scene>`,
   data() {
     return {
       vueIndex1: undefined,
       vueKey1: undefined,
-      // jsonUrl: `http://${window.webclient.staticIP}:8895/标绘/test.json`,
-      // symbolUrl: `http://${window.webclient.staticIP}:8895/标绘/symbols.json`,
-      jsonUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/test.json`,
-      symbolUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/symbols.json`,
+      jsonUrl: `http://${window.webclient.staticIP}:8895/标绘/test.json`,
+      symbolUrl: `http://${window.webclient.staticIP}:8895/标绘/symbols.json`,
+      dataUrl: `http://${window.webclient.staticIP}:8895/标绘/animation.json`,
+      // 打包时使用
+      // jsonUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/test.json`,
+      // symbolUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/symbols.json`,
+      // dataUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/animation.json`,
+      manager: undefined,
+      dataSource: undefined,
+      // jsonUrl: `http://localhost:8895/标绘/test.json`,
+      // symbolUrl: `http://localhost:8895/标绘/symbols.json`,
     };
+  },
+  created() {
+    this.manager = window.PlotSymbolManager;
+    if (!this.manager) {
+      this.manager = new SymbolManager(this.symbolUrl);
+      window.PlotSymbolManager = this.manager;
+    }
   },
   methods: {
     handleLoaded(e) {
       const vm = this;
-      let manager = new SymbolManager(this.symbolUrl);
-      manager.getSymbols().then(function () {
+      axios.get(vm.dataUrl).then((res) => {
+        vm.dataSource = res.data;
         vm.vueIndex1 = e.vueIndex;
         vm.vueKey1 = e.vueKey;
       });
@@ -41,9 +56,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 态势推演 = Template.bind({});
 态势推演.args = {
-  // data: `http://${window.webclient.staticIP}:8895/标绘/animation.json`,
-  data: `http://${window.webclient.staticIP}:8086/storybook/标绘/animation.json`,
-  // data: `http://localhost:8895/标绘/animation.json`,
+  // dataUrl: `http://localhost:8895/标绘/animation.json`,
 };
 
 态势推演.parameters = {

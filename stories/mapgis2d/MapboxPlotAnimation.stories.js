@@ -3,6 +3,7 @@ import Mapgis2dPlotLayer from "../../mapboxgl/src/components/layer/2DPlot/plotLa
 import { SymbolManager } from "@mapgis/webclient-es6-service";
 import Markdown from "../../mapboxgl/docs/api/Layers/2DPlot/PlotAnimation.md";
 import "../style/card.css";
+import * as axios from "axios";
 
 export default {
   title: "二维/图层/标绘/态势推演",
@@ -15,8 +16,8 @@ const Template = (args, { argTypes }) => ({
   components: { Mapgis2dPlotAnimation, Mapgis2dPlotLayer },
   template: `<mapgis-web-map style="height:95vh" v-bind="{...mapOptions}" >
         <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
-        <mapgis-2d-plot-layer @loaded="handleLoad" :dataSource="jsonUrl" v-bind="$props" :symbolUrl="symbolUrl"></mapgis-2d-plot-layer>
-        <mapgis-2d-plot-animation  v-bind="$props" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1 && vueKey1">
+        <mapgis-2d-plot-layer @loaded="handleLoad" :dataSource="jsonUrl" v-bind="$props" :symbolUrl="symbolUrl" v-if="manager"></mapgis-2d-plot-layer>
+        <mapgis-2d-plot-animation :data="dataSource" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1">
         </mapgis-2d-plot-animation>
   </mapgis-web-map>`,
   data() {
@@ -34,15 +35,29 @@ const Template = (args, { argTypes }) => ({
       },
       jsonUrl: `http://${window.webclient.staticIP}:8895/标绘/test.json`,
       symbolUrl: `http://${window.webclient.staticIP}:8895/标绘/symbols.json`,
+      dataUrl: `http://${window.webclient.staticIP}:8895/标绘/animation.json`,
+      // 打包时使用
+      // jsonUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/test.json`,
+      // symbolUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/symbols.json`,
+      // dataUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/animation.json`,
+      manager: undefined,
+      dataSource: undefined,
       // jsonUrl: `http://localhost:8895/标绘/test.json`,
       // symbolUrl: `http://localhost:8895/标绘/symbols.json`,
     };
   },
+  created() {
+    this.manager = window.PlotSymbolManager;
+    if (!this.manager) {
+      this.manager = new SymbolManager(this.symbolUrl);
+      window.PlotSymbolManager = this.manager;
+    }
+  },
   methods: {
     handleLoad(e) {
       const vm = this;
-      let manager = new SymbolManager(this.symbolUrl);
-      manager.getSymbols().then(function () {
+      axios.get(vm.dataUrl).then((res) => {
+        vm.dataSource = res.data;
         vm.vueIndex1 = e.vueIndex;
         vm.vueKey1 = e.vueKey;
       });
@@ -52,7 +67,6 @@ const Template = (args, { argTypes }) => ({
 
 export const 态势推演 = Template.bind({});
 态势推演.args = {
-  data: `http://${window.webclient.staticIP}:8895/标绘/animation.json`,
   // data: `http://localost:8895/标绘/animation.json`,
 };
 

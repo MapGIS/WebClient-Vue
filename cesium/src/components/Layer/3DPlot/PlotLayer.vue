@@ -40,9 +40,6 @@ export default {
     dataSource: {
       type: [String, Object]
     },
-    symbolUrl: {
-      type: String
-    },
     // 标绘图层的可见性
     show: {
       type: Boolean,
@@ -52,14 +49,6 @@ export default {
     editable: {
       type: Boolean,
       default: false
-    },
-    fontUrl: {
-      type: String,
-      default: ''
-    },
-    baseUrl: {
-      type: String,
-      default: ''
     }
   },
   data() {
@@ -99,14 +88,8 @@ export default {
     show: {
       handler: function(val) {
         let layer = this.getLayer();
-        let layers = this.getLayers();
-        if (!layer || !layers) return;
-        if (val) {
-          layers.removeLayer(layer);
-          layers.addLayer(layer);
-        } else {
-          layers.removeLayer(layer);
-        }
+        layer && layer.setVisible(val);
+        // console.log("showww-3d", val);
       },
       immediate: true
     },
@@ -127,29 +110,58 @@ export default {
   },
   methods: {
     mount() {
+      this.initLayer();
+    },
+    unmount() {
+      let layer = this.getLayer();
+      let layers = this.getLayers();
+
+      if (layer && layers) {
+        layer.removeAll();
+        layers.removeLayer(layer);
+        window.vueCesium.PlotLayerManager.deleteSource(
+          this.vueKey,
+          this.vueIndex
+        );
+        window.vueCesium.PlotLayerGroupManager.deleteSource(
+          this.vueKey,
+          this.vueIndex
+        );
+      }
+    },
+    initLayer() {
       const { viewer, Cesium } = this;
       const vm = this;
-      let manager = new SymbolManager(this.symbolUrl,{
-        fontURL: vm.fontUrl,
-        baseUrl: vm.baseUrl
-      });
+      let manager = this.getSymbolManager();
+      if (!manager) {
+        this.$message.warning("符号库未加载完成！");
+        return;
+      }
       manager.getSymbols().then(function() {
         viewer.scene.globe.depthTestAgainstTerrain = false;
         let layer = window.vueCesium.PlotLayerManager.findSource(
-            vm.vueKey,
-            vm.vueIndex
+          vm.vueKey,
+          vm.vueIndex
         );
-        if(!layer) {
+        if (!layer) {
           layer = new PlotLayer3D(Cesium, viewer);
-          window.vueCesium.PlotLayerManager.addSource(vm.vueKey, vm.vueIndex, layer);
+          window.vueCesium.PlotLayerManager.addSource(
+            vm.vueKey,
+            vm.vueIndex,
+            layer
+          );
         }
         let layers = window.vueCesium.PlotLayerGroupManager.findSource(
-            vm.vueKey,
-            vm.vueIndex
+          vm.vueKey,
+          vm.vueIndex
         );
-        if(!layers) {
+        if (!layers) {
           layers = new PlotLayer3DGroup(viewer);
-          window.vueCesium.PlotLayerGroupManager.addSource(vm.vueKey, vm.vueIndex, layers);
+          window.vueCesium.PlotLayerGroupManager.addSource(
+            vm.vueKey,
+            vm.vueIndex,
+            layers
+          );
         }
         layers.addLayer(layer);
 
@@ -171,26 +183,21 @@ export default {
         }
       });
     },
-    unmount(){
-      let layer = this.getLayer();
-      let layers = this.getLayers();
-
-      if(layer && layers) {
-        layer.removeAll()
-        layers.removeLayer(layer);
-      }
+    getSymbolManager() {
+      let PlotSymbolManager = window.PlotSymbolManager;
+      return PlotSymbolManager;
     },
     getLayer() {
       let layerManager = window.vueCesium.PlotLayerManager.findSource(
-          this.vueKey,
-          this.vueIndex
+        this.vueKey,
+        this.vueIndex
       );
       return layerManager && layerManager.source;
     },
     getLayers() {
       let PlotLayerGroupManager = window.vueCesium.PlotLayerGroupManager.findSource(
-          this.vueKey,
-          this.vueIndex
+        this.vueKey,
+        this.vueIndex
       );
       return PlotLayerGroupManager && PlotLayerGroupManager.source;
     },

@@ -13,8 +13,8 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { Mapgis3dPlot, Mapgis3dPlotLayer },
   template: `<mapgis-web-scene style="height:95vh">
-      <mapgis-3d-plot-layer @loaded="handleLoaded" :dataSource="jsonUrl" v-bind="$props"></mapgis-3d-plot-layer>
-      <mapgis-3d-plot v-bind="$props" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1 && vueKey1" class="storybook-ui-card"/>
+      <mapgis-3d-plot-layer @loaded="handleLoaded" :dataSource="jsonUrl" v-bind="$props" v-if="manager"></mapgis-3d-plot-layer>
+      <mapgis-3d-plot v-bind="$props" :vueIndex="vueIndex1" :vueKey="vueKey1" class="storybook-ui-card" @loaded="manager=true"/>
       <mapgis-ui-space :size="8"  style="bottom:50px;left:10px;position:absolute;background:#fff"  v-if="vueIndex1 && vueKey1">
         <mapgis-ui-iconfont type="mapgis-daoru" @click="importClick"/>
         <input
@@ -31,8 +31,11 @@ const Template = (args, { argTypes }) => ({
       vueIndex1: undefined,
       vueKey1: undefined,
       jsonUrl: `http://${window.webclient.staticIP}:8895/标绘/test.json`,
+      // 打包时使用
+      // jsonUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/test.json`,
       jsonData: undefined,
       layer: undefined,
+      manager: undefined,
     };
   },
   methods: {
@@ -105,8 +108,9 @@ const Template = (args, { argTypes }) => ({
 
 export const 三维标绘 = Template.bind({});
 三维标绘.args = {
-  // symbolUrl: `http://${window.webclient.staticIP}:8895/标绘/symbols.json`,
-  symbolUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/symbols.json`,
+  symbolUrl: `http://${window.webclient.staticIP}:8895/标绘/symbols.json`,
+  // 打包时使用
+  // symbolUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/symbols.json`,
 };
 
 三维标绘.parameters = {

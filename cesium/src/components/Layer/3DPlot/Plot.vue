@@ -7,7 +7,6 @@
       :click="clickIcon"
       :search="searchIcon"
       :baseUrl="baseUrl"
-      v-if="symbolData"
     >
       <mapgis-ui-plot-symbol
         :data="symbolData"
@@ -37,20 +36,35 @@ export default {
   name: "mapgis-3d-plot",
   inject: ["viewer", "Cesium", "vueCesium"],
   props: {
+    /**
+     * 标绘图层的vueKey
+     */
     vueKey: {
       type: String
     },
+    /**
+     * 标绘图层的vueIndex
+     */
     vueIndex: {
       type: [Number, String]
     },
+    /**
+     * 符号库url
+     */
     symbolUrl: {
       type: String,
       required: true
     },
+    /**
+     * 字体基地址
+     */
     fontUrl: {
       type: String,
       default: ""
     },
+    /**
+     * 标绘符号基地址
+     */
     baseUrl: {
       type: String,
       default: ""
@@ -75,91 +89,70 @@ export default {
   mounted() {
     this.mount();
   },
-  methods: {
-    getLayer() {
-      let vueCesium = this.vueCesium || window.vueCesium;
-      if (!vueCesium) return;
-      let layerManager = vueCesium.PlotLayerManager.findSource(
-        this.vueKey,
-        this.vueIndex
-      );
-      return layerManager && layerManager.source;
-    },
-    getLayers() {
-      let PlotLayerGroupManager = window.vueCesium.PlotLayerGroupManager.findSource(
-        this.vueKey,
-        this.vueIndex
-      );
-      return PlotLayerGroupManager && PlotLayerGroupManager.source;
-    },
-    getDrawTool() {
-      let DrawToolManager = window.vueCesium.DrawToolManager.findSource(
-        this.vueKey,
-        this.vueIndex
-      );
-      return DrawToolManager && DrawToolManager.source;
-    },
-    getSymbolManager() {
-      let PlotSymbolManager = window.vueCesium.PlotSymbolManager.findSource(
-        this.vueKey,
-        this.vueIndex
-      );
-      return PlotSymbolManager && PlotSymbolManager.source;
-    },
-    toJSON() {
+  destroyed() {
+    this.unmount();
+  },
+  watch: {
+    vueIndex(val) {
       let layer = this.getLayer();
-      return layer && layer.toJSON();
+      if (layer) {
+        this.initDrawTool();
+        this.setPick();
+      }
+    }
+  },
+  methods: {
+    mount() {
+      this.getSymbol();
+      this.$emit("loaded", this);
     },
+    unmount() {
+      // window.PlotSymbolManager = undefined;
+      window.vueCesium.DrawToolManager.deleteSource(this.vueKey, this.vueIndex);
+    },
+    initDrawTool() {
+      const vm = this;
+      let layer = this.getLayer();
+      if (!layer) return;
+      let drawTool = this.getDrawTool();
+      if (!drawTool) {
+        drawTool = new DrawTool(layer, {
+          addedPlot: function(plot) {
+            vm.isDraw = true;
+            vm.plot = plot;
+            let json = plot.getStyle();
+            vm.parseStyleJson(json, plot._elem._symbol._src);
+            // console.log("addedPlot--getStyle--json: ", json);
+          }
+        });
+        window.vueCesium.DrawToolManager.addSource(
+          this.vueKey,
+          this.vueIndex,
+          drawTool
+        );
+      }
+    },
+    /**
+     * 设置图元的点击事件
+     */
     setPick() {
       const vm = this;
       let layer = this.getLayer();
+      if (!layer) return;
       layer.pickPlot = async function(plot) {
         vm.isDraw = true;
         vm.plot = plot;
-        // console.log('plot',plot);
-        vm.symbol = vm.symbol || plot._elem._symbol;
+        // console.log("plot-3d", plot);
         let json = plot.getStyle();
-        vm.symbol.style = vm.symbol.style || json;
+        // vm.symbol = vm.symbol || plot._elem._symbol;
+        // vm.symbol.style = vm.symbol.style || json;
         vm.parseStyleJson(json, plot._elem._symbol._src);
       };
       // layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
     },
-    mount() {
-      const vm = this;
-      let layer = this.getLayer();
-      if (layer) {
-        let drawTool = this.getDrawTool();
-        if (!drawTool) {
-          drawTool = new DrawTool(layer, {
-            addedPlot: function(plot) {
-              vm.isDraw = true;
-              vm.plot = plot;
-              let json = plot.getStyle();
-              vm.parseStyleJson(json, plot._elem._symbol._src);
-              // console.log("addedPlot--getStyle--json: ", json);
-            }
-          });
-          window.vueCesium.DrawToolManager.addSource(
-            this.vueKey,
-            this.vueIndex,
-            drawTool
-          );
-        }
-        this.getSymbol();
-        // 由这个监听控制属性面板的开关
-        layer.pickPlot = function(plot) {
-          vm.isDraw = true;
-          vm.plot = plot;
-          let json = plot.getStyle();
-          // console.log("pickPlot---getStyl--json: ", json);
-          // vm.symbol = vm.symbol || plot._elem._symbol;
-          // vm.symbol.style = vm.symbol.style || json;
-          vm.parseStyleJson(json, plot._elem._symbol._src);
-        };
-        // layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
-      }
-      this.$emit("loaded", this);
-    },
+    /**
+     * 解析符号库
+     */
     getSymbol() {
       const vm = this;
       // console.log("symbolUrl", this.symbolUrl);
@@ -169,11 +162,7 @@ export default {
           fontURL: vm.fontUrl,
           baseUrl: vm.baseUrl
         });
-        window.vueCesium.PlotSymbolManager.addSource(
-          this.vueKey,
-          this.vueIndex,
-          manager
-        );
+        window.PlotSymbolManager = manager;
       }
 
       manager.getSymbols().then(function(symbols) {
@@ -217,8 +206,16 @@ export default {
         vm.symbolData = symbols._config;
       });
     },
+    /**
+     * 点击符号
+     */
     async clickIcon(data) {
       const vm = this;
+      let layer = this.getLayer();
+      if (!layer) {
+        this.$message.warning("请勾选标绘图层后进行操作！");
+        return;
+      }
       this.isDraw = false;
       let manager = this.getSymbolManager();
       if (!manager) return;
@@ -236,6 +233,9 @@ export default {
         drawTool.drawPlot(vm.symbol);
       }
     },
+    /**
+     * 解析符号或者图元的样式信息
+     */
     parseStyleJson(json, svgUrl) {
       // console.log("parseStyleJson", json);
       for (var node in json.nodeStyles) {
@@ -270,6 +270,9 @@ export default {
       }
       return json;
     },
+    /**
+     * 改变符号或图元的样式
+     */
     changeStyle(e) {
       if (e.key == "strokeColor") {
         e.key = "strokeStyle";
@@ -281,6 +284,9 @@ export default {
       }
       return this.plot.setStyle(e.key, e.value);
     },
+    /**
+     * 搜索符号
+     */
     searchIcon(e) {
       //删除上次存储的查询结果
       if (this.searchResult) {
@@ -307,6 +313,33 @@ export default {
         };
       }
       this.symbolData.unshift(this.searchResult);
+    },
+    getLayer() {
+      let vueCesium = this.vueCesium || window.vueCesium;
+      if (!vueCesium) return;
+      let layerManager = vueCesium.PlotLayerManager.findSource(
+        this.vueKey,
+        this.vueIndex
+      );
+      return layerManager && layerManager.source;
+    },
+    getLayers() {
+      let PlotLayerGroupManager = window.vueCesium.PlotLayerGroupManager.findSource(
+        this.vueKey,
+        this.vueIndex
+      );
+      return PlotLayerGroupManager && PlotLayerGroupManager.source;
+    },
+    getDrawTool() {
+      let DrawToolManager = window.vueCesium.DrawToolManager.findSource(
+        this.vueKey,
+        this.vueIndex
+      );
+      return DrawToolManager && DrawToolManager.source;
+    },
+    getSymbolManager() {
+      let PlotSymbolManager = window.PlotSymbolManager;
+      return PlotSymbolManager;
     }
   }
 };

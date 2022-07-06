@@ -7,7 +7,6 @@
       :click="clickIcon"
       :search="searchIcon"
       :baseUrl="baseUrl"
-      v-if="symbolData"
     >
       <mapgis-ui-plot-symbol
         :data="symbolData"
@@ -37,33 +36,49 @@ export default {
   name: "mapgis-2d-plot",
   inject: ["map"],
   props: {
+    /**
+     * 标绘图层的vueKey
+     */
     vueKey: {
       type: String
     },
+    /**
+     * 标绘图层的vueIndex
+     */
     vueIndex: {
       type: [Number, String]
     },
+    /**
+     * 符号库url
+     */
     symbolUrl: {
       type: String,
       required: true
     },
+    /**
+     * 字体基地址
+     */
     fontUrl: {
       type: String,
       default: ""
     },
+    /**
+     * 标绘符号基地址
+     */
     baseUrl: {
       type: String,
       default: ""
     }
   },
-  // watch: {
-  //   layer: {
-  //     handler: function(lyr) {
-  //       console.log('layer---',lyr);
-  //     },
-  //     immediate: true,
-  //   }
-  // },
+  watch: {
+    vueIndex(val) {
+      let layer = this.getLayer();
+      if (layer) {
+        this.initDrawTool();
+        this.setPick();
+      }
+    }
+  },
   data() {
     return {
       symbolData: undefined,
@@ -80,12 +95,36 @@ export default {
     };
   },
   mounted() {
-    // if (this.layer) {
     this.mount();
-    // }
+  },
+  destroyed() {
+    this.unmount();
   },
   methods: {
     mount() {
+      this.getSymbol();
+      this.$emit("loaded", this);
+    },
+    unmount() {
+      // window.PlotSymbolManager = undefined;
+      window.vueCesium.DrawToolManager.deleteSource(this.vueKey, this.vueIndex);
+    },
+    setPick() {
+      const vm = this;
+      let layer = this.getLayer();
+      if (!layer) return;
+      layer.editable = true;
+      layer.pickPlot = async function(plot) {
+        vm.isDraw = true;
+        vm.plot = plot;
+        // console.log("plot", plot);
+        let json = plot.getStyle();
+        // vm.symbol = vm.symbol || plot._elem._symbol;
+        // vm.symbol.style = vm.symbol.style || json;
+        vm.parseStyleJson(json, plot._elem._symbol._src);
+      };
+    },
+    initDrawTool() {
       const vm = this;
       let layer = this.getLayer();
       if (layer) {
@@ -106,66 +145,6 @@ export default {
           );
         }
       }
-      this.getSymbol();
-
-      layer.editable = true;
-      layer.pickPlot = function(plot) {
-        vm.isDraw = true;
-        vm.plot = plot;
-        let json = plot.getStyle();
-        // vm.symbol = vm.symbol || plot._elem._symbol;
-        // vm.symbol.style = vm.symbol.style || json;
-        vm.parseStyleJson(json, plot._elem._symbol._src);
-      };
-      this.$emit("loaded", this);
-    },
-    setPick() {
-      const vm = this;
-      let layer = this.getLayer();
-      layer.editable = true;
-      layer.pickPlot = async function(plot) {
-        vm.isDraw = true;
-        vm.plot = plot;
-        // console.log('plot',plot);
-        vm.symbol = vm.symbol || plot._elem._symbol;
-        let json = plot.getStyle();
-        vm.symbol.style = vm.symbol.style || json;
-        vm.parseStyleJson(json, plot._elem._symbol._src);
-      };
-    },
-    getLayer() {
-      let vueMap = this.vueMap || window.vueMap;
-      if (!vueMap) return;
-      let layerManager = vueMap.PlotLayerManager.findSource(
-        this.vueKey,
-        this.vueIndex
-      );
-      return layerManager && layerManager.source;
-    },
-    getLayers() {
-      let PlotLayerGroupManager = window.vueMap.PlotLayerGroupManager.findSource(
-        this.vueKey,
-        this.vueIndex
-      );
-      return PlotLayerGroupManager && PlotLayerGroupManager.source;
-    },
-    getDrawTool() {
-      let DrawToolManager = window.vueMap.DrawToolManager.findSource(
-        this.vueKey,
-        this.vueIndex
-      );
-      return DrawToolManager && DrawToolManager.source;
-    },
-    getSymbolManager() {
-      let PlotSymbolManager = window.vueMap.PlotSymbolManager.findSource(
-        this.vueKey,
-        this.vueIndex
-      );
-      return PlotSymbolManager && PlotSymbolManager.source;
-    },
-    toJSON() {
-      let layer = this.getLayer();
-      return layer && layer.toJSON();
     },
     getSymbol() {
       const vm = this;
@@ -176,11 +155,7 @@ export default {
           fontURL: vm.fontUrl,
           baseUrl: vm.baseUrl
         });
-        window.vueMap.PlotSymbolManager.addSource(
-          this.vueKey,
-          this.vueIndex,
-          manager
-        );
+        window.PlotSymbolManager = manager;
       }
       manager.getSymbols().then(function(symbols) {
         // console.log("symbols", symbols);
@@ -228,6 +203,11 @@ export default {
     },
     clickIcon(data) {
       const vm = this;
+      let layer = this.getLayer();
+      if (!layer) {
+        this.$message.warning("请勾选标绘图层后进行操作！");
+        return;
+      }
       this.isDraw = false;
       let manager = this.getSymbolManager();
       if (!manager) return;
@@ -303,6 +283,33 @@ export default {
         };
       }
       this.symbolData.unshift(this.searchResult);
+    },
+    getLayer() {
+      let vueMap = this.vueMap || window.vueMap;
+      if (!vueMap) return;
+      let layerManager = vueMap.PlotLayerManager.findSource(
+        this.vueKey,
+        this.vueIndex
+      );
+      return layerManager && layerManager.source;
+    },
+    getLayers() {
+      let PlotLayerGroupManager = window.vueMap.PlotLayerGroupManager.findSource(
+        this.vueKey,
+        this.vueIndex
+      );
+      return PlotLayerGroupManager && PlotLayerGroupManager.source;
+    },
+    getDrawTool() {
+      let DrawToolManager = window.vueMap.DrawToolManager.findSource(
+        this.vueKey,
+        this.vueIndex
+      );
+      return DrawToolManager && DrawToolManager.source;
+    },
+    getSymbolManager() {
+      let PlotSymbolManager = window.PlotSymbolManager;
+      return PlotSymbolManager;
     }
   }
 };
