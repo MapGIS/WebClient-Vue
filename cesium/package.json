@@ -23,7 +23,6 @@
     ]
   },
   "dependencies": {
-    "@mapbox/mapbox-gl-style-spec": "13.23.1",
     "@mapgis/cesium": "^1.84.0",
     "@mapgis/webclient-es6-service": "^15.6.0",
     "@mapgis/webclient-store": "^10.5.5",
@@ -66,8 +65,8 @@
     "less": "3.12.2",
     "less-loader": "7.0.2",
     "lint-staged": "^8.1.0",
-    "vue": "^2.6.6",
-    "vue-template-compiler": "^2.6.6",
+    "vue": "2.6.14",
+    "vue-template-compiler": "2.6.14",
     "vuepress-plugin-demo-block": "^0.7.2"
   },
   "keywords": [
