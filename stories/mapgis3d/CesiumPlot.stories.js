@@ -30,9 +30,7 @@ const Template = (args, { argTypes }) => ({
     return {
       vueIndex1: undefined,
       vueKey1: undefined,
-      jsonUrl: `http://${window.webclient.staticIP}:8895/标绘/test.json`,
-      // 打包时使用
-      // jsonUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/test.json`,
+      jsonUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/test.json`,
       jsonData: undefined,
       layer: undefined,
       manager: undefined,
@@ -108,7 +106,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 三维标绘 = Template.bind({});
 三维标绘.args = {
-  symbolUrl: `http://${window.webclient.staticIP}:8895/标绘/symbols.json`,
+  symbolUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/symbols.json`,
   // 打包时使用
   // symbolUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/symbols.json`,
 };
