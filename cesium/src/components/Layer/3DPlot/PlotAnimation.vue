@@ -33,7 +33,6 @@
         }
       "
       v-show="showTimeline"
-      ref="timeline"
       :duration="totalTime"
       :enableEnd="false"
       :start="start"
@@ -64,16 +63,22 @@
 </template>
 
 <script>
-import { TimeLine, SymbolManager } from "@mapgis/webclient-es6-service";
+import { TimeLine } from "@mapgis/webclient-es6-service";
 import axios from "axios";
 
 export default {
   name: "mapgis-3d-plot-animation",
   inject: ["viewer", "Cesium"],
   props: {
+    /**
+     * 标绘图层的vueKey
+     */
     vueKey: {
       type: String
     },
+    /**
+     * 标绘图层的vueIndex
+     */
     vueIndex: {
       type: [Number, String]
     },
@@ -137,6 +142,13 @@ export default {
       deep: true,
       immediate: true
     }
+    // vueIndex(val) {
+    //   let layer = this.getLayer();
+    //   if (layer) {
+    //     this.setPick();
+    //     this.initPlotAnimation();
+    //   }
+    // }
     // value(e) {
     //   let timeline = this.getPlotAnimation();
     //   timeline && timeline.seek(e * 1000);
@@ -146,32 +158,39 @@ export default {
     this.mount();
   },
   destroyed() {
-    this.clearTimeline();
+    this.unmount();
   },
   methods: {
+    mount() {
+      let layer = this.getLayer();
+      if (layer) {
+        this.setPick();
+        this.initPlotAnimation();
+      } else {
+        this.$message.warning("请先加载标绘图层!");
+      }
+    },
+    unmount() {
+      this.clearTimeline();
+      window.vueCesium.PlotAnimationManager.deleteSource(
+        this.vueKey,
+        this.vueIndex
+      );
+    },
     setPick() {
       const vm = this;
       let layer = this.getLayer();
       layer.pickPlot = function(plot) {
         vm.plotId = plot.id;
-        // console.log("plot", plot);
-        let json = plot.getStyle();
-        vm.nodeNames = Object.keys(json.nodeStyles);
-        // console.log("plotId/nodeNames", vm.plotId, "/", vm.nodeNames);
-      };
-    },
-    mount() {
-      const vm = this;
-      let layer = this.getLayer();
-      layer.pickPlot = function(plot) {
-        vm.plotId = plot.id;
-        // console.log("plot", plot);
+        // console.log("plot-animation-3d", plot);
         let json = plot.getStyle();
         vm.nodeNames = Object.keys(json.nodeStyles);
         // console.log("plotId/nodeNames", vm.plotId, "/", vm.nodeNames);
       };
       // layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
-
+    },
+    initPlotAnimation() {
+      const vm = this;
       let layers = this.getLayers();
 
       let timeline = this.getPlotAnimation();
@@ -200,32 +219,14 @@ export default {
           timeline.fromJSON(JSON.parse(JSON.stringify(res.data)));
         });
       }
-
       this.$emit("loaded", this);
     },
-    getLayer() {
-      let layerManager = window.vueCesium.PlotLayerManager.findSource(
-        this.vueKey,
-        this.vueIndex
-      );
-      return layerManager && layerManager.source;
-    },
-    getLayers() {
-      let PlotLayerGroupManager = window.vueCesium.PlotLayerGroupManager.findSource(
-        this.vueKey,
-        this.vueIndex
-      );
-      return PlotLayerGroupManager && PlotLayerGroupManager.source;
-    },
-    getPlotAnimation() {
-      let PlotAnimationManager = window.vueCesium.PlotAnimationManager.findSource(
-        this.vueKey,
-        this.vueIndex
-      );
-      return PlotAnimationManager && PlotAnimationManager.source;
-    },
     start() {
-      this.$refs.timeline.stopPlay();
+      if (this.$refs.timeline) {
+        this.$refs.timeline.stopPlay();
+      } else {
+        this.$emit("reset");
+      }
       let timeline = this.getPlotAnimation();
       timeline && timeline.restore();
     },
@@ -278,7 +279,12 @@ export default {
         let timeline = this.getPlotAnimation();
         timeline && timeline.restore();
       }
-      this.$refs.timeline.forward();
+      /** 判断时间轴是否使用插槽实现 */
+      if (this.$refs.timeline) {
+        this.$refs.timeline.forward();
+      } else {
+        this.$emit("play");
+      }
       // this.forward();
     },
     clickList(e) {
@@ -335,6 +341,27 @@ export default {
         // console.log("adddddd", data);
         timeline.addAnimationObject(data);
       }
+    },
+    getLayer() {
+      let layerManager = window.vueCesium.PlotLayerManager.findSource(
+        this.vueKey,
+        this.vueIndex
+      );
+      return layerManager && layerManager.source;
+    },
+    getLayers() {
+      let PlotLayerGroupManager = window.vueCesium.PlotLayerGroupManager.findSource(
+        this.vueKey,
+        this.vueIndex
+      );
+      return PlotLayerGroupManager && PlotLayerGroupManager.source;
+    },
+    getPlotAnimation() {
+      let PlotAnimationManager = window.vueCesium.PlotAnimationManager.findSource(
+        this.vueKey,
+        this.vueIndex
+      );
+      return PlotAnimationManager && PlotAnimationManager.source;
     }
   }
 };

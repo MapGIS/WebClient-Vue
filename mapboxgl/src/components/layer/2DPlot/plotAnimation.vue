@@ -33,7 +33,6 @@
         }
       "
       v-show="showTimeline"
-      ref="timeline"
       :duration="totalTime"
       :enableEnd="false"
       :start="start"
@@ -64,22 +63,24 @@
 </template>
 
 <script>
-import { TimeLine, SymbolManager } from "@mapgis/webclient-es6-service";
+import { TimeLine } from "@mapgis/webclient-es6-service";
 import axios from "axios";
 
 export default {
   name: "mapgis-2d-plot-animation",
   inject: ["map"],
   props: {
+    /**
+     * 标绘图层的vueKey
+     */
     vueKey: {
-      type: String,
-      default: "default"
+      type: String
     },
+    /**
+     * 标绘图层的vueIndex
+     */
     vueIndex: {
-      type: [Number, String],
-      default() {
-        return Number((Math.random() * 100000000).toFixed(0));
-      }
+      type: [Number, String]
     },
     data: {
       type: [String, Object, Array]
@@ -140,6 +141,16 @@ export default {
       deep: true,
       immediate: true
     }
+    // vueIndex: {
+    //   handler: function(val) {
+    //     let layer = this.getLayer();
+    //     if (layer) {
+    //       this.setPick();
+    //       this.initPlotAnimation();
+    //     }
+    //   },
+    //   immediate: true
+    // }
     // value(e) {
     //   let timeline = this.getPlotAnimation();
     //   timeline && timeline.seek(e * 1000);
@@ -149,22 +160,40 @@ export default {
     this.mount();
   },
   destroyed() {
-    this.clearTimeline();
+    this.unmount();
   },
   methods: {
     mount() {
+      let layer = this.getLayer();
+      if (layer) {
+        this.setPick();
+        this.initPlotAnimation();
+      } else {
+        this.$message.warning("请先加载标绘图层!");
+      }
+    },
+    unmount() {
+      this.clearTimeline();
+      window.vueMap.PlotAnimationManager.deleteSource(
+        this.vueKey,
+        this.vueIndex
+      );
+    },
+    setPick() {
       const vm = this;
       let layer = this.getLayer();
       layer.editable = true;
       layer.pickPlot = function(plot) {
-        // console.log("plot", plot);
+        // console.log("plot-animation", plot);
         vm.plotId = plot.element.featureId;
         let json = plot.getStyle();
         // console.log("plot.getStyle", json);
         vm.nodeNames = Object.keys(json.nodeStyles);
         // console.log("plotId/nodeNames", vm.plotId, "/", vm.nodeNames);
       };
-
+    },
+    initPlotAnimation() {
+      const vm = this;
       let layers = this.getLayers();
       let timeline = this.getPlotAnimation();
       if (!timeline) {
@@ -193,42 +222,12 @@ export default {
 
       this.$emit("loaded", this);
     },
-    setPick() {
-      const vm = this;
-      let layer = this.getLayer();
-      layer.editable = true;
-      layer.pickPlot = function(plot) {
-        // console.log("plot", plot);
-        vm.plotId = plot.element.featureId;
-        let json = plot.getStyle();
-        // console.log("plot.getStyle", json);
-        vm.nodeNames = Object.keys(json.nodeStyles);
-        // console.log("plotId/nodeNames", vm.plotId, "/", vm.nodeNames);
-      };
-    },
-    getLayer() {
-      let layerManager = window.vueMap.PlotLayerManager.findSource(
-        this.vueKey,
-        this.vueIndex
-      );
-      return layerManager && layerManager.source;
-    },
-    getLayers() {
-      let PlotLayerGroupManager = window.vueMap.PlotLayerGroupManager.findSource(
-        this.vueKey,
-        this.vueIndex
-      );
-      return PlotLayerGroupManager && PlotLayerGroupManager.source;
-    },
-    getPlotAnimation() {
-      let PlotAnimationManager = window.vueMap.PlotAnimationManager.findSource(
-        this.vueKey,
-        this.vueIndex
-      );
-      return PlotAnimationManager && PlotAnimationManager.source;
-    },
     start() {
-      this.$refs.timeline.stopPlay();
+      if (this.$refs.timeline) {
+        this.$refs.timeline.stopPlay();
+      } else {
+        this.$emit("reset");
+      }
       let timeline = this.getPlotAnimation();
       timeline.restore();
     },
@@ -274,6 +273,7 @@ export default {
     },
     playScript(e) {
       let timeline = this.getPlotAnimation();
+      if (!timeline) return;
       let index = this.activeIndex;
       this.activeIndex = e ? e.index : this.activeIndex;
       if (index !== this.activeIndex) {
@@ -281,7 +281,12 @@ export default {
       } else {
         timeline.restore();
       }
-      this.$refs.timeline.forward();
+      /** 判断时间轴是否使用插槽实现 */
+      if (this.$refs.timeline) {
+        this.$refs.timeline.forward();
+      } else {
+        this.$emit("play");
+      }
       // this.forward();
     },
     clickList(e) {
@@ -338,6 +343,27 @@ export default {
         // console.log("adddddd", data);
         timeline.addAnimationObject(data);
       }
+    },
+    getLayer() {
+      let layerManager = window.vueMap.PlotLayerManager.findSource(
+        this.vueKey,
+        this.vueIndex
+      );
+      return layerManager && layerManager.source;
+    },
+    getLayers() {
+      let PlotLayerGroupManager = window.vueMap.PlotLayerGroupManager.findSource(
+        this.vueKey,
+        this.vueIndex
+      );
+      return PlotLayerGroupManager && PlotLayerGroupManager.source;
+    },
+    getPlotAnimation() {
+      let PlotAnimationManager = window.vueMap.PlotAnimationManager.findSource(
+        this.vueKey,
+        this.vueIndex
+      );
+      return PlotAnimationManager && PlotAnimationManager.source;
     }
   }
 };
