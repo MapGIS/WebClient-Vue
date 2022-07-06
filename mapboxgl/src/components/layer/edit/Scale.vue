@@ -8,7 +8,7 @@
     <a slot="extra" @click="handleClose">x</a>
     <mapgis-ui-slider range :min="0" :max="24" :marks="marks" v-model="value" />
     <mapgis-ui-divider>属性过滤</mapgis-ui-divider>
-    <filter-action :layerid="layerid"/>
+    <filter-action :layerid="layerid" />
   </mapgis-ui-card>
 </template>
 
@@ -63,7 +63,7 @@ export default {
           style: {
             color: "#f50"
           },
-          label: <strong>24级</strong>
+          label: "24级"
         }
       }
     };
@@ -115,7 +115,7 @@ export default {
   z-index: 1000;
   height: calc(100vh - 200px);
   overflow-y: scroll;
-    /* 针对火狐浏览器 */
+  /* 针对火狐浏览器 */
   scrollbar-color: transparent transparent;
   scrollbar-width: thin;
 }
