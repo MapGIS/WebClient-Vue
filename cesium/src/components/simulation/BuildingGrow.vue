@@ -1,71 +1,89 @@
 <template>
   <div>
     <mapgis-ui-card
-        size="small"
-        hoverable
-        :style="{ width: `${width}px` }"
-        class="mapgis-city-grow"
+      size="small"
+      hoverable
+      :style="{ width: `${width}px` }"
+      class="mapgis-city-grow"
     >
       <mapgis-ui-slider
-          v-if="enableSteps"
-          :style="{ width: width }"
-          :tip-formatter="formatter"
-          :min="minSlider"
-          :max="maxSlider"
-          v-model="sliderValue"
-          :marks="marks"
-          :step="stepsCopy"
-          @change="onSliderChange"></mapgis-ui-slider>
+        v-if="enableSteps"
+        :style="{ width: width }"
+        :tip-formatter="formatter"
+        :min="minSlider"
+        :max="maxSlider"
+        v-model="sliderValue"
+        :marks="marks"
+        :step="stepsCopy"
+        @change="onSliderChange"
+      ></mapgis-ui-slider>
       <mapgis-ui-slider
-          v-else
-          :style="{ width: width }"
-          :tip-formatter="formatter"
-          :min="minSlider"
-          :max="maxSlider"
-          v-model="sliderValue"
-          :marks="marks"
-          :step="null"
-          @change="onSliderChange"></mapgis-ui-slider>
-      <span class="mapgis-city-grow-starttime" v-if="startTimeCopy!==''">起始时间:{{ startTimeCopy }}</span>
+        v-else
+        :style="{ width: width }"
+        :tip-formatter="formatter"
+        :min="minSlider"
+        :max="maxSlider"
+        v-model="sliderValue"
+        :marks="marks"
+        :step="null"
+        @change="onSliderChange"
+      ></mapgis-ui-slider>
+      <span class="mapgis-city-grow-starttime" v-if="startTimeCopy !== ''"
+        >起始时间:{{ startTimeCopy }}</span
+      >
       <div class="mapgis-city-grow-toolbar">
         <mapgis-ui-tooltip>
           <template slot="title">
             跳转至开头
           </template>
-          <mapgis-ui-iconfont type="mapgis-chevrons-left" @click.capture.stop="JumpToBegin"/>
+          <mapgis-ui-iconfont
+            type="mapgis-chevrons-left"
+            @click.capture.stop="JumpToBegin"
+          />
         </mapgis-ui-tooltip>
         <mapgis-ui-tooltip>
           <template slot="title">
             快退一步
           </template>
-          <mapgis-ui-iconfont type="mapgis-chevron-left"  @click.capture.stop="stepBack"/>
+          <mapgis-ui-iconfont
+            type="mapgis-chevron-left"
+            @click.capture.stop="stepBack"
+          />
         </mapgis-ui-tooltip>
         <mapgis-ui-iconfont
-            v-if="!isStartGrow"
-            type="mapgis-play-circle-fill"
-            class="mapgis-city-grow-toolbar-main"
-            @click.capture.stop="startGrow"
+          v-if="!isStartGrow"
+          type="mapgis-play-circle-fill"
+          class="mapgis-city-grow-toolbar-main"
+          @click.capture.stop="startGrow"
         />
         <mapgis-ui-iconfont
-            v-else
-            type="mapgis-zanting"
-            class="mapgis-city-grow-toolbar-main"
-            @click.capture.stop="stopGrow"
+          v-else
+          type="mapgis-zanting"
+          class="mapgis-city-grow-toolbar-main"
+          @click.capture.stop="stopGrow"
         />
         <mapgis-ui-tooltip>
           <template slot="title">
             快进一步
           </template>
-          <mapgis-ui-iconfont type="mapgis-chevron-right"  @click.capture.stop="stepForward"/>
+          <mapgis-ui-iconfont
+            type="mapgis-chevron-right"
+            @click.capture.stop="stepForward"
+          />
         </mapgis-ui-tooltip>
         <mapgis-ui-tooltip>
           <template slot="title">
             跳转至结尾
           </template>
-          <mapgis-ui-iconfont type="mapgis-chevrons-right" @click.capture.stop="JumpToEnd"/>
+          <mapgis-ui-iconfont
+            type="mapgis-chevrons-right"
+            @click.capture.stop="JumpToEnd"
+          />
         </mapgis-ui-tooltip>
       </div>
-      <span class="mapgis-city-grow-endtime" v-if="endTimeCopy!==''">结束时间:{{ endTimeCopy }}</span>
+      <span class="mapgis-city-grow-endtime" v-if="endTimeCopy !== ''"
+        >结束时间:{{ endTimeCopy }}</span
+      >
     </mapgis-ui-card>
   </div>
 </template>
@@ -109,20 +127,20 @@ export default {
       stepsCopy: 1,
       currentNode: 0,
       startNode: 0,
-      endNode:0,
+      endNode: 0,
 
       tree: undefined,
       mapgism3dNode: undefined,
       minSlider: 0,
       maxSlider: 100,
       sliderValue: 0,
-      startTimeCopy: '',
-      endTimeCopy: '',
+      startTimeCopy: "",
+      endTimeCopy: "",
       isStartGrow: false,
       infinite: true,
 
       currentFps: -1
-    }
+    };
   },
   watch: {
     steps: {
@@ -131,15 +149,14 @@ export default {
       },
       immediate: true
     },
-    vueIndex:{
-      handler(next){
+    vueIndex: {
+      handler(next) {
         this.unmount();
         this.mount();
       }
     }
   },
-  created() {
-  },
+  created() {},
   mounted() {
     this.mount();
   },
@@ -155,53 +172,53 @@ export default {
      */
     m3dIsReady() {
       let vm = this;
-      const {vueCesium, vueKey, model, innerVueIndex} = this;
+      const { vueCesium, vueKey, model, innerVueIndex } = this;
       return new Promise((resolve, reject) => {
         let layerIndex = 0;
         this.$_getM3DByInterval(
-            function (m3ds) {
-              if (m3ds && m3ds.length > 0) {
-                if (
-                    !m3ds[layerIndex] ||
-                    !m3ds[layerIndex].hasOwnProperty("options") ||
-                    !m3ds[layerIndex].options
-                ) {
-                  reject(null);
-                } else {
-                  resolve(m3ds[layerIndex]);
-                }
-              } else {
+          function(m3ds) {
+            if (m3ds && m3ds.length > 0) {
+              if (
+                !m3ds[layerIndex] ||
+                !m3ds[layerIndex].hasOwnProperty("options") ||
+                !m3ds[layerIndex].options
+              ) {
                 reject(null);
+              } else {
+                resolve(m3ds[layerIndex]);
               }
-            },
-            vueKey,
-            innerVueIndex
+            } else {
+              reject(null);
+            }
+          },
+          vueKey,
+          innerVueIndex
         );
       });
     },
     mount() {
       const vm = this;
-      const {innerVueIndex, vueKey, vueCesium} = this;
-      const {viewer, enablePopup} = this;
+      const { innerVueIndex, vueKey, vueCesium } = this;
+      const { viewer, enablePopup } = this;
 
       let promise = this.createCesiumObject();
-      promise.then((find) => {
+      promise.then(find => {
         if (find && find.source) {
-          let {source} = find;
+          let { source } = find;
           let m3d = source && source.length > 0 ? source[0] : undefined;
-          if (m3d.m3dtree === undefined){
+          if (m3d.m3dtree === undefined) {
             this.$message.warning("该m3d模型不能进行单体化建筑生长");
           }
-          m3d.m3dtreeOptions = { createType:'ModelLoaded' };
+          m3d.m3dtreeOptions = { createType: "ModelLoaded" };
           let tree = m3d ? m3d.m3dtree : undefined;
           vm.parseTree(tree);
-          vm.$emit("loaded", {component: vm});
+          vm.$emit("loaded", { component: vm });
           let collection = new Cesium.PrimitiveCollection();
           vueCesium.BimManager.addSource(vueKey, innerVueIndex, m3d, {
             m3d: m3d,
             tree: tree,
             collection: collection,
-            primitiveCollection: viewer.scene.primitives.add(collection),
+            primitiveCollection: viewer.scene.primitives.add(collection)
           });
           // 1.通过构件树隐藏m3d模型
           if (this.initIsHideNode) {
@@ -214,19 +231,19 @@ export default {
       if (viewer.isDestroyed()) return;
     },
     unmount() {
-      const {vueCesium, vueKey, innerVueIndex} = this;
-      const {viewer} = this;
+      const { vueCesium, vueKey, innerVueIndex } = this;
+      const { viewer } = this;
       let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
       if (find && find.options) {
         this.clearData();
       }
-      this.$emit("unload", {component: this});
+      this.$emit("unload", { component: this });
       vueCesium.BimManager.deleteSource(vueKey, innerVueIndex);
       if (this.interval) {
         clearInterval(this.interval);
       }
     },
-    clearData(){
+    clearData() {
       this.showAllLayer();
       this.resetAllLayer();
       this.allLayerIds = [];
@@ -245,7 +262,7 @@ export default {
       let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
       if (find && find.options) {
         let { tree } = find.options;
-        allLayerIds.forEach((layer) => {
+        allLayerIds.forEach(layer => {
           let mapgism3dNode = tree.getM3DByName(layer);
           if (mapgism3dNode) {
             mapgism3dNode.forceInvisible = false;
@@ -273,9 +290,9 @@ export default {
         parent: parent,
         isleaf: false,
         count: 0,
-        scopedSlots: {icon: "icon", title: "title"},
+        scopedSlots: { icon: "icon", title: "title" }
       };
-      node.m3dtreeChildren.forEach((child) => {
+      node.m3dtreeChildren.forEach(child => {
         let c = vm.loopTreeNode(child, key, cbnode);
         cbnode.children.push(c);
         cbnode.count += c.count;
@@ -290,10 +307,10 @@ export default {
     // 隐藏整个tree
     hideRootNode(layers, currentIndex) {
       layers = layers || this.layerIds;
-      const {vueKey, innerVueIndex, vueCesium, allLayerIds} = this;
+      const { vueKey, innerVueIndex, vueCesium, allLayerIds } = this;
       let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
       if (find && find.options) {
-        const {tree} = find.options;
+        const { tree } = find.options;
         if (!tree) return;
         for (let i = 0; i < layers.length; i++) {
           let layer = layers[i];
@@ -310,11 +327,11 @@ export default {
     showLayerNode(layers) {
       let vm = this;
       layers = layers || this.layerIds;
-      const {vueKey, innerVueIndex, vueCesium} = this;
+      const { vueKey, innerVueIndex, vueCesium } = this;
       let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
       if (find && find.options) {
-        const {tree} = find.options;
-        if (!tree || !vm.isStartGrow) return
+        const { tree } = find.options;
+        if (!tree || !vm.isStartGrow) return;
         for (let i = 0; i < layers.length; i++) {
           let layer = layers[i];
           let mapgism3dNode = tree.getM3DByName(layer.index);
@@ -326,7 +343,7 @@ export default {
     },
     // 查找整个树节点
     findRoot() {
-      const {layerTree} = this;
+      const { layerTree } = this;
       if (!layerTree || layerTree.length <= 0) return undefined;
       let root = layerTree[0];
       return root;
@@ -335,7 +352,7 @@ export default {
     findTreePath(index) {
       let result = {
         paths: [],
-        node: undefined,
+        node: undefined
       };
       let root = this.findRoot();
       let find = this.findNode(root, index);
@@ -374,7 +391,7 @@ export default {
       if (node) {
         paths.push(node);
         if (node && node.children) {
-          node.children.forEach((child) => {
+          node.children.forEach(child => {
             this.findChildren(child, paths);
           });
         }
@@ -385,13 +402,13 @@ export default {
       let vm = this;
       //先判断是否是年-月-日的日期格式
       let dateFormat = /^(\d{4})-(\d{1,2})-(\d{1,2})$/;
-      this.layerIds = this.layerIds.filter(x => dateFormat.test(x))
+      this.layerIds = this.layerIds.filter(x => dateFormat.test(x));
       //  dateFormat = /^(\d{1,4})(-|\/)(\d{1,2})\2(\d{1,2})$/
-      vm.sortDate = this.layerIds.sort(function (obj1, obj2) {
+      vm.sortDate = this.layerIds.sort(function(obj1, obj2) {
         let a = new Date(obj1) / 1000;
         let b = new Date(obj2) / 1000;
         return a > b ? 1 : -1;
-      })
+      });
       // 为播放条的最大最小值赋值
       let length = vm.sortDate.length;
       vm.stepsCopy = vm.stepsCopy * 24 * 60 * 60;
@@ -401,9 +418,9 @@ export default {
       for (let i = 0; i < length; i++) {
         let key = parseInt(moment(vm.sortDate[i]).valueOf() / 1000);
         vm.marks[key] = {
-          style: {display: 'none'},
-          label: <span>parseInt(moment(vm.sortDate[i]).valueOf() / 1000)</span>
-        }
+          style: { display: "none" },
+          label: parseInt(moment(vm.sortDate[i]).valueOf() / 1000)
+        };
       }
       vm.startTimeCopy = vm.sortDate[0];
       vm.endTimeCopy = vm.sortDate[length - 1];
@@ -419,12 +436,12 @@ export default {
       let y = time.getFullYear();
       let m = time.getMonth() + 1;
       let d = time.getDate();
-      return y + '-' + this.addT(m) + '-' + this.addT(d);
+      return y + "-" + this.addT(m) + "-" + this.addT(d);
       // 时间戳转时间 方法二：
       // return moment(timestamp).format("YYYY-MM-DD");
     },
     addT(m) {
-      return m < 10 ? '0' + m : m
+      return m < 10 ? "0" + m : m;
     },
     // 做建筑节点跳转
     onSliderChange(e) {
@@ -460,7 +477,9 @@ export default {
         if (e <= vm.currentNode) {
           // 当 当前已播放进度 大于 要跳转的e位置，隐藏i之后的所有节点
           for (let i = 0; i < vm.sortDate.length; i++) {
-            let sortDateTime = parseInt(moment(vm.sortDate[i]).valueOf() / 1000)
+            let sortDateTime = parseInt(
+              moment(vm.sortDate[i]).valueOf() / 1000
+            );
             let nodeArr = [];
             if (sortDateTime >= e) {
               let node = vm.sortDate[i];
@@ -472,7 +491,9 @@ export default {
         } else {
           // 当 当前已播放进度 小于 要跳转的e位置， 显示i之前的所有节点
           for (let i = 0; i < vm.sortDate.length; i++) {
-            let sortDateTime = parseInt(moment(vm.sortDate[i]).valueOf() / 1000)
+            let sortDateTime = parseInt(
+              moment(vm.sortDate[i]).valueOf() / 1000
+            );
             if (sortDateTime <= e) {
               let node = vm.sortDate[i];
               let allNode = vm.findTreePath(node);
@@ -493,13 +514,15 @@ export default {
       let vm = this;
       vm.isStartGrow = true;
       vm.infinite = false;
-      const {vueKey, innerVueIndex, vueCesium, sortDate} = this;
+      const { vueKey, innerVueIndex, vueCesium, sortDate } = this;
       let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
       if (find && find.options) {
-        const {tree} = find.options;
+        const { tree } = find.options;
         if (!tree) return;
         vm.startNode = parseInt(moment(vm.sortDate[0]).valueOf() / 1000);
-        vm.endNode = parseInt(moment(vm.sortDate[vm.sortDate.length - 1]).valueOf() / 1000);
+        vm.endNode = parseInt(
+          moment(vm.sortDate[vm.sortDate.length - 1]).valueOf() / 1000
+        );
         // 先分类：1.按照播放条steps进度生长 2.按照建筑时间顺序生长
         if (vm.enableSteps) {
           // 获取首尾两个节点，累加steps值
@@ -516,7 +539,7 @@ export default {
             vm.sliderValue = vm.currentNode;
             // 比较当前节点和sortDate数组中元素大小
             vm.compareSortDate(vm.currentNode);
-          }, 1000)
+          }, 1000);
         } else {
           // 循环显示模型树结构数据
           window.setInterval(() => {
@@ -531,8 +554,10 @@ export default {
             let allNode = vm.findTreePath(node);
             let nodeArr = allNode.paths;
             vm.showLayerNode(nodeArr);
-            vm.sliderValue = parseInt(moment(vm.sortDate[vm.currentFps]).valueOf() / 1000);
-          }, 1000)
+            vm.sliderValue = parseInt(
+              moment(vm.sortDate[vm.currentFps]).valueOf() / 1000
+            );
+          }, 1000);
         }
       }
     },
@@ -553,43 +578,43 @@ export default {
     },
 
     //跳转至开头
-    JumpToBegin(){
+    JumpToBegin() {
       // 隐藏整个tree
       let vm = this;
       vm.currentFps = -1;
       vm.sliderValue = vm.startNode;
       this.hideRootNode();
     },
-    JumpToEnd(){
+    JumpToEnd() {
       let vm = this;
       if (vm.enableSteps) {
         vm.currentFps = Math.ceil((vm.endNode - vm.startNode) / vm.stepsCopy);
-      }else {
+      } else {
         vm.currentFps = vm.sortDate.length;
       }
-      vm.sliderValue = vm.endNode
+      vm.sliderValue = vm.endNode;
       this.showAllLayer();
     },
-    stepForward(){
+    stepForward() {
       let vm = this;
       // 判断enableStep分支 找到下一个时间节点
-      if (vm.enableSteps){
+      if (vm.enableSteps) {
         this.currentFps = this.currentFps + 4;
       } else {
         this.currentFps = this.currentFps + 2;
       }
     },
-    stepBack(){
+    stepBack() {
       let vm = this;
       // 判断enableStep分支 找到上一个时间节点
-      if (vm.enableSteps){
+      if (vm.enableSteps) {
         this.currentFps = this.currentFps - 4;
       } else {
         this.currentFps = this.currentFps - 2;
       }
     }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -607,7 +632,7 @@ export default {
 }
 
 .mapgis-city-grow-toolbar-main:hover {
-  color: #49A8FF;
+  color: #49a8ff;
 }
 
 .mapgis-city-grow-toolbar-main {
@@ -617,7 +642,6 @@ export default {
 .mapgis-city-grow-toolbar > .anticon {
   font-size: 22px;
 }
-
 
 .mapgis-ui-card-small > .mapgis-ui-card-body {
   padding: 6px 12px;
