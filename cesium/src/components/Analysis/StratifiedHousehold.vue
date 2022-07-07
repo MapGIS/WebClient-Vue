@@ -142,6 +142,9 @@
         :properties="featureproperties"
         :getProjectorStatus="getProjectorStatus"
         @project-screen="handleProjectScreen"
+        :dataStoreIp="dataStoreIp"
+        :dataStorePort="dataStorePort"
+        :dataStoreDataset="dataStoreDataset"
       >
       </mapgis-3d-popup-iot>
     </mapgis-3d-feature-popup>
@@ -216,6 +219,19 @@ export default {
     layerHighlightColorProp: {
       type: String,
       default: "rgba(255,0,0,0.5)"
+    },
+    dataStoreIp: {
+      type: String,
+      default: "192.168.96.101"
+    },
+    dataStorePort: {
+      type: String,
+      default: "9014"
+    },
+    // 查询知识图谱的数据集位置
+    dataStoreDataset: {
+      type: String,
+      default: "Graph3/GraphDataset1"
     }
   },
   components: {

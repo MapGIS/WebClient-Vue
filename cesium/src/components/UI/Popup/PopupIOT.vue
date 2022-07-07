@@ -51,9 +51,14 @@
             type="mapgis-a-iotDevicechuanganqi"
           ></mapgis-ui-iconfont>
         </li>
+        <li title="知识图谱">
+          <mapgis-ui-iconfont
+            @click="clickIot(501)"
+            type="mapgis-share-alt"
+          ></mapgis-ui-iconfont>
+        </li>
       </ul>
     </template>
-
     <mapgis-ui-modal
       v-model="showModal"
       :footer="null"
@@ -69,6 +74,7 @@
         :Euid="Euid"
         :dataStoreIp="dataStoreIp"
         :dataStorePort="dataStorePort"
+        :dataStoreDataset="dataStoreDataset"
         @project-screen="projectScreen"
       />
     </mapgis-ui-modal>
@@ -98,6 +104,11 @@ export default {
     dataStorePort: {
       type: String,
       default: "9014"
+    },
+    // 查询知识图谱的数据集位置
+    dataStoreDataset: {
+      type: String,
+      default: "Graph3/GraphDataset1"
     },
     getProjectorStatus: {
       type: Function,

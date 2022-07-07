@@ -19,6 +19,7 @@ const Template = (args, { argTypes }) => ({
     return {
       g3d: {
         url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/场景图层-分层分户/SceneServer`,
+        // url: "http://192.168.199.71:8089/igs/rest/services/图数据/分层分户0629/SceneServer",
         vueIndex: "test_g3d_layer1",
       },
     };
@@ -47,6 +48,8 @@ export const 分层分户 = Template.bind({});
       vueIndex: "test_g3d_layer1",
     },
   ],
+  dataStoreIp: "192.168.199.50",
+  dataStoreDataset: "Graph3/GraphDataset1",
 };
 
 分层分户.parameters = {
