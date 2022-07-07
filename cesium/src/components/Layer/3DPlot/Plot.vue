@@ -23,6 +23,7 @@
       v-if="showStylePanel"
       v-model="styleData"
       :baseUrl="baseUrl"
+      :symbolType="symbolType"
       @changeComponentStyle="changeStyle"
       @changeStyle="changeStyle"
     ></mapgis-ui-plot-attribute>
@@ -83,7 +84,8 @@ export default {
       plot: undefined,
       // 记录是否完成绘制
       isDraw: false,
-      searchResult: undefined
+      searchResult: undefined,
+      symbolType: undefined,
     };
   },
   mounted() {
@@ -142,6 +144,7 @@ export default {
       layer.pickPlot = async function(plot) {
         vm.isDraw = true;
         vm.plot = plot;
+        vm.symbolType = plot._elem.type
         // console.log("plot-3d", plot);
         let json = plot.getStyle();
         // vm.symbol = vm.symbol || plot._elem._symbol;
@@ -248,6 +251,7 @@ export default {
       json["symbolUrl"] = svgUrl;
       json = this.remove2dAttributes(json);
       this.showStylePanel = true;
+      console.log("this.styleData",this.styleData)
       this.styleData = json;
     },
     remove2dAttributes(json) {

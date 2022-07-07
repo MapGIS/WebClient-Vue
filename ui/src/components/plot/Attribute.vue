@@ -202,6 +202,10 @@ export default {
     baseUrl: {
       type: String,
       default: ""
+    },
+    symbolType: {
+      type: String,
+      default: undefined
     }
   },
   model: {
@@ -235,8 +239,8 @@ export default {
   data() {
     return {
       dataCopy: undefined,
-      groupArr: this.groupConfig,
-      styleAttributes: this.attributeConfig,
+      groupArr: JSON.parse(JSON.stringify(this.groupConfig)),
+      styleAttributes: JSON.parse(JSON.stringify(this.attributeConfig)),
       active: 0,
       nodesName: undefined,
       svgT: undefined,
@@ -356,13 +360,29 @@ export default {
       }
       let name = Object.keys(vm.dataCopy[vm.nodesName])[vm.active];
       nodeObj = { ...nodeObj, ...vm.dataCopy[vm.nodesName][name] };
-
+      if (this.symbolType === 'simplearea') {
+        let newArr = JSON.parse(JSON.stringify(this.groupConfig)), newGroupArr = [];
+        for (let i = 0; i < newArr.length; i++) {
+          if (newArr[i].label !== "墙体" && newArr[i].label !== "填充样式"
+              && newArr[i].label !== "文字样式" && newArr[i].label !== "衬线") {
+            newGroupArr.push(newArr[i]);
+          }
+        }
+        this.groupArr = newGroupArr;
+        this.styleAttributes = JSON.parse(JSON.stringify(this.attributeConfig));
+        delete this.styleAttributes.lineWidth;
+      } else {
+        this.groupArr = JSON.parse(JSON.stringify(this.groupConfig));
+      }
       this.group = new Array(vm.groupArr.length).fill(0);
       for (var key in vm.styleAttributes) {
         let index = vm.styleAttributes[key].groupId;
         if (vm.dataCopy[key] || nodeObj[key]) {
           vm.group[index] = 1;
         }
+      }
+      if(this.symbolType === 'simplearea'){
+        this.group[3] = 1
       }
       // console.log("vm.group", vm.group);
     },
