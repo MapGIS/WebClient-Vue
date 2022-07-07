@@ -290,29 +290,39 @@ export default {
     searchIcon(e) {
       //删除上次存储的查询结果
       if (this.searchResult) {
-        this.symbolData.shift();
+        this.symbolData.symbols.shift();
       }
 
-      let result = this.symbols.filter(s => {
-        if (`${s.id}`.indexOf(e) > -1 || s.name.indexOf(e) > 1) return true;
-      });
-
-      if (result.length > 0) {
-        this.searchResult = {
-          children: [
-            {
-              type: "查询结果",
-              icon: result,
-              collapse: false
-            }
-          ]
-        };
-      } else {
-        this.searchResult = {
-          title: "没有查询到相应的图标！"
-        };
+      let result = [];
+      for (let i = 0; i < this.symbols.length; i++) {
+        if(this.symbols[i].name.indexOf(e) > -1){
+          result.push(this.symbols[i]);
+        }
       }
-      this.symbolData.unshift(this.searchResult);
+      if(result.length > 0){
+        this.searchResult = {
+          "path": "搜索结果/",
+          "name": "搜索结果",
+          "id": "5bde21fe-f932-11e1-9052-ac74b1ee4018",
+          "type": "folder",
+          "items": [ {
+            "path": "符号库/",
+            "name": "符号库",
+            "id": "51240178-f12e-11ec-9bce-ac74b1ee4018",
+            "type": "folder",
+            "items": []
+          }]
+        };
+        for (let i = 0; i < result.length; i++) {
+          this.searchResult.items[0].items.push({
+            "id": result[i].id,
+            "name": result[i].name,
+            "type": result[i].type,
+            "path": result[i].src
+          });
+        }
+        this.symbolData.symbols.unshift(this.searchResult);
+      }
     },
     getLayer() {
       let vueCesium = this.vueCesium || window.vueCesium;
