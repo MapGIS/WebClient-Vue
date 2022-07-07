@@ -322,6 +322,8 @@ export default {
           });
         }
         this.symbolData.symbols.unshift(this.searchResult);
+      }else {
+        this.$message.warning("没有搜素到图标！");
       }
     },
     getLayer() {
