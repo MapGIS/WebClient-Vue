@@ -21,7 +21,7 @@
               :class="{ 'icon-wrapper-active': icon.id === currentIconID }"
               @click="onIconClick(icon, icons)"
             >
-              <img :src="baseUrl + icon.src" />
+              <img :src="baseUrl + icon.src" :title="icon.name"/>
             </div>
           </mapgis-ui-title-collapse>
         </template>
