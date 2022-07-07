@@ -161,7 +161,12 @@
       :popupOptions="popupOptions"
       v-model="featurevisible"
     >
-      <mapgis-3d-popup-iot :properties="featureproperties">
+      <mapgis-3d-popup-iot
+        :properties="featureproperties"
+        :dataStoreIp="dataStoreIp"
+        :dataStorePort="dataStorePort"
+        :dataStoreDataset="dataStoreDataset"
+      >
       </mapgis-3d-popup-iot>
     </mapgis-3d-feature-popup>
   </div>
@@ -186,6 +191,19 @@ export default {
       default: () => {
         return { popupType: "card" };
       }
+    },
+    dataStoreIp: {
+      type: String,
+      default: "192.168.96.101"
+    },
+    dataStorePort: {
+      type: String,
+      default: "9014"
+    },
+    // 查询知识图谱的数据集位置
+    dataStoreDataset: {
+      type: String,
+      default: "Graph3/GraphDataset1"
     }
   },
   mixins: [PopupMixin],
