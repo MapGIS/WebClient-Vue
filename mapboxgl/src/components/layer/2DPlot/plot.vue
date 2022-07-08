@@ -125,6 +125,10 @@ export default {
         // vm.symbol = vm.symbol || plot._elem._symbol;
         // vm.symbol.style = vm.symbol.style || json;
         vm.parseStyleJson(json, plot._elem._symbol._src);
+        let drawTool = vm.getDrawTool();
+        if (drawTool) {
+          drawTool.stopDraw();
+        }
       };
     },
     initDrawTool() {
@@ -139,6 +143,11 @@ export default {
               vm.plot = plot;
               let json = plot.getStyle();
               vm.parseStyleJson(json, plot._elem._symbol._src);
+              let drawTool = vm.getDrawTool();
+              if (drawTool) {
+                drawTool.stopDraw();
+                drawTool.drawPlot(vm.symbol);
+              }
             }
           });
           window.vueMap.DrawToolManager.addSource(
