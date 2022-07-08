@@ -66,7 +66,7 @@
             :showLabel="false"
             v-model="intervalCopy"
             :selectOptions="intervalOptions"
-            :placeholder="intervalPlaceholder"
+            :placeholder="intervalCopy"
             :wrapperCol="24"
             @mouseenter.native="() => (showInterval = true)"
             @mouseleave.native="closeIntervalPanel"
@@ -146,10 +146,10 @@ export default {
       type: String,
       default: "月"
     },
-    intervalPlaceholder: {
-      type: String,
-      default: "月"
-    },
+    // intervalPlaceholder: {
+    //   type: String,
+    //   default: "月"
+    // },
     /** 时间间隔选项 */
     intervalOptions: {
       type: Array,
@@ -457,6 +457,7 @@ export default {
       const vm = this;
       this.lasttime = undefined;
       cancelAnimationFrame(vm.raf);
+      this.forwardBtn = false;
     },
     valueChange() {
       this.percent = (this.valueCopy - this.min) / (this.max - this.min);
@@ -519,6 +520,7 @@ export default {
       this.pauseBtn = false;
       this.forwardBtn = true;
       this.endBtn = false;
+      console.log("forwardddddd");
       this.$emit("forward");
       this.startPlay();
     },
