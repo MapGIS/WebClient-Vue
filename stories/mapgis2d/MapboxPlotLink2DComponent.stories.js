@@ -128,7 +128,7 @@ const Template = (args, { argTypes }) => ({
     <div class="cesium-item top-right">
       <mapgis-web-scene @load="webGlobeLoaded" :vueIndex="vueIndex">
         <mapgis-3d-raster-layer :url="url1"> </mapgis-3d-raster-layer>
-        <mapgis-3d-link :timestamp="100" :enable="link" v-model="rect" ></mapgis-3d-link>
+        <mapgis-3d-link :timestamp="100" :enableWheel="true" :enable="link" v-model="rect" ></mapgis-3d-link>
       </mapgis-web-scene>
     </div>
     <div :class="{'control-2d-3d': true, 'link-active': link}" v-on:click="changeMode"></div>
