@@ -7,7 +7,7 @@
       @click="clickList"
       @edit="editList"
       @addScript="addList"
-      @removeScript="removeList"
+      @remove="removeList"
       @import="importList"
       @export="exportList"
       class="mapgis-3d-plot-animation-panel"
@@ -353,6 +353,10 @@ export default {
     },
     removeList(scriptList) {
       this.scriptListCopy = scriptList;
+      if (scriptList.length == 0) {
+        this.activeIndex = undefined;
+        return;
+      }
       this.activeIndex =
         this.activeIndex > scriptList.length - 1
           ? scriptList.length - 1

@@ -189,14 +189,14 @@ export default {
         } else {
           vm.scriptListCopy = [...vm.scriptListCopy, json];
         }
+        vm.$emit("import", vm.scriptListCopy);
       };
-      this.$emit("import", vm.scriptListCopy);
     },
     /**
      * 导出功能
      */
-    exportClick() {
-      this.exportJSON(this.scriptListCopy, "script-list.json");
+    async exportClick() {
+      await this.exportJSON(this.scriptListCopy, "script-list.json");
       this.$emit("export", this.scriptListCopy);
     },
     exportJSON(data, filename) {
