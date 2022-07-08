@@ -4,7 +4,7 @@ import {SymbolManager,PlotLayer3D,PlotLayer3DGroup,PlotLayer2D,PlotLayer2DGroup,
 import { FabricLayer } from "@mapgis/webclient-es6-mapboxgl";
 
 export default {
-  title: "二维/场景子组件/二三维联动/标绘(组件)",
+  title: "二维/场景子组件/二三维联动/标绘",
   component: Mapgis3dLink,
   argTypes: {
     timestamp: 100,
