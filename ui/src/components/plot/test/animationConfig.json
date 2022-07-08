@@ -29,11 +29,13 @@
       "default": "Linear"
     },
     "delay": {
+      "name": "延迟",
       "type": "time",
       "range": [0, null],
       "default": 0
     },
     "endDelay": {
+      "name": "末端延迟",
       "type": "time",
       "range": [0, null],
       "default": 0
