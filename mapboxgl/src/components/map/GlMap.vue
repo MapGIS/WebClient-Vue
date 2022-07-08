@@ -122,6 +122,7 @@ export default {
       const { actions, mapbox } = this;
       this.map = map;
       const canvas = new FabricLayer(map, PlotLayer2DGroup);
+      canvas._containerId = map._container.id;
       window.vueMap.MapManager.addSource(this.vueKey, this.vueIndex, map, {
         canvas: canvas
       });
