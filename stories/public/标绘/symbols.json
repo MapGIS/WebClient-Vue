@@ -1,17 +1,17 @@
 {
-  "name": "淮海战役",
+  "name": "标绘/icon",
   "rootPath": "",
   "symbols": [
     {
       "path": "常用符号库/",
       "name": "常用符号库",
-      "id": "5bde21fe-f90e-11ec-9052-ac74b1ee4018",
+      "id": "a5eed0e8-f914-11ec-bfbb-f875a4e5c216",
       "type": "folder",
       "items": [
         {
           "path": "基础符号/",
           "name": "基础符号",
-          "id": "5be40178-f90e-11ec-9bce-ac74b1ee4018",
+          "id": "a6742064-f914-11ec-88b7-f875a4e5c216",
           "type": "folder",
           "items": [
             {
@@ -34,6 +34,12 @@
             },
             {
               "id": 4,
+              "name": "",
+              "type": "simpleline",
+              "path": "标绘/icon/常用符号库/基础符号/工具线.svg"
+            },
+            {
+              "id": 101,
               "name": "",
               "type": "simpleline",
               "path": "标绘/icon/常用符号库/基础符号/工具线.svg"
@@ -73,7 +79,7 @@
         {
           "path": "常规点/",
           "name": "常规点",
-          "id": "5be40179-f90e-11ec-bacc-ac74b1ee4018",
+          "id": "a686b158-f914-11ec-8734-f875a4e5c216",
           "type": "folder",
           "items": [
             {
@@ -225,7 +231,7 @@
         {
           "path": "常规线/",
           "name": "常规线",
-          "id": "5be6b21c-f90e-11ec-9078-ac74b1ee4018",
+          "id": "a6a3c254-f914-11ec-a522-f875a4e5c216",
           "type": "folder",
           "items": [
             {
@@ -293,7 +299,7 @@
         {
           "path": "常规面/",
           "name": "常规面",
-          "id": "5be6b21d-f90e-11ec-bed9-ac74b1ee4018",
+          "id": "a6afc814-f914-11ec-962e-f875a4e5c216",
           "type": "folder",
           "items": [
             {
@@ -313,7 +319,7 @@
         {
           "path": "算法符号/",
           "name": "算法符号",
-          "id": "5be6b21e-f90e-11ec-ba04-ac74b1ee4018",
+          "id": "a6b25e58-f914-11ec-9560-f875a4e5c216",
           "type": "folder",
           "items": [
             {
