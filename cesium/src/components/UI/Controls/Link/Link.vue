@@ -187,7 +187,7 @@ export default {
 
         screenSpaceEventType.forEach(item => {
           s.options.ScreenSpaceEventHandler.setInputAction(function(movement) {
-            if (item.type == "LEFT_DOWN" || item.type == "RIGHT_DOWN") {
+            if (item.type == "LEFT_DOWN" || item.type == "RIGHT_DOWN" || item.type == "WHEEL") {
               vm.active = true;
             } else if (item.type == "LEFT_UP" || item.type == "RIGHT_UP") {
               vm.active = false;
