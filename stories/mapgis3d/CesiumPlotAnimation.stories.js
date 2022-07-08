@@ -17,6 +17,15 @@ const Template = (args, { argTypes }) => ({
   template: `<mapgis-web-scene style="height:95vh">
         <mapgis-3d-plot-layer @loaded="handleLoaded" :dataSource="jsonUrl" :symbolUrl="symbolUrl" v-if="manager"></mapgis-3d-plot-layer>
         <mapgis-3d-plot-animation :data="dataSource" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1"/>
+        <mapgis-ui-space :size="8"  style="top:10px;right:10px;position:absolute;background:#fff"  v-if="vueIndex1 && vueKey1">
+          <mapgis-ui-iconfont type="mapgis-daoru" @click="importClick"/>
+          <input
+              type="file"
+              ref="importFile"
+              v-show="false"
+              @change="selectFile"
+          />
+        </mapgis-ui-space>
   </mapgis-web-scene>`,
   data() {
     return {
@@ -43,12 +52,31 @@ const Template = (args, { argTypes }) => ({
     }
   },
   methods: {
+    importClick() {
+      this.$refs.importFile.click();
+    },
+    selectFile(e) {
+      const vm = this;
+      let reader = new FileReader();
+      reader.readAsText(e.target.files[0], "UTF-8");
+      reader.onload = function (res) {
+        vm.jsonData = JSON.parse(res.target.result);
+        vm.layer.fromJSON(vm.jsonData);
+      };
+    },
     handleLoaded(e) {
       const vm = this;
       axios.get(vm.dataUrl).then((res) => {
         vm.dataSource = res.data;
         vm.vueIndex1 = e.vueIndex;
         vm.vueKey1 = e.vueKey;
+        let vueCesium = vm.vueCesium || window.vueCesium;
+        if (!vueCesium) return;
+        let layerManager = vueCesium.PlotLayerManager.findSource(
+          vm.vueKey1,
+          vm.vueIndex1
+        );
+        vm.layer = layerManager && layerManager.source;
       });
     },
   },
