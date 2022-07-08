@@ -14,8 +14,8 @@ const Template = (args, { argTypes }) => ({
   components: { Mapgis3dPlot, Mapgis3dPlotLayer },
   template: `<mapgis-web-scene style="height:95vh">
       <mapgis-3d-plot-layer @loaded="handleLoaded" :dataSource="jsonUrl" v-bind="$props" v-if="manager"></mapgis-3d-plot-layer>
-      <mapgis-3d-plot v-bind="$props" :vueIndex="vueIndex1" :vueKey="vueKey1" class="storybook-ui-card" @loaded="manager=true"/>
-      <mapgis-ui-space :size="8"  style="bottom:50px;left:10px;position:absolute;background:#fff"  v-if="vueIndex1 && vueKey1">
+      <mapgis-3d-plot ref="plot" v-bind="$props" :vueIndex="vueIndex1" :vueKey="vueKey1" class="storybook-ui-card" @loaded="manager=true"/>
+      <mapgis-ui-space :size="8"  style="top:10px;right:10px;position:absolute;background:#fff"  v-if="vueIndex1 && vueKey1">
         <mapgis-ui-iconfont type="mapgis-daoru" @click="importClick"/>
         <input
           type="file"
@@ -24,6 +24,7 @@ const Template = (args, { argTypes }) => ({
           @change="selectFile"
         />
         <mapgis-ui-iconfont type="mapgis-daochu" @click="exportClick"/>
+        <mapgis-ui-iconfont type="mapgis-shanchu" @click="deletePlot"/>
       </mapgis-ui-space>
   </mapgis-web-scene>`,
   data() {
@@ -63,6 +64,9 @@ const Template = (args, { argTypes }) => ({
         vm.jsonData = JSON.parse(res.target.result);
         vm.layer.fromJSON(vm.jsonData);
       };
+    },
+    deletePlot() {
+      this.$refs.plot.deletePlot();
     },
     /**
      * 导出功能

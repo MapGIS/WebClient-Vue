@@ -104,6 +104,13 @@ export default {
     }
   },
   methods: {
+    deletePlot() {
+      let layer = this.getLayer();
+      if(layer && this.plot){
+        layer.removePlot(this.plot);
+        this.showStylePanel = false;
+      }
+    },
     mount() {
       this.getSymbol();
       this.$emit("loaded", this);
@@ -260,7 +267,6 @@ export default {
       json["symbolUrl"] = svgUrl;
       json = this.remove2dAttributes(json);
       this.showStylePanel = true;
-      console.log("this.styleData",this.styleData)
       this.styleData = json;
     },
     remove2dAttributes(json) {
