@@ -57,7 +57,7 @@ export default {
                   that.layers[k].vueKey,
                   that.layers[k].vueIndex
               );
-              if (layerManager.source.loaded) {
+              if (layerManager && layerManager.source && layerManager.source.loaded) {
                 loadedLayer++;
               }
             }
