@@ -103,6 +103,13 @@ export default {
     this.unmount();
   },
   methods: {
+    deletePlot() {
+      let layer = this.getLayer();
+      if(layer && this.plot){
+        layer.removePlot(this.plot);
+        this.showStylePanel = false;
+      }
+    },
     mount() {
       this.getSymbol();
       this.$emit("loaded", this);
