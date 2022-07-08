@@ -25,11 +25,12 @@
         @dblclick="$_dbclick"
         @clickTool="$_clickTool"
         @changeAttributes="$_changeAttributes"
+        @deleteAttribute="$_deleteAttribute"
         @editTitle="$_editTitle"
         @batchOperate="$_batchOperate"
       />
     </div>
-    <mapgis-3d-popup
+    <!-- <mapgis-3d-popup
       v-if="enablePopup"
       :position="{
         longitude: popup.lng,
@@ -43,7 +44,20 @@
           <div v-html="popup.container"></div>
         </slot>
       </div>
-    </mapgis-3d-popup>
+    </mapgis-3d-popup> -->
+    <mapgis-3d-feature-popup
+      v-if="popup.lng"
+      :position="{
+        longitude: popup.lng,
+        latitude: popup.lat,
+        height: popup.alt
+      }"
+      :popupOptions="popupOptions"
+      v-model="enablePopup"
+    >
+      <mapgis-3d-popup-iot :properties="popup.properties">
+      </mapgis-3d-popup-iot>
+    </mapgis-3d-feature-popup>
   </div>
 </template>
 
@@ -165,7 +179,13 @@ export default {
       firstClickFlag: undefined,
       currentGroupId: undefined,
       isUpdateByEditValues: true,
-      groupName: undefined
+      groupName: undefined,
+      popupOptions: {
+        type: Object,
+        default: () => {
+          return { popupType: "card" };
+        }
+      }
     };
   },
   watch: {
@@ -313,6 +333,18 @@ export default {
         Object.keys(attributes).forEach(function(key) {
           graphic.attributes[key] = attributes[key];
         });
+        this.enablePopup = false;
+        this.$nextTick(function() {
+          this.$_setPopUp(graphic, true);
+        });
+      }
+    },
+    $_deleteAttribute(attributeKey, graphicId) {
+      if (graphicId) {
+        let graphic = this.$_getGraphicByID(graphicId);
+        if (graphic.attributes[attributeKey]) {
+          delete graphic.attributes[attributeKey];
+        }
         this.enablePopup = false;
         this.$nextTick(function() {
           this.$_setPopUp(graphic, true);
