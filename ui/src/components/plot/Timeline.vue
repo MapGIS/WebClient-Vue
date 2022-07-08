@@ -520,7 +520,6 @@ export default {
       this.pauseBtn = false;
       this.forwardBtn = true;
       this.endBtn = false;
-      console.log("forwardddddd");
       this.$emit("forward");
       this.startPlay();
     },
