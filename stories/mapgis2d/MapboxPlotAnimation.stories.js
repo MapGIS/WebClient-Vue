@@ -14,7 +14,7 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { Mapgis2dPlotAnimation, Mapgis2dPlotLayer },
-  template: `<mapgis-web-map style="height:95vh" v-bind="{...mapOptions}" >
+  template: `<mapgis-web-map @load="handle2dLoad" style="height:95vh" v-bind="{...mapOptions}" >
         <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
         <mapgis-2d-plot-layer @loaded="handleLoad" :dataSource="jsonUrl" v-bind="$props" :symbolUrl="symbolUrl" v-if="manager"></mapgis-2d-plot-layer>
         <mapgis-2d-plot-animation :data="dataSource" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1">
@@ -63,6 +63,16 @@ const Template = (args, { argTypes }) => ({
     }
   },
   methods: {
+    handle2dLoad(e) {
+      let map = e.map;
+      let bbox = [
+        [116.2396164394222, 36.857699114405676],
+        [119.38483688908019,33.044482287500756],
+      ];
+      map.fitBounds(bbox, {
+        duration: 0,
+      });
+    },
     importClick() {
       this.$refs.importFile.click();
     },
