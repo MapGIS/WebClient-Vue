@@ -477,12 +477,16 @@
               v-if="value === 'title'"
               title="标题"
               paddingRight="4px"
+              :enableDelete="true"
+              @delete="$_delete(index)"
               v-model="attributeValueArray[index]"
             />
             <mapgis-ui-input-row-left
               v-else
               :title="value"
               paddingRight="4px"
+              :enableDelete="true"
+              @delete="$_delete(index)"
               v-model="attributeValueArray[index]"
             />
           </div>
@@ -1457,6 +1461,15 @@ export default {
       };
 
       return format[type];
+    },
+    $_delete(index) {
+      this.$emit(
+        "deleteAttribute",
+        this.attributeKeyArray[index],
+        this.editPanelValues.id
+      );
+      this.attributeKeyArray.splice(index, 1);
+      this.attributeValueArray.splice(index, 1);
     }
   }
 };

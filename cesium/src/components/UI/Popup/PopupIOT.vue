@@ -1,5 +1,6 @@
 <template>
   <div class="attribute-popup-content-wrapper">
+    <div v-if="title" class="mapgis-popup-title">{{ title }}</div>
     <mapgis-ui-carousel v-if="images && images.length > 0" autoplay>
       <div
         v-for="(image, index) in images"
@@ -128,7 +129,7 @@ export default {
       const keys = [];
       for (const key in this.properties) {
         // 不展示关联的实体编码
-        if (key !== "Euid" && key !== "images") {
+        if (key !== "Euid" && key !== "images" && key !== "title") {
           keys.push(key);
         }
       }
@@ -149,6 +150,12 @@ export default {
         return arr || [];
       }
       return [];
+    },
+    title() {
+      if (this.properties.title) {
+        return this.properties.title;
+      }
+      return null;
     }
   },
   methods: {
@@ -238,5 +245,9 @@ export default {
 .iot-enclosure-container > li:hover {
   background-color: var(--shadow-color);
   cursor: pointer;
+}
+
+.mapgis-popup-title {
+  margin-top: 5px;
 }
 </style>

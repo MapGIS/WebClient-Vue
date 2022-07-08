@@ -44,6 +44,11 @@
     <mapgis-ui-button v-if="enableButton" type="primary" @click="$_finish"
       >完成</mapgis-ui-button
     >
+    <mapgis-ui-iconfont
+      v-if="enableDelete"
+      type="mapgis-delete"
+      @click="$_delete"
+    ></mapgis-ui-iconfont>
   </mapgis-ui-row>
 </template>
 
@@ -67,7 +72,7 @@ export default {
     },
     fontSize: {
       type: String,
-      default: "14px",
+      default: "14px"
     },
     paddingLeft: {
       type: String,
@@ -91,11 +96,15 @@ export default {
     },
     width: {
       type: String,
-      default: "calc(100% - 94px)",
+      default: "calc(100% - 94px)"
     },
     uploadUrl: {
       type: String,
       default: ""
+    },
+    enableDelete: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -145,6 +154,9 @@ export default {
     $_updateImgUrl(url) {
       this.valueCopy = url;
       this.$emit("change", this.valueCopy);
+    },
+    $_delete() {
+      this.$emit("delete");
     }
   },
   mounted() {
@@ -173,7 +185,7 @@ export default {
   text-align: left;
   font-size: 12px;
   /* font-weight: bolder; */
-  color: var(--heading-color)
+  color: var(--heading-color);
 }
 
 .mapgis-ui-input-row-left-input {
