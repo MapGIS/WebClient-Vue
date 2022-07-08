@@ -116,8 +116,9 @@ export default {
       this.$emit("loaded", this);
     },
     unmount() {
-      // window.PlotSymbolManager = undefined;
-      window.vueCesium.DrawToolManager.deleteSource(this.vueKey, this.vueIndex);
+      if(window.vueCesium) {
+        window.vueCesium.DrawToolManager.deleteSource(this.vueKey, this.vueIndex);
+      }
     },
     initDrawTool() {
       const vm = this;

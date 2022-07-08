@@ -48,7 +48,15 @@ const Template = (args, { argTypes }) => ({
         this.vueIndex1
       );
       this.layer = layerManager && layerManager.source;
-      // console.log("layer", this.layer);
+      viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(117.7646, 33.0881, 210000),
+        orientation: {
+          heading: Cesium.Math.toRadians(0),
+          pitch: Cesium.Math.toRadians(-45),
+          roll: 0,
+        },
+        duration: 1
+      })
     },
     /**
      * 导入功能
