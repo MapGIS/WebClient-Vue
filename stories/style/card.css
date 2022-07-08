@@ -25,8 +25,8 @@
 
 .storybook-ui-card > .plot-panel-attribute {
   position: fixed;
-  top: 10px;
-  right: 10px;
+  top: 56px;
+  right: 20px;
 }
 
 .mapgis-2d-plot-panel,

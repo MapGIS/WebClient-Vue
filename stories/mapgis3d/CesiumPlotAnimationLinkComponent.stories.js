@@ -2,6 +2,7 @@ import Mapgis3dLink from "../../cesium/src/components/UI/Controls/Link/Link.vue"
 import "../style/link.css";
 import {SymbolManager,PlotLayer3D,PlotLayer3DGroup,PlotLayer2D,PlotLayer2DGroup,DrawTool,LinkTool} from "@mapgis/webclient-es6-service";
 import { FabricLayer } from "@mapgis/webclient-es6-mapboxgl";
+import * as axios from "axios";
 
 export default {
   title: "三维/场景子组件/二三维联动/态势推演",
@@ -25,24 +26,30 @@ const Template = (args, { argTypes }) => ({
       vueKey1: undefined,
       jsonUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/test.json`,
       symbolUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/symbols.json`,
-      data: `http://${window.webclient.ip}:${window.webclient.port}/标绘/animation.json`,
+      dataUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/animation.json`,
+      dataSource: undefined,
       vueIndex: 12345,
       containers:[{vueIndex:12345,vueKey: "default",type:"cesium"},{vueIndex:12345,vueKey: "default",type:"mapbox"}],
-      layers: [{vueIndex:23456,vueKey: "default"}]
+      layers: [{vueIndex:23456,vueKey: "default"}],
+      manager: undefined,
+      mapboxActive: false,
+      rectCount: 0
     };
   },
   watch: {
     rect: function (next) {
-      const { east, north, south, west } = next["2d"];
-      console.log(east, north, south, west);
-      let map = this.map || window.map;
-      let bbox = [
-        [west, south],
-        [east, north],
-      ];
-      map.fitBounds(bbox, {
-        duration: 0,
-      });
+      this.rectCount++;
+      if(this.rectCount > 1){
+        const { east, north, south, west } = next["2d"];
+        let map = this.map || window.map;
+        let bbox = [
+          [west, south],
+          [east, north],
+        ];
+        map.fitBounds(bbox, {
+          duration: 0,
+        });
+      }
     },
   },
   mounted() {
@@ -51,12 +58,66 @@ const Template = (args, { argTypes }) => ({
     handleLoaded(e) {
       this.vueIndex1 = e.vueIndex;
       this.vueKey1 = e.vueKey;
+      viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(117.7646, 33.0881, 210000),
+        orientation: {
+          heading: Cesium.Math.toRadians(0),
+          pitch: Cesium.Math.toRadians(-45),
+          roll: 0,
+        },
+        duration: 1
+      })
+      const vm = this;
+      axios.get(vm.dataUrl).then((res) => {
+        vm.dataSource = res.data;
+      });
+    },
+    flyToRect(bounds) {
+      viewer.camera.flyTo({
+        destination: Cesium.Rectangle.fromDegrees(bounds._sw.lng,bounds._sw.lat,bounds._ne.lng,bounds._ne.lat),
+        orientation: {
+          heading: Cesium.Math.toRadians(0),
+          pitch: Cesium.Math.toRadians(-90),
+          roll: 0,
+        },
+        duration: 0.1
+      })
     },
     changeMode() {
       this.link = !this.link;
     },
     handle2dLoad(e) {
+      let vm = this;
       window.map = this.map = e.map;
+      let bbox = [
+        [116.2396164394222, 36.857699114405676],
+        [119.38483688908019,33.044482287500756],
+      ];
+      this.map.fitBounds(bbox, {
+        duration: 0,
+      });
+      this.map.on('wheel', function (e) {
+        let bounds = vm.map.getBounds();
+        vm.flyToRect(bounds);
+      });
+      this.map.on('wheel', function (e) {
+        let bounds = vm.map.getBounds();
+        vm.flyToRect(bounds);
+      });
+      this.map.on('mousedown', function (e) {
+        vm.mapboxActive = true;
+      });
+      this.map.on('mouseup', function (e) {
+        vm.mapboxActive = false;
+      });
+      let mapboxManager = window.vueMap.MapManager.findSource("default", this.vueIndex);
+      let fabricCanvas = mapboxManager.options.canvas.getFabricCanvas();
+      fabricCanvas.on("mouse:move",function () {
+        if(vm.mapboxActive){
+          let bounds = vm.map.getBounds();
+          vm.flyToRect(bounds);
+        }
+      });
     }
   },
   template: `<div class="mapgis-link-test">
@@ -67,10 +128,11 @@ const Template = (args, { argTypes }) => ({
     </div>
     <div class="cesium-item top-right">
       <mapgis-web-scene :vueIndex="vueIndex">
-        <mapgis-3d-plot-layer :vueIndex="23456" :symbolUrl="symbolUrl" @loaded="handleLoaded" :dataSource="jsonUrl"></mapgis-3d-plot-layer>
-        <mapgis-3d-plot-animation :data="data" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueKey1 && vueIndex1"/>
+        <mapgis-3d-plot-layer :vueIndex="23456" :symbolUrl="symbolUrl" @loaded="handleLoaded" :dataSource="jsonUrl" v-if="manager"></mapgis-3d-plot-layer>
+        <mapgis-3d-plot v-show="false" :symbolUrl="symbolUrl" :vueIndex="vueIndex1" :vueKey="vueKey1" @loaded="manager=true" class="storybook-ui-card"/>
+        <mapgis-3d-plot-animation :data="dataSource" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueKey1"/>
         <mapgis-3d-raster-layer :url="url1"> </mapgis-3d-raster-layer>
-        <mapgis-3d-link :enable="link" v-model="rect" ></mapgis-3d-link>
+        <mapgis-3d-link :timestamp="100" :enableWheel="true" :enable="link" v-model="rect" ></mapgis-3d-link>
         <mapgis-3D-plot-link :layers="layers" :containers="containers"></mapgis-3D-plot-link>
       </mapgis-web-scene>
     </div>
