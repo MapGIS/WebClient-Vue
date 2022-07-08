@@ -15,7 +15,7 @@ const Template = (args, { argTypes }) => ({
   template: `<mapgis-web-map style="height:95vh" v-bind="{...mapOptions}" >
         <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
         <mapgis-2d-plot-layer @loaded="handleLoad" :dataSource="jsonUrl" v-bind="$props" v-if="manager"></mapgis-2d-plot-layer>
-        <mapgis-2d-plot  v-bind="$props" :vueIndex="vueIndex1" :vueKey="vueKey1" class="storybook-ui-card" @loaded="manager=true">
+        <mapgis-2d-plot ref="plot" v-bind="$props" :vueIndex="vueIndex1" :vueKey="vueKey1" class="storybook-ui-card" @loaded="manager=true">
           <template #symbol="slotProps">
             <mapgis-ui-plot-symbol
               :data="slotProps.data"
@@ -27,7 +27,7 @@ const Template = (args, { argTypes }) => ({
             ></mapgis-ui-plot-symbol>
           </template>
         </mapgis-2d-plot>      
-        <mapgis-ui-space :size="8"  style="bottom:50px;left:10px;position:absolute;background:#fff;z-index:1"  v-if="vueIndex1 && vueKey1">
+        <mapgis-ui-space :size="8"  style="top:10px;right:10px;position:absolute;background:#fff;z-index:1"  v-if="vueIndex1 && vueKey1">
           <mapgis-ui-iconfont type="mapgis-daoru" @click="importClick"/>
           <input
             type="file"
@@ -36,6 +36,7 @@ const Template = (args, { argTypes }) => ({
             @change="selectFile"
           />
           <mapgis-ui-iconfont type="mapgis-daochu" @click="exportClick"/>
+          <mapgis-ui-iconfont type="mapgis-shanchu" @click="deletePlot"/>
         </mapgis-ui-space>
   </mapgis-web-map>`,
   data() {
@@ -51,7 +52,7 @@ const Template = (args, { argTypes }) => ({
         zoom: 7,
         center: [116.19, 34.01],
       },
-      jsonUrl: `http://${window.webclient.staticIP}:8895/标绘/test.json`,
+      jsonUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/test.json`,
       // 打包时使用
       // jsonUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/test.json`,
       jsonData: undefined,
@@ -70,6 +71,9 @@ const Template = (args, { argTypes }) => ({
         this.vueIndex1
       );
       this.layer = layerManager && layerManager.source;
+    },
+    deletePlot() {
+      this.$refs.plot.deletePlot();
     },
     /**
      * 导入功能
@@ -127,7 +131,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 二维标绘 = Template.bind({});
 二维标绘.args = {
-  symbolUrl: `http://${window.webclient.staticIP}:8895/标绘/symbols.json`,
+  symbolUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/symbols.json`,
   // 打包时使用
   // symbolUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/symbols.json`,
 };
