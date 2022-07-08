@@ -27,6 +27,8 @@
     <slot
       name="timeline"
       :value="value"
+      :min="minValue"
+      :max="maxValue"
       :change="
         e => {
           value = e;
@@ -35,14 +37,20 @@
       v-show="showTimeline"
       :duration="totalTime"
       :enableEnd="false"
+      :speed="speed"
+      :interval="interval"
+      :intervalOptions="['时', '分', '秒']"
       :start="start"
       :backward="backward"
       :pause="pause"
       :forward="forward"
       :speedChange="setSpeed"
+      :intervalChange="setInterval"
     >
       <mapgis-ui-plot-timeline
         :value="value"
+        :min="minValue"
+        :max="maxValue"
         @change="
           e => {
             value = e;
@@ -52,11 +60,15 @@
         ref="timeline"
         :duration="totalTime"
         :enableEnd="false"
+        :speed="speed"
+        :interval="interval"
+        :intervalOptions="['时', '分', '秒']"
         @start="start"
         @backward="backward"
         @pause="pause"
         @forward="forward"
         @speedChange="setSpeed"
+        @intervalChange="setInterval"
       ></mapgis-ui-plot-timeline>
     </slot>
   </div>
@@ -113,12 +125,16 @@ export default {
   data() {
     return {
       value: 0,
+      minValue: 0,
+      maxValue: 60,
       plotId: undefined,
       scriptListCopy: undefined,
       showScriptList: true,
       activeIndex: undefined,
       nodeNames: undefined,
-      totalTime: 12
+      totalTime: 240,
+      interval: "未设置",
+      speed: 1
     };
   },
   watch: {
@@ -229,6 +245,8 @@ export default {
       }
       let timeline = this.getPlotAnimation();
       timeline && timeline.restore();
+      this.speed = 1;
+      this.interval = "未设置";
     },
     backward() {
       let timeline = this.getPlotAnimation();
@@ -254,6 +272,8 @@ export default {
       let timeline = this.getPlotAnimation();
       if (timeline) {
         timeline.restore();
+        this.speed = 1;
+        this.interval = "未设置";
         timeline.clear();
       }
     },
@@ -269,8 +289,27 @@ export default {
     setSpeed(e) {
       let timeline = this.getPlotAnimation();
       timeline && timeline.setSpeed(e);
+      this.speed = e;
+    },
+    setInterval(e) {
+      let timeline = this.getPlotAnimation();
+      if (!timeline) return;
+      this.interval = e;
+      let totalTime = timeline.getTotalTime() / 1000;
+      switch (e) {
+        case "时":
+          this.speed = totalTime / 4;
+          break;
+        case "分":
+          this.speed = totalTime / 240;
+          break;
+        case "秒":
+          this.speed = totalTime / (240 * 60);
+          break;
+      }
     },
     playScript(e) {
+      const vm = this;
       let index = this.activeIndex;
       this.activeIndex = e ? e.index : this.activeIndex;
       if (index !== this.activeIndex) {
@@ -278,13 +317,21 @@ export default {
       } else {
         let timeline = this.getPlotAnimation();
         timeline && timeline.restore();
+        timeline && timeline.setSpeed(this.speed);
       }
-      /** 判断时间轴是否使用插槽实现 */
-      if (this.$refs.timeline) {
-        this.$refs.timeline.forward();
-      } else {
-        this.$emit("play");
+      if (this.value >= this.maxValue) {
+        this.value = this.minValue;
       }
+      /** 设置延时是为了让时间轴内部的value更改生效后再执行播放操作 */
+      setTimeout(() => {
+        /** 判断时间轴是否使用插槽实现 */
+        if (vm.$refs.timeline) {
+          vm.$refs.timeline.forward();
+        } else {
+          vm.$emit("play");
+        }
+      }, 50);
+
       // this.forward();
     },
     clickList(e) {
