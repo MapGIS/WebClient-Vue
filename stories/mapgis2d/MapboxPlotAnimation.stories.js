@@ -19,6 +19,15 @@ const Template = (args, { argTypes }) => ({
         <mapgis-2d-plot-layer @loaded="handleLoad" :dataSource="jsonUrl" v-bind="$props" :symbolUrl="symbolUrl" v-if="manager"></mapgis-2d-plot-layer>
         <mapgis-2d-plot-animation :data="dataSource" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1">
         </mapgis-2d-plot-animation>
+        <mapgis-ui-space :size="8"  style="top:10px;right:10px;position:absolute;background:#fff">
+          <mapgis-ui-iconfont type="mapgis-daoru" @click="importClick"/>
+          <input
+              type="file"
+              ref="importFile"
+              v-show="false"
+              @change="selectFile"
+          />
+        </mapgis-ui-space>
   </mapgis-web-map>`,
   data() {
     return {
@@ -54,12 +63,31 @@ const Template = (args, { argTypes }) => ({
     }
   },
   methods: {
+    importClick() {
+      this.$refs.importFile.click();
+    },
+    selectFile(e) {
+      const vm = this;
+      let reader = new FileReader();
+      reader.readAsText(e.target.files[0], "UTF-8");
+      reader.onload = function (res) {
+        vm.jsonData = JSON.parse(res.target.result);
+        vm.layer.fromJSON(vm.jsonData);
+      };
+    },
     handleLoad(e) {
       const vm = this;
       axios.get(vm.dataUrl).then((res) => {
         vm.dataSource = res.data;
         vm.vueIndex1 = e.vueIndex;
         vm.vueKey1 = e.vueKey;
+        let vueMap = vm.vueMap || window.vueMap;
+        if (!vueMap) return;
+        let layerManager = vueMap.PlotLayerManager.findSource(
+          vm.vueKey1,
+          vm.vueIndex1
+        );
+        vm.layer = layerManager && layerManager.source;
       });
     },
   },
