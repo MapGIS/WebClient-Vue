@@ -185,9 +185,37 @@ export default {
       reader.onload = function(res) {
         let json = JSON.parse(res.target.result);
         if (json instanceof Array) {
-          vm.scriptListCopy = [...vm.scriptListCopy, ...json];
+          let hasData = [];
+          for (let i = 0; i < json.length; i++) {
+            hasData[i] = false;
+          }
+          for (let i = 0; i < vm.scriptListCopy.length; i++) {
+            for (let j = 0; j < json.length; j++) {
+              hasData[j] = false;
+              if(vm.scriptListCopy[i].id === json[j].id){
+                vm.scriptListCopy[i] = json[j];
+                hasData[j] = true;
+                break;
+              }
+            }
+          }
+          for (let i = 0; i < hasData.length; i++) {
+            if (!hasData[i]) {
+              vm.scriptListCopy.push(json[i]);
+            }
+          }
         } else {
-          vm.scriptListCopy = [...vm.scriptListCopy, json];
+          let hasData = false;
+          for (let i = 0; i < vm.scriptListCopy.length; i++) {
+            if(vm.scriptListCopy[i].id === json.id){
+              vm.scriptListCopy[i] = json;
+              hasData = true;
+              break;
+            }
+          }
+          if(!hasData) {
+            vm.scriptListCopy.push(json);
+          }
         }
         vm.$emit("import", vm.scriptListCopy);
       };
