@@ -38,7 +38,6 @@ const Template = (args, { argTypes }) => ({
       this.rectCount++;
       if(this.rectCount > 1){
         const { east, north, south, west } = next["2d"];
-        console.log(east, north, south, west);
         let map = this.map || window.map;
         let bbox = [
           [west, south],
