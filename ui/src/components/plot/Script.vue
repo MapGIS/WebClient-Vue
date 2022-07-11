@@ -231,6 +231,13 @@ export default {
         this.$message.warning("没有选中动画绑定的图元对象！");
         return;
       }
+      let plot = this.getPlot(vm.plotId);
+      if (type == "grow-animation" && plot._elem.type.indexOf("point") > -1) {
+        // 点类型无法添加生长动画
+        this.$message.warning("点类型的图元不能设置生长动画！");
+        return;
+      }
+
       this.getIdsOptions(this.plotId);
       let animation = {
         animationName: "动画" + (vm.scriptCopy.animations.length + 1),
@@ -247,6 +254,7 @@ export default {
       let event = "animationChange";
       let length = Object.keys(this.scriptCopy.animations[vm.activeIndex])
         .length;
+      // 判断动画的改变是否为新增动画
       if (length == 3) {
         event = "add";
       }
@@ -261,13 +269,11 @@ export default {
       this.$emit("return", true);
     },
     getIdsOptions(id) {
-      let layer = this.getLayer();
-      if (!layer) return;
-      let plot = layer.getPlotByID(id);
+      let plot = this.getPlot(id);
       let json = plot.getStyle();
       this.idsOptions = Object.keys(json.nodeStyles);
     },
-    getLayer() {
+    getPlot(id) {
       let layerManager;
       if (this.is3dLayer) {
         layerManager = window.vueCesium.PlotLayerManager.findSource(
@@ -280,7 +286,9 @@ export default {
           this.vueIndex
         );
       }
-      return layerManager && layerManager.source;
+      let layer = layerManager && layerManager.source;
+      if (!layer) return;
+      return layer.getPlotByID(id);
     },
     initDrawer() {
       this.is3dLayer
