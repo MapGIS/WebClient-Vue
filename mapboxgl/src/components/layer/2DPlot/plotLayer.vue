@@ -2,13 +2,14 @@
   <span />
 </template>
 <script>
-import {
+import axios from "axios";
+import plot from "@mapgis/webclient-plot";
+const {
   PlotLayer2DGroup,
   PlotLayer2D,
-  SymbolManager
-} from "@mapgis/webclient-es6-service";
-import { FabricLayer } from "@mapgis/webclient-es6-mapboxgl";
-import axios from "axios";
+  SymbolManager,
+  FabricLayer
+} = plot;
 
 export default {
   name: "mapgis-2d-plot-layer",
@@ -183,12 +184,6 @@ export default {
      * @return {*}
      */
     fromJSON(json) {
-      // console.log("fromJSON", json);
-      // const vm = this;
-      // let manager = new SymbolManager(this.symbolUrl);
-      // manager.getSymbols().then(function() {
-      //   vm.layer && vm.layer.fromJSON(json);
-      // });
       let layer = this.getLayer();
       layer && layer.fromJSON(json);
     },

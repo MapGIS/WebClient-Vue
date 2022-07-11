@@ -18,8 +18,11 @@ import { initManager, initVueMap } from "./manager";
 
 import { addListener, removeListener } from "resize-detector";
 import debounce from "lodash/debounce";
-import {PlotLayer2DGroup} from "@mapgis/webclient-es6-service";
-import { FabricLayer } from "@mapgis/webclient-es6-mapboxgl";
+import plot from "@mapgis/webclient-plot";
+const {
+  PlotLayer2DGroup,
+  FabricLayer
+} = plot;
 
 export default {
   name: "mapgis-web-map",

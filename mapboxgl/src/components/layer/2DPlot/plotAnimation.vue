@@ -79,8 +79,9 @@
 </template>
 
 <script>
-import { TimeLine } from "@mapgis/webclient-es6-service";
 import axios from "axios";
+import plot from "@mapgis/webclient-plot";
+const { TimeLine } = plot;
 
 export default {
   name: "mapgis-2d-plot-animation",

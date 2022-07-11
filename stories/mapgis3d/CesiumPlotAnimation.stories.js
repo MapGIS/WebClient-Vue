@@ -1,6 +1,7 @@
 import Mapgis3dPlotAnimation from "../../cesium/src/components/Layer/3DPlot/PlotAnimation.vue";
 import Mapgis3dPlotLayer from "../../cesium/src/components/Layer/3DPlot/PlotLayer.vue";
-import { SymbolManager } from "@mapgis/webclient-es6-service";
+import plot from "@mapgis/webclient-plot";
+const { SymbolManager } = plot;
 import Markdown from "../../cesium/docs/api/layer/3DPlot/PlotAnimation.md";
 import "../style/card.css";
 import * as axios from "axios";
