@@ -16,6 +16,10 @@
       :script="scriptListCopy[activeIndex]"
       :plotId="plotId"
       :attrsItemOptions="attrsItemOptions"
+      :attrsItemColorOptions="attrsItemColorOptions"
+      :vueKey="vueKey"
+      :vueIndex="vueIndex"
+      :is3dLayer="false"
       v-if="!showScriptList"
       @return="e => (showScriptList = e)"
       @play="playScript"
@@ -116,6 +120,17 @@ export default {
         ];
       }
     },
+    attrsItemColorOptions: {
+      type: Array,
+      default: () => {
+        return [
+          "compareLineColor",
+          "strokeStyle",
+          // "fillGradColor",
+          "fillStyle"
+        ];
+      }
+    },
     showTimeline: {
       type: Boolean,
       default: true
@@ -201,10 +216,10 @@ export default {
       layer.editable = true;
       layer.pickPlot = function(plot) {
         // console.log("plot-animation", plot);
-        vm.plotId = plot.element.featureId;
         let json = plot.getStyle();
         // console.log("plot.getStyle", json);
         vm.nodeNames = Object.keys(json.nodeStyles);
+        vm.plotId = plot.element.featureId;
         // console.log("plotId/nodeNames", vm.plotId, "/", vm.nodeNames);
       };
     },

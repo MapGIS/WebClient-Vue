@@ -254,7 +254,7 @@
       "animationType": "blink-animation"
     },
     {
-      "animationName": "动画2",
+      "animationName": "属性动画_hasIds",
       "featureIds": "30978630-d601-4285-81b6-7d92db50f3fd",
       "duration": 1000,
       "easing": "Linear",

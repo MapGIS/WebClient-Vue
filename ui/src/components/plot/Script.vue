@@ -84,9 +84,24 @@
     <mapgis-ui-plot-animation
       :animation="scriptCopy.animations[activeIndex]"
       :attrsItemOptions="attrsItemOptions"
+      :attrsItemColorOptions="attrsItemColorOptions"
+      :idsOptions="idsOptions"
       @change="animationChange"
+      @drawPath="initDrawer"
       v-if="activeIndex !== undefined"
     ></mapgis-ui-plot-animation>
+    <mapgis-draw
+      v-if="!is3dLayer"
+      :enableControl="false"
+      ref="draw"
+      @drawCreate="getCoods"
+    />
+    <mapgis-3d-draw
+      v-if="is3dLayer"
+      :enableControl="false"
+      ref="draw"
+      @drawCreate="getCoods"
+    />
   </div>
 </template>
 
@@ -116,6 +131,35 @@ export default {
           "lineWidth"
         ];
       }
+    },
+    attrsItemColorOptions: {
+      type: Array,
+      default: () => {
+        return [
+          "compareLineColor",
+          "wallColor",
+          // "wallGradColor",
+          "strokeStyle",
+          // "fillGradColor",
+          "fillStyle"
+        ];
+      }
+    },
+    /**
+     * 标绘图层的vueKey
+     */
+    vueKey: {
+      type: String
+    },
+    /**
+     * 标绘图层的vueIndex
+     */
+    vueIndex: {
+      type: [Number, String]
+    },
+    is3dLayer: {
+      type: Boolean,
+      default: true
     }
   },
   watch: {
@@ -125,6 +169,11 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    activeIndex(index) {
+      if (index) {
+        this.getIdsOptions(this.scriptCopy.animations[index].featureIds);
+      }
     }
     // scriptCopy: {
     //   handler: function(obj) {
@@ -152,7 +201,9 @@ export default {
         "blink-animation": "闪烁动画",
         "grow-animation": "生长动画",
         "path-animation": "路径动画"
-      }
+      },
+      // 图元的部件名称
+      idsOptions: undefined
     };
   },
   methods: {
@@ -180,6 +231,7 @@ export default {
         this.$message.warning("没有选中动画绑定的图元对象！");
         return;
       }
+      this.getIdsOptions(this.plotId);
       let animation = {
         animationName: "动画" + (vm.scriptCopy.animations.length + 1),
         animationType: type,
@@ -207,6 +259,44 @@ export default {
     },
     showScriptList() {
       this.$emit("return", true);
+    },
+    getIdsOptions(id) {
+      let layer = this.getLayer();
+      if (!layer) return;
+      let plot = layer.getPlotByID(id);
+      let json = plot.getStyle();
+      this.idsOptions = Object.keys(json.nodeStyles);
+    },
+    getLayer() {
+      let layerManager;
+      if (this.is3dLayer) {
+        layerManager = window.vueCesium.PlotLayerManager.findSource(
+          this.vueKey,
+          this.vueIndex
+        );
+      } else {
+        layerManager = window.vueMap.PlotLayerManager.findSource(
+          this.vueKey,
+          this.vueIndex
+        );
+      }
+      return layerManager && layerManager.source;
+    },
+    initDrawer() {
+      this.is3dLayer
+        ? this.$refs.draw.enableDrawLine()
+        : this.$refs.draw.togglePolyline();
+    },
+    getCoods(a, b) {
+      let coords;
+      if (this.is3dLayer) {
+        coords = b.map(pos => {
+          return pos.slice(0, 2);
+        });
+      } else {
+        coords = a.features[0].geometry.coordinates;
+      }
+      this.scriptCopy.animations[this.activeIndex].animationCoords = coords;
     }
   }
 };

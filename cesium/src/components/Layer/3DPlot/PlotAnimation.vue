@@ -16,6 +16,10 @@
       :script="scriptListCopy[activeIndex]"
       :plotId="plotId"
       :attrsItemOptions="attrsItemOptions"
+      :attrsItemColorOptions="attrsItemColorOptions"
+      :vueKey="vueKey"
+      :vueIndex="vueIndex"
+      :is3dLayer="true"
       v-if="!showScriptList"
       @return="e => (showScriptList = e)"
       @play="playScript"
@@ -117,6 +121,18 @@ export default {
         ];
       }
     },
+    attrsItemColorOptions: {
+      type: Array,
+      default: () => {
+        return [
+          "wallColor",
+          // "wallGradColor",
+          "strokeStyle",
+          // "fillGradColor",
+          "fillStyle"
+        ];
+      }
+    },
     showTimeline: {
       type: Boolean,
       default: true
@@ -197,10 +213,10 @@ export default {
       const vm = this;
       let layer = this.getLayer();
       layer.pickPlot = function(plot) {
-        vm.plotId = plot.id;
         // console.log("plot-animation-3d", plot);
         let json = plot.getStyle();
         vm.nodeNames = Object.keys(json.nodeStyles);
+        vm.plotId = plot.id;
         // console.log("plotId/nodeNames", vm.plotId, "/", vm.nodeNames);
       };
       // layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
