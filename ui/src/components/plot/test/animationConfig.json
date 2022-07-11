@@ -86,7 +86,7 @@
           "name": "属性",
           "type": "object",
           "collapse": false,
-          "default": {},
+          "default": { "attrName": "", "value": [] },
           "children": {
             "attrName": {
               "name": "属性名称",
@@ -102,6 +102,10 @@
                 "dimModHeight",
                 "lineWidth"
               ]
+            },
+            "ids": {
+              "name": "部件名称",
+              "type": "string"
             },
             "value": {
               "name": "属性值",
@@ -180,7 +184,10 @@
         "animationCoords": {
           "name": "位置数组",
           "type": "array-coordinates",
-          "default": [],
+          "default": [
+            [114.25, 36.74],
+            [114.27, 36.98]
+          ],
           "example": [
             [114.25, 36.74],
             [114.27, 36.98]
