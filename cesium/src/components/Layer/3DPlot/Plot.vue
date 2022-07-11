@@ -31,8 +31,9 @@
 </template>
 
 <script>
-import { SymbolManager, DrawTool } from "@mapgis/webclient-es6-service";
-
+// import { SymbolManager, DrawTool } from "@mapgis/webclient-es6-service";
+import plot from "@mapgis/webclient-plot";
+const { SymbolManager, DrawTool } = plot;
 export default {
   name: "mapgis-3d-plot",
   inject: ["viewer", "Cesium", "vueCesium"],
@@ -113,7 +114,6 @@ export default {
     },
     mount() {
       this.getSymbol();
-      this.$emit("loaded", this);
     },
     unmount() {
       if(window.vueCesium) {
@@ -224,6 +224,7 @@ export default {
           }
         });
         vm.symbolData = symbols._config;
+        vm.$emit("loaded", vm);
       });
     },
     /**

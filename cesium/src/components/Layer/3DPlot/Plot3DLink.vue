@@ -3,7 +3,8 @@
 </template>
 
 <script>
-import {LinkTool} from "@mapgis/webclient-es6-service";
+import plot from "@mapgis/webclient-plot";
+const {LinkTool} = plot;
 
 export default {
   name: "mapgis-3D-plot-link",

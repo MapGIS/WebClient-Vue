@@ -3,12 +3,9 @@
 </template>
 
 <script>
-import {
-  PlotLayer3DGroup,
-  PlotLayer3D,
-  SymbolManager
-} from "@mapgis/webclient-es6-service";
 import axios from "axios";
+import plot from "@mapgis/webclient-plot";
+const { SymbolManager,PlotLayer3DGroup,PlotLayer3D } = plot;
 
 export default {
   name: "mapgis-3d-plot-layer",

@@ -1,6 +1,7 @@
 import Mapgis2dPlotAnimation from "../../mapboxgl/src/components/layer/2DPlot/plotAnimation.vue";
 import Mapgis2dPlotLayer from "../../mapboxgl/src/components/layer/2DPlot/plotLayer.vue";
-import { SymbolManager } from "@mapgis/webclient-es6-service";
+import plot from "@mapgis/webclient-plot";
+const { SymbolManager } = plot;
 import Markdown from "../../mapboxgl/docs/api/Layers/2DPlot/PlotAnimation.md";
 import "../style/card.css";
 import * as axios from "axios";

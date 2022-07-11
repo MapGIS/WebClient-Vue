@@ -1,7 +1,7 @@
 import Mapgis3dLink from "../../cesium/src/components/UI/Controls/Link/Link.vue";
 import "../style/link.css";
-import {SymbolManager,PlotLayer3D,PlotLayer3DGroup,PlotLayer2D,PlotLayer2DGroup,DrawTool,LinkTool} from "@mapgis/webclient-es6-service";
-import { FabricLayer } from "@mapgis/webclient-es6-mapboxgl";
+import plot from "@mapgis/webclient-plot";
+const { SymbolManager,PlotLayer3D,PlotLayer3DGroup,PlotLayer2D,PlotLayer2DGroup,DrawTool,LinkTool,FabricLayer } = plot;
 import * as axios from "axios";
 
 export default {
@@ -59,10 +59,10 @@ const Template = (args, { argTypes }) => ({
       this.vueIndex1 = e.vueIndex;
       this.vueKey1 = e.vueKey;
       viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(117.7646, 33.0881, 210000),
+        destination: Cesium.Cartesian3.fromDegrees(117.4192, 33.9502, 440000),
         orientation: {
           heading: Cesium.Math.toRadians(0),
-          pitch: Cesium.Math.toRadians(-45),
+          pitch: Cesium.Math.toRadians(-90),
           roll: 0,
         },
         duration: 1
