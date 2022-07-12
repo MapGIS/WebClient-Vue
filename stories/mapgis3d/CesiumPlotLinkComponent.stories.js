@@ -2,8 +2,6 @@ import Mapgis3dLink from "../../cesium/src/components/UI/Controls/Link/Link.vue"
 import MapgisStateControl from "../../mapboxgl/src/components/UI/controls/state/StateControl.vue";
 import "../style/link.css";
 import "../style/state.css";
-import plot from "@mapgis/webclient-plot";
-const { SymbolManager,PlotLayer3D,PlotLayer3DGroup,PlotLayer2D,PlotLayer2DGroup,DrawTool,LinkTool,FabricLayer } = plot;
 
 export default {
   title: "三维/场景子组件/二三维联动/标绘",

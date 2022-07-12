@@ -1,7 +1,5 @@
 import Mapgis3dLink from "../../cesium/src/components/UI/Controls/Link/Link.vue";
 import "../style/link.css";
-import plot from "@mapgis/webclient-plot";
-const { SymbolManager,PlotLayer3D,PlotLayer3DGroup,PlotLayer2D,PlotLayer2DGroup,DrawTool,LinkTool,FabricLayer } = plot;
 import * as axios from "axios";
 
 export default {

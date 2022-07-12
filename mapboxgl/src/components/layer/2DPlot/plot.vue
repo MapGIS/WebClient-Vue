@@ -32,7 +32,8 @@
 
 <script>
 import plot from "@mapgis/webclient-plot";
-const { SymbolManager, DrawTool } = plot;
+const { SymbolManager = window.Zondy.Plot.SymbolManager,
+  DrawTool = window.Zondy.Plot.DrawTool } = plot;
 export default {
   name: "mapgis-2d-plot",
   inject: ["map"],

@@ -20,8 +20,8 @@ import { addListener, removeListener } from "resize-detector";
 import debounce from "lodash/debounce";
 import plot from "@mapgis/webclient-plot";
 const {
-  PlotLayer2DGroup,
-  FabricLayer
+  PlotLayer2DGroup = window.Zondy.Plot.PlotLayer2DGroup,
+  FabricLayer = window.Zondy.Plot.FabricLayer
 } = plot;
 
 export default {

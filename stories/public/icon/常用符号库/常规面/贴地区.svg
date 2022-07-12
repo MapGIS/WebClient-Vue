@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="200" version="1.1" height="200" id="svg2" xmlns="http://www.w3.org/2000/svg"
+   xmlns:zondyPlotSymbol="https://www.mapgis.com" xmlns:zondyPlotSymbolItem="https://www.mapgis.com"
+   zondyPlotSymbol:version="1.0" zondyPlotSymbol:id="svg003" zondyPlotSymbol:name="" zondyPlotSymbol:desc=""
+   zondyPlotSymbol:type="simplearea" zondyPlotSymbol:pose="1">
+   <defs id="defs9864" />
+   <path    zondyPlotSymbolItem:type="10" id="rect4154" style="fill:none;stroke:#ff0000;stroke-width:10;stroke-linecap:square"
+      d="M 0,0 H 200 V 200 H 0 Z" />
+   <g zondyPlotSymbolItem:type="21" id="g1181" UseStyle="Duplicate">
+      <circle style="fill:#e9afaf;fill-opacity:1;fill-rule:evenodd" id="path995" cx="36.90678" cy="89.194916"
+         r="12.5" />
+      <circle style="fill:#e9afaf;fill-opacity:1;fill-rule:evenodd" id="path995-1" cx="109.61865" cy="158.60172"
+         r="12.5" />
+      <circle style="fill:#e9afaf;fill-opacity:1;fill-rule:evenodd" id="path995-2" cx="152.24577" cy="101.5678"
+         r="12.5" />
+      <circle style="fill:#e9afaf;fill-opacity:1;fill-rule:evenodd" id="path995-8" cx="84.703384" cy="37.669487"
+         r="12.5" />
+   </g>
+   
+</svg>
