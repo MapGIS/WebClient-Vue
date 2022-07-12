@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="200"
+   version="1.1"
+   height="200"
+   id="svg2"
+   zondyPlotSymbol:version="1.0"
+   zondyPlotSymbol:id="svg003"
+   zondyPlotSymbol:name="文本"
+   zondyPlotSymbol:desc=""
+   zondyPlotSymbol:type="simplepoint"
+   zondyPlotSymbol:pose="1"
+   sodipodi:docname="文本.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:zondyPlotSymbol="https://www.mapgis.com"
+   xmlns:zondyPlotSymbolItem="https://www.mapgis.com">
+    <text
+     xml:space="preserve"
+     id="text100567"
+     x="42.337891"
+     y="86.648438"
+     style="fill:#ffffff;font-size:40px;line-height:1.25;font-family:SimHei;-inkscape-font-specification:SimHei;white-space:pre;shape-inside:url(#rect100569)"
+     transform="matrix(1.7876116,0,0,1.626541,-14.555942,-48.031957)"><tspan
+       x="22.337891"
+       y="86.648438"
+       id="tspan5195">徐州</tspan></text>
+</svg>

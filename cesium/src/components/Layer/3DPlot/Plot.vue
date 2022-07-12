@@ -33,7 +33,8 @@
 <script>
 // import { SymbolManager, DrawTool } from "@mapgis/webclient-es6-service";
 import plot from "@mapgis/webclient-plot";
-const { SymbolManager, DrawTool } = plot;
+const { SymbolManager = window.Zondy.Plot.SymbolManager,
+  DrawTool = window.Zondy.Plot.DrawTool } = plot;
 export default {
   name: "mapgis-3d-plot",
   inject: ["viewer", "Cesium", "vueCesium"],

@@ -5,10 +5,10 @@
 import axios from "axios";
 import plot from "@mapgis/webclient-plot";
 const {
-  PlotLayer2DGroup,
-  PlotLayer2D,
-  SymbolManager,
-  FabricLayer
+  PlotLayer2DGroup = window.Zondy.Plot.PlotLayer2DGroup,
+  PlotLayer2D = window.Zondy.Plot.PlotLayer2D,
+  SymbolManager = window.Zondy.Plot.SymbolManager,
+  FabricLayer = window.Zondy.Plot.FabricLayer
 } = plot;
 
 export default {

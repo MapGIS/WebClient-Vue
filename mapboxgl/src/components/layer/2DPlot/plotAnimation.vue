@@ -81,7 +81,7 @@
 <script>
 import axios from "axios";
 import plot from "@mapgis/webclient-plot";
-const { TimeLine } = plot;
+const { TimeLine = window.Zondy.Plot.TimeLine } = plot;
 
 export default {
   name: "mapgis-2d-plot-animation",
@@ -214,7 +214,7 @@ export default {
     setPick() {
       const vm = this;
       let layer = this.getLayer();
-      layer.editable = true;
+      // layer.editable = true;
       layer.pickPlot = function(plot) {
         // console.log("plot-animation", plot);
         let json = plot.getStyle();
