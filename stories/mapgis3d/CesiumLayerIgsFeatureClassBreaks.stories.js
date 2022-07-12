@@ -83,12 +83,12 @@ export const 点 = Template.bind({});
     field: "lg",
     defaultSymbol: new PointSymbol3D({
       type: 'point-3d',
-      symbolLayers: new IconSymbol3DLayer({
+      symbolLayers: {
         type: "icon",
         material: { color: "#ff0000" },
         outline: { color: "#000000", width: 1.0 },
         size: 20.0
-      })
+      }
     }),
     defaultLabel: "其他",
     classBreakInfos: [
@@ -447,12 +447,12 @@ export const 点视觉变量颜色 = Template.bind({});
     ],
     defaultSymbol: new PointSymbol3D({
       type: 'point-3d',
-      symbolLayers: new IconSymbol3DLayer({
+      symbolLayers: {
         type: "icon",
         material: { color: "#ffff00", },
         outline: { color: "#000000", width: 1.0, },
-        size: 200.0
-      })
+        size: 120.0
+      }
     }),
     defaultLabel: "其他",
   }),
@@ -480,12 +480,12 @@ export const 点视觉变量透明度 = Template.bind({});
     ],
     defaultSymbol: new PointSymbol3D({
       type: 'point-3d',
-      symbolLayers: new IconSymbol3DLayer({
+      symbolLayers: {
         type: "icon",
         material: { color: "#ffff00", },
         outline: { color: "#000000", width: 1.0, },
-        size: 200.0
-      })
+        size: 120.0
+      }
     }),
     defaultLabel: "其他",
   }),

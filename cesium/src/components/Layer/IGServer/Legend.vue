@@ -6,7 +6,7 @@
           {{ legend.title }}
         </div>
         <div class="mapgis-theme-legend-row-3d" :class="legend.class.rowClass" :style="legend.style.rowStyle" :key="index" v-for="(item, index) in legend.fields">
-          <div class="mapgis-theme-legend-color-3d" v-if="isSvg == false" :class="legend.class.symbolClass" :style="{background: item.color, ...legend.style.symbolStyle}"></div>
+          <div class="mapgis-theme-legend-color-3d" v-if="isSvg == false" :class="legend.class.symbolClass" :style="{background: item.color, ...legend.style.symbolStyle}" :data-index="index" @click="legendClick"></div>
           <div class="mapgis-theme-legend-svg-3d" v-if="isSvg == true">
             <img :src="item.source" />
           </div>
@@ -47,6 +47,11 @@ export default {
       type: Boolean,
       default: false
     },
+    // 交互样式，长度大于等于图例项
+    symbolList: {
+      type: Array,
+      default: () => []
+    }
   },
   watch: {
     enableLegend: {
@@ -90,6 +95,11 @@ export default {
     this.mount();
   },
   methods: {
+    legendClick(e) {
+      let index = Number(e.target.dataset.index);
+      let clickLegendData = this.symbolList[index];
+      this.$emit("legendClick", clickLegendData);
+    },
     mount() {
       // 如果传入renderInfo直接生成最终图例信息，未传入则通过专题图renderer生成
       if (this.rendererInfo && this.rendererInfo.fields) {

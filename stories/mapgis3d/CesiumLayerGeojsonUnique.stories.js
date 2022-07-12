@@ -59,12 +59,12 @@ export const 点 = Template.bind({});
     field: "lg",
     defaultSymbol: new PointSymbol3D({
       type: 'point-3d',
-      symbolLayers: new IconSymbol3DLayer({
+      symbolLayers: {
         type: "icon",
         material: { color: "#ffff00" },
-        outline: { color: "#ff0000", width: 1.0 },
-        size: 20.0,
-      })
+        outline: { color: "#ffff00", width: 1.0 },
+        size: 100.0,
+      }
     }),
     defaultLabel: "标签",
     uniqueValueInfos: [
@@ -75,7 +75,7 @@ export const 点 = Template.bind({});
           symbolLayers: new IconSymbol3DLayer({
             type: "icon",
             material: { color: "#ff0000" },
-            outline: { color: "#000000", width: 1.0 },
+            outline: { color: "#ff0000", width: 1.0 },
             size: 100.0,
           })
         }),
@@ -88,7 +88,7 @@ export const 点 = Template.bind({});
           symbolLayers: new IconSymbol3DLayer({
             type: "icon",
             material: { color: "#00ff00" },
-            outline: { color: "#000000", width: 1.0 },
+            outline: { color: "#00ff00", width: 1.0 },
             size: 100.0,
           })
         }),

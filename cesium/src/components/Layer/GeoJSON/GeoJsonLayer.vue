@@ -43,6 +43,7 @@ export default {
   },
   data() {
     return {
+      layerType: "geojson",
       layerIndex: undefined,
       layer: undefined,
       layerRange: [],
