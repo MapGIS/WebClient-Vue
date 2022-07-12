@@ -51,12 +51,14 @@ export default {
   },
   data() {
     return {
+      layerType: "feature",
       layerIndex: undefined,
       layer: undefined,
       layerRange: [],
       clickhandler: undefined,
       hoverhandler: undefined,
-      tempHighlightdata: undefined
+      tempHighlightdata: undefined,
+      tempQueryDataArr: []
     };
   },
   mounted() {
@@ -124,8 +126,8 @@ export default {
         let source = [vm.layer];
         if (source) {
           vueCesium.IgsFeatureManager.addSource(vueKey, vueIndex, source, {
-            url: baseUrl,
-            layerIndex: dataSource.layerIndex,
+            url: vm.baseUrl,
+            layerIndex: vm.layerIndex,
             clickhandler: vm.clickhandler,
             hoverhandler: vm.hoverhandler,
           });

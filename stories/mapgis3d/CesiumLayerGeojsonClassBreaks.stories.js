@@ -104,13 +104,12 @@ export const 点 = Template.bind({});
     field: "lg",
     defaultSymbol: new PointSymbol3D({
       type: 'point-3d',
-      symbolLayers: new IconSymbol3DLayer({
+      symbolLayers: {
         type: "icon",
         material: { color: "#ff0000" },
         outline: { color: "#000000", width: 1.0 },
-        resource: {primitive: "circle"},
         size: 20.0
-      })
+      }
     }),
     defaultLabel: "其他",
     classBreakInfos: [
@@ -270,6 +269,20 @@ export const 体 = Template.bind({});
   baseUrl:
     `http://${window.webclient.staticIP}:8895/geojson/buildings.json`,
   autoReset: true,
+  enableQuery: false,
+  queryInfo: {
+    field: "mpPerimete",
+    type: "range",
+    minValue: 0,
+    maxValue: 0.006,
+    symbol: {
+      type: 'polygon-3d',
+      symbolLayers: {
+        type: "extrude",
+        material: { color: "#ffffff", },
+      }
+    }
+  },
   enableClick: true,
   enableHover: false,
   highlightSymbol: {
@@ -463,12 +476,12 @@ export const 点视觉变量颜色 = Template.bind({});
     ],
     defaultSymbol: new PointSymbol3D({
       type: 'point-3d',
-      symbolLayers: new IconSymbol3DLayer({
+      symbolLayers: {
         type: "icon",
         material: { color: "#ffff00", },
         outline: { color: "#000000", width: 1.0, },
         size: 200.0
-      })
+      }
     }),
     defaultLabel: "其他",
   }),
@@ -495,12 +508,12 @@ export const 点视觉变量透明度 = Template.bind({});
     ],
     defaultSymbol: new PointSymbol3D({
       type: 'point-3d',
-      symbolLayers: new IconSymbol3DLayer({
+      symbolLayers: {
         type: "icon",
         material: { color: "#ffff00", },
         outline: { color: "#000000", width: 1.0, },
         size: 200.0
-      })
+      }
     }),
     defaultLabel: "其他",
   }),
