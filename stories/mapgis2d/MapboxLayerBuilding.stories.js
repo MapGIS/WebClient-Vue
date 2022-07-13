@@ -88,7 +88,7 @@ const Template = (args, { argTypes }) => ({
 export const 小数据GEOJSON = Template.bind({});
 小数据GEOJSON.args = {
   // geojson: "http://develop.smaryun.com/static/data/geojson/building-500.geojson",
-  geojson: `http://${window.webclient.ip}:${window.webclient.port}static/data/geojson/building-500.geojson`,
+  geojson: `http://${window.webclient.ip}:${window.webclient.port}/static/data/geojson/building-500.geojson`,
   field: "height",
   heightScale: 2,
 };

@@ -194,7 +194,7 @@ export const IGS矢量图层 = Template.bind({});
 IGS矢量图层.args = {
   layerId: "igs_layer_layerid",
   sourceId: "igs_layer_sourceid",
-  baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/layers`,
+  baseUrl:`http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/layers`,
   gdbps:[
     "gdbp://MapGISLocal/ClientTheme/ds/epsg4326/sfcls/湖北省市级区划2",
     // "gdbp://MapGISLocal/ClientTheme/ds/epsg4326/sfcls/点编辑",

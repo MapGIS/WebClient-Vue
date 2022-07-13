@@ -81,7 +81,7 @@ const Template = (args, {argTypes}) => ({
 
 export const  标签 = Template.bind({});
 标签.args = {
-  dataSource: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrfs/layer/query?f=json&gdbp=gdbp://MapGISLocalPlus/wuhan_new/sfcls/武汉市&structs={IncludeAttribute:true,IncludeGeometry:true,IncludeWebGraphic:false}&pageCount=200&page=0&cursorType=forward&rtnLabel=true`,
+  dataSource: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrfs/layer/query?f=json&gdbp=gdbp://MapGISLocalPlus/wuhan_new/sfcls/武汉市&structs={IncludeAttribute:true,IncludeGeometry:true,IncludeWebGraphic:false}&pageCount=200&page=0&cursorType=forward&rtnLabel=true`,
   type: "uniform",
   field: "Name",
   themeOptions: {

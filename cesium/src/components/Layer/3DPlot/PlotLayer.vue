@@ -174,11 +174,11 @@ export default {
           }).then(res => {
             vm.dataSourceCopy = res.data;
             vm.fromJSON(JSON.parse(JSON.stringify(vm.dataSourceCopy)));
-            vm.$emit("loaded", { vueKey: vm.vueKey, vueIndex: vm.vueIndex });
+            vm.$emit("loaded", { vueKey: vm.vueKey, vueIndex: vm.vueIndex, vm: vm });
           });
         } else {
           vm.fromJSON(JSON.parse(JSON.stringify(vm.dataSourceCopy)));
-          vm.$emit("loaded", { vueKey: vm.vueKey, vueIndex: vm.vueIndex });
+          vm.$emit("loaded", { vueKey: vm.vueKey, vueIndex: vm.vueIndex, vm: vm });
         }
       });
     },

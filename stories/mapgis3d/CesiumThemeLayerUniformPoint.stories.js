@@ -39,7 +39,7 @@ const Template = (args, {argTypes}) => ({
 export const 点数据 = Template.bind({});
 点数据.args = {
   // baseUrl: `http://${window.webclient.ip}/static/data/geojson/省级行政区.geojson`,
-  // baseUrl: `http://${window.webclient.staticIP}:8895/geojson/china-city.geojson`,
+  // baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/geojson/china-city.geojson`,
   baseUrl: `http://develop.smaryun.com/static/data/geojson/省会城市.geojson`,
 
   visible: true,

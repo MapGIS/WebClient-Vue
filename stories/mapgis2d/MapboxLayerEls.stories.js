@@ -58,9 +58,9 @@ const Template = (args, { argTypes }) => ({
           metadata: {},
           sources: {},
           layers: [],
-          sprite: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/sprite`,
+          sprite: `http://http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/vtiles/sprite`,
           glyphs:
-              `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`,
+              `http://http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`,
         },
         zoom: 13,
         center: [114.8820937708428, 30.44895306216159],

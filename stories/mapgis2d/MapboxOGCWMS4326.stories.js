@@ -118,7 +118,7 @@ IGS_4326.args = {
   layers: '北京市,绿地_1,绿地_2,绿地_3,中小学POI,幼儿园POI,纪念碑POI,博物馆POI,名胜古迹点,动物园poi,观光胜地poi,主题公园POI,书店POI,区县点,首都点',//.Net版本
   layerId: 'raster_layerId',
   sourceId: 'raster_sourceId',
-  baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/ogc/doc/北京市/WMSServer`,
+  baseUrl:`http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/ogc/doc/北京市/WMSServer`,
   crs:'EPSG:4326'
 };
 IGS_4326.parameters = {

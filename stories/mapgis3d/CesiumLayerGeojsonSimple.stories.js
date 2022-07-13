@@ -52,7 +52,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 点 = Template.bind({});
 点.args = {
-  baseUrl: `http://${window.webclient.staticIP}:8895/geojson/metroStation.json`,
+  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/geojson/metroStation.json`,
   autoReset: true,
   renderer: new SimpleRenderer({
     type: 'simple',
@@ -70,7 +70,7 @@ export const 点 = Template.bind({});
 
 export const 线 = Template.bind({});
 线.args = {
-  baseUrl: `http://${window.webclient.staticIP}:8895/geojson/metro.json`,
+  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/geojson/metro.json`,
   autoReset: true,
   renderer: new SimpleRenderer({
     type: 'simple',
@@ -87,7 +87,7 @@ export const 线 = Template.bind({});
 
 export const 区 = Template.bind({});
 区.args = {
-  baseUrl: `http://${window.webclient.staticIP}:8895/geojson/populationSizeGeoJson_2017.json`,
+  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/geojson/populationSizeGeoJson_2017.json`,
   autoReset: true,
   renderer: new SimpleRenderer({
     type: 'simple',

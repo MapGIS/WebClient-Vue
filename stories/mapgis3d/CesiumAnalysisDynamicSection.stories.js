@@ -14,7 +14,7 @@ const Template = (args, { argTypes }) => ({
       url: "http://t0.tianditu.gov.cn/img_c/wmts",
       //地形url TODO这里地址打包的时候改一下
       //terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/terrain",
-      terrainUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/terrain`,
+      terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`,
       tileMatrixSet: "c",
       tilingScheme: "EPSG:4326",
       layer: "img",
@@ -23,8 +23,8 @@ const Template = (args, { argTypes }) => ({
         key: "tk",
         value: "9c157e9585486c02edf817d2ecbc7752",
       },
-      m3dUrl1: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔_2_钻孔模型s`,
-      m3dUrl2: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔分层点_Sur_000_Ent`,
+      m3dUrl1: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/钻孔_2_钻孔模型s`,
+      m3dUrl2: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/钻孔分层点_Sur_000_Ent`,
       m3dUrl3: `http://${window.webclient.ip}:${window.webclient.port}/3DTileset/dayantaresult/tileset.json`
     };
   },

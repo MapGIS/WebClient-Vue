@@ -5,7 +5,7 @@ export default {
   title: "三维/图层/M3D/1.0 点云",
   component: Mapgis3dM3dLayer,
   argTypes: {
-    url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
+    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
     show: true,
     opacity: 1.0,
     layers: '',
@@ -37,8 +37,8 @@ const Template = (args, { argTypes }) => ({
 
 export const 点云 = Template.bind({});
 点云.args = {
-  url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/m3d_点云`,
-  // url:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/m3d_点云`,
+  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/m3d_点云`,
+  // url:`http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/m3d_点云`,
   show: true,
 
 };

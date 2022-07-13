@@ -119,7 +119,7 @@ IGS_3857.args = {
   layers: '北京市,区县点,首都点',//.Net版本
   layerId: 'raster_layerId',
   sourceId: 'raster_sourceId',
-  baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/ogc/doc/北京市/WMSServer`,
+  baseUrl:`http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/ogc/doc/北京市/WMSServer`,
   crs:'EPSG:3857'
 };
 IGS_3857.parameters = {

@@ -14,9 +14,9 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       // terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/terrain",
-      terrainUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/武汉地形`,
+      terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/武汉地形`,
       // terrainUrl: "http://192.168.81.98:6163/igs/rest/g3d/wuhan_srtm",
-      m3dUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
+      m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
       rasterUrl:"http://t4.tianditu.com/DataServer?T=img_w&L={z}&Y={y}&X={x}&tk=2ddaabf906d4b5418aed0078e1657029",
       maximumScreenSpaceError: 8,
 
