@@ -25,7 +25,7 @@ const Template = (args, { argTypes }) => ({
       },
       m3dUrl1: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔_2_钻孔模型s`,
       m3dUrl2: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔分层点_Sur_000_Ent`,
-      m3dUrl3: `http://192.168.88.204:8089/3DTileset/dayantaresult/tileset.json`
+      m3dUrl3: `http://${window.webclient.ip}:${window.webclient.port}/3DTileset/dayantaresult/tileset.json`
     };
   },
     template: `

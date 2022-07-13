@@ -1,7 +1,5 @@
 import Mapgis2dPlotAnimation from "../../mapboxgl/src/components/layer/2DPlot/plotAnimation.vue";
 import Mapgis2dPlotLayer from "../../mapboxgl/src/components/layer/2DPlot/plotLayer.vue";
-import plot from "@mapgis/webclient-plot";
-const { SymbolManager = window.Zondy.Plot.FabricLayer } = plot;
 import Markdown from "../../mapboxgl/docs/api/Layers/2DPlot/PlotAnimation.md";
 import "../style/card.css";
 import * as axios from "axios";
@@ -18,6 +16,7 @@ const Template = (args, { argTypes }) => ({
   template: `<mapgis-web-map @load="handle2dLoad" style="height:95vh" v-bind="{...mapOptions}" >
         <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
         <mapgis-2d-plot-layer @loaded="handleLoad" :dataSource="jsonUrl" v-bind="$props" :symbolUrl="symbolUrl" v-if="manager"></mapgis-2d-plot-layer>
+        <mapgis-2d-plot v-show="false" ref="plot" :symbolUrl="symbolUrl" :vueIndex="vueIndex1" :vueKey="vueKey1" class="storybook-ui-card" @loaded="manager=true"></mapgis-2d-plot>
         <mapgis-2d-plot-animation :data="dataSource" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1">
         </mapgis-2d-plot-animation>
         <mapgis-ui-space :size="8"  style="top:10px;right:10px;position:absolute;background:#fff">
@@ -57,11 +56,6 @@ const Template = (args, { argTypes }) => ({
     };
   },
   created() {
-    this.manager = window.PlotSymbolManager;
-    if (!this.manager) {
-      this.manager = new SymbolManager(this.symbolUrl);
-      window.PlotSymbolManager = this.manager;
-    }
   },
   methods: {
     handle2dLoad(e) {

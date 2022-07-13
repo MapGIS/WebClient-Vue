@@ -5,7 +5,7 @@ export default {
   title: "三维/图层/场景图层",
   component: Mapgis3dSceneLayer,
   argTypes: {
-    url: "http://192.168.199.71:8089/igs/rest/services/CIMyanshi/倾斜临时/SceneServer",
+    url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/CIMyanshi/倾斜临时/SceneServer`,
     layers: "show",
     maximumScreenSpaceError: 16,
     opacity: 1,
@@ -38,7 +38,7 @@ const Template = (args, { argTypes }) => ({
 export const 场景展示 = Template.bind({});
 场景展示.args = {
   // url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/场景-BIM/SceneServer`,
-  url: 'http://localhost:8089/igs/rest/services/分层分户/SceneServer',
+  url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/分层分户/SceneServer`,
   layers: "show:0,1",
   maximumScreenSpaceError: 4,
   opacity: 0.5,

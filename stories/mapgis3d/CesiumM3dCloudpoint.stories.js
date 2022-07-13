@@ -37,7 +37,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 点云 = Template.bind({});
 点云.args = {
-  url: "http://192.168.21.191:6163/igs/rest/g3d/m3d_点云",
+  url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/m3d_点云`,
   // url:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/m3d_点云`,
   show: true,
 

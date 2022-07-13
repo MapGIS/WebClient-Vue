@@ -1,7 +1,5 @@
 import Mapgis3dPlotAnimation from "../../cesium/src/components/Layer/3DPlot/PlotAnimation.vue";
 import Mapgis3dPlotLayer from "../../cesium/src/components/Layer/3DPlot/PlotLayer.vue";
-import plot from "@mapgis/webclient-plot";
-const { SymbolManager = window.Zondy.Plot.SymbolManager } = plot;
 import Markdown from "../../cesium/docs/api/layer/3DPlot/PlotAnimation.md";
 import "../style/card.css";
 import * as axios from "axios";
@@ -18,6 +16,7 @@ const Template = (args, { argTypes }) => ({
   template: `<mapgis-web-scene style="height:95vh">
         <mapgis-3d-plot-layer @loaded="handleLoaded" :dataSource="jsonUrl" :symbolUrl="symbolUrl" v-if="manager"></mapgis-3d-plot-layer>
         <mapgis-3d-plot-animation :data="dataSource" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1"/>
+        <mapgis-3d-plot v-show="false" ref="plot" :symbolUrl="symbolUrl" :vueIndex="vueIndex1" :vueKey="vueKey1" class="storybook-ui-card" @loaded="manager=true"/>
         <mapgis-ui-space :size="8"  style="top:10px;right:10px;position:absolute;background:#fff"  v-if="vueIndex1 && vueKey1">
           <mapgis-ui-iconfont type="mapgis-daoru" @click="importClick"/>
           <input
@@ -46,11 +45,6 @@ const Template = (args, { argTypes }) => ({
     };
   },
   created() {
-    this.manager = window.PlotSymbolManager;
-    if (!this.manager) {
-      this.manager = new SymbolManager(this.symbolUrl);
-      window.PlotSymbolManager = this.manager;
-    }
   },
   methods: {
     importClick() {

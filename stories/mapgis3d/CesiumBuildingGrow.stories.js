@@ -34,7 +34,7 @@ const Template = (args, {argTypes}) => ({
 
 export const buildingGrow = Template.bind({});
 buildingGrow.args = {
-    m3d: 'http://192.168.88.204:8089/M3D/2.0/BIM%E6%A8%A1%E5%9E%8B%E7%94%9F%E9%95%BFtime/BIM%E6%A8%A1%E5%9E%8B%E7%94%9F%E9%95%BFtime.mcj',
+    m3d: `http://${window.webclient.ip}:${window.webclient.port}/M3D/2.0/BIM%E6%A8%A1%E5%9E%8B%E7%94%9F%E9%95%BFtime/BIM%E6%A8%A1%E5%9E%8B%E7%94%9F%E9%95%BFtime.mcj`,
     initIsHideNode: false
 };
 buildingGrow.parameters = {

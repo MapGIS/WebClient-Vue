@@ -52,8 +52,8 @@ const Template = (args, { argTypes }) => ({
 
 export const 点 = Template.bind({});
 点.args = {
-  baseUrl: "http://192.168.81.98:8089/igs/rest/services/武汉市地图文档/FeatureServer/4",
-  // baseUrl: "http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/4",
+  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/4`,
+  // baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/4",
   autoReset: true,
   renderer: new UniqueValueRenderer({
     type: "unique-value",
@@ -114,8 +114,8 @@ export const 点 = Template.bind({});
 
 export const 线 = Template.bind({});
 线.args = {
-  baseUrl: "http://192.168.81.98:8089/igs/rest/services/武汉市地图文档/FeatureServer/3",
-  // baseUrl: "http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/3",
+  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/3`,
+  // baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/3",
   autoReset: true,
   renderer: new UniqueValueRenderer({
     type: "unique-value",
@@ -172,8 +172,8 @@ export const 线 = Template.bind({});
 
 export const 区 = Template.bind({});
 区.args = {
-  baseUrl: "http://192.168.81.98:8089/igs/rest/services/武汉市地图文档/FeatureServer/0",
-  // baseUrl: "http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/0",
+  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/0`,
+  // baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/0",
   autoReset: true,
   renderer: new UniqueValueRenderer({
     type: "unique-value",

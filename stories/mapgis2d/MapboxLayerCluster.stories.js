@@ -45,5 +45,5 @@ const Template = (args, { argTypes }) => ({
 export const 聚类 = Template.bind({});
 聚类.args = {
   geojson:
-      `http://${window.webclient.ip}/static/data/geojson/chinamobile_1000.geojson`,
+      `http://${window.webclient.ip}:${window.webclient.port}static/data/geojson/chinamobile_1000.geojson`,
 };

@@ -9,7 +9,7 @@ export default {
     layer: {},
     layerId: "wuhan_WFS_4326",
     sourceId: "wuhan_WFS_4326",
-    url: "http://localhost:6163/igs/rest/mrms/docs/wuhan_WFS_4326",
+    url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/docs/wuhan_WFS_4326`,
   },
 };
 
@@ -25,5 +25,5 @@ const Template = (args, { argTypes }) => ({
 export const WFS = Template.bind({});
 WFS.args = {
   layerId: "wuhan_WFS_4326",
-  url: "http://localhost:6163/igs/rest/mrms/docs/wuhan_WFS_4326"
+  url:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/docs/wuhan_WFS_4326`
 };

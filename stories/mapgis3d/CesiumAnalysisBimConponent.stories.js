@@ -31,7 +31,7 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       m3d: {
-        url: "http://192.168.88.204:8089/M3D/2.0/高级住所模型/高级住所模型.mcj",
+        url: `http://${window.webclient.ip}:${window.webclient.port}/M3D/2.0/高级住所模型/高级住所模型.mcj`,
         vueIndex: "test_bim_layer1"
       }
     };

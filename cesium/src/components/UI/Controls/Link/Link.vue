@@ -45,6 +45,10 @@ export default {
     enableWheel: {
       type: Boolean,
       default: false
+    },
+    enableRight: {
+      type: Boolean,
+      default: true
     }
   },
   model: {
@@ -185,21 +189,32 @@ export default {
           s.source.scene.canvas
         );
 
-        s.source.camera.changed.addEventListener(() => {
-          vm.updateView(s.source.camera);
-        });
+        // s.source.camera.changed.addEventListener(() => {
+        //   vm.updateView(s.source.camera);
+        // });
 
         screenSpaceEventType.forEach(item => {
           s.options.ScreenSpaceEventHandler.setInputAction(function(movement) {
             if(vm.enableWheel && item.type == "WHEEL"){
               vm.active = true;
             }
-            if (item.type == "LEFT_DOWN" || item.type == "RIGHT_DOWN") {
+            if (item.type == "LEFT_DOWN") {
               vm.active = true;
-            } else if (item.type == "LEFT_UP" || item.type == "RIGHT_UP") {
+            } else if (item.type == "LEFT_UP" || item.type == "RIGHT_UP" || item.type == "RIGHT_DOWN") {
               vm.active = false;
             } else if (item.type == "MOUSE_MOVE") {
               if (!vm.active) return;
+            }
+
+            if(!vm.enableRight && (item.type == "RIGHT_UP" || item.type == "RIGHT_DOWN")){
+              return;
+            }
+
+            if(Cesium.Math.toDegrees(s.source.camera.pitch) < -120){
+              return;
+            }
+            if(Cesium.Math.toDegrees(s.source.camera.pitch) > -70){
+              return;
             }
 
             vm.updateView(s.source.camera);
@@ -241,7 +256,7 @@ export default {
             );
           });
           s.source.camera.changed.removeEventListener(() => {
-            vm.updateView(s.source.camera);
+            // vm.updateView(s.source.camera);
           });
           // s.options.ScreenSpaceEventHandler.destroy();
         }
