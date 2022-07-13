@@ -15,6 +15,9 @@ export function initVueCesium() {
     window.vueCesium.RasterManager || new RasterManager();
   window.vueCesium.GeojsonManager =
     window.vueCesium.GeojsonManager || new GeojsonManager();
+  window.vueCesium.KmlManager = window.vueCesium.KmlManager || new KmlManager();
+  window.vueCesium.CzmlManager =
+    window.vueCesium.CzmlManager || new CzmlManager();
   window.vueCesium.PopupManager =
     window.vueCesium.PopupManager || new PopupManager();
   window.vueCesium.ExplosionManager =
@@ -294,6 +297,8 @@ export class BaseManager {
 
 export class RasterManager extends BaseManager {}
 export class GeojsonManager extends BaseManager {}
+export class KmlManager extends BaseManager {}
+export class CzmlManager extends BaseManager {}
 export class EntityManager extends BaseManager {}
 export class DragEditManager extends BaseManager {}
 export class PopupManager extends BaseManager {}
