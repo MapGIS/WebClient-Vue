@@ -35,6 +35,8 @@ export { default as Mapgis3dGraphicLayerService } from "./components/Layer/Graph
 
 // 要素图层
 export { default as Mapgis3dGeojsonLayer } from "./components/Layer/GeoJSON/GeoJsonLayer";
+export { default as Mapgis3dKmlLayer } from "./components/Layer/KML/KmlLayer";
+export { default as Mapgis3dCzmlLayer } from "./components/Layer/CZML/CzmlLayer";
 
 // 矢量瓦片
 export { default as Mapgis3dVectortileLayer } from "./components/Layer/VectorTile/VectorTileLayer.vue";
