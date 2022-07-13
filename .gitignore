@@ -16,7 +16,7 @@ dist
 package-lock.json
 yarn.lock
 stories/public/cesium
-stories/public/static
+stories/public/static/color
 
 # local env files
 .env.local
