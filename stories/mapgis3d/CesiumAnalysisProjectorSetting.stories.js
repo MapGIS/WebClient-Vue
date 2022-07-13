@@ -88,7 +88,7 @@ export const 投放配置 = Template.bind({});
       imgUrl: "",
       videoSource: {
         protocol: "m3u8",
-        videoUrl: "http://192.168.91.123:10008/record/video3/20211221/out.m3u8",
+        videoUrl: `http://${window.webclient.ip}:${window.webclient.port}/record/video3/20211221/out.m3u8`,
       },
       cameraPosition: {
         x: 114.4006886798949,

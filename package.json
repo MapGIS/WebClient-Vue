@@ -21,7 +21,6 @@
     "@mapgis/mapbox-gl": "^1.9.7",
     "@mapgis/mapbox-gl-compare": "^0.4.0",
     "@mapgis/mapbox-gl-draw-radius": "^1.0.0",
-    "@mapgis/@mapgis/webclient-plot": "^1.0.1",
     "@mapgis/webclient-es6-service": "^10.5.5-3",
     "@mapgis/webclient-es6-mapboxgl": "^15.6.1",
     "@mapgis/webclient-store": "^1.0.14",

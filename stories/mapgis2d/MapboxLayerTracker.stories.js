@@ -35,5 +35,5 @@ const Template = (args, { argTypes }) => ({
 
 export const 轨迹跟踪 = Template.bind({});
 轨迹跟踪.args = {
-  geojson: `http://${window.webclient.ip}/static/data/geojson/tracker.geojson`,
+  geojson: `http://${window.webclient.ip}:${window.webclient.port}static/data/geojson/tracker.geojson`,
 };

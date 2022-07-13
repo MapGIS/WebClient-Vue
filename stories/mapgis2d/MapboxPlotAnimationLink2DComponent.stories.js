@@ -1,7 +1,5 @@
 import Mapgis3dLink from "../../cesium/src/components/UI/Controls/Link/Link.vue";
 import "../style/link.css";
-import plot from "@mapgis/webclient-plot";
-const { SymbolManager = window.Zondy.Plot.SymbolManager } = plot;
 import * as axios from "axios";
 
 export default {
@@ -55,11 +53,6 @@ const Template = (args, { argTypes }) => ({
   mounted() {
   },
   created() {
-    this.manager = window.PlotSymbolManager;
-    if (!this.manager) {
-      this.manager = new SymbolManager(this.symbolUrl);
-      window.PlotSymbolManager = this.manager;
-    }
   },
   methods: {
     handleLoaded(e) {
@@ -134,6 +127,7 @@ const Template = (args, { argTypes }) => ({
       <mapgis-web-map crs="EPSG:3857"  @load="handle2dLoad" :vueIndex="vueIndex">
         <mapgis-2d-plot-layer :vueIndex="23456" :symbolUrl="symbolUrl" @loaded="handleLoaded" :dataSource="jsonUrl" v-if="manager"></mapgis-2d-plot-layer>
         <mapgis-2d-plot-animation :data="dataSource" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1"/>
+        <mapgis-2d-plot v-show="false" ref="plot" :symbolUrl="symbolUrl" :vueIndex="vueIndex1" :vueKey="vueKey1" class="storybook-ui-card" @loaded="manager=true"></mapgis-2d-plot>
         <mapgis-2D-plot-link :layers="layers" :containers="containers"></mapgis-2D-plot-link>
         <mapgis-rastertile-layer :url="url2" layerId="raster_tdt" />
       </mapgis-web-map>
@@ -141,7 +135,7 @@ const Template = (args, { argTypes }) => ({
     <div class="cesium-item top-right">
         <mapgis-web-scene @load="webGlobeLoaded" :vueIndex="vueIndex">
         <mapgis-3d-raster-layer :url="url1"> </mapgis-3d-raster-layer>
-        <mapgis-3d-link :timestamp="100" :enableWheel="true" :enable="link" v-model="rect" ></mapgis-3d-link>
+        <mapgis-3d-link :timestamp="100" :enableRight="false" :enableWheel="true" :enable="link" v-model="rect" ></mapgis-3d-link>
       </mapgis-web-scene>
     </div>
     <div :class="{'control-2d-3d': true, 'link-active': link}" v-on:click="changeMode"></div>

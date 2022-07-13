@@ -130,7 +130,7 @@ const Template = (args, { argTypes }) => ({
         <mapgis-3d-plot v-show="false" :symbolUrl="symbolUrl" :vueIndex="vueIndex1" :vueKey="vueKey1" @loaded="manager=true" class="storybook-ui-card"/>
         <mapgis-3d-plot-animation :data="dataSource" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueKey1"/>
         <mapgis-3d-raster-layer :url="url1"> </mapgis-3d-raster-layer>
-        <mapgis-3d-link :timestamp="100" :enableWheel="true" :enable="link" v-model="rect" ></mapgis-3d-link>
+        <mapgis-3d-link :timestamp="100" :enableRight="false" :enableWheel="true" :enable="link" v-model="rect" ></mapgis-3d-link>
         <mapgis-3D-plot-link :layers="layers" :containers="containers"></mapgis-3D-plot-link>
       </mapgis-web-scene>
     </div>

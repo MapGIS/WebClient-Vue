@@ -34,7 +34,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 点 = Template.bind({});
 点.args = {
-  baseUrl: `http://${window.webclient.ip}/static/data/geojson/省会城市.geojson`,
+  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}static/data/geojson/省会城市.geojson`,
   enablePopup: true,
   popupOptions: {
     "title": 'name',  
@@ -68,7 +68,7 @@ export const 点 = Template.bind({});
 
 export const 线 = Template.bind({});
 线.args = {
-  baseUrl: `http://${window.webclient.ip}/static/data/geojson/长江黄河.geojson`,
+  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}static/data/geojson/长江黄河.geojson`,
   enablePopup: true,
   popupOptions: {
     "title": 'name',
@@ -100,7 +100,7 @@ export const 线 = Template.bind({});
  
 export const 区 = Template.bind({});
 区.args = {
-  baseUrl: `http://${window.webclient.ip}/static/data/geojson/省级行政区.geojson`,
+  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}static/data/geojson/省级行政区.geojson`,
   enablePopup: true,
   popupOptions: {
     "title": 'name',
