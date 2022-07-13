@@ -4,7 +4,7 @@ export default {
   title: "三维/图层/M3D/2.0 图文关联",
   component: Mapgis3dM3dLayer,
   argTypes: {
-    url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
+    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
     show: true,
     opacity: 1.0,
     enablePopup: true,
@@ -31,7 +31,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 图文关联 = Template.bind({});
 图文关联.args = {
-  // url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
+  // url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
   url: `http://${window.webclient.ip}:${window.webclient.port}/M3D/2.0/20211105测试楼高_ty_result/20211105测试楼高_ty_result.mcj`,
   show: true,
   opacity: 1.0,

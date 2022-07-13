@@ -126,6 +126,8 @@ export default {
       this.map = map;
       const canvas = new FabricLayer(map, PlotLayer2DGroup);
       canvas._containerId = map._container.id;
+      this.map.vueKey = this.vueKey;
+      this.map.vueIndex = this.vueIndex;
       window.vueMap.MapManager.addSource(this.vueKey, this.vueIndex, map, {
         canvas: canvas
       });
@@ -160,6 +162,7 @@ export default {
         this.map.remove();
         this.initialized = false;
         this.map = null;
+        window.vueMap.MapManager.deleteSource(this.vueKey, this.vueIndex);
       }
     });
   },

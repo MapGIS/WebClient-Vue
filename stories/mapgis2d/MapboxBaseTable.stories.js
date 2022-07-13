@@ -42,7 +42,7 @@ const Template = (args, { argTypes }) => ({
         total:0,
         pageSize:10
       },
-      serviceUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrfs/docs/Hubei3857`
+      serviceUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrfs/docs/Hubei3857`
     }
   },
   mounted() {
@@ -151,6 +151,6 @@ export const 表格 = Template.bind({});
 表格.args = {
   layerId: "igs_layer_layerid",
   sourceId: "igs_layer_sourceid",
-  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/tile/北京市`,
+  baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/tile/北京市`,
 };
 

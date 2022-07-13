@@ -112,7 +112,13 @@ export default {
         }
         let layers = vm.getLayers();
         if (!layers) {
-          const canvas = new FabricLayer(map, PlotLayer2DGroup);
+          let canvas;
+          let MapManager = window.vueMap.MapManager.findSource(map.vueKey, map.vueIndex);
+          if(!MapManager.options.canvas){
+            canvas = new FabricLayer(map, PlotLayer2DGroup);
+          }else {
+            canvas = MapManager.options.canvas;
+          }
           layers = canvas.getFabricCanvas();
           window.vueMap.PlotLayerGroupManager.addSource(
             vm.vueKey,
@@ -137,7 +143,7 @@ export default {
           vm.fromJSON(vm.dataSourceCopy);
         }
 
-        vm.$emit("loaded", { vueKey: vm.vueKey, vueIndex: vm.vueIndex });
+        vm.$emit("loaded", { vueKey: vm.vueKey, vueIndex: vm.vueIndex, vm: vm });
       });
     },
     unmount() {

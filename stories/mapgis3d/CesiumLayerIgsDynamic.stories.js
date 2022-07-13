@@ -42,7 +42,7 @@ const Template = (args, { argTypes }) => ({
     //     return {
     //         gdbps:
     //             ["GDBP://MapGISLocalPlus/北京市/ds/行政区/sfcls/北京市", "GDBP://MapGISLocalPlus/北京市/ds/行政区/sfcls/首都点"],
-    //         baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/layers`
+    //         baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/layers`
     //     }
     // },
     // template: `
@@ -65,6 +65,6 @@ const Template = (args, { argTypes }) => ({
 
 export const Vector = Template.bind({});
 Vector.args = {
-    baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/layers`,
+    baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/layers`,
     gdbps: "GDBP://MapGISLocalPlus/北京市/ds/行政区/sfcls/北京市,GDBP://MapGISLocalPlus/北京市/ds/行政区/sfcls/首都点"
 }

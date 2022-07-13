@@ -40,9 +40,9 @@ const Template = (args, { argTypes }) => ({
         <mapgis-3d-marker
           :key="'primitive'"
           :enableCluster="true"
-          :geojson="'http://${window.webclient.staticIP}:8895/geojson/cityResource/education.json'"
+          :geojson="'http://${window.webclient.ip}:${window.webclient.port}/geojson/cityResource/education.json'"
           :height="0"
-          :iconUrl="'http://${window.webclient.staticIP}:8895/img/poi-route.png'"
+          :iconUrl="'http://${window.webclient.ip}:${window.webclient.port}/img/poi-route.png'"
           :iconWidth="32"
           :iconHeight="32"
         ></mapgis-3d-marker>
@@ -52,9 +52,9 @@ const Template = (args, { argTypes }) => ({
           :key="'hospital'"
           :usePrimitive="true"
           :circleColor="circleColors"
-          :geojson="'http://${window.webclient.staticIP}:8895/geojson/cityResource/hospitalization.json'"
+          :geojson="'http://${window.webclient.ip}:${window.webclient.port}/geojson/cityResource/hospitalization.json'"
           :height="0"
-          :iconUrl="'http://${window.webclient.staticIP}:8895/img/poi-zhuan.png'"
+          :iconUrl="'http://${window.webclient.ip}:${window.webclient.port}/img/poi-zhuan.png'"
           :iconWidth="32"
           :iconHeight="32"
           @click="click"

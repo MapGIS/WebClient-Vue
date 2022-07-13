@@ -9,7 +9,7 @@ export default {
       description:'当出现瓦片错级的情况(如使用新版本发布老版本的平台裁剪出来的瓦片）时，需要手动传入options中的tileMatrixLabels参数，其值为xml文件中TileMatrix字段下的ows:Identifier字段值组成的数组',
       table:{
         type:{
-          detail:'示例:通过`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/ogc/{serverName}/WMTSServer`可以获取xml文件信息，以下为xml信息片段。\n'+
+          detail:'示例:通过`http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/ogc/{serverName}/WMTSServer`可以获取xml文件信息，以下为xml信息片段。\n'+
           "当出现igserver与平台版本不一致导致的瓦片错级时，以以下xml信息为例需要传入`options: {tileMatrixLabels:['EPSG:4326_北京市1_028mm_GB:1','EPSG:4326_北京市1_028mm_GB:2']}`\n"+ 
           '<TileMatrix>\n'+ 
           '<ows:Identifier>EPSG:4326_北京市1_028mm_GB:0</ows:Identifier>\n'+
@@ -60,7 +60,7 @@ const Template = (args, { argTypes }) => ({
 
 export const OGCWMTS = Template.bind({});
 OGCWMTS.args = {
-  baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/ogc/beijing/WMTSServer`,
+  baseUrl:`http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/ogc/beijing/WMTSServer`,
   wmtsLayer: "beijing",
   tileMatrixSet : "EPSG:4326_北京市_028mm_GB",
   tilingScheme : "EPSG:4326",

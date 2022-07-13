@@ -66,8 +66,8 @@ const Template = (args, { argTypes }) => ({
 export const 点 = Template.bind({});
 点.args = {
   baseUrl:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/4`,
-    // `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/4",
+    `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/4`,
+    // `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/4",
   autoReset: true,
   enableClick: true,
   enableHover: false,
@@ -125,8 +125,8 @@ export const 点 = Template.bind({});
 export const 线 = Template.bind({});
 线.args = {
   baseUrl:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/3`,
-    // `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/3",
+    `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/3`,
+    // `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/3",
   autoReset: true,
   enableClick: true,
   enableHover: true,
@@ -181,8 +181,8 @@ export const 线 = Template.bind({});
 export const 区 = Template.bind({});
 区.args = {
   baseUrl:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/0`,
-    // `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/0",
+    `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/0`,
+    // `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/0",
   autoReset: true,
   enablePopup: true,
   popupOptions: {
@@ -247,8 +247,8 @@ export const 区 = Template.bind({});
 export const 体 = Template.bind({});
 体.args = {
   baseUrl:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/1`,
-    // `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/1",
+    `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/1`,
+    // `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/1",
   autoReset: true,
   enableClick: true,
   enableHover: false,
@@ -306,8 +306,8 @@ export const 体 = Template.bind({});
 export const 区计算表达式 = Template.bind({});
 区计算表达式.args = {
   baseUrl:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/0`,
-    // `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/0",
+    `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/0`,
+    // `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/0",
   autoReset: true,
   renderer: new ClassBreaksRenderer({
     type: "class-breaks",
@@ -355,8 +355,8 @@ export const 区计算表达式 = Template.bind({});
 export const 区字段归一化 = Template.bind({});
 区字段归一化.args = {
   baseUrl:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/0`,
-    // `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/0",
+    `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/0`,
+    // `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/0",
   autoReset: true,
   renderer: new ClassBreaksRenderer({
     type: "class-breaks",
@@ -392,8 +392,8 @@ export const 区字段归一化 = Template.bind({});
 export const 区总和归一化 = Template.bind({});
 区总和归一化.args = {
   baseUrl:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/0`,
-    // `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/0",
+    `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/0`,
+    // `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/0",
   autoReset: true,
   renderer: new ClassBreaksRenderer({
     type: "class-breaks",
@@ -428,8 +428,8 @@ export const 区总和归一化 = Template.bind({});
 export const 点视觉变量颜色 = Template.bind({});
 点视觉变量颜色.args = {
   baseUrl:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/4`,
-    // `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/4",
+    `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/4`,
+    // `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/4",
   autoReset: true,
   renderer: new ClassBreaksRenderer({
     type: "class-breaks",
@@ -461,8 +461,8 @@ export const 点视觉变量颜色 = Template.bind({});
 export const 点视觉变量透明度 = Template.bind({});
 点视觉变量透明度.args = {
   baseUrl:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/4`,
-    // `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/4",
+    `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/4`,
+    // `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/4",
   autoReset: true,
   renderer: new ClassBreaksRenderer({
     type: "class-breaks",
@@ -494,8 +494,8 @@ export const 点视觉变量透明度 = Template.bind({});
 export const 区视觉变量颜色 = Template.bind({});
 区视觉变量颜色.args = {
   baseUrl:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/0`,
-    // `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/0",
+    `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/0`,
+    // `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/0",
   autoReset: true,
   renderer: new ClassBreaksRenderer({
     type: "class-breaks",
@@ -538,8 +538,8 @@ export const 区视觉变量颜色 = Template.bind({});
 export const 区视觉变量透明度 = Template.bind({});
 区视觉变量透明度.args = {
   baseUrl:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/0`,
-    // `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/0",
+    `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/0`,
+    // `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/0",
   autoReset: true,
   renderer: new ClassBreaksRenderer({
     type: "class-breaks",
@@ -582,8 +582,8 @@ export const 区视觉变量透明度 = Template.bind({});
 export const 点BillBoard = Template.bind({});
 点BillBoard.args = {
   baseUrl:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/4`,
-    // `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/4",
+    `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/4`,
+    // `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/4",
   autoReset: true,
   renderer: new ClassBreaksRenderer({
     type: "class-breaks",
@@ -635,8 +635,8 @@ export const 点BillBoard = Template.bind({});
 export const 点符号svg = Template.bind({});
 点符号svg.args = {
   baseUrl:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/4`,
-    // `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/武汉市地图文档/FeatureServer/4",
+    `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/4`,
+    // `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/武汉市地图文档/FeatureServer/4",
   autoReset: true,
   enablePopup: true,
   popupOptions: {
@@ -663,7 +663,7 @@ export const 点符号svg = Template.bind({});
       symbolLayers: new IconSymbol3DLayer({
         type: "icon",
         material: { color: "#ffffff" },
-        resource: { herf: `http://${window.webclient.staticIP}:8895/img/Church.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
+        resource: { herf: `http://${window.webclient.ip}:${window.webclient.port}/img/Church.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
         size: 10.0
       })
     }),
@@ -677,7 +677,7 @@ export const 点符号svg = Template.bind({});
           symbolLayers: new IconSymbol3DLayer({
             type: "icon",
             material: { color: "#ffffff", },
-            resource: { herf: `http://${window.webclient.staticIP}:8895/img/Museum.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
+            resource: { herf: `http://${window.webclient.ip}:${window.webclient.port}/img/Museum.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
             size: 10.0
           })
         }),
@@ -691,7 +691,7 @@ export const 点符号svg = Template.bind({});
           symbolLayers: new IconSymbol3DLayer({
             type: "icon",
             material: { color: "#ffffff", },
-            resource: { herf: `http://${window.webclient.staticIP}:8895/img/Hotel.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
+            resource: { herf: `http://${window.webclient.ip}:${window.webclient.port}/img/Hotel.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
             size: 10.0
           })
         }),
@@ -705,7 +705,7 @@ export const 点符号svg = Template.bind({});
           symbolLayers: new IconSymbol3DLayer({
             type: "icon",
             material: { color: "#ffffff", },
-            resource: { herf: `http://${window.webclient.staticIP}:8895/img/Park.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
+            resource: { herf: `http://${window.webclient.ip}:${window.webclient.port}/img/Park.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
             size: 10.0
           })
         }),
@@ -719,7 +719,7 @@ export const 点符号svg = Template.bind({});
           symbolLayers: new IconSymbol3DLayer({
             type: "icon",
             material: { color: "#ffffff", },
-            resource: { herf: `http://${window.webclient.staticIP}:8895/img/Restaurant.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
+            resource: { herf: `http://${window.webclient.ip}:${window.webclient.port}/img/Restaurant.svg`, sizeInMeters: false, scale: 1.5, distanceDisplayCondition: [10, 1000000] },
             size: 10.0
           })
         }),

@@ -50,7 +50,7 @@ const TemplateMerge = (args, { argTypes }) => ({
           IGServer: {
             type: "vector",
             tiles: [
-              `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/tile/OSM全中国/{z}/{y}/{x}?type=cpbf&returnError=false`,
+              `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/tile/OSM全中国/{z}/{y}/{x}?type=cpbf&returnError=false`,
   ],
             minZoom: 0,
             maxZoom: 24,
@@ -58,15 +58,15 @@ const TemplateMerge = (args, { argTypes }) => ({
           china: {
             type: "vector",
             tiles: [
-              `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/tile/中国行政区/{z}/{y}/{x}?type=cpbf`,
+              `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/tile/中国行政区/{z}/{y}/{x}?type=cpbf`,
             ],
             minZoom: 0,
             maxZoom: 10,
           },
         },
-        sprite: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/sprite`,
+        sprite: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/vtiles/sprite`,
         glyphs:
-          `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`,
+          `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`,
         layers: [
           {
             id: "背景底色",
@@ -139,7 +139,7 @@ const TemplateMerge = (args, { argTypes }) => ({
 export const 合并 = TemplateMerge.bind({});
 合并.args = {
   mvtStyle:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/styles/街道-墨卡托.json`,
+    `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/vtiles/styles/街道-墨卡托.json`,
   mode: "merge",
 };
 
@@ -156,14 +156,14 @@ const Template = (args, { argTypes }) => ({
 export const 追加 = Template.bind({});
 追加.args = {
   mvtStyle:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/styles/街道-墨卡托.json`,
+    `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/vtiles/styles/街道-墨卡托.json`,
   mode: "add",
 };
 
 export const 覆盖 = Template.bind({});
 覆盖.args = {
   mvtStyle:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/styles/街道-墨卡托.json`,
+    `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/vtiles/styles/街道-墨卡托.json`,
   mode: "set",
 };
 
@@ -177,15 +177,15 @@ MvtJSON对象.args = {
       china: {
         type: "vector",
         tiles: [
-          `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/tile/中国行政区/{z}/{y}/{x}?type=cpbf`,
+          `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/tile/中国行政区/{z}/{y}/{x}?type=cpbf`,
         ],
         minZoom: 0,
         maxZoom: 10,
       },
     },
-    sprite: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/sprite`,
+    sprite: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/vtiles/sprite`,
     glyphs:
-      `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`,
+      `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`,
     layers: [
       {
         id: "中国行政区",

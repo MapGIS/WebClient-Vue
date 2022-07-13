@@ -28,7 +28,7 @@ const Template = (args, { argTypes }) => ({
   `,
   data(){
     return {
-      url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ModelM3D`,
+      url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ModelM3D`,
       dataSource: undefined,
       // dataSource: '',
       pagination:{

@@ -39,7 +39,7 @@ const Template = (args, {argTypes}) => ({
 export const 多边形数据 = Template.bind({});
 多边形数据.args = {
   // baseUrl: `http://${window.webclient.ip}/static/data/geojson/省级行政区.geojson`,
-  baseUrl: `http://${window.webclient.staticIP}:8895/geojson/湖北省.json`,
+  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/geojson/湖北省.json`,
   
   visible: true,
   type: "random",

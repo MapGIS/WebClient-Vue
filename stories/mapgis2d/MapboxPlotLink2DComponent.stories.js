@@ -50,8 +50,9 @@ const Template = (args, { argTypes }) => ({
   mounted() {
   },
   methods: {
-    webGlobeLoaded() {
-      viewer.camera.flyTo({
+    webGlobeLoaded(e) {
+      window.viewer = e.component.viewer;
+      e.component.viewer.camera.flyTo({
         destination: Cesium.Cartesian3.fromDegrees(117.4192, 33.9502, 440000),
         orientation: {
           heading: Cesium.Math.toRadians(0),
@@ -69,7 +70,7 @@ const Template = (args, { argTypes }) => ({
       this.link = !this.link;
     },
     flyToRect(bounds) {
-      viewer.camera.flyTo({
+      window.viewer.camera.flyTo({
         destination: Cesium.Rectangle.fromDegrees(bounds._sw.lng,bounds._sw.lat,bounds._ne.lng,bounds._ne.lat),
         orientation: {
           heading: Cesium.Math.toRadians(0),

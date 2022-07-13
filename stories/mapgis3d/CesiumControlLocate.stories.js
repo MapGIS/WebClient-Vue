@@ -46,7 +46,7 @@ locate.args = {
         key: "tk",
         value: "9c157e9585486c02edf817d2ecbc7752",
     },
-    baseUrl:"http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/docs/北京市",
+    baseUrl:"http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/docs/北京市",
     boundaryStyle:{
         color: "#1E90FF",
         opacity: 0.5,

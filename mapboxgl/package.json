@@ -34,7 +34,7 @@
     "@mapgis/webclient-es6-mapboxgl": "^15.6.1",
     "@mapgis/webclient-store": "^10.5.5",
     "@mapgis/webclient-vue-ui": "^15.6.0",
-    "@mapgis/@mapgis/webclient-plot": "^1.0.1",
+    "@mapgis/webclient-plot": "^1.0.5",
     "@turf/turf": "^6.5.0",
     "echarts": "^5.3.0",
     "file-saver": "^2.0.5",

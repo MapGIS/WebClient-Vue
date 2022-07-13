@@ -69,8 +69,8 @@ export const 视频图层 = Template.bind({});
   source: {
     type: "video",
     urls: [
-      `http://${window.webclient.ip}:${window.webclient.port}static/data/video/drone.mp4`,
-      `http://${window.webclient.ip}:${window.webclient.port}static/data/video/drone.webm`,
+      `http://${window.webclient.ip}:${window.webclient.port}/static/data/video/drone.mp4`,
+      `http://${window.webclient.ip}:${window.webclient.port}/static/data/video/drone.webm`,
     ],
     coordinates: [
       [-122.51596391201019, 37.56238816766053],

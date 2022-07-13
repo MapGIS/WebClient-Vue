@@ -72,7 +72,7 @@ const Template = (args, { argTypes }) => ({
           vm.vueIndex1
         );
         vm.layer = layerManager && layerManager.source;
-        viewer.camera.flyTo({
+        e.vm.viewer.camera.flyTo({
           destination: Cesium.Cartesian3.fromDegrees(117.7646, 33.0881, 210000),
           orientation: {
             heading: Cesium.Math.toRadians(0),

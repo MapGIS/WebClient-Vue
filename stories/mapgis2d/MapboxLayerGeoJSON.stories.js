@@ -47,7 +47,7 @@ export const 点 = Template.bind({});
     }),
   },
   data:
-      `http://${window.webclient.ip}:${window.webclient.port}static/data/geojson/china.geojson` /* geojson, */,
+      `http://${window.webclient.ip}:${window.webclient.port}/static/data/geojson/china.geojson` /* geojson, */,
   enablePopup: true,
   enableTips: true,
 };

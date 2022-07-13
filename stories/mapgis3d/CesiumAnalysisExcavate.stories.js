@@ -32,10 +32,10 @@ const Template = (args, { argTypes }) => ({
 
 export const Excavate = Template.bind({});
 Excavate.args = {
-    // m3dUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔_2_钻孔模型s`,
+    // m3dUrl:`http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/钻孔_2_钻孔模型s`,
     autoReset:true,
     // m3dUrl2:"http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
-    m3dUrl2:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔分层点_Sur_000_Ent`,
+    m3dUrl2:`http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/钻孔分层点_Sur_000_Ent`,
     maximumScreenSpaceError:1,
     vueIndex:22,
     excaveteStyle:{
