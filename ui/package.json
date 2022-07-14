@@ -75,7 +75,8 @@
     "uglifyjs-webpack-plugin": "^2.2.0",
     "vue": "^2.6.6",
     "vue-template-compiler": "^2.6.6",
-    "webpack-bundle-analyzer": "^4.4.2"
+    "webpack-bundle-analyzer": "^4.4.2",
+    "file-loader": "4.0.0"
   },
   "keywords": [
     "vue",
