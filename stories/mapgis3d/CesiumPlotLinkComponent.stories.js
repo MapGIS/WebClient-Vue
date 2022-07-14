@@ -30,7 +30,11 @@ const Template = (args, { argTypes }) => ({
       layers: [{vueIndex:23456,vueKey: "default"}],
       manager: undefined,
       mapboxActive: false,
-      rectCount: 0
+      rectCount: 0,
+      bbox: [
+        [116.2396164394222, 36.857699114405676],
+        [119.38483688908019,33.044482287500756],
+      ]
     };
   },
   watch: {
@@ -57,7 +61,7 @@ const Template = (args, { argTypes }) => ({
       this.vueKey1 = e.vueKey;
       window.viewer = e.vm.viewer;
       e.vm.viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(117.4192, 33.9502, 440000),
+        destination: Cesium.Rectangle.fromDegrees(this.bbox[0][0],this.bbox[1][1],this.bbox[1][0],this.bbox[0][1]),
         orientation: {
           heading: Cesium.Math.toRadians(0),
           pitch: Cesium.Math.toRadians(-90),
@@ -83,11 +87,7 @@ const Template = (args, { argTypes }) => ({
     handle2dLoad(e) {
       let vm = this;
       window.map = this.map = e.map;
-      let bbox = [
-        [116.2396164394222, 36.857699114405676],
-        [119.38483688908019,33.044482287500756],
-      ];
-      this.map.fitBounds(bbox, {
+      this.map.fitBounds(this.bbox, {
         duration: 0,
       });
       this.map.on('wheel', function (e) {
