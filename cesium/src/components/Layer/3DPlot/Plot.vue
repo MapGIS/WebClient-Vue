@@ -31,10 +31,10 @@
 </template>
 
 <script>
-// import { SymbolManager, DrawTool } from "@mapgis/webclient-es6-service";
 import plot from "@mapgis/webclient-plot";
-const { SymbolManager = window.Zondy.Plot.SymbolManager,
-  DrawTool = window.Zondy.Plot.DrawTool } = plot;
+const {SymbolManager = window.Zondy.Plot.SymbolManager,
+  DrawTool = window.Zondy.Plot.DrawTool} = plot;
+
 export default {
   name: "mapgis-3d-plot",
   inject: ["viewer", "Cesium", "vueCesium"],
@@ -259,7 +259,6 @@ export default {
      * 解析符号或者图元的样式信息
      */
     parseStyleJson(json, svgUrl) {
-      // console.log("parseStyleJson", json);
       for (var node in json.nodeStyles) {
         if (node.indexOf("tspan") === -1) {
           json.nodeStyles[node]["strokeColor"] =
@@ -303,6 +302,9 @@ export default {
         return this.plot.setStyle(e.key, e.value, e.name);
       } else if (e.name && !this.isDraw) {
         return (this.symbol.style.nodeStyles[e.name][e.key] = e.value);
+      }
+      if(e.key === "classificationType"){
+        return this.plot.setStyle(e.key, Number(e.value));
       }
       return this.plot.setStyle(e.key, e.value);
     },

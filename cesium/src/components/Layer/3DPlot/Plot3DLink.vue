@@ -4,7 +4,7 @@
 
 <script>
 import plot from "@mapgis/webclient-plot";
-const {LinkTool = window.Zondy.Plot.LinkTool } = plot;
+const {LinkTool = window.Zondy.Plot.LinkTool} = plot;
 
 export default {
   name: "mapgis-3D-plot-link",
