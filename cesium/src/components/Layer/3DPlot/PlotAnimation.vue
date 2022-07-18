@@ -81,7 +81,7 @@
 <script>
 import axios from "axios";
 import plot from "@mapgis/webclient-plot";
-const {TimeLine = window.Zondy.Plot.TimeLine } = plot;
+const {TimeLine = window.Zondy.Plot.TimeLine} = plot;
 
 export default {
   name: "mapgis-3d-plot-animation",
