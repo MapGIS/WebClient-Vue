@@ -470,6 +470,20 @@
               v-model="editPanelValues[row.key]"
             />
           </div>
+          <mapgis-ui-graphic-model-edit-panel
+            v-if="
+              currentEditType === 'model' &&
+                editPanelValues &&
+                editPanelValues.positions
+            "
+            :positions.sync="editPanelValues.positions"
+            :orientation.sync="editPanelValues.orientation"
+            @pickCoords="$_pickCoords"
+            @editPositions="$_editPositions"
+            @location="$_location"
+            @editOrientation="$_editOrientation"
+            @resetOrientation="$_resetOrientation"
+          ></mapgis-ui-graphic-model-edit-panel>
         </div>
         <div v-show="editType === 'popup'">
           <div :key="index" v-for="(value, index) in attributeKeyArray">
@@ -936,7 +950,10 @@ export default {
         editing,
         allowPicking,
         modelMatrix,
-        asynchronous
+        asynchronous,
+        heading,
+        pitch,
+        roll
       } = json;
 
       const {
@@ -1427,6 +1444,8 @@ export default {
           if (title) {
             editPanelValues.title = title;
           }
+          editPanelValues.positions = positions;
+          editPanelValues.orientation = { heading, pitch, roll };
           break;
       }
 
@@ -1470,6 +1489,21 @@ export default {
       );
       this.attributeKeyArray.splice(index, 1);
       this.attributeValueArray.splice(index, 1);
+    },
+    $_pickCoords(val) {
+      this.$emit("pickCoords", val);
+    },
+    $_editPositions(val) {
+      this.$emit("editPositions", val);
+    },
+    $_location() {
+      this.$emit("location");
+    },
+    $_editOrientation(val) {
+      this.$emit("editOrientation", val);
+    },
+    $_resetOrientation() {
+      this.$emit("resetOrientation");
     }
   }
 };
