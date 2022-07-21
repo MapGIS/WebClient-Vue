@@ -28,6 +28,11 @@
         @deleteAttribute="$_deleteAttribute"
         @editTitle="$_editTitle"
         @batchOperate="$_batchOperate"
+        @pickCoords="$_pickCoords"
+        @editPositions="$_editPositions"
+        @location="$_location"
+        @editOrientation="$_editOrientation"
+        @resetOrientation="$_resetOrientation"
       />
     </div>
     <!-- <mapgis-3d-popup
@@ -185,7 +190,8 @@ export default {
         default: () => {
           return { popupType: "card" };
         }
-      }
+      },
+      transformEditor: undefined
     };
   },
   watch: {
@@ -506,7 +512,10 @@ export default {
         editing,
         allowPicking,
         modelMatrix,
-        asynchronous
+        asynchronous,
+        heading,
+        pitch,
+        roll
       } = json;
 
       let {
@@ -969,6 +978,14 @@ export default {
           if (title) {
             editPanelValues.title = title;
           }
+          editPanelValues.positions = this.$_cartesian3ToLongLat(
+            new this.Cesium.Cartesian3.fromArray(positions)
+          );
+          editPanelValues.orientation = {
+            heading: heading ? Math.PI / heading : 0,
+            pitch: pitch ? Math.PI / pitch : 0,
+            roll: roll ? Math.PI / roll : 0
+          };
           break;
       }
 
@@ -1209,6 +1226,23 @@ export default {
             const { showBackground } = Graphic.style;
             options.style.showBackground = showBackground;
           }
+          if (Graphic.type === "model") {
+            if (editPanelValues.orientation) {
+              const { heading, pitch, roll } = editPanelValues.orientation;
+              Graphic.heading = heading ? Math.PI / heading : 0;
+              Graphic.pitch = pitch ? Math.PI / pitch : 0;
+              Graphic.roll = roll ? Math.PI / roll : 0;
+            }
+            if (editPanelValues.positions) {
+              const { lng, lat, alt } = editPanelValues.positions;
+              const cartesian = this.Cesium.Cartesian3.fromDegrees(
+                lng,
+                lat,
+                alt
+              );
+              Graphic.positions = [cartesian];
+            }
+          }
           this.$_updateStyleByStyle(editPanelValues.id, options.style);
           this.$nextTick(function() {
             this.$refs.editPanel.isUpdatePanel = true;
@@ -1250,8 +1284,8 @@ export default {
       //停止绘制
       this.$_stopDrawing();
       this.isStartDrawing = false;
-      //开始编辑
-      if (!noStartEdit) {
+      // 开始编辑,模型取消双击进行编辑，已添加模型编辑按钮
+      if (!noStartEdit && this.currentEditType !== "model") {
         this.$nextTick(function() {
           this.isEdit = true;
           this.$_startEdit();
@@ -1290,6 +1324,14 @@ export default {
       this.editPanelValues = this.$_getEditPanelValuesFromJSON(json);
       this.editPanelValues.showOutline = false;
       let graphic = this.$_getGraphicByID(json.id);
+      if (graphic && graphic.heading) {
+        const { heading, pitch, roll } = graphic;
+        this.editPanelValues.orientation = {
+          heading: heading ? Math.PI / heading : 0,
+          pitch: pitch ? Math.PI / pitch : 0,
+          roll: roll ? Math.PI / roll : 0
+        };
+      }
       let graphicJSON = this.$_getJsonById(json.id);
       this.$refs.editPanel.$_setEditPanelValues(
         this.$_getEditPanelValuesFromJSON(graphicJSON)
@@ -1906,6 +1948,189 @@ export default {
       } else {
         this.isEdit = true;
       }
+    },
+    /**
+     * 模型跟着鼠标移动
+     */
+    $_pickCoords(val) {
+      this.$_deactivate();
+      if (!val) {
+        return;
+      }
+      const { Cesium, viewer } = this;
+      const vm = this;
+      viewer.screenSpaceEventHandler.setInputAction(function onMousemove(
+        movement
+      ) {
+        let graphic = vm.$_getGraphicByID(vm.editPanelValues.id);
+        if (!graphic) {
+          return;
+        }
+        let cartesian = viewer.scene.globe.pick(
+          viewer.camera.getPickRay(movement.endPosition),
+          viewer.scene
+        );
+        graphic.positions = [cartesian];
+        let json = vm.$_getJsonById(vm.editPanelValues.id);
+        if (!json) {
+          return;
+        }
+        vm.editPanelValues.positions = vm.$_cartesian3ToLongLat(
+          new Cesium.Cartesian3.fromArray(json.positions)
+        );
+        vm.$refs.editPanel.$_setEditPanelValues(vm.editPanelValues);
+      },
+      Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+      viewer.screenSpaceEventHandler.setInputAction(function onLeftClick(
+        movement
+      ) {
+        vm.viewer.screenSpaceEventHandler.removeInputAction(
+          Cesium.ScreenSpaceEventType.MOUSE_MOVE
+        );
+      },
+      Cesium.ScreenSpaceEventType.LEFT_CLICK);
+    },
+    /**
+     * 视图中出现坐标编辑
+     */
+    $_editPositions(val) {
+      this.$_deactivate();
+      if (!val) {
+        return;
+      }
+      const transformEditor = this.$_getTransformEditor();
+      //获取模型视图对象
+      const viewModel = transformEditor.viewModel;
+      if (!viewModel) {
+        return;
+      }
+      //设置模型视图平移
+      viewModel.setModeTranslation();
+      //激活平移工具
+      viewModel.activate();
+    },
+    $_deactivate() {
+      let transformEditor = this.$_getTransformEditor();
+      //获取模型视图对象
+      const viewModel = transformEditor.viewModel;
+      viewModel.deactivate();
+    },
+    $_getTransformEditor() {
+      let graphic = this.$_getGraphicByID(this.editPanelValues.id);
+      if (!graphic) {
+        return null;
+      }
+      const { Cesium, viewer } = this;
+      const vm = this;
+      if (
+        !this.transformEditor ||
+        this.transformEditor.id !== this.editPanelValues.id
+      ) {
+        //创建平移编辑器
+        this.transformEditor = new Cesium.ModelEditor({
+          container: viewer.container,
+          scene: viewer.scene,
+          transform: graphic.modelMatrix,
+          boundingSphere: graphic.boundingSphere,
+          getViewModel: function(e) {
+            // console.log(e);
+            if (graphic.type === "model") {
+              const { heading, pitch, roll } = e.headingPitchRoll;
+              graphic.heading = heading;
+              graphic.pitch = pitch;
+              graphic.roll = roll;
+
+              vm.editPanelValues.orientation = {
+                heading: heading ? Math.PI / heading : 0,
+                pitch: pitch ? Math.PI / pitch : 0,
+                roll: roll ? Math.PI / roll : 0
+              };
+              graphic.positions = [e.position];
+              vm.editPanelValues.positions = vm.$_cartesian3ToLongLat(
+                e.position
+              );
+              vm.$refs.editPanel.$_setEditPanelValues(vm.editPanelValues);
+            }
+          }
+        });
+        this.transformEditor.id = this.editPanelValues.id;
+      } else {
+        this.transformEditor.transform = graphic.modelMatrix;
+        this.transformEditor.boundingSphere = graphic.boundingSphere;
+      }
+      return this.transformEditor;
+    },
+    /**
+     * 定位到模型
+     */
+    $_location() {
+      this.$_deactivate();
+      let graphic = this.$_getGraphicByID(this.editPanelValues.id);
+      if (!graphic) {
+        return null;
+      }
+      let json = this.$_getJsonById(this.editPanelValues.id);
+      if (!json) {
+        return;
+      }
+      const Cartesian3 = new Cesium.Cartesian3(
+        json.positions[0],
+        json.positions[1],
+        json.positions[2]
+      );
+      const center = this.$_cartesian3ToLongLat(Cartesian3);
+      const destinationHeight = Number(graphic.boundingSphere.radius * 4);
+      const destination = Cesium.Cartesian3.fromDegrees(
+        center.lng,
+        center.lat,
+        destinationHeight
+      );
+      this.viewer.camera.flyTo({
+        duration: 1,
+        destination,
+        orientation: {
+          heading: 6.283185307179586,
+          pitch: -1.5707963267948966,
+          roll: 0
+        }
+      });
+    },
+    /**
+     * 视图中出现朝向编辑
+     */
+    $_editOrientation(val) {
+      this.$_deactivate();
+      if (!val) {
+        return;
+      }
+      const transformEditor = this.$_getTransformEditor();
+      //获取模型视图对象
+      const viewModel = transformEditor.viewModel;
+      if (!viewModel) {
+        return;
+      }
+      //设置模型视图旋转
+      viewModel.setModeRotation();
+      //激活旋转工具
+      viewModel.activate();
+    },
+    /**
+     * 重置朝向
+     */
+    $_resetOrientation() {
+      let graphic = this.$_getGraphicByID(this.editPanelValues.id);
+      if (!graphic) {
+        return null;
+      }
+      graphic.heading = 0;
+      graphic.pitch = 0;
+      graphic.roll = 0;
+      this.editPanelValues.orientation = {
+        heading: 0,
+        pitch: 0,
+        roll: 0
+      };
+      this.$refs.editPanel.$_setEditPanelValues(this.editPanelValues);
     }
   }
 };
