@@ -48,6 +48,11 @@ export default {
     editable: {
       type: Boolean,
       default: false
+    },
+    // 三维贴地,0：贴地，1：贴模型，2：都贴，3： 都不贴
+    classificationType: {
+      type: Number,
+      default: 3
     }
   },
   data() {
@@ -89,6 +94,15 @@ export default {
         let layer = this.getLayer();
         layer && layer.setVisible(val);
         // console.log("showww-3d", val);
+      },
+      immediate: true
+    },
+    classificationType: {
+      handler: function(val) {
+        let layer = this.getLayer();
+        if(layer) {
+          layer.classificationType = this.classificationType;
+        }
       },
       immediate: true
     },
@@ -143,7 +157,9 @@ export default {
           vm.vueIndex
         );
         if (!layer) {
-          layer = new PlotLayer3D(Cesium, viewer);
+          layer = new PlotLayer3D(Cesium, viewer, {
+            classificationType: vm.classificationType
+          });
           window.vueCesium.PlotLayerManager.addSource(
             vm.vueKey,
             vm.vueIndex,
