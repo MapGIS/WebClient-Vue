@@ -39,6 +39,11 @@ export default {
     editable: {
       type: Boolean,
       default: false
+    },
+    // 三维贴地,0：贴地，1：贴模型，2：都贴，3： 都不贴
+    classificationType: {
+      type: Number,
+      default: 3
     }
   },
   data() {
@@ -64,6 +69,15 @@ export default {
         layer.pickPlot = func;
       },
       deep: true,
+      immediate: true
+    },
+    classificationType: {
+      handler: function(val) {
+        let layer = this.getLayer();
+        if(layer) {
+          layer.classificationType = this.classificationType;
+        }
+      },
       immediate: true
     },
     show: {
@@ -102,6 +116,7 @@ export default {
         let layer = vm.getLayer();
         if (!layer) {
           layer = new PlotLayer2D();
+          layer.classificationType = vm.classificationType;
           window.vueMap.PlotLayerManager.addSource(
             vm.vueKey,
             vm.vueIndex,
