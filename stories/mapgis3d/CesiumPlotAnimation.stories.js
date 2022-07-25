@@ -15,8 +15,12 @@ const Template = (args, { argTypes }) => ({
   components: { Mapgis3dPlotAnimation, Mapgis3dPlotLayer },
   template: `<mapgis-web-scene style="height:95vh">
         <mapgis-3d-plot-layer @loaded="handleLoaded" :dataSource="jsonUrl" :symbolUrl="symbolUrl" v-if="manager"></mapgis-3d-plot-layer>
-        <mapgis-3d-plot-animation :data="dataSource" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1"/>
-        <mapgis-3d-plot v-show="false" ref="plot" :symbolUrl="symbolUrl" :vueIndex="vueIndex1" :vueKey="vueKey1" class="storybook-ui-card" @loaded="manager=true"/>
+        <mapgis-3d-plot-animation :data="dataSource" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1"  ref="animation" />
+        <mapgis-3d-plot v-show="false" :symbolUrl="symbolUrl" :vueIndex="vueIndex1" :vueKey="vueKey1" 
+          class="storybook-ui-card" 
+          @loaded="manager=true"
+          @pick="setPick"
+        />
         <mapgis-ui-space :size="8"  style="top:10px;right:10px;position:absolute;background:#fff"  v-if="vueIndex1 && vueKey1">
           <mapgis-ui-iconfont type="mapgis-daoru" @click="importClick"/>
           <input
@@ -43,8 +47,6 @@ const Template = (args, { argTypes }) => ({
       // jsonUrl: `http://localhost:8895/标绘/test.json`,
       // symbolUrl: `http://localhost:8895/标绘/symbols.json`,
     };
-  },
-  created() {
   },
   methods: {
     importClick() {
@@ -79,9 +81,12 @@ const Template = (args, { argTypes }) => ({
             pitch: Cesium.Math.toRadians(-45),
             roll: 0,
           },
-          duration: 1
-        })
+          duration: 1,
+        });
       });
+    },
+    setPick() {
+      this.$refs.animation.setPick();
     },
   },
 });

@@ -32,8 +32,10 @@
 
 <script>
 import plot from "@mapgis/webclient-plot";
-const {SymbolManager = window.Zondy.Plot.SymbolManager,
-  DrawTool = window.Zondy.Plot.DrawTool} = plot;
+const {
+  SymbolManager = window.Zondy.Plot.SymbolManager,
+  DrawTool = window.Zondy.Plot.DrawTool
+} = plot;
 
 export default {
   name: "mapgis-3d-plot",
@@ -87,7 +89,7 @@ export default {
       // 记录是否完成绘制
       isDraw: false,
       searchResult: undefined,
-      symbolType: undefined,
+      symbolType: undefined
     };
   },
   mounted() {
@@ -108,7 +110,7 @@ export default {
   methods: {
     deletePlot() {
       let layer = this.getLayer();
-      if(layer && this.plot){
+      if (layer && this.plot) {
         layer.removePlot(this.plot);
         this.showStylePanel = false;
       }
@@ -117,8 +119,11 @@ export default {
       this.getSymbol();
     },
     unmount() {
-      if(window.vueCesium) {
-        window.vueCesium.DrawToolManager.deleteSource(this.vueKey, this.vueIndex);
+      if (window.vueCesium) {
+        window.vueCesium.DrawToolManager.deleteSource(
+          this.vueKey,
+          this.vueIndex
+        );
       }
     },
     initDrawTool() {
@@ -158,7 +163,7 @@ export default {
       layer.pickPlot = async function(plot) {
         vm.isDraw = true;
         vm.plot = plot;
-        vm.symbolType = plot._elem.type
+        vm.symbolType = plot._elem.type;
         // console.log("plot-3d", plot);
         let json = plot.getStyle();
         // vm.symbol = vm.symbol || plot._elem._symbol;
@@ -170,6 +175,7 @@ export default {
         }
       };
       // layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
+      this.$emit("pick", this);
     },
     /**
      * 解析符号库
@@ -303,7 +309,7 @@ export default {
       } else if (e.name && !this.isDraw) {
         return (this.symbol.style.nodeStyles[e.name][e.key] = e.value);
       }
-      if(e.key === "classificationType"){
+      if (e.key === "classificationType") {
         return this.plot.setStyle(e.key, Number(e.value));
       }
       return this.plot.setStyle(e.key, e.value);
@@ -319,34 +325,36 @@ export default {
 
       let result = [];
       for (let i = 0; i < this.symbols.length; i++) {
-        if(this.symbols[i].name.indexOf(e) > -1){
+        if (this.symbols[i].name.indexOf(e) > -1) {
           result.push(this.symbols[i]);
         }
       }
-      if(result.length > 0){
+      if (result.length > 0) {
         this.searchResult = {
-          "path": "搜索结果/",
-          "name": "搜索结果",
-          "id": "5bde21fe-f932-11e1-9052-ac74b1ee4018",
-          "type": "folder",
-          "items": [ {
-            "path": "符号库/",
-            "name": "符号库",
-            "id": "51240178-f12e-11ec-9bce-ac74b1ee4018",
-            "type": "folder",
-            "items": []
-          }]
+          path: "搜索结果/",
+          name: "搜索结果",
+          id: "5bde21fe-f932-11e1-9052-ac74b1ee4018",
+          type: "folder",
+          items: [
+            {
+              path: "符号库/",
+              name: "符号库",
+              id: "51240178-f12e-11ec-9bce-ac74b1ee4018",
+              type: "folder",
+              items: []
+            }
+          ]
         };
         for (let i = 0; i < result.length; i++) {
           this.searchResult.items[0].items.push({
-            "id": result[i].id,
-            "name": result[i].name,
-            "type": result[i].type,
-            "path": result[i].src
+            id: result[i].id,
+            name: result[i].name,
+            type: result[i].type,
+            path: result[i].src
           });
         }
         this.symbolData.symbols.unshift(this.searchResult);
-      }else {
+      } else {
         this.$message.warning("没有搜素到图标！");
       }
     },
