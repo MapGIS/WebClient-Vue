@@ -16,8 +16,7 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       link: true,
-      url1:
-        "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
+      url1: "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
       url2: "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
       rect: {},
       vueIndex1: undefined,
@@ -26,22 +25,25 @@ const Template = (args, { argTypes }) => ({
       symbolUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/symbols.json`,
       dataUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/animation.json`,
       vueIndex: 12345,
-      containers:[{vueIndex:12345,vueKey: "default",type:"mapbox"},{vueIndex:12345,vueKey: "default",type:"cesium"}],
-      layers: [{vueIndex:23456,vueKey: "default"}],
+      containers: [
+        { vueIndex: 12345, vueKey: "default", type: "mapbox" },
+        { vueIndex: 12345, vueKey: "default", type: "cesium" },
+      ],
+      layers: [{ vueIndex: 23456, vueKey: "default" }],
       manager: undefined,
       dataSource: undefined,
       mapboxActive: false,
       rectCount: 0,
       bbox: [
         [116.2396164394222, 36.857699114405676],
-        [119.38483688908019,33.044482287500756],
-      ]
+        [119.38483688908019, 33.044482287500756],
+      ],
     };
   },
   watch: {
     rect: function (next) {
       this.rectCount++;
-      if(this.rectCount > 1){
+      if (this.rectCount > 1) {
         const { east, north, south, west } = next["2d"];
         let map = this.map || window.map;
         let bbox = [
@@ -54,10 +56,8 @@ const Template = (args, { argTypes }) => ({
       }
     },
   },
-  mounted() {
-  },
-  created() {
-  },
+  mounted() {},
+  created() {},
   methods: {
     handleLoaded(e) {
       const vm = this;
@@ -76,24 +76,27 @@ const Template = (args, { argTypes }) => ({
       this.map.fitBounds(this.bbox, {
         duration: 0,
       });
-      this.map.on('wheel', function (e) {
+      this.map.on("wheel", function (e) {
         let bounds = vm.map.getBounds();
         vm.flyToRect(bounds);
       });
-      this.map.on('wheel', function (e) {
+      this.map.on("wheel", function (e) {
         let bounds = vm.map.getBounds();
         vm.flyToRect(bounds);
       });
-      this.map.on('mousedown', function (e) {
+      this.map.on("mousedown", function (e) {
         vm.mapboxActive = true;
       });
-      this.map.on('mouseup', function (e) {
+      this.map.on("mouseup", function (e) {
         vm.mapboxActive = false;
       });
-      let mapboxManager = window.vueMap.MapManager.findSource("default", this.vueIndex);
+      let mapboxManager = window.vueMap.MapManager.findSource(
+        "default",
+        this.vueIndex
+      );
       let fabricCanvas = mapboxManager.options.canvas.getFabricCanvas();
-      fabricCanvas.on("mouse:move",function () {
-        if(vm.mapboxActive){
+      fabricCanvas.on("mouse:move", function () {
+        if (vm.mapboxActive) {
           let bounds = vm.map.getBounds();
           vm.flyToRect(bounds);
         }
@@ -101,34 +104,47 @@ const Template = (args, { argTypes }) => ({
     },
     flyToRect(bounds) {
       window.viewer.camera.flyTo({
-        destination: Cesium.Rectangle.fromDegrees(bounds._sw.lng,bounds._sw.lat,bounds._ne.lng,bounds._ne.lat),
+        destination: Cesium.Rectangle.fromDegrees(
+          bounds._sw.lng,
+          bounds._sw.lat,
+          bounds._ne.lng,
+          bounds._ne.lat
+        ),
         orientation: {
           heading: Cesium.Math.toRadians(0),
           pitch: Cesium.Math.toRadians(-90),
           roll: 0,
         },
-        duration: 0.1
-      })
+        duration: 0.1,
+      });
     },
     webGlobeLoaded(e) {
       window.viewer = e.component.viewer;
       e.component.viewer.camera.flyTo({
-        destination: Cesium.Rectangle.fromDegrees(this.bbox[0][0],this.bbox[1][1],this.bbox[1][0],this.bbox[0][1]),
+        destination: Cesium.Rectangle.fromDegrees(
+          this.bbox[0][0],
+          this.bbox[1][1],
+          this.bbox[1][0],
+          this.bbox[0][1]
+        ),
         orientation: {
           heading: Cesium.Math.toRadians(0),
           pitch: Cesium.Math.toRadians(-90),
           roll: 0,
         },
-        duration: 1
-      })
-    }
+        duration: 1,
+      });
+    },
+    setPick() {
+      this.$refs.animation.setPick();
+    },
   },
   template: `<div class="mapgis-link-test">
     <div class="mapbox-item top-left">
       <mapgis-web-map crs="EPSG:3857"  @load="handle2dLoad" :vueIndex="vueIndex">
         <mapgis-2d-plot-layer :vueIndex="23456" :symbolUrl="symbolUrl" @loaded="handleLoaded" :dataSource="jsonUrl" v-if="manager"></mapgis-2d-plot-layer>
-        <mapgis-2d-plot-animation :data="dataSource" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1"/>
-        <mapgis-2d-plot v-show="false" ref="plot" :symbolUrl="symbolUrl" :vueIndex="vueIndex1" :vueKey="vueKey1" class="storybook-ui-card" @loaded="manager=true"></mapgis-2d-plot>
+        <mapgis-2d-plot-animation ref="animation" :data="dataSource" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1"/>
+        <mapgis-2d-plot v-show="false" :symbolUrl="symbolUrl" :vueIndex="vueIndex1" :vueKey="vueKey1" class="storybook-ui-card" @loaded="manager=true" @pick="setPick"></mapgis-2d-plot>
         <mapgis-2D-plot-link :layers="layers" :containers="containers"></mapgis-2D-plot-link>
         <mapgis-rastertile-layer :url="url2" layerId="raster_tdt" />
       </mapgis-web-map>
