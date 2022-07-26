@@ -73,6 +73,10 @@ export default {
     baseUrl: {
       type: String,
       default: ""
+    },
+    isSetPick: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -157,6 +161,9 @@ export default {
      * 设置图元的点击事件
      */
     setPick() {
+      if(!this.isSetPick) {
+        return;
+      }
       const vm = this;
       let layer = this.getLayer();
       if (!layer) return;
