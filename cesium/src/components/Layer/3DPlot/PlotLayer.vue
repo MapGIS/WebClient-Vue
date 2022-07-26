@@ -53,6 +53,10 @@ export default {
     classificationType: {
       type: Number,
       default: 3
+    },
+    isSetPick: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -73,6 +77,9 @@ export default {
     },
     pickPlot: {
       handler: function(func) {
+        if(!this.isSetPick) {
+          return;
+        }
         let layer = this.getLayer();
         if (!func || !layer) return;
         layer.pickPlot = func;
