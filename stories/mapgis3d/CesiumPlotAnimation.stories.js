@@ -14,12 +14,14 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { Mapgis3dPlotAnimation, Mapgis3dPlotLayer },
   template: `<mapgis-web-scene style="height:95vh">
-        <mapgis-3d-plot-layer @loaded="handleLoaded" :dataSource="jsonUrl" :symbolUrl="symbolUrl" v-if="manager"></mapgis-3d-plot-layer>
+        <mapgis-3d-plot-layer @loaded="handleLoaded"
+                              :isSetPick="false"
+                              :dataSource="jsonUrl" :symbolUrl="symbolUrl" v-if="manager"></mapgis-3d-plot-layer>
         <mapgis-3d-plot-animation :data="dataSource" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1"  ref="animation" />
         <mapgis-3d-plot v-show="false" :symbolUrl="symbolUrl" :vueIndex="vueIndex1" :vueKey="vueKey1" 
           class="storybook-ui-card" 
           @loaded="manager=true"
-          @pick="setPick"
+          :isSetPick="false"
         />
         <mapgis-ui-space :size="8"  style="top:10px;right:10px;position:absolute;background:#fff"  v-if="vueIndex1 && vueKey1">
           <mapgis-ui-iconfont type="mapgis-daoru" @click="importClick"/>
@@ -84,10 +86,7 @@ const Template = (args, { argTypes }) => ({
           duration: 1,
         });
       });
-    },
-    setPick() {
-      this.$refs.animation.setPick();
-    },
+    }
   },
 });
 
