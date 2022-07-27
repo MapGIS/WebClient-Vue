@@ -285,6 +285,7 @@ export default {
       keyArr.forEach((key, index) => {
         let svgDom = vm.svgT;
         const cloneDom = vm.getSvgDomByKey(svgDom, key, 30, 30);
+        // console.log("cloneDom", cloneDom);
         svgContainer[index].appendChild(cloneDom);
       });
     },
@@ -318,6 +319,7 @@ export default {
       const partArr = [];
       const joinArr = [];
       this._applySvgDomArray(cloneDom, partArr);
+      // console.log("keyArr", keyArr);
       const deleteArr = partArr.filter(s => {
         if (keyArr.indexOf(s.getAttribute("id")) > -1) {
           joinArr.push(s);
@@ -329,6 +331,7 @@ export default {
         t.parentElement.removeChild(t);
       });
 
+      // console.log("joinArr", joinArr);
       const cloneDomWidth = parseInt(cloneDom.getAttribute("width"), 10);
       const cloneDomHeight = parseInt(cloneDom.getAttribute("height"), 10);
 
@@ -336,6 +339,12 @@ export default {
       cloneDom.setAttribute("height", height);
 
       joinArr.forEach(s => {
+        if (s.nodeName == "tspan") {
+          s.parentElement.style.transformOrigin = "left top";
+          s.parentElement.style.transform = `scale(${width /
+            cloneDomWidth},${height / cloneDomHeight})`;
+          return;
+        }
         s.style.transformOrigin = "left top";
         s.style.transform = `scale(${width / cloneDomWidth},${height /
           cloneDomHeight})`;
@@ -345,7 +354,7 @@ export default {
     },
     _applySvgDomArray(dom, partArr) {
       dom.childNodes.forEach(item => {
-        if (item.nodeName === "g") {
+        if (item.nodeName === "g" || item.nodeName === "text") {
           this._applySvgDomArray(item, partArr);
         } else if (item.nodeType === 1) {
           partArr.push(item);
