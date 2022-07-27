@@ -46,7 +46,8 @@ export const styleAttributes = {
   dimModHeight: {
     title: "模型高度",
     type: "number",
-    groupId: 2
+    groupId: 2,
+    range: [1, 1000000000000000]
   },
   dimModAttitude: {
     title: "模型姿态",
@@ -92,11 +93,11 @@ export const styleAttributes = {
       2: "渐变填充"
     }
   },
-  // fillStyle: {
-  //   title: "填充颜色",
-  //   type: "color",
-  //   groupId: 6
-  // },
+  fillStyle: {
+    title: "填充颜色",
+    type: "color",
+    groupId: 6
+  },
   fillGradType: {
     title: "渐变类型",
     type: "select",
@@ -139,15 +140,15 @@ export const styleAttributes = {
     groupId: 7,
     options: ["normal", "bold", "bolder", "lighter"]
   },
-  // fontSize: {
-  //   title: "字体大小",
-  //   type: "number",
-  //   groupId: 7,
-  // },
+  fontSize: {
+    title: "字体大小",
+    type: "number",
+    groupId: 7
+  },
   // fontFamily: {
   //   title: "字体",
   //   type: "text",
-  //   groupId: 7,
+  //   groupId: 7
   // },
   strokeStyle: {
     title: "笔触类型",
@@ -190,13 +191,13 @@ export const styleAttributes = {
     title: "最大斜接长度",
     type: "number",
     groupId: 5
+  },
+  lineWidth: {
+    title: "笔画宽",
+    type: "number",
+    groupId: 5,
+    range: [0, 1000]
   }
-  // lineWidth: {
-  //   title: "笔画宽",
-  //   type: "number",
-  //   groupId: 5,
-  //   range: [0, 1000]
-  // }
 };
 
 export const groupArr = [
