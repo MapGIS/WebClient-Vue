@@ -263,6 +263,7 @@ export { default as MapgisUiHoverEditPanel } from "./components/panel/HoverEditP
 export { default as MapgisUiStoryPanelLarge } from "./components/panel/StoryPanelLarge";
 export { default as MapgisUiProjectBottomPanel } from "./components/panel/ProjectBottomPanel";
 export { default as MapgisUiGraphicEditPanel } from "./components/panel/GraphicEditPanel";
+export { default as MapgisUiGraphicModelEditPanel } from "./components/panel/GraphicModelEditPanel";
 
 //picture
 export { default as MapgisUiChoosePicture } from "./components/picture/ChoosePicture";

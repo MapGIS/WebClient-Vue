@@ -16,8 +16,12 @@ const Template = (args, { argTypes }) => ({
   template: `<mapgis-web-map @load="handle2dLoad" style="height:95vh" v-bind="{...mapOptions}" >
         <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
         <mapgis-2d-plot-layer @loaded="handleLoad" :dataSource="jsonUrl" v-bind="$props" :symbolUrl="symbolUrl" v-if="manager"></mapgis-2d-plot-layer>
-        <mapgis-2d-plot v-show="false" ref="plot" :symbolUrl="symbolUrl" :vueIndex="vueIndex1" :vueKey="vueKey1" class="storybook-ui-card" @loaded="manager=true"></mapgis-2d-plot>
-        <mapgis-2d-plot-animation :data="dataSource" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1">
+        <mapgis-2d-plot v-show="false" :symbolUrl="symbolUrl" :vueIndex="vueIndex1" :vueKey="vueKey1" 
+          class="storybook-ui-card" 
+          @loaded="manager=true"
+          @pick="setPick"
+        ></mapgis-2d-plot>
+        <mapgis-2d-plot-animation ref="animation" :data="dataSource" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1">
         </mapgis-2d-plot-animation>
         <mapgis-ui-space :size="8"  style="top:10px;right:10px;position:absolute;background:#fff">
           <mapgis-ui-iconfont type="mapgis-daoru" @click="importClick"/>
@@ -55,14 +59,12 @@ const Template = (args, { argTypes }) => ({
       // symbolUrl: `http://localhost:8895/标绘/symbols.json`,
     };
   },
-  created() {
-  },
   methods: {
     handle2dLoad(e) {
       let map = e.map;
       let bbox = [
         [116.2396164394222, 36.857699114405676],
-        [119.38483688908019,33.044482287500756],
+        [119.38483688908019, 33.044482287500756],
       ];
       map.fitBounds(bbox, {
         duration: 0,
@@ -94,6 +96,9 @@ const Template = (args, { argTypes }) => ({
         );
         vm.layer = layerManager && layerManager.source;
       });
+    },
+    setPick() {
+      this.$refs.animation.setPick();
     },
   },
 });

@@ -187,8 +187,12 @@ export default {
       let {viewer, vueCesium} = this;
       const {vueKey, vueIndex, layerIndex} = this;
       let find = vueCesium.IgsFeatureManager.findSource(vueKey, vueIndex);
+      let index = layerIndex;
+      if(layerIndex instanceof Array) {
+        index = layerIndex[0];
+      }
       if (find && find.source) {
-        viewer.scene.layers.removeFeatureLayerByID(layerIndex);
+        viewer.scene.layers.removeFeatureLayerByID(index);
       }
       if (find && find.clickhandler) {
         find.clickhandler.destroy();

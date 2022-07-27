@@ -6,12 +6,10 @@
 
 <script>
 import VueOptions from "../../../Base/Vue/VueOptions";
-import Mapgis3dSeneSetting from "../../../SceneEffect/SceneSetting";
 
 export default {
   name: "mapgis-3d-m3d-menu-setting",
   inject: ["Cesium", "vueCesium", "viewer", "m3ds"],
-  components: {Mapgis3dSeneSetting},
   props: {
     ...VueOptions,
     version: {
@@ -26,8 +24,7 @@ export default {
       currentMenu: undefined
     };
   },
-  created() {
-  },
+  created() {},
   mounted() {
     this.mount();
   },
@@ -37,17 +34,16 @@ export default {
   methods: {
     createCesiumObject() {
       return new Promise(
-          resolve => {
-            resolve();
-          },
-          reject => {
-          }
+        resolve => {
+          resolve();
+        },
+        reject => {}
       );
     },
     mount() {
       const vm = this;
-      const {Cesium, vueIndex, vueKey, vueCesium} = this;
-      const {viewer} = this;
+      const { Cesium, vueIndex, vueKey, vueCesium } = this;
+      const { viewer } = this;
 
       let highlight = this.createCesiumObject();
       highlight.then(res => {
@@ -72,13 +68,13 @@ export default {
             handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
           } else {
             handler.removeInputAction(
-                vm.$_highlightAction,
-                Cesium.ScreenSpaceEventType.LEFT_CLICK
+              vm.$_highlightAction,
+              Cesium.ScreenSpaceEventType.LEFT_CLICK
             );
           }
           handler.setInputAction(
-              vm.$_highlightAction,
-              Cesium.ScreenSpaceEventType.LEFT_CLICK
+            vm.$_highlightAction,
+            Cesium.ScreenSpaceEventType.LEFT_CLICK
           );
         }
       });
@@ -86,16 +82,16 @@ export default {
       if (viewer.isDestroyed()) return;
     },
     unmount() {
-      const {vueCesium, vueKey, vueIndex} = this;
+      const { vueCesium, vueKey, vueIndex } = this;
       let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
       if (find && find.options) {
       }
-      this.$emit("unload", {component: this});
+      this.$emit("unload", { component: this });
       vueCesium.G3DManager.deleteSource(vueKey, vueIndex);
     },
     $_highlightAction(movement) {
-      const {vueKey, vueIndex, vueCesium, Cesium} = this;
-      const {layerIndex, viewer, m3ds, version} = this;
+      const { vueKey, vueIndex, vueCesium, Cesium } = this;
+      const { layerIndex, viewer, m3ds, version } = this;
       let tileset;
       if (m3ds) {
         tileset = m3ds[layerIndex];

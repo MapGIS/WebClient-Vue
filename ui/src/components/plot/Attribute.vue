@@ -9,6 +9,7 @@
           v-show="group && group[grpIdx]"
         >
           <mapgis-ui-row :gutter="8">
+            <!-- 基本属性和公共的样式属性 -->
             <template v-for="(value, key, dataIdx) in dataCopy">
               <div
                 v-if="
@@ -103,6 +104,7 @@
                 </mapgis-ui-col>
               </div>
             </template>
+            <!-- 部件的样式属性 -->
             <template
               v-for="(val, k, styleIdx) in dataCopy[nodesName][componentName]"
             >
@@ -216,6 +218,7 @@ export default {
     data: {
       handler: function(obj) {
         this.dataCopy = obj;
+        // console.log("obj", obj);
       },
       deep: true,
       immediate: true
@@ -289,8 +292,10 @@ export default {
      * 获取符号对应svg
      */
     async getSvg(url) {
-      if(!url){ return console.log("缺少符号的svgUrl")}
-      if(this.baseUrl){
+      if (!url) {
+        return console.log("缺少符号的svgUrl");
+      }
+      if (this.baseUrl) {
         url = this.baseUrl + url;
       }
       axios.defaults.withCredentials = true;
@@ -360,29 +365,18 @@ export default {
       }
       let name = Object.keys(vm.dataCopy[vm.nodesName])[vm.active];
       nodeObj = { ...nodeObj, ...vm.dataCopy[vm.nodesName][name] };
-      if (this.symbolType === 'simplearea') {
-        let newArr = JSON.parse(JSON.stringify(this.groupConfig)), newGroupArr = [];
-        for (let i = 0; i < newArr.length; i++) {
-          if (newArr[i].label !== "墙体" && newArr[i].label !== "填充样式"
-              && newArr[i].label !== "文字样式" && newArr[i].label !== "衬线") {
-            newGroupArr.push(newArr[i]);
-          }
-        }
-        this.groupArr = newGroupArr;
-        this.styleAttributes = JSON.parse(JSON.stringify(this.attributeConfig));
-        delete this.styleAttributes.lineWidth;
-      } else {
-        this.groupArr = JSON.parse(JSON.stringify(this.groupConfig));
-      }
-      this.group = new Array(vm.groupArr.length).fill(0);
+      this.group = new Array(vm.groupArr.length).fill(false);
       for (var key in vm.styleAttributes) {
         let index = vm.styleAttributes[key].groupId;
+        // 当存在分组下的属性时，将对应分类开关的显示设置为开启
         if (vm.dataCopy[key] || nodeObj[key]) {
-          vm.group[index] = 1;
+          vm.group[index] = true;
         }
       }
-      if(this.symbolType === 'simplearea'){
-        this.group[3] = 1
+
+      // 当没有部件时，隐藏 切换部件 折叠开关
+      if (JSON.stringify(vm.dataCopy[vm.nodesName]) == "{}") {
+        vm.group[4] = false;
       }
       // console.log("vm.group", vm.group);
     },

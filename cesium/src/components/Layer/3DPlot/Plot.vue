@@ -24,6 +24,7 @@
       v-model="styleData"
       :baseUrl="baseUrl"
       :symbolType="symbolType"
+      :attributeConfig="styleAttributes"
       @changeComponentStyle="changeStyle"
       @changeStyle="changeStyle"
     ></mapgis-ui-plot-attribute>
@@ -31,9 +32,12 @@
 </template>
 
 <script>
+import { styleAttributes } from "@mapgis/webclient-vue-ui/src/components/plot/test/attributeConfig";
 import plot from "@mapgis/webclient-plot";
-const {SymbolManager = window.Zondy.Plot.SymbolManager,
-  DrawTool = window.Zondy.Plot.DrawTool} = plot;
+const {
+  SymbolManager = window.Zondy.Plot.SymbolManager,
+  DrawTool = window.Zondy.Plot.DrawTool
+} = plot;
 
 export default {
   name: "mapgis-3d-plot",
@@ -71,7 +75,20 @@ export default {
     baseUrl: {
       type: String,
       default: ""
+    },
+    isSetPick: {
+      type: Boolean,
+      default: true
     }
+  },
+  created() {
+    this.styleAttributes = styleAttributes;
+    // 设置三维标绘的填充类型属性的选项
+    this.styleAttributes.fillStyleType.options = {
+      0: "无填充",
+      1: "实填充"
+    };
+    // console.log("styleAttributes", styleAttributes);
   },
   data() {
     return {
@@ -88,6 +105,9 @@ export default {
       isDraw: false,
       searchResult: undefined,
       symbolType: undefined,
+      styleAttributes: undefined,
+
+      canFill: true
     };
   },
   mounted() {
@@ -108,7 +128,7 @@ export default {
   methods: {
     deletePlot() {
       let layer = this.getLayer();
-      if(layer && this.plot){
+      if (layer && this.plot) {
         layer.removePlot(this.plot);
         this.showStylePanel = false;
       }
@@ -117,8 +137,11 @@ export default {
       this.getSymbol();
     },
     unmount() {
-      if(window.vueCesium) {
-        window.vueCesium.DrawToolManager.deleteSource(this.vueKey, this.vueIndex);
+      if (window.vueCesium) {
+        window.vueCesium.DrawToolManager.deleteSource(
+          this.vueKey,
+          this.vueIndex
+        );
       }
     },
     initDrawTool() {
@@ -152,13 +175,18 @@ export default {
      * 设置图元的点击事件
      */
     setPick() {
+      if (!this.isSetPick) {
+        return;
+      }
       const vm = this;
       let layer = this.getLayer();
       if (!layer) return;
       layer.pickPlot = async function(plot) {
         vm.isDraw = true;
         vm.plot = plot;
-        vm.symbolType = plot._elem.type
+        vm.symbolType = plot._elem.type;
+        vm.canFill = !plot.isMustFill;
+        // console.log("canFill", vm.canFill);
         // console.log("plot-3d", plot);
         let json = plot.getStyle();
         // vm.symbol = vm.symbol || plot._elem._symbol;
@@ -170,6 +198,7 @@ export default {
         }
       };
       // layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
+      this.$emit("pick", this);
     },
     /**
      * 解析符号库
@@ -244,6 +273,10 @@ export default {
       this.symbol = manager.getLeafByID(data.icon.id);
       // 调用primitive上的getStyleJSON
       this.symbol.getElement().then(function(res) {
+        // console.log("symbol", res);
+        vm.symbolType = res.type;
+        vm.canFill = !res.isMustFill;
+        // console.log("canFill", vm.canFill);
         vm.symbol.style = res.getStyleJSON();
         let json = res.getStyleJSON();
         vm.parseStyleJson(json, data.icon.src);
@@ -267,11 +300,12 @@ export default {
         }
       }
       json["symbolUrl"] = svgUrl;
-      json = this.remove2dAttributes(json);
+      json = this.removeInvalidAttributes(json);
       this.showStylePanel = true;
       this.styleData = json;
     },
-    remove2dAttributes(json) {
+    removeInvalidAttributes(json) {
+      // 移除二维特有的属性
       delete json.compareLine;
       delete json.compareLineWidth;
       delete json.compareLineColor;
@@ -281,6 +315,7 @@ export default {
           delete json.nodeStyles[node].fontStyle;
           delete json.nodeStyles[node].fontVariant;
           delete json.nodeStyles[node].fontWeight;
+          delete json.nodeStyles[node].fontSize;
           delete json.nodeStyles[node].strokeStyle;
           delete json.nodeStyles[node].lineWidth;
         }
@@ -288,6 +323,28 @@ export default {
         delete json.nodeStyles[node].lineCap;
         delete json.nodeStyles[node].lineJoin;
         delete json.nodeStyles[node].miterLimit;
+        delete json.nodeStyles[node].fillGradType;
+        delete json.nodeStyles[node].fillGradColor;
+
+        // 移除特定面的无法更改的属性
+        if (!this.canFill) {
+          delete json.nodeStyles[node].lineWidth;
+          delete json.nodeStyles[node].fillStyleType;
+          delete json.nodeStyles[node].fillStyle;
+        }
+      }
+
+      if (!this.canFill) {
+        delete json.dimModHeight;
+        delete json.dimModAttitude;
+        delete json.isOpenWall;
+        delete json.wallColor;
+        delete json.isWallGradColor;
+        delete json.wallGradColor;
+      }
+      // console.log(this.symbolType);
+      if (this.symbolType.indexOf("point") == -1) {
+        delete json.dimModAttitude;
       }
       return json;
     },
@@ -303,7 +360,7 @@ export default {
       } else if (e.name && !this.isDraw) {
         return (this.symbol.style.nodeStyles[e.name][e.key] = e.value);
       }
-      if(e.key === "classificationType"){
+      if (e.key === "classificationType") {
         return this.plot.setStyle(e.key, Number(e.value));
       }
       return this.plot.setStyle(e.key, e.value);
@@ -319,34 +376,36 @@ export default {
 
       let result = [];
       for (let i = 0; i < this.symbols.length; i++) {
-        if(this.symbols[i].name.indexOf(e) > -1){
+        if (this.symbols[i].name.indexOf(e) > -1) {
           result.push(this.symbols[i]);
         }
       }
-      if(result.length > 0){
+      if (result.length > 0) {
         this.searchResult = {
-          "path": "搜索结果/",
-          "name": "搜索结果",
-          "id": "5bde21fe-f932-11e1-9052-ac74b1ee4018",
-          "type": "folder",
-          "items": [ {
-            "path": "符号库/",
-            "name": "符号库",
-            "id": "51240178-f12e-11ec-9bce-ac74b1ee4018",
-            "type": "folder",
-            "items": []
-          }]
+          path: "搜索结果/",
+          name: "搜索结果",
+          id: "5bde21fe-f932-11e1-9052-ac74b1ee4018",
+          type: "folder",
+          items: [
+            {
+              path: "符号库/",
+              name: "符号库",
+              id: "51240178-f12e-11ec-9bce-ac74b1ee4018",
+              type: "folder",
+              items: []
+            }
+          ]
         };
         for (let i = 0; i < result.length; i++) {
           this.searchResult.items[0].items.push({
-            "id": result[i].id,
-            "name": result[i].name,
-            "type": result[i].type,
-            "path": result[i].src
+            id: result[i].id,
+            name: result[i].name,
+            type: result[i].type,
+            path: result[i].src
           });
         }
         this.symbolData.symbols.unshift(this.searchResult);
-      }else {
+      } else {
         this.$message.warning("没有搜素到图标！");
       }
     },

@@ -86,6 +86,7 @@
       :attrsItemOptions="attrsItemOptions"
       :attrsItemColorOptions="attrsItemColorOptions"
       :idsOptions="idsOptions"
+      :animationOptions="defaultAnimation"
       @change="animationChange"
       @drawPath="initDrawer"
       v-if="activeIndex !== undefined"
@@ -194,7 +195,6 @@ export default {
       editState: false,
       nameToEdit: "",
       defaultAnimation: {
-        none: "无动画",
         "scale-animation": "比例动画",
         "attribute-animation": "属性动画",
         "visible-animation": "显隐动画",

@@ -14,15 +14,11 @@
         :tabBarStyle="tabBarStyle"
         default-active-key="1"
       >
-        <mapgis-ui-tab-pane
-          key="1"
-          tab="基本设置"
-          class="control-content"
-        >
+        <mapgis-ui-tab-pane key="1" tab="基本设置" class="control-content">
           <basic-setting
             ref="attr"
             @updateSpin="changeSpinning"
-            :initialStatebar="initialStatebar"
+            :initBasicSetting.sync="initBasicSetting"
             :initialDepthTest="depthTest"
             :initial-scene-mode="sceneMode"
           ></basic-setting>
@@ -35,6 +31,7 @@
         >
           <camera-setting
             ref="effect"
+            :initCameraSetting.sync="initCameraSetting"
             @updateSpin="changeSpinning"
           ></camera-setting>
         </mapgis-ui-tab-pane>
@@ -46,6 +43,7 @@
         >
           <light-setting
             ref="effect"
+            :initLightSetting.sync="initLightSetting"
             @updateSpin="changeSpinning"
           ></light-setting>
         </mapgis-ui-tab-pane>
@@ -57,6 +55,7 @@
         >
           <weather-setting
             ref="effect"
+            :initWeatherSetting.sync="initWeatherSetting"
             @updateSpin="changeSpinning"
           ></weather-setting>
         </mapgis-ui-tab-pane>
@@ -68,6 +67,7 @@
         >
           <effect-setting
             ref="effect"
+            :initEffectSetting.sync="initEffectSetting"
             @updateSpin="changeSpinning"
           ></effect-setting>
         </mapgis-ui-tab-pane>
@@ -110,10 +110,103 @@ export default {
     panelStyle: {
       type: Object
     },
-    //默认状态栏的开启
-    initialStatebar: {
-      type: Boolean,
-      default: false
+    initParams: {
+      type: Object,
+      default: () => {
+        return {};
+      }
+    }
+  },
+  computed: {
+    initBasicSetting() {
+      return (
+        this.initParams.basicSetting || {
+          earth: true,
+          skyAtmosphere: true,
+          shadow: false,
+          depthTest: false,
+          FPS: false,
+          timeline: false,
+          compass: false,
+          zoom: false,
+          statebar: true,
+          sceneMode: false,
+          layerbrightness: 1.0,
+          layercontrast: 1.0,
+          layerhue: 0.0,
+          layersaturation: 1.0
+        }
+      );
+    },
+    initCameraSetting() {
+      return (
+        this.initParams.cameraSetting || {
+          undgrd: false,
+          undgrdParams: {
+            groundAlpha: 0.5
+          },
+          fov: 60
+        }
+      );
+    },
+    initLightSetting() {
+      return (
+        this.initParams.lightSetting || {
+          sunlight: false,
+          sunlightParams: {
+            lightColor: "rgba(255,255,255,255)"
+          },
+          lightIntensity: 10
+        }
+      );
+    },
+    initWeatherSetting() {
+      return (
+        this.initParams.weatherSetting || {
+          sun: true,
+          moon: true,
+          sceneSkybox: true,
+          skybox: false,
+          clouds: false,
+          cloudsParams: {
+            cloudsduration: 5
+          },
+          rain: false,
+          rainParams: {
+            speed: 18,
+            rainOpacity: 0.6,
+            angle: -30,
+            length: 1
+          },
+          snow: false,
+          snowParams: {
+            size: 5,
+            density: 5
+          },
+          fog: false,
+          fogParams: {
+            fogOpacity: 0.5,
+            color: "#FFFFFF"
+          },
+          surficialFog: true,
+          surfFogParams: {
+            surfFogDst: 0.0002
+          }
+        }
+      );
+    },
+    initEffectSetting() {
+      return (
+        this.initParams.effectSetting || {
+          blckWhite: false,
+          ntVision: false,
+          bloom: false,
+          bloomParams: {
+            bloomBrt: -0.3,
+            bloomCtrst: 128
+          }
+        }
+      );
     }
   },
   data() {
@@ -122,7 +215,7 @@ export default {
       transform: undefined,
       tabBarStyle: {
         margin: "0px",
-        textAlign: "center",
+        textAlign: "center"
         // borderBottom: "1px solid #F0F0F0"
       },
       show: true,
