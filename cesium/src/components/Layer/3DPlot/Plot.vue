@@ -24,6 +24,7 @@
       v-model="styleData"
       :baseUrl="baseUrl"
       :symbolType="symbolType"
+      :attributeConfig="styleAttributes"
       @changeComponentStyle="changeStyle"
       @changeStyle="changeStyle"
     ></mapgis-ui-plot-attribute>
@@ -31,6 +32,7 @@
 </template>
 
 <script>
+import { styleAttributes } from "@mapgis/webclient-vue-ui/src/components/plot/test/attributeConfig";
 import plot from "@mapgis/webclient-plot";
 const {
   SymbolManager = window.Zondy.Plot.SymbolManager,
@@ -79,6 +81,15 @@ export default {
       default: true
     }
   },
+  created() {
+    this.styleAttributes = styleAttributes;
+    // 设置三维标绘的填充类型属性的选项
+    this.styleAttributes.fillStyleType.options = {
+      0: "无填充",
+      1: "实填充"
+    };
+    // console.log("styleAttributes", styleAttributes);
+  },
   data() {
     return {
       symbolData: undefined,
@@ -93,7 +104,10 @@ export default {
       // 记录是否完成绘制
       isDraw: false,
       searchResult: undefined,
-      symbolType: undefined
+      symbolType: undefined,
+      styleAttributes: undefined,
+
+      canFill: true
     };
   },
   mounted() {
@@ -161,7 +175,7 @@ export default {
      * 设置图元的点击事件
      */
     setPick() {
-      if(!this.isSetPick) {
+      if (!this.isSetPick) {
         return;
       }
       const vm = this;
@@ -171,6 +185,8 @@ export default {
         vm.isDraw = true;
         vm.plot = plot;
         vm.symbolType = plot._elem.type;
+        vm.canFill = !plot.isMustFill;
+        // console.log("canFill", vm.canFill);
         // console.log("plot-3d", plot);
         let json = plot.getStyle();
         // vm.symbol = vm.symbol || plot._elem._symbol;
@@ -257,6 +273,10 @@ export default {
       this.symbol = manager.getLeafByID(data.icon.id);
       // 调用primitive上的getStyleJSON
       this.symbol.getElement().then(function(res) {
+        // console.log("symbol", res);
+        vm.symbolType = res.type;
+        vm.canFill = !res.isMustFill;
+        // console.log("canFill", vm.canFill);
         vm.symbol.style = res.getStyleJSON();
         let json = res.getStyleJSON();
         vm.parseStyleJson(json, data.icon.src);
@@ -280,11 +300,12 @@ export default {
         }
       }
       json["symbolUrl"] = svgUrl;
-      json = this.remove2dAttributes(json);
+      json = this.removeInvalidAttributes(json);
       this.showStylePanel = true;
       this.styleData = json;
     },
-    remove2dAttributes(json) {
+    removeInvalidAttributes(json) {
+      // 移除二维特有的属性
       delete json.compareLine;
       delete json.compareLineWidth;
       delete json.compareLineColor;
@@ -294,6 +315,7 @@ export default {
           delete json.nodeStyles[node].fontStyle;
           delete json.nodeStyles[node].fontVariant;
           delete json.nodeStyles[node].fontWeight;
+          delete json.nodeStyles[node].fontSize;
           delete json.nodeStyles[node].strokeStyle;
           delete json.nodeStyles[node].lineWidth;
         }
@@ -301,6 +323,28 @@ export default {
         delete json.nodeStyles[node].lineCap;
         delete json.nodeStyles[node].lineJoin;
         delete json.nodeStyles[node].miterLimit;
+        delete json.nodeStyles[node].fillGradType;
+        delete json.nodeStyles[node].fillGradColor;
+
+        // 移除特定面的无法更改的属性
+        if (!this.canFill) {
+          delete json.nodeStyles[node].lineWidth;
+          delete json.nodeStyles[node].fillStyleType;
+          delete json.nodeStyles[node].fillStyle;
+        }
+      }
+
+      if (!this.canFill) {
+        delete json.dimModHeight;
+        delete json.dimModAttitude;
+        delete json.isOpenWall;
+        delete json.wallColor;
+        delete json.isWallGradColor;
+        delete json.wallGradColor;
+      }
+      // console.log(this.symbolType);
+      if (this.symbolType.indexOf("point") == -1) {
+        delete json.dimModAttitude;
       }
       return json;
     },
