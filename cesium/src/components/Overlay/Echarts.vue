@@ -30,12 +30,13 @@ export default {
       return new EchartsLayer(viewer, this.options);
     },
     watchProp() {
+      let vm = this;
       this.$watch("options", {
         handler(next){
-          if (!this.echartsLayer) {
+          if (!vm.echartsLayer) {
             return;
           }
-          this.update(next);
+          vm.update(next);
           // this.unmount();
           // this.mount();
         },

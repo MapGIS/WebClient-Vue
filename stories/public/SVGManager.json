@@ -1,0 +1,43 @@
+{
+  "name": "图标配置",
+  "children": [
+    {
+      "name": "规则",
+      "children": [
+        {
+          "name": "点",
+          "children": [
+            {
+              "id": 1,
+              "name": "",
+              "type": "simplepoint",
+              "src": "newIcon/点/point1.svg"
+            }
+          ]
+        },
+        {
+          "name": "线",
+          "children": [
+            {
+              "id": 2,
+              "name": "",
+              "type": "simpleline",
+              "src": "newIcon/线/line1.svg"
+            }
+          ]
+        },
+        {
+          "name": "区",
+          "children": [
+            {
+              "id": 3,
+              "name": "",
+              "type": "simplearea",
+              "src": "newIcon/区/polygon1.svg"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

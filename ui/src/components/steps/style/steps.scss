@@ -32,7 +32,7 @@ $steps-desciption-max-width: 140px;
 $steps-nav-content-max-width: auto;
 
 @include b(steps) {
-  display: flex;
+  // display: flex;
   width: 100%;
   font-size: 0;
 
@@ -123,11 +123,57 @@ $steps-nav-content-max-width: auto;
       font-size: $font-size-base;
     }
     &-description {
-      color: $text-color-secondary;
+      color: $text-color-secondary !important;
       font-size: $font-size-base;
     }
     /* .step-item-status(wait);
     .step-item-status(process); */
+    &-wait &-icon {
+      background-color: $steps-background;
+      border-color: $wait-icon-color;
+      > .#{steps-prefix-cls}-icon {
+        color: $wait-icon-color;
+        .#{steps-prefix-cls}-icon-dot {
+          background: $wait-icon-color;
+        }
+      }
+    }
+    &-wait > &-container > &-content > &-title {
+      color: $wait-title-color;
+      &::after {
+        background-color: $wait-tail-color;
+      }
+    }
+    &-wait > &-container > &-content > &-description {
+      color: $wait-description-color
+    }
+    &-wait > &-container > &-tail::after {
+      background-color: $wait-tail-color;
+    }
+
+    &-process &-icon {
+      background-color: $steps-background;
+      border-color: $process-icon-color;
+      > .#{steps-prefix-cls}-icon {
+        color: $process-icon-color;
+        .#{steps-prefix-cls}-icon-dot {
+          background: $process-icon-color;
+        }
+      }
+    }
+    &-process > &-container > &-content > &-title {
+      color: $process-title-color;
+      &::after {
+        background-color: $process-tail-color;
+      }
+    }
+    &-process > &-container > &-content > &-description {
+      color: $process-description-color
+    }
+    &-process > &-container > &-tail::after {
+      background-color: $process-tail-color;
+    }
+
     &-process &-icon {
       background: $process-icon-color;
       > .#{steps-prefix-cls}-icon {
@@ -136,6 +182,52 @@ $steps-nav-content-max-width: auto;
     }
     &-process &-title {
       font-weight: 500;
+    }
+
+    &-finish &-icon {
+      background-color: $steps-background;
+      border-color: $finish-icon-color;
+      > .#{steps-prefix-cls}-icon {
+        color: $finish-icon-color;
+        .#{steps-prefix-cls}-icon-dot {
+          background: $finish-icon-color;
+        }
+      }
+    }
+    &-finish > &-container > &-content > &-title {
+      color: $finish-title-color;
+      &::after {
+        background-color: $finish-tail-color;
+      }
+    }
+    &-finish > &-container > &-content > &-description {
+      color: $finish-description-color
+    }
+    &-finish > &-container > &-tail::after {
+      background-color: $finish-tail-color;
+    }
+
+    &-error &-icon {
+      background-color: $steps-background;
+      border-color: $error-icon-color;
+      > .#{steps-prefix-cls}-icon {
+        color: $error-icon-color;
+        .#{steps-prefix-cls}-icon-dot {
+          background: $error-icon-color;
+        }
+      }
+    }
+    &-error > &-container > &-content > &-title {
+      color: $error-title-color;
+      &::after {
+        background-color: $error-tail-color;
+      }
+    }
+    &-error > &-container > &-content > &-description {
+      color: $error-description-color
+    }
+    &-error > &-container > &-tail::after {
+      background-color: $error-tail-color;
     }
     /* .step-item-status(finish);
     .step-item-status(error); */

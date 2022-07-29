@@ -1,365 +1,569 @@
 <template>
   <div>
     <mapgis-ui-card
-        :tab-list="tabListNoTitle"
-        :active-tab-key="noTitleKey"
-        :bodyStyle="cardBodyStyle"
-        @tabChange="key => onTabChange(key, 'noTitleKey')"
+      :tab-list="tabListNoTitle"
+      :active-tab-key="noTitleKey"
+      :bodyStyle="cardBodyStyle"
+      :tabBarStyle="tabBarStyle"
+      @tabChange="key => onTabChange(key, 'noTitleKey')"
     >
       <!--标注列表-->
-      <div :style="{height: listHeight + 'px','overflow-y': dataSourceCopy.length >= scrollNum ? 'scroll' : 'hidden'}"
-           class="mapgis-ui-graphic-edit-list" v-show="noTitleKey === 'list'">
+      <div
+        :style="{
+          height: listHeight + 'px',
+          'overflow-y': dataSourceCopy.length >= scrollNum ? 'scroll' : 'hidden'
+        }"
+        class="mapgis-ui-graphic-edit-list"
+        v-show="noTitleKey === 'list'"
+      >
         <div :key="index" v-for="(row, index) in dataSourceCopy">
-          <mapgis-ui-icon-row @clickTool="$_clickTool($event, row)"
-                              @dblclick="$_dbclick($event, row)"
-                              @open="$_open($event, row)"
-                              :iconStyle="iconStyle"
-                              :mainStyle="rowStyle"
-                              :top="(index < dataSourceCopy.length - 3) || (index < 3)"
-                              :enableGroup="row.type === 'group'"
-                              :src="icons[row.type + 'Image']" :title="row.attributes.title"/>
-          <mapgis-ui-input @change="$_changeTitle" style="width: 60%;margin-left: 17px;margin-right: 3px;"
-                           v-show="editTitleGraphicId === row.id" v-model="row.attributes.title"/>
-          <mapgis-ui-button v-show="editTitleGraphicId === row.id" @click="$_finishEditTitle(row.attributes.title)"
-                            style="height: 30px;padding-top: 3px" type="primary">完成修改
+          <mapgis-ui-icon-row
+            @clickTool="$_clickTool($event, row)"
+            @dblclick="$_dbclick($event, row)"
+            @open="$_open($event, row)"
+            :iconStyle="iconStyle"
+            :mainStyle="rowStyle"
+            :top="index < dataSourceCopy.length - 3 || index < 3"
+            :enableGroup="row.type === 'group'"
+            :src="icons[row.type + 'Image']"
+            :title="row.attributes.title"
+          >
+            <div
+              slot="checkbox"
+              class="item-checkbox"
+              v-if="row.type !== 'group'"
+            >
+              <mapgis-ui-checkbox
+                v-show="isBatch"
+                :checked="selectedIds.includes(row.id)"
+                @change="$_changeItemChecked(row.id, $event)"
+              >
+              </mapgis-ui-checkbox>
+            </div>
+          </mapgis-ui-icon-row>
+          <mapgis-ui-input
+            @change="$_changeTitle"
+            class="mapgis-ui-graphic-edit-list-input"
+            v-show="editTitleGraphicId === row.id"
+            v-model="row.attributes.title"
+          />
+          <mapgis-ui-button
+            v-show="editTitleGraphicId === row.id"
+            @click="$_finishEditTitle(row.attributes.title)"
+            style="height: 30px;"
+            type="primary"
+            >完成修改
           </mapgis-ui-button>
-          <div v-if="row.type === 'group'" v-show='openGroup === row.id'>
-            <mapgis-ui-icon-row :key="gIndex" v-for="(graphic, gIndex) in graphicGroups"
-                                @clickTool="$_clickTool($event, graphic)"
-                                @dblclick="$_dbclick($event, graphic)"
-                                :iconStyle="iconStyle"
-                                :mainStyle="groupRowStyle"
-                                :top="(gIndex < graphicGroups.length - 3) || (gIndex < 3)"
-                                :src="icons[graphic.type + 'Image']"
-                                :title="graphic.name"
-            />
+          <div v-if="row.type === 'group'" v-show="openGroup === row.id">
+            <mapgis-ui-icon-row
+              :key="gIndex"
+              v-for="(graphic, gIndex) in graphicGroups"
+              @clickTool="$_clickTool($event, graphic)"
+              @dblclick="$_dbclick($event, graphic)"
+              :iconStyle="iconStyle"
+              :mainStyle="groupRowStyle"
+              :top="gIndex < graphicGroups.length - 3 || gIndex < 3"
+              :src="icons[graphic.type + 'Image']"
+              :title="graphic.name"
+            >
+              <div slot="checkbox" class="item-checkbox">
+                <mapgis-ui-checkbox
+                  v-show="isBatch"
+                  :checked="selectedIds.includes(graphic.id)"
+                  @change="$_changeItemChecked(graphic.id, $event)"
+                >
+                </mapgis-ui-checkbox>
+              </div>
+            </mapgis-ui-icon-row>
           </div>
         </div>
+        <!-- 批量操作 -->
+        <mapgis-ui-setting-footer>
+          <div v-show="isBatch" class="footer-div">
+            <mapgis-ui-button @click="$_batchShow" class="footer-btn"
+              >显示</mapgis-ui-button
+            >
+            <mapgis-ui-button @click="$_batchHide" class="footer-btn"
+              >隐藏</mapgis-ui-button
+            >
+            <mapgis-ui-button @click="$_batchDelete" class="footer-btn"
+              >删除</mapgis-ui-button
+            >
+          </div>
+        </mapgis-ui-setting-footer>
       </div>
       <!--设置面板-->
-      <div v-show="noTitleKey === 'edit'" style="min-height: 200px;max-height: 430px;overflow:auto;">
-        <div v-show="editPanelValues && editType === 'edit'" style="margin-bottom: 12px;">
+      <div
+        v-show="noTitleKey === 'edit'"
+        style="min-height: 200px;max-height: 430px;overflow:auto;"
+      >
+        <div
+          v-show="editPanelValues && editType === 'edit'"
+          style="margin-bottom: 12px;"
+        >
           <mapgis-ui-title-row-left
-              title="类型"
-              :value="$_formatType(currentEditType)"
+            title="类型"
+            :value="$_formatType(currentEditType)"
           />
           <div :key="index" v-for="(row, index) in editList[currentEditType]">
             <mapgis-ui-input-row-left
-                v-if="row.type === 'MapgisUiInput'"
-                :title="row.title"
-                v-model="editPanelValues[row.key]"
-                v-show="['image', 'rectangleText'].indexOf(row.key) < 0"
+              v-if="row.type === 'MapgisUiInput'"
+              :title="row.title"
+              v-model="editPanelValues[row.key]"
+              v-show="['image', 'rectangleText'].indexOf(row.key) < 0"
             />
             <mapgis-ui-input-row-left
-                v-if="row.type === 'MapgisUiInput'"
-                :title="row.title"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'image' && ['PolylineTrailLink', 'Image'].indexOf(editPanelValues.materialType) > -1"
+              v-if="row.type === 'MapgisUiInput'"
+              :title="row.title"
+              type="Image"
+              :uploadUrl="uploadUrl"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'image' &&
+                  ['PolylineTrailLink', 'Image'].indexOf(
+                    editPanelValues.materialType
+                  ) > -1
+              "
+            >
+            </mapgis-ui-input-row-left>
+            <mapgis-ui-input-row-left
+              v-if="row.type === 'MapgisUiInput'"
+              :title="row.title"
+              type="Image"
+              :uploadUrl="uploadUrl"
+              v-model="editPanelValues[row.key]"
+              v-show="row.key === 'image' && currentEditType === 'billboard'"
             />
             <mapgis-ui-input-row-left
-                v-if="row.type === 'MapgisUiInput'"
-                :title="row.title"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'image' && currentEditType === 'billboard'"
+              v-if="row.type === 'MapgisUiInput'"
+              :title="row.title"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'rectangleText' &&
+                  editPanelValues.materialType === 'text'
+              "
             />
             <mapgis-ui-input-row-left
-                v-if="row.type === 'MapgisUiInput'"
-                :title="row.title"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'rectangleText' && editPanelValues.materialType === 'text'"
+              v-if="row.type === 'MapgisUiInputNumber'"
+              :title="row.title"
+              type="Number"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                [
+                  'rtFontSize',
+                  'flashTime',
+                  'alphaSpace',
+                  'flashAlpha',
+                  'outlineWidth',
+                  'backgroundPadding',
+                  'speed',
+                  'duration',
+                  'gradient',
+                  'count',
+                  'direction',
+                  'stRotation',
+                  'repeatX',
+                  'repeatY'
+                ].indexOf(row.key) < 0
+              "
             />
             <mapgis-ui-input-row-left
-                v-if="row.type === 'MapgisUiInputNumber'"
-                :title="row.title"
-                type="Number"
-                v-model="editPanelValues[row.key]"
-                v-show="['rtFontSize', 'flashTime', 'alphaSpace', 'flashAlpha', 'outlineWidth','backgroundPadding','speed','duration','gradient','count', 'direction', 'stRotation', 'repeatX', 'repeatY'].indexOf(row.key) < 0"
+              v-if="row.type === 'MapgisUiInputNumber'"
+              :title="row.title"
+              type="Number"
+              v-model="editPanelValues[row.key]"
+              v-show="row.key === 'outlineWidth' && showOutline"
             />
             <mapgis-ui-input-row-left
-                v-if="row.type === 'MapgisUiInputNumber'"
-                :title="row.title"
-                type="Number"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'outlineWidth' && showOutline"
+              v-if="row.type === 'MapgisUiInputNumber'"
+              :title="row.title"
+              type="Number"
+              v-model="editPanelValues[row.key]"
+              v-show="row.key === 'backgroundPadding' && showBackground"
             />
             <mapgis-ui-input-row-left
-                v-if="row.type === 'MapgisUiInputNumber'"
-                :title="row.title"
-                type="Number"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'backgroundPadding' && showBackground"
+              v-if="row.type === 'MapgisUiInputNumber'"
+              :title="row.title"
+              type="Number"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'speed' &&
+                  editPanelValues.materialType === 'RadarMaterial'
+              "
             />
             <mapgis-ui-input-row-left
-                v-if="row.type === 'MapgisUiInputNumber'"
-                :title="row.title"
-                type="Number"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'speed' && editPanelValues.materialType === 'RadarMaterial'"
+              v-if="row.type === 'MapgisUiInputNumber'"
+              :title="row.title"
+              type="Number"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'duration' &&
+                  ['PolylineTrailLink', 'CircleWaveMaterial'].indexOf(
+                    editPanelValues.materialType
+                  ) > -1
+              "
             />
             <mapgis-ui-input-row-left
-                v-if="row.type === 'MapgisUiInputNumber'"
-                :title="row.title"
-                type="Number"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'duration' && ['PolylineTrailLink', 'CircleWaveMaterial'].indexOf(editPanelValues.materialType) > -1"
+              v-if="row.type === 'MapgisUiInputNumber'"
+              :title="row.title"
+              type="Number"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'gradient' &&
+                  editPanelValues.materialType === 'CircleWaveMaterial'
+              "
             />
             <mapgis-ui-input-row-left
-                v-if="row.type === 'MapgisUiInputNumber'"
-                :title="row.title"
-                type="Number"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'gradient' && editPanelValues.materialType === 'CircleWaveMaterial'"
+              v-if="row.type === 'MapgisUiInputNumber'"
+              :title="row.title"
+              type="Number"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'count' &&
+                  editPanelValues.materialType === 'CircleWaveMaterial'
+              "
             />
             <mapgis-ui-input-row-left
-                v-if="row.type === 'MapgisUiInputNumber'"
-                :title="row.title"
-                type="Number"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'count' && editPanelValues.materialType === 'CircleWaveMaterial'"
+              v-if="row.type === 'MapgisUiInputNumber'"
+              :title="row.title"
+              type="Number"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'stRotation' &&
+                  editPanelValues.materialType === 'Image'
+              "
             />
             <mapgis-ui-input-row-left
-                v-if="row.type === 'MapgisUiInputNumber'"
-                :title="row.title"
-                type="Number"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'stRotation' && editPanelValues.materialType === 'Image'"
+              v-if="row.type === 'MapgisUiInputNumber'"
+              :title="row.title"
+              type="Number"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'repeatX' &&
+                  editPanelValues.materialType === 'Image'
+              "
             />
             <mapgis-ui-input-row-left
-                v-if="row.type === 'MapgisUiInputNumber'"
-                :title="row.title"
-                type="Number"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'repeatX' && editPanelValues.materialType === 'Image'"
+              v-if="row.type === 'MapgisUiInputNumber'"
+              :title="row.title"
+              type="Number"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'repeatY' &&
+                  editPanelValues.materialType === 'Image'
+              "
             />
             <mapgis-ui-input-row-left
-                v-if="row.type === 'MapgisUiInputNumber'"
-                :title="row.title"
-                type="Number"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'repeatY' && editPanelValues.materialType === 'Image'"
+              v-if="row.type === 'MapgisUiInputNumber'"
+              :title="row.title"
+              type="Number"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'flashAlpha' &&
+                  editPanelValues.materialType === 'flash'
+              "
             />
             <mapgis-ui-input-row-left
-                v-if="row.type === 'MapgisUiInputNumber'"
-                :title="row.title"
-                type="Number"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'flashAlpha' && editPanelValues.materialType === 'flash'"
+              v-if="row.type === 'MapgisUiInputNumber'"
+              :title="row.title"
+              type="Number"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'alphaSpace' &&
+                  editPanelValues.materialType === 'flash'
+              "
             />
             <mapgis-ui-input-row-left
-                v-if="row.type === 'MapgisUiInputNumber'"
-                :title="row.title"
-                type="Number"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'alphaSpace' && editPanelValues.materialType === 'flash'"
+              v-if="row.type === 'MapgisUiInputNumber'"
+              :title="row.title"
+              type="Number"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'flashTime' &&
+                  editPanelValues.materialType === 'flash'
+              "
             />
             <mapgis-ui-input-row-left
-                v-if="row.type === 'MapgisUiInputNumber'"
-                :title="row.title"
-                type="Number"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'flashTime' && editPanelValues.materialType === 'flash'"
-            />
-            <mapgis-ui-input-row-left
-                v-if="row.type === 'MapgisUiInputNumber'"
-                :title="row.title"
-                type="Number"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'rtFontSize' && editPanelValues.materialType === 'text'"
+              v-if="row.type === 'MapgisUiInputNumber'"
+              :title="row.title"
+              type="Number"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'rtFontSize' &&
+                  editPanelValues.materialType === 'text'
+              "
             />
             <mapgis-ui-slider-row-left
-                v-if="row.type === 'MapgisUiSlider'"
-                :title="row.title"
-                v-model="editPanelValues[row.key]"
-                v-show="['outlineOpacity', 'backgroundOpacity', 'materialOpacity', 'rtBackgroundOpacity'].indexOf(row.key) < 0"
+              v-if="row.type === 'MapgisUiSlider'"
+              :title="row.title"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                [
+                  'outlineOpacity',
+                  'backgroundOpacity',
+                  'materialOpacity',
+                  'rtBackgroundOpacity'
+                ].indexOf(row.key) < 0
+              "
             />
             <mapgis-ui-slider-row-left
-                v-if="row.type === 'MapgisUiSlider'"
-                :title="row.title"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'outlineOpacity' && showOutline"
+              v-if="row.type === 'MapgisUiSlider'"
+              :title="row.title"
+              v-model="editPanelValues[row.key]"
+              v-show="row.key === 'outlineOpacity' && showOutline"
             />
             <mapgis-ui-slider-row-left
-                v-if="row.type === 'MapgisUiSlider'"
-                :title="row.title"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'backgroundOpacity' && showBackground"
+              v-if="row.type === 'MapgisUiSlider'"
+              :title="row.title"
+              v-model="editPanelValues[row.key]"
+              v-show="row.key === 'backgroundOpacity' && showBackground"
             />
             <mapgis-ui-slider-row-left
-                v-if="row.type === 'MapgisUiSlider'"
-                :title="row.title"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'materialOpacity' && ['Color', 'PolylineTrailLink'].indexOf(editPanelValues.materialType) > -1"
+              v-if="row.type === 'MapgisUiSlider'"
+              :title="row.title"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'materialOpacity' &&
+                  ['Color', 'PolylineTrailLink'].indexOf(
+                    editPanelValues.materialType
+                  ) > -1
+              "
             />
             <mapgis-ui-slider-row-left
-                v-if="row.type === 'MapgisUiSlider'"
-                :title="row.title"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'rtBackgroundOpacity' && editPanelValues.materialType === 'text'"
+              v-if="row.type === 'MapgisUiSlider'"
+              :title="row.title"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'rtBackgroundOpacity' &&
+                  editPanelValues.materialType === 'text'
+              "
             />
             <mapgis-ui-select-row-left
-                v-if="row.type === 'MapgisUiSelect'"
-                :title="row.title"
-                :dataSource="row.dataSource"
-                v-model="editPanelValues[row.key]"
-                v-show="['direction', 'rtFontFamily'].indexOf(row.key) < 0"
+              v-if="row.type === 'MapgisUiSelect'"
+              :title="row.title"
+              :dataSource="row.dataSource"
+              v-model="editPanelValues[row.key]"
+              v-show="['direction', 'rtFontFamily'].indexOf(row.key) < 0"
             />
             <mapgis-ui-select-row-left
-                v-if="row.type === 'MapgisUiSelect'"
-                :title="row.title"
-                :dataSource="row.dataSource"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'direction' && editPanelValues.materialType === 'PolylineTrailLink'"
+              v-if="row.type === 'MapgisUiSelect'"
+              :title="row.title"
+              :dataSource="row.dataSource"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'direction' &&
+                  editPanelValues.materialType === 'PolylineTrailLink'
+              "
             />
             <mapgis-ui-select-row-left
-                v-if="row.type === 'MapgisUiSelect'"
-                :title="row.title"
-                :dataSource="row.dataSource"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'rtFontFamily' && editPanelValues.materialType === 'text'"
+              v-if="row.type === 'MapgisUiSelect'"
+              :title="row.title"
+              :dataSource="row.dataSource"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'rtFontFamily' &&
+                  editPanelValues.materialType === 'text'
+              "
             />
             <mapgis-ui-color-picker-left
-                v-if="row.type === 'MapgisUiColorPicker'"
-                :title="row.title"
-                v-model="editPanelValues[row.key]"
-                v-show="['outlineColor','backgroundColor','materialColor','pureColor', 'linkColor', 'rtBackgroundColor'].indexOf(row.key) < 0"
+              v-if="row.type === 'MapgisUiColorPicker'"
+              :title="row.title"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                [
+                  'outlineColor',
+                  'backgroundColor',
+                  'materialColor',
+                  'pureColor',
+                  'linkColor',
+                  'rtBackgroundColor'
+                ].indexOf(row.key) < 0
+              "
             />
             <mapgis-ui-color-picker-left
-                v-if="row.type === 'MapgisUiColorPicker'"
-                :title="row.title"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'outlineColor' && showOutline"
+              v-if="row.type === 'MapgisUiColorPicker'"
+              :title="row.title"
+              v-model="editPanelValues[row.key]"
+              v-show="row.key === 'outlineColor' && showOutline"
             />
             <mapgis-ui-color-picker-left
-                v-if="row.type === 'MapgisUiColorPicker'"
-                :title="row.title"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'backgroundColor' && showBackground"
+              v-if="row.type === 'MapgisUiColorPicker'"
+              :title="row.title"
+              v-model="editPanelValues[row.key]"
+              v-show="row.key === 'backgroundColor' && showBackground"
             />
             <mapgis-ui-color-picker-left
-                v-if="row.type === 'MapgisUiColorPicker'"
-                :title="row.title"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'materialColor' && ['Color', 'RadarMaterial', 'CircleWaveMaterial'].indexOf(editPanelValues.materialType) > -1"
+              v-if="row.type === 'MapgisUiColorPicker'"
+              :title="row.title"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'materialColor' &&
+                  ['Color', 'RadarMaterial', 'CircleWaveMaterial'].indexOf(
+                    editPanelValues.materialType
+                  ) > -1
+              "
             />
             <mapgis-ui-color-picker-left
-                v-if="row.type === 'MapgisUiColorPicker'"
-                :title="row.title"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'linkColor' && ['PolylineTrailLink'].indexOf(editPanelValues.materialType) > -1"
+              v-if="row.type === 'MapgisUiColorPicker'"
+              :title="row.title"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'linkColor' &&
+                  ['PolylineTrailLink'].indexOf(editPanelValues.materialType) >
+                    -1
+              "
             />
             <mapgis-ui-color-picker-left
-                v-if="row.type === 'MapgisUiColorPicker'"
-                :title="row.title"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'pureColor' && editPanelValues.materialType === 'Color'"
+              v-if="row.type === 'MapgisUiColorPicker'"
+              :title="row.title"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'pureColor' &&
+                  editPanelValues.materialType === 'Color'
+              "
             />
             <mapgis-ui-color-picker-left
-                v-if="row.type === 'MapgisUiColorPicker'"
-                :title="row.title"
-                v-model="editPanelValues[row.key]"
-                v-show="row.key === 'rtBackgroundColor' && editPanelValues.materialType === 'text'"
+              v-if="row.type === 'MapgisUiColorPicker'"
+              :title="row.title"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'rtBackgroundColor' &&
+                  editPanelValues.materialType === 'text'
+              "
             />
             <mapgis-ui-choose-picture-right
-                v-if="row.type === 'MapgisUiPicture'"
-                :showTitleIcon="false"
-                :title="row.title"
-                :carouselStyle="carouselStyle"
-                :titleStyle="pTitleStyle"
-                v-model="editPanelValues[row.key]"
-                :enablePreview="false"
+              v-if="row.type === 'MapgisUiPicture'"
+              :showTitleIcon="false"
+              :title="row.title"
+              :carouselStyle="carouselStyle"
+              :titleStyle="pTitleStyle"
+              v-model="editPanelValues[row.key]"
+              :enablePreview="false"
             />
             <mapgis-ui-switch-row-left
-                v-if="row.type === 'MapgisUiShowOutline'"
-                :title="row.title"
-                checkTitle="收起"
-                unCheckTitle="展开"
-                @change="$_showOutLine"
-                v-model="showOutline"
+              v-if="row.type === 'MapgisUiShowOutline'"
+              :title="row.title"
+              checkTitle="收起"
+              unCheckTitle="展开"
+              @change="$_showOutLine"
+              v-model="showOutline"
             />
             <mapgis-ui-switch-row-left
-                v-if="row.type === 'MapgisUiSwitch'"
-                :title="row.title"
-                @change="$_isHermiteSpline"
-                v-model="row.value"
-                v-show="row.key === 'isHermiteSpline'"
+              v-if="row.type === 'MapgisUiSwitch'"
+              :title="row.title"
+              @change="$_isHermiteSpline"
+              v-model="row.value"
+              v-show="row.key === 'isHermiteSpline'"
             />
             <mapgis-ui-switch-row-left
-                v-if="row.type === 'MapgisUiShowBackground'"
-                :title="row.title"
-                checkTitle="收起"
-                unCheckTitle="展开"
-                @change="$_showBackground"
-                v-model="showBackground"
+              v-if="row.type === 'MapgisUiShowBackground'"
+              :title="row.title"
+              checkTitle="收起"
+              unCheckTitle="展开"
+              @change="$_showBackground"
+              v-model="showBackground"
             />
             <mapgis-ui-switch-row-left
-                v-if="row.type === 'MapgisUiLoop'"
-                :title="row.title"
-                @change="$_loop"
-                v-model="editPanelValues[row.key]"
+              v-if="row.type === 'MapgisUiLoop'"
+              :title="row.title"
+              @change="$_loop"
+              v-model="editPanelValues[row.key]"
             />
           </div>
+          <mapgis-ui-graphic-model-edit-panel
+            v-if="
+              currentEditType === 'model' &&
+                editPanelValues &&
+                editPanelValues.positions
+            "
+            :positions.sync="editPanelValues.positions"
+            :orientation.sync="editPanelValues.orientation"
+            @pickCoords="$_pickCoords"
+            @editPositions="$_editPositions"
+            @location="$_location"
+            @editOrientation="$_editOrientation"
+            @resetOrientation="$_resetOrientation"
+          ></mapgis-ui-graphic-model-edit-panel>
         </div>
         <div v-show="editType === 'popup'">
           <div :key="index" v-for="(value, index) in attributeKeyArray">
             <mapgis-ui-input-row-left
-                v-if="value === 'title'"
-                title="标题"
-                paddingRight="4px"
-                v-model="attributeValueArray[index]"
+              v-if="value === 'title'"
+              title="标题"
+              paddingRight="4px"
+              :enableDelete="true"
+              @delete="$_delete(index)"
+              v-model="attributeValueArray[index]"
             />
             <mapgis-ui-input-row-left
-                v-else
-                :title="value"
-                paddingRight="4px"
-                v-model="attributeValueArray[index]"
+              v-else
+              :title="value"
+              paddingRight="4px"
+              :enableDelete="true"
+              @delete="$_delete(index)"
+              v-model="attributeValueArray[index]"
             />
           </div>
-          <div class="mapgis-ui-graphic-edit-addAttribute" v-show="addAttribute">
+          <div
+            class="mapgis-ui-graphic-edit-addAttribute"
+            v-show="addAttribute"
+          >
             <div>
-              <span style="font-size: 12px;">属性名</span>
+              <span style="font-size: 14px;">属性名</span>
               <mapgis-ui-input
-                  class="mapgis-ui-graphic-edit-addAttribute-input"
-                  v-model="attributeKey"
+                class="mapgis-ui-graphic-edit-addAttribute-input"
+                v-model="attributeKey"
               />
             </div>
-            <div style="padding-top: 10px;">
-              <span style="font-size: 12px;">属性值</span>
+            <div style="padding-top: 8px;">
+              <span style="font-size: 14px;">属性值</span>
               <mapgis-ui-input
-                  class="mapgis-ui-graphic-edit-addAttribute-input"
-                  v-model="attributeValue"
+                class="mapgis-ui-graphic-edit-addAttribute-input"
+                v-model="attributeValue"
               />
             </div>
           </div>
-          <mapgis-ui-button type="primary"
-                            class="mapgis-ui-graphic-edit-addAttribute-add"
-                            :style="{'margin-top': attributeKeyArray.length > 0 ? '0' : '7px'}"
-                            @click="$_addAttribute">
+          <mapgis-ui-button
+            type="primary"
+            class="mapgis-ui-graphic-edit-addAttribute-add"
+            :style="{
+              'margin-top': attributeKeyArray.length > 0 ? '0' : '7px'
+            }"
+            @click="$_addAttribute"
+          >
             {{ addAttributeTitle }}
           </mapgis-ui-button>
         </div>
         <div v-if="editPanelValues" v-show="editType === 'batch'">
           <mapgis-ui-input-row-left
-              title="比例尺"
-              type="Number"
-              v-model="editPanelValues.scale"
+            title="比例尺"
+            type="Number"
+            v-model="editPanelValues.scale"
           />
           <mapgis-ui-input-row-left
-              title="Z轴旋转"
-              type="Number"
-              v-model="editPanelValues.heading"
+            title="Z轴旋转"
+            type="Number"
+            v-model="editPanelValues.heading"
           />
           <mapgis-ui-input-row-left
-              title="Y轴旋转"
-              type="Number"
-              v-model="editPanelValues.pitch"
+            title="Y轴旋转"
+            type="Number"
+            v-model="editPanelValues.pitch"
           />
           <mapgis-ui-input-row-left
-              title="X轴旋转"
-              type="Number"
-              v-model="editPanelValues.roll"
+            title="X轴旋转"
+            type="Number"
+            v-model="editPanelValues.roll"
           />
         </div>
       </div>
+      <mapgis-ui-checkbox
+        v-show="noTitleKey === 'list'"
+        slot="tabBarExtraContent"
+        @change="$_changeBatch"
+      >
+        批量操作
+      </mapgis-ui-checkbox>
     </mapgis-ui-card>
   </div>
 </template>
@@ -369,6 +573,7 @@ import icons from "../iconfont/GraphicBase64Icons";
 
 export default {
   name: "mapgis-ui-graphic-edit-panel",
+  inject: ["uploadUrl"],
   props: {
     editList: {
       type: Object
@@ -392,7 +597,7 @@ export default {
   },
   watch: {
     editPanelValues: {
-      handler: function () {
+      handler: function() {
         if (this.isUpdatePanel && !this.editTitle) {
           if (this.editType === "batch") {
             this.$emit("changeGroup", this.editPanelValues, this.groupId);
@@ -404,12 +609,14 @@ export default {
       deep: true
     },
     dataSource: {
-      handler: function () {
+      handler: function() {
         this.dataSourceCopy = JSON.parse(JSON.stringify(this.dataSource));
         if (this.dataSource.length > 0 && !this.editTitle) {
           //获取设置面板显示参数
           if (this.isUpdatePanel) {
-            this.editPanelValues = this.$_getEditPanelValuesFromJSON(this.dataSourceCopy[this.dataSourceCopy.length - 1]);
+            this.editPanelValues = this.$_getEditPanelValuesFromJSON(
+              this.dataSourceCopy[this.dataSourceCopy.length - 1]
+            );
             this.noTitleKey = "edit";
             this.isEdit = true;
           }
@@ -420,22 +627,29 @@ export default {
   },
   data() {
     return {
+      isBatch: false, //是否批量操作
+      selectedIds: [], //选中要素的id集合
       //切换面板参数
       tabListNoTitle: [
         {
-          key: 'list',
-          tab: '标注列表',
+          key: "list",
+          tab: "标注列表"
         },
         {
-          key: 'edit',
-          tab: '设置面板',
+          key: "edit",
+          tab: "设置面板"
         }
       ],
       //当前显示面板
-      noTitleKey: 'list',
+      noTitleKey: "list",
       //tab框的body样式
       cardBodyStyle: {
         padding: "0"
+      },
+      tabBarStyle: {
+        margin: "0",
+        textAlign: "center"
+        // borderBottom: "1px solid #F0F0F0"
       },
       //标注列表一行中的图标样式
       iconStyle: {
@@ -526,12 +740,15 @@ export default {
       groupId: undefined,
       dataSourceCopy: [],
       editType: "edit"
-    }
+    };
   },
   mounted() {
     let canvas = document.getElementsByClassName("mapboxgl-canvas");
     if (canvas && canvas.length > 0) {
-      this.listHeight = canvas[0].offsetHeight - 370 > 200 ? canvas[0].offsetHeight - 370 > 200 : 200;
+      this.listHeight =
+        canvas[0].offsetHeight - 370 > 200
+          ? canvas[0].offsetHeight - 370 > 200
+          : 200;
       this.scrollNum = Math.ceil(this.listHeight / 40);
     }
   },
@@ -551,7 +768,8 @@ export default {
     $_addAttribute() {
       if (this.addAttribute) {
         this.addAttributeTitle = "添加属性";
-        let hasSameKey = false, index = 0;
+        let hasSameKey = false,
+          index = 0;
         for (let i = 0; i < this.attributeKeyArray.length; i++) {
           if (this.attributeKeyArray[i] === this.attributeKey) {
             index = i;
@@ -582,23 +800,67 @@ export default {
       this.$emit("test");
     },
     $_setEditPanelValues(editPanelValues) {
-      const {attributes} = editPanelValues;
+      const { attributes } = editPanelValues;
       let vm = this;
       this.isUpdatePanel = false;
       this.editPanelValues = editPanelValues;
       if (attributes) {
         this.attributeKeyArray = [];
         this.attributeValueArray = [];
-        Object.keys(attributes).forEach(function (key) {
-          if(key !== "title"){
+        Object.keys(attributes).forEach(function(key) {
+          if (key !== "title") {
             vm.attributeKeyArray.push(key);
             vm.attributeValueArray.push(attributes[key]);
           }
         });
       }
-      this.$nextTick(function () {
+      this.$nextTick(function() {
         this.isUpdatePanel = true;
       });
+    },
+    /**
+     * 是否批量操作
+     */
+    $_changeBatch({ target }) {
+      this.isBatch = target.checked;
+    },
+    /**
+     * 列表中checbox事件
+     */
+    $_changeItemChecked(id, event) {
+      const checked = event.target.checked;
+      if (checked) {
+        if (!this.selectedIds.includes(id)) {
+          this.selectedIds.push(id);
+        }
+      } else {
+        if (this.selectedIds.includes(id)) {
+          const index = this.selectedIds.indexOf(id);
+          if (index > -1) {
+            this.selectedIds.splice(index, 1);
+          }
+        }
+      }
+    },
+    $_batchShow() {
+      this.$emit("batchOperate", {
+        operate: "batchShow",
+        selectedIds: this.selectedIds
+      });
+    },
+    $_batchHide() {
+      this.$emit("batchOperate", {
+        operate: "batchHide",
+        selectedIds: this.selectedIds
+      });
+    },
+    $_batchDelete() {
+      this.$emit("batchOperate", {
+        operate: "batchDelete",
+        selectedIds: this.selectedIds
+      });
+      // 删除后，重置selectedIds
+      this.selectedIds = [];
     },
     onTabChange(key, type) {
       this[type] = key;
@@ -688,42 +950,90 @@ export default {
         editing,
         allowPicking,
         modelMatrix,
-        asynchronous
+        asynchronous,
+        heading,
+        pitch,
+        roll
       } = json;
 
       const {
-        text, font, color, fillColor, backgroundColor, outlineWidth, outlineColor, image,
-        extrudedHeight, width, height, topRadius, backgroundOpacity, backgroundPadding, bottomRadius,
-        pixelSize, radius, materialType, material, cornerType, radiusX, radiusY, radiusZ, url, scale, addHeight,
-        stRotation, isHermiteSpline, offsetHeight, loop
+        text,
+        font,
+        color,
+        fillColor,
+        backgroundColor,
+        outlineWidth,
+        outlineColor,
+        image,
+        extrudedHeight,
+        width,
+        height,
+        topRadius,
+        backgroundOpacity,
+        backgroundPadding,
+        bottomRadius,
+        pixelSize,
+        radius,
+        materialType,
+        material,
+        cornerType,
+        radiusX,
+        radiusY,
+        radiusZ,
+        url,
+        scale,
+        addHeight,
+        stRotation,
+        isHermiteSpline,
+        offsetHeight,
+        loop
       } = style;
 
-      const {title, __flashStyle} = attributes;
+      const { title, __flashStyle } = attributes;
 
-      let editPanelValues = {}, vm = this;
+      let editPanelValues = {},
+        vm = this;
 
       //取得属性面板参数，由于object无法设置顺序，因此使用数组代替
       vm.attributeKeyArray = [];
       vm.attributeValueArray = [];
-      Object.keys(attributes).forEach(function (key) {
+      Object.keys(attributes).forEach(function(key) {
         vm.attributeKeyArray.push(key);
         vm.attributeValueArray.push(attributes[key]);
-      })
+      });
 
       let type = json.type;
-      if (type === "circle" && this.currentEditType !== "circle" && this.currentEditType !== "mouse") {
+      if (
+        type === "circle" &&
+        this.currentEditType !== "circle" &&
+        this.currentEditType !== "mouse"
+      ) {
         type = "cone";
       }
       switch (type) {
         case "point":
           editPanelValues.id = id;
-          editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.color =
+            "rgb(" +
+            color[0] * 255 +
+            "," +
+            color[1] * 255 +
+            "," +
+            color[2] * 255 +
+            ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.pixelSize = pixelSize;
           editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.outlineWidth = outlineWidth;
           editPanelValues.outlineOpacity = outlineColor[3] * 100;
-          editPanelValues.outlineColor = "rgb(" + outlineColor[0] * 255 + "," + outlineColor[1] * 255 + "," + outlineColor[2] * 255 + ")";
+          editPanelValues.outlineColor =
+            "rgb(" +
+            outlineColor[0] * 255 +
+            "," +
+            outlineColor[1] * 255 +
+            "," +
+            outlineColor[2] * 255 +
+            ")";
           if (title) {
             editPanelValues.title = title;
           }
@@ -744,13 +1054,34 @@ export default {
           }
           editPanelValues.fontSize = fonts[0];
           editPanelValues.fontFamily = fonts[1];
-          editPanelValues.fontColor = "rgb(" + fillColor[0] * 255 + "," + fillColor[1] * 255 + "," + fillColor[2] * 255 + ")";
+          editPanelValues.fontColor =
+            "rgb(" +
+            fillColor[0] * 255 +
+            "," +
+            fillColor[1] * 255 +
+            "," +
+            fillColor[2] * 255 +
+            ")";
           editPanelValues.opacity = fillColor[3] * 100;
-          editPanelValues.backgroundColor = "rgb(" + backgroundColor[0] * 255 + "," + backgroundColor[1] * 255 + "," + backgroundColor[2] * 255 + ")";
+          editPanelValues.backgroundColor =
+            "rgb(" +
+            backgroundColor[0] * 255 +
+            "," +
+            backgroundColor[1] * 255 +
+            "," +
+            backgroundColor[2] * 255 +
+            ")";
           editPanelValues.backgroundOpacity = backgroundColor[3] * 100;
           editPanelValues.backgroundPadding = backgroundPadding.x;
           editPanelValues.outlineWidth = outlineWidth;
-          editPanelValues.outlineColor = "rgb(" + outlineColor[0] * 255 + "," + outlineColor[1] * 255 + "," + outlineColor[2] * 255 + ")";
+          editPanelValues.outlineColor =
+            "rgb(" +
+            outlineColor[0] * 255 +
+            "," +
+            outlineColor[1] * 255 +
+            "," +
+            outlineColor[2] * 255 +
+            ")";
           editPanelValues.outlineOpacity = outlineColor[3] * 100;
           let position = this.$_cartesian3ToLongLat({
             x: positions[0],
@@ -762,7 +1093,14 @@ export default {
           break;
         case "box":
           editPanelValues.id = id;
-          editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.color =
+            "rgb(" +
+            color[0] * 255 +
+            "," +
+            color[1] * 255 +
+            "," +
+            color[2] * 255 +
+            ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.extrudedHeight = extrudedHeight;
           editPanelValues.offsetHeight = offsetHeight;
@@ -772,7 +1110,14 @@ export default {
           break;
         case "billboard":
           editPanelValues.id = id;
-          editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.color =
+            "rgb(" +
+            color[0] * 255 +
+            "," +
+            color[1] * 255 +
+            "," +
+            color[2] * 255 +
+            ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.image = image;
           editPanelValues.width = width;
@@ -780,7 +1125,14 @@ export default {
           editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.outlineWidth = outlineWidth;
           editPanelValues.outlineOpacity = outlineColor[3] * 100;
-          editPanelValues.outlineColor = "rgb(" + outlineColor[0] * 255 + "," + outlineColor[1] * 255 + "," + outlineColor[2] * 255 + ")";
+          editPanelValues.outlineColor =
+            "rgb(" +
+            outlineColor[0] * 255 +
+            "," +
+            outlineColor[1] * 255 +
+            "," +
+            outlineColor[2] * 255 +
+            ")";
           if (title) {
             editPanelValues.title = title;
           }
@@ -792,10 +1144,24 @@ export default {
           editPanelValues.materialType = materialType;
           editPanelValues.loop = loop;
           if (materialType === "Color") {
-            editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+            editPanelValues.color =
+              "rgb(" +
+              color[0] * 255 +
+              "," +
+              color[1] * 255 +
+              "," +
+              color[2] * 255 +
+              ")";
             editPanelValues.opacity = color[3] * 100;
           } else {
-            editPanelValues.color = "rgb(" + material.color.red * 255 + "," + material.color.green * 255 + "," + material.color.blue * 255 + ")";
+            editPanelValues.color =
+              "rgb(" +
+              material.color.red * 255 +
+              "," +
+              material.color.green * 255 +
+              "," +
+              material.color.blue * 255 +
+              ")";
             editPanelValues.opacity = material.color.alpha * 100;
           }
           if (title) {
@@ -804,7 +1170,14 @@ export default {
           break;
         case "polylineVolume":
           editPanelValues.id = id;
-          editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.color =
+            "rgb(" +
+            color[0] * 255 +
+            "," +
+            color[1] * 255 +
+            "," +
+            color[2] * 255 +
+            ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.width = width;
           editPanelValues.offsetHeight = offsetHeight;
@@ -816,7 +1189,14 @@ export default {
         case "polygon":
           editPanelValues.id = id;
           editPanelValues.title = title;
-          editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.color =
+            "rgb(" +
+            color[0] * 255 +
+            "," +
+            color[1] * 255 +
+            "," +
+            color[2] * 255 +
+            ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.extrudedHeight = extrudedHeight;
           editPanelValues.offsetHeight = offsetHeight;
@@ -837,7 +1217,14 @@ export default {
         case "rectangle":
           editPanelValues.id = id;
           editPanelValues.title = title;
-          editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.color =
+            "rgb(" +
+            color[0] * 255 +
+            "," +
+            color[1] * 255 +
+            "," +
+            color[2] * 255 +
+            ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.materialType = materialType;
@@ -845,18 +1232,32 @@ export default {
             editPanelValues.title = title;
           }
           if (materialType === "text") {
-            const {backgroundColor, text, font, fillColor} = material;
-            editPanelValues.rtBackgroundColor = "rgb(" + backgroundColor[0] * 255 + "," + backgroundColor[1] * 255 + "," + backgroundColor[2] * 255 + ")";
+            const { backgroundColor, text, font, fillColor } = material;
+            editPanelValues.rtBackgroundColor =
+              "rgb(" +
+              backgroundColor[0] * 255 +
+              "," +
+              backgroundColor[1] * 255 +
+              "," +
+              backgroundColor[2] * 255 +
+              ")";
             editPanelValues.rtBackgroundOpacity = backgroundColor[3] * 100;
             editPanelValues.rectangleText = text;
             let fonts = font.split(" ");
             editPanelValues.rtFontSize = fonts[0].split("px")[0];
             editPanelValues.rtFontFamily = fonts[1];
-            editPanelValues.color = "rgb(" + fillColor[0] * 255 + "," + fillColor[1] * 255 + "," + fillColor[2] * 255 + ")";
+            editPanelValues.color =
+              "rgb(" +
+              fillColor[0] * 255 +
+              "," +
+              fillColor[1] * 255 +
+              "," +
+              fillColor[2] * 255 +
+              ")";
             editPanelValues.opacity = fillColor[3] * 100;
           }
           if (materialType === "Image") {
-            const {repeat} = material;
+            const { repeat } = material;
             editPanelValues.image = material.image;
             editPanelValues.stRotation = stRotation;
             editPanelValues.repeatX = repeat.x;
@@ -870,14 +1271,35 @@ export default {
             editPanelValues.offsetHeight = offsetHeight;
             editPanelValues.materialType = materialType;
             if (materialType === "Color") {
-              editPanelValues.materialColor = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+              editPanelValues.materialColor =
+                "rgb(" +
+                color[0] * 255 +
+                "," +
+                color[1] * 255 +
+                "," +
+                color[2] * 255 +
+                ")";
               editPanelValues.materialOpacity = color[3] * 100;
             } else if (materialType === "RadarMaterial") {
-              editPanelValues.materialColor = "rgb(" + material.color.red * 255 + "," + material.color.green * 255 + "," + material.color.blue * 255 + ")";
+              editPanelValues.materialColor =
+                "rgb(" +
+                material.color.red * 255 +
+                "," +
+                material.color.green * 255 +
+                "," +
+                material.color.blue * 255 +
+                ")";
               editPanelValues.materialOpacity = material.color.alpha * 100;
               editPanelValues.speed = material.speed;
             } else if (materialType === "CircleWaveMaterial") {
-              editPanelValues.materialColor = "rgb(" + material.color.red * 255 + "," + material.color.green * 255 + "," + material.color.blue * 255 + ")";
+              editPanelValues.materialColor =
+                "rgb(" +
+                material.color.red * 255 +
+                "," +
+                material.color.green * 255 +
+                "," +
+                material.color.blue * 255 +
+                ")";
               editPanelValues.materialOpacity = material.color.alpha * 100;
               editPanelValues.duration = material.duration;
               editPanelValues.gradient = material.gradient;
@@ -889,7 +1311,14 @@ export default {
           } else {
             editPanelValues.id = id;
             editPanelValues.title = title;
-            editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+            editPanelValues.color =
+              "rgb(" +
+              color[0] * 255 +
+              "," +
+              color[1] * 255 +
+              "," +
+              color[2] * 255 +
+              ")";
             editPanelValues.opacity = color[3] * 100;
             editPanelValues.radius = radius;
             editPanelValues.height = height;
@@ -901,7 +1330,14 @@ export default {
           break;
         case "ellipsoid":
           editPanelValues.id = id;
-          editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.color =
+            "rgb(" +
+            color[0] * 255 +
+            "," +
+            color[1] * 255 +
+            "," +
+            color[2] * 255 +
+            ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.radiusX = radiusX;
           editPanelValues.radiusY = radiusY;
@@ -918,10 +1354,24 @@ export default {
           editPanelValues.materialType = materialType;
           editPanelValues.loop = loop;
           if (materialType === "Color") {
-            editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+            editPanelValues.color =
+              "rgb(" +
+              color[0] * 255 +
+              "," +
+              color[1] * 255 +
+              "," +
+              color[2] * 255 +
+              ")";
             editPanelValues.opacity = color[3] * 100;
           } else if (materialType === "PolylineTrailLink") {
-            editPanelValues.linkColor = "rgb(" + material.color.red * 255 + "," + material.color.green * 255 + "," + material.color.blue * 255 + ")";
+            editPanelValues.linkColor =
+              "rgb(" +
+              material.color.red * 255 +
+              "," +
+              material.color.green * 255 +
+              "," +
+              material.color.blue * 255 +
+              ")";
             editPanelValues.materialOpacity = material.color.alpha * 100;
             editPanelValues.duration = material.duration;
             editPanelValues.image = material.image;
@@ -933,7 +1383,14 @@ export default {
           break;
         case "corridor":
           editPanelValues.id = id;
-          editPanelValues.color = "rgba(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.color =
+            "rgba(" +
+            color[0] * 255 +
+            "," +
+            color[1] * 255 +
+            "," +
+            color[2] * 255 +
+            ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.width = width;
           editPanelValues.cornerType = cornerType;
@@ -945,7 +1402,14 @@ export default {
           break;
         case "cylinder":
           editPanelValues.id = id;
-          editPanelValues.color = "rgba(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.color =
+            "rgba(" +
+            color[0] * 255 +
+            "," +
+            color[1] * 255 +
+            "," +
+            color[2] * 255 +
+            ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.topRadius = topRadius;
           editPanelValues.bottomRadius = bottomRadius;
@@ -957,7 +1421,14 @@ export default {
           break;
         case "cone":
           editPanelValues.id = id;
-          editPanelValues.color = "rgba(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.color =
+            "rgba(" +
+            color[0] * 255 +
+            "," +
+            color[1] * 255 +
+            "," +
+            color[2] * 255 +
+            ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.radius = radius;
           editPanelValues.offsetHeight = offsetHeight;
@@ -973,6 +1444,8 @@ export default {
           if (title) {
             editPanelValues.title = title;
           }
+          editPanelValues.positions = positions;
+          editPanelValues.orientation = { heading, pitch, roll };
           break;
       }
 
@@ -1003,13 +1476,37 @@ export default {
         corridor: "方管线",
         model: "模型",
         wall: "墙",
-        square: "正方体",
-      }
+        square: "正方体"
+      };
 
       return format[type];
     },
+    $_delete(index) {
+      this.$emit(
+        "deleteAttribute",
+        this.attributeKeyArray[index],
+        this.editPanelValues.id
+      );
+      this.attributeKeyArray.splice(index, 1);
+      this.attributeValueArray.splice(index, 1);
+    },
+    $_pickCoords(val) {
+      this.$emit("pickCoords", val);
+    },
+    $_editPositions(val) {
+      this.$emit("editPositions", val);
+    },
+    $_location() {
+      this.$emit("location");
+    },
+    $_editOrientation(val) {
+      this.$emit("editOrientation", val);
+    },
+    $_resetOrientation() {
+      this.$emit("resetOrientation");
+    }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -1032,5 +1529,35 @@ export default {
   float: right;
   margin-right: 7px;
   margin-bottom: 7px;
+}
+
+.mapgis-ui-graphic-edit-list-input {
+  width: calc(100% - 124px);
+  margin-left: 20px;
+  margin-right: 4px;
+}
+
+::v-deep .mapgis-ui-card-head {
+  padding: 0 11px;
+}
+
+.item-checkbox {
+  float: right;
+  margin-right: 5px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.footer-div {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.footer-btn {
+  margin: 0 8px;
+  width: 30%;
 }
 </style>

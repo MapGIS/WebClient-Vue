@@ -5,27 +5,28 @@
 .mapgis-ui-border__content {
   .mapgis-ui-switch-panel {
     width: 100%;
-    height: fit-content;
+    // height: fit-content;
   }
 }
 
 @include b(switch-panel) {
   .mapgis-ui-form-item {
     margin: 0;
-    padding: 0 10px;
+    padding: 0;
+    // padding-bottom: 8px;
   }
 
   .mapgis-ui-form-item-control {
     text-align: right;
-    height: 40px;
-    line-height: 40px;
+    // height: 40px;
+    // line-height: 40px;
     overflow: hidden;
   }
 
   .mapgis-ui-form-item-label {
     padding: 0px;
-    line-height: 40px;
-    font-size: 12px;
+    // line-height: 40px;
+    font-size: 14px;
   }
 
   .mapgis-ui-form-item-no-colon {
@@ -36,7 +37,7 @@
     //overflow: hidden;
     //white-space: nowrap;
     //text-overflow: ellipsis;
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .mapgis-ui-input-sm {
@@ -60,15 +61,15 @@
   @include e(label, "-") {
     // padding: 0 6px;
     font-size: 14px;
-    line-height: 40px;
+    // line-height: 40px;
   }
 
   @include e(switch, "-") {
     float: right;
-    margin: 9px 0px;
+    // margin: 9px 0px;
     &-sm {
       float: right;
-      margin: 12px 0px;
+      // margin: 12px 0px;
     }
   }
 
@@ -88,26 +89,52 @@
   }
 }
 
+@include b(title-collapse) {
+  @include e(parameter, "-") {
+    &-transparent {
+      background: transparent;
+    }
+    // background: $panel-inner-color;
+    // margin: 4px;
+    border-radius: 4px;
+    overflow: hidden;
+    max-height: 0px;
+    transition: max-height 0.5s;
+    -moz-transition: max-height 0.5s; /* Firefox 4 */
+    -webkit-transition: max-height 0.5s; /* Safari and Chrome */
+    -o-transition: max-height 0.5s; /* Opera */
+  }
+  .front{
+    padding-right: 4px;
+  }
+}
+
 @include b(input-number-panel) {
   //background: $panel-inner-color;
   border-radius: 3px;
-  padding: 7px;
+  // padding: 7px;
+  padding-bottom: 8px;
   min-width: 250px;
-  height: 66px;
+  // height: 66px;
 
   &-transparent {
     background: transparent;
   }
 
   &-sm {
-    height: 48px;
-    padding: 10px 6px;
-    &:hover {
-      background: $primary-2;
+    // height: 48px;
+    // padding: 10px 6px;
+    // &:hover {
+    //   background: $primary-2;
+    // }
+    .sm-hover {
+      &:hover {
+        background: $primary-2;
+      }
     }
     .label-sm {
-      height: 28px;
-      line-height: 28px;
+      height: 32px;
+      line-height: 32px;
       font-size: 14px;
       font-family: Microsoft YaHei;
       font-weight: 400;
@@ -134,10 +161,10 @@
       }
     }
     .mapgis-ui-row {
-      height: 28px;
+      height: 32px;
     }
     .mapgis-ui-slider {
-      margin: 8px 8px;
+      margin: 12px 8px 8px;
       width: 90%;
     }
     .mapgis-ui-input-number-sm {
@@ -146,11 +173,11 @@
     }
   }
   &-md {
-    height: 40px;
-    padding: 0 6px;
+    // height: 32px;
+    // padding: 0 6px;
     .mapgis-ui-row {
-      height: 40px;
-      line-height: 40px;
+      height: 32px;
+      line-height: 32px;
       overflow: hidden;
     }
     .label-md {
@@ -176,24 +203,35 @@
   }
 
   .right-panel {
-    height: 52px;
-    padding: 3px;
+    // height: 52px;
+    // padding: 3px;
+    padding: 3px 0 3px 8px;
+  }
+
+  .right-range {
+    padding-left: 8px;
   }
 
   .label {
-    margin-left: 4px;
-    height: 16px;
+    // margin-left: 4px;
+    height: 32px;
+    line-height: 32px;
     font-size: 14px;
     font-family: Microsoft YaHei;
-    font-weight: 400;
+    // font-weight: 400;
     color: $panel-text-color;
   }
   .range {
+    display: inline-block;
     width: 100%;
+    line-height: 32px;
     font-size: 12px;
     font-family: Microsoft YaHei;
-    font-weight: 400;
+    // font-weight: 400;
     color: $panel-option-color;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow:ellipsis;
   }
   .left {
   }
@@ -205,8 +243,8 @@
 
 @include b(select-panel) {
   //background: $panel-inner-color;
-  border-radius: 1px;
-  padding: 7px;
+  // border-radius: 1px;
+  padding: 0 0 8px 0;
 
   &-transparent {
     background: transparent;
@@ -229,10 +267,10 @@
 @include b(color-pick-panel) {
   // background: $panel-inner-color;
   border-radius: 3px;
-  padding: 10px 6px;
+  padding: 0 0 8px;
   min-width: 250px;
-  height: 52px;
-  line-height: 52px;
+  height: auto;
+  line-height: inherit;
   overflow: hidden;
   &-transparent {
     background: transparent;

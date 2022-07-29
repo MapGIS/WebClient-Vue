@@ -3,7 +3,10 @@
     <slot>
       <div class="mapgis-widget-profile-analysis">
         <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
-        <mapgis-ui-setting-form :label-width="72">
+        <mapgis-ui-setting-form 
+          :layout="layout"
+          size="default"
+        >
           <mapgis-ui-form-item label="剖切线颜色">
             <mapgis-ui-sketch-color-picker
               :color.sync="polylineGroundColorCopy"
@@ -12,11 +15,10 @@
           </mapgis-ui-form-item>
 
           <mapgis-ui-form-item label="采样精度">
-            <mapgis-ui-input
+            <mapgis-ui-input-number-addon
               v-model.number="samplePrecisionCopy"
-              type="number"
               min="0"
-              addon-after="(米)"
+              addon-after="米"
             />
           </mapgis-ui-form-item>
           <mapgis-ui-form-item label="交互点颜色" v-show="!showPolygonCopy">
@@ -25,29 +27,28 @@
               :disableAlpha="true"
             ></mapgis-ui-sketch-color-picker>
           </mapgis-ui-form-item>
-          <mapgis-ui-form-item label="显示剖切面">
-            <mapgis-ui-switch size="small" v-model="showPolygonCopy" />
-          </mapgis-ui-form-item>
-          <mapgis-ui-form-item label="剖切面高度" v-show="showPolygonCopy">
-            <mapgis-ui-input
-              v-model.number="polygonHeightCopy"
-              type="number"
-              min="0"
-              addon-after="(米)"
-            />
-          </mapgis-ui-form-item>
-          <mapgis-ui-form-item label="剖切面颜色" v-show="showPolygonCopy">
-            <mapgis-ui-sketch-color-picker
-              :color.sync="polygonColorCopy"
-              :disableAlpha="true"
-            ></mapgis-ui-sketch-color-picker>
-          </mapgis-ui-form-item>
-          <mapgis-ui-form-item label="交互线颜色" v-show="showPolygonCopy">
-            <mapgis-ui-sketch-color-picker
-              :color.sync="polyLineColorCopy"
-              :disableAlpha="true"
-            ></mapgis-ui-sketch-color-picker>
-          </mapgis-ui-form-item>
+          <mapgis-ui-switch-panel label="显示剖切面" v-model="showPolygonCopy" size="default" >
+            <mapgis-ui-form-item label="剖切面高度" v-show="showPolygonCopy">
+              <mapgis-ui-input
+                v-model.number="polygonHeightCopy"
+                type="number"
+                min="0"
+                addon-after="(米)"
+              />
+            </mapgis-ui-form-item>
+            <mapgis-ui-form-item label="剖切面颜色" v-show="showPolygonCopy">
+              <mapgis-ui-sketch-color-picker
+                :color.sync="polygonColorCopy"
+                :disableAlpha="true"
+              ></mapgis-ui-sketch-color-picker>
+            </mapgis-ui-form-item>
+            <mapgis-ui-form-item label="交互线颜色" v-show="showPolygonCopy">
+              <mapgis-ui-sketch-color-picker
+                :color.sync="polyLineColorCopy"
+                :disableAlpha="true"
+              ></mapgis-ui-sketch-color-picker>
+            </mapgis-ui-form-item>
+          </mapgis-ui-switch-panel>
         </mapgis-ui-setting-form>
         <mapgis-ui-setting-footer>
           <mapgis-ui-button type="primary" @click="analysis"
@@ -80,6 +81,15 @@ export default {
   inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
+    /**
+     * @type String
+     * @default "vertical"
+     * @description 表单布局
+     */
+    layout: {
+      type: String,
+      default: "vertical" // 'horizontal' 'vertical' 'inline'
+    },
     /**
      * @type Number
      * @default 1

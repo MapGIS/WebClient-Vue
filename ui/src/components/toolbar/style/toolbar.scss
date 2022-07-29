@@ -15,11 +15,11 @@
 }
 
 @include b(toolbar-command) {
-  font-size: 14px;
+  font-size: 16px;
   color: $text-color;
   width: 27px;
-  margin: 0 6px;
-  padding-top: 2px;
+  margin: 0 4px;
+  padding-top: 1px;
   text-align: center;
   cursor: pointer;
   &.anticon {

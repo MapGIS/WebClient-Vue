@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="200"
+   version="1.1"
+   height="200"
+   id="svg2"
+   zondyPlotSymbol:version="1.0"
+   zondyPlotSymbol:id="svg003"
+   zondyPlotSymbol:name=""
+   zondyPlotSymbol:desc=""
+   zondyPlotSymbol:type="simpleline"
+   zondyPlotSymbol:pose="1"
+   sodipodi:docname="防守.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:zondyPlotSymbol="https://www.mapgis.com"
+    xmlns:zondyPlotSymbolItem="https://www.mapgis.com"
+   >
+  <defs
+     id="defs951" />
+  <sodipodi:namedview
+     id="namedview949"
+     pagecolor="#ffffff"
+     bordercolor="#111111"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     showgrid="false"
+     inkscape:zoom="15.4"
+     inkscape:cx="151.52597"
+     inkscape:cy="106.1039"
+     inkscape:window-width="1920"
+     inkscape:window-height="986"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <path
+     zondyPlotSymbolItem:type="10"
+     style="fill:none;stroke:#0000ff;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     d="M 30,100 H 170"
+     id="path1076"
+     sodipodi:nodetypes="cc" />
+  <g
+     id="g3569"
+     zondyPlotSymbolItem:type="13"
+     transform="translate(-0.64282435,0.09183205)"
+     style="display:inline"
+     zondyPlotSymbolItem:markerOrigin="30,100">
+    <path
+       style="fill:none;stroke:#0000ff;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 30,85 c -11.793314,10.926876 -11.839202,18.16985 0,30"
+       id="path1244"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#0000fe;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 25.276772,85.47268 2.203969,2.089179"
+       id="path3200" />
+    <path
+       style="display:inline;fill:none;stroke:#0000fe;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 22.958012,87.745523 2.54834,2.135096"
+       id="path3202" />
+    <path
+       style="fill:none;stroke:#0200ff;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 23.738585,112.36799 2.479465,-1.366"
+       id="path3204"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#0200ff;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 25.001276,114.39978 2.709045,-1.63002"
+       id="path3206" />
+  </g>
+  <g
+     id="g3569-1"
+     zondyPlotSymbolItem:type="13"
+     transform="matrix(-1,0,0,1,200.67451,0.29040901)"
+     zondyPlotSymbolItem:markerOrigin="170,100">
+    <path
+       style="fill:none;stroke:#0000ff;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 30,85 c -11.793314,10.926876 -11.839202,18.16985 0,30"
+       id="path1244-3"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#0000fe;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 25.276772,85.47268 2.203969,2.089179"
+       id="path3200-2" />
+    <path
+       style="display:inline;fill:none;stroke:#0000fe;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 22.958012,87.745523 2.54834,2.135096"
+       id="path3202-1" />
+    <path
+       style="fill:none;stroke:#0200ff;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 23.738585,112.36799 2.479465,-1.366"
+       id="path3204-8"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#0200ff;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 25.001276,114.39978 2.709045,-1.63002"
+       id="path3206-4" />
+  </g>
+</svg>

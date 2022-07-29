@@ -253,3 +253,80 @@ const Template3 = (args, { argTypes }) => ({
 
 export const 自定义校验 = Template3.bind({});
 自定义校验.args = {};
+
+
+const Template4 = (args, { argTypes }) => ({
+  props: Object.keys(argTypes),
+  components: {},
+  template: `
+  <div>
+    <mapgis-ui-form :layout="formLayout" >
+      <mapgis-ui-form-item
+        label="字段A"
+        :colon="false"
+        :label-col="formItemLayout.labelCol"
+        :wrapper-col="formItemLayout.wrapperCol"
+      >
+        <mapgis-ui-input placeholder="input placeholder" />
+        <mapgis-ui-input placeholder="input placeholder" />
+        <mapgis-ui-input placeholder="input placeholder" />
+      </mapgis-ui-form-item>
+      <mapgis-ui-form-item
+        label="字段B"
+        :colon="false"
+        :label-col="formItemLayout.labelCol"
+        :wrapper-col="formItemLayout.wrapperCol"
+      >
+        <mapgis-ui-input placeholder="input placeholder" />
+      </mapgis-ui-form-item>
+      <mapgis-ui-color-pick-panel
+        label="轮廓颜色"
+        :color="colorCopyLine"
+        :wrapperCol="24"
+        :disableAlpha="false"
+        :colorStyle="colorStyle"
+        @input="val =>(colorCopyLine = 'rgba('+val.rgba.r+','+val.rgba.g+','+val.rgba.b+','+val.rgba.a+')')"
+      >
+      </mapgis-ui-color-pick-panel>
+      <mapgis-ui-form-item :wrapper-col="buttonItemLayout.wrapperCol" :style="{ marginTop: '32px' }">
+        <mapgis-ui-button type="primary">提交</mapgis-ui-button>
+        <mapgis-ui-button :style="{ marginLeft: '8px' }">清除</mapgis-ui-button>
+      </mapgis-ui-form-item>
+      
+    </mapgis-ui-form>
+  </div>
+  `,
+  data() {
+    return {
+      formLayout: 'vertical', // 'horizontal' 'vertical' 'inline'
+      colorCopyLine: 'rgba(255,0,0,1)',
+      colorStyle:{
+				fontSize: '14px',
+				padding:"10px 0",
+			},
+    };
+  },
+  computed: {
+    formItemLayout() {
+      const { formLayout } = this;
+      return formLayout === 'horizontal'
+        ? {
+            labelCol: { span: 4 },
+            wrapperCol: { span: 14 },
+          }
+        : {};
+    },
+    buttonItemLayout() {
+      const { formLayout } = this;
+      return formLayout === 'horizontal'
+        ? {
+            wrapperCol: { span: 14, offset: 4 },
+          }
+        : {};
+    },
+  },
+  methods: {},
+});
+
+export const UI规范 = Template4.bind({});
+UI规范.args = {};

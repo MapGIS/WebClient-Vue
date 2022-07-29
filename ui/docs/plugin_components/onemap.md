@@ -125,16 +125,16 @@ customPosition: {
 
 ## 核心 UI 的分离与替换
 
-该组件使用了<mp-group-tab /> 与 <MpColorsSetting /> 2 个组件，根据能否复用的原则，将这 2 个组件下沉到`@mapgis/webclient-vue-ui`中
+该组件使用了`<mp-group-tab />` 与 `<MpColorsSetting />` 2 个组件，根据能否复用的原则，将这 2 个组件下沉到`@mapgis/webclient-vue-ui`中
 
 以<mp-group-tab />为例
 
 1. 在`@mapgis/webclient-vue-ui`的 src/components/tabs/ 下新建`GroupTab.vue` 文件，将原本的一张图的组件代码直接复制到该文件夹。
-   1. 由于该组件是个纯净的组件，只需要将里面使用<a-xxx />的 ui 替换成<mapgis-ui-xxx />即可
-   2. <mapgis-ui- />是<a-xxx />的超集，只在样式和主题等个性化定制上有细微差距，核心 api 延续了 antd-vue 的 api
-   3. 该组件里面没有使用到<a-xxx />，因此无需替换
+   1. 由于该组件是个纯净的组件，只需要将里面使用`<a-xxx />`的 ui 替换成`<mapgis-ui-xxx />`即可
+   2. `<mapgis-ui- />`是`<a-xxx />`的超集，只在样式和主题等个性化定制上有细微差距，核心 api 延续了 antd-vue 的 api
+   3. 该组件里面没有使用到`<a-xxx />`，因此无需替换
 2. 针对该组件的样式
-   1. 将该组件的样式部分从<style />里面单独的剥离到当前目录的`style/tabs.scss`目录下
+   1. 将该组件的样式部分从`<style />`里面单独的剥离到当前目录的`style/tabs.scss`目录下
    2. 2 种方式移植，第一种是最暴力的方式，直接将整个样式移植到 tabs.scss 的最尾部 ![less2scss](./img/less2scss.png)
    3. 对比上图发现，其中有 2 种颜色是没有找到的，优先去寻找`ui\src\util\style\theme\theme.scss` 看看有没有 ，我对比了一张图的 theme.less 里面是 400 多的变量，mapgis-ui-是 777 个变量，绝大部分都囊括了一张图的样式
    4. 将上面的@primary-color; @heading-color; 替换成 $primary-color; $heading-color; 即可
@@ -144,7 +144,7 @@ customPosition: {
    /* MapGIS Design Mapbox Base*/
    @import "./components/map/style/map.scss";
    ```
-3. 替换后将 <mp-group-tab title="坡向图例设置" /> 修改为 <mapgis-ui-group-tab title="坡向图例设置" />
+3. 替换后将 `<mp-group-tab title="坡向图例设置" />` 修改为 `<mapgis-ui-group-tab title="坡向图例设置" />`
 
 ## 样式移植
 

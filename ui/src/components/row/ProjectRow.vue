@@ -195,7 +195,7 @@ export default {
 .mapgis-mapstory-tool-bar-more {
   position: absolute;
   top: 8px;
-  right: -1px;
+  right: 4px;
 }
 
 .mapgis-mapstory-more-tool {

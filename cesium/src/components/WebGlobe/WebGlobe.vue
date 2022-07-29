@@ -150,6 +150,7 @@ export default {
         this.viewer.entities.removeAll();
         // this.viewer.destroy();
         window.vueCesium.GlobesManager.deleteSource(vueKey, vueIndex)
+        window.vueCesium.ViewerManager.deleteSource(vueKey, vueIndex)
         // this.viewer = null;
         this.initialized = false;
       }

@@ -3,6 +3,12 @@
 
 $result-prefix-cls: $ant-prefix + "-result";
 
+@include b(result) {
+  &-subtitle {
+    color: $text-color-secondary;
+  }
+}
+
 .#{result-prefix-cls} {
   padding: 48px 32px;
   // status color

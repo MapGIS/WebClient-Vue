@@ -12,13 +12,13 @@ $tree-height: 400px;
 
 .mapgis-3d-stratified-household {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  // top: 10px;
+  // left: 10px;
   height: $tree-height;
   width: 270px;
 
   &-wrapper {
-    width: 320px;
+    // width: 320px;
   }
 
   &-layers {
@@ -132,6 +132,10 @@ $tree-height: 400px;
       line-height: 36px;
     }
   }
+
+  .mapgis-ui-divider-horizontal.mapgis-ui-divider-with-text-center {
+    margin: 8px 0px;
+  }
 }
 
 .mapgis-3d-stratified-household-menus {
@@ -158,7 +162,7 @@ $tree-height: 400px;
 
   .mapgis-3d-m3d-menu-explosion {
     &-direction {
-      height: 100px;
+      height: 123px;
       .anticon {
         font-size: 14px;
       }
@@ -167,7 +171,7 @@ $tree-height: 400px;
     &-content {
       padding: 0px;
       .mapgis-ui-input-number-panel {
-        margin: 10px 0px;
+        // margin: 10px 0px;
       }
     }
   }

@@ -54,7 +54,7 @@ const Template = (args, {argTypes}) => ({
     data() {
         return {
             url: "http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752",
-            m3dUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
+            m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
             autoReset: true,
             maximumScreenSpaceError: 8
         }

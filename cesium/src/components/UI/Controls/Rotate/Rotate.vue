@@ -12,19 +12,20 @@
 
         <div  v-show="value === 1">
           <mapgis-ui-input-number-panel
-              size="small"
+              size="large"
               class="mapgis-ui-number-style"
               label="纬度(°)"
               :range="[0,90]"
               v-model="latitude"/>
           <mapgis-ui-input-number-panel
-              size="small"
+              size="large"
               class="mapgis-ui-number-style"
               label="高度(米)"
+              :rangeShow="true"
               :range="[200000,280430000]"
               v-model="height"/>
           <mapgis-ui-input-number-panel
-              size="small"
+              size="large"
               class="mapgis-ui-number-style"
               label="旋转周期(秒)"
               :range="[1,600]"
@@ -32,19 +33,19 @@
         </div>
         <div v-show="value === 2">
           <mapgis-ui-input-number-panel
-              size="small"
+              size="large"
               class="mapgis-ui-number-style"
               label="俯仰角(°)"
               :range="[-90,0]"
               v-model="pitch"/>
           <mapgis-ui-input-number-panel
-              size="small"
+              size="large"
               class="mapgis-ui-number-style"
               label="距离(米)"
               :range="[0,50000]"
               v-model="distance"/>
           <mapgis-ui-input-number-panel
-              size="small"
+              size="large"
               class="mapgis-ui-number-style"
               label="环绕周期(秒)"
               :range="[1,600]"
@@ -52,14 +53,51 @@
           <mapgis-ui-switch-panel
               :labelCol="{ span: 8 }"
               :wrapperCol="{ span: 16 }"
-              layout="horizontal"
-              label="鼠标拾取中心点"
-              size="small"
-              :height="'154px'"
+              layout="vertical"
+              label="鼠标拾取中心点坐标"
+              size="default"
               :checked="getCenter"
               @changeChecked="getM3dCenter"
           >
-            <mapgis-ui-form-item label="x坐标">
+
+
+            <mapgis-ui-row :gutter="8">
+              <mapgis-ui-col :span="12">
+                <mapgis-ui-input-number-addon
+                  v-model.number="coordinate.longitude"
+                  min="0"
+                  :step="0.0001"
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="x坐标">
+                    <mapgis-ui-iconfont type="mapgis-xzhouyidong"/>
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input-number-addon>
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="12">
+                <mapgis-ui-input-number-addon
+                  v-model.number="coordinate.latitude"
+                  min="0"
+                  :step="0.0001"
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="y坐标">
+                    <mapgis-ui-iconfont type="mapgis-yzhouyidong"/>
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input-number-addon>
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="12" style="paddingTop:8px;">
+                <mapgis-ui-input-number-addon
+                  v-model.number="coordinate.height"
+                  min="0"
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="z坐标">
+                    <mapgis-ui-iconfont type="mapgis-Zzhouyidong"/>
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input-number-addon>
+              </mapgis-ui-col>
+            </mapgis-ui-row>
+
+
+            <!-- <mapgis-ui-form-item label="x坐标">
               <mapgis-ui-input
                   v-model.number="coordinate.longitude"
                   type="number"
@@ -79,7 +117,7 @@
                   type="number"
                   min="0"
               />
-            </mapgis-ui-form-item>
+            </mapgis-ui-form-item> -->
           </mapgis-ui-switch-panel>
         </div>
         <mapgis-ui-setting-footer>
@@ -328,5 +366,7 @@ export default {
 </script>
 
 <style scoped>
-
+.mapgis-ui-form-item {
+	margin-bottom: 0px;
+}
 </style>

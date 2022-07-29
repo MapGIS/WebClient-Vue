@@ -4,7 +4,7 @@ export default {
   title: "三维/图层/3DTiles",
   component: Mapgis3dTileset,
   argTypes: {
-    url: "http://192.168.88.204:8089/3DTileset/dayantaresult/tileset.json",
+    url: `http://${window.webclient.ip}:${window.webclient.port}/3DTileset/dayantaresult/tileset.json`,
     opacity: 1.0,
   },
 };
@@ -34,6 +34,6 @@ const Template = (args, { argTypes }) => ({
 
 export const 标准3DTile = Template.bind({});
 标准3DTile.args = {
-  url: "http://192.168.88.204:8089/3DTileset/dayantaresult/tileset.json",
+  url: `http://${window.webclient.ip}:${window.webclient.port}/3DTileset/dayantaresult/tileset.json`,
   opacity: 1.0,
 };

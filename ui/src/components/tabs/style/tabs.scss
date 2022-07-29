@@ -14,6 +14,14 @@
     }
   }
 
+  .mapgis-ui-tabs-nav .mapgis-ui-tabs-tab {
+    margin: 0 16px 0 0;
+    padding: 12px 4px;
+  }
+  .mapgis-ui-tabs .mapgis-ui-tabs-small-bar .mapgis-ui-tabs-tab {
+    padding: 8px 4px;
+  }
+
   @include e(tab-prev tab-next, '-') {
     color: $text-color-secondary;
   }
@@ -98,8 +106,11 @@
   display: flex;
   align-items: center;
   width: 100%;
-  font-weight: 700;
+  line-height: 32px;
 
+  &.is-title-bold {
+    font-weight: bold;
+  }
   &.is-mini {
     font-size: 12px;
     &.has-top-margin {
@@ -107,6 +118,9 @@
     }
     &.has-bottom-margin {
       margin-bottom: 4px;
+    }
+    &.has-left-margin {
+      margin-left: 8px;
     }
   }
   &.is-small {
@@ -117,14 +131,20 @@
     &.has-bottom-margin {
       margin-bottom: 6px;
     }
+    &.has-left-margin {
+      margin-left: 12px;
+    }
   }
   &.is-default {
     font-size: 14px;
     &.has-top-margin {
-      margin-top: 7px;
+      margin-top: 8px;
     }
     &.has-bottom-margin {
-      margin-bottom: 7px;
+      margin-bottom: 8px;
+    }
+    &.has-left-margin {
+      margin-left: 16px;
     }
   }
   &.is-large {
@@ -135,6 +155,9 @@
     &.has-bottom-margin {
       margin-bottom: 8px;
     }
+    &.has-left-margin {
+      margin-left: 16px;
+    }
   }
   hr {
     width: 3px;
@@ -144,7 +167,11 @@
     background-color: $primary-color;
   }
   .title {
-    flex: 1;
+    // flex: 1;
+    padding-right: 4px;
     color: $heading-color;
+  }
+  .handle {
+    margin-left: auto;
   }
 }

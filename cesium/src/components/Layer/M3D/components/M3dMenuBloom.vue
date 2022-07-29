@@ -1,71 +1,78 @@
 <template>
   <div class="mapgis-3d-m3d-menu-bloom">
-    <mapgis-ui-divider> 泛光设置 </mapgis-ui-divider>
+    <mapgis-ui-divider style="fontSize:14px"> 泛光设置 </mapgis-ui-divider>
     <div class="mapgis-3d-m3d-menu-bloom-content">
-      <mapgis-ui-color-pick-panel
-        transparent
-        label="颜色设置"
-        v-model="lightColor"
-        :disableAlpha="false"
-      />
+      <div>
+        <mapgis-ui-color-pick-panel
+          transparent
+          label="颜色设置"
+          v-model="lightColor"
+          :disableAlpha="false"
+          :labelCol="24"
+          :wrapperCol="24"
+        />
 
-      <mapgis-ui-input-number-panel
-        transparent
-        size="small"
-        label="最小高度"
-        v-model="minHeight"
-        :range="[0, 1000]"
-      >
-      </mapgis-ui-input-number-panel>
+        <mapgis-ui-input-number-panel
+          transparent
+          size="large"
+          label="最小高度"
+          v-model="minHeight"
+          :range="[0, 1000]"
+        >
+        </mapgis-ui-input-number-panel>
 
-      <mapgis-ui-input-number-panel
-        transparent
-        size="small"
-        label="最大高度"
-        v-model="maxHeight"
-        :range="[0, 1000]"
-      >
-      </mapgis-ui-input-number-panel>
+        <mapgis-ui-input-number-panel
+          transparent
+          size="large"
+          label="最大高度"
+          v-model="maxHeight"
+          :range="[0, 1000]"
+        >
+        </mapgis-ui-input-number-panel>
 
-      <mapgis-ui-input-number-panel
-        transparent
+        <mapgis-ui-input-number-panel
+          transparent
+          size="large"
+          label="混合系数"
+          v-model="mixFactor"
+          :step="0.1"
+          :range="[0, 1]"
+        >
+        </mapgis-ui-input-number-panel>
+      </div>
+
+      <mapgis-ui-switch-panel
+        v-model="startBreath"
+        label="呼吸开启"
         size="small"
-        label="混合系数"
-        v-model="mixFactor"
-        :step="0.1"
-        :range="[0, 1]"
+        layout="horizontal"
       >
-      </mapgis-ui-input-number-panel>
+        <mapgis-ui-input-number-panel
+          size="large"
+          label="呼吸速度"
+          tooltip="呼吸灯速度,建议取值区间(0,0.1)，值越小，闪烁速度越慢"
+          v-model="breathSpeed"
+          :step="0.1"
+          :range="[0, 1]"
+        >
+        </mapgis-ui-input-number-panel>
+      </mapgis-ui-switch-panel>
     </div>
-
-    <mapgis-ui-switch-panel
-      v-model="startBreath"
-      label="呼吸开启"
-      size="small"
-      layout="horizontal"
-    >
-      <mapgis-ui-input-number-panel
-        size="large"
-        label="呼吸速度"
-        tooltip="呼吸灯速度,建议取值区间(0,0.1)，值越小，闪烁速度越慢"
-        v-model="breathSpeed"
-        :step="0.1"
-        :range="[0, 1]"
-      >
-      </mapgis-ui-input-number-panel>
-    </mapgis-ui-switch-panel>
-
-    <mapgis-ui-button
+    <mapgis-ui-setting-footer>
+      <mapgis-ui-button type="primary" @click="addEffect">执行泛光</mapgis-ui-button>
+      <mapgis-ui-button @click="removeEffect">删除泛光</mapgis-ui-button>
+    </mapgis-ui-setting-footer>
+    <!-- <mapgis-ui-button
       type="primary"
       @click="addEffect"
       :style="{ width: '100%' }"
       >执行泛光</mapgis-ui-button
-    >
-    <mapgis-ui-button
+    > -->
+    <!-- <mapgis-ui-button
       :style="{ width: '100%', marginTop: '4px', display: 'block' }"
       @click="removeEffect"
       >删除泛光</mapgis-ui-button
-    >
+    > -->
   </div>
 </template>
 
@@ -205,5 +212,9 @@ export default {
 .mapgis-3d-m3d-menu-bloom {
   height: 100%;
   width: 100%;
+}
+.mapgis-3d-m3d-menu-bloom-content {
+  height: 248px;
+  overflow-y: auto;
 }
 </style>

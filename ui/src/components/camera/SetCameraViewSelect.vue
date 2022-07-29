@@ -4,14 +4,23 @@
       <mapgis-ui-col :span="24">
         <h4 class="mapgis-ui-set-camera-panel-select-title" :style="titleStyle">
           <mapgis-ui-title-icon v-show="showTitleIcon"/>
-          <span style="width: 90px;margin-right: 4px">设置相机视角</span>
-          <span @click="$_showDetail" class="mapgis-ui-set-camera-panel-select-show-more">
-            {{ showDetailTitle }}
-          </span>
+          <span style="width: 90px;margin-right: 4px">相机视角</span>
+          <mapgis-ui-select v-model="currentSelect" class="mapgis-ui-set-camera-set-select" @change="$_selectChange">
+            <mapgis-ui-select-option :key="index" v-for="(select,index) in selectData" :value="select.key">
+              {{ select.value }}
+            </mapgis-ui-select-option>
+          </mapgis-ui-select>
+          <mapgis-ui-tooltip title="获取视角">
+          <mapgis-ui-svg-icon @click="$_click"
+                          class="mapgis-ui-set-camera-set-select-icon"
+                          :iconStyle="iconStyle"
+                          :containerStyle="containerStyle"
+                          type="camera"/>
+          </mapgis-ui-tooltip>
         </h4>
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <div class="mapgis-ui-set-camera-set-content" :style="mainStyle">
+    <!-- <div class="mapgis-ui-set-camera-set-content" :style="mainStyle">
       <mapgis-ui-select v-model="currentSelect" class="mapgis-ui-set-camera-set-select" @change="$_selectChange">
         <mapgis-ui-select-option :key="index" v-for="(select,index) in selectData" :value="select.key">
           {{ select.value }}
@@ -23,6 +32,11 @@
                           :containerStyle="containerStyle"
                           title="获取视角"
                           type="camera"/>
+    </div> -->
+    <div>
+      <span @click="$_showDetail" class="mapgis-ui-set-camera-panel-select-show-more">
+        {{ showDetailTitle }}
+      </span>
     </div>
   </div>
 </template>
@@ -50,13 +64,13 @@ export default {
       iconStyle: {
         width: "20px",
         height: "20px",
-        marginBottom: "6px"
+        marginBottom: "8px"
       },
       containerStyle: {
         border: "1px solid #1890FF",
         textAlign: "center",
-        width: "32px",
-        height: "32px",
+        width: "30px",
+        height: "30px",
       },
       camerasCopy: [],
       showDetail: false,
@@ -162,12 +176,13 @@ export default {
 
 <style scoped>
 .mapgis-ui-set-camera-panel-select {
-  margin-top: 6px;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
 .mapgis-ui-set-camera-panel-select-title {
-  font-weight: bolder;
-  margin-top: 3px;
+  /* font-weight: bolder; */
+  margin-top: 0;
   margin-bottom: 0;
   padding-left: 12px;
 }
@@ -182,22 +197,24 @@ export default {
 
 .mapgis-ui-set-camera-set-select-icon {
   position: absolute;
-  top: 6px;
-  right: 7px;
+  top: 1px;
+  right: 16px;
+  border-radius: 4px;
 }
 
 .mapgis-ui-set-camera-panel-select-show-more {
-  float: right;
+  /* float: right; */
   cursor: pointer;
   color: #0081E2;
   width: calc(100% - 90px);
-  text-align: right;
+  text-align: left;
+  margin-left: 7px;
 }
 
 .mapgis-ui-set-camera-set-select {
-  width: calc(100% - 42px);
-  margin-left: 0;
+  width: calc(100% - 120px);
+  margin-left: 13px;
   margin-right: 6px;
-  margin-top: 6px;
+  /* margin-top: 6px; */
 }
 </style>

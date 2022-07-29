@@ -8,7 +8,7 @@
                     <mapgis-ui-radio :value="2"> 填充颜色 </mapgis-ui-radio>
                 </mapgis-ui-radio-group>
                 <mapgis-ui-group-tab title="坡向图例设置" v-show="value === 2">
-                    <mapgis-ui-tooltip slot="handle" placement="bottomRight">
+                    <mapgis-ui-tooltip slot="tip" placement="top">
                         <template slot="title">
                             <span>{{ info }}</span>
                         </template>

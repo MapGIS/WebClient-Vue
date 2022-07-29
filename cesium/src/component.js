@@ -35,6 +35,8 @@ export { default as Mapgis3dGraphicLayerService } from "./components/Layer/Graph
 
 // 要素图层
 export { default as Mapgis3dGeojsonLayer } from "./components/Layer/GeoJSON/GeoJsonLayer";
+export { default as Mapgis3dKmlLayer } from "./components/Layer/KML/KmlLayer";
+export { default as Mapgis3dCzmlLayer } from "./components/Layer/CZML/CzmlLayer";
 
 // 矢量瓦片
 export { default as Mapgis3dVectortileLayer } from "./components/Layer/VectorTile/VectorTileLayer.vue";
@@ -58,6 +60,7 @@ export { default as Mapgis3dEchartsLayer } from "./components/Overlay/Echarts.vu
 export { default as Mapgis3dCesiumHeaterLayer } from "./components/Overlay/themeLayer/heater/CesiumHeater.vue";
 export { default as Mapgis3dMapvHeaterLayer } from "./components/Overlay/themeLayer/heater/MapvHeater.vue";
 export { default as Mapgis3dGraphThemeLayer } from "./components/Overlay/themeLayer/GraphThemeLayer.vue";
+export { default as Mapgis3dThemeLayerCustom } from "./components/Overlay/themeLayer/ThemeLayerCustom.vue";
 
 export { default as Mapgis3dIgsTerrain } from "./components/Provider/TerrainProvider/IgsTerrainProvider.vue";
 export { default as Mapgis3dTerrainProvider } from "./components/Provider/TerrainProvider/TerrainProvider.vue";
@@ -117,3 +120,9 @@ export { default as Mapgis3dCityGrowOptions } from "./components/simulation/City
 export { default as Mapgis3dPondingSimulation } from "./components/simulation/PondingSimulation.vue";
 export { default as Mapgis3dPondingSimulationTimeline } from "./components/simulation/PondingSimulation/PondingSimulationTimeline.vue";
 export { default as Mapgis3dBuildingGlow } from "./components/simulation/BuildingGrow";
+
+// 标绘
+export { default as Mapgis3DPlot } from "./components/Layer/3DPlot/Plot.vue";
+export { default as Mapgis3DPlotLink } from "./components/Layer/3DPlot/Plot3DLink.vue";
+export { default as Mapgis3DPlotLayer } from "./components/Layer/3DPlot/PlotLayer.vue";
+export { default as Mapgis3DPlotAnimation } from "./components/Layer/3DPlot/PlotAnimation.vue";

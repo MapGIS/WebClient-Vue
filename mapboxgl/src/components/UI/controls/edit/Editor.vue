@@ -44,6 +44,10 @@
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import * as MapboxDrawCom from "@mapbox/mapbox-gl-draw";
 const MapboxDraw = MapboxDrawCom.default;
+const modes = MapboxDrawCom.default.modes;
+import StaticMode from "@mapbox/mapbox-gl-draw-static-mode";
+
+modes.static = StaticMode;
 
 import editMixin from "./editMixin";
 import controlMixin from "../withControlEvents";
@@ -85,6 +89,10 @@ export default {
       required: true
     },
     enableControl: {
+      type: Boolean,
+      default: false
+    },
+    closeEdit: {
       type: Boolean,
       default: false
     },
@@ -304,6 +312,9 @@ export default {
       this.editor.changeMode("direct_select", {
         featureId: this.guid
       });
+      if (this.closeEdit){
+        this.editor && this.editor.changeMode("static");
+      }
     },
     toggleDelete() {
       this.enableEditor();

@@ -181,7 +181,7 @@ All common layer [events](/api/Layers/#events)
     :center="outerCenter"
     :crs="mapCrs"
   >
-    <mapbox-igs-vector-layer
+    <mapgis-igs-vector-layer
       :layer="layer"
       :layerId="layerId"
       :sourceId="sourceId"
@@ -189,7 +189,7 @@ All common layer [events](/api/Layers/#events)
       :port="igsVectorPort"
       :gdbps="igsVectorGdbps"
     >
-    </mapbox-igs-vector-layer>
+    </mapgis-igs-vector-layer>
   </mapgis-web-map>
 </template>
 
@@ -198,13 +198,13 @@ import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
 import Mapbox from "@mapgis/mapbox-gl";
 import {
   MapgisWebMap,
-  MapboxIgsVectorLayer
+  MapgisIgsVectorLayer
 } from "@mapgis/webclient-vue-mapboxgl";
 
 export default {
   components: {
     MapgisWebMap,
-    MapboxIgsVectorLayer
+    MapgisIgsVectorLayer
   },
   data() {
     return {

@@ -23,7 +23,7 @@ export default {
       height: 0, // 仅用于父级marker动态改变popup的data使用,
       show: true,
       isPopupOptionsChange: false,
-      slotInnerHTML: "",
+      slotInnerHTML: ""
     };
   },
   inject: ["Cesium", "vueCesium", "viewer"],
@@ -88,9 +88,9 @@ export default {
           container =
             this.$slots.default[0].elm || this.$slots.default[0].elm.innerHTML;
           this.slotInnerHTML = container;
-        }  else if (this.isPopupOptionsChange) {
+        } else if (this.isPopupOptionsChange) {
           container = this.slotInnerHTML;
-        }  else if (this.$slots.default[0].context.$children[0].$el) {
+        } else if (this.$slots.default[0].context.$children[0].$el) {
           container = this.$slots.default[0].context.$children[0].$el.innerHTML;
         }
       }
@@ -99,8 +99,8 @@ export default {
         ...options,
         Cesium: Cesium,
         callback: {
-          onShow: () => {
-            vm.$emit("change", true);
+          onShow: (isShow, popupId) => {
+            vm.$emit("change", isShow, popupId);
           },
           onHide: () => {
             vm.$emit("change", false, vm.vueIndex);
@@ -109,9 +109,9 @@ export default {
               // vm.unmount();
             }
           },
-          onSeparate: (payload) => {
+          onSeparate: payload => {
             vm.$emit("separate", payload);
-          },
+          }
         }
       };
 
@@ -157,7 +157,7 @@ export default {
       if (find) {
         popup = find.source;
       }
-      
+
       if (popup && popup.remove) {
         popup.remove();
         popup = undefined;

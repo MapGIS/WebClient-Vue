@@ -6,8 +6,8 @@ import ThemeMixin from "../../mixin/ThemeMixin";
 
 export const AllSpaceProps = {
   ...SpaceProps,
-  size: "small",
-  direction: "horizontal"
+  // size: "small",
+  // direction: "horizontal"
 };
 
 export default {

@@ -49,7 +49,7 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   data() {
     return {
-      m3dUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
+      m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
       autoReset: true,
       maximumScreenSpaceError: 8,
       isM3DLoaded: false,
@@ -58,8 +58,8 @@ const Template = (args, { argTypes }) => ({
   template: `
       <mapgis-web-scene style="height: 95vh" v-on:load="handleLoad">
       <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"></mapgis-3d-m3d-layer>
-      <mapgis-ui-card v-if="isM3DLoaded" class="storybook-ui-card" style="max-height:500px;overflow-y:auto">
-      <mapgis-3d-projector-setting :settings="settings" :modelUrl="modelUrl" :modelOffset="modelOffset" :hideVPInvisible="hideVPInvisible"></mapgis-3d-projector-setting>
+      <mapgis-ui-card v-if="isM3DLoaded" class="storybook-ui-card">
+      <mapgis-3d-projector-setting style="height:70vh;" :settings="settings" :modelUrl="modelUrl" :modelOffset="modelOffset" :hideVPInvisible="hideVPInvisible"></mapgis-3d-projector-setting>
       </mapgis-ui-card>
       </mapgis-web-scene>
     `,
@@ -88,7 +88,7 @@ export const 投放配置 = Template.bind({});
       imgUrl: "",
       videoSource: {
         protocol: "m3u8",
-        videoUrl: "http://192.168.91.123:10008/record/video3/20211221/out.m3u8",
+        videoUrl: `http://${window.webclient.ip}:${window.webclient.port}/record/video3/20211221/out.m3u8`,
       },
       cameraPosition: {
         x: 114.4006886798949,

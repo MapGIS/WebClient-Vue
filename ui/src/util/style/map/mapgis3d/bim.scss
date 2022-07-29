@@ -5,10 +5,10 @@ $tree-height: 400px;
 
 .mapgis-3d-bim-component {
     position: absolute;
-    top: 10px;
-    left: 10px;
+    // top: 10px;
+    // left: 10px;
     height: $tree-height;
-    width: 270px;
+    // width: 270px;
   
     &-wrapper {
     }
@@ -29,7 +29,7 @@ $tree-height: 400px;
       padding: 0px; */
       // overflow-x: hidden;
       height: $tree-height;
-      width: 270px;
+      // width: 270px;
       // background: #000;
     }
   

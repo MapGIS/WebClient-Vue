@@ -49,7 +49,7 @@ rotate.args = {
     tileMatrixSet1: "c",
     tilingScheme1: "EPSG:4326",
     layer1:"cva",
-    baseUrl:"http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/docs/北京市",
+    baseUrl:"http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/docs/北京市",
     boundaryStyle:{
         color: "#1E90FF",
         opacity: 0.5,

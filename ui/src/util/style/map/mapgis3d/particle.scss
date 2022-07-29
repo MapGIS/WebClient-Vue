@@ -2,7 +2,7 @@
 @import "../../theme/theme.scss";
 
 .mapgis-3d-particle-effects {
-    padding: 5px;
+    padding: 0px;
     &-list-active {
         background: $primary-2;
     }
@@ -15,11 +15,11 @@
         font-weight: 400;
     }
     &-control-content {
-        max-height: 394px;
+        max-height: 395px;
         overflow: hidden;
         overflow-y: auto;
         padding-top: 10px;
-        height: 394px;
+        height: 395px;
     }
     &-opearation {
         position: absolute;

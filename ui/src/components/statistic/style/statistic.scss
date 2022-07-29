@@ -3,6 +3,12 @@
 
 $statistic-prefix-cls: $ant-prefix + "-statistic";
 
+@include b(statistic) {
+  &-title {
+    color: $text-color-secondary;
+  }
+}
+
 .#{statistic-prefix-cls} {
   // .reset-component;
 

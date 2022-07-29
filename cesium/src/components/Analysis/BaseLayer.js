@@ -5,13 +5,13 @@ export default {
   props: {
     vueKey: {
       type: String,
-      default: "default"
+      default: "default",
     },
     vueIndex: {
       type: [Number, String],
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
-      }
+      },
     },
     terrainGraphics: {
       type: Object,
@@ -24,10 +24,10 @@ export default {
           //轮廓线是否显示
           outline: false,
           //轮廓线颜色
-          outlineColor: Cesium.Color.RED
+          outlineColor: Cesium.Color.RED,
         };
-      }
-    }
+      },
+    },
   },
   data() {
     return {};
@@ -44,16 +44,16 @@ export default {
       window.drawElement = new window.Cesium.DrawElement(viewer);
       let vm = this;
       window.drawElement[drawFunction]({
-        callback: function(result) {
+        callback: function (result) {
           // console.log("positions", positions);
           let positions = result.positions;
           vm[analyseFunction](viewer, positions, analysisName);
-        }
+        },
       });
     },
     $_initAnalysis(drawFunction, analyseFunction, analysisName) {
       let vm = this;
-      window.vueCesium.getViewerByInterval(function(viewer) {
+      window.vueCesium.getViewerByInterval(function (viewer) {
         vm.$_draw(drawFunction, viewer, analyseFunction, analysisName);
       }, this.vueKey);
     },
@@ -114,7 +114,7 @@ export default {
       let vueCesium = getCesiumBaseObject(this, "vueCesium");
       let m3d = undefined;
       let m3dArr = [];
-      let interval = setInterval(function() {
+      let interval = setInterval(function () {
         let allLoaded = true;
         for (let i = 0; i < vueIndex.length; i++) {
           m3d = vueCesium.M3DIgsManager.findSource(vueKey, vueIndex[i]);
@@ -150,7 +150,7 @@ export default {
         vueIndex = [vueIndex];
       }
 
-      let interval = setInterval(function() {
+      let interval = setInterval(function () {
         let allLoaded = true;
         for (let i = 0; i < vueIndex.length; i++) {
           g3d = vueCesium.G3DManager.findSource(vueKey, vueIndex[i]);
@@ -186,7 +186,7 @@ export default {
       let m3d = undefined;
       let g3d = undefined;
       let m3dArr = [];
-      let interval = setInterval(function() {
+      let interval = setInterval(function () {
         // 遍历M3D
 
         for (let i = 0; i < vueIndex.length; i++) {
@@ -204,6 +204,55 @@ export default {
           if (g3d) {
             const { m3ds } = g3d.options;
             m3dArr = m3dArr.concat(m3ds);
+          }
+        }
+        callback(m3dArr);
+        clearInterval(interval);
+        this.interval = undefined;
+      }, 50);
+      this.interval = interval;
+    },
+    /**
+     * 获取M3D和原生Cesium3DTileset数组
+     * @param {*} callback 成功查询到对应的回调
+     * @param {*} vueKey 查询的三维球的实例对象
+     * @param {String|Number|Array<String|Number>} vueIndex 查询的图层下标
+     * @param {String} types 被查询的数据类型 ['m3d','g3d','tile3d']
+     */
+    $_getAll3DTileSetArray(callback, vueKey, vueIndex, types) {
+      vueKey = vueKey || this.vueKey;
+      vueIndex = vueIndex || this.vueIndex;
+      if (!(vueIndex instanceof Array)) {
+        vueIndex = [vueIndex];
+      }
+      let vueCesium = getCesiumBaseObject(this, "vueCesium");
+      let m3d = undefined;
+      let g3d = undefined;
+      let tile3d = undefined;
+      let m3dArr = [];
+      let interval = setInterval(function () {
+        // 遍历M3D
+        for (let i = 0; i < vueIndex.length; i++) {
+          m3d = vueCesium.M3DIgsManager.findSource(vueKey, vueIndex[i]);
+          if (m3d) {
+            for (let j = 0; j < m3d.source.length; j++) {
+              m3dArr = m3dArr.concat(m3d.source[j]);
+            }
+          }
+        }
+        // 遍历G3D
+        for (let i = 0; i < vueIndex.length; i++) {
+          g3d = vueCesium.G3DManager.findSource(vueKey, vueIndex[i]);
+          if (g3d) {
+            const { m3ds } = g3d.options;
+            m3dArr = m3dArr.concat(m3ds);
+          }
+        }
+        // 遍历tile3d，即原生Cesium3DTileset
+        for (let i = 0; i < vueIndex.length; i++) {
+          tile3d = vueCesium.Tileset3DManager.findSource(vueKey, vueIndex[i]);
+          if (tile3d) {
+            m3dArr = m3dArr.concat(tile3d.source);
           }
         }
         callback(m3dArr);
@@ -262,8 +311,8 @@ export default {
       return {
         length: length,
         width: width,
-        height: height
+        height: height,
       };
-    }
-  }
+    },
+  },
 };

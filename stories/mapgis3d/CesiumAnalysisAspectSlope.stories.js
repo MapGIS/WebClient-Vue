@@ -28,7 +28,7 @@ const Template = (args, {argTypes}) => ({
             url: "http://t0.tianditu.gov.cn/img_c/wmts",
             //地形url TODO这里地址打包的时候改一下
             //terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/terrain",
-            terrainUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/terrain`,
+            terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`,
             tileMatrixSet: "c",
             tilingScheme: "EPSG:4326",
             layer: "img",
@@ -55,7 +55,9 @@ const Template = (args, {argTypes}) => ({
       ></mapgis-3d-ogc-wmts-layer>
       <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true"/>
       <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-aspect-slope/>
+        <mapgis-3d-aspect-slope
+            v-bind="$props"
+        />
       </mapgis-ui-card>
       </mapgis-web-scene>
     `,
@@ -101,4 +103,5 @@ export const 坡向坡度 = Template.bind({});
         {min: 240, max: 300, color: "rgba(96, 125, 139, 0.5)"},
         {min: 300, max: 360, color: "rgba(76, 175, 80, 0.5)"},
     ],
+    gradual: true
 };

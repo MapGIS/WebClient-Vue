@@ -112,6 +112,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    closeEdit:{
+      type: Boolean,
+      default: false,
+    },
     // expandControl: {
     //   type: Boolean,
     //   default: false
@@ -414,9 +418,13 @@ export default {
             this.$emit("update-radius", {area, radiusinkm, center});
           }
         }
-      } else if (eventName == "drawCreate" && !this.editable) {
+      } else if (eventName == "drawCreate" && !this.editable && !this.closeEdit) {
         window.setTimeout(() => {
           vm.drawer && vm.drawer.changeMode("simple_select");
+        }, 100);
+      } else if (eventName == "drawCreate" && this.closeEdit){
+        window.setTimeout(() => {
+          vm.drawer && vm.drawer.changeMode("static");
         }, 100);
       }
       // if (eventName == "drawCreate" && mode == "direct_select" ) {

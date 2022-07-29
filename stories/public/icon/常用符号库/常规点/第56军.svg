@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="200"
+   version="1.1"
+   height="200"
+   id="svg2"
+   zondyPlotSymbol:version="1.0"
+   zondyPlotSymbol:id="svg003"
+   zondyPlotSymbol:name="第56军"
+   zondyPlotSymbol:desc=""
+   zondyPlotSymbol:type="simplepoint"
+   zondyPlotSymbol:pose="1"
+   sodipodi:docname="第56军.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:zondyPlotSymbol="https://www.mapgis.com">
+  <defs
+     id="defs7">
+    <rect
+       x="35"
+       y="40"
+       width="120"
+       height="60"
+       id="rect53028" />
+    <rect
+       x="43.376623"
+       y="46.753247"
+       width="105.19481"
+       height="46.233766"
+       id="rect16065" />
+    <rect
+       x="42.597403"
+       y="48.051948"
+       width="104.93506"
+       height="45.194805"
+       id="rect5534" />
+  </defs>
+  <sodipodi:namedview
+     id="namedview5"
+     pagecolor="#ffffff"
+     bordercolor="#111111"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     showgrid="false"
+     inkscape:zoom="4"
+     inkscape:cx="78.25"
+     inkscape:cy="69.25"
+     inkscape:window-width="1920"
+     inkscape:window-height="986"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <path
+     style="fill:none;stroke:#ff0000;stroke-width:3px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 85,100 100,88.15625 115,100 Z"
+     id="path1042"
+     sodipodi:nodetypes="cccc" />
+  <path
+     style="fill:none;stroke:#ff0000;stroke-width:3px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 100,88.15625 V 16 h 42 v 21 h -42"
+     id="path1556"
+     sodipodi:nodetypes="ccccc" />
+  <rect
+     style="fill:#ffffff;stroke:none;stroke-width:3"
+     id="rect4145"
+     width="39.790298"
+     height="18.436737"
+     x="101.28163"
+     y="17.281631" />
+  <text
+     xml:space="preserve"
+     style="font-size:12.2209px;line-height:1.25;font-family:SimHei;-inkscape-font-specification:SimHei;stroke-width:1.22209"
+     x="103.58765"
+     y="30.845221"
+     id="text48789"
+     transform="scale(0.99472061,1.0053074)"><tspan
+       sodipodi:role="line"
+       id="tspan48787"
+       x="103.58765"
+       y="30.845221"
+        style="fill:#000000;stroke:none">第56军</tspan></text>
+</svg>

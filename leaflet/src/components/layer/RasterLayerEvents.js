@@ -1,0 +1,15 @@
+export default [
+  "tileabort",
+  "loading",
+  "tileunload",
+  "tileloadstart",
+  "tileerror",
+  "tileload",
+  "load",
+  "add",
+  "remove",
+  "popupopen",
+  "popupclose",
+  "tooltipopen",
+  "tooltipclose",
+];

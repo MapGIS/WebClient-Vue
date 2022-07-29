@@ -1,0 +1,30 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW (评估版) -->
+<svg xmlns="http://www.w3.org/2000/svg" width="200px" height="200px" version="1.1"
+  style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+  xmlns:zondyPlotSymbol="https://www.mapgis.com" xmlns:zondyPlotSymbolItem="https://www.mapgis.com"
+  zondyPlotSymbol:version="1.0" zondyPlotSymbol:id="svg003" zondyPlotSymbol:name="" zondyPlotSymbol:desc=""
+  zondyPlotSymbol:type="simplepoint" zondyPlotSymbol:pose="0">
+  <defs>
+    <style type="text/css">
+      <![CDATA[
+      .str0 {
+        stroke: #ED3237;
+        stroke-width: 5.91;
+        stroke-miterlimit: 22.9256
+      }
+
+      .fil0 {
+        fill: none
+      }
+      ]]>
+    </style>
+  </defs>
+  <g id="图层_x0020_1" class="str0 fil0">
+    <polygon points="52.64,82.64 109.86,44.88 166.32,82.64 166.32,139.48 52.64,139.48 " />
+    <line x1="91.35" y1="100.72" x2="127.6" y2="100.72" />
+    <line style="stroke:#ED3237;stroke-width:5.91;stroke-miterlimit:22.9256" x1="109.48" y1="118.85" x2="109.48"
+      y2="82.6" />
+  </g>
+</svg>

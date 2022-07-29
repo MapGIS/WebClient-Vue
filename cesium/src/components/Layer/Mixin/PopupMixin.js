@@ -135,6 +135,7 @@ export default {
       const scene = viewer.scene;
       let tempRay = new Cesium.Ray();
       let tempPos = new Cesium.Cartesian3();
+      // console.log('pickmovement-6',movement);
       if (!movement) return;
       if (scene.mode !== Cesium.SceneMode.MORPHING) {
         // let cartesian = viewer.scene.pickPosition(movement.position);
@@ -144,22 +145,25 @@ export default {
         let ray = scene.camera.getPickRay(position, tempRay);
         let cartesian2 = scene.globe.pick(ray, scene, tempPos);
         let pickedFeature = viewer.scene.pick(position);
+        // console.log('cartesian-7',cartesian, cartesian2 );
 
         // 多选模式
         let entities = scene.drillPick(position);
+        // console.log('entities-8',entities);
         if (entities.length <= 0) {
           if (mode == iClickMode) {
             vm.iClickVisible = false;
           } else {
             vm.iHoverVisible = false;
           }
+          // console.log('onfail--1');
           onFail && onFail({ movement });
           return;
         }
 
         let longitudeString2, latitudeString2, heightString2;
 
-        if (Cesium.defined(cartesian2)) {
+        if (Cesium.defined(cartesian)) {
           let cartographic2 = Cesium.Cartographic.fromCartesian(cartesian);
           longitudeString2 = Cesium.Math.toDegrees(cartographic2.longitude);
           latitudeString2 = Cesium.Math.toDegrees(cartographic2.latitude);
@@ -174,6 +178,7 @@ export default {
               latitude: latitudeString2,
               height: heightString2,
             };
+            // console.log('iClickPosition-9', vm.iClickPosition.longitude, vm.iClickPosition.latitude, vm.iClickPosition.height);
           } else {
             vm.iHoverVisible = true;
             vm.iHoverPosition = {
@@ -214,6 +219,7 @@ export default {
             return info;
           });
           vm.iClickFeatures = iClickFeatures;
+          // console.log('iClickFeatures-10',vm.iClickFeatures);
           onSuccess &&
             onSuccess({ entities, movement, iClickFeatures, pickedFeature });
         } else {
@@ -222,6 +228,7 @@ export default {
           } else {
             vm.iHoverVisible = false;
           }
+          // console.log('onfail--1');
           onFail && onFail();
         }
       }

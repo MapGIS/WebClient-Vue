@@ -33,7 +33,7 @@ const Template = (args, { argTypes }) => ({
 
 export const DocLayer = Template.bind({});
 DocLayer.args = {
-  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/docs/北京市`,
+  baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/docs/北京市`,
   layers: "show:1,2,3,4,5,6,7,8,9,10",
   layerStyle: {
     visible: true,

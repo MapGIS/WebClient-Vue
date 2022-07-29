@@ -42,7 +42,7 @@ const Template = (args, {argTypes}) => ({
     data() {
         return {
             url: "http://t0.tianditu.gov.cn/img_c/wmts",
-            m3dUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
+            m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
             // m3dUrl: `http://localhost:6163/igs/rest/g3d/BIM模型`,
             maximumScreenSpaceError: 8,
             tileMatrixSet: "c",

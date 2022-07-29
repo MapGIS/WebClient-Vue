@@ -1,9 +1,9 @@
 {
   "name": "@mapgis/webclient-vue-mapboxgl",
-  "version": "15.6.0",
+  "version": "15.6.3",
   "description": "中地数码webclient-vue-mapboxgl",
-  "main": "dist-libs/webclient-vue-mapboxgl.umd.min.js",
-  "module1": "src/main.js",
+  "main1": "dist-libs/webclient-vue-mapboxgl.umd.min.js",
+  "module": "src/main.js",
   "scripts": {
     "build": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-mapboxgl src/main.js",
     "serve": "vue-cli-service build --target lib --name webclient-vue-mapboxgl src/index.js --watch",
@@ -31,8 +31,10 @@
     "@mapgis/mapbox-gl-draw-radius": "^1.0.0",
     "@mapgis/mapbox-gl-inspect": "^10.5.6",
     "@mapgis/webclient-es6-service": "^15.6.0",
+    "@mapgis/webclient-es6-mapboxgl": "^15.6.1",
     "@mapgis/webclient-store": "^10.5.5",
     "@mapgis/webclient-vue-ui": "^15.6.0",
+    "@mapgis/webclient-plot": "^1.0.5",
     "@turf/turf": "^6.5.0",
     "echarts": "^5.3.0",
     "file-saver": "^2.0.5",
@@ -68,9 +70,10 @@
     "lint-staged": "^8.1.0",
     "node-sass": "^4.14.1",
     "sass-loader": "10.1.1",
-    "vue": "^2.6.6",
+    "vue": "2.6.11",
+    "vue-server-renderer": "2.6.11",
     "vue-cli-plugin-webpack-bundle-analyzer": "^4.0.0",
-    "vue-template-compiler": "^2.6.6",
+    "vue-template-compiler": "2.6.11",
     "webpack-bundle-analyzer": "^4.4.2"
   },
   "keywords": [

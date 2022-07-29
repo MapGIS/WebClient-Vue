@@ -3,14 +3,14 @@
 ### 方式一：npm 安装
 
 ```bash
-# npm或yarn安装 webclient-vue-cesium webclient-vue-ui
-npm install --save @mapgis/webclient-vue-cesium @mapgis/webclient-vue-ui
+# npm或yarn安装 webclient-vue-cesium
+npm install --save @mapgis/webclient-vue-cesium
 # 或者
-yarn add @mapgis/webclient-vue-cesium @mapgis/webclient-vue-ui
+yarn add @mapgis/webclient-vue-cesium
 ```
 
-::: tip 为什么要安装 webclient-vue-ui
-由于 webclient-vue-cesium 使用了大量内置的 webclient-vue-ui，因此需要同步安装 webclient-vue-ui
+::: tip 安装 webclient-vue-cesium 的同时，默认会自动安装 webclient-vue-ui
+原因：由于 webclient-vue-cesium 使用了大量内置的 webclient-vue-ui，因此会同步安装 webclient-vue-ui
 :::
 
 ### 方式二：yarn link`特殊情况下：需要使用组件最新的功能时`
