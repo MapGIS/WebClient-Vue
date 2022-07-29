@@ -1,33 +1,33 @@
 <template>
-      <mapgis-ui-timeline-panel
+      <mapgis-ui-plot-timeline
           v-model="sliderValue"
           :curTimeWidth="curTimeWidth"
           :max="maxSlider"
           :min="minSlider"
           :speed="speedValue"
-          :speedStep="0.01"
+          :speedStep="1"
           :minSpeed="minSpeed"
           :maxSpeed="maxSpeed"
           :interval="growInterval"
           :intervalOptions="dataFields"
           :tipFormatter="formatter"
           :currentTime="String(formatDate(sliderValue))"
-          :enableBackforward="true"
-          :disabled="true"
-          :resetActive="clickBtn"
           :forwardActive="playBtn"
           :backActive="backBtn"
           :pauseActive="suspendBtn"
+          :enableStart="false"
+          :enableEnd="false"
+          :disableBackward="true"
+          :disableForward="true"
+          :disablePause="true"
+          :loop="true"
           @backward="backSetting"
           @pause="suspendSetting"
           @forward="playSetting"
           @intervalChange="onFieldChange"
-          @resetSpeed="recoverSetting"
           @speedChange="onChange"
-          @decelerate="reduceSliderVal"
-          @accelerate="addSliderVal"
           @change="onSliderChange"
-      ></mapgis-ui-timeline-panel>
+      ></mapgis-ui-plot-timeline>
 </template>
 
 <script>
@@ -341,9 +341,6 @@ export default {
         vm.layer.setCityGrowPlayRate(speed);
       }
     },
-    recoverSetting() {
-      this.speedValue = 1;
-    },
     backSetting() {
       this.startGrow();
       this.speedValue = -this.speedValue;
@@ -353,6 +350,9 @@ export default {
       if (vm.layer) {
         vm.layer.cityGrowStop();
       }
+      this.playBtn = false;
+      this.backBtn = false;
+      this.suspendBtn = true;
     },
     playSetting() {
       this.startGrow();
@@ -360,12 +360,6 @@ export default {
     },
     onChange(value) {
       this.speedValue = value;
-    },
-    addSliderVal() {
-      this.speedValue++;
-    },
-    reduceSliderVal() {
-      this.speedValue--;
     }
   }
 }

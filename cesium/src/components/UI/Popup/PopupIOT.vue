@@ -1,5 +1,6 @@
 <template>
   <div class="attribute-popup-content-wrapper">
+    <div v-if="title" class="mapgis-popup-title">{{ title }}</div>
     <mapgis-ui-carousel v-if="images && images.length > 0" autoplay>
       <div
         v-for="(image, index) in images"
@@ -51,9 +52,14 @@
             type="mapgis-a-iotDevicechuanganqi"
           ></mapgis-ui-iconfont>
         </li>
+        <li title="知识图谱">
+          <mapgis-ui-iconfont
+            @click="clickIot(501)"
+            type="mapgis-share-alt"
+          ></mapgis-ui-iconfont>
+        </li>
       </ul>
     </template>
-
     <mapgis-ui-modal
       v-model="showModal"
       :footer="null"
@@ -69,6 +75,7 @@
         :Euid="Euid"
         :dataStoreIp="dataStoreIp"
         :dataStorePort="dataStorePort"
+        :dataStoreDataset="dataStoreDataset"
         @project-screen="projectScreen"
       />
     </mapgis-ui-modal>
@@ -99,6 +106,11 @@ export default {
       type: String,
       default: "9014"
     },
+    // 查询知识图谱的数据集位置
+    dataStoreDataset: {
+      type: String,
+      default: "Graph3/GraphDataset1"
+    },
     getProjectorStatus: {
       type: Function,
       default: () => {}
@@ -117,7 +129,7 @@ export default {
       const keys = [];
       for (const key in this.properties) {
         // 不展示关联的实体编码
-        if (key !== "Euid" && key !== "images") {
+        if (key !== "Euid" && key !== "images" && key !== "title") {
           keys.push(key);
         }
       }
@@ -138,6 +150,12 @@ export default {
         return arr || [];
       }
       return [];
+    },
+    title() {
+      if (this.properties.title) {
+        return this.properties.title;
+      }
+      return null;
     }
   },
   methods: {
@@ -227,5 +245,9 @@ export default {
 .iot-enclosure-container > li:hover {
   background-color: var(--shadow-color);
   cursor: pointer;
+}
+
+.mapgis-popup-title {
+  margin-top: 5px;
 }
 </style>

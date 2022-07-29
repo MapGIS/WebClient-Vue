@@ -3,23 +3,23 @@
 ## 一、注册组件到StoryBook
 这里以一个WMTS组件为例，创建了一个新组件
 
-![img.png](./img.png)
+![img.png](../guide/img/img.png)
 <br>
 将组建注册到StoryBook的配置文件中，配置文件路径如下：webclient-vue/.storybook/components/cesium_coms.js
 
-![img_1.png](./img_1.png)
+![img_1.png](../guide/img/img_1.png)
 
 ## 二、创建一个StoryBook的3D组件示例
 
 找到如下文件夹：webclient-vue/stories/mapgis3d，新建一个storybook的3D示例CesiumExample.stories.js
 
-![img_2.png](./img_2.png)
+![img_2.png](../guide/img/img_2.png)
 
 ## 三、stories的结构解析
 
 一个storybook示例包含如下三部分：标题、示例代码、接口展示
 
-![img_3.png](./img_3.png)
+![img_3.png](../guide/img/img_3.png)
 <br>
 标题结构如下：
 ```vue
@@ -86,17 +86,17 @@ props、template、data。methods就是标准的vue模板语法，可完全按�
 
 "ExampleLayer"这个名称就是次级标题的名称
 
-![img_4.png](./img_4.png)
+![img_4.png](../guide/img/img_4.png)
 <br>
 
 ExampleLayer.args里面的值将会展示在示例页面的form表单中
 
-![img_5.png](./img_5.png)
+![img_5.png](../guide/img/img_5.png)
 <br>
 
 在展示示例的接口展示表单中修改接口的值，可以实时更新示例，但请注意，更新走的是初始化的方法，不会触发watch函数！！！！
 
-![img_6.png](./img_6.png)
+![img_6.png](../guide/img/img_6.png)
 <br>
 
 编写接口描述信息，这里以baseUrl字段为例，展示如何编写Description以及Default的值
@@ -126,15 +126,15 @@ export default {
 };
 ```
 
-![img_10.png](./img_10.png)
+![img_10.png](../guide/img/img_10.png)
 <br>
 
 control的可选值：
 <br>
 
-![img_7.png](./img_7.png)
+![img_7.png](../guide/img/img_7.png)
 
-![img_8.png](./img_8.png)
+![img_8.png](../guide/img/img_8.png)
 
 ## 四、一个stories示例里面展示多个示例
 

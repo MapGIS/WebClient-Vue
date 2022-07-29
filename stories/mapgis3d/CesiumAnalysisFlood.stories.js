@@ -35,7 +35,7 @@ export default {
     floodSpeed: {
       description: "洪水淹没速度，单位 米/秒",
       table: {
-        defaultValue: { summary: "500" },
+        defaultValue: { summary: "80" },
       },
       control: "number",
     },
@@ -77,7 +77,8 @@ const Template = (args, { argTypes }) => ({
       url: "http://t0.tianditu.gov.cn/img_c/wmts",
       //地形url TODO这里地址打包的时候改一下
       //terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/terrain",
-      terrainUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/terrain`,
+      terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`,
+      // terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/武汉地形`,
       tileMatrixSet: "c",
       tilingScheme: "EPSG:4326",
       layer: "img",
@@ -153,7 +154,7 @@ export const 洪水淹没 = Template.bind({});
   minHeight: 0,
   maxHeight: 2000,
   floodColor: "rgba(149,232,249,0.5)",
-  floodSpeed: 500,
+  floodSpeed: 80,
   specularIntensity: 2,
   amplitude: 10,
   animationSpeed: 0.01,

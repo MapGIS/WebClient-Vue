@@ -18,13 +18,17 @@
           :tabBarStyle="tabBarStyle"
           :active-key="activeKey"
           @change="_tabChange"
-          size="small"
         >
-          <mapgis-ui-tab-pane
-            key="1"
-            tab="投放列表"
-            class="control-content list-pane"
-          >
+          <mapgis-ui-tab-pane key="1" class="control-content list-pane">
+            <span slot="tab">
+              投放列表
+              <mapgis-ui-tooltip slot="handle" placement="bottomRight">
+                <template slot="title">
+                  <span>{{ info }}</span>
+                </template>
+                <mapgis-ui-iconfont type="mapgis-info"></mapgis-ui-iconfont>
+              </mapgis-ui-tooltip>
+            </span>
             <mapgis-ui-list
               v-if="
                 currentProjectorOverlayLayer &&
@@ -41,7 +45,7 @@
               <mapgis-ui-empty
                 :image="emptyImage"
                 :image-style="imageStyle"
-                v-if="projectorList && projectorList.length === 0"
+                v-if="emptyImage && projectorList && projectorList.length === 0"
               >
                 <span slot="description" class="empty-style">
                   请新建投放
@@ -92,21 +96,18 @@
                 :show-total="total => `共${total}条数据`"
               ></mapgis-ui-pagination>
               <!-- 批量操作 -->
-              <div class="buttons">
-                <div v-show="isBatch" class="full-width">
+              <mapgis-ui-setting-footer>
+                <div v-show="isBatch">
                   <mapgis-ui-button
                     @click="_cancelPutProjectors"
-                    class="control-button"
                     >取消投放</mapgis-ui-button
                   >
                   <mapgis-ui-button
                     @click="_putProjectors"
-                    class="control-button"
                     >投放视频</mapgis-ui-button
                   >
                   <mapgis-ui-button
                     @click="_deleteProjectors"
-                    class="control-button"
                     >删除</mapgis-ui-button
                   >
                 </div>
@@ -119,16 +120,16 @@
                     新建投放视频
                   </mapgis-ui-button>
                 </div>
-              </div>
+              </mapgis-ui-setting-footer>
             </div>
           </mapgis-ui-tab-pane>
           <mapgis-ui-tab-pane
             key="2"
             tab="设置面板"
-            class="control-content"
             id="parameter-formList"
           >
             <mapgis-3d-projector-setting
+              class="control-content"
               v-if="
                 currentEditProjector &&
                   Object.keys(currentEditProjector).length > 0
@@ -160,7 +161,7 @@
 </template>
 
 <script>
-import emptyImage from "../../../assets/image/empty.png";
+import { emptyImage } from "../../UI/Base64Image/base64Image";
 import { newGuid } from "../../Utils/util";
 import VueOptions from "./components/OperationsItem.vue";
 import OperationsItem from "./components/OperationsItem.vue";
@@ -331,6 +332,7 @@ export default {
   },
   data() {
     return {
+      info: "如需投放到地形上,请开启深度检测",
       reflush: true,
       projectorOverlayLayerListCopy: [], //图层数组
       layerSelectOptions: [], //图层选中框信息
@@ -339,9 +341,9 @@ export default {
       tabBarStyle: {
         margin: "0",
         textAlign: "center",
-        borderBottom: "1px solid #F0F0F0"
+        // borderBottom: "1px solid #F0F0F0"
       },
-      emptyImage: emptyImage,
+      emptyImage: undefined,
       imageStyle: {
         height: "150px",
         margin: "0 auto"
@@ -352,21 +354,19 @@ export default {
       selectedIds: [], //选中projector的id集合
       pagination: {
         onChange: page => {
-          console.log(page);
+          // console.log(page);
           this.pagination.current = page;
         },
         current: 1,
         size: "small",
         pageSize: 20
-      },
-      isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
-      //是否开启缓存区
-      isLogarithmicDepthBufferEnable: undefined
+      }
     };
   },
   created() {},
   mounted() {
     this.mount();
+    this.emptyImage = emptyImage();
   },
   destroyed() {
     this.unmount();
@@ -515,6 +515,14 @@ export default {
      * 点击列表项
      */
     _clickListItem(item, index) {
+      if (!item) {
+        return;
+      }
+      // 如果是点击删除按钮触发的，这个item已经被删除，则不需要往后走
+      const projector = this.projectorList.find(pro => pro.id === item.id);
+      if (!projector) {
+        return;
+      }
       this.activeIndex = index;
       this.currentEditProjector = item;
     },
@@ -753,7 +761,8 @@ export default {
 <style scoped>
 .projector-layer-select-div {
   width: 100%;
-  padding: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color-split);
 }
 .list-pane {
   position: relative;
@@ -796,11 +805,12 @@ export default {
   border-top: 1px solid var(--border-color-split);
 }
 .control-content {
-  max-height: 394px;
-  overflow: hidden;
-  overflow-y: auto;
-  padding-top: 10px;
-  height: 394px;
+  /* max-height: 394px; */
+  /* overflow: hidden;
+  overflow-y: auto; */
+  /* padding-top: 10px; */
+  /* height: 394px; */
+  height: calc(60vh);
 }
 
 .list-active {

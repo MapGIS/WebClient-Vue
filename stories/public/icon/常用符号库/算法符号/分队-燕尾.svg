@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW (评估版) -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="200px" height="200px" version="1.1"
+    style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+    viewBox="0 0 200 200" xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xodm="http://www.corel.com/coreldraw/odm/2003" xmlns:zondyPlotSymbol="https://www.mapgis.com"
+    xmlns:zondyPlotSymbolItem="https://www.mapgis.com" zondyPlotSymbol:version="1.0" zondyPlotSymbol:id="svg003"
+    zondyPlotSymbol:name="" zondyPlotSymbol:desc="" zondyPlotSymbol:type="tailedsquadarrow">
+    <defs>
+        <style type="text/css">
+            <![CDATA[
+            .fil0 {
+                fill: #ED3237
+            }
+            ]]>
+        </style>
+    </defs>
+    <g id="图层_x0020_1">
+        <metadata id="CorelCorpID_0Corel-Layer" />
+        <path class="fil0"
+            d="M42.69 17.84l27.66 23.45 -7.01 -2.75c58.13,65.38 67.88,89.64 75.28,100.89 -8.37,-10.84 -17.13,-23.61 -26.48,-32.5 10.3,24.31 20.59,48.63 25.83,72.94 -17.16,-57.86 -52.52,-107.18 -77.94,-138.52l1.28 7.39 -18.62 -30.9z" />
+    </g>
+</svg>

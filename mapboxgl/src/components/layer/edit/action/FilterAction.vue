@@ -1,6 +1,6 @@
 <template>
   <div class="mapgis-mvt-action-filter">
-    <mapgis-ui-row class="mapgis-mvt-action-filter-control">
+    <!-- <mapgis-ui-row class="mapgis-mvt-action-filter-control">
       <div class="mapgis-mvt-action-filter-left">过滤显示</div>
       <div class="mapgis-mvt-action-filter-right">
         启用 <mapgis-ui-switch v-model="enable" />
@@ -25,7 +25,33 @@
         height="240px"
         @error="onJsonError"
       />
-    </div>
+    </div> -->
+
+    <mapgis-ui-switch-panel
+      size="small"
+      label="过滤显示"
+      v-model="enable"
+    >
+      <div>
+        <mapgis-ui-radio-group v-model="type">
+          <mapgis-ui-radio value="properties">
+            按属性过滤
+          </mapgis-ui-radio>
+          <mapgis-ui-radio value="geometry" disabled>
+            按范围过滤
+          </mapgis-ui-radio>
+        </mapgis-ui-radio-group>
+
+        <v-jsoneditor
+          class="mapgis-mvt-action-filter-json-editor"
+          v-model="json"
+          :options="options"
+          :plus="false"
+          height="240px"
+          @error="onJsonError"
+        />
+      </div>
+    </mapgis-ui-switch-panel>
   </div>
 </template>
 

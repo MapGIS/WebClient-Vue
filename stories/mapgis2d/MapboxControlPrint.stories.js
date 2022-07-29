@@ -27,7 +27,7 @@ const Template = (args, { argTypes }) => ({
         zIndex: 700,
         right: "20px",
         top: "20px",
-        height: "260px",
+        // height: "360px",
         width: "300px",
       },
       scaleStyle: {

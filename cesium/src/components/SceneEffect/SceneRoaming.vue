@@ -3,30 +3,6 @@
     <slot>
       <div class="mapgis-widget-scene-roaming">
         <div v-if="!roaming">
-          <mapgis-ui-button
-            v-if="!interactiveAdding"
-            type="primary"
-            class="full-width"
-            @click="onAddPathStart"
-          >
-            添加路线
-          </mapgis-ui-button>
-          <div v-else class="add-path-status">
-            <mapgis-ui-button
-              @click="onAddPathCancel"
-              class="add-path-status-action"
-            >
-              取消
-            </mapgis-ui-button>
-            <mapgis-ui-button
-              type="primary"
-              class="add-path-status-action"
-              @click="onAddPathComplete"
-              :disabled="addedPositions.length < 2"
-            >
-              完成
-            </mapgis-ui-button>
-          </div>
           <div v-if="!interactiveAdding" class="path-container">
             <mapgis-ui-group-tab :title="pathTotal">
               <mapgis-ui-toolbar slot="handle" :bordered="false">
@@ -53,6 +29,16 @@
             </div>
           </div>
           <div v-else class="path-container">
+            <mapgis-ui-group-tab title="基本信息"></mapgis-ui-group-tab>
+            <mapgis-ui-setting-form
+              :layout="layout"
+              size="default"
+              class="mapgis-ui-setting-form"
+            >
+              <mapgis-ui-form-item label="名称">
+                <mapgis-ui-input v-model="name" class="full-width" allowClear />
+              </mapgis-ui-form-item>
+            </mapgis-ui-setting-form>
             <mapgis-ui-group-tab title="路线坐标"> </mapgis-ui-group-tab>
             <mapgis-ui-table
               v-if="positions && positions.length > 0"
@@ -76,14 +62,41 @@
               :description="emptyDescription"
             />
           </div>
+          <mapgis-ui-setting-footer>
+            <div v-if="!interactiveAdding" class="full-width">
+              <mapgis-ui-button
+                @click="onAddPathStart"
+                type="primary"
+                class="full-width"
+              >
+                添加路线
+              </mapgis-ui-button>
+            </div>
+            <div v-else>
+              <mapgis-ui-button
+                @click="onAddPathCancel"
+              >
+                取消
+              </mapgis-ui-button>
+              <mapgis-ui-button
+                type="primary"
+                @click="onAddPathComplete"
+                :disabled="addedPositions.length < 2"
+              >
+                完成
+              </mapgis-ui-button>
+            </div>
+          </mapgis-ui-setting-footer>
         </div>
         <div v-else>
-          <div class="header" @click="onGotoHome">
-            <div>
-              <mapgis-ui-iconfont class="return" type="mapgis-left" />
+          <mapgis-ui-group-tab>
+            <div slot="title" class="header" @click="onGotoHome">
+              <div>
+                <mapgis-ui-iconfont class="return" type="mapgis-left" />
+              </div>
+              <div class="name">{{ roamingPath.name }}</div>
             </div>
-            <div class="name">{{ roamingPath.name }}</div>
-          </div>
+          </mapgis-ui-group-tab>
           <path-roaming
             ref="refPathRoaming"
             :positions="roamingPath.path"
@@ -109,13 +122,17 @@
 import PathItem from "./PathRoaming/PathItem.vue";
 import PathRoaming from "./PathRoaming/PathRoaming.vue";
 import VueOptions from "../Base/Vue/VueOptions";
-// import { Empty } from "ant-design-vue";
+import { MapgisUiEmpty } from "@mapgis/webclient-vue-ui";
 export default {
   name: "mapgis-3d-scene-roaming",
   inject: ["Cesium", "vueCesium", "viewer"],
   components: { PathItem, PathRoaming },
   props: {
     ...VueOptions,
+    layout: {
+      type: String,
+      default: "vertical" // 'horizontal' 'vertical' 'inline'
+    },
     speed: {
       type: Number,
       default: 10
@@ -192,6 +209,7 @@ export default {
       interactiveAdding: false,
       roaming: false,
       roamingPath: null,
+      name: "",
       addedPositions: [],
       addedPositionsColumns: [
         {
@@ -227,7 +245,7 @@ export default {
       pathsCopy: [],
       linePoints: [],
       polyline: undefined,
-      // emptyImage: Empty.PRESENTED_IMAGE_SIMPLE,
+      emptyImage: MapgisUiEmpty.PRESENTED_IMAGE_SIMPLE,
       emptyDescription: "暂无数据"
     };
   },
@@ -261,6 +279,8 @@ export default {
     },
     onAddPathStart() {
       this.interactiveAdding = true;
+      const pathId = this.getPathId();
+      this.name = `路线${pathId}`;
       this.draw = new this.Cesium.DrawElement(this.viewer);
 
       const material = this.Cesium.Material.fromType("Color");
@@ -312,8 +332,8 @@ export default {
         }
       });
     },
-    onAddPathComplete() {
-      let pathId;
+    getPathId() {
+      let pathId = 1;
       if (this.pathsCopy.length > 0) {
         const pathIds = this.pathsCopy
           .map((item, index) => {
@@ -323,9 +343,11 @@ export default {
             return a - b;
           });
         pathId = +pathIds[pathIds.length - 1] + 1;
-      } else {
-        pathId = 1;
       }
+      return pathId;
+    },
+    onAddPathComplete() {
+      const pathId = this.getPathId();
       const {
         speed,
         exHeight,
@@ -339,7 +361,7 @@ export default {
         showInfo
       } = this;
       const path = {
-        name: `路线${pathId}`,
+        name: this.name,
         id: pathId,
         path: this.addedPositions,
         para: {
@@ -424,7 +446,7 @@ export default {
   width: calc(50% - 4px);
 }
 .path-container .path-list {
-  width: 280px;
+  /* width: 280px; */
   margin: 0 auto;
 }
 

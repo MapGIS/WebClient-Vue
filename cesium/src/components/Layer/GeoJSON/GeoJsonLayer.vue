@@ -1,59 +1,57 @@
+<template>
+  <div class="mapgis-popup-default-wrapper">
+    <div v-if="popVisiable">
+      <Popup
+        :position="iClickPosition"
+        :visible="iClickVisible"
+        :forceRender="forceRender"
+      >
+        <mapgis-ui-popup-content
+          :feature="gemotryAttribute[0]"
+          :popupOptions="popupOptions"
+        >
+        </mapgis-ui-popup-content>
+      </Popup>
+    </div>
+  </div>
+</template>
+
 <script>
-import bbox from "@turf/bbox";
-
-import VueOptions from "../../Base/Vue/VueOptions";
+import clonedeep from "lodash.clonedeep";
 import PopupMixin from "../Mixin/PopupVirtual";
-
-import { Style } from "@mapgis/webclient-es6-service";
-const { MarkerStyle, LineStyle, PointStyle, FillStyle } = Style;
+import BaseLayer from "./BaseLayer";
 
 export default {
   name: "mapgis-3d-geojson-layer",
   inject: ["Cesium", "vueCesium", "viewer"],
-  mixins: [PopupMixin],
+  mixins: [BaseLayer, PopupMixin],
   props: {
-    ...VueOptions,
     baseUrl: {
-      type: [String, Object],
-      required: true,
-    },
-    layerId: {
       type: String,
-      default: "矢量图层",
+      default: null
     },
-    layerStyle: {
+    renderer: {
       type: Object,
-      default: () => {
-        return {};
-      },
+      default() {
+        return {}
+      }
     },
-    highlightStyle: {
-      type: Object,
-      default: () => {
-        return {
-          point: new PointStyle(),
-          line: new LineStyle(),
-          polygon: new FillStyle(),
-        };
-      },
-    },
-    visible: {
+    clampToGround: {
       type: Boolean,
-      default: true,
-    },
+      default: false
+    }
   },
   data() {
     return {
-      bbox: undefined,
+      layerType: "geojson",
+      layerIndex: undefined,
+      layer: undefined,
+      layerRange: [],
+      clickhandler: undefined,
+      hoverhandler: undefined,
+      tempHighlightdata: undefined,
+      tempQueryDataArr: []
     };
-  },
-  watch: {
-    visible(val, oldval) {
-      if (val != oldval) {
-        this.unmount();
-        this.mount();
-      }
-    },
   },
   mounted() {
     this.mount();
@@ -61,200 +59,151 @@ export default {
   destroyed() {
     this.unmount();
   },
+  watch: {
+    baseUrl: {
+      handler: function () {
+        this.unmount();
+        this.mount();
+      },
+    },
+    autoReset: {
+      handler(value) {
+        this.unmount();
+        this.mount();
+      },
+      deep: true
+    },
+    renderer: {
+      handler(value) {
+        this.unmount();
+        this.mount();
+      },
+      deep: true
+    }
+  },
   methods: {
     async createCesiumObject() {
-      const { baseUrl, options } = this;
-      // return new Cesium.GeoJsonDataSource.load(baseUrl, options);
-      return new Cesium.GeoJsonDataSource.load(baseUrl, {
-        clampToGround: true,
-      });
+      let {viewer, vueCesium} = this;
+      let { baseUrl, gdbps, autoReset, renderer, clampToGround} = this;
+      let vm = this;
+      let options = {
+        autoReset,
+        loadAll: true,
+        renderer,
+        getDocLayerIndexes: indexs => {
+          this.layerIndex = indexs[0];
+        },
+        clampToGround
+      };
+      let transformRenderer = JSON.parse(JSON.stringify(renderer));
+      this.transformObject(transformRenderer);
+      options.renderer = transformRenderer;
+
+      return new Promise(
+        resolve => {
+          let layerIndex = viewer.scene.layers.appendGeojsonLayer(baseUrl, {
+            ...options,
+            loaded: vm.onGeojsonLoaded
+          });
+          resolve({ layerIndex: layerIndex });
+        },
+        reject => {}
+      );
+    },
+    onGeojsonLoaded(layer) {
+      const vm = this;
+      const { vueIndex, vueKey, vueCesium, baseUrl } = this;
+      if (layer) {
+        vm.layer = layer;
+        let source = layer;
+        vueCesium.GeojsonManager.addSource(vueKey, vueIndex, source, {
+          url: baseUrl,
+          layerIndex: vm.layerIndex,
+          clickhandler: vm.clickhandler,
+          hoverhandler: vm.hoverhandler,
+        });
+        vm.layerRange = vm.layer._layerRange;
+        vm.parseBBox(vm.layerRange);
+        vm.$emit("load", { data: vm });
+      }
     },
     mount() {
-      const { viewer, vueCesium, vueKey, vueIndex } = this;
-      const { enablePopup, enableTips, baseUrl } = this;
-      const vm = this;
+      let {viewer, vueCesium, vueKey, vueIndex, baseUrl} = this;
+      let vm = this;
+
+      // 判断是否支持图像渲染像素化处理
+      viewer.shadows = true;
+      if (Cesium.FeatureDetection.supportsImageRenderingPixelated()) { 
+        viewer.resolutionScale = window.devicePixelRatio;
+      };
+      // 是否开启抗锯齿
+      viewer.scene.fxaa = true;
+      viewer.scene.postProcessStages.fxaa.enabled = true;
+      this.checkType();
       let promise = this.createCesiumObject();
       promise.then(function (dataSource) {
-        // viewer.zoomTo(dataSource);
-        viewer.dataSources.add(dataSource);
-        vm.changeColor(dataSource);
-        // 新增visible属性，控制图层可见性
-        vm.changeVisisbe(dataSource);
-        vm.$emit("load", { component: this });
-        vm.parseData(baseUrl);
-        let clickhandler, hoverhandler;
-        if (enablePopup) {
-          clickhandler = vm.$_bindClickEvent(vm.highlight);
+        // vm.layer = viewer.scene.layers.getGeojsonLayer(dataSource.layerIndex);
+        // 增加图层click和hover事件，在组件外部获得对应entity
+        vm.$_bindClickEvent(vm.parseClick);
+        vm.$_bindHoverEvent(vm.parseHover);
+        if (vm.enablePopup) {
+          vm.clickhandler = vm.$_bindClickEvent(vm.clickHighlight);
         }
-        if (enableTips) {
-          hoverhandler = vm.$_bindHoverEvent(vm.changePopup);
+        if (vm.enableClick) {
+          vm.clickhandler = vm.$_bindClickEvent(vm.clickHighlight);
         }
-        vueCesium.GeojsonManager.addSource(vueKey, vueIndex, dataSource, {
-          clickhandler: clickhandler,
-          hoverhandler: hoverhandler,
-        });
+        if (vm.enableHover) {
+          vm.hoverhandler = vm.$_bindHoverEvent(vm.hoverHighlight);
+        }
+        if (vm.enableQuery) {
+          vm.queryPrimitive();
+        }
       });
     },
+    transformObject(renderer) {
+      renderer = renderer || {};
+      Object.keys(renderer).forEach( key => {
+        if (key == "distanceDisplayCondition") {
+          renderer[key] = new Cesium.DistanceDisplayCondition(renderer[key][0], renderer[key][1]);
+        }
+        if (typeof(renderer[key]) == "object") {
+          this.transformObject(renderer[key]);
+        }
+        if (key == "color") {
+          renderer[key] = Cesium.Color.fromCssColorString(renderer[key]);
+        }
+      })
+    },
     unmount() {
-      let { viewer, vueCesium, vueKey, vueIndex } = this;
-      const { dataSources } = viewer;
+      let {viewer, vueCesium} = this;
+      const {vueKey, vueIndex, layerIndex} = this;
       let find = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
-      if (find) {
-        if (dataSources) {
-          dataSources.remove(find.source, true);
-        }
-        if (find.clickhandler) {
-          find.clickhandler.destroy();
-        }
-        if (find.hoverhandler) {
-          find.hoverhandler.destroy();
-        }
+      if (find && find.source) {
+        viewer.scene.layers.removeGeojsonLayerByID(layerIndex);
+      }
+      if (find && find.clickhandler) {
+        find.clickhandler.destroy();
+      }
+      if (find && find.hoverhandler) {
+        find.hoverhandler.destroy();
       }
       vueCesium.GeojsonManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
-    changeColor(dataSource) {
-      let entities = dataSource.entities.values;
-      const vm = this;
-      const { Cesium, layerStyle } = this;
-      const { type } = layerStyle;
-
-      for (let i = 0; i < entities.length; i++) {
-        let entity = entities[i];
-        if (type == "point" || entity.billboard) {
-          entity.billboard.show = false;
-          const style = layerStyle.toCesiumStyle(Cesium);
-          const { color, pixelSize, outlineColor } = style;
-          entity.ellipse = new Cesium.EllipseGraphics({
-            semiMajorAxis: pixelSize,
-            semiMinorAxis: pixelSize,
-            outline: outlineColor,
-            material: color,
-          });
-        } else if (type == "line" || entity.polyline) {
-          const style = layerStyle.toCesiumStyle(Cesium);
-          const { material, width } = style;
-          entity.polyline.material = material;
-          entity.polyline.width = width;
-        } else if (type == "fill" || entity.polygon) {
-          const style = layerStyle.toCesiumStyle(Cesium);
-          const { material, outlineColor } = style;
-          entity.polygon.material = material;
-          entity.polygon.outlineColor = outlineColor;
-        }
-      }
+    // 组件回调
+    parseClick(payload) {
+      this.$emit("geojsonClick", {pick: payload});
     },
-    highlight(payload) {
-      const { entities, currentClickInfo } = payload;
-      const vm = this;
-      const { vueKey, vueIndex, vueCesium } = this;
-      const { viewer, Cesium, enablePopup, layerStyle, highlightStyle } = this;
-      const { type } = layerStyle;
-      const hpolygon = highlightStyle.polygon;
-      const hline = highlightStyle.line;
-      const hpoint = highlightStyle.point;
-      vm.currentClickInfo = currentClickInfo;
-      let outlineEntity;
-      if (!entities || entities.length <= 0 || !enablePopup) return;
-      let find = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
-      if (!find) return;
-      for (let i = 0; i < find.source.entities.values.length; i++) {
-        let entity = find.source.entities.values[i];
-        if (entity.id == vm.activeId) {
-          if (entity.ellipse) {
-            const style = hpoint.toCesiumStyle(Cesium);
-            const { color, pixelSize, outlineColor } = style;
-            entity.ellipse = new Cesium.EllipseGraphics({
-              semiMajorAxis: pixelSize,
-              semiMinorAxis: pixelSize,
-              outline: outlineColor,
-              material: color,
-            });
-          } else if (entity.polyline) {
-            const style = hline.toCesiumStyle(Cesium);
-            const { material, width } = style;
-            entity.polyline.material = material;
-            entity.polyline.width = width;
-          } else if (entity.polygon) {
-            outlineEntity = find.options.outlineEntity;
-            const style = hpolygon.toCesiumStyle(Cesium);
-            const { material, outlineColor } = style;
-            entity.polygon.material = material;
-            entity.polygon.outlineColor = outlineColor;
-            if (outlineEntity) {
-              viewer.entities.remove(outlineEntity);
-            }
-            outlineEntity = new Cesium.Entity({
-              polyline: {
-                width: 20,
-                positions: entity.polygon.hierarchy._value.positions,
-                material: new Cesium.PolylineGlowMaterialProperty({
-                  glowPower: 0.7,
-                  color: new Cesium.Color.fromCssColorString("#7cc4db"),
-                }),
-                clampToGround: true,
-              },
-            });
-            viewer.entities.add(outlineEntity);
-            vueCesium.GeojsonManager.changeOptions(
-              vueKey,
-              vueIndex,
-              "outlineEntity",
-              outlineEntity
-            );
-          }
-        } else {
-          if (type == "point" || entity.ellipse) {
-            const style = layerStyle.toCesiumStyle(Cesium);
-            const { color, pixelSize, outlineColor } = style;
-            entity.ellipse = new Cesium.EllipseGraphics({
-              semiMajorAxis: pixelSize,
-              semiMinorAxis: pixelSize,
-              outline: outlineColor,
-              material: color,
-            });
-          } else if (type == "line" || entity.polyline) {
-            const style = layerStyle.toCesiumStyle(Cesium);
-            const { material, width } = style;
-            entity.polyline.material = material;
-            entity.polyline.width = width;
-          } else if (type == "fill" || entity.polygon) {
-            const style = layerStyle.toCesiumStyle(Cesium);
-            const { material, outlineColor } = style;
-            entity.polygon.material = material;
-            entity.polygon.outlineColor = outlineColor;
-          }
-        }
-      }
+    parseHover(payload) {
+      this.$emit("geojsonHover", {pick: payload});
     },
-    changePopup(payload) {
-      const { currentClickInfo } = payload;
-      this.currentClickInfo = currentClickInfo;
+    parseBBox(bbox) {
+      this.$emit("bbox", { bbox: bbox });
     },
-    changeVisisbe(dataSource) {
-      const { vueKey, vueIndex, visible } = this;
-      let entities = dataSource.entities.values;
-      for (let i = 0; i < entities.length; i++) {
-        let entity = entities[i];
-        entity.show = visible;
-      }
-    },
-    parseData(data) {
-      const vm = this;
-      if (typeof data === "string") {
-        fetch(data)
-          .then((res) => res.json())
-          .then((geojson) => {
-            vm.parseBBox(geojson);
-          });
-      } else {
-        vm.parseBBox(data);
-      }
-    },
-    parseBBox(geojson) {
-      this.bbox = bbox(geojson);
-      this.$emit("bbox", { bbox: this.bbox });
-    },
-  },
-};
+  }
+}
 </script>
+
+<style scoped>
+
+</style>

@@ -31,7 +31,7 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       m3d: {
-        url: "http://192.168.88.204:8089/M3D/2.0/高级住所模型/高级住所模型.mcj",
+        url: `http://${window.webclient.ip}:${window.webclient.port}/M3D/2.0/高级住所模型/高级住所模型.mcj`,
         vueIndex: "test_bim_layer1"
       }
     };
@@ -43,7 +43,7 @@ const Template = (args, { argTypes }) => ({
   },
   template: `<mapgis-web-scene @load="handleMapload" style="height:95vh">    
     <mapgis-3d-m3d-layer v-bind="m3d" />
-    <mapgis-3d-bim-component v-bind="$props" />
+    <mapgis-3d-bim-component style="position: absolute;top: 10px;left: 10px;" v-bind="$props" />
     <mapgis-3d-statebar />
   </mapgis-web-scene>`,
 });

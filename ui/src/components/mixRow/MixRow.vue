@@ -459,8 +459,8 @@ export default {
         suffix: undefined,
         type: undefined,
         allowClear: undefined,
-        titleCol: 6,
-        inputCol: 18,
+        titleCol: 7,
+        inputCol: 17,
       },
       inputNumberProps: {
         autoFocus: undefined,
@@ -913,7 +913,7 @@ export default {
 
 <style scoped>
 .mix-row {
-  margin: 6px 0;
+  margin: 8px 0;
 }
 
 .mixRowSmall {
@@ -931,9 +931,10 @@ export default {
 }
 
 .mix-row-title {
-  font-size: 12px;
+  font-size: 14px;
   position: absolute;
   top: 8px;
+  color: var(--heading-color);
 }
 
 .mix-row-color-outer {

@@ -1,51 +1,51 @@
 <template>
   <div class="mapgis-ui-colors-setting">
     <mapgis-ui-table
-        bordered
-        size="small"
-        :pagination="false"
-        :columns="tableColumns"
-        :data-source="tableData"
-        :scroll="{ y: 350 }"
+      bordered
+      size="small"
+      :pagination="false"
+      :columns="tableColumns"
+      :data-source="tableData"
+      :scroll="{ y: 350 }"
     >
       <template slot="color" slot-scope="text, record">
         <mapgis-ui-sketch-color-picker
-            :color.sync="record.color"
-            :disableAlpha="false"
+          :color.sync="record.color"
+          :disableAlpha="false"
+          :showColorText="false"
         ></mapgis-ui-sketch-color-picker>
       </template>
       <template slot="max" slot-scope="text, record, index" v-if="showNumber">
-        <mapgis-ui-input
-            v-model="record.max"
-            size="small"
-            :min="record.min"
-            :max="getMax(index)"
-            :prefix="`${record.min}~`"
-            @change="changeMax(record, index)"
-            type="number"
-            v-if="!singleNumber"
+        <mapgis-ui-input-number-addon
+          v-model="record.max"
+          size="small"
+          :min="record.min"
+          :max="getMax(index)"
+          :prefix="`${record.min}~`"
+          @change="changeMax(record, index)"
+          v-if="!singleNumber"
         />
-        <mapgis-ui-input
-            v-else
-            v-model="record.max"
-            size="small"
-            :min="record.min"
-            :max="getMax(index)"
-            @change="changeMax(record, index)"
-            type="number"
+        <mapgis-ui-input-number-addon
+          v-else
+          v-model="record.max"
+          size="small"
+          :min="record.min"
+          :max="getMax(index)"
+          @change="changeMax(record, index)"
         />
       </template>
       <template slot="operation" slot-scope="text, record, index">
         <mapgis-ui-tooltip placement="top" title="删除">
           <mapgis-ui-iconfont
-              type="mapgis-delete"
-              @click="remove(index)"
+            class="mapgis-ui-iconfont"
+            type="mapgis-delete"
+            @click="remove(index)"
           ></mapgis-ui-iconfont>
         </mapgis-ui-tooltip>
         <mapgis-ui-tooltip placement="top" title="向下插入一行">
           <mapgis-ui-iconfont
-              type="mapgis-plus"
-              @click="add(index)"
+            type="mapgis-plus"
+            @click="add(index)"
           ></mapgis-ui-iconfont>
         </mapgis-ui-tooltip>
       </template>
@@ -55,19 +55,20 @@
 
 <script>
 import { uuid } from "../../util/common/util";
+import { rgbaToHex } from "../../util/common/color-util.js";
 
 export default {
   name: "mapgis-ui-colors-setting",
   props: {
     // [{ min: 0, max: 60, color: 'rgba(244, 67, 54, 0.5)' }...]
-    value: {type: Array},
-    rangeField: {type: String, default: "角度范围"},
-    singleNumber: {type: Boolean, defalut: false},
-    showNumber: {type: Boolean, default: true},
+    value: { type: Array },
+    rangeField: { type: String, default: "角度范围" },
+    singleNumber: { type: Boolean, defalut: false },
+    showNumber: { type: Boolean, default: true }
   },
   model: {
-    props: 'value',
-    event: 'change'
+    props: "value",
+    event: "change"
   },
   data() {
     return {
@@ -101,7 +102,7 @@ export default {
       handler: function() {
         if (JSON.stringify(this.value) !== JSON.stringify(this.emitValue)) {
           this.initTableData();
-          this.$emit('change', this.value);
+          this.$emit("change", this.value);
         }
       },
       immediate: true,
@@ -109,32 +110,40 @@ export default {
     },
     tableData: {
       handler: function() {
+        const vm = this;
         this.emitValue = this.tableData.map(({ min, max, color }) => ({
           min,
           max,
           color
         }));
-        this.$emit('change', this.emitValue);
+        if (this.value instanceof Array && this.value[0] instanceof String) {
+          this.emitValue = [];
+          this.tableData.forEach(item => {
+            let hex = rgbaToHex(item.color, false);
+            vm.emitValue.push(hex);
+          });
+        }
+        this.$emit("change", this.emitValue);
         this.$emit("input", this.emitValue);
       },
       immediate: true,
       deep: true
     },
-    singleNumber:{
-      handler:function (next) {
-        if (next){
-          this.tableColumns.splice(this.tableColumns.length - 1,1);
+    singleNumber: {
+      handler: function(next) {
+        if (next) {
+          this.tableColumns.splice(this.tableColumns.length - 1, 1);
         }
       },
-      immediate: true,
+      immediate: true
     },
     showNumber: {
-      handler: function (next) {
+      handler: function(next) {
         if (!next) {
           this.tableColumns.splice(1, 1);
         }
       },
-      immediate: true,
+      immediate: true
     }
   },
   methods: {
@@ -163,6 +172,7 @@ export default {
      * 初始化列表数据
      */
     initTableData() {
+      const vm = this;
       if (!this.value || this.value.length === 0) {
         return;
       }
@@ -172,6 +182,15 @@ export default {
         max,
         color
       }));
+      if (this.value instanceof Array && this.value[0] instanceof String) {
+        this.tableData = [];
+        this.value.forEach(color => {
+          vm.tableData.push({
+            key: uuid(),
+            color: color
+          });
+        });
+      }
     },
 
     /**
@@ -179,6 +198,11 @@ export default {
      */
     remove(index) {
       const length = this.tableData.length;
+      // 传入的值只有颜色没有最大最小值时，如['rgba(222,222,222,0.2)]
+      if (this.value instanceof Array && this.value[0] instanceof String) {
+        this.tableData.splice(index, 1);
+        return;
+      }
       if (index === 0) {
         this.tableData[index + 1].min = this.tableData[index].min;
       } else if (index < length - 1) {

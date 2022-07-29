@@ -1,17 +1,54 @@
 <template>
   <mapgis-ui-row class="mapgis-ui-input-row-left">
-    <div class="mapgis-ui-input-row-left-title"
-         :style="{paddingLeft: paddingLeft, fontSize: fontSize}"
+    <div
+      class="mapgis-ui-input-row-left-title"
+      :style="{ paddingLeft: paddingLeft, fontSize: fontSize }"
     >
       {{ title }}
     </div>
-    <div class="mapgis-ui-input-row-left-input"
-         :style="{paddingRight: paddingRight, marginLeft: marginLeft, width: enableButton ? 'calc(100% - 156px)' : width}"
+    <div
+      class="mapgis-ui-input-row-left-input"
+      :style="{
+        paddingRight: paddingRight,
+        marginLeft: marginLeft,
+        width: enableButton ? 'calc(100% - 154px)' : width
+      }"
     >
-      <mapgis-ui-input style="width: 100%" @change="$_change" v-model="valueCopy" v-if="type === 'Text'"/>
-      <mapgis-ui-input-number style="width: 100%" @change="$_change" v-model="valueCopy" v-if="type === 'Number'"/>
+      <mapgis-ui-input
+        style="width: 100%"
+        @change="$_change"
+        v-model="valueCopy"
+        v-if="
+          type === 'Text' ||
+            (type === 'Image' && (!uploadUrl || uploadUrl.length == 0))
+        "
+      />
+      <mapgis-ui-input-number
+        style="width: 100%"
+        @change="$_change"
+        v-model="valueCopy"
+        v-if="type === 'Number'"
+      />
+      <div
+        class="full-width flex"
+        v-if="type === 'Image' && uploadUrl && uploadUrl.length > 0"
+      >
+        <mapgis-ui-input v-model="valueCopy" @change="$_change" allowClear />
+        <mapgis-ui-upload-image
+          :uploadUrl="uploadUrl"
+          :showUploadList="false"
+          @image-url="$_updateImgUrl"
+        ></mapgis-ui-upload-image>
+      </div>
     </div>
-    <mapgis-ui-button v-if="enableButton" type="primary" @click="$_finish">完成</mapgis-ui-button>
+    <mapgis-ui-button v-if="enableButton" type="primary" @click="$_finish"
+      >完成</mapgis-ui-button
+    >
+    <mapgis-ui-iconfont
+      v-if="enableDelete"
+      type="mapgis-delete"
+      @click="$_delete"
+    ></mapgis-ui-iconfont>
   </mapgis-ui-row>
 </template>
 
@@ -35,7 +72,7 @@ export default {
     },
     fontSize: {
       type: String,
-      default: "12px"
+      default: "14px"
     },
     paddingLeft: {
       type: String,
@@ -59,17 +96,25 @@ export default {
     },
     width: {
       type: String,
-      default: "calc(100% - 82px)"
+      default: "calc(100% - 94px)"
+    },
+    uploadUrl: {
+      type: String,
+      default: ""
+    },
+    enableDelete: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       valueCopy: undefined
-    }
+    };
   },
   watch: {
     value: {
-      handler: function () {
+      handler: function() {
         this.valueCopy = this.value;
       },
       deep: true
@@ -79,38 +124,45 @@ export default {
     $_change(e) {
       function getValue(value, type) {
         let result;
-        if(type === "Number"){
-          if(!(typeof value === "number")){
+        if (type === "Number") {
+          if (!(typeof value === "number")) {
             result = 0;
-          }else {
+          } else {
             result = value;
           }
-        }else {
+        } else {
           result = value;
         }
         return result;
       }
-      if(!e){
-        if(this.type === "Number"){
+      if (!e) {
+        if (this.type === "Number") {
           this.valueCopy = 0;
-        }else {
+        } else {
           this.valueCopy = "";
         }
-      }else if (typeof e === "object") {
+      } else if (typeof e === "object") {
         this.valueCopy = getValue(e.target.value, this.type);
-      }else {
+      } else {
         this.valueCopy = getValue(e, this.type);
       }
       this.$emit("change", this.valueCopy);
     },
     $_finish() {
       this.$emit("finish");
+    },
+    $_updateImgUrl(url) {
+      this.valueCopy = url;
+      this.$emit("change", this.valueCopy);
+    },
+    $_delete() {
+      this.$emit("delete");
     }
   },
   mounted() {
     this.valueCopy = this.value;
   }
-}
+};
 </script>
 
 <style scoped>
@@ -118,22 +170,33 @@ export default {
   text-align: left;
   height: 32px;
   line-height: 32px;
-  margin: 10px 0;
+  margin: 8px 0;
 }
 
-.mapgis-ui-input-row-left-title, .mapgis-ui-input-row-left-input {
+.mapgis-ui-input-row-left-title,
+.mapgis-ui-input-row-left-input {
   display: inline-block;
   height: inherit;
   vertical-align: top;
 }
 
 .mapgis-ui-input-row-left-title {
-  width: 70px;
+  width: 80px;
   text-align: left;
   font-size: 12px;
-  font-weight: bolder;
+  /* font-weight: bolder; */
+  color: var(--heading-color);
 }
 
 .mapgis-ui-input-row-left-input {
+}
+
+.full-width {
+  width: 100%;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
 }
 </style>

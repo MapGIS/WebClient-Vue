@@ -17,7 +17,7 @@ const Template = (args, { argTypes }) => ({
         return {
             g3d: {
                 // url: "http://192.168.88.204:6163/igs/rest/g3d/大楼",
-                url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/分层分户-静态单体化/SceneServer`,
+                url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/分层分户-静态单体化/SceneServer`,
                 enableControl: false,
             }
         };

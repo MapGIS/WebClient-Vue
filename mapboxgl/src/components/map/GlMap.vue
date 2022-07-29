@@ -14,9 +14,15 @@ import options from "./options";
 import withWatchers from "./mixins/withWatchers";
 import withPrivateMethods from "./mixins/withPrivateMethods";
 import withAsyncActions from "./mixins/withAsyncActions";
+import { initManager, initVueMap } from "./manager";
 
 import { addListener, removeListener } from "resize-detector";
 import debounce from "lodash/debounce";
+import plot from "@mapgis/webclient-plot";
+const {
+  PlotLayer2DGroup = window.Zondy.Plot.PlotLayer2DGroup,
+  FabricLayer = window.Zondy.Plot.FabricLayer
+} = plot;
 
 export default {
   name: "mapgis-web-map",
@@ -56,6 +62,9 @@ export default {
       },
       get resize() {
         return this.resizeEvent;
+      },
+      get vueMap() {
+        return self.vueMap;
       }
     };
   },
@@ -95,7 +104,9 @@ export default {
   },
 
   created() {
-    const { company } = this;    
+    const { company } = this;   
+    initManager();
+    initVueMap(); 
     this.map = null;
     this.propsIsUpdating = {};
     if (company.indexOf("mapgis") >= 0) {
@@ -113,6 +124,14 @@ export default {
     this.$_loadMap().then(map => {
       const { actions, mapbox } = this;
       this.map = map;
+      const canvas = new FabricLayer(map, PlotLayer2DGroup);
+      canvas._containerId = map._container.id;
+      this.map.vueKey = this.vueKey;
+      this.map.vueIndex = this.vueIndex;
+      window.vueMap.MapManager.addSource(this.vueKey, this.vueIndex, map, {
+        canvas: canvas
+      });
+      this.vueMap = window.vueMap;
       if (this.RTLTextPluginUrl !== undefined) {
         this.mapbox.setRTLTextPlugin(
           this.RTLTextPluginUrl,
@@ -143,6 +162,7 @@ export default {
         this.map.remove();
         this.initialized = false;
         this.map = null;
+        window.vueMap.MapManager.deleteSource(this.vueKey, this.vueIndex);
       }
     });
   },

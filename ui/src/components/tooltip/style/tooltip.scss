@@ -6,4 +6,8 @@
     height: 27px;
     line-height: 27px;
   }
+  
+  @include e(inner, '-') {
+    box-shadow: 1px 1px 10px $tooltip-shadow-color;
+  }
 }

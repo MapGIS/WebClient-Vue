@@ -92,7 +92,6 @@ export default {
       var resultData = null;
       if (result instanceof Array) {
         for (let i = 0; i < result.length; i++) {
-          result[i] = result[i] / 1000;
           resultData += result[i];
         }
       } else {

@@ -2,171 +2,218 @@
   <div>
     <slot>
       <div class="mapgis-3d-particle-effects">
-        <mapgis-ui-tab-panel :tabs="tabIcons" @change="onCreateParticle" ref="tabPanel">
+        <mapgis-ui-tab-panel
+          :tabs="tabIcons"
+          @change="onCreateParticle"
+          ref="tabPanel"
+        >
         </mapgis-ui-tab-panel>
         <mapgis-ui-tabs
-            :animated="false"
-            :tabBarStyle="tabBarStyle"
-            :active-key="activeKey"
-            @change="tabChange"
+          :animated="false"
+          :tabBarStyle="tabBarStyle"
+          :active-key="activeKey"
+          @change="tabChange"
         >
-          <mapgis-ui-tab-pane key="1" tab="粒子列表" class="mapgis-3d-particle-effects-control-content list-pane">
-            <mapgis-ui-list item-layout="horizontal" :data-source="particleListCopy" :pagination="pagination"
-                            :split="false">
-              <mapgis-ui-empty :image="emptyImage" :image-style="imageStyle" v-if="particleListCopy.length === 0">
-                <span slot="description" class="mapgis-3d-particle-effects-empty-style"> 选择上方粒子类型 <br>在地图上点击添加粒子 </span>
+          <mapgis-ui-tab-pane
+            key="1"
+            tab="粒子列表"
+            class="mapgis-3d-particle-effects-control-content list-pane"
+          >
+            <mapgis-ui-list
+              item-layout="horizontal"
+              :data-source="particleListCopy"
+              :pagination="pagination"
+              :split="false"
+            >
+              <mapgis-ui-empty
+                :image="emptyImage"
+                :image-style="imageStyle"
+                v-if="particleListCopy.length === 0"
+              >
+                <span
+                  slot="description"
+                  class="mapgis-3d-particle-effects-empty-style"
+                >
+                  选择上方粒子类型 <br />在地图上点击添加粒子
+                </span>
               </mapgis-ui-empty>
               <mapgis-ui-list-item
-                  :class="{'mapgis-3d-particle-effects-list-active':activeIndex === index}"
-                  slot="renderItem"
-                  slot-scope="item, index"
-                  @mouseenter="mouseenter(index)"
-                  @mouseleave="mouseleave"
-                  @click="clickListItem(index)"
+                :class="{
+                  'mapgis-3d-particle-effects-list-active':
+                    activeIndex === index
+                }"
+                slot="renderItem"
+                slot-scope="item, index"
+                @mouseenter="mouseenter(index)"
+                @mouseleave="mouseleave"
+                @click="clickListItem(index)"
               >
-                <template v-for="(tab,i) in tabIcons">
+                <template v-for="(tab, i) in tabIcons">
                   <div v-if="item.param.symbolGuid === tab.guid" :key="i">
                     <div v-if="tab.type === 'icon'">
                       <mapgis-ui-iconfont
-                          :class="{'mapgis-3d-particle-effects-item-active':particleListCopy[index].isShow === true}"
-                          :type="tab.icon"
-                          style="font-size: 16px;padding-right: 4px"
-                          @click.capture.stop="showOrHide(index)"></mapgis-ui-iconfont>
+                        :class="{
+                          'mapgis-3d-particle-effects-item-active':
+                            particleListCopy[index].isShow === true
+                        }"
+                        :type="tab.icon"
+                        style="font-size: 16px;padding-right: 4px"
+                        @click.capture.stop="showOrHide(index)"
+                      ></mapgis-ui-iconfont>
                       <span>{{ item.name }}</span>
                     </div>
                     <div v-else>
                       <img
-                          :src="tab.image"
-                          style="width: 24px;padding-right: 4px"
-                          alt=""
-                          :class="{'mapgis-3d-particle-effects-item-active':particleListCopy[index].isShow === true}"
-                          @click="showOrHide(index)"/>
+                        :src="tab.image"
+                        style="width: 24px;padding-right: 4px"
+                        alt=""
+                        :class="{
+                          'mapgis-3d-particle-effects-item-active':
+                            particleListCopy[index].isShow === true
+                        }"
+                        @click="showOrHide(index)"
+                      />
                       <span>{{ item.name }}</span>
                     </div>
                   </div>
                 </template>
                 <div
-                    :class="['mapgis-3d-particle-effects-opearation',{'mapgis-3d-particle-effects-isBatch':isBatch === true}]"
-                    v-show="enterIndex === index || activeIndex === index">
-                  <mapgis-ui-tooltip title="删除">
-                    <mapgis-ui-iconfont type="mapgis-shanchu" style="font-size: 16px;padding-right: 4px"
-                                        @click.capture.stop="onClearParticle(index)"></mapgis-ui-iconfont>
-                  </mapgis-ui-tooltip>
+                  :class="[
+                    'mapgis-3d-particle-effects-opearation',
+                    { 'mapgis-3d-particle-effects-isBatch': isBatch === true }
+                  ]"
+                  v-if="enterIndex === index || activeIndex === index"
+                >
                   <mapgis-ui-tooltip title="配置">
-                    <mapgis-ui-iconfont type="mapgis-shezhiditu" style="font-size: 16px"
-                                        @click.capture.stop="setParticleParameter(index)"></mapgis-ui-iconfont>
+                    <mapgis-ui-iconfont
+                      type="mapgis-shezhiditu"
+                      style="font-size:16px;width:27px;margin:0 4px;"
+                      @click.capture.stop="setParticleParameter(index)"
+                    ></mapgis-ui-iconfont>
+                  </mapgis-ui-tooltip>
+                  <mapgis-ui-tooltip title="删除">
+                    <mapgis-ui-iconfont
+                      type="mapgis-shanchu"
+                      style="font-size:16px;width:27px;margin:0 4px;"
+                      @click.capture.stop="onClearParticle(index)"
+                    ></mapgis-ui-iconfont>
                   </mapgis-ui-tooltip>
                 </div>
                 <div @click.stop>
                   <mapgis-ui-checkbox
-                      class="item-checkbox"
-                      v-show="isBatch"
-                      :checked="selectedIds.includes(index)"
-                      @change="_changeItemChecked(index, $event)"
+                    class="item-checkbox"
+                    v-show="isBatch"
+                    :checked="selectedIds.includes(index)"
+                    @change="_changeItemChecked(index, $event)"
                   ></mapgis-ui-checkbox>
                 </div>
               </mapgis-ui-list-item>
             </mapgis-ui-list>
             <div class="pagination-div">
               <mapgis-ui-pagination
-                  v-show="!isBatch"
-                  hideOnSinglePage
-                  class="pagination"
-                  @change="pagination.onChange"
-                  :pageSize="pagination.pageSize"
-                  :total="pagination.total"
-                  :size="pagination.size"
-                  :show-total="total => `共${total}条数据`"
+                v-show="!isBatch"
+                hideOnSinglePage
+                class="pagination"
+                @change="pagination.onChange"
+                :pageSize="pagination.pageSize"
+                :total="pagination.total"
+                :size="pagination.size"
+                :show-total="total => `共${total}条数据`"
               ></mapgis-ui-pagination>
               <!-- 批量操作 -->
-              <div class="buttons">
-                <div v-show="isBatch" class="full-width">
-                  <mapgis-ui-button @click="allVisible" class="control-button"
-                  >可见
-                  </mapgis-ui-button>
-                  <mapgis-ui-button
-                      @click="allInvisible"
-                      class="control-button"
-                  >不可见
-                  </mapgis-ui-button>
-                  <mapgis-ui-button
-                      @click="allDelete"
-                      class="control-button"
-                  >删除
-                  </mapgis-ui-button>
-                </div>
-              </div>
+              <mapgis-ui-setting-footer v-show="isBatch">
+                <mapgis-ui-button @click="allVisible">可见</mapgis-ui-button>
+                <mapgis-ui-button @click="allInvisible">不可见</mapgis-ui-button>
+                <mapgis-ui-button @click="allDelete">删除</mapgis-ui-button>
+              </mapgis-ui-setting-footer>
             </div>
           </mapgis-ui-tab-pane>
-          <mapgis-ui-tab-pane key="2" tab="设置面板" class="mapgis-3d-particle-effects-control-content"
-                              id="parameter-formList">
+          <mapgis-ui-tab-pane
+            key="2"
+            tab="设置面板"
+            class="mapgis-3d-particle-effects-control-content"
+            id="parameter-formList"
+          >
             <mapgis-ui-select-panel
-                class="mapgis-ui-number-style"
-                label="发射类型"
-                v-model="emitterTypeCopy"
-                :selectOptions="emitterOptions"
-                @change="onEmitterChange">
+              class="mapgis-ui-number-style"
+              label="发射类型"
+              v-model="emitterTypeCopy"
+              :selectOptions="emitterOptions"
+              :labelCol="24"
+              :wrapperCol="24"
+              @change="onEmitterChange"
+            >
             </mapgis-ui-select-panel>
+
             <mapgis-ui-input-number-panel
-                class="mapgis-ui-number-style"
-                size="small" label="发射速率(个/秒)"
-                v-model="emissionRateCopy"
-                @change="val => onChangeEffect(val, 'emissionRate')"/>
+              class="mapgis-ui-number-style"
+              size="large"
+              label="发射速率(个/秒)"
+              v-model="emissionRateCopy"
+              @change="val => onChangeEffect(val, 'emissionRate')"
+            />
             <mapgis-ui-input-number-panel
-                class="mapgis-ui-number-style"
-                size="small"
-                label="尺寸(像素)"
-                :range="[2,60]"
-                v-model="imageSizeCopy"
-                @change="val => onChangeEffect(val, 'imageSize')"/>
+              class="mapgis-ui-number-style"
+              size="large"
+              label="尺寸(像素)"
+              :range="[2, 60]"
+              v-model="imageSizeCopy"
+              @change="val => onChangeEffect(val, 'imageSize')"
+            />
             <mapgis-ui-input-number-panel
-                size="small"
-                label="最小存在时间(秒)"
-                :range="[0.1,30.0]"
-                v-model="minimumParticleLifeCopy"
-                :step="0.1"
-                @change="val => onChangeEffect(val, 'minimumParticleLife')"/>
+              size="large"
+              label="最小存在时间(秒)"
+              :range="[0.1, 30.0]"
+              v-model="minimumParticleLifeCopy"
+              :step="0.1"
+              @change="val => onChangeEffect(val, 'minimumParticleLife')"
+            />
             <mapgis-ui-input-number-panel
-                size="small"
-                class="mapgis-ui-number-style"
-                label="最大存在时间(秒)"
-                :range="[0.1,30.0]"
-                v-model="maximumParticleLifeCopy"
-                :step="0.1"
-                @change="val => onChangeEffect(val, 'maximumParticleLife')"/>
+              size="large"
+              class="mapgis-ui-number-style"
+              label="最大存在时间(秒)"
+              :range="[0.1, 30.0]"
+              v-model="maximumParticleLifeCopy"
+              :step="0.1"
+              @change="val => onChangeEffect(val, 'maximumParticleLife')"
+            />
             <mapgis-ui-input-number-panel
-                size="small"
-                label="最小速度(个/秒)"
-                :range="[0,30]"
-                v-model="minimumSpeedCopy"
-                @change="val => onChangeEffect(val, 'minimumSpeed')"/>
+              size="large"
+              label="最小速度(个/秒)"
+              :range="[0, 30]"
+              v-model="minimumSpeedCopy"
+              @change="val => onChangeEffect(val, 'minimumSpeed')"
+            />
             <mapgis-ui-input-number-panel
-                size="small"
-                class="mapgis-ui-number-style"
-                label="最大速度(个/秒)"
-                :range="[0,30]"
-                v-model="maximumSpeedCopy"
-                @change="val => onChangeEffect(val, 'maximumSpeed')"/>
+              size="large"
+              class="mapgis-ui-number-style"
+              label="最大速度(个/秒)"
+              :range="[0, 30]"
+              v-model="maximumSpeedCopy"
+              @change="val => onChangeEffect(val, 'maximumSpeed')"
+            />
             <mapgis-ui-input-number-panel
-                size="small"
-                label="初始比例"
-                :range="[0.0,10.0]"
-                :step="0.5"
-                v-model="startScaleCopy"
-                @change="val => onChangeEffect(val, 'startScale')"/>
+              size="large"
+              label="初始比例"
+              :range="[0.0, 10.0]"
+              :step="0.5"
+              v-model="startScaleCopy"
+              @change="val => onChangeEffect(val, 'startScale')"
+            />
             <mapgis-ui-input-number-panel
-                size="small"
-                class="mapgis-ui-number-style"
-                label="结束比例"
-                :range="[0.0,10.0]"
-                :step="0.5"
-                v-model="endScaleCopy"
-                @change="val => onChangeEffect(val, 'endScale')"/>
+              size="large"
+              class="mapgis-ui-number-style"
+              label="结束比例"
+              :range="[0.0, 10.0]"
+              :step="0.5"
+              v-model="endScaleCopy"
+              @change="val => onChangeEffect(val, 'endScale')"
+            />
           </mapgis-ui-tab-pane>
           <mapgis-ui-checkbox
-              v-show="activeKey === '1'"
-              slot="tabBarExtraContent"
-              @change="_changeBatch"
+            v-show="activeKey === '1'"
+            slot="tabBarExtraContent"
+            @change="_changeBatch"
           >
             批量操作
           </mapgis-ui-checkbox>
@@ -182,10 +229,9 @@ import {
   isLogarithmicDepthBufferEnable,
   setLogarithmicDepthBufferEnable
 } from "../../WebGlobe/util";
-
-import emptyImage from '../../../assets/image/empty.png';
-import {newGuid} from "../../Utils/util";
-import clonedeep from 'lodash.clonedeep';
+import { emptyImage } from "../../UI/Base64Image/base64Image";
+import { newGuid } from "../../Utils/util";
+import clonedeep from "lodash.clonedeep";
 
 export default {
   name: "mapgis-3d-particle-effects-manager",
@@ -213,7 +259,7 @@ export default {
       default: () => {
         return [];
       }
-    },
+    }
   },
   watch: {
     symbolList: {
@@ -234,7 +280,7 @@ export default {
           let particle = {};
           if (next[i].iconUrl) {
             particle.type = "icon";
-            particle.icon = next[i].iconUrl
+            particle.icon = next[i].iconUrl;
           } else {
             particle.type = "img";
             particle.icon = next[i].image;
@@ -277,7 +323,9 @@ export default {
     },
     particleArr: {
       handler(next) {
-        this.pagination.total = this.particleListCopy ? this.particleListCopy.length : 0;
+        this.pagination.total = this.particleListCopy
+          ? this.particleListCopy.length
+          : 0;
       }
     }
   },
@@ -309,8 +357,8 @@ export default {
       endScaleCopy: 4.0, // 结束比例
       emitterTypeCesium: undefined, // 发射类型
       emitterTypeCopy: "圆形放射", // 发射类型下拉值
-      currentEffectType: "火焰",//当前预设特效类型
-      currentEffectName: "火焰1",//当前预设特效名称
+      currentEffectType: "火焰", //当前预设特效类型
+      currentEffectName: "火焰1", //当前预设特效名称
       emitterOptions: ["盒状放射", "圆形放射", "锥形放射", "球形放射"], // 发射类型下拉项
       particleArr: [], // 粒子特效集
       isLogarithmicDepthBufferEnable: undefined, // 记录对数深度缓冲区状态
@@ -329,36 +377,38 @@ export default {
           type: "icon",
           guid: "9A81F9FB-AABA-D469-8B5E-1572A0BF8515",
           image: "./smoke.png"
-        }],
+        }
+      ],
       tabBarStyle: {
-        margin: '0',
+        margin: "0",
         textAlign: "center",
-        borderBottom: "1px solid #F0F0F0",
+        borderBottom: "1px solid #F0F0F0"
       },
-      activeKey: '1',
+      activeKey: "1",
       particleListCopy: this.particleList || [],
       symbolListCopy: [
         {
           guid: "C0EA27B2-0365-1F9F-C71A-B0586ADDCA0D",
           name: "火焰",
           image: "./fire.png",
-          iconUrl: "mapgis-fire",
+          iconUrl: "mapgis-fire"
         },
         {
           guid: "B8AF7BAC-082F-14C6-BECD-8F7AB44C5019",
           name: "烟雾",
           image: "./smoke.png",
-          iconUrl: "mapgis-smoke",
-        }],
+          iconUrl: "mapgis-smoke"
+        }
+      ],
       // 修改已有粒子参数的索引
       changeParticleIndex: undefined,
       // 粒子类型: create(新建) | selected(选中)
       mode: undefined,
 
-      emptyImage: emptyImage,
+      emptyImage: undefined,
       imageStyle: {
-        height: '150px',
-        margin: '0 auto'
+        height: "150px",
+        margin: "0 auto"
       },
       // 初始化的粒子参数
       initParticleParmeter: {},
@@ -370,8 +420,8 @@ export default {
       roll: 0,
       // 符号库列表样式
       symbolImgStyle: {
-        width: '24px',
-        height: '24px'
+        width: "24px",
+        height: "24px"
       },
       symbolGuid: undefined,
       title: undefined,
@@ -393,14 +443,14 @@ export default {
       },
       isBatch: false, //是否批量操作
 
-      selectedIds: [], //选中video的id集合
+      selectedIds: [] //选中video的id集合
     };
   },
 
-  created() {
-  },
+  created() {},
   mounted() {
     this.mount();
+    this.emptyImage = emptyImage();
   },
   destroyed() {
     this.removeAllParticle();
@@ -416,7 +466,7 @@ export default {
     clickListItem(index) {
       let vm = this;
       this.activeIndex = index;
-      this.mode = 'selected';
+      this.mode = "selected";
       // 当前分页对应的页数
       const currentPage = vm.pagination.current;
       const pageSize = vm.pagination.pageSize;
@@ -429,7 +479,11 @@ export default {
       this.viewer.entities.removeAll();
       let entity = new Cesium.Entity({
         id: currentChooseIndex,
-        position: Cesium.Cartesian3.fromDegrees(particlePosition[0], particlePosition[1], particlePosition[2]),
+        position: Cesium.Cartesian3.fromDegrees(
+          particlePosition[0],
+          particlePosition[1],
+          particlePosition[2]
+        ),
         point: {
           pixelSize: 10,
           color: Cesium.Color.WHITE.withAlpha(0),
@@ -458,11 +512,10 @@ export default {
     },
     async createCesiumObject() {
       return new Promise(
-          resolve => {
-            resolve();
-          },
-          reject => {
-          }
+        resolve => {
+          resolve();
+        },
+        reject => {}
       );
     },
     setEffectOptions(effect) {
@@ -480,7 +533,7 @@ export default {
     mount() {
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function (dataSource) {
+      promise.then(function(dataSource) {
         vm.$emit("load", vm);
       });
       // this.effectOptions = this.effectFireOptions;
@@ -488,19 +541,21 @@ export default {
     },
     unmount() {
       if (this.handlerAction) {
-        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        this.handlerAction.removeInputAction(
+          Cesium.ScreenSpaceEventType.LEFT_CLICK
+        );
         this.handlerAction = undefined;
       }
       if (this.$refs.tabPanel) {
-        this.$refs.tabPanel.active = undefined
+        this.$refs.tabPanel.active = undefined;
       }
       if (
-          this.isLogarithmicDepthBufferEnable !==
-          isLogarithmicDepthBufferEnable(this.viewer)
+        this.isLogarithmicDepthBufferEnable !==
+        isLogarithmicDepthBufferEnable(this.viewer)
       ) {
         setLogarithmicDepthBufferEnable(
-            this.isLogarithmicDepthBufferEnable,
-            this.viewer
+          this.isLogarithmicDepthBufferEnable,
+          this.viewer
         );
       }
       this.$emit("unload", this);
@@ -543,11 +598,11 @@ export default {
     },
     tabChange(e) {
       this.activeKey = e;
-      if (e === '2') {
+      if (e === "2") {
         // 当tab切换到设置面板时，先判断粒子列表是否有选中粒子，若有则设置面板为该选中粒子的参数，否则为生成粒子时的初始化参数
         if (this.activeIndex === undefined) {
           this.changeParticleIndex = undefined;
-          if (this.mode = 'create') {
+          if ((this.mode = "create")) {
             //选中符号，创建粒子时的参数
             const viewModelCopy = JSON.parse(JSON.stringify(this.viewModel));
             this.emitterTypeCopy = viewModelCopy.emitterType;
@@ -571,12 +626,14 @@ export default {
               maximumSpeed: 9.5,
               startScale: 1.0,
               endScale: 4.0
-            }
+            };
             this.emitterTypeCopy = initOperationConfig.emitterType;
             this.emissionRateCopy = initOperationConfig.emissionRate;
             this.imageSizeCopy = initOperationConfig.imageSize;
-            this.minimumParticleLifeCopy = initOperationConfig.minimumParticleLife;
-            this.maximumParticleLifeCopy = initOperationConfig.maximumParticleLife;
+            this.minimumParticleLifeCopy =
+              initOperationConfig.minimumParticleLife;
+            this.maximumParticleLifeCopy =
+              initOperationConfig.maximumParticleLife;
             this.minimumSpeedCopy = initOperationConfig.minimumSpeed;
             this.maximumSpeedCopy = initOperationConfig.maximumSpeed;
             this.startScaleCopy = initOperationConfig.startScale;
@@ -586,9 +643,13 @@ export default {
           // 选中粒子列表中的已有粒子时：
           const currentPage = this.pagination.current;
           const pageSize = this.pagination.pageSize;
-          this.changeParticleIndex = this.activeIndex + (currentPage - 1) * pageSize;
+          this.changeParticleIndex =
+            this.activeIndex + (currentPage - 1) * pageSize;
 
-          let currentParticle = Object.assign({}, this.particleListCopy[this.changeParticleIndex].param);
+          let currentParticle = Object.assign(
+            {},
+            this.particleListCopy[this.changeParticleIndex].param
+          );
 
           this.emitterTypeCopy = currentParticle.emitterType;
           this.emissionRateCopy = currentParticle.emissionRate;
@@ -605,14 +666,17 @@ export default {
       }
     },
     setParticleParameter(index) {
-      this.activeKey = '2';
-      this.mode = 'selected';
+      this.activeKey = "2";
+      this.mode = "selected";
       const currentPage = this.pagination.current;
       const pageSize = this.pagination.pageSize;
       this.changeParticleIndex = index + (currentPage - 1) * pageSize;
 
       // 参数为该粒子的参数，初始化时是初始化参数，修改后是修改后存放在particleArr结果集中的参数。
-      let currentParticle = Object.assign({}, this.particleListCopy[this.changeParticleIndex].param);
+      let currentParticle = Object.assign(
+        {},
+        this.particleListCopy[this.changeParticleIndex].param
+      );
       // let currentParticle = clonedeep(this.particleListCopy[index].param);
       this.emitterTypeCopy = currentParticle.emitterType;
       this.emissionRateCopy = currentParticle.emissionRate;
@@ -626,7 +690,7 @@ export default {
     },
     onCreateParticle(tab) {
       // 先把面板参数重设
-      this.mode = 'create';
+      this.mode = "create";
       // this.setEffectOptions(this.viewModel);
       this.viewModel = Object.assign({}, tab.config);
       this.changeParticleIndex = undefined;
@@ -640,16 +704,16 @@ export default {
     },
 
     _addEventListener() {
-      this.handlerAction = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
+      this.handlerAction = new Cesium.ScreenSpaceEventHandler(
+        this.viewer.scene.canvas
+      );
       this.handlerAction.setInputAction(event => {
         this._registerMouseLClickEvent(event);
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
     },
     _registerMouseLClickEvent(event) {
       // 获取点击点的笛卡尔坐标
-      const cartesian = this.viewer.getCartesian3Position(
-          event.position
-      );
+      const cartesian = this.viewer.getCartesian3Position(event.position);
       // 获取当前坐标系标准
       const ellipsoid = this.viewer.scene.globe.ellipsoid;
       // 根据坐标系标准，将笛卡尔坐标转换为地理坐标
@@ -661,10 +725,10 @@ export default {
       // 获取该位置的经纬度坐标
       let degrees = {};
       const longitude = parseFloat(
-          this.Cesium.Math.toDegrees(cartographic.longitude).toFixed(8)
+        this.Cesium.Math.toDegrees(cartographic.longitude).toFixed(8)
       );
       const latitude = parseFloat(
-          this.Cesium.Math.toDegrees(cartographic.latitude).toFixed(8)
+        this.Cesium.Math.toDegrees(cartographic.latitude).toFixed(8)
       );
       degrees.longitude = longitude;
       degrees.latitude = latitude;
@@ -685,7 +749,7 @@ export default {
         imageUrl: this.imgUrl,
         isShow: true,
         param: param
-      }
+      };
       this.particleListCopy.push(particleItem);
       this.$emit("changeParticle", this.particleListCopy);
     },
@@ -694,7 +758,7 @@ export default {
       let emitterTypeCesium = vm.changeEmitterTypeCesium(viewModel.emitterType);
 
       this.isLogarithmicDepthBufferEnable = isLogarithmicDepthBufferEnable(
-          this.viewer
+        this.viewer
       );
       if (this.isLogarithmicDepthBufferEnable === true) {
         setLogarithmicDepthBufferEnable(false, this.viewer);
@@ -703,28 +767,36 @@ export default {
       this.viewer.clock.shouldAnimate = true;
 
       // 创建粒子特效
-      let particle = new this.Cesium.StableParticle(this.viewer, this.imgUrl, [degrees.longitude, degrees.latitude, degrees.height], {
-        startColor: new this.Cesium.Color(1, 1, 1, 1),
-        emissionRate: viewModel.emissionRate,
-        imageSize: new this.Cesium.Cartesian2(viewModel.imageSize, viewModel.imageSize),
-        minimumParticleLife: viewModel.minimumParticleLife,
-        maximumParticleLife: viewModel.maximumParticleLife,
-        minimumSpeed: viewModel.minimumSpeed,
-        maximumSpeed: viewModel.maximumSpeed,
-        startScale: viewModel.startScale,
-        endScale: viewModel.endScale,
-        emitter: emitterTypeCesium,
-        gravity: 0.5,
-        heading: 0.0,
-        pitch: 0.0,
-        roll: 0.0,
-        minimumPixelSize: 64.0,
-        endColor: this.Cesium.Color.WHITE.withAlpha(0.0),
-        minimumImageSize: new this.Cesium.Cartesian2(25.0, 25.0),
-        maximumImageSize: new this.Cesium.Cartesian2(25.0, 25.0),
-        lifetime: 16.0,
-        viewHeight: -1,
-      });
+      let particle = new this.Cesium.StableParticle(
+        this.viewer,
+        this.imgUrl,
+        [degrees.longitude, degrees.latitude, degrees.height],
+        {
+          startColor: new this.Cesium.Color(1, 1, 1, 1),
+          emissionRate: viewModel.emissionRate,
+          imageSize: new this.Cesium.Cartesian2(
+            viewModel.imageSize,
+            viewModel.imageSize
+          ),
+          minimumParticleLife: viewModel.minimumParticleLife,
+          maximumParticleLife: viewModel.maximumParticleLife,
+          minimumSpeed: viewModel.minimumSpeed,
+          maximumSpeed: viewModel.maximumSpeed,
+          startScale: viewModel.startScale,
+          endScale: viewModel.endScale,
+          emitter: emitterTypeCesium,
+          gravity: 0.5,
+          heading: 0.0,
+          pitch: 0.0,
+          roll: 0.0,
+          minimumPixelSize: 64.0,
+          endColor: this.Cesium.Color.WHITE.withAlpha(0.0),
+          minimumImageSize: new this.Cesium.Cartesian2(25.0, 25.0),
+          maximumImageSize: new this.Cesium.Cartesian2(25.0, 25.0),
+          lifetime: 16.0,
+          viewHeight: -1
+        }
+      );
       particle.start();
 
       this.particleArr.push(particle);
@@ -742,12 +814,12 @@ export default {
     onEmitterChange(value) {
       let emitter = this.changeEmitterTypeCesium(value);
       for (let i = 0; i < this.particleArr.length; i++) {
-        if (i === this.changeParticleIndex && this.mode === 'selected') {
+        if (i === this.changeParticleIndex && this.mode === "selected") {
           this.particleArr[i].emitter = emitter;
           this.particleListCopy[i].param.emitterType = value;
           this.$emit("changeParticle", this.particleListCopy);
-        } else if (this.mode === 'create') {
-          this.viewModel.emitterType = value
+        } else if (this.mode === "create") {
+          this.viewModel.emitterType = value;
         }
       }
     },
@@ -756,7 +828,7 @@ export default {
       switch (value) {
         case "盒状放射":
           emitter = new this.Cesium.BoxEmitter(
-              new this.Cesium.Cartesian3(5.0, 5.0, 5.0)
+            new this.Cesium.Cartesian3(5.0, 5.0, 5.0)
           );
           break;
         case "圆形放射":
@@ -764,7 +836,7 @@ export default {
           break;
         case "锥形放射":
           emitter = new this.Cesium.ConeEmitter(
-              this.Cesium.Math.toRadians(30.0)
+            this.Cesium.Math.toRadians(30.0)
           );
           break;
         case "球形放射":
@@ -779,17 +851,23 @@ export default {
     onChangeEffect(val, key) {
       if (this.particleArr.length > 0) {
         for (let i = 0; i < this.particleArr.length; i++) {
-          if (i === this.changeParticleIndex && this.mode === 'selected') {
+          if (i === this.changeParticleIndex && this.mode === "selected") {
             if (key === "imageSize") {
-              this.particleArr[i].maximumImageSize = new this.Cesium.Cartesian2(val, val);
-              this.particleArr[i].minimumImageSize = new this.Cesium.Cartesian2(val, val);
+              this.particleArr[i].maximumImageSize = new this.Cesium.Cartesian2(
+                val,
+                val
+              );
+              this.particleArr[i].minimumImageSize = new this.Cesium.Cartesian2(
+                val,
+                val
+              );
               this.particleListCopy[i].param.imageSize = val;
             } else {
               this.particleArr[i][key] = val;
               this.particleListCopy[i].param[key] = val;
             }
             this.$emit("changeParticle", this.particleListCopy);
-          } else if (this.mode === 'create') {
+          } else if (this.mode === "create") {
             if (key === "imageSize") {
               this.viewModel.imageSize = val;
             } else {
@@ -820,34 +898,44 @@ export default {
     showParticleEffects(index) {
       let vm = this;
       let oneParticle = Object.assign({}, vm.particleListCopy[index].param);
-      let emitterTypeCesium = vm.changeEmitterTypeCesium(oneParticle.emitterType);
+      let emitterTypeCesium = vm.changeEmitterTypeCesium(
+        oneParticle.emitterType
+      );
       const imgUrl = vm.particleListCopy[index].imageUrl;
       const degrees = oneParticle.position;
       // 开启计时
       this.viewer.clock.shouldAnimate = true;
       // 创建粒子特效
-      let particle = new this.Cesium.StableParticle(this.viewer, imgUrl, [degrees.longitude, degrees.latitude, degrees.height], {
-        startColor: new this.Cesium.Color(1, 1, 1, 1),
-        emissionRate: oneParticle.emissionRate,
-        imageSize: new this.Cesium.Cartesian2(oneParticle.imageSize, oneParticle.imageSize),
-        minimumParticleLife: oneParticle.minimumParticleLife,
-        maximumParticleLife: oneParticle.maximumParticleLife,
-        minimumSpeed: oneParticle.minimumSpeed,
-        maximumSpeed: oneParticle.maximumSpeed,
-        startScale: oneParticle.startScale,
-        endScale: oneParticle.endScale,
-        emitter: emitterTypeCesium,
-        gravity: 0.5,
-        heading: 0.0,
-        pitch: 0.0,
-        roll: 0.0,
-        minimumPixelSize: 64.0,
-        endColor: this.Cesium.Color.WHITE.withAlpha(0.0),
-        minimumImageSize: new this.Cesium.Cartesian2(25.0, 25.0),
-        maximumImageSize: new this.Cesium.Cartesian2(25.0, 25.0),
-        lifetime: 16.0,
-        viewHeight: -1,
-      });
+      let particle = new this.Cesium.StableParticle(
+        this.viewer,
+        imgUrl,
+        [degrees.longitude, degrees.latitude, degrees.height],
+        {
+          startColor: new this.Cesium.Color(1, 1, 1, 1),
+          emissionRate: oneParticle.emissionRate,
+          imageSize: new this.Cesium.Cartesian2(
+            oneParticle.imageSize,
+            oneParticle.imageSize
+          ),
+          minimumParticleLife: oneParticle.minimumParticleLife,
+          maximumParticleLife: oneParticle.maximumParticleLife,
+          minimumSpeed: oneParticle.minimumSpeed,
+          maximumSpeed: oneParticle.maximumSpeed,
+          startScale: oneParticle.startScale,
+          endScale: oneParticle.endScale,
+          emitter: emitterTypeCesium,
+          gravity: 0.5,
+          heading: 0.0,
+          pitch: 0.0,
+          roll: 0.0,
+          minimumPixelSize: 64.0,
+          endColor: this.Cesium.Color.WHITE.withAlpha(0.0),
+          minimumImageSize: new this.Cesium.Cartesian2(25.0, 25.0),
+          maximumImageSize: new this.Cesium.Cartesian2(25.0, 25.0),
+          lifetime: 16.0,
+          viewHeight: -1
+        }
+      );
       particle.start();
       vm.particleArr[index] = particle;
     },
@@ -877,7 +965,7 @@ export default {
     /**
      * 是否批量操作
      */
-    _changeBatch({target}) {
+    _changeBatch({ target }) {
       this.isBatch = target.checked;
     },
     /**
@@ -885,11 +973,12 @@ export default {
      */
     allInvisible() {
       let vm = this;
-      const {selectedIds, pagination} = this;
+      const { selectedIds, pagination } = this;
       const currentPage = pagination.current;
       const pageSize = pagination.pageSize;
       for (let i = 0; i < selectedIds.length; i++) {
-        const currentChooseIndex = selectedIds[i] + (currentPage - 1) * pageSize;
+        const currentChooseIndex =
+          selectedIds[i] + (currentPage - 1) * pageSize;
         if (vm.particleListCopy[currentChooseIndex].isShow) {
           // 隐藏
           vm.particleListCopy[currentChooseIndex].isShow = false;
@@ -902,12 +991,13 @@ export default {
      */
     allVisible() {
       let vm = this;
-      const {selectedIds, pagination} = this;
+      const { selectedIds, pagination } = this;
       const currentPage = pagination.current;
       const pageSize = pagination.pageSize;
       for (let i = 0; i < selectedIds.length; i++) {
         // 显示
-        const currentChooseIndex = selectedIds[i] + (currentPage - 1) * pageSize;
+        const currentChooseIndex =
+          selectedIds[i] + (currentPage - 1) * pageSize;
         if (!vm.particleListCopy[currentChooseIndex].isShow) {
           vm.particleListCopy[currentChooseIndex].isShow = true;
           vm.showParticleEffects(currentChooseIndex);
@@ -919,13 +1009,14 @@ export default {
      */
     allDelete() {
       let vm = this;
-      const {selectedIds, pagination} = this;
+      const { selectedIds, pagination } = this;
       const currentPage = pagination.current;
       const pageSize = pagination.pageSize;
       let indexArr = [];
       // 移除被选中的删除项
       for (let i = 0; i < selectedIds.length; i++) {
-        const currentChooseIndex = selectedIds[i] + (currentPage - 1) * pageSize;
+        const currentChooseIndex =
+          selectedIds[i] + (currentPage - 1) * pageSize;
         indexArr.push(currentChooseIndex);
         vm.particleArr[currentChooseIndex].remove();
       }
@@ -935,7 +1026,7 @@ export default {
         vm.particleArr.splice(indexArr[j], 1);
       }
       this.selectedIds = [];
-    },
+    }
   }
 };
 </script>

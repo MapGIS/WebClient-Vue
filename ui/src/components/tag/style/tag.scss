@@ -3,6 +3,13 @@
 
 $tag-prefix-cls: $ant-prefix + "-tag";
 
+@include b(tag) {
+  background: $tag-default-bg;
+  .#{$iconfont-css-prefix}-close {
+    color: $text-color-secondary;
+  }
+}
+
 .#{tag-prefix-cls} {
   // .reset-component;
 

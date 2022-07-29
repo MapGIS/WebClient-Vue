@@ -1,0 +1,251 @@
+{
+  "basicOptions": {
+    "animationName": {
+      "name": "动画名称",
+      "type": "string",
+      "default": ""
+    },
+    "featureIds": {
+      "name": "图元id",
+      "type": "string",
+      "default": ""
+    },
+    "duration": {
+      "name": "动画时长",
+      "type": "time",
+      "range": [0, null],
+      "default": 3000
+    },
+    "easing": {
+      "name": "速度曲线",
+      "desc": "描述时间的不均匀变化",
+      "type": "string",
+      "multi": {
+        "Linear": "平滑",
+        "Sine": "正弦",
+        "Circ": "圆",
+        "Bounce": "反弹"
+      },
+      "default": "Linear"
+    },
+    "delay": {
+      "name": "延迟",
+      "type": "time",
+      "range": [0, null],
+      "default": 0
+    },
+    "endDelay": {
+      "name": "末端延迟",
+      "type": "time",
+      "range": [0, null],
+      "default": 0
+    },
+    "loop": {
+      "name": "循环次数",
+      "desc": "描述循环播放次数",
+      "type": "number",
+      "range": [0, null],
+      "default": 1
+    },
+    "timelineOffset": {
+      "name": "时间轴偏移",
+      "desc": "描述动画在时间轴上的偏移",
+      "type": "time",
+      "range": [0, null],
+      "default": 0
+    }
+  },
+  "animations": {
+    "none": {
+      "type": "无动画",
+      "options": null
+    },
+    "scale-animation": {
+      "type": "比例动画",
+      "options": {
+        "scaleRateArr": {
+          "name": "比例数组",
+          "type": "array-number",
+          "default": [1, 2, 1]
+        }
+      }
+    },
+    "attribute-animation": {
+      "type": "属性动画",
+      "limitColorItems": [
+        "compareLineColor",
+        "wallColor",
+        "wallGradColor",
+        "strokeStyle",
+        "fillGradColor",
+        "fillStyle"
+      ],
+      "limitNumberItems": ["compareLineWidth", "dimModHeight", "lineWidth"],
+      "options": {
+        "attrsItem": {
+          "name": "属性",
+          "type": "object",
+          "collapse": false,
+          "default": { "attrName": "", "value": [] },
+          "children": {
+            "attrName": {
+              "name": "属性名称",
+              "type": "string",
+              "multi": [
+                "compareLineColor",
+                "wallColor",
+                "wallGradColor",
+                "strokeStyle",
+                "fillGradColor",
+                "fillStyle",
+                "compareLineWidth",
+                "dimModHeight",
+                "lineWidth"
+              ]
+            },
+            "ids": {
+              "name": "部件名称",
+              "type": "string"
+            },
+            "value": {
+              "name": "属性值",
+              "type": ["array-number", "array-color"]
+            }
+          },
+          "example": {
+            "attrName": "lineWidth",
+            "ids": "path2578",
+            "value": [8, 20, 15, 8]
+          }
+        }
+      }
+    },
+    "visible-animation": {
+      "type": "显隐动画",
+      "options": {
+        "endStatus": {
+          "name": "最终可见性",
+          "desc": "动画最终状态",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "blink-animation": {
+      "type": "闪烁动画",
+      "options": {
+        "blinkColors": {
+          "name": "闪烁颜色",
+          "type": "array-color",
+          "default": []
+        },
+        "isBlinkGrad": {
+          "name": "闪烁渐变",
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "grow-animation": {
+      "type": "生长动画",
+      "options": {
+        "startRate": {
+          "name": "开始比例",
+          "type": "number",
+          "range": [0, 1],
+          "default": 0
+        },
+        "endRate": {
+          "name": "结束比例",
+          "type": "number",
+          "range": [0, 1],
+          "default": 1
+        },
+        "growMode": {
+          "name": "生长类型",
+          "type": "string",
+          "multi": {
+            "spline": "线型生长",
+            "center": "中心生长"
+          },
+          "default": "spline"
+        }
+      }
+    },
+    "path-animation": {
+      "type": "路径动画",
+      "limit": "point",
+      "options": {
+        "symbolBindId": {
+          "name": "符号ID",
+          "type": "string",
+          "default": null
+        },
+        "animationCoords": {
+          "name": "位置数组",
+          "type": "array-coordinates",
+          "default": [
+            [114.25, 36.74],
+            [114.27, 36.98]
+          ],
+          "example": [
+            [114.25, 36.74],
+            [114.27, 36.98]
+          ]
+        },
+        "showPath": {
+          "name": "显示路径",
+          "type": "boolean",
+          "default": true
+        },
+        "pathType": {
+          "name": "路径类型",
+          "type": "string",
+          "multi": {
+            "spline": "贝塞尔曲线"
+          },
+          "default": "spline"
+        },
+        "startPathRate": {
+          "name": "开始比例",
+          "type": "number",
+          "range": [0, 1],
+          "default": 0
+        },
+        "endPathRate": {
+          "name": "结束比例",
+          "type": "number",
+          "range": [0, 1],
+          "default": 1
+        },
+        "alongTangent": {
+          "name": "沿切线运动",
+          "type": "boolean",
+          "default": false
+        },
+        "pathStyle": {
+          "name": "路径样式",
+          "type": "object",
+          "collapse": true,
+          "children": {
+            "strokeStyle": {
+              "name": "笔画颜色",
+              "type": "color",
+              "default": "#00ff00"
+            },
+            "lineWidth": {
+              "name": "路径宽度",
+              "type": "number",
+              "default": 5
+            }
+          },
+          "default": {
+            "fill": "none",
+            "strokeStyle": "#00ff00",
+            "lineWidth": 5
+          }
+        }
+      }
+    }
+  }
+}

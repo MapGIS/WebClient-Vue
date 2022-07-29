@@ -163,7 +163,7 @@ All common layer [events](/api/Layers/#events)
     :center="outerCenter"
     :crs="mapCrs"
   >
-    <mapbox-igs-tdt-layer
+    <mapgis-igs-tdt-layer
       :layer="layer"
       :layerId="layerId"
       :sourceId="sourceId"
@@ -171,7 +171,7 @@ All common layer [events](/api/Layers/#events)
       :token="token"
       :crs="mapCrs"
     >
-    </mapbox-igs-tdt-layer>
+    </mapgis-igs-tdt-layer>
   </mapgis-web-map>
 </template>
 
@@ -180,13 +180,13 @@ import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
 import Mapbox from "@mapgis/mapbox-gl";
 import {
   MapgisWebMap,
-  MapboxIgsTdtLayer
+  MapgisIgsTdtLayer,
 } from "@mapgis/webclient-vue-mapboxgl";
 
 export default {
   components: {
     MapgisWebMap,
-    MapboxIgsTdtLayer
+    MapgisIgsTdtLayer,
   },
   data() {
     return {
@@ -201,14 +201,14 @@ export default {
       sourceId: "igsLayer_sourceId",
       layer: {}, // 图层配置信息
       baseURL: "http://t2.tianditu.gov.cn/vec_c/wmts", // 请求基地址
-      token: "2ddaabf906d4b5418aed0078e1657029" // 请求天地图的key值
+      token: "2ddaabf906d4b5418aed0078e1657029", // 请求天地图的key值
     };
   },
 
   created() {
     // 在组件中使用mapbox-gl.js的脚本库功能
     this.mapbox = Mapbox;
-  }
+  },
 };
 </script>
 

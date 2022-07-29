@@ -55,13 +55,14 @@
                                         @changeImage="$_changeImage"
                                         v-model="dataSourceCopy.images"/>
         <!--标绘工具-->
-        <mapgis-ui-title-row-left
+        <!-- <mapgis-ui-title-row-left
             title="标绘工具"
             paddingLeft="7px"
             paddingRight="0"
             margin="0"
             fontSize="14px"
-        />
+        /> -->
+        <mapgis-ui-group-tab title="标绘工具" style="padding-left: 8px;"/>
         <mapgis-3d-graphic-single-layer
             v-if="dataSourceCopy"
             ref="graphicLayer"
@@ -78,18 +79,19 @@
             @delete="$_deleteGraphic"
         />
         <!--富文本-->
-        <mapgis-ui-title-row-left
+        <!-- <mapgis-ui-title-row-left
             title="富文本编辑"
             paddingLeft="7px"
             paddingRight="0"
             margin="0"
             fontSize="14px"
             width="80px"
-        />
+        /> -->
+        <mapgis-ui-group-tab title="富文本编辑" style="padding-left: 8px;"/>
         <mapgis-ui-row style="width: 100%;padding-left: 8px;padding-right: 9px;">
-          <div v-if="editor" style="border: 1px solid #DCDCDC;">
+          <div v-if="editor" class="editor-menu-bar-head">
             <editor-menu-bar :editor="editor" v-slot="{ commands }">
-              <div style="border-bottom: 1px solid #DCDCDC;">
+              <div class="editor-menu-bar-content">
               <span
                   @click="commands.bold"
               >
@@ -282,7 +284,7 @@ export default {
         width: "100%",
         margin: 0,
         marginBottom: "10px",
-        marginTop: "10px"
+        // marginTop: "10px"
       },
     }
   },
@@ -586,5 +588,12 @@ div:focus-visible {
 
 .mapgis-ui-feature-edit-set-camera {
   margin-top: 10px;
+}
+
+.editor-menu-bar-head {
+  border: 1px solid var(--border-color-split);
+}
+.editor-menu-bar-content {
+  border-bottom: 1px solid var(--border-color-split);
 }
 </style>

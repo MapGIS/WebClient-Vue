@@ -8,20 +8,19 @@
 
 - **类型**: `Object`
 - **Default:** `null`
-- - **描述:** Mapboxgl-js implementation. Useful for lazy-loading. If omitted, VueMapbox imports Mapbox-gl-js dynamically.
+- **描述:** Mapboxgl-js implementation. Useful for lazy-loading. If omitted, VueMapbox imports Mapbox-gl-js dynamically.
+
+### `crs`
+
+- **类型**: `String`
+- **Default**: `EPSG:3857`
+- **描述:** mapbox 原生只支持 3857，但 webclient-vue-mapboxgl 基于原生基础上，实现了 4326、4490、4610 的参考系。
+- **注意:** 在组件中，由于 github 的授权问题，@mapgis/mapbox 的版本最好是 mapbox1.x 的最后一个版本；而单独使用 mapboxgl，2.x 版本的 mapboxgl 支持 7 类投影方式，参考链接为： [projection](https://docs.mapbox.com/help/glossary/projection/)
 
 ### `mapStyle`
 
 - **类型**: `String`, `Object`
-- **Default:** `{
-  version: 8,
-  sources: {},
-  layers: [{
-    id: "背景",
-    type: "background",
-    paint: {"background-color": "rgba(0, 0, 0, 1)"}
-  }]
-}`
+- **Default:** `{ version: 8, sources: {}, layers: [{ id: "背景", type: "background", paint: {"background-color": "rgba(0, 0, 0, 1)"} }] }`
 - **描述:** The map's Mapbox style. This must be an a JSON object conforming to the schema described in the Mapbox Style Specification , or a URL to such JSON.
 - **查看:** `options.style` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 

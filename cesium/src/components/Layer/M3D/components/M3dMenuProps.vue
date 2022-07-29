@@ -8,7 +8,7 @@
         <mapgis-ui-iconfont type="mapgis-info-circle" />
       </mapgis-ui-tooltip>
     </mapgis-ui-input>
-    <mapgis-ui-divider>属性展示 </mapgis-ui-divider>
+    <mapgis-ui-divider style="fontSize:14px">属性展示 </mapgis-ui-divider>
     <div
       class="mapgis-3d-popup-props-item"
       v-for="key in Object.keys(properties)"

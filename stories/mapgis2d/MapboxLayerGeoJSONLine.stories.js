@@ -48,7 +48,7 @@ export const 线 = Template.bind({});
     }),
   },
   data:
-    `http://${window.webclient.ip}/static/data/geojson/china.geojson` /* geojson, */,
+    `http://${window.webclient.ip}:${window.webclient.port}/static/data/geojson/china.geojson` /* geojson, */,
     enablePopup: true,
   enableTips: true,
 };

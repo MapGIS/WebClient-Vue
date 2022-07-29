@@ -22,25 +22,29 @@ All common [layers props](/api/Layers/README.md#props)
 - **描述:** 服务基地址。
 
 ### `tileSize`
- - **类型:** `Number`
+
+- **类型:** `Number`
 - **默认值:** `512`
-- **描述:** 加载瓦片的大小，如果数据瓦片本身是256大小的设置512大小会被强制拉伸至512大小。
+- **描述:** 加载瓦片的大小，如果数据瓦片本身是 256 大小的设置 512 大小会被强制拉伸至 512 大小。
 
 | 512                     | 256                     |
 | :---------------------- | :---------------------- |
 | ![512](../tile/512.png) | ![256](../tile/256.png) |
 
 ::: tip 天地图模糊
-请传入tileSize为256即可，2种方式
-``` vue
+请传入 tileSize 为 256 即可，2 种方式
+
+```vue
 <mapgis-igs-tile-layer :tileSize="256" />
 ```
-``` vue
-<mapgis-igs-tile-layer :source="{'tileSize': 256}" />
+
+```vue
+<mapgis-igs-tile-layer :source="{ tileSize: 256 }" />
 ```
+
 :::
 
-``` vue
+```vue
 <template>
   <div class="hello">
     <mapgis-web-map crs="EPSG:4326" :center="[107.19, 26.85]" :zoom="3">
@@ -181,7 +185,7 @@ All common layer [events](/api/Layers/#events)
     :center="outerCenter"
     :crs="mapCrs"
   >
-    <mapbox-igs-vector-layer
+    <mapgis-igs-vector-layer
       :layer="layer"
       :layerId="layerId"
       :sourceId="sourceId"
@@ -189,7 +193,7 @@ All common layer [events](/api/Layers/#events)
       :port="igsVectorPort"
       :gdbps="igsVectorGdbps"
     >
-    </mapbox-igs-vector-layer>
+    </mapgis-igs-vector-layer>
   </mapgis-web-map>
 </template>
 
@@ -198,13 +202,13 @@ import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
 import Mapbox from "@mapgis/mapbox-gl";
 import {
   MapgisWebMap,
-  MapboxIgsVectorLayer
+  MapgisIgsVectorLayer,
 } from "@mapgis/webclient-vue-mapboxgl";
 
 export default {
   components: {
     MapgisWebMap,
-    MapboxIgsVectorLayer
+    MapgisIgsVectorLayer,
   },
   data() {
     return {
@@ -220,14 +224,14 @@ export default {
       layer: {}, // 图层配置信息
       igsVectorIp: "localhost", // igs服务ip
       igsVectorPort: "6163", // igs服务port
-      igsVectorGdbps: "gdbp://MapGisLocal/专题图数据/sfcls/中国地级县x" // igs地图图层gdbp地址
+      igsVectorGdbps: "gdbp://MapGisLocal/专题图数据/sfcls/中国地级县x", // igs地图图层gdbp地址
     };
   },
 
   created() {
     // 在组件中使用mapbox-gl.js的脚本库功能
     this.mapbox = Mapbox;
-  }
+  },
 };
 </script>
 

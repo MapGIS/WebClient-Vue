@@ -35,6 +35,30 @@
     }
   }
 
+  .mapgis-ui-input-number {
+    font-size: 12px;
+    border: none;
+    border-radius: 0 !important;
+    &-focused {
+      box-shadow: none;
+    }
+    &-focused,
+    &:hover,
+    &:focus {
+      border-color: $border-color-base;
+    }
+    &-sm input {
+      height: 24px;
+    }
+  }
+  .mapgis-ui-input-affix-wrapper .mapgis-ui-input-number:not(:first-child) {
+    padding-left: 23px;
+  }
+
+  .mapgis-ui-iconfont {
+    margin-right: 8px;
+  }
+
   .mapgis-ui-tooltip {
     font-size: 12px;
   }

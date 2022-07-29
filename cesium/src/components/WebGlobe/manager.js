@@ -1,3 +1,5 @@
+import { SymbolManager } from "@mapgis/webclient-es6-service";
+
 export function initManager() {
   window.vueCesium = window.vueCesium || {};
 }
@@ -13,6 +15,9 @@ export function initVueCesium() {
     window.vueCesium.RasterManager || new RasterManager();
   window.vueCesium.GeojsonManager =
     window.vueCesium.GeojsonManager || new GeojsonManager();
+  window.vueCesium.KmlManager = window.vueCesium.KmlManager || new KmlManager();
+  window.vueCesium.CzmlManager =
+    window.vueCesium.CzmlManager || new CzmlManager();
   window.vueCesium.PopupManager =
     window.vueCesium.PopupManager || new PopupManager();
   window.vueCesium.ExplosionManager =
@@ -120,6 +125,14 @@ export function initVueCesium() {
   window.vueCesium.BimManager = window.vueCesium.BimManager || new BimManager();
   window.vueCesium.RotateManager =
     window.vueCesium.RotateManager || new RotateManager();
+  window.vueCesium.PlotLayerManager =
+    window.vueCesium.PlotLayerManager || new PlotLayerManager();
+  window.vueCesium.PlotLayerGroupManager =
+    window.vueCesium.PlotLayerGroupManager || new PlotLayerGroupManager();
+  window.vueCesium.PlotAnimationManager =
+    window.vueCesium.PlotAnimationManager || new PlotAnimationManager();
+  window.vueCesium.PlotSymbolManager =
+    window.vueCesium.PlotSymbolManager || new PlotSymbolManager();
 
   //在window.vueCesium下添加取得WebGlobe对象的方法
   window.vueCesium.getViewer = function (vueKey) {
@@ -284,6 +297,8 @@ export class BaseManager {
 
 export class RasterManager extends BaseManager {}
 export class GeojsonManager extends BaseManager {}
+export class KmlManager extends BaseManager {}
+export class CzmlManager extends BaseManager {}
 export class EntityManager extends BaseManager {}
 export class DragEditManager extends BaseManager {}
 export class PopupManager extends BaseManager {}
@@ -336,3 +351,7 @@ export class GraphicsLayerManager extends BaseManager {}
 export class BimManager extends BaseManager {}
 export class AspectSlopeAnalysisManager extends BaseManager {}
 export class RotateManager extends BaseManager {}
+export class PlotLayerManager extends BaseManager {}
+export class PlotLayerGroupManager extends BaseManager {}
+export class PlotAnimationManager extends BaseManager {}
+export class PlotSymbolManager extends BaseManager {}

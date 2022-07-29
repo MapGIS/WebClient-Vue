@@ -76,8 +76,9 @@ export default {
   width: 90px;
   text-align: left;
   padding-left: 10px;
-  font-size: 12px;
-  font-weight: bolder;
+  font-size: 14px;
+  /* font-weight: bolder; */
+  color: var(--heading-color)
 }
 
 .mapgis-ui-switch-row-left-switch {

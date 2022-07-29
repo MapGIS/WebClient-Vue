@@ -1,5 +1,47 @@
 <template>
   <div class="mapgis-ui-switch-panel">
+    <mapgis-ui-group-tab v-if="showLabel" :title="label" :isTitleBold="isTitleBold" :hasTopMargin="hasTopMargin" :hasBottomMargin="hasBottomMargin">
+      <mapgis-ui-switch
+        slot="handle"
+        class="mapgis-ui-switch-panel-switch"
+        checked-children="开启"
+        un-checked-children="关闭"
+        v-model="innerChecked"
+        @change="changeChecked"
+        v-if="size === 'default'"
+      >
+      </mapgis-ui-switch>
+      <mapgis-ui-switch
+        slot="handle"
+        class="mapgis-ui-switch-panel-switch-sm"
+        v-model="innerChecked"
+        @change="changeChecked"
+        size="small"
+        v-else
+      >
+      </mapgis-ui-switch>
+    </mapgis-ui-group-tab>
+    <mapgis-ui-group-tab  v-if="!showLabel" title="" :hasTopMargin="hasTopMargin" :hasBottomMargin="hasBottomMargin">
+      <mapgis-ui-switch
+        slot="front"
+        class="mapgis-ui-switch-panel-switch"
+        checked-children="开启"
+        un-checked-children="关闭"
+        v-model="innerChecked"
+        @change="changeChecked"
+        v-if="size === 'default'"
+      >
+      </mapgis-ui-switch>
+      <mapgis-ui-switch
+        slot="front"
+        class="mapgis-ui-switch-panel-switch-sm"
+        v-model="innerChecked"
+        @change="changeChecked"
+        size="small"
+        v-else
+      >
+      </mapgis-ui-switch>
+    </mapgis-ui-group-tab>
     <mapgis-ui-form-model
       :layout="layout"
       v-bind="formItemLayout"
@@ -7,26 +49,6 @@
       class="formStyle"
       :colon="false"
     >
-      <div class="mapgis-ui-switch-panel-header">
-        <label class="mapgis-ui-switch-panel-label">{{ label }}</label>
-        <mapgis-ui-switch
-          class="mapgis-ui-switch-panel-switch"
-          checked-children="开启"
-          un-checked-children="关闭"
-          v-model="innerChecked"
-          @change="changeChecked"
-          v-if="size === 'default'"
-        >
-        </mapgis-ui-switch>
-        <mapgis-ui-switch
-          class="mapgis-ui-switch-panel-switch-sm"
-          v-model="innerChecked"
-          @change="changeChecked"
-          size="small"
-          v-else
-        >
-        </mapgis-ui-switch>
-      </div>
       <div
         :class="{
           'mapgis-ui-switch-panel-parameter': true,
@@ -48,13 +70,17 @@ export default {
       type: String,
       default: "标题"
     },
+    showLabel: {
+      type: Boolean,
+      default: true
+    },
     checked: {
       type: Boolean,
       default: false
     },
     layout: {
       type: String,
-      default: "horizontal" // 'horizontal' 'vertical' 'inline'
+      default: "vertical" // 'horizontal' 'vertical' 'inline'
     },
     height: {
       type: String,
@@ -79,7 +105,19 @@ export default {
     transparent: {
       type: Boolean,
       default: false
-    }
+    },
+    isTitleBold: {
+      type: Boolean,
+      default: true
+    },
+    hasTopMargin: {
+      type: Boolean,
+      default: true
+    },
+    hasBottomMargin: {
+      type: Boolean,
+      default: true
+    },
   },
   model: {
     prop: "checked",

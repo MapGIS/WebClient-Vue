@@ -475,7 +475,7 @@ $popover-prefix-cls: $ant-prefix + "-popover";
 
 .#{$popover-prefix-cls} {
   // .reset-component;
-  background: $popover-background;
+  // background: $popover-background;
   position: absolute;
   top: 0;
   left: 0;

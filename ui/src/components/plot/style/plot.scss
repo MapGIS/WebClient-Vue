@@ -1,0 +1,343 @@
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+
+.plot {
+  &-attribute-panel,
+  &-animation-panel,
+  &-script-panel,
+  &-script-list-panel,
+  &-symbol-panel {
+    width: 320px;
+    // max-height: 600px;
+    padding: 0 16px;
+    // border: 1px solid $border-color-base;
+    // border-radius: 2px;
+    // box-shadow: 1px 1px 6px $shadow-color;
+    overflow-y: auto;
+    overflow-x: hidden;
+    user-select: none;
+    background-color: $card-background;
+  }
+}
+
+.margin-top {
+  margin-top: 8px;
+}
+
+.space-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.mapgis-ui-select-panel {
+  padding: 0;
+}
+
+.front {
+  padding-right: 4px;
+  display: flex;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+  &-lg {
+    width: 22px;
+    height: 22px;
+    font-size: 22px;
+    display: block;
+  }
+}
+
+.plot-attribute-panel {
+  .tab-item {
+    width: 32px;
+    height: 32px;
+    text-align: center;
+    border: 1px solid $border-color-base;
+    background-color: $background-color-base;
+    &:hover {
+      border: 1px solid $success-color;
+    }
+  }
+
+  .tab-item-active {
+    position: relative;
+    border: 1px solid $hover-color;
+    &-img {
+      border-width: 0px;
+      position: absolute;
+      right: -2px;
+      bottom: -2px;
+    }
+    .sm {
+      width: 11px;
+      height: 11px;
+    }
+    .lg {
+      transform: rotate(270deg);
+      width: 18px;
+      height: 18px;
+    }
+  }
+  .mapgis-ui-switch-panel {
+    height: 32px;
+  }
+}
+
+.plot-animation-panel {
+  .mapgis-ui-form-horizontal .mapgis-ui-form-item {
+    padding-bottom: 8px;
+
+    @include b("input-number") {
+      width: 100%;
+    }
+  }
+}
+
+.plot-script-panel {
+  .mapgis-ui-divider {
+    margin: 0px;
+  }
+
+  &-header {
+    padding: 0 8px;
+    &:hover {
+      background: $primary-2;
+    }
+  }
+
+  .script-title-edit {
+    height: 32px;
+    line-height: 32px;
+    padding: 0 8px;
+    background: $primary-2;
+
+    .title {
+      width: 100%;
+      padding-right: 16px;
+    }
+
+    .mapgis-ui-input {
+      background-color: $panel-backgroud;
+      border-radius: 0px;
+    }
+  }
+
+  &-content {
+    margin-left: 16px;
+    .list-item {
+      padding-left: 8px;
+    }
+  }
+
+  &-footer {
+    padding-left: 20px;
+    .title {
+      color: $primary-color;
+      &:hover {
+        color: $hover-color;
+      }
+    }
+  }
+
+  & > .plot-animation-panel {
+    padding: 0px;
+    width: 100%;
+  }
+}
+
+.plot-script-list-panel {
+  .mapgis-ui-list-item {
+    padding: 0 8px;
+  }
+
+  &-footer {
+    padding-left: 4px;
+  }
+}
+
+.plot-symbol-panel {
+  padding: 16px;
+
+  .symbol-search {
+    margin-bottom: 8px;
+  }
+
+  .class-title {
+    height: 32px;
+    line-height: 32px;
+    font-weight: bold;
+    font-size: 14px;
+    color: $heading-color;
+    margin-top: 16px;
+    text-align: center;
+  }
+
+  .class-content {
+    background-color: $background-color-light;
+    padding: 8px;
+    margin-top: 8px;
+
+    .icon-wrapper {
+      height: 32px;
+      width: 32px;
+      margin-top: 8px;
+      margin-right: 8px;
+      display: inline-block;
+      background-color: $background-color-base;
+      &:hover {
+        background-color: $panel-backgroud;
+      }
+
+      img {
+        max-width: 32px;
+        max-height: 32px;
+      }
+    }
+  }
+}
+
+.plot-timeline-panel {
+  user-select: none;
+  display: flex;
+  justify-content: center;
+
+  .timeline-setting-panel {
+    height: 48px;
+    padding: 0 16px;
+    position: absolute;
+    bottom: 60px;
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+    background: $background-color-light;
+    z-index: 1;
+
+    .play-btn {
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-active {
+      background-color: #33333347 !important;
+      color: #0081e2;
+    }
+
+    .timeline-current-time {
+      // width: 72px;
+      font-size: 14px;
+      text-align: center;
+      margin-left: 16px;
+    }
+
+    .timeline-current-speed {
+      margin-left: 8px;
+    }
+
+    .timeline-select {
+      margin-left: 16px;
+    }
+  }
+
+  .timeline-main {
+    height: 48px;
+    background: $background-color-light;
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    padding: 0 16px;
+    z-index: 1;
+
+    .timeline-bar {
+      height: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      position: relative;
+
+      .timeline-needle {
+        height: 100%;
+        position: absolute;
+        top: 0px;
+        z-index: 10000;
+
+        &-top {
+          position: absolute;
+          top: 0px;
+          left: -11px;
+        }
+
+        &-bottom {
+          width: 2px;
+          height: 36px;
+          position: absolute;
+          bottom: 0px;
+          background-color: #0081e2;
+        }
+      }
+
+      .time-mark {
+        position: absolute;
+        bottom: 26px;
+        left: -10px;
+        width: 20px;
+        text-align: center;
+      }
+
+      .time-tick {
+        display: inline-block;
+        position: relative;
+        bottom: 0px;
+
+        &-sm {
+          height: 5px;
+          width: 1px;
+          background: $text-color-secondary;
+        }
+
+        &-md {
+          height: 10px;
+          width: 1px;
+          background: $text-color-secondary;
+        }
+
+        &-lg {
+          width: 100%;
+          height: 12px;
+          border-left: 1px solid $text-color;
+          display: flex;
+          justify-content: space-evenly;
+          align-items: flex-end;
+
+          &-last {
+            width: 1px;
+            height: 12px;
+            background: $text-color;
+          }
+        }
+      }
+    }
+  }
+}
+
+.mapgis-ui-svg-setting-panel-svg-part-container-left,
+.mapgis-ui-svg-setting-panel-svg-basic,
+.mapgis-ui-svg-setting-panel-svg {
+  background: $card-background;
+}
+
+.mapgis-ui-svg-setting-panel-left,
+.mapgis-ui-svg-setting-panel-right,
+.mapgis-ui-svg-setting-panel-bottom,
+.mapgis-ui-svg-setting-panel-check-one,
+.mapgis-ui-svg-setting-panel-check-two {
+  border: 1px solid $border-color-base;
+}
+
+.mapgis-ui-svg-setting-panel-check-one {
+  color: $heading-color;
+}

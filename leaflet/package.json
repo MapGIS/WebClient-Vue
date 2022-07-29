@@ -1,0 +1,72 @@
+{
+  "name": "@mapgis/webclient-vue-leaflet",
+  "version": "15.6.0",
+  "description": "中地数码webclient-vue-leaflet",
+  "main1": "dist-libs/webclient-vue-leaflet.umd.min.js",
+  "module": "src/main.js",
+  "scripts": {
+    "build": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-leaflet src/main.js",
+    "serve": "vue-cli-service build --target lib --name webclient-vue-leaflet src/index.js --watch",
+    "lint": "vue-cli-service lint",
+    "docs:serve": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,json,css,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "dependencies": {
+    "@mapgis/webclient-es6-service": "^15.6.0",
+    "@mapgis/webclient-vue-ui": "^15.6.0",
+    "@turf/turf": "^6.5.0",
+    "echarts": "^5.3.0",
+    "file-saver": "^2.0.5",
+    "html2canvas": "^1.4.1",
+    "leaflet": "^1.8.0",
+    "mapv": "^2.0.62",
+    "moment": "^2.29.1",
+    "resize-detector": "^0.3.0",
+    "v-contextmenu": "^2.9.0",
+    "vue-runtime-helpers": "^1.1.2",
+    "vuepress": "^1.9.7"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.2.0",
+    "@vue/cli-plugin-eslint": "^3.2.1",
+    "@vue/cli-service": "^3.2.0",
+    "@vue/eslint-config-prettier": "^4.0.1",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.10.0",
+    "eslint-loader": "2.1.1",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-vue": "^6.1.2",
+    "husky": "^1.2.0",
+    "less": "3.12.2",
+    "less-loader": "7.0.2",
+    "lint-staged": "^8.1.0",
+    "node-sass": "^4.14.1",
+    "sass-loader": "10.1.1",
+    "vue": "^2.6.6",
+    "vue-cli-plugin-webpack-bundle-analyzer": "^4.0.0",
+    "vue-template-compiler": "^2.6.6",
+    "webpack-bundle-analyzer": "^4.4.2"
+  },
+  "keywords": [
+    "vue",
+    "leaflet"
+  ],
+  "repository": "https://github.com/MapGIS/WebClient-Vue/tree/main/leaflet",
+  "bugs": {
+    "url": "https://github.com/MapGIS/WebClient-Vue/issues"
+  },
+  "homepage": "https://github.com/MapGIS/WebClient-Vue/tree/main/leaflet",
+  "author": "Wuhan Zondy Cyber Science&Technology Co.Ltd.",
+  "license": "Apache2"
+}

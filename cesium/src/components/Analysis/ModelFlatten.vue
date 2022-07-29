@@ -1,13 +1,42 @@
 <template>
-  <div
+  <!-- <div
       :class="[
       'modelflatten',
       { right: position === 'right', left: position === 'left' },
       {'mapgis--3d-model-flatten-box': noOneMap}
     ]"
   >
-    <div class="mapgis-3d-model-flatten-container">
-      <mapgis-ui-select-row-left
+    <div class="mapgis-3d-model-flatten-container"> -->
+  <div>
+    <slot>
+      <div>
+        <mapgis-ui-setting-form
+          :layout="layout"
+          size="default"
+        >
+          <mapgis-ui-form-item label="M3D模型">
+            <mapgis-ui-select v-model="selectDefaultValue"  @change="$_chooseM3D">
+              <mapgis-ui-select-option :key="index" v-for="(data,index) in dataSource" :value="data.key">
+                {{ data.value }}
+              </mapgis-ui-select-option>
+            </mapgis-ui-select>
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="是否贴模型">
+            <mapgis-ui-select v-model="mode"  @change="$_chooseMode">
+              <mapgis-ui-select-option :key="index" v-for="(data,index) in classify" :value="data.key">
+                {{ data.value }}
+              </mapgis-ui-select-option>
+            </mapgis-ui-select>
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="压平高度">
+            <mapgis-ui-input-number autoWidth v-model="flattenHeight" @change="$_change"/>
+          </mapgis-ui-form-item>
+        </mapgis-ui-setting-form>
+        <mapgis-ui-setting-footer>
+          <mapgis-ui-button type="primary" @click="clearModelFlatten(true)">还原</mapgis-ui-button>
+          <mapgis-ui-button type="primary" @click="startModelFlatten">清除</mapgis-ui-button>
+        </mapgis-ui-setting-footer>
+      <!-- <mapgis-ui-select-row-left
           title="M3D模型"
           :dataSource="dataSource"
           :value="selectDefaultValue"
@@ -44,8 +73,9 @@
           @click="startModelFlatten"
       >
         开始绘制
-      </mapgis-ui-button>
-    </div>
+      </mapgis-ui-button> -->
+      </div>
+    </slot>
   </div>
 </template>
 
@@ -58,6 +88,10 @@ export default {
   name: "mapgis-3d-model-flatten",
   mixins: [BaseMixin, GraphicLayerService],
   props: {
+    layout: {
+      type: String,
+      default: "vertical" // 'horizontal' 'vertical' 'inline'
+    },
     position: {
       type: String,
       default: "right"

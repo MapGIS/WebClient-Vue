@@ -4,34 +4,28 @@
       <div class="mapgis-widget-contour-analysis">
         <mapgis-ui-group-tab title="参数设置"> </mapgis-ui-group-tab>
         <mapgis-ui-input-number-panel
-          size="small"
           class="mapgis-ui-number-style"
           label="最大分段数"
           :range="[1, 800]"
           v-model="maxSegmentedValueCopy"
         />
         <mapgis-ui-input-number-panel
-          size="small"
           class="mapgis-ui-number-style"
           label="等值距(米)"
           :range="[initSpacing, halfHeight]"
           v-model="contourSpacingCopy"
         />
         <mapgis-ui-switch-panel
-          :labelCol="{ span: 8 }"
-          :wrapperCol="{ span: 16 }"
-          layout="horizontal"
+          layout="vertical"
           label="等值线"
-          :height="'154px'"
           v-if="switchOptions.indexOf('isogram') >= 0"
           :checked="isogram"
           @changeChecked="startIsogram"
         >
           <mapgis-ui-form-item label="线宽">
-            <mapgis-ui-input
-              size="small"
+            <mapgis-ui-input-number
+              autoWidth
               v-model.number="formData1.contourWidthCopy"
-              type="number"
               min="0"
             />
           </mapgis-ui-form-item>
@@ -44,16 +38,13 @@
         </mapgis-ui-switch-panel>
 
         <mapgis-ui-switch-panel
-          :labelCol="{ span: 8 }"
-          :wrapperCol="{ span: 16 }"
-          :height="'312px'"
-          layout="horizontal"
+          layout="vertical"
           label="等值面"
           v-if="switchOptions.indexOf('isosurface') >= 0"
           @changeChecked="startIsosurface"
         >
           <mapgis-ui-input-number-panel
-            size="small"
+            size="large"
             class="mapgis-ui-number-style"
             label="等值面透明度"
             :range="[0, 1]"
@@ -71,13 +62,13 @@
             </mapgis-ui-collapse-panel>
           </mapgis-ui-collapse>
         </mapgis-ui-switch-panel>
-        <mapgis-ui-setting-footer>
-          <mapgis-ui-button type="primary" @click="analysis"
-            >分析
-          </mapgis-ui-button>
-          <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
-        </mapgis-ui-setting-footer>
       </div>
+      <mapgis-ui-setting-footer>
+        <mapgis-ui-button type="primary" @click="analysis"
+          >分析
+        </mapgis-ui-button>
+        <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
+      </mapgis-ui-setting-footer>
     </slot>
   </div>
 </template>
@@ -714,7 +705,7 @@ export default {
 </script>
 <style scoped>
 .mapgis-widget-contour-analysis {
-  max-height: calc(50vh);
+  max-height: calc(60vh);
   overflow-y: auto;
 }
 ::v-deep

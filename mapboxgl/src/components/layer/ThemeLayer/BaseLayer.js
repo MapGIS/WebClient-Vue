@@ -3,7 +3,7 @@ import EventBusMapMixin from "../../../lib/eventbus/EventBusMapMixin";
 import {
   emitMapChangeStyle,
   emitMapAddLayer,
-  emitMapRemoveLayer
+  emitMapRemoveLayer,
 } from "../../../lib/eventbus/EmitMap";
 import ZondyThemeManager from "./themeManager";
 import gradients from "./gradient";
@@ -15,7 +15,7 @@ import All from "@mapgis/webclient-es6-service";
 import {
   formatInterpolate,
   formatStyleToLayer,
-  getLayerFromTextStyle
+  getLayerFromTextStyle,
 } from "./themeUtil";
 import { getPopupHtml } from "../../UI/popupUtil";
 
@@ -28,7 +28,7 @@ import {
   symbolLayoutList,
   polylineDefaultValue,
   pointDefaultValue,
-  polygonDefaultValue
+  polygonDefaultValue,
 } from "./mappingList";
 
 import * as turf from "@turf/turf";
@@ -39,7 +39,7 @@ export const DefaultThemeMains = [
   "_分段专题图",
   "_等级专题图",
   "_热力专题图",
-  "_符号专题图"
+  "_符号专题图",
 ];
 
 export const DefaultThemeSubs = [
@@ -55,7 +55,7 @@ export const DefaultThemeSubs = [
   "_等级专题图_线",
   "_等级专题图_注记",
   "_热力专题图_线",
-  "_热力专题图_注记"
+  "_热力专题图_注记",
 ];
 
 export const DefaultThemeLayers = [
@@ -77,7 +77,7 @@ export const DefaultThemeLayers = [
   "_热力专题图",
   "_热力专题图_线",
   "_热力专题图_注记",
-  "_符号专题图"
+  "_符号专题图",
 ];
 
 let themeManager = new ZondyThemeManager();
@@ -89,25 +89,25 @@ export default {
      * 以url的方式请求geojson数据
      * */
     baseUrl: {
-      type: String
+      type: String,
     },
     /**
      * 传入layerId，通过queryRenderFeature的方式取得数据
      * */
     layerId: {
-      type: String
+      type: String,
     },
     /**
      * 传入sourceId，通过直接取得source的方式取得数据
      * */
     sourceId: {
-      type: String
+      type: String,
     },
     /**
      * 传入sourceId，通过直接取得source的方式取得数据
      * */
     sourceLayerId: {
-      type: String
+      type: String,
     },
     /**
      * mapbox的原生参数
@@ -116,144 +116,144 @@ export default {
       type: Object,
       default() {
         return {};
-      }
+      },
     },
     /**
      * 图标数组
      * */
     icons: {
-      type: Array
+      type: Array,
     },
     dataSource: {
-      type: [Object, String]
+      type: [Object, String],
     },
     hideItem: {
       type: Array,
       default() {
         return [];
-      }
+      },
     },
     panelStyle: {
-      type: Object
+      type: Object,
     },
     themeOptions: {
       type: Object,
       default() {
         return {};
-      }
+      },
     },
     type: {
-      type: String
+      type: String,
     },
     field: {
-      type: String
+      type: String,
     },
     layerStyle: {
       type: Object,
       default() {
         return {};
-      }
+      },
     },
     highlightStyle: {
-      type: Object
+      type: Object,
     },
     highlightFeature: {
-      type: Object
+      type: Object,
     },
     highlightCoordinates: {
-      type: Array
+      type: Array,
     },
     styleGroups: {
-      type: Array
+      type: Array,
     },
     isHoverAble: {
       type: Boolean,
-      default: false
+      default: false,
     },
     enableTips: {
       type: Boolean,
-      default: false
+      default: false,
     },
     tipsOptions: {
       type: Object,
       default() {
         return {
-          enableHighlight: true
+          enableHighlight: true,
         };
-      }
+      },
     },
     enablePopup: {
       type: Boolean,
-      default: false
+      default: false,
     },
     popupOptions: {
       type: Object,
       default() {
         return {
-          enableHighlight: true
+          enableHighlight: true,
         };
-      }
+      },
     },
     enableLoading: {
       type: Boolean,
-      default: true
+      default: true,
     },
     loadingOptions: {
       type: Object,
       default() {
         return {};
-      }
+      },
     },
     enableLegend: {
       type: Boolean,
-      default: false
+      default: false,
     },
     legendOptions: {
       type: Object,
       default() {
         return {};
-      }
-    }
+      },
+    },
   },
   watch: {
     dataSource: {
-      handler: function() {
+      handler: function () {
         this.$_addThemeLayerBySource();
       },
-      deep: true
+      deep: true,
     },
     highlightFeature: {
-      handler: function() {
+      handler: function () {
         this.$_highLightFeature();
       },
-      deep: true
+      deep: true,
     },
     type: {
-      handler: function() {
+      handler: function () {
         this.$_removeHighlightLayerAll();
         this.$_themeTypeChanged(this.type);
         this.$_addTipsAndPopup(this.type);
       },
-      deep: true
+      deep: true,
     },
     field: {
-      handler: function() {
+      handler: function () {
         this.$_fieldChanged(this.field);
       },
-      deep: true
+      deep: true,
     },
     enableTips: {
-      handler: function() {},
-      deep: true
+      handler: function () {},
+      deep: true,
     },
     enablePopup: {
-      handler: function() {},
-      deep: true
+      handler: function () {},
+      deep: true,
     },
     "themeOptions.layerStyle": {
-      handler: function() {
+      handler: function () {
         let vm = this;
-        Object.keys(this.themeOptions.layerStyle).forEach(function(key) {
+        Object.keys(this.themeOptions.layerStyle).forEach(function (key) {
           let layerStyleCopy = vm.themeOptionsCopy.layerStyle;
           let layerStyle = vm.themeOptions.layerStyle;
           if (
@@ -268,17 +268,17 @@ export default {
         });
         this.$_getthemeOptionsCopy();
       },
-      deep: true
+      deep: true,
     },
     "themeOptions.styleGroups": {
-      handler: function() {
+      handler: function () {
         let groups = {},
           vm = this;
         const { styleGroups } = this.themeOptions;
         for (let i = 0; i < styleGroups.length; i++) {
           const { style } = styleGroups[i];
           if (style) {
-            Object.keys(style).forEach(function(key) {
+            Object.keys(style).forEach(function (key) {
               if (!groups[key]) {
                 groups[key] = [];
               }
@@ -286,11 +286,11 @@ export default {
               if (vm.themeType === "range") {
                 s = {
                   start: styleGroups[i].start,
-                  end: styleGroups[i].end
+                  end: styleGroups[i].end,
                 };
               } else if (vm.themeType === "unique") {
                 s = {
-                  value: styleGroups[i].value
+                  value: styleGroups[i].value,
                 };
               }
               s[key] = style[key];
@@ -308,8 +308,8 @@ export default {
         }
         this.$_getthemeOptionsCopy();
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   data() {
     return {
@@ -375,16 +375,16 @@ export default {
           titleStyle: {},
           rowStyle: {},
           legendStyle: {},
-          labelStyle: {}
+          labelStyle: {},
         },
         class: {
           containerClass: {},
           titleClass: {},
           rowClass: {},
           legendClass: {},
-          labelClass: {}
-        }
-      }
+          labelClass: {},
+        },
+      },
     };
   },
   mounted() {
@@ -417,7 +417,7 @@ export default {
     $_getInterpolateUnique(key, defaultValue, colors) {
       let interpolate = {
         property: key,
-        stops: []
+        stops: [],
       };
       for (let k = 0; k < colors.stops.length; k++) {
         interpolate.stops.push([colors.stops[k][0], defaultValue]);
@@ -486,9 +486,9 @@ export default {
         case "fill":
           watchObject = {
             color: "",
-            opacity: ""
+            opacity: "",
           };
-          Object.keys(groups).forEach(function(key) {
+          Object.keys(groups).forEach(function (key) {
             if (watchObject.hasOwnProperty(key)) {
               setPaint(groups, key, vm, watchObject[key], vm.selectValue);
             }
@@ -501,9 +501,9 @@ export default {
             radius: "",
             outlineWidth: "stroke-width",
             outlineColor: "stroke-color",
-            outlineOpacity: "stroke-opacity"
+            outlineOpacity: "stroke-opacity",
           };
-          Object.keys(groups).forEach(function(key) {
+          Object.keys(groups).forEach(function (key) {
             if (watchObject.hasOwnProperty(key)) {
               setPaint(groups, key, vm, watchObject[key], vm.selectValue);
             }
@@ -512,9 +512,9 @@ export default {
         case "line":
           watchObject = {
             color: "",
-            opacity: ""
+            opacity: "",
           };
-          Object.keys(groups).forEach(function(key) {
+          Object.keys(groups).forEach(function (key) {
             if (watchObject.hasOwnProperty(key)) {
               setPaint(groups, key, vm, watchObject[key], vm.selectValue);
             }
@@ -579,9 +579,9 @@ export default {
         case "fill":
           watchObject = {
             color: "",
-            opacity: ""
+            opacity: "",
           };
-          Object.keys(groups).forEach(function(key) {
+          Object.keys(groups).forEach(function (key) {
             if (watchObject.hasOwnProperty(key)) {
               setPaint(groups, key, vm, watchObject[key]);
             }
@@ -594,9 +594,9 @@ export default {
             radius: "",
             outlineWidth: "stroke-width",
             outlineColor: "stroke-color",
-            outlineOpacity: "stroke-opacity"
+            outlineOpacity: "stroke-opacity",
           };
-          Object.keys(groups).forEach(function(key) {
+          Object.keys(groups).forEach(function (key) {
             if (watchObject.hasOwnProperty(key)) {
               setPaint(groups, key, vm, watchObject[key]);
             }
@@ -605,9 +605,9 @@ export default {
         case "line":
           watchObject = {
             color: "",
-            opacity: ""
+            opacity: "",
           };
-          Object.keys(groups).forEach(function(key) {
+          Object.keys(groups).forEach(function (key) {
             if (watchObject.hasOwnProperty(key)) {
               setPaint(groups, key, vm, watchObject[key]);
             }
@@ -682,14 +682,13 @@ export default {
             let iconName = "useDefault";
             vm.defaultIcon = layerStyle[key];
             if (vm.defaultIcon !== "useDefault") {
-              let iconFullName = vm.defaultIcon.split("/")[
-                vm.defaultIcon.split("/").length - 1
-              ];
+              let iconFullName =
+                vm.defaultIcon.split("/")[vm.defaultIcon.split("/").length - 1];
               iconName = iconFullName.split(".")[0];
             }
             if (!vm.map.hasImage(iconName)) {
               let img = new Image(128, 128);
-              img.addEventListener("load", function() {
+              img.addEventListener("load", function () {
                 vm.map.addImage(iconName, img);
                 vm.$_setLayOutProperty(
                   vm.layerIdCopy,
@@ -766,7 +765,7 @@ export default {
         const { layerStyle } = this.themeOptions;
         if (layerStyle instanceof Object) {
           this.themeOptionsCopy.layerStyle = {};
-          Object.keys(layerStyle).forEach(function(key) {
+          Object.keys(layerStyle).forEach(function (key) {
             vm.themeOptionsCopy.layerStyle[key] = layerStyle[key];
           });
         }
@@ -776,13 +775,8 @@ export default {
       let _container = document.getElementById(this.map._container.id),
         vm = this;
       let spinSpan = document.createElement("span");
-      const {
-        maskClass,
-        maskStyle,
-        spinClass,
-        spinStyle,
-        delayTime
-      } = this.loadingOptions;
+      const { maskClass, maskStyle, spinClass, spinStyle, delayTime } =
+        this.loadingOptions;
       spinSpan.className = "mapgis-ui-spin-dot mapgis-ui-spin-dot-spin";
       for (let i = 0; i < 4; i++) {
         let spinSpanI = document.createElement("i");
@@ -799,7 +793,7 @@ export default {
       spin.append(spinSpan);
       spin.style.position = "absolute";
       if (spinStyle) {
-        Object.keys(spinStyle).forEach(function(key) {
+        Object.keys(spinStyle).forEach(function (key) {
           spin.style[key] = spinStyle[key];
         });
       }
@@ -813,7 +807,7 @@ export default {
       }
       mask.className = maskClassName;
       if (maskStyle) {
-        Object.keys(maskStyle).forEach(function(key) {
+        Object.keys(maskStyle).forEach(function (key) {
           mask.style[key] = maskStyle[key];
         });
       }
@@ -822,10 +816,10 @@ export default {
       mask.id = this.maskId;
       _container.append(spin);
       _container.append(mask);
-      let interval = setInterval(function() {
+      let interval = setInterval(function () {
         if (vm.map.getLayer(vm.layerIdCopy + vm.$_getThemeName())) {
           let time = delayTime || 100;
-          setTimeout(function() {
+          setTimeout(function () {
             let _container = document.getElementById(vm.map._container.id);
             _container.removeChild(document.getElementById(vm.spinId));
             _container.removeChild(document.getElementById(vm.maskId));
@@ -838,7 +832,7 @@ export default {
       let newOptions = {
         startData: undefined,
         dataSource: [],
-        colors: []
+        colors: [],
       };
       newOptions.startData = Number(options[0].min);
       for (let i = 0; i < options.length; i++) {
@@ -851,7 +845,7 @@ export default {
       let newOptions = {
         startData: undefined,
         dataSource: [],
-        radius: []
+        radius: [],
       };
       newOptions.startData = Number(options[0].min);
       for (let i = 0; i < options.length; i++) {
@@ -945,12 +939,12 @@ export default {
       if (this.dataSource && this.dataSource instanceof Object) {
         this.map.addSource(source_Id, {
           type: "geojson",
-          data: this.dataSource
+          data: this.dataSource,
         });
       } else if (this.dataSourceUrl && this.dataSourceUrl instanceof Object) {
         this.map.addSource(source_Id, {
           type: "geojson",
-          data: this.dataSourceUrl
+          data: this.dataSourceUrl,
         });
       } else {
         return;
@@ -977,9 +971,9 @@ export default {
                 "case",
                 ["boolean", ["feature-state", "hover"], false],
                 4,
-                0
-              ]
-            }
+                0,
+              ],
+            },
           };
           let heightLightLayerFill = {
             id: hIdFill,
@@ -991,9 +985,9 @@ export default {
                 "case",
                 ["boolean", ["feature-state", "hover"], false],
                 0.5,
-                0
-              ]
-            }
+                0,
+              ],
+            },
           };
           if (options.highlightStyle) {
             const { lineStyle, fillStyle } = options.highlightStyle;
@@ -1006,7 +1000,7 @@ export default {
                   "case",
                   ["boolean", ["feature-state", "hover"], false],
                   lineStyle.width,
-                  0
+                  0,
                 ];
               }
               if (lineStyle.opacity) {
@@ -1022,7 +1016,7 @@ export default {
                   "case",
                   ["boolean", ["feature-state", "hover"], false],
                   fillStyle.opacity,
-                  0
+                  0,
                 ];
               }
             }
@@ -1053,16 +1047,16 @@ export default {
                 "case",
                 ["boolean", ["feature-state", "hover"], false],
                 0.5,
-                0
+                0,
               ],
               "circle-radius": cRadius,
               "circle-opacity": [
                 "case",
                 ["boolean", ["feature-state", "hover"], false],
                 0.5,
-                0
-              ]
-            }
+                0,
+              ],
+            },
           };
           if (options.highlightStyle) {
             const { pointStyle } = options.highlightStyle;
@@ -1086,7 +1080,7 @@ export default {
                   "case",
                   ["boolean", ["feature-state", "hover"], false],
                   pointStyle.outlineOpacity,
-                  0
+                  0,
                 ];
               }
               if (pointStyle.opacity) {
@@ -1094,7 +1088,7 @@ export default {
                   "case",
                   ["boolean", ["feature-state", "hover"], false],
                   pointStyle.opacity,
-                  0
+                  0,
                 ];
               }
             }
@@ -1121,9 +1115,9 @@ export default {
                 "case",
                 ["boolean", ["feature-state", "hover"], false],
                 0.5,
-                0
-              ]
-            }
+                0,
+              ],
+            },
           };
           if (options.highlightStyle) {
             const { lineStyle } = options.highlightStyle;
@@ -1139,7 +1133,7 @@ export default {
                   "case",
                   ["boolean", ["feature-state", "hover"], false],
                   lineStyle.opacity,
-                  0
+                  0,
                 ];
               }
             }
@@ -1160,7 +1154,7 @@ export default {
           closeOnClick: false,
           closeButton: true,
           maxWidth: "300px",
-          className: "popup-content"
+          className: "popup-content",
         };
         popupOptions = Object.assign(popupOptions, this.popupOptions);
         window.popup = new this.mapbox.Popup(popupOptions).addTo(this.map);
@@ -1185,7 +1179,7 @@ export default {
             closeOnClick: false,
             closeButton: false,
             maxWidth: "300px",
-            className: "popup-content"
+            className: "popup-content",
           };
           tipsOption = Object.assign(tipsOption, this.tipsOptions);
           window.tips = new this.mapbox.Popup(tipsOption).addTo(this.map);
@@ -1206,7 +1200,7 @@ export default {
     $_resultToGeojson(result) {
       let geojson = {
         type: "FeatureCollection",
-        features: []
+        features: [],
       };
       let FldName = result.AttStruct.FldName;
       for (let i = 0; i < result.SFEleArray.length; i++) {
@@ -1228,8 +1222,8 @@ export default {
               properties: properties,
               geometry: {
                 type: "MultiPolygon",
-                coordinates: []
-              }
+                coordinates: [],
+              },
             };
             for (let k = 0; k < RegGeom.length; k++) {
               coordinates = [];
@@ -1250,8 +1244,8 @@ export default {
               properties: properties,
               geometry: {
                 type: "Polygon",
-                coordinates: [coordinates]
-              }
+                coordinates: [coordinates],
+              },
             };
           }
         }
@@ -1271,13 +1265,13 @@ export default {
         vm.$_addTheme(this.dataSource);
       } else if (this.dataSource && typeof this.dataSource === "string") {
         if (this.dataSource.indexOf("igs/rest/mrfs/layer/query") >= 0) {
-          FeatureService.get(this.dataSource, function(result) {
+          FeatureService.get(this.dataSource, function (result) {
             result = JSON.parse(result);
             let LabelDots = result.LabelDots;
             result = vm.$_resultToGeojson(result);
             let textGeojson = {
               type: "FeatureCollection",
-              features: []
+              features: [],
             };
             for (let k = 0; k < LabelDots.length; k++) {
               textGeojson.features.push({
@@ -1285,21 +1279,21 @@ export default {
                 properties: result.features[k].properties,
                 geometry: {
                   type: "Point",
-                  coordinates: [LabelDots[k].X, LabelDots[k].Y]
-                }
+                  coordinates: [LabelDots[k].X, LabelDots[k].Y],
+                },
               });
             }
             vm.igsTextSourceId =
               "igs_text_" + parseInt(String(Math.random() * 10000));
             vm.map.addSource(vm.igsTextSourceId, {
               type: "geojson",
-              data: textGeojson
+              data: textGeojson,
             });
             vm.dataSourceUrl = result;
             vm.$_addTheme(result);
           });
         } else {
-          FeatureService.get(this.dataSource, function(result) {
+          FeatureService.get(this.dataSource, function (result) {
             result = JSON.parse(result);
             vm.dataSourceUrl = result;
             vm.$_addTheme(result);
@@ -1309,12 +1303,7 @@ export default {
     },
     $_addTipsAndPopup(themeType) {
       let vm = this;
-      //是否开启tips
-      if (
-        this.enableTips &&
-        this.type !== "symbol" &&
-        this.type !== "heatmap"
-      ) {
+      if (this.type !== "symbol" && this.type !== "heatmap") {
         //是否开启高亮
         if (
           this.tipsOptions.enableHighlight ||
@@ -1333,61 +1322,53 @@ export default {
           this.map.on(
             "mousemove",
             this.layerIdCopy + this.$_getThemeName(),
-            e => {
-              if (vm.enableTips) {
-                if (vm.hoveredStateId) {
-                  vm.map.setFeatureState(
-                    { source: vm.tipsSourceId, id: vm.hoveredStateId },
-                    { hover: false }
-                  );
-                }
-                vm.hoveredStateId = e.features[0].id;
+            (e) => {
+              if (vm.hoveredStateId) {
                 vm.map.setFeatureState(
                   { source: vm.tipsSourceId, id: vm.hoveredStateId },
-                  { hover: true }
+                  { hover: false }
                 );
-                vm.$_addTips([e.lngLat.lng, e.lngLat.lat], e.features[0]);
-                vm.$emit("highlightChanged", vm.hoveredStateId);
               }
+              vm.hoveredStateId = e.features[0].id;
+              vm.map.setFeatureState(
+                { source: vm.tipsSourceId, id: vm.hoveredStateId },
+                { hover: true }
+              );
+              vm.$_addTips([e.lngLat.lng, e.lngLat.lat], e.features[0]);
+              vm.$emit("highlightChanged", vm.hoveredStateId);
             }
           );
           this.map.on(
             "mouseleave",
             this.layerIdCopy + this.$_getThemeName(),
-            e => {
-              if (vm.enableTips) {
-                if (vm.hoveredStateId !== null) {
-                  vm.map.setFeatureState(
-                    { source: vm.tipsSourceId, id: vm.hoveredStateId },
-                    { hover: false }
-                  );
-                  vm.$_removeTips();
-                }
-                vm.hoveredStateId = null;
+            (e) => {
+              if (vm.hoveredStateId !== null) {
+                vm.map.setFeatureState(
+                  { source: vm.tipsSourceId, id: vm.hoveredStateId },
+                  { hover: false }
+                );
+                vm.$_removeTips();
               }
+              vm.hoveredStateId = null;
             }
           );
         } else {
           this.map.on(
             "mousemove",
             this.layerIdCopy + this.$_getThemeName(),
-            e => {
-              if (vm.enableTips) {
-                vm.hoveredStateId = e.features[0].id;
-                vm.$_addTips([e.lngLat.lng, e.lngLat.lat], e.features[0]);
-              }
+            (e) => {
+              vm.hoveredStateId = e.features[0].id;
+              vm.$_addTips([e.lngLat.lng, e.lngLat.lat], e.features[0]);
             }
           );
           this.map.on(
             "mouseleave",
             this.layerIdCopy + this.$_getThemeName(),
-            e => {
-              if (vm.enableTips) {
-                if (vm.hoveredStateId !== null) {
-                  vm.$_removeTips();
-                }
-                vm.hoveredStateId = null;
+            (e) => {
+              if (vm.hoveredStateId !== null) {
+                vm.$_removeTips();
               }
+              vm.hoveredStateId = null;
             }
           );
         }
@@ -1413,7 +1394,7 @@ export default {
             themeType
           );
         }
-        this.map.on("click", this.layerIdCopy + this.$_getThemeName(), e => {
+        this.map.on("click", this.layerIdCopy + this.$_getThemeName(), (e) => {
           if (vm.enablePopup) {
             if (vm.popupStateId) {
               vm.map.setFeatureState(
@@ -1441,7 +1422,7 @@ export default {
       this.source_Id = "geojson_" + parseInt(Math.random() * 10000);
       this.map.addSource(this.source_Id, {
         type: "geojson",
-        data: dataSource
+        data: dataSource,
       });
       this.initType = "props";
       let layerId =
@@ -1531,7 +1512,7 @@ export default {
           );
           this.$refs.themePanel.$_setRadiusArr(radiusArr);
           this.startData = props.startData;
-          this.$nextTick(function() {
+          this.$nextTick(function () {
             let iconUrl = themeManager.getPanelProps(
               this.layerIdCopy,
               this.themeType,
@@ -1547,7 +1528,7 @@ export default {
             this.dataType + "-pattern-url"
           );
           if (patternUrl) {
-            this.$nextTick(function() {
+            this.$nextTick(function () {
               this.$refs.themePanel.$_setPattern(patternUrl);
             });
           }
@@ -1574,7 +1555,7 @@ export default {
         }
       } else {
         //取得数据
-        this.$_getDataByLayer(layerId, function(features) {
+        this.$_getDataByLayer(layerId, function (features) {
           //设定数据几何类型
           vm.$_setDataType(features[0]);
           //保存字段信息
@@ -1841,7 +1822,7 @@ export default {
       if (features.length === 0) {
         this.$emit("createLayerFailed", {
           message: "专题图",
-          description: "数据量为0!"
+          description: "数据量为0!",
         });
       } else {
         //执行回调
@@ -1867,13 +1848,13 @@ export default {
     $_getFeatureCollection(features) {
       let featureCollection = {
         features: [],
-        type: "FeatureCollection"
+        type: "FeatureCollection",
       };
       for (let i = 0; i < features.length; i++) {
         featureCollection.features.push({
           geometry: features[i].geometry,
           properties: features[i].properties,
-          type: "Feature"
+          type: "Feature",
         });
       }
       return featureCollection;
@@ -1892,7 +1873,7 @@ export default {
         throw new Error("没有properties对象！");
       }
       //取得所有的字段
-      Object.keys(features[0].properties).forEach(function(key) {
+      Object.keys(features[0].properties).forEach(function (key) {
         //排除proto上的对象
         if (features[0].properties.hasOwnProperty(key)) {
           originFields.push(key);
@@ -1935,7 +1916,7 @@ export default {
         }
       }
       //取得只含数字的字段
-      Object.keys(numberFlag).forEach(function(key) {
+      Object.keys(numberFlag).forEach(function (key) {
         if (numberFlag[key] && hasValueFlag[key]) {
           numberFields.push(key);
         }
@@ -1948,7 +1929,7 @@ export default {
       );
       return {
         fields: fields,
-        numberFields: numberFields
+        numberFields: numberFields,
       };
     },
     /**
@@ -1990,7 +1971,7 @@ export default {
       } else {
         newColors = {
           property: key,
-          stops: []
+          stops: [],
         };
         for (let i = 0; i < dataSourceCopy.length; i++) {
           newColors.stops.push([dataSourceCopy[i], color]);
@@ -2210,7 +2191,7 @@ export default {
         let opacity, radius, outlineWidth, outlineColor, outlineOpacity;
         newColors = {
           property: key,
-          stops: []
+          stops: [],
         };
         for (let i = 0; i < dataSourceCopy.length; i++) {
           newColors.stops.push([dataSourceCopy[i], colors[i]]);
@@ -2222,9 +2203,8 @@ export default {
               if (
                 newColors.stops[j][0] === this.themeOptions.styleGroups[i].value
               ) {
-                newColors.stops[j][1] = this.themeOptions.styleGroups[
-                  i
-                ].style.color;
+                newColors.stops[j][1] =
+                  this.themeOptions.styleGroups[i].style.color;
               }
             }
             if (
@@ -2274,9 +2254,8 @@ export default {
               let stops = outlineWidth.stops;
               for (let k = 0; k < stops.length; k++) {
                 if (stops[k][0] === this.themeOptions.styleGroups[i].value) {
-                  stops[k][1] = this.themeOptions.styleGroups[
-                    i
-                  ].style.outlineWidth;
+                  stops[k][1] =
+                    this.themeOptions.styleGroups[i].style.outlineWidth;
                   break;
                 }
               }
@@ -2298,9 +2277,8 @@ export default {
               let stops = outlineColor.stops;
               for (let k = 0; k < stops.length; k++) {
                 if (stops[k][0] === this.themeOptions.styleGroups[i].value) {
-                  stops[k][1] = this.themeOptions.styleGroups[
-                    i
-                  ].style.outlineColor;
+                  stops[k][1] =
+                    this.themeOptions.styleGroups[i].style.outlineColor;
                   break;
                 }
               }
@@ -2322,9 +2300,8 @@ export default {
               let stops = outlineOpacity.stops;
               for (let k = 0; k < stops.length; k++) {
                 if (stops[k][0] === this.themeOptions.styleGroups[i].value) {
-                  stops[k][1] = this.themeOptions.styleGroups[
-                    i
-                  ].style.outlineOpacity;
+                  stops[k][1] =
+                    this.themeOptions.styleGroups[i].style.outlineOpacity;
                   break;
                 }
               }
@@ -2420,7 +2397,7 @@ export default {
           valueArr.push(Number(value));
         }
       }
-      valueArr = valueArr.sort(function(a, b) {
+      valueArr = valueArr.sort(function (a, b) {
         return a - b;
       });
       for (let i = 0; i < colorArr.length; i++) {
@@ -2441,7 +2418,7 @@ export default {
       }
       return {
         colors: colors,
-        checkBoxArr: checkBoxArr
+        checkBoxArr: checkBoxArr,
       };
     },
     $_setRangeColors(color, dataSourceCopy, key, features) {
@@ -2508,7 +2485,7 @@ export default {
         outlineOpacities = [
           "step",
           ["to-number", ["get", key]],
-          outlineOpacity
+          outlineOpacity,
         ];
         for (let k = 3; k < colors.length; k += 2) {
           outlineOpacities[k] = colors[k];
@@ -2542,9 +2519,8 @@ export default {
                   this.themeOptions.styleGroups[i].start <= opacitys[j] &&
                   opacitys[j] <= this.themeOptions.styleGroups[i].end
                 ) {
-                  opacitys[j + 1] = this.themeOptions.styleGroups[
-                    i
-                  ].style.opacity;
+                  opacitys[j + 1] =
+                    this.themeOptions.styleGroups[i].style.opacity;
                 } else if (opacitys[j] > this.themeOptions.styleGroups[i].end) {
                   break;
                 }
@@ -2558,9 +2534,8 @@ export default {
                   this.themeOptions.styleGroups[i].start <= radiuses[j] &&
                   radiuses[j] <= this.themeOptions.styleGroups[i].end
                 ) {
-                  radiuses[j + 1] = this.themeOptions.styleGroups[
-                    i
-                  ].style.radius;
+                  radiuses[j + 1] =
+                    this.themeOptions.styleGroups[i].style.radius;
                 } else if (radiuses[j] > this.themeOptions.styleGroups[i].end) {
                   break;
                 }
@@ -2576,9 +2551,8 @@ export default {
                   this.themeOptions.styleGroups[i].start <= outlineWidths[j] &&
                   outlineWidths[j] <= this.themeOptions.styleGroups[i].end
                 ) {
-                  outlineWidths[j + 1] = this.themeOptions.styleGroups[
-                    i
-                  ].style.outlineWidth;
+                  outlineWidths[j + 1] =
+                    this.themeOptions.styleGroups[i].style.outlineWidth;
                 } else if (
                   outlineWidths[j] > this.themeOptions.styleGroups[i].end
                 ) {
@@ -2596,9 +2570,8 @@ export default {
                   this.themeOptions.styleGroups[i].start <= outlineColors[j] &&
                   outlineColors[j] <= this.themeOptions.styleGroups[i].end
                 ) {
-                  outlineColors[j + 1] = this.themeOptions.styleGroups[
-                    i
-                  ].style.outlineColor;
+                  outlineColors[j + 1] =
+                    this.themeOptions.styleGroups[i].style.outlineColor;
                 } else if (
                   outlineColors[j] > this.themeOptions.styleGroups[i].end
                 ) {
@@ -2617,9 +2590,8 @@ export default {
                     outlineOpacities[j] &&
                   outlineOpacities[j] <= this.themeOptions.styleGroups[i].end
                 ) {
-                  outlineOpacities[j + 1] = this.themeOptions.styleGroups[
-                    i
-                  ].style.outlineOpacity;
+                  outlineOpacities[j + 1] =
+                    this.themeOptions.styleGroups[i].style.outlineOpacity;
                 } else if (
                   outlineOpacities[j] > this.themeOptions.styleGroups[i].end
                 ) {
@@ -2710,7 +2682,7 @@ export default {
      * */
     $_getProps(panelProps) {
       let newPanelProps = {};
-      Object.keys(panelProps).forEach(function(key) {
+      Object.keys(panelProps).forEach(function (key) {
         if (
           panelProps.hasOwnProperty(key) &&
           typeof panelProps[key] !== "function"
@@ -2749,7 +2721,7 @@ export default {
           dataSourceCopy.push(features[i].properties[key]);
         }
       }
-      dataSourceCopy.sort(function(a, b) {
+      dataSourceCopy.sort(function (a, b) {
         return a - b;
       });
       dataSourceCopy = Array.from(new Set(dataSourceCopy));
@@ -2999,7 +2971,7 @@ export default {
             type: "circle",
             source: this.source_Id, //必须和上面的layerVectorId一致
             layout: {
-              visibility: "visible"
+              visibility: "visible",
             },
             paint: {
               "circle-color": paintColors,
@@ -3008,8 +2980,8 @@ export default {
               "circle-radius": 6,
               "circle-stroke-color": "#000000",
               "circle-stroke-width": 1,
-              "circle-translate": [0, 0]
-            }
+              "circle-translate": [0, 0],
+            },
           };
           break;
         case "line":
@@ -3018,13 +2990,13 @@ export default {
             type: "line",
             source: this.source_Id,
             layout: {
-              visibility: "visible"
+              visibility: "visible",
             },
             paint: {
               "line-color": paintColors,
               "line-opacity": 1,
-              "line-width": 1
-            }
+              "line-width": 1,
+            },
           };
           break;
         case "fill":
@@ -3033,13 +3005,13 @@ export default {
             type: "fill",
             source: this.source_Id, //必须和上面的layerVectorId一致
             layout: {
-              visibility: "visible"
+              visibility: "visible",
             },
             paint: {
               "fill-antialias": true,
               "fill-color": paintColors,
-              "fill-opacity": 1
-            }
+              "fill-opacity": 1,
+            },
           };
           break;
       }
@@ -3117,7 +3089,7 @@ export default {
             type: "circle",
             source: this.source_Id, //必须和上面的layerVectorId一致
             layout: {
-              visibility: "visible"
+              visibility: "visible",
             },
             paint: {
               "circle-color": paintColors,
@@ -3126,8 +3098,8 @@ export default {
               "circle-radius": 6,
               "circle-stroke-color": "#000000",
               "circle-stroke-width": 1,
-              "circle-translate": [0, 0]
-            }
+              "circle-translate": [0, 0],
+            },
           };
           break;
         case "line":
@@ -3136,13 +3108,13 @@ export default {
             type: "line",
             source: this.source_Id,
             layout: {
-              visibility: "visible"
+              visibility: "visible",
             },
             paint: {
               "line-color": paintColors,
               "line-opacity": 1,
-              "line-width": 1
-            }
+              "line-width": 1,
+            },
           };
           break;
         case "fill":
@@ -3151,13 +3123,13 @@ export default {
             type: "fill",
             source: this.source_Id, //必须和上面的layerVectorId一致
             layout: {
-              visibility: "visible"
+              visibility: "visible",
             },
             paint: {
               "fill-antialias": true,
               "fill-color": paintColors,
-              "fill-opacity": 1
-            }
+              "fill-opacity": 1,
+            },
           };
           break;
       }
@@ -3185,14 +3157,14 @@ export default {
         iconSize.push([
           "<",
           ["to-number", ["get", this.selectValue]],
-          Number(this.startData)
+          Number(this.startData),
         ]);
         iconSize.push(0.1);
         for (let i = 0; i < dataSource.length; i++) {
           iconSize.push([
             "<=",
             ["to-number", ["get", this.selectValue]],
-            Number(dataSource[i])
+            Number(dataSource[i]),
           ]);
           iconSize.push(radius[i] / 10);
         }
@@ -3210,14 +3182,14 @@ export default {
         iconSize.push([
           "<",
           ["to-number", ["get", this.selectValue]],
-          Number(this.startData)
+          Number(this.startData),
         ]);
         iconSize.push(0.1);
         for (let i = 0; i < dataSource.length; i++) {
           iconSize.push([
             "<=",
             ["to-number", ["get", this.selectValue]],
-            Number(dataSource[i])
+            Number(dataSource[i]),
           ]);
           iconSize.push((i + 2) / 10);
         }
@@ -3239,9 +3211,8 @@ export default {
       if (vm.defaultIcon === "useDefault") {
         iconName = "useDefault";
       } else {
-        let iconFullName = vm.defaultIcon.split("/")[
-          vm.defaultIcon.split("/").length - 1
-        ];
+        let iconFullName =
+          vm.defaultIcon.split("/")[vm.defaultIcon.split("/").length - 1];
         iconName = iconFullName.split(".")[0];
       }
       themeManager.setPanelProps(
@@ -3250,7 +3221,7 @@ export default {
         "icon-image",
         iconName
       );
-      img.addEventListener("load", function() {
+      img.addEventListener("load", function () {
         let hasIcon = vm.map.hasImage(iconName),
           iconSize;
         if (!hasIcon) {
@@ -3279,14 +3250,14 @@ export default {
               "text-offset": [0, 0],
               "text-font": ["宋体", "宋体"],
               "text-rotate": 0,
-              visibility: "visible"
+              visibility: "visible",
             },
             paint: {
               "icon-opacity": 1,
               "text-color": "#000000",
               "text-halo-color": "#FFFFFF",
-              "text-halo-width": 0
-            }
+              "text-halo-width": 0,
+            },
           };
           layer = vm.$_editLayerByStyle(layer);
           layer.layout["icon-image"] = iconName;
@@ -3355,13 +3326,13 @@ export default {
           "text-letter-spacing": 0.05,
           "text-offset": [0, 0],
           "text-font": ["宋体", "宋体"],
-          "text-rotate": 0
+          "text-rotate": 0,
         },
         paint: {
           "text-color": "#000000",
           "text-halo-color": "#000000",
-          "text-halo-width": 0
-        }
+          "text-halo-width": 0,
+        },
       };
       let textStyle = this.themeOptions.textStyle || {};
       const { enableTurf, enableIgs, baseUrl } = textStyle;
@@ -3381,7 +3352,7 @@ export default {
         let featureLength = features.length;
         let textGeojson = {
           type: "FeatureCollection",
-          features: []
+          features: [],
         };
         let geometryStr = "";
         for (let i = 0; i < features.length; i++) {
@@ -3396,23 +3367,23 @@ export default {
             geometryStr;
           FeatureService.get(
             url,
-            function(result, properties) {
+            function (result, properties) {
               result = JSON.parse(result);
               let feature = {
                 type: "Feature",
                 properties: properties,
                 geometry: {
                   type: "Point",
-                  coordinates: [result.X, result.Y]
-                }
+                  coordinates: [result.X, result.Y],
+                },
               };
               textGeojson.features.push(feature);
             },
-            function() {},
+            function () {},
             features[i].properties
           );
         }
-        let textInterval = setInterval(function() {
+        let textInterval = setInterval(function () {
           if (featureLength === textGeojson.features.length) {
             let textSource =
               vm.layerIdCopy +
@@ -3420,7 +3391,7 @@ export default {
               parseInt(String(Math.random() * 10000));
             vm.map.addSource(textSource, {
               type: "geojson",
-              data: textGeojson
+              data: textGeojson,
             });
             textLayer.source = textSource;
             if (
@@ -3442,7 +3413,7 @@ export default {
           const { features } = this.dataSource;
           let textGeojson = {
             type: "FeatureCollection",
-            features: []
+            features: [],
           };
           for (let i = 0; i < features.length; i++) {
             let feature = {
@@ -3450,8 +3421,8 @@ export default {
               properties: features[i].properties,
               geometry: {
                 type: "Point",
-                coordinates: this.$_getCenter(features[i])
-              }
+                coordinates: this.$_getCenter(features[i]),
+              },
             };
             textGeojson.features.push(feature);
           }
@@ -3461,7 +3432,7 @@ export default {
             parseInt(String(Math.random() * 10000));
           this.map.addSource(textSource, {
             type: "geojson",
-            data: textGeojson
+            data: textGeojson,
           });
           textLayer.source = textSource;
         }
@@ -3478,7 +3449,7 @@ export default {
             textLayer
           );
           emitMapAddLayer({
-            layer: textLayer
+            layer: textLayer,
           });
           this.$emit("textLayer", textLayer);
         }
@@ -3509,9 +3480,9 @@ export default {
         paint: {
           "line-color": "#000000",
           "line-opacity": 1,
-          "line-width": 1
+          "line-width": 1,
         },
-        layout: {}
+        layout: {},
       };
       //如果有线宽、颜色、透明度则应用参数
       if (outlineWidth) {
@@ -3536,7 +3507,7 @@ export default {
           lineLayer
         );
         emitMapAddLayer({
-          layer: lineLayer
+          layer: lineLayer,
         });
         this.$emit("lineLayer", lineLayer);
       }
@@ -3602,7 +3573,7 @@ export default {
         vm = this;
       let originLayer = this.map.getLayer(layerId);
       if (!originLayer) return layer;
-      Object.keys(originLayer).forEach(function(key) {
+      Object.keys(originLayer).forEach(function (key) {
         switch (key) {
           case "paint":
             let paint = {};
@@ -3817,7 +3788,7 @@ export default {
       }
       if (!props) {
         //取得数据
-        this.$_getDataByLayer(this.layerIdCopy, function(features) {
+        this.$_getDataByLayer(this.layerIdCopy, function (features) {
           //绑定数据
           let fields, dataSource, checkBoxAr;
           switch (themeType) {
@@ -4018,7 +3989,7 @@ export default {
         );
         if (pattern && !this.map.hasImage(pattern)) {
           let img = new Image(16, 16);
-          img.addEventListener("load", function() {
+          img.addEventListener("load", function () {
             vm.map.addImage(pattern, img);
             //显示已存在的专题图
             vm.$_setLayOutProperty(
@@ -4121,7 +4092,7 @@ export default {
         //初始化额外数据
         themeManager.initExtraData(this.layerIdCopy, this.themeType, field);
         //取得数据
-        this.$_getDataByLayer(this.layerIdCopy, function(features) {
+        this.$_getDataByLayer(this.layerIdCopy, function (features) {
           let dataSource;
           switch (vm.themeType) {
             case "uniform":
@@ -4318,7 +4289,7 @@ export default {
           this.$_setPropertyByPanel(props);
         } else if (this.themeType === "symbol") {
           //取得数据
-          this.$_getDataByLayer(this.layerIdCopy, function(features) {
+          this.$_getDataByLayer(this.layerIdCopy, function (features) {
             let iconSize = themeManager.getExtraData(
               vm.layerIdCopy,
               vm.themeType,
@@ -4449,7 +4420,7 @@ export default {
       let vm = this;
       switch (this.dataType) {
         case "fill":
-          Object.keys(props).forEach(function(key) {
+          Object.keys(props).forEach(function (key) {
             let value = props[key];
             //处理多边形
             if (
@@ -4479,10 +4450,10 @@ export default {
                   vm.layerIdCopy + vm.$_getThemeName(),
                   key,
                   value,
-                  function(value) {
+                  function (value) {
                     return value;
                   },
-                  function(value) {
+                  function (value) {
                     return value / 100;
                   }
                 );
@@ -4501,7 +4472,7 @@ export default {
                     vm.themeType,
                     "fill-pattern-url"
                   );
-                  img.addEventListener("load", function() {
+                  img.addEventListener("load", function () {
                     vm.map.addImage(value, img);
                     vm.$_setPaintProperty(
                       vm.layerIdCopy,
@@ -4535,10 +4506,10 @@ export default {
                   vm.layerIdCopy + vm.$_getThemeName() + "_线",
                   newKey,
                   value,
-                  function(value) {
+                  function (value) {
                     return value;
                   },
-                  function(value) {
+                  function (value) {
                     return value / 100;
                   }
                 );
@@ -4558,7 +4529,7 @@ export default {
           break;
         default:
           if (vm.themeType === "symbol") {
-            Object.keys(props).forEach(function(key) {
+            Object.keys(props).forEach(function (key) {
               if (
                 props.hasOwnProperty(key) &&
                 key !== "icon-url" &&
@@ -4575,7 +4546,7 @@ export default {
                     vm.$_setLayoutByKey(key, value);
                   } else {
                     let img = new Image(128, 128);
-                    img.addEventListener("load", function() {
+                    img.addEventListener("load", function () {
                       vm.map.addImage(iconName, img);
                       vm.$_setLayoutByKey(key, value);
                     });
@@ -4591,7 +4562,7 @@ export default {
               }
             });
           } else if (vm.themeType === "heatmap") {
-            Object.keys(props).forEach(function(key) {
+            Object.keys(props).forEach(function (key) {
               //处理热力图
               vm.map.setPaintProperty(
                 vm.layerIdCopy + vm.$_getThemeName(),
@@ -4600,7 +4571,7 @@ export default {
               );
             });
           } else {
-            Object.keys(props).forEach(function(key) {
+            Object.keys(props).forEach(function (key) {
               let value = props[key];
               //处理点或线
               if (
@@ -4625,10 +4596,10 @@ export default {
                     vm.layerIdCopy + vm.$_getThemeName(),
                     key,
                     value,
-                    function(value) {
+                    function (value) {
                       return value;
                     },
-                    function(value) {
+                    function (value) {
                       return value / 100;
                     }
                   );
@@ -4673,10 +4644,10 @@ export default {
               this.layerIdCopy + this.$_getThemeName() + extraName,
               key,
               value,
-              function(value) {
+              function (value) {
                 return value;
               },
-              function(value) {
+              function (value) {
                 return value / 100;
               }
             );
@@ -4929,14 +4900,14 @@ export default {
       iconSize.push([
         "<",
         ["to-number", ["get", this.selectValue]],
-        Number(this.startData)
+        Number(this.startData),
       ]);
       iconSize.push(0.1);
       for (let i = 0; i < dataSourceCopy.length; i++) {
         iconSize.push([
           "<=",
           ["to-number", ["get", this.selectValue]],
-          Number(dataSourceCopy[i])
+          Number(dataSourceCopy[i]),
         ]);
         iconSize.push(radiusArr[i] / 10);
       }
@@ -4981,7 +4952,7 @@ export default {
         this.dataType + "-opacity",
         opacity,
         undefined,
-        function(opacity) {
+        function (opacity) {
           return opacity / 100;
         }
       );
@@ -5000,7 +4971,7 @@ export default {
         "icon-opacity",
         opacity,
         undefined,
-        function(opacity) {
+        function (opacity) {
           return opacity / 100;
         }
       );
@@ -5012,7 +4983,7 @@ export default {
         newRadiusArr.push(radiusArr[i]);
       }
       //先要取得数据
-      this.$_getDataByLayer(vm.layerIdCopy, function(features) {
+      this.$_getDataByLayer(vm.layerIdCopy, function (features) {
         //重新取得数据
         let dataSource = themeManager.getExtraData(
           vm.layerIdCopy,
@@ -5023,14 +4994,14 @@ export default {
         iconSize.push([
           "<",
           ["to-number", ["get", vm.selectValue]],
-          Number(vm.startData)
+          Number(vm.startData),
         ]);
         iconSize.push(0.1);
         for (let i = 0; i < dataSource.length; i++) {
           iconSize.push([
             "<=",
             ["to-number", ["get", vm.selectValue]],
-            Number(dataSource[i])
+            Number(dataSource[i]),
           ]);
           iconSize.push(radiusArr[i] / 10);
         }
@@ -5071,7 +5042,7 @@ export default {
         "heatmap-opacity",
         opacity,
         undefined,
-        function(opacity) {
+        function (opacity) {
           return opacity / 100;
         }
       );
@@ -5083,7 +5054,7 @@ export default {
         "line-opacity",
         opacity,
         undefined,
-        function(opacity) {
+        function (opacity) {
           return opacity / 100;
         }
       );
@@ -5152,10 +5123,10 @@ export default {
         this.layerIdCopy + this.$_getThemeName(),
         this.dataType + "-translate",
         translate,
-        function(translate) {
+        function (translate) {
           return vm.$_editTranslate(translate, index);
         },
-        function(translate) {
+        function (translate) {
           return vm.$_editTranslate(translate, index);
         }
       );
@@ -5167,10 +5138,10 @@ export default {
         this.layerIdCopy + this.$_getThemeName() + "_线",
         "line-translate",
         translate,
-        function(translate) {
+        function (translate) {
           return vm.$_editTranslate(translate, index);
         },
-        function(translate) {
+        function (translate) {
           return vm.$_editTranslate(translate, index);
         }
       );
@@ -5185,10 +5156,10 @@ export default {
         this.layerIdCopy + this.$_getThemeName(),
         "icon-translate",
         translate,
-        function(translate) {
+        function (translate) {
           return vm.$_editTranslate(translate, 0);
         },
-        function(translate) {
+        function (translate) {
           let tArr = vm.$_editTranslate(translate, 0);
           return [tArr[0], tArr[1] * -1];
         }
@@ -5222,10 +5193,10 @@ export default {
         this.layerIdCopy + this.$_getThemeName(),
         "icon-translate",
         translate,
-        function(translate) {
+        function (translate) {
           return vm.$_editTranslate(translate, 1);
         },
-        function(translate) {
+        function (translate) {
           return vm.$_editTranslate(translate, 1);
         }
       );
@@ -5329,7 +5300,7 @@ export default {
         "circle-stroke-opacity",
         opacity,
         undefined,
-        function(opacity) {
+        function (opacity) {
           return opacity / 100;
         }
       );
@@ -5347,10 +5318,10 @@ export default {
         this.$_getSymbolId(),
         "text-field",
         field,
-        function(field) {
+        function (field) {
           return "{" + field + "}";
         },
-        function(field) {
+        function (field) {
           return "{" + field + "}";
         }
       );
@@ -5386,7 +5357,7 @@ export default {
         "text-font",
         font,
         undefined,
-        function(font) {
+        function (font) {
           return [font, font];
         }
       );
@@ -5410,10 +5381,10 @@ export default {
         this.$_getSymbolId(),
         "text-offset",
         offset,
-        function(offset) {
+        function (offset) {
           return [offset, textOffset[1]];
         },
-        function(offset) {
+        function (offset) {
           return [offset, textOffset[1]];
         }
       );
@@ -5429,10 +5400,10 @@ export default {
         this.$_getSymbolId(),
         "text-offset",
         offset,
-        function(offset) {
+        function (offset) {
           return [textOffset[0], offset];
         },
-        function(offset) {
+        function (offset) {
           return [textOffset[0], -offset];
         }
       );
@@ -5462,7 +5433,7 @@ export default {
         "icon-image",
         icon
       );
-      img.addEventListener("load", function() {
+      img.addEventListener("load", function () {
         let hasIcon = vm.map.hasImage(icon);
         if (!hasIcon) {
           vm.map.addImage(icon, img);
@@ -5491,7 +5462,7 @@ export default {
     $_wenliIconChanged(icon, url) {
       let img = new Image(16, 16),
         vm = this;
-      img.addEventListener("load", function() {
+      img.addEventListener("load", function () {
         let hasIcon = vm.map.hasImage(icon);
         if (!hasIcon) {
           vm.map.addImage(icon, img);
@@ -5663,7 +5634,7 @@ export default {
           break;
         case "range":
           //先要取得数据
-          this.$_getDataByLayer(vm.layerIdCopy, function(features) {
+          this.$_getDataByLayer(vm.layerIdCopy, function (features) {
             vm.rangeLevel = color.split(",").length;
             let dataSource = vm.$_setDataSource(
               features,
@@ -5715,7 +5686,7 @@ export default {
       }
       return {
         startData: Number(startData),
-        endData: Number(endData)
+        endData: Number(endData),
       };
     },
     $_uniformColorChanged(color) {
@@ -5764,13 +5735,13 @@ export default {
           datas.push(dataSource[i]);
         }
       }
-      datas = datas.sort(function(a, b) {
+      datas = datas.sort(function (a, b) {
         return a - b;
       });
       let heatmapWeight = [
         "interpolate",
         ["linear"],
-        ["get", this.selectValue]
+        ["get", this.selectValue],
       ];
       if (datas.length === 1) {
         if (Number(datas[0]) === 0) {
@@ -5794,7 +5765,7 @@ export default {
         ["linear"],
         ["heatmap-density"],
         0,
-        "rgba(33,102,172,0)"
+        "rgba(33,102,172,0)",
       ];
       for (let i = 0; i < colors.length - 2; i++) {
         heatmapColor.push(step * (i + 1), colors[i]);
@@ -5830,17 +5801,17 @@ export default {
           "heatmap-color": heatmapColor,
           "heatmap-radius": heatmapRadius,
           "heatmap-weight": heatmapWeight,
-          "heatmap-opacity": 1
-        }
+          "heatmap-opacity": 1,
+        },
       };
       let layer = {
         id: this.layerIdCopy + "_热力专题图",
         type: "heatmap",
         source: this.source_Id,
         layout: {
-          visibility: "visible"
+          visibility: "visible",
         },
-        paint: paintValue.paint
+        paint: paintValue.paint,
       };
       if (this.source_layer_Id) {
         layer["source-layer"] = this.source_layer_Id;
@@ -5881,7 +5852,7 @@ export default {
       for (let i = 0; i < colorsArr.length; i++) {
         colors.push({
           key: i + "",
-          value: colorsArr[i]
+          value: colorsArr[i],
         });
       }
       if (!isNaN(Number(index))) {
@@ -5942,7 +5913,7 @@ export default {
         }
       }
       //绘制专题图
-      let interval = setInterval(function() {
+      let interval = setInterval(function () {
         //确保所有source已经加载完毕，之后做下面的
         let initAllSource = true,
           originLayerId = undefined;
@@ -5995,7 +5966,7 @@ export default {
                   let symbolOriginId = originLayerId;
                   let symbolId = layerOrder[i];
                   vm.$refs.themePanel.$_setIcons(vm.icons);
-                  img.addEventListener("load", function() {
+                  img.addEventListener("load", function () {
                     vm.map.addImage(iconName, img);
                     let hasIcon = vm.map.hasImage(iconName),
                       iconSize;
@@ -6042,7 +6013,7 @@ export default {
                       let img = new Image(16, 16);
                       let patternLayerId = originLayerId;
                       let patternId = layerOrder[i];
-                      img.addEventListener("load", function() {
+                      img.addEventListener("load", function () {
                         vm.map.addImage(pattern, img);
                         vm.map.addLayer(
                           themeManager.getLayer(patternLayerId, patternId),
@@ -6198,7 +6169,7 @@ export default {
               );
             } else {
               let img = new Image(128, 128);
-              img.addEventListener("load", function() {
+              img.addEventListener("load", function () {
                 vm.map.addImage(iconName, img);
                 vm.$_setLayOutProperty(
                   layerId,
@@ -6225,7 +6196,7 @@ export default {
         }
       }
       let vm = this;
-      setTimeout(function() {
+      setTimeout(function () {
         //隐藏原图层
         let dataType = themeManager.getLayerProps(layerId, "dataType");
         vm.map.setPaintProperty(layerId, dataType + "-opacity", 0);
@@ -6234,7 +6205,7 @@ export default {
     $_getNullFields(features, layerId) {
       let fields = [];
       for (let i = 0; i < features.length; i++) {
-        Object.keys(features[i].properties).forEach(function(key) {
+        Object.keys(features[i].properties).forEach(function (key) {
           if (
             (!features[i].properties[key] ||
               features[i].properties[key] === "" ||
@@ -6366,18 +6337,18 @@ export default {
             legends.push({
               layerName: returnColors[i * 2],
               layerType: this.dataType,
-              color: returnColors[i * 2 + 1]
+              color: returnColors[i * 2 + 1],
             });
           }
         } else {
           legends.push({
             layerName: this.layerIdCopy + "_符号",
             layerType: "symbol",
-            color: returnColors
+            color: returnColors,
           });
         }
       }
       return legends;
-    }
-  }
+    },
+  },
 };

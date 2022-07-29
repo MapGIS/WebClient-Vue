@@ -1,40 +1,26 @@
 <template>
   <mapgis-ui-spin :spinning="loading">
-    <mapgis-ui-row class="mapgis-print-row">
-      <mapgis-ui-col span="6">
-        <span class="mapgis-print-title"> 主标题 </span>
-      </mapgis-ui-col>
-      <mapgis-ui-col span="18">
+    <mapgis-ui-form :layout="layout">
+      <mapgis-ui-form-item label="主标题" >
         <mapgis-ui-input v-model="info.baseinfo.title" />
-      </mapgis-ui-col>
-    </mapgis-ui-row>
-    <mapgis-ui-row class="mapgis-print-row">
-      <mapgis-ui-col span="6">
-        <span class="mapgis-print-title"> 作者 </span>
-      </mapgis-ui-col>
-      <mapgis-ui-col span="18">
+      </mapgis-ui-form-item>
+      <mapgis-ui-form-item label="作者" >
         <mapgis-ui-input v-model="info.baseinfo.author" />
-      </mapgis-ui-col>
-    </mapgis-ui-row>
-    <mapgis-ui-row class="mapgis-print-row">
-      <mapgis-ui-col span="6">
-        <span class="mapgis-print-title"> 时间 </span>
-      </mapgis-ui-col>
-      <mapgis-ui-col span="18">
+      </mapgis-ui-form-item>
+      <mapgis-ui-form-item label="时间" >
         <mapgis-ui-input v-model="info.baseinfo.date" />
-      </mapgis-ui-col>
-    </mapgis-ui-row>
-    <mapgis-ui-divider />
-    <mapgis-ui-button
-      @click="print"
-      class="mapgis-brower-print-button"
-      type="primary"
-    >
-      <mapgis-ui-iconfont
-        class="mapgis-ui-modal-print-toolbar"
-        type="mapgis-dayinP"
-      />打印出图
-    </mapgis-ui-button>
+      </mapgis-ui-form-item>
+    </mapgis-ui-form>
+    <mapgis-ui-setting-footer>
+      <div class="mapgis-brower-print-button">
+      <mapgis-ui-button type="primary" @click="print" class="mapgis-brower-print-button">
+        <mapgis-ui-iconfont
+          class="mapgis-ui-modal-print-toolbar"
+          type="mapgis-dayinP"
+        />打印出图
+      </mapgis-ui-button>
+      </div>
+		</mapgis-ui-setting-footer>
   </mapgis-ui-spin>
 </template>
 
@@ -53,6 +39,10 @@ export default {
       type: Number,
       default: 1000,
     },
+		layout: {
+			type: String,
+			default: "vertical" // 'horizontal' 'vertical' 'inline'
+		},
   },
   data() {
     return {
@@ -97,7 +87,14 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.mapgis-ui-form-item{
+  margin-bottom: 0;
+}
+.mapgis-ui-setting-footer .mapgis-ui-btn {
+  margin-right: 0;
+}
+
 .mapgis-brower-print-button {
   width: 100%;
 }

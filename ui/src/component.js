@@ -41,6 +41,7 @@ export { default as MapgisUiIconsPanel } from "./components/iconfont/IconsPanel"
 export { default as MapgisUiIconsPanelScrollX } from "./components/iconfont/IconsPanelScrollX";
 export { default as MapgisUiTitleIcon } from "./components/iconfont/TitleIcon";
 export { default as MapgisUiGraphicIconsPanel } from "./components/iconfont/GraphicIconsPanel";
+export { default as MapgisUiUploadImage } from "./components/upload-image/UploadImage.vue";
 
 // Layout
 export { default as MapgisUiDiv } from "./components/div/Div.vue";
@@ -107,6 +108,7 @@ export { default as MapgisUiInputSearch } from "./components/input/Search.vue";
 export { default as MapgisUiInputGroup } from "./components/input/Group.vue";
 export { default as MapgisUiInputPassword } from "./components/input/Password.vue";
 export { default as MapgisUiInputNumber } from "./components/input/Number.vue";
+export { default as MapgisUiInputNumberAddon } from "./components/input/NumberAddon.vue";
 export { default as MapgisUiSettingForm } from "./components/form/SettingForm.vue";
 export { default as MapgisUiFormModel } from "./components/form-model/Form.vue";
 export { default as MapgisUiFormModelItem } from "./components/form-model/FormItem.vue";
@@ -137,6 +139,7 @@ export { default as MapgisUiTreeSelect } from "./components/tree-select/TreeSele
 export { default as MapgisUiTreeSelectNode } from "./components/tree-select/TreeNode.vue";
 export { default as MapgisUiJsonEditor } from "./components/jsoneditor/JsonEditor.vue";
 export { default as MapgisUiCustomTreeSelect } from "./components/tree-select/CustomTreeSelect.vue";
+export { default as MapgisUiUpload } from "./components/upload/Upload.vue";
 
 // Data Display
 export { default as MapgisUiAvatar } from "./components/avatar/Avatar.vue";
@@ -176,6 +179,7 @@ export { default as MapgisUiTree } from "./components/tree/Tree.vue";
 export { default as MapgisUiVideo } from "./components/media/Video.vue";
 
 // Feedback
+export { default as MapgisUiAlert } from "./components/alert/Alert.vue";
 export { default as MapgisUiDrawer } from "./components/drawer/Drawer.vue";
 export { default as MapgisUiModal } from "./components/modal";
 export { default as MapgisUiProgress } from "./components/progress/Progress.vue";
@@ -221,6 +225,7 @@ export { default as MapgisUiNavBarItem } from "./layout/navs/NavBarItem.vue";
 export { default as MapgisUiProSetting } from "./layout/base/BaseSetting.vue";
 export { default as MapgisUiProlayout } from "./layout/base/BaseLayout.vue";
 export { default as MapgisUiSwitchPanel } from "./layout/panel/SwitchPanel.vue";
+export { default as MapgisUiTitleCollapse } from "./layout/panel/TitleCollapse.vue";
 export { default as MapgisUiInputNumberPanel } from "./layout/panel/InputNumberPanel.vue";
 export { default as MapgisUiColorPickPanel } from "./layout/panel/ColorPickPanel.vue";
 export { default as MapgisUiSelectPanel } from "./layout/panel/SelectPanel.vue";
@@ -240,6 +245,7 @@ export { default as MapgisUiPortalServiceresource } from "./view/portal/componen
 
 // DataStore
 export { default as MapgisUiFilePreview } from "./view/datastore/iot/FilePreview.vue";
+export { default as MapgisUiGlobalSocket } from "./view/datastore/stream/GlobalSocket.vue";
 
 // comprehensive-query
 export { default as MapgisUiComprehensiveQuery } from "./view/comprehensive-query/ComprehensiveQuery.vue";
@@ -257,6 +263,7 @@ export { default as MapgisUiHoverEditPanel } from "./components/panel/HoverEditP
 export { default as MapgisUiStoryPanelLarge } from "./components/panel/StoryPanelLarge";
 export { default as MapgisUiProjectBottomPanel } from "./components/panel/ProjectBottomPanel";
 export { default as MapgisUiGraphicEditPanel } from "./components/panel/GraphicEditPanel";
+export { default as MapgisUiGraphicModelEditPanel } from "./components/panel/GraphicModelEditPanel";
 
 //picture
 export { default as MapgisUiChoosePicture } from "./components/picture/ChoosePicture";
@@ -290,3 +297,14 @@ export { default as MapgisUiSelectRow } from "./components/select/SelectRow";
 export { default as MapgisUiSelectRowLeft } from "./components/select/SelectRowLeft";
 
 export { default as MapgisUiTimelinePanel } from "./layout/panel/TimelinePanel.vue";
+
+//plot
+export { default as MapgisUiPlotAnimation } from "./components/plot/Animation.vue";
+export { default as MapgisUiPlotAttribute } from "./components/plot/Attribute.vue";
+export { default as MapgisUiPlotScript } from "./components/plot/Script.vue";
+export { default as MapgisUiPlotScriptList } from "./components/plot/ScriptList.vue";
+export { default as MapgisUiPlotSymbol } from "./components/plot/PlotSymbol.vue";
+export { default as MapgisUiSvgManager } from "./components/plot/SVGManager.vue";
+export { default as MapgisUiSVGSettingPanel } from "./components/plot/SVGSettingPanel.vue";
+export { default as MapgisUiFileManager } from "./components/plot/FileManager.vue";
+export { default as MapgisUiPlotTimeline } from "./components/plot/Timeline.vue";

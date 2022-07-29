@@ -1,4 +1,4 @@
-import Mapgis3dShadow from "../../cesium/src/components/Analysis/Shadow"
+import Mapgis3dShadow from "../../cesium/src/components/Analysis/Shadow.vue"
 import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/Shadow.md";
 
@@ -44,7 +44,7 @@ const Template = (args, { argTypes }) => ({
         return {
             url:
                 "http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752",
-            m3dUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
+            m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
             autoReset: true,
             maximumScreenSpaceError: 8,
             vueIndex:22
@@ -57,17 +57,16 @@ const Template = (args, { argTypes }) => ({
       <mapgis-web-scene style="height: 95vh">
       <mapgis-3d-raster-layer :url="url"></mapgis-3d-raster-layer>
       <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"></mapgis-3d-m3d-layer>
-      <div class="storybook-ui-card">
+      <mapgis-ui-card class="storybook-ui-card">
         <mapgis-3d-shadow
             :shadowColor="shadowColor"
             :sunColor="sunColor"
             :minHeight="minHeight"
             :stretchHeight="stretchHeight"
             :enableShadowRatio="enableShadowRatio"
-            :style="{backgroundColor:'#FFFFFF'}"
         >
         </mapgis-3d-shadow>
-      </div>
+      </mapgis-ui-card>
       </mapgis-web-scene>
     `
 });
