@@ -2,11 +2,14 @@ import EventBus from "../../vue-types/event-bus";
 import themeFactory from "./theme.json";
 import { dealWithTheme, ThemeStyleParams } from "../color/serialColors";
 
-export const setTheme = (themeStyle = {}) => {
+export const setTheme = (themeStyle = {}, payload = {}) => {
   let acceptedThemeStyle = themeStyle;
   if (typeof themeStyle === "string") {
     acceptedThemeStyle =
       themeFactory.find(item => item.label === themeStyle) || themeFactory[1];
+  }
+  if (payload && payload instanceof Object) {
+    acceptedThemeStyle = {...acceptedThemeStyle, ...payload};
   }
   const nextThemeData = dealWithTheme(acceptedThemeStyle);
   const nextTheme = {

@@ -201,6 +201,10 @@ module.exports = {
               ["/api/Layers/ArcGISServer/ArcGISMapLayer.md", "ArcGIS地图"],
               ["/api/Layers/ArcGISServer/ArcGISTileLayer.md", "ArcGIS瓦片"],
               ["/api/Layers/VectorTile/mvtstyle.md", "MVT样式图层"],
+              ["/api/Layers/2DPlot/PlotLayer.md", "行业标绘图层"],
+              ["/api/Layers/2DPlot/Plot.md", "行业标绘绘制组件"],
+              ["/api/Layers/2DPlot/PlotAnimation.md", "态势推演组件"],
+              ["/api/Layers/2DPlot/PlotLink.md", "行业标绘二三维联动"],
               {
                 title: "可视化",
                 collapsable: false,

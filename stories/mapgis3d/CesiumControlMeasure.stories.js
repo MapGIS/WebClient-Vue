@@ -58,7 +58,7 @@ const Template = (args, { argTypes }) => ({
   `,
   data() {
     return {
-      m3durl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
+      m3durl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
       measure: null,
       toolbarVisible: this.hasSettingPanel,
       toolbarBtns: [
@@ -101,8 +101,8 @@ const Template = (args, { argTypes }) => ({
         },
       ],
       measureOptions: {
-        //设置测量单位
-        unit: "meters",
+        //设置测量单位，可选"kilometers" | "meters"
+        unit: "kilometers",
         //设置测量图标参数
         pointIconWith: 16,
         pointIconHeight: 16,

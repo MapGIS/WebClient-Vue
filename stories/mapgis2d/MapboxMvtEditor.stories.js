@@ -13,7 +13,7 @@ const Template = (args, { argTypes }) => ({
     return {
       layer: "",
       enableEditor: false,
-      mvtStyle: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/styles/街道-墨卡托.json`,
+      mvtStyle: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/vtiles/styles/街道-墨卡托.json`,
     };
   },
   methods: {

@@ -11,7 +11,7 @@ const Template = (args, { argTypes }) => ({
   template: `<mapgis-web-scene style="height:95vh">
       <mapgis-3d-raster-layer url="http://t1.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
       <mapgis-3d-raster-layer url="http://t1.tianditu.com/DataServer?T=cta_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
-      <mapgis-3d-graphic-layer style="position: absolute;top: 10px;right: 10px;" v-bind="$props"/>
+      <mapgis-3d-graphic-layer style="width:332px;position: absolute;top: 10px;right: 10px;" v-bind="$props"/>
   </mapgis-web-scene>`,
 });
 

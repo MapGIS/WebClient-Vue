@@ -14,7 +14,8 @@
 }
 
 .mapgis-ui-project-row:hover, .mapgis-ui-feature-row:hover, .mapgis-mapstory-more-tool-row:hover {
-  background: $map-story-hover;
+  // background: $map-story-hover;
+  background: var(--primary-2);
 }
 
 .mapgis-mapstory-more-tool {

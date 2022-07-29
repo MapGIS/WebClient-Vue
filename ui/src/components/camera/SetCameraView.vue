@@ -22,6 +22,7 @@
           :formStyle="formStyle"
           :mainStyle="mainStyle"
           :disabled="disableInput"
+          :props="inputProps"
       />
       <mapgis-ui-mix-row
           title="俯仰角"
@@ -31,6 +32,7 @@
           :formStyle="formStyle"
           :mainStyle="mainStyle"
           :disabled="disableInput"
+          :props="inputProps"
       />
       <mapgis-ui-mix-row
           title="滚动角"
@@ -40,6 +42,7 @@
           :formStyle="formStyle"
           :mainStyle="mainStyle"
           :disabled="disableInput"
+          :props="inputProps"
       />
       <mapgis-ui-mix-row
           title="经度"
@@ -49,6 +52,7 @@
           :formStyle="formStyle"
           :mainStyle="mainStyle"
           :disabled="disableInput"
+          :props="inputProps"
       />
       <mapgis-ui-mix-row
           title="纬度"
@@ -58,6 +62,7 @@
           :formStyle="formStyle"
           :mainStyle="mainStyle"
           :disabled="disableInput"
+          :props="inputProps"
       />
       <mapgis-ui-mix-row
           title="高度"
@@ -67,6 +72,7 @@
           :formStyle="formStyle"
           :mainStyle="mainStyle"
           :disabled="disableInput"
+          :props="inputProps"
       />
     </div>
   </div>
@@ -92,11 +98,15 @@ export default {
       },
       mainStyle: {
         height: "32px",
-        width: "213px",
+        // width: "192px",
       },
       titleStyle: {
         paddingLeft: "9px"
-      }
+      },
+      inputProps: {
+        titleCol: 7,
+        inputCol: 16,
+      },
     }
   },
   props: {
@@ -161,7 +171,7 @@ export default {
 
 .mapgis-ui-set-camera-set-camera-content {
   width: 100%;
-  height: 225px;
+  height: 240px;
   border-radius: 3px;
   padding-top: 1px;
 }

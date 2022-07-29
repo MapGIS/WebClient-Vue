@@ -19,7 +19,7 @@ export default {
     watchProp() {
       let { show } = this;
       if (show) {
-        this.$watch("show", function(next) {
+        this.$watch("show", function (next) {
           if (this.initial) return;
           // this.tileset.show = next;
         });
@@ -39,8 +39,8 @@ export default {
       viewer.scene.primitives.add(tileset);
 
       tileset.readyPromise
-        .then(function(primitives) {
-          vm.$emit('loaded', {tileset: tileset});
+        .then(function (primitives) {
+          vm.$emit("loaded", { tileset: tileset });
           if (autoReset) {
             viewer.zoomTo(
               primitives,
@@ -52,7 +52,7 @@ export default {
             );
           }
         })
-        .otherwise(function(error) {
+        .otherwise(function (error) {
           console.error("3dtileset", error);
         });
     },
@@ -61,13 +61,12 @@ export default {
       let find = window.vueCesium.Tileset3DManager.findSource(vueKey, vueIndex);
       if (find) {
         !viewer.isDestroyed() && viewer.scene.primitives.remove(find.source);
-        find.source.destroy && find.source.destroy();
       }
       this.$emit("unload");
       window.vueCesium.Tileset3DManager.deleteSource(vueKey, vueIndex);
-    }
+    },
   },
   render(createElement) {
     return createElement("span");
-  }
+  },
 };

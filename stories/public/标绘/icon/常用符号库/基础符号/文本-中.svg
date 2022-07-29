@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="200"
+   version="1.1"
+   height="200"
+   id="svg2"
+   zondyPlotSymbol:version="1.0"
+   zondyPlotSymbol:id="svg003"
+   zondyPlotSymbol:name="文本"
+   zondyPlotSymbol:desc=""
+   zondyPlotSymbol:type="simplepoint"
+   zondyPlotSymbol:pose="1"
+   sodipodi:docname="文本-中.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:zondyPlotSymbol="https://www.mapgis.com">
+  <defs
+     id="defs7">
+    <rect
+       x="50.909091"
+       y="52.987013"
+       width="97.142857"
+       height="47.272727"
+       id="rect2512" />
+  </defs>
+  <sodipodi:namedview
+     id="namedview5"
+     pagecolor="#ffffff"
+     bordercolor="#111111"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     showgrid="false"
+     inkscape:zoom="1.925"
+     inkscape:cx="132.72727"
+     inkscape:cy="38.961039"
+     inkscape:window-width="1920"
+     inkscape:window-height="986"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <text
+     xml:space="preserve"
+     id="text2510"
+     style="font-size:40px;line-height:1.25;font-family:SimHei;-inkscape-font-specification:SimHei;white-space:pre;shape-inside:url(#rect2512);fill:#ffffff"
+     transform="translate(11.948052,10.909091)"><tspan
+       x="50.908203"
+       y="92.361328"
+       id="tspan3100">徐州</tspan></text>
+</svg>

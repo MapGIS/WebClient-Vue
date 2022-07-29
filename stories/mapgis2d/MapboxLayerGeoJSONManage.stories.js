@@ -124,7 +124,7 @@ Fill.args = {
     },
   },
   layerId: "geojsonLayer",
-  data: `http://${window.webclient.ip}/static/data/geojson/china.geojson`,
+  data: `http://${window.webclient.ip}:${window.webclient.port}/static/data/geojson/china.geojson`,
   sourceId: "geojson_source_id",
   enablePopup: true,
   enableTips: true,

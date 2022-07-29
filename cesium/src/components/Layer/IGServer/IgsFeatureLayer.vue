@@ -1,28 +1,44 @@
 <template>
-  <span/>
+  <div class="mapgis-popup-default-wrapper">
+    <div v-if="popVisiable">
+      <Popup
+        :position="iClickPosition"
+        :visible="iClickVisible"
+        :forceRender="forceRender"
+      >
+        <mapgis-ui-popup-content
+          :feature="gemotryAttribute[0]"
+          :popupOptions="popupOptions"
+        >
+        </mapgis-ui-popup-content>
+      </Popup>
+    </div>
+  </div>
 </template>
+
 <script>
 import clonedeep from "lodash.clonedeep";
+import PopupMixin from "../Mixin/PopupVirtual";
+import BaseLayer from "../GeoJSON/BaseLayer";
 
 export default {
   name: "mapgis-3d-igs-feature-layer",
   inject: ["Cesium", "vueCesium", "viewer"],
+  mixins: [BaseLayer, PopupMixin],
   props: {
     baseUrl: {
       type: String,
       default: null
     },
-    autoReset: {
-      type: Boolean,
-      default: true
+    gdbps: {
+      type: String,
+      default: null
     },
-    loadAll: {
-      type: Boolean,
-      default: false
-    },
-    setViewToExisting: {
-      type: Boolean,
-      default: false
+    renderer: {
+      type: Object,
+      default() {
+        return {}
+      }
     },
     filter: {
       type: Object,
@@ -31,26 +47,19 @@ export default {
     clampToGround: {
       type: Boolean,
       default: false
-    },
-    vueKey: {
-      type: String,
-      default: "default"
-    },
-    vueIndex: {
-      type: Number,
-      default() {
-        return Number((Math.random() * 100000000).toFixed(0));
-      }
-    },
-    featureStyle: {
-      type: Object,
-      default(){
-        return {}
-      }
     }
   },
   data() {
-    return {};
+    return {
+      layerType: "feature",
+      layerIndex: undefined,
+      layer: undefined,
+      layerRange: [],
+      clickhandler: undefined,
+      hoverhandler: undefined,
+      tempHighlightdata: undefined,
+      tempQueryDataArr: []
+    };
   },
   mounted() {
     this.mount();
@@ -65,133 +74,145 @@ export default {
         this.mount();
       },
     },
-    filter: {
-      handler: function () {
+    autoReset: {
+      handler(value) {
         this.unmount();
         this.mount();
       },
+      deep: true
     },
-    featureStyle: {
-      handler: function () {
-        this.unmount();
+    renderer: {
+      handler(value) {
         this.mount();
       },
+      deep: true
     }
   },
   methods: {
-    mount() {
+    async createCesiumObject() {
       let {viewer, vueCesium} = this;
+      let { baseUrl, gdbps, autoReset, renderer, filter, clampToGround} = this;
       let vm = this;
-      let layerIndex;
-      let options = {};
-      options = vm.initOptions(options);
-      // if (vm.baseUrl.indexOf("/g3d") > -1) {
-      //   layerIndex = viewer.scene.layers.appendG3DLayer(vm.baseUrl, {
-      //     ...options,
-      //     getDocLayerIndexes: vm._handleCallback
-      //   });
-      // } else {
-        layerIndex = viewer.scene.layers.appendVectorLayer(vm.baseUrl, {
-          ...options,
-          getDocLayerIndexes: vm._handleCallback
-        });
-      // }
-
-      vueCesium.IgsFeatureManager.addSource(
-          vm.vueKey,
-          vm.vueIndex,
-          layerIndex
+      let options = {
+        autoReset,
+        loadAll: true,
+        renderer,
+        clampToGround,
+        filter: filter
+      };
+      if (baseUrl.indexOf("/igs/rest/mrfs/layer") !== -1) {
+        options.layers = gdbps;
+      }
+      let transformRenderer = JSON.parse(JSON.stringify(renderer));
+      this.transformObject(transformRenderer);
+      options.renderer = transformRenderer;
+      return new Promise(
+        resolve => {
+          let layerIndex = viewer.scene.layers.appendFeatureLayer(baseUrl, {
+            ...options,
+            getDocLayerIndexes: vm.getDocLayer
+          });
+          resolve({ layerIndex: layerIndex });
+        },
+        reject => {}
       );
     },
+    getDocLayer(index) {
+      const vm = this;
+      const { vueIndex, vueKey, vueCesium, url, enablePopup } = this;
+      if (index) {
+        vm.layerIndex = index;
+        vm.layer = viewer.scene.layers.getFeatureLayer(vm.layerIndex[0]);
+        let source = [vm.layer];
+        if (source) {
+          vueCesium.IgsFeatureManager.addSource(vueKey, vueIndex, source, {
+            url: vm.baseUrl,
+            layerIndex: vm.layerIndex,
+            clickhandler: vm.clickhandler,
+            hoverhandler: vm.hoverhandler,
+          });
+          vm.layerRange = vm.layer._layerRange;
+          vm.parseBBox(vm.layerRange);
+        }
+        vm.$emit("load", { data: vm });
+      }
+    },
+    mount() {
+      let {viewer, vueCesium, vueKey, vueIndex, baseUrl, gdbps, enablePopup} = this;
+
+      // 判断是否支持图像渲染像素化处理
+      viewer.shadows = true;
+      if (Cesium.FeatureDetection.supportsImageRenderingPixelated()) { 
+        viewer.resolutionScale = window.devicePixelRatio;
+      };
+      // 是否开启抗锯齿
+      viewer.scene.fxaa = true;
+      viewer.scene.postProcessStages.fxaa.enabled = true;
+      this.checkType();
+      let promise = this.createCesiumObject();
+      let vm = this;
+      promise.then(function (dataSource) {
+        // 增加图层click和hover事件，在组件外部获得对象
+        vm.$_bindClickEvent(vm.parseClick);
+        vm.$_bindHoverEvent(vm.parseHover);
+        if (vm.enablePopup) {
+          vm.clickhandler = vm.$_bindClickEvent(vm.clickHighlight);
+        }
+        if (vm.enableClick) {
+          vm.clickhandler = vm.$_bindClickEvent(vm.clickHighlight);
+        }
+        if (vm.enableHover) {
+          vm.hoverhandler = vm.$_bindHoverEvent(vm.hoverHighlight);
+        }
+        if (vm.enableQuery) {
+          vm.queryPrimitive();
+        }
+      });
+    },
+    transformObject(renderer) {
+      renderer = renderer || {};
+      Object.keys(renderer).forEach( key => {
+        if (key == "distanceDisplayCondition") {
+          renderer[key] = new Cesium.DistanceDisplayCondition(renderer[key][0], renderer[key][1]);
+        }
+        if (typeof(renderer[key]) == "object") {
+          this.transformObject(renderer[key]);
+        }
+        if (key == "color") {
+          renderer[key] = Cesium.Color.fromCssColorString(renderer[key]);
+        }
+      })
+    },
     unmount() {
-      //图层移除
       let {viewer, vueCesium} = this;
-      const {vueKey, vueIndex} = this;
+      const {vueKey, vueIndex, layerIndex} = this;
       let find = vueCesium.IgsFeatureManager.findSource(vueKey, vueIndex);
+      let index = layerIndex;
+      if(layerIndex instanceof Array) {
+        index = layerIndex[0];
+      }
       if (find && find.source) {
-        let findSource = find.source;
-        viewer.scene.layers.removeImageryLayerByID(findSource);
+        viewer.scene.layers.removeFeatureLayerByID(index);
+      }
+      if (find && find.clickhandler) {
+        find.clickhandler.destroy();
+      }
+      if (find && find.hoverhandler) {
+        find.hoverhandler.destroy();
       }
       vueCesium.IgsFeatureManager.deleteSource(vueKey, vueIndex);
+      this.$emit("unload", this);
     },
-    initOptions(options) {
-      const {Cesium} = this;
-      let {autoReset, filter, mapIndex, featureStyle, clampToGround, loadAll, setViewToExisting} = this;
-      if (autoReset) {
-        options.autoReset = autoReset;
-      }
-      if (filter) {
-        options.filter = filter;
-      }
-      if (featureStyle) {
-        let featureStyleCopy = clonedeep(featureStyle);
-        // if (Array.isArray(featureStyle)) {
-        //   // 先做key值替换
-        //   let tempArr = [];
-        //   featureStyleCopy.map((currentVal, index, array) => {
-        //     tempArr.push({
-        //       'type': currentVal.type, 'styleOptions': currentVal.parameters
-        //     })
-        //   })
-        //   tempArr.forEach((fs) => {
-        //     let styleOptions = fs.styleOptions;
-        //     if (styleOptions && styleOptions.color) {
-        //       let colorTrans = Cesium.Color.fromCssColorString(styleOptions.color);
-        //       styleOptions.color = colorTrans;
-        //     }
-        //     if (styleOptions && styleOptions.outlineColor) {
-        //       let outlineColorTemp = Cesium.Color.fromCssColorString(styleOptions.outlineColor);
-        //       styleOptions.outlineColor = outlineColorTemp;
-        //     }
-        //     fs.styleOptions = styleOptions;
-        //   })
-        //   options.style = tempArr;
-        // } else {
-          // 先做key值替换
-          featureStyleCopy = this.$_changeKey(featureStyleCopy);
-          let styleOptions = featureStyleCopy.styleOptions;
-          if (styleOptions && styleOptions.color) {
-            styleOptions.color = Cesium.Color.fromCssColorString(styleOptions.color);
-          }
-          if (styleOptions && styleOptions.outlineColor) {
-            let outlineColorTemp = Cesium.Color.fromCssColorString(styleOptions.outlineColor);
-            styleOptions.outlineColor = outlineColorTemp;
-          }
-          options.style = featureStyleCopy;
-        // }
-      }
-      if (mapIndex) {
-        options.mapIndex = mapIndex;
-      }
-      if (clampToGround) {
-        options.clampToGround = true;
-      }
-      if (loadAll) {
-        options.loadAll = loadAll;
-      }
-      if (setViewToExisting) {
-        options.setViewToExisting = setViewToExisting;
-      }
-      options.pageCount = 0
-      return options;
+    // 组件回调
+    parseClick(payload) {
+      this.$emit("featureClick", {pick: payload});
     },
-
-    //该方法用于修改对象的key值
-    $_changeKey(oldFeatureStyle) {
-      let keyMap = {type: "type", parameters: "styleOptions"};
-      let newFeatureStyle = Object.keys(oldFeatureStyle).reduce((newData, key) => {
-        let newKey = keyMap[key] || key;
-        newData[newKey] = oldFeatureStyle[key];
-        return newData;
-      }, {});
-      return newFeatureStyle;
+    parseHover(payload) {
+      this.$emit("featureHover", {pick: payload});
     },
-
-    _handleCallback(indexs) {
-      let layerIndex = indexs;
-      //抛出load事件
-      this.$emit("loaded", {layerIndex: layerIndex});
-    }
+    parseBBox(bbox) {
+      this.$emit("bbox", { bbox: bbox });
+    },
   }
 }
 </script>

@@ -20,12 +20,13 @@
         <span
           v-if="hasAddonBefore"
           class="mapgis-ui-input-group-addon addon-before"
-          >{{ addonBefore }}</span
         >
+          <slot name="addonBefore">{{addonBefore}}</slot>
+        </span>
         <div
           class="color-container"
           :style="{
-            padding: showBorder ? '9px 8px' : '0',
+            padding: showBorder ? '4px 8px' : '0',
             border: showBorder
               ? 'border: 1px solid $border-color-base;'
               : 'none',
@@ -34,10 +35,15 @@
           }"
         >
           <div
-            :style="{ background: pickColor }"
             :title="color"
             class="color-div"
+            :style="{
+              background: pickColor,
+              width: showColorText ? '16px' : '100%',
+              height: '16px'
+            }"
           ></div>
+          <div v-if="showColorText" style="line-height:22px;margin-left:8px;">{{color}}</div>
         </div>
       </mapgis-ui-row>
     </mapgis-ui-popover>
@@ -51,6 +57,10 @@ export default {
   name: "mapgis-ui-sketch-color-picker",
   components: { "sketch-picker": Sketch },
   props: {
+    showColorText: {
+      type: Boolean,
+      default: true
+    },
     color: {
       type: String,
       required: true,
@@ -88,13 +98,20 @@ export default {
       }
     },
     hasAddonBefore() {
-      return this.addonBefore && this.addonBefore.length > 0;
+      return (this.addonBefore && this.addonBefore.length > 0) || (this.$slots && this.$slots.addonBefore);
     }
+  },
+  model: {
+    prop: "color",
+    event: "change"
   },
   methods: {
     onColorChange(val) {
       this.getPickColor(val);
       this.$emit("input", val, this.extraValue);
+      let rgba = val.rgba;
+      let color = this.colorObjectToRgba(rgba, this.disableAlpha)
+      this.$emit("change", color, this.extraValue);
     },
     // 颜色拾取器选中事件回调
     getPickColor(val) {
@@ -123,6 +140,7 @@ export default {
 
 .addon-before {
   height: 32px;
+  line-height: 32px;
   width: fit-content;
 }
 </style>

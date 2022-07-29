@@ -15,7 +15,7 @@ export default {
     baseUrl:{
       description: "输入图层的baseUrl",
       table:{
-        defaultValue: { summary: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/layers` },
+        defaultValue: { summary: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/layers` },
       },
       control:'text'
     },
@@ -77,11 +77,19 @@ const Template = (args, { argTypes }) => ({
     `,
 });
 
+{/* <mapgis-web-scene style="height: 95vh">
+<mapgis-ui-borderbox1 class="storybook-ui-card" style="height:60vh;">
+  <mapgis-3d-analysis-buffer v-bind="$props" @listenLayer="showLayer" @listenFeature="showFeature" @listenBufferAdd="showAdd"/>
+</mapgis-ui-borderbox1>
+<mapgis-3d-igs-dynamic-layer v-if="finishedLayer && addResultToLayer" :baseUrl="this.baseUrl" :gdbps="resultLayer"></mapgis-3d-igs-dynamic-layer>
+<mapgis-3d-geojson-layer v-if="finishedFeature && addResultToLayer" :layerStyle="layerStyle" :baseUrl="resultFeature"/>
+</mapgis-web-scene> */}
+
 export const Buffer = Template.bind({});
 Buffer.args = {
   srcType: "Layer",
   // srcType: "Feature",
-  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/layers`,
+  baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/layers`,
   srcLayer: "gdbp://MapGISLocal/Templates/sfcls/湖北省市级区划",
   srcFeature: {
     "type": "FeatureCollection",

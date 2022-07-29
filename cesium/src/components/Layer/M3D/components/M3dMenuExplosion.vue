@@ -1,6 +1,6 @@
 <template>
   <div class="mapgis-3d-m3d-menu-explosion">
-    <mapgis-ui-divider>爆炸设置</mapgis-ui-divider>
+    <mapgis-ui-divider style="fontSize:14px">爆炸设置</mapgis-ui-divider>
     <div class="mapgis-3d-m3d-menu-explosion-direction">
       <mapgis-ui-row>
         <mapgis-ui-col :span="8" :offset="8"
@@ -53,7 +53,7 @@
       </mapgis-ui-input-number-panel> -->
       <mapgis-ui-input-number-panel
         transparent
-        size="small"
+        size="large"
         label="距离"
         v-model="distance"
         :range="[-100, 100]"
@@ -61,7 +61,7 @@
       </mapgis-ui-input-number-panel>
       <mapgis-ui-input-number-panel
         transparent
-        size="small"
+        size="large"
         label="速度"
         v-model="speed"
         :range="[0, 100]"

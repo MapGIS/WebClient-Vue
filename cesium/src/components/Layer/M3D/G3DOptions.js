@@ -12,14 +12,14 @@ export default {
    */
   vueIndex: {
     type: [String, Number],
-    default: () => (Math.random() * 100000000).toFixed(0)
+    default: () => (Math.random() * 100000000).toFixed(0),
   },
 
   /**
    * @description 图层过滤功能:'show:0,1'表示显示第0，1个图层，'hide:0，2'表示隐藏第0，2个图层
    */
   layerId: {
-    type: String
+    type: String,
   },
 
   /**
@@ -27,7 +27,20 @@ export default {
    */
   url: { type: String, required: true },
 
+  /**
+   * @description 图层透明度
+   */
   opacity: { type: Number, default: 1 },
+
+  /**
+   * @description 图层ID，用于修改指定图层透明度
+   */
+  opacityLayersArray: {
+    type: Array,
+    default() {
+      return [];
+    },
+  },
 
   autoReset: { type: Boolean, default: true },
   /**
@@ -94,8 +107,8 @@ export default {
         height: "450px",
         width: "270px",
         top: "0px",
-        left: "0px"
+        left: "0px",
       };
-    }
-  }
+    },
+  },
 };

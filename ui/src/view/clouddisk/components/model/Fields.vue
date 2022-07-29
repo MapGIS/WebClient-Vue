@@ -103,7 +103,7 @@
         </div>
       </div>
     <!-- </mapgis-ui-card> -->
-    <div style="background:#fff;" :style="buttonPosition">
+    <div :style="buttonPosition">
       <mapgis-ui-button type="primary" style="margin:8px 18px 8px 0px;" :loading="showLoading" @click="() => {this.$emit('handleConfirm')}">执行分析</mapgis-ui-button>
       <mapgis-ui-button style="margin:8px 4px;" @click="() => {this.$emit('handleClearParams')}">清空数据</mapgis-ui-button>
     </div>

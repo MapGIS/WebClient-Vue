@@ -1309,12 +1309,7 @@ export default {
     },
     $_addTipsAndPopup(themeType) {
       let vm = this;
-      //是否开启tips
-      if (
-        this.enableTips &&
-        this.type !== "symbol" &&
-        this.type !== "heatmap"
-      ) {
+      if (this.type !== "symbol" && this.type !== "heatmap") {
         //是否开启高亮
         if (
           this.tipsOptions.enableHighlight ||
@@ -1334,37 +1329,33 @@ export default {
             "mousemove",
             this.layerIdCopy + this.$_getThemeName(),
             e => {
-              if (vm.enableTips) {
-                if (vm.hoveredStateId) {
-                  vm.map.setFeatureState(
-                    { source: vm.tipsSourceId, id: vm.hoveredStateId },
-                    { hover: false }
-                  );
-                }
-                vm.hoveredStateId = e.features[0].id;
+              if (vm.hoveredStateId) {
                 vm.map.setFeatureState(
                   { source: vm.tipsSourceId, id: vm.hoveredStateId },
-                  { hover: true }
+                  { hover: false }
                 );
-                vm.$_addTips([e.lngLat.lng, e.lngLat.lat], e.features[0]);
-                vm.$emit("highlightChanged", vm.hoveredStateId);
               }
+              vm.hoveredStateId = e.features[0].id;
+              vm.map.setFeatureState(
+                { source: vm.tipsSourceId, id: vm.hoveredStateId },
+                { hover: true }
+              );
+              vm.$_addTips([e.lngLat.lng, e.lngLat.lat], e.features[0]);
+              vm.$emit("highlightChanged", vm.hoveredStateId);
             }
           );
           this.map.on(
             "mouseleave",
             this.layerIdCopy + this.$_getThemeName(),
             e => {
-              if (vm.enableTips) {
-                if (vm.hoveredStateId !== null) {
-                  vm.map.setFeatureState(
-                    { source: vm.tipsSourceId, id: vm.hoveredStateId },
-                    { hover: false }
-                  );
-                  vm.$_removeTips();
-                }
-                vm.hoveredStateId = null;
+              if (vm.hoveredStateId !== null) {
+                vm.map.setFeatureState(
+                  { source: vm.tipsSourceId, id: vm.hoveredStateId },
+                  { hover: false }
+                );
+                vm.$_removeTips();
               }
+              vm.hoveredStateId = null;
             }
           );
         } else {
@@ -1372,22 +1363,18 @@ export default {
             "mousemove",
             this.layerIdCopy + this.$_getThemeName(),
             e => {
-              if (vm.enableTips) {
-                vm.hoveredStateId = e.features[0].id;
-                vm.$_addTips([e.lngLat.lng, e.lngLat.lat], e.features[0]);
-              }
+              vm.hoveredStateId = e.features[0].id;
+              vm.$_addTips([e.lngLat.lng, e.lngLat.lat], e.features[0]);
             }
           );
           this.map.on(
             "mouseleave",
             this.layerIdCopy + this.$_getThemeName(),
             e => {
-              if (vm.enableTips) {
-                if (vm.hoveredStateId !== null) {
-                  vm.$_removeTips();
-                }
-                vm.hoveredStateId = null;
+              if (vm.hoveredStateId !== null) {
+                vm.$_removeTips();
               }
+              vm.hoveredStateId = null;
             }
           );
         }

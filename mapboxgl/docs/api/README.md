@@ -8,7 +8,14 @@
 
 - **类型**: `Object`
 - **Default:** `null`
-- - **描述:** Mapboxgl-js implementation. Useful for lazy-loading. If omitted, VueMapbox imports Mapbox-gl-js dynamically.
+- **描述:** Mapboxgl-js implementation. Useful for lazy-loading. If omitted, VueMapbox imports Mapbox-gl-js dynamically.
+
+### `crs`
+
+- **类型**: `String`
+- **Default**: `EPSG:3857`
+- **描述:** mapbox原生只支持3857，但webclient-vue-mapboxgl基于原生基础上，实现了4326、4490、4610的参考系。
+- **注意:** 在组件中，由于github的授权问题，@mapgis/mapbox的版本最好是mapbox1.x的最后一个版本；而单独使用mapboxgl，2.x版本的mapboxgl支持7类投影方式，参考链接为： [projection](https://docs.mapbox.com/help/glossary/projection/)
 
 ### `mapStyle`
 

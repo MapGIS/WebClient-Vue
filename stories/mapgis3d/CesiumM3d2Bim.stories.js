@@ -4,7 +4,7 @@ export default {
   title: "三维/图层/M3D/2.0 BIM",
   component: Mapgis3dM3dLayer,
   argTypes: {
-    url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
+    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
     show: true,
     opacity: 1.0,
     enablePopup: true,
@@ -31,8 +31,8 @@ const Template = (args, { argTypes }) => ({
 
 export const BIM = Template.bind({});
 BIM.args = {
-  // url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
-  url: "http://192.168.88.204:8089/M3D/2.0/高级住所模型/高级住所模型.mcj",
+  // url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
+  url: `http://${window.webclient.ip}:${window.webclient.port}/M3D/2.0/高级住所模型/高级住所模型.mcj`,
   show: true,
   opacity: 1.0,
   highlightStyle: {color: 'rgba(255, 255, 0, 0.6)'},
@@ -41,4 +41,6 @@ BIM.args = {
     title: "oid",
     enableSeparate: true
   },
+  autoReset: true,
+  duration: 2.5
 };

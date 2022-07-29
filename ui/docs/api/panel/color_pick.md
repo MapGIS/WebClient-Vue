@@ -6,6 +6,7 @@
             v-bind:label="'光照颜色'" 
             v-bind:disableAlpha="false" 
             v-bind:color="lightColor" 
+            v-bind:showColorText="true"
             @input="inputChange"
         >
         </mapgis-ui-color-pick-panel>
@@ -43,6 +44,13 @@
 - **类型:** `Number`
 - **非侦听属性**
 - **描述:** 当布局layout是horizontal才生效，表示右侧颜色面板的比例，采取24空格比例
+
+### `showColorText`
+
+- **类型:** `Boolean`
+- **非侦听属性**
+- **描述:** 是否在输入框中展示颜色值文本
+- **默认:** `true`
 
 ## 事件
 

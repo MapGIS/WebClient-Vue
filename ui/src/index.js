@@ -12,6 +12,7 @@ import { default as MapgisUiMessage } from "./components/message/Message.js";
 import { default as MapgisUiNotification } from "./components/notification/Notification.js";
 import { default as ModalInstance } from "./components/modal";
 import { default as MapgisUiForm } from "./components/form/Form.vue";
+import { default as MapgisUiEmpty } from "./components/empty/Empty.vue";
 
 import { default as IconFont } from "./components/iconfont/Icon.vue";
 
@@ -21,11 +22,12 @@ const install = function(Vue, options) {
   options = options || {};
   let theme = options.theme || "light";
   let layout = options.layout || "admin";
+  let payload = options.payload || {};
   // require("./style.scss");
   require("./util/style/theme/antd.less");
   require("./style.scss");
   setLayout(layout);
-  setTheme(theme);
+  setTheme(theme, payload);
   setLayoutSettingVisible(true);
   Vue.use(antDirective);
   Vue.use(vcolorpicker);
@@ -58,7 +60,7 @@ export { Util };
 
 export { zhCN };
 
-export { MapgisUiMessage, MapgisUiNotification, ModalInstance };
+export { MapgisUiMessage, MapgisUiNotification, ModalInstance, MapgisUiEmpty };
 export default {
   Util,
   setTheme,

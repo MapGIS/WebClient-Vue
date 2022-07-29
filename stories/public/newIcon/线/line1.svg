@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+        width="200"
+        version="1.1"
+        height="200"
+        id="svg2"
+        svg:version="1.0"
+        svg:id="svg003"
+        svg:name=""
+        svg:desc=""
+        svg:type="1"
+        svg:pose="1"
+        sodipodi:docname="模板 - 副本.svg"
+        inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+        xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:svg="http://www.w3.org/2000/svg">
+    <defs
+            id="defs5" />
+    <sodipodi:namedview
+            id="namedview3"
+            pagecolor="#ffffff"
+            bordercolor="#666666"
+            borderopacity="1.0"
+            inkscape:pageshadow="2"
+            inkscape:pageopacity="0.0"
+            inkscape:pagecheckerboard="0"
+            showgrid="false"
+            inkscape:zoom="5.6568542"
+            inkscape:cx="139.74198"
+            inkscape:cy="103.9447"
+            inkscape:window-width="2560"
+            inkscape:window-height="1377"
+            inkscape:window-x="-8"
+            inkscape:window-y="-8"
+            inkscape:window-maximized="1"
+            inkscape:current-layer="svg2" />
+    <path
+            style="fill:#ffb380;stroke:#ff0000;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;paint-order:fill markers stroke"
+            d="M 0.00402749,100.49998 16.437001,100.4589 M 36.884897,100.40778 200,100"
+            id="path77"
+            sodipodi:nodetypes="cccc" />
+    <path
+            style="fill:#ffb380;stroke:#ff0000;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+            d="m -0.49798672,137.99999 16.43297372,-0.0411 m 20.447896,-0.0511 163.115107,-0.40778"
+            id="path77-2"
+            sodipodi:nodetypes="cccc" />
+    <g
+            id="g5206">
+        <path
+                style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+                d="M 60.125,100.375 60,50 h 40 V 74 H 60"
+                id="path1025"
+                sodipodi:nodetypes="ccccc" />
+        <text
+                xml:space="preserve"
+                style="font-style:normal;font-weight:normal;font-size:10.0245px;line-height:1.25;font-family:sans-serif;fill:#00ffff;fill-opacity:1;stroke:none;stroke-width:0.250612"
+                x="78.525078"
+                y="53.649681"
+                id="text3656"
+                transform="scale(0.8110865,1.2329141)"><tspan
+         sodipodi:role="line"
+         id="tspan3654"
+         x="78.525078"
+         y="53.649681"
+         style="stroke-width:0.250612;fill:#00ffff">中地数码</tspan></text>
+    </g>
+    <path
+            sodipodi:type="star"
+            style="fill:#800080;stroke-width:34.6998"
+            id="path5094"
+            inkscape:flatsided="false"
+            sodipodi:sides="5"
+            sodipodi:cx="146.01755"
+            sodipodi:cy="68.766136"
+            sodipodi:r1="31.361301"
+            sodipodi:r2="15.680651"
+            sodipodi:arg1="0.3270981"
+            sodipodi:arg2="0.95541663"
+            inkscape:rounded="0"
+            inkscape:randomized="0"
+            d="m 175.71603,78.842408 -20.64654,2.727831 -9.45771,18.554571 -8.97445,-18.793075 -20.56904,-3.261143 15.10002,-14.342592 -3.25466,-20.57007 18.30678,9.928868 18.55756,-9.45186 -3.78581,20.47897 z"
+            inkscape:transform-center-x="0.12538899"
+            inkscape:transform-center-y="2.8752352" />
+</svg>

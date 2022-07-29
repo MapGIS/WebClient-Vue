@@ -6,7 +6,7 @@
         显示 <mapgis-ui-switch v-model="enable" />
       </div>
     </mapgis-ui-row>-->
-    <mapgis-ui-divider /> 
+    <!-- <mapgis-ui-divider />  -->
     <div v-if="enable">
       <fill-style
         v-if="type == 'fill'"

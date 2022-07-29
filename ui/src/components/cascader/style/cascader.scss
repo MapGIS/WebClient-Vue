@@ -4,6 +4,21 @@
 
 $cascader-prefix-cls: $ant-prefix + "-cascader";
 
+@include b(cascader) {
+  &-menu-item {
+    &-active:not(&-disabled) {
+      &,
+      &:hover {
+        background-color: $background-color-light;
+      }
+    }
+    &-expand &-expand-icon,
+    &-loading-icon {
+      color: $text-color-secondary;
+    }
+  }
+}
+
 .#{cascader-prefix-cls} {
   // .reset-component;
 

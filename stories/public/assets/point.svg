@@ -1,0 +1,22 @@
+﻿<?xml version='1.0' encoding='UTF-8' standalone='no'?><!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg width="480"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" version="1.1"
+    xmlns="http://www.w3.org/2000/svg" height="480"
+    xmlns:cc="http://creativecommons.org/ns#" id="svg2"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:svg="http://www.w3.org/2000/svg">
+    <defs id="defs3009"/>
+    <metadata id="metadata7">
+        <rdf:RDF>
+            <cc:Work rdf:about="">
+                <dc:format>image/svg+xml</dc:format>
+                <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+                <dc:title/>
+            </cc:Work>
+        </rdf:RDF>
+    </metadata>
+    <msbl Angle="90" Attitude="1" xOrigin="0.5" Type="msbl_regularpoint" yOrigin="0.5" Name="团级" id="dsc2994"/>
+    <!-- RotatePolicy  0:禁止旋转  1:沿着前进的方向  2:垂直于前进的方向-->
+    <_3D Model="" id="_3D3024"/>
+    <circle cx="240" cy="240" style="fill:#3C6EBE;stroke:#ffffff;stroke-width:48" r="240"/>
+</svg>

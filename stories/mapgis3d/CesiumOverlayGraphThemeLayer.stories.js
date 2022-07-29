@@ -99,6 +99,13 @@ const Template = (args, { argTypes }) => ({
       this.graphThemeLayer = graphThemeLayer;
       this.initData();
     },
+    click(feature) {
+      console.log('clickfeature',feature.id.feature);
+      
+    },
+    hover(feature) {
+      // console.log('hover',feature);
+    },
   },
   template: `
       <mapgis-web-scene :style="{height: '95vh'}">
@@ -106,11 +113,16 @@ const Template = (args, { argTypes }) => ({
         :attributeName="attributeName" 
         :attributeColor="attributeColor"
         :width="width" 
+        :heightScale="heightScale"
         :addExtrudedHeight="addExtrudedHeight" 
         :textFont="textFont"
         :textColor="textColor" 
         :textHeightOffset="textHeightOffset"
+        :textScale="textScale"
+        @click="click"
+        @hover="hover"
         @load="load"/>
+        <mapgis-3d-statebar />
       </mapgis-web-scene>
     `,
 });
@@ -122,10 +134,17 @@ export const 统计专题图 = Template.bind({});
   attributeName: ["GDP_2007", "GDP_2008"],
   attributeColor: ["#FFB980", "#5AB1EF"],
   width: 50000,
+  heightScale: 1,
   addExtrudedHeight: true,
   textFont: "50px Helvetica",
   textColor: "#008000",
   textHeightOffset: 10000,
+  textScale: {
+    near: 0,
+    nearValue: 1,
+    far: 5000000,
+    farValue: 0
+  }
 };
 统计专题图.parameters = {
   docs: {

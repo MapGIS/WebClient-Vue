@@ -27,9 +27,9 @@ const Template = (args, { argTypes }) => ({
           metadata: {},
           sources: {},
           layers: [],
-          sprite: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/sprite`,
+          sprite: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/vtiles/sprite`,
           glyphs:
-              `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`,
+              `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`,
         },
       },
     };
@@ -45,5 +45,5 @@ const Template = (args, { argTypes }) => ({
 export const 聚类 = Template.bind({});
 聚类.args = {
   geojson:
-      `http://${window.webclient.ip}/static/data/geojson/chinamobile_1000.geojson`,
+      `http://${window.webclient.ip}:${window.webclient.port}/static/data/geojson/chinamobile_1000.geojson`,
 };

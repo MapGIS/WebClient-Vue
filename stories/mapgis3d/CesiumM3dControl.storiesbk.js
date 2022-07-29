@@ -5,7 +5,7 @@ export default {
   title: "三维/图层/M3D/1.0 图层控制",
   component: Mapgis3dM3dLayer,
   argTypes: {
-    url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
+    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
     show: true,
     opacity: 1.0,
     layers: '',
@@ -37,9 +37,9 @@ const Template = (args, { argTypes }) => ({
 
 export const 图层控制 = Template.bind({});
 图层控制.args = {
-  // url: "http://192.168.21.191:6163/igs/rest/g3d/汉阳BIM",
+  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/汉阳BIM`,
   // url: 'http://192.168.21.191:6163/igs/rest/g3d/大楼',
-  url:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/汉阳BIM`,
+  // url:`http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/汉阳BIM`,
   show: true,
   layers: "layers=show:0,1",
 };

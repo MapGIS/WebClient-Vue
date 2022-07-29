@@ -490,23 +490,23 @@ export default {
   width: 47%;
   height: 32px;
   margin-right: 5px;
-  background: white;
-  color: #0081E2;
+  /* background: white;
+  color: #0081E2; */
   font-size: 14px;
 }
 
 .mapgis-ui-project-edit-feature-preview {
   width: 47%;
   height: 32px;
-  color: white;
-  font-weight: bold;
-  border: 1px solid #75BAED;
-  background: #0081E2;
+  /* color: white; */
+  /* font-weight: bold; */
+  /* border: 1px solid #75BAED; */
+  /* background: #0081E2; */
 }
 
 .mapgis-ui-project-edit-back {
   padding: 8px 8px 8px 28px;
-  border-bottom: 1px solid rgb(217, 217, 217);
+  border-bottom: 1px solid var(--border-color-split);
   cursor: pointer;
 }
 </style>

@@ -1,13 +1,17 @@
 <template>
   <div>
     <div class="mapgis-ui-graphic-icons-panel" :style="containerStyle">
-      <div class="mapgis-ui-graphic-icons-head" id="mapgis-ui-graphic-icons-head">
-        <mapgis-ui-dropdown
-          :getPopupContainer="$_popupContainer"
-        >
-          <div class="mapgis-ui-graphic-dropdown" @click="e => e.preventDefault()">
+      <div
+        class="mapgis-ui-graphic-icons-head"
+        id="mapgis-ui-graphic-icons-head"
+      >
+        <mapgis-ui-dropdown :getPopupContainer="$_popupContainer">
+          <div
+            class="mapgis-ui-graphic-dropdown"
+            @click="e => e.preventDefault()"
+          >
             {{ drawType }}
-            <mapgis-ui-iconfont type="mapgis-down"/>
+            <mapgis-ui-iconfont type="mapgis-down" />
           </div>
           <mapgis-ui-menu slot="overlay">
             <mapgis-ui-menu-item @click="$_chooseDrawType('二维几何体')">
@@ -19,57 +23,80 @@
           </mapgis-ui-menu>
         </mapgis-ui-dropdown>
       </div>
-      <div class="mapgis-ui-graphic-icons-container"
-           :style="{height: iconsContainerHeight + 'px'}"
-           @mouseenter="$_toggleIconsContainer(true)"
-           @mouseleave="$_toggleIconsContainer(false)"
+      <div
+        class="mapgis-ui-graphic-icons-container"
+        :style="{ height: iconsContainerHeight + 'px' }"
+        @mouseenter="$_toggleIconsContainer(true)"
+        @mouseleave="$_toggleIconsContainer(false)"
       >
-        <div class="mapgis-ui-graphic-icon-div"
-             :key="index"
-             v-for="(icon, index) in iconsInfo"
-             @click="$_startDraw(icon.type)"
-             :style="{outline: icon.type === currentIconType ? '1px solid #1890FF' : 'none',margin: enableOneMap ? '10px 9px' : enableMapStory ? '10px 13.7px' : '10px 17px'}"
+        <div
+          class="mapgis-ui-graphic-icon-div"
+          :key="index"
+          v-for="(icon, index) in iconsInfo"
+          @click="$_startDraw(icon.type)"
+          :style="{
+            outline:
+              icon.type === currentIconType ? '1px solid #1890FF' : 'none',
+            margin: enableOneMap
+              ? '10px 7px'
+              : enableMapStory
+              ? '10px 13.7px'
+              : '10px 15px'
+          }"
         >
-          <img @click="$_startDraw(icon.type)"
-               class="mapgis-ui-graphic-icon"
-               :src="icons[icon.type + 'Image']"
-               :title="icon.title" alt="">
+          <img
+            @click="$_startDraw(icon.type)"
+            class="mapgis-ui-graphic-icon"
+            :src="icons[icon.type + 'Image']"
+            :title="icon.title"
+            alt=""
+          />
         </div>
       </div>
     </div>
-    <div class="mapgis-ui-graphic-icons-panel"
-         :style="containerStyle"
-         v-show="currentIconType === 'model'"
+    <div
+      class="mapgis-ui-graphic-icons-panel"
+      :style="containerStyle"
+      v-show="currentIconType === 'model'"
     >
       <div class="mapgis-ui-graphic-icons-head">
         <mapgis-ui-dropdown>
-          <div class="mapgis-ui-graphic-dropdown" @click="e => e.preventDefault()">
+          <div
+            class="mapgis-ui-graphic-dropdown"
+            @click="e => e.preventDefault()"
+          >
             {{ $_getType(currentModelType) }}
-            <mapgis-ui-iconfont type="mapgis-down"/>
+            <mapgis-ui-iconfont type="mapgis-down" />
           </div>
           <mapgis-ui-menu slot="overlay">
             <mapgis-ui-menu-item
               v-for="(model, index) in modelTypes"
               :key="index"
-              @click="$_chooseModelType(model)">
+              @click="$_chooseModelType(model)"
+            >
               <span>{{ $_getType(model) }}</span>
             </mapgis-ui-menu-item>
           </mapgis-ui-menu>
         </mapgis-ui-dropdown>
       </div>
-      <div class="mapgis-ui-graphic-icons-container"
-           :style="{height: modelIconsContainerHeight + 'px'}"
-           @mouseenter="$_toggleModelIconsContainer(true)"
-           @mouseleave="$_toggleModelIconsContainer(false)"
+      <div
+        class="mapgis-ui-graphic-icons-container"
+        :style="{ height: modelIconsContainerHeight + 'px' }"
+        @mouseenter="$_toggleModelIconsContainer(true)"
+        @mouseleave="$_toggleModelIconsContainer(false)"
       >
-        <div class="mapgis-ui-graphic-icon-div"
-             :key="index"
-             v-for="(model, index) in models[currentModelType]"
+        <div
+          class="mapgis-ui-graphic-icon-div"
+          :key="index"
+          v-for="(model, index) in models[currentModelType]"
         >
-          <img @click="$_startDrawModel(model.model, model)"
-               class="mapgis-ui-graphic-icons-model"
-               :style="{width: enableMapStory ? '36px' : '41px'}"
-               :src="model.img" alt="">
+          <img
+            @click="$_startDrawModel(model.model, model)"
+            class="mapgis-ui-graphic-icons-model"
+            :style="{ width: enableMapStory ? '36px' : '41px' }"
+            :src="model.img"
+            alt=""
+          />
         </div>
       </div>
     </div>
@@ -89,7 +116,7 @@
 </template>
 
 <script>
-import icons from "./GraphicBase64Icons"
+import icons from "./GraphicBase64Icons";
 import iconsInfo3D from "./iconsInfo3D";
 import iconsInfo2D from "./iconsInfo2D";
 
@@ -136,7 +163,7 @@ export default {
       //绘制模式，点、线、多边形等
       drawMode: "point",
       //绘制间隔（距离）
-      drawDistance: 500,
+      drawDistance: 100,
       modelRadius: 1000,
       chooseMode: "point",
       drawModes: [
@@ -154,18 +181,26 @@ export default {
         }
       ],
       modelUrl: undefined
-    }
+    };
   },
   watch: {
     models: {
-      handler: function () {
+      handler: function() {
         this.$_init();
       },
       deep: true
     },
     drawMode: {
-      handler: function () {
-        this.$emit("startDrawModel", "model", this.modelUrl, this.drawMode, this.drawDistance, this.modelRadius, 1);
+      handler: function() {
+        this.$emit(
+          "startDrawModel",
+          "model",
+          this.modelUrl,
+          this.drawMode,
+          this.drawDistance,
+          this.modelRadius,
+          1
+        );
       },
       deep: true
     }
@@ -174,12 +209,12 @@ export default {
     this.$_init();
   },
   methods: {
-    $_popupContainer(){
-      return document.querySelector('#mapgis-ui-graphic-icons-head');
+    $_popupContainer() {
+      return document.querySelector("#mapgis-ui-graphic-icons-head");
     },
     $_init() {
       let vm = this;
-      Object.keys(this.models).forEach(function (key) {
+      Object.keys(this.models).forEach(function(key) {
         vm.modelTypes.push(key);
       });
       if (this.modelTypes.length > 0) {
@@ -211,9 +246,11 @@ export default {
     $_toggleModelIconsContainer(flag) {
       let length = Math.ceil(this.iconsInfo.length / 5);
       if (flag) {
-        this.modelIconsContainerHeight = this.modelIconsContainerHeight * length;
+        this.modelIconsContainerHeight =
+          this.modelIconsContainerHeight * length;
       } else {
-        this.modelIconsContainerHeight = this.modelIconsContainerHeight / length;
+        this.modelIconsContainerHeight =
+          this.modelIconsContainerHeight / length;
       }
     },
     //开始绘制
@@ -231,7 +268,15 @@ export default {
         scale = model.scale;
       }
       this.modelUrl = url;
-      this.$emit("startDrawModel", "model", url, this.drawMode, this.drawDistance, this.modelRadius, scale);
+      this.$emit(
+        "startDrawModel",
+        "model",
+        url,
+        this.drawMode,
+        this.drawDistance,
+        this.modelRadius,
+        scale
+      );
     },
     $_chooseModelType(type) {
       this.currentModelType = type;
@@ -263,26 +308,30 @@ export default {
         case "billboard":
           title = "广告牌";
           break;
+        default:
+          title = type;
+          break;
       }
       return title;
     }
   }
-}
+};
 </script>
 
 <style scoped>
 .mapgis-ui-graphic-icons-panel {
   width: 100%;
   height: auto;
-  background: #FFFFFF;
-  border: 1px solid #DCDCDC;
-  margin: 10px 0;
+  /* background: #FFFFFF; */
+  border: 1px solid var(--border-color-split);
+  margin-bottom: 8px;
+  border-radius: 2px;
 }
 
 .mapgis-ui-graphic-icons-head {
   width: 100%;
   height: 32px;
-  border-bottom: 1px solid #DCDCDC;
+  border-bottom: 1px solid var(--border-color-split);
 }
 
 .mapgis-ui-graphic-icons-container {

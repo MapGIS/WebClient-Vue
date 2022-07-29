@@ -1,28 +1,28 @@
 <template>
-    <div :style="{ width: `${width}px`,height:'80px' }">
-        <mapgis-ui-timeline-panel
+    <div class="ponding-simuilation-timeline">
+        <mapgis-ui-plot-timeline
             v-model="sliderValue"
-            :max="pondingTime"
+            :duration="pondingTime"
             :interval="intvl"
             :speed="multiSpeedCopy"
             :speedStep="speedStep"
             :maxSpeed="60"
             :intervalOptions="intvlOptions"
             :intervalPlaceholder="intvlPlaceholder"
-            :tipFormatter="formatter"
-            :isPlaying="playing"
             :currentTime="crtTime"
-            :enableBackforward="false"
-            :disabled="true"
-            :width="width"
-            @startPlay="play"
-            @stopPlay="stop"
+            :curTimeWidth="curTimeWidth"
+            @forward="play"
             @intervalChange="intvlChange"
-            @resetSpeed="resetSpeed"
             @speedChange="spdChange"
-            @decelerate="decelerate"
-            @accelerate="accelerate"
-        ></mapgis-ui-timeline-panel>
+            :pauseActive="!playing"
+            :forwardActive="playing"
+            :enableStart="false"
+            :enableBack="false"
+            :enableEnd="false"
+            :disablePause="true"
+            :disableForward="noForward"
+            ref="timeline"
+        ></mapgis-ui-plot-timeline>
     </div>
 </template>
 
@@ -31,13 +31,9 @@ export default {
     name: "mapgis-3d-ponding-simulation-timeline",
     inject: ["Cesium", "vueCesium", "viewer"],
     props: {
-        value: {
+        costTime: {
             type: Number,
             default: 0,
-        },
-        resetSpeedVal: {
-            type: Number,
-            default: 1,
         },
         speedStep: {
             type: Number,
@@ -47,19 +43,16 @@ export default {
             type: Boolean,
             default: false,
         },
-        width: {
+        curTimeWidth: {
             type: Number,
-            default: 560,
+            default: null,
         }
     },
     watch: {
-        value(e) {
-            this.sliderValue = e;
-        },
         multiSpeedCopy(e) {
             this.$emit('updateSpeed',e)
         },
-        sliderValue:{
+        costTime:{
           handler:function(e){
             this.crtTime = this.formatter(e)
           },
@@ -73,14 +66,29 @@ export default {
         },
         isPlaying: {
             handler: function (e) {
+                const vm = this;
                 this.playing = e;
+                if(e){
+                    vm.noForward = false;
+                    vm.value = 0;
+                    this.$refs.timeline.disableForwardCopy = vm.noForward;
+                    this.$refs.timeline.valueCopy = vm.value;
+                    this.$refs.timeline.forward();
+
+                }else{
+                    this.noForward = false;
+                    if( this.costTime === 0){
+                        this.noForward = true;
+                    }
+                    this.$refs.timeline && this.$refs.timeline.pause();
+                }
             },
             immediate: true,
         },
     },
     data() {
         return {
-            sliderValue: this.value,
+            sliderValue: 0,
             marks: {
                 0: "0:00",
                 4: "4:00",
@@ -94,8 +102,7 @@ export default {
             //积水上涨的时间
             pondingTime: 24,
 
-            
-            timer: undefined,
+            noForward: false,
             playing: this.isPlaying,
             intvl: '时',
             crtTime:undefined,
@@ -116,8 +123,7 @@ export default {
             this.$emit("loaded", this);
         },
         unmount() {
-            let vm = this;
-            vm.sliderValue = 0;
+            this.sliderValue = 0;
         },
         formatter(value) {
           const vm = this;
@@ -129,7 +135,7 @@ export default {
             let m = ms.getMinutes();
             return vm.addT(h) + ':' + vm.addT(m) + ':00';
           }else if(vm.intvl == '秒'){
-            let ms = new Date((value-8*60*60) * 1000);
+            let ms = new Date(( value - 8 * 60 * 60 ) * 1000);
             let h = ms.getHours();
             let m = ms.getMinutes();
             let s = ms.getSeconds();
@@ -139,27 +145,17 @@ export default {
         addT(m) {
             return m < 10 ? '0' + m : m
         }, 
-        resetSpeed(){
-            this.multiSpeedCopy = this.resetSpeedVal;
-        },
-        decelerate(){
-            if(this.multiSpeedCopy >= this.speedStep){
-                this.multiSpeedCopy -= this.speedStep;
-            }
-            this.$emit('decelerate') 
-        },
-        accelerate(){
-            if(this.multiSpeedCopy <= 60 - this.speedStep){
-                this.multiSpeedCopy += this.speedStep;
-            }
-            this.$emit('accelerate') 
-        },
         spdChange(e){
-          this.sliderValue = 0;
-          this.multiSpeedCopy = e;
+            if(this.playing){
+                this.sliderValue = 0;
+            }
+            this.multiSpeedCopy = e;
         },
         intvlChange(e){
           this.intvl = e;
+          if(this.playing){
+            this.sliderValue = 0;
+          }
           this.sliderValue = 0;
 
           const vm = this;
@@ -175,15 +171,8 @@ export default {
         
         /* 开始播放 */
         play() {
-            this.playing = true;
             this.$emit("play");
-        },
-        stop(){
-          this.playing = false;
         },
     },
 };
 </script>
-
-<style scoped>
-</style>

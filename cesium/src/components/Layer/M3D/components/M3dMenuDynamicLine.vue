@@ -1,79 +1,88 @@
 <template>
   <div class="mapgis-3d-m3d-menu-dynamicline">
-    <mapgis-ui-divider> 扫描设置 </mapgis-ui-divider>
-    <mapgis-ui-color-pick-panel
-      transparent
-      label="光线颜色"
-      v-model="lightColor"
-      :disableAlpha="false"
-    />
-    <mapgis-ui-select-panel
-      transparent
-      label="扫描方向"
-      v-model="direction"
-      :selectOptions="Object.keys(directions)"
-    />
+    <mapgis-ui-divider style="fontSize:14px"> 扫描设置 </mapgis-ui-divider>
+    <div class="mapgis-3d-m3d-menu-dynamic-line">
+      <mapgis-ui-color-pick-panel
+        transparent
+        label="光线颜色"
+        v-model="lightColor"
+        :disableAlpha="false"
+        :labelCol="24"
+        :wrapperCol="24"
+      />
+      <mapgis-ui-select-panel
+        transparent
+        label="扫描方向"
+        v-model="direction"
+        :labelCol="24"
+        :wrapperCol="24"
+        :selectOptions="Object.keys(directions)"
+      />
 
-    <mapgis-ui-input-number-panel
-      transparent
-      size="small"
-      label="最小值"
-      v-model="min"
-      :range="[0, 1000]"
-    >
-    </mapgis-ui-input-number-panel>
-
-    <mapgis-ui-input-number-panel
-      transparent
-      size="small"
-      label="最大值"
-      v-model="max"
-      :range="[0, 1000]"
-    >
-    </mapgis-ui-input-number-panel>
-
-    <mapgis-ui-input-number-panel
-      transparent
-      size="small"
-      label="持续时间"
-      v-model="duration"
-      :range="[0, 10000]"
-    >
-    </mapgis-ui-input-number-panel>
-
-    <mapgis-ui-switch-panel
-      v-model="isGridTrail"
-      label="拖尾效果"
-      size="small"
-      layout="horizontal"
-    >
       <mapgis-ui-input-number-panel
         transparent
-        size="small"
-        label="栅格宽度"
-        v-model="gridWidth"
+        size="large"
+        label="最小值"
+        v-model="min"
         :range="[0, 1000]"
       >
       </mapgis-ui-input-number-panel>
-      <mapgis-ui-input-number-panel
-        transparent
-        size="small"
-        label="栅格线宽度"
-        v-model="gridLineWidth"
-        :range="[0, 1000]"
-      >
-      </mapgis-ui-input-number-panel>
-      <mapgis-ui-input-number-panel
-        transparent
-        size="small"
-        label="栅格行数"
-        v-model="gridRowNum"
-        :range="[0, 1000]"
-      >
-      </mapgis-ui-input-number-panel>
-    </mapgis-ui-switch-panel>
 
-    <mapgis-ui-button
+      <mapgis-ui-input-number-panel
+        transparent
+        size="large"
+        label="最大值"
+        v-model="max"
+        :range="[0, 1000]"
+      >
+      </mapgis-ui-input-number-panel>
+
+      <mapgis-ui-input-number-panel
+        transparent
+        size="large"
+        label="持续时间"
+        v-model="duration"
+        :range="[0, 10000]"
+      >
+      </mapgis-ui-input-number-panel>
+
+      <mapgis-ui-switch-panel
+        v-model="isGridTrail"
+        label="拖尾效果"
+        size="small"
+        layout="horizontal"
+      >
+        <mapgis-ui-input-number-panel
+          transparent
+          size="large"
+          label="栅格宽度"
+          v-model="gridWidth"
+          :range="[0, 1000]"
+        >
+        </mapgis-ui-input-number-panel>
+        <mapgis-ui-input-number-panel
+          transparent
+          size="large"
+          label="栅格线宽度"
+          v-model="gridLineWidth"
+          :range="[0, 1000]"
+        >
+        </mapgis-ui-input-number-panel>
+        <mapgis-ui-input-number-panel
+          transparent
+          size="large"
+          label="栅格行数"
+          v-model="gridRowNum"
+          :range="[0, 1000]"
+        >
+        </mapgis-ui-input-number-panel>
+      </mapgis-ui-switch-panel>
+    </div>
+    <mapgis-ui-setting-footer>
+      <mapgis-ui-button type="primary" @click="addEffect">执行动态线</mapgis-ui-button>
+      <mapgis-ui-button @click="removeEffect">删除动态线</mapgis-ui-button>
+    </mapgis-ui-setting-footer>
+    <!-- <mapgis-ui-button
       type="primary"
       @click="addEffect"
       :style="{ width: '100%' }"
@@ -83,7 +92,7 @@
       :style="{ width: '100%', marginTop: '4px', display: 'block' }"
       @click="removeEffect"
       >删除动态线</mapgis-ui-button
-    >
+    > -->
   </div>
 </template>
 
@@ -276,5 +285,9 @@ export default {
 .mapgis-3d-m3d-menu-dynamicline {
   height: 100%;
   width: 100%;
+}
+.mapgis-3d-m3d-menu-dynamic-line {
+  height: 248px;
+  overflow-y: auto;
 }
 </style>

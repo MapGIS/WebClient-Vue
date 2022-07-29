@@ -2,6 +2,7 @@ import * as echarts from "echarts";
 import "echarts-gl";
 
 import { MapCoordSys } from "./MapCoordSys";
+import debounce from "lodash/debounce";
 
 window.EchartsIdIndex = 0;
 
@@ -11,6 +12,9 @@ window.EchartsIdIndex = 0;
  * @description cesium的echars 4.0的实现。后面接手的人，没看懂echarts源码之前请不要改动下面的代码
  * @param map - {Object} 传入的leaflet的地图对象
  * @param options - {Object} echarts.options
+ * @param options.cesium - options.cesium.
+ * @param {Boolean} [options.cesium.postRender=false] 是否实时渲染
+ * @param {Boolean} [options.cesium.postRenderFrame=30] 每间隔多少帧渲染一次
  * @param container - {Element} 外部传入的div;外接的方式使用mapv<br>
  *
  * @see http://echarts.baidu.com/api.html#echarts
@@ -32,6 +36,15 @@ export class EchartsLayer {
 
     /*         this.container = map.container;
         this.addInnerContainer(); */
+
+    this.postRenderTime = 0;
+
+    let cesiumOpt = options.cesium;
+    if (cesiumOpt) {
+      this.postRender = cesiumOpt.postRender || false;
+      this.postRenderFrame = cesiumOpt.postRenderFrame || 30;
+    }
+
     if (container != undefined) {
       this.container = container;
       container.appendChild(this.canvas);
@@ -171,11 +184,14 @@ export class EchartsLayer {
         var cesiumMap = window.EchartCesiumMap[window.EchartsIdIndex]; // echarts.cesiumMap;
         var viewportRoot = api.getZr().painter.getViewportRoot();
         var coordSys = mapModel.coordinateSystem;
-        var moveHandler = function (type, target) {
+        function moveHandler() {
           if (rendering) {
             return;
           }
           self._unvisible();
+          if (!self.map) {
+            self.map = map;
+          }
           var offsetEl = self.map.canvas;
 
           var mapOffset = [
@@ -193,11 +209,15 @@ export class EchartsLayer {
           api.dispatchAction({
             type: "CesiumRoma",
           });
-        };
+          self._visible();
+        }
 
-        var moveEndHandler = function (type, target) {
+        function moveEndHandler(type, target) {
           if (rendering) {
             return;
+          }
+          if (!self.map) {
+            self.map = map;
           }
           var offsetEl = self.map.canvas;
 
@@ -217,7 +237,7 @@ export class EchartsLayer {
             bearing: 0, // self.map,
           });
           self._visible();
-        };
+        }
 
         function zoomStartHandler() {
           self._unvisible();
@@ -227,6 +247,7 @@ export class EchartsLayer {
           api.dispatchAction({
             type: "CesiumRoma",
           });
+          self._visible();
         }
 
         function zoomEndHandler() {
@@ -236,42 +257,105 @@ export class EchartsLayer {
           api.dispatchAction({
             type: "CesiumRoma",
           });
+          self._visible();
         }
 
-        var handler = new Cesium.ScreenSpaceEventHandler(self.scene.canvas);
+        function postHandler(type, target) {
+          self.postRenderTime >= 1000
+            ? (self.postRenderTime = 0)
+            : self.postRenderTime++;
+          if (self.postRenderTime % self.postRenderFrame !== 0) {
+            return;
+          }
+          if (rendering) {
+            return;
+          }
+          if (!self.map) {
+            self.map = map;
+          }
+          var offsetEl = self.map.canvas;
 
-        if (self.initStats == false) {
-          self.initStats = true;
+          var mapOffset = [
+            -parseInt(offsetEl.style.left, 10) || 0,
+            -parseInt(offsetEl.style.top, 10) || 0,
+          ];
+          viewportRoot.style.left = mapOffset[0] + "px";
+          viewportRoot.style.top = mapOffset[1] + "px";
+
+          coordSys.setMapOffset(mapOffset);
+          mapModel.__mapOffset = mapOffset;
+
+          api.dispatchAction({
+            type: "CesiumRoma",
+            pitch: 0, // self.map.camera.pitch,
+            bearing: 0, // self.map,
+          });
+          self._visible();
+        }
+
+        if (self.postRender) {
+          var handler = new Cesium.ScreenSpaceEventHandler(self.scene.canvas);
           handler.setInputAction(
-            zoomStartHandler,
+            () => self.scene.postRender.addEventListener(postHandler),
+            Cesium.ScreenSpaceEventType.MOUSE_MOVE
+          );
+          handler.setInputAction(
+            () => self.scene.postRender.addEventListener(postHandler),
             Cesium.ScreenSpaceEventType.WHEEL
           );
           handler.setInputAction(
-            moveHandler,
+            () => self.scene.postRender.addEventListener(postHandler),
             Cesium.ScreenSpaceEventType.LEFT_DOWN
           );
           handler.setInputAction(
-            moveEndHandler,
-            Cesium.ScreenSpaceEventType.LEFT_UP
-          );
-          handler.setInputAction(
-            moveHandler,
+            () => self.scene.postRender.addEventListener(postHandler),
             Cesium.ScreenSpaceEventType.RIGHT_DOWN
           );
           handler.setInputAction(
-            moveEndHandler,
+            () => self.scene.postRender.removeEventListener(postHandler),
+            Cesium.ScreenSpaceEventType.LEFT_UP
+          );
+          handler.setInputAction(
+            () => self.scene.postRender.removeEventListener(postHandler),
             Cesium.ScreenSpaceEventType.RIGHT_UP
           );
-          self.map.scene.camera.moveEnd.addEventListener(function () {
-            //获取当前相机高度
-            moveEndHandler();
-          });
-          //cesiumMap.scene.camera.moveStart.addEventListener(zoomStartHandler);
-          //cesiumMap.scene.camera.moveEnd.addEventListener(moveEndHandler);
-        }
+        } else {
+          var handler = new Cesium.ScreenSpaceEventHandler(self.scene.canvas);
 
-        this._oldMoveHandler = moveHandler;
-        this._oldZoomEndHandler = zoomEndHandler;
+          if (self.initStats == false) {
+            self.initStats = true;
+            handler.setInputAction(
+              zoomStartHandler,
+              Cesium.ScreenSpaceEventType.MOUSE_MOVE
+            );
+            handler.setInputAction(
+              zoomStartHandler,
+              Cesium.ScreenSpaceEventType.WHEEL
+            );
+            handler.setInputAction(
+              moveHandler,
+              Cesium.ScreenSpaceEventType.LEFT_DOWN
+            );
+            handler.setInputAction(
+              moveEndHandler,
+              Cesium.ScreenSpaceEventType.LEFT_UP
+            );
+            handler.setInputAction(
+              moveHandler,
+              Cesium.ScreenSpaceEventType.RIGHT_DOWN
+            );
+            handler.setInputAction(
+              moveEndHandler,
+              Cesium.ScreenSpaceEventType.RIGHT_UP
+            );
+            self.map.scene.camera.moveEnd.addEventListener(function () {
+              //获取当前相机高度
+              moveEndHandler();
+            });
+            //cesiumMap.scene.camera.moveStart.addEventListener(zoomStartHandler);
+            //cesiumMap.scene.camera.moveEnd.addEventListener(moveEndHandler);
+          }
+        }
 
         var roam = mapModel.get("roam");
         if (roam && roam !== "scale") {
@@ -357,5 +441,11 @@ export class EchartsLayer {
       this.canvas.parentElement.removeChild(this.canvas);
     this.map = undefined;
     return this;
+  }
+
+  _reset() {
+    this._resizeCanvas();
+
+    // this.resize();
   }
 }

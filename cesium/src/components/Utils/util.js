@@ -1,9 +1,11 @@
-export const checkType = val =>
+import * as turf from "@turf/turf";
+
+export const checkType = (val) =>
   Object.prototype.toString.call(val).slice(8, -1);
 
-export const toKebabCase = str =>
+export const toKebabCase = (str) =>
   str
-    .replace(new RegExp("[A-Z]", "g"), letter => `-${letter.toLowerCase()}`)
+    .replace(new RegExp("[A-Z]", "g"), (letter) => `-${letter.toLowerCase()}`)
     .replace(new RegExp("^-"), "");
 /**
  * 通过 class 名获取 Dom 元素。
@@ -14,7 +16,7 @@ export const getDocumentByClassName = (htmlCollection, className) => {
   let temp;
   const BreakException = {};
   try {
-    Array.prototype.slice.call(htmlCollection).forEach(element => {
+    Array.prototype.slice.call(htmlCollection).forEach((element) => {
       if (element.className === className) {
         temp = element;
         throw BreakException;
@@ -25,6 +27,7 @@ export const getDocumentByClassName = (htmlCollection, className) => {
   }
   return temp;
 };
+
 /**
  * 判断传入的对象是否是方法。
  * @param {*} value
@@ -115,6 +118,7 @@ export function lnglatValidator(longitude, latitude) {
   }
   return true;
 }
+
 /**
  * 普通对象 {x: number, y: number } 转换为 Cesium.Cartesian2 对象
  * @param {Object} val
@@ -149,7 +153,7 @@ export function makeCartesian3Array(vals) {
   }
 
   const coordinates = [];
-  vals.forEach(item => {
+  vals.forEach((item) => {
     coordinates.push(item.lng);
     coordinates.push(item.lat);
     coordinates.push(item.height);
@@ -159,6 +163,7 @@ export function makeCartesian3Array(vals) {
     ? Cesium.Cartesian3.fromDegreesArrayHeights(coordinates)
     : vals;
 }
+
 /**
  * 普通数组 [lng, lat, ……，lng, lat] 转换为 Cesium.Cartesian2 数组
  * @param {Array} vals
@@ -166,7 +171,7 @@ export function makeCartesian3Array(vals) {
  */
 export function makeCartesian2Array(vals) {
   const cartesian2Array = [];
-  vals.forEach(item => {
+  vals.forEach((item) => {
     cartesian2Array.push(new Cesium.Cartesian2(item.x, item.y));
   });
   return cartesian2Array;
@@ -185,7 +190,7 @@ export function makeQuaternion(val) {
  * @param {Object} val
  */
 function parsePolygonHierarchyJson(val) {
-  val.forEach(element => {
+  val.forEach((element) => {
     element.positions = makeCartesian3Array(element.positions);
     if (element.holes) {
       parsePolygonHierarchyJson(element.holes);
@@ -208,6 +213,7 @@ export function makePolygonHierarchy(val) {
 
   return val;
 }
+
 /**
  * 普通对象 {near: number, nearValue: number, far: number, farValue: number} 转 Cesium.NearFarScalar 对象。
  * @param {Object} val
@@ -219,6 +225,7 @@ export function makeNearFarScalar(val) {
     new Cesium.NearFarScalar(val.near, val.nearValue, val.far, val.farValue)
   );
 }
+
 /**
  * 普通对象 {near: number, far: number} 转 Cesium.DistanceDisplayCondition 对象。
  * @param {Object} val
@@ -227,6 +234,7 @@ export function makeNearFarScalar(val) {
 export function makeDistanceDisplayCondition(val) {
   return val && new Cesium.DistanceDisplayCondition(val.near, val.far);
 }
+
 /**
  * 普通对象或数组 [r, g, b, a] 或字符串转 Cesium.Color 对象。
  * @param {String|Array|Object} val
@@ -412,7 +420,7 @@ export function Platform() {
     isPhone: isPhone,
     isAndroid: isAndroid,
     isPc: isPc,
-    isChrome: isChrome
+    isChrome: isChrome,
   };
 }
 
@@ -420,7 +428,7 @@ export function captureScreenshot(viewer, showSplitter = false) {
   const { when } = Cesium;
   const deferred = when.defer();
   const scene = viewer.scene;
-  var removeCallback = scene.postRender.addEventListener(function() {
+  var removeCallback = scene.postRender.addEventListener(function () {
     removeCallback();
     try {
       const cesiumCanvas = viewer.scene.canvas;
@@ -455,11 +463,12 @@ export function captureScreenshot(viewer, showSplitter = false) {
 }
 
 export function getAllAttribution(viewer) {
-  const credits = viewer.scene.frameState.creditDisplay._currentFrameCredits.screenCredits.values.concat(
-    viewer.scene.frameState.creditDisplay._currentFrameCredits.lightboxCredits
-      .values
-  );
-  return credits.map(credit => credit.html);
+  const credits =
+    viewer.scene.frameState.creditDisplay._currentFrameCredits.screenCredits.values.concat(
+      viewer.scene.frameState.creditDisplay._currentFrameCredits.lightboxCredits
+        .values
+    );
+  return credits.map((credit) => credit.html);
 }
 
 /**
@@ -492,7 +501,7 @@ export function last(array) {
  * 随机生成一个guid
  * @returns {string}
  */
-export const newGuid = function() {
+export const newGuid = function () {
   let guid = "";
   for (let i = 1; i <= 32; i++) {
     let n = Math.floor(Math.random() * 16.0).toString(16);
@@ -512,13 +521,16 @@ export function uuid() {
   if (window.performance && typeof window.performance.now === "function") {
     d += performance.now();
   }
-  const UuidStr = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
-    // tslint:disable-next-line: no-bitwise
-    const r = (d + Math.random() * 16) % 16 | 0;
-    d = Math.floor(d / 16);
-    // tslint:disable-next-line: no-bitwise
-    return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
-  });
+  const UuidStr = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+    /[xy]/g,
+    (c) => {
+      // tslint:disable-next-line: no-bitwise
+      const r = (d + Math.random() * 16) % 16 | 0;
+      d = Math.floor(d / 16);
+      // tslint:disable-next-line: no-bitwise
+      return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+    }
+  );
   return UuidStr;
 }
 
@@ -529,7 +541,7 @@ export function uuid() {
  */
 export function getCamera(viewer) {
   let camera = {
-    positionCartographic: {}
+    positionCartographic: {},
   };
   camera.positionCartographic.height =
     viewer.camera.positionCartographic.height;
@@ -541,4 +553,44 @@ export function getCamera(viewer) {
   camera.pitch = viewer.scene.camera.pitch;
   camera.roll = viewer.scene.camera.roll;
   return camera;
+}
+
+export function getPolygonSamplePoints(options) {
+  options = options || {};
+  let { positions } = options;
+  let { step } = options;
+  if (!positions || !step) return;
+  let line = turf.lineString(positions);
+  let bbox = turf.bbox(line);
+  let bboxPolygon = turf.bboxPolygon(bbox);
+  let { coordinates } = bboxPolygon.geometry;
+  let points = coordinates[0];
+  let width = points[1][0] - points[0][0];
+  let height = points[3][1] - points[0][1];
+  let widthStep = width / step;
+  let heightStep = height / step;
+  let ps = [],
+    result = [],
+    startP = [points[0][0], points[0][1]];
+  for (let i = 0; i < step; i++) {
+    startP[0] = points[0][0];
+    for (let j = 0; j < step; j++) {
+      startP[0] += widthStep;
+      ps.push([startP[0], startP[1]]);
+    }
+    startP[1] += heightStep;
+  }
+  let pArr = [];
+  for (let i = 0; i < positions.length; i++) {
+    pArr.push(positions[i]);
+  }
+  let polygon = turf.polygon([pArr]);
+  for (let i = 0; i < ps.length; i++) {
+    let point = turf.point([ps[i][0], ps[i][1]]);
+    let flag = turf.booleanPointInPolygon(point, polygon);
+    if (flag) {
+      result.push(ps[i]);
+    }
+  }
+  return result;
 }

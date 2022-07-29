@@ -45,10 +45,10 @@
       </div>
     </mapgis-ui-row>
     <mapgis-ui-row v-show="showAddInternetImg" style="margin-top: 10px;padding-left: 7px;">
-      <mapgis-ui-col span="17">
+      <mapgis-ui-col span="15">
         <mapgis-ui-input placeholder="请输入图片的Url地址" v-model="internetImg"/>
       </mapgis-ui-col>
-      <mapgis-ui-col span="7" style="padding-left: 12px">
+      <mapgis-ui-col span="8" style="padding-left: 12px">
         <mapgis-ui-button type="primary" @click="$_addInternetImg">确定</mapgis-ui-button>
       </mapgis-ui-col>
     </mapgis-ui-row>
@@ -88,7 +88,7 @@ export default {
       type: Object,
       default() {
         return {
-          color: "#747070",
+          // color: "#747070",
           top: "-4px",
           left: "0",
           fontWeight: "border"
@@ -290,13 +290,14 @@ export default {
 
 <style scoped>
 .mapgis-ui-choose-picture-right-img-title {
-  font-weight: bolder;
+  /* font-weight: bolder; */
   position: relative;
   margin-top: 11px;
   margin-bottom: 11px;
   padding-left: 12px;
   width: 30%;
   float: left;
+  color: var(--heading-color)
 }
 
 .mapgis-ui-choose-picture-right-image {
@@ -348,7 +349,7 @@ export default {
 }
 
 .mapgis-ui-choose-picture-right-upload {
-  border: 1px dashed #CCCCCC;
+  border: 1px dashed var(--border-color-split);
 }
 
 .mapgis-ui-choose-picture-right-icon-container {

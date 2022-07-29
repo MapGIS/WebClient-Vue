@@ -1,8 +1,8 @@
 <template>
   <div>
     <slot>
-      <mapgis-ui-group-tab title="模型" :has-top-margin="false">
-        <mapgis-ui-tooltip slot="handle" placement="bottomRight">
+      <mapgis-ui-group-tab title="模型">
+        <mapgis-ui-tooltip slot="tip" placement="top">
           <template slot="title">
             <span>{{ info }}</span>
           </template>
@@ -18,7 +18,7 @@
             v-for="(option, index) in checkboxOptions"
             :key="`model-${index}`"
           >
-            <mapgis-ui-checkbox :value="option.value">
+            <mapgis-ui-checkbox :value="option.value" style="line-height:32px;" >
               {{ option.label }}
             </mapgis-ui-checkbox>
           </mapgis-ui-row>
@@ -44,7 +44,7 @@
         </mapgis-ui-radio-group>
       </mapgis-ui-row>
       <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
-      <mapgis-ui-setting-form :label-width="72">
+      <mapgis-ui-setting-form :layout="layout" size="default">
         <mapgis-ui-form-item label="剖面颜色">
           <mapgis-ui-sketch-color-picker
             :color.sync="colorCopy"
@@ -60,7 +60,8 @@
             style="width: 100%"
           />
         </mapgis-ui-form-item>
-        <mapgis-ui-form-item label="剖切距离">
+        
+        <!-- <mapgis-ui-form-item label="剖切距离">
           <mapgis-ui-slider
             v-model="distanceCopy"
             :min="min"
@@ -68,8 +69,16 @@
             @change="setDistance"
             :disabled="readonly"
           />
-        </mapgis-ui-form-item>
+        </mapgis-ui-form-item> -->
       </mapgis-ui-setting-form>
+      <mapgis-ui-input-number-panel
+          size="large"
+          label="剖切距离"
+          :range="[min, max]"
+          v-model="distanceCopy"
+          @change="setDistance"
+          :disabled="readonly"
+        />
       <mapgis-ui-setting-footer>
         <mapgis-ui-button type="primary" @click="startClipping">
           分析
@@ -112,7 +121,11 @@ export default {
     distance: {
       type: Number,
       default: 0
-    }
+    },
+    layout: {
+      type: String,
+      default: "vertical" // 'horizontal' 'vertical' 'inline'
+    },
   },
   data() {
     return {
@@ -178,6 +191,12 @@ export default {
       immediate: true,
       handler: function() {
         this.colorCopy = this.color;
+      }
+    },
+    colorCopy: {
+      immediate: true,
+      handler: function() {
+        this.changePlaneColor(this._edgeColor());
       }
     },
     time: {
@@ -271,13 +290,13 @@ export default {
     },
 
     /**
-     * 判断传入的m3d图层是否加载完毕
+     * 判断传入的m3d、Cesium3DTileset图层是否加载完毕
      */
     _m3dIsReady() {
       const { vueKey, checked } = this;
       return new Promise((resolve, reject) => {
         if (checked.length > 0) {
-          this.$_getM3DSetArray(
+          this.$_getAll3DTileSetArray(
             function(m3ds) {
               if (m3ds && m3ds.length > 0) {
                 resolve(m3ds);
@@ -327,6 +346,23 @@ export default {
       if (dynamicSectionAnalysis) {
         // 设置剖切面距离
         dynamicSectionAnalysis.distance = value;
+      }
+    },
+    /**
+     * 修改剖切面颜色
+     */
+    changePlaneColor(value) {
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.DynamicSectionAnalysisManager.findSource(
+        vueKey,
+        vueIndex
+      );
+      if (find) {
+        let { options } = find;
+        let { dynamicSectionAnalysis } = options;
+        if (dynamicSectionAnalysis) {
+          dynamicSectionAnalysis.changePlaneColor(value);
+        }
       }
     },
     /**
@@ -482,10 +518,9 @@ export default {
       const boundingSphere = this.Cesium.AlgorithmLib.mergeLayersBoundingSphere(
         m3dSetArray
       );
-      const layersBoundingSphereCenter = boundingSphere.center;
       for (let i = 0; i < m3dSetArray.length; i++) {
         const m3d = m3dSetArray[i];
-        const range = this._getM3DSetRange(m3d, layersBoundingSphereCenter);
+        const range = this._getM3DSetRange(m3d, boundingSphere);
         if (!range) {
           continue;
         }
@@ -513,10 +548,14 @@ export default {
     /**
      * 获取一个m3d的包围盒范围(以最大包围盒中心点为原点)
      */
-    _getM3DSetRange(m3dSet, layersBoundingSphereCenter) {
+    _getM3DSetRange(m3dSet, boundingSphere) {
       // m3dSet.debugShowBoundingVolume = true;
       // 如果模型未加载完，这里transform为undefined
-      const transform = m3dSet._transform;
+      // const transform = m3dSet._transform;
+      const layersBoundingSphereCenter = boundingSphere.center;
+      const layersBoundingSphereRadius = boundingSphere.radius;
+      const transform = m3dSet._root.computedTransform;
+      let xmin, ymin, xmax, ymax, zmin, zmax;
       if (!transform) {
         return null;
       }
@@ -524,6 +563,22 @@ export default {
         transform,
         new Cesium.Matrix4()
       );
+
+      if (m3dSet.constructor.name == "Cesium3DTileset") {
+        let range = { xmin, ymin, xmax, ymax, zmin, zmax };
+        Object.keys(range).forEach(item => {
+          if (item == "xmin" || item == "ymin")
+            range[item] = -layersBoundingSphereRadius;
+          if (item == "xmax" || item == "ymax")
+            range[item] = layersBoundingSphereRadius;
+          if (item == "zmin")
+            range[item] = -layersBoundingSphereRadius/2;
+          if (item == "zmax")
+            range[item] = layersBoundingSphereRadius/2;
+        })
+        return range;
+      }
+
       // 东北角
       const northeastCornerCartesian =
         m3dSet._root.boundingVolume.northeastCornerCartesian;
@@ -542,8 +597,8 @@ export default {
         southwestCornerCartesian,
         new Cesium.Cartesian3()
       );
-      const zmin = m3dSet._root.boundingVolume.minimumHeight;
-      const zmax = m3dSet._root.boundingVolume.maximumHeight;
+      zmin = m3dSet._root.boundingVolume.minimumHeight;
+      zmax = m3dSet._root.boundingVolume.maximumHeight;
       // 模型中心点本地坐标
       // const centerLocal = {
       //   x: (northeastCornerLocal.x + southwestCornerLocal.x) / 2,
@@ -580,10 +635,10 @@ export default {
         new Cesium.Cartesian3()
       );
 
-      const xmin = southwestCornerLocal.x - layersBoundingSphereCenterLocal.x;
-      const ymin = southwestCornerLocal.y - layersBoundingSphereCenterLocal.y;
-      const xmax = northeastCornerLocal.x - layersBoundingSphereCenterLocal.x;
-      const ymax = northeastCornerLocal.y - layersBoundingSphereCenterLocal.y;
+      xmin = southwestCornerLocal.x - layersBoundingSphereCenterLocal.x;
+      ymin = southwestCornerLocal.y - layersBoundingSphereCenterLocal.y;
+      xmax = northeastCornerLocal.x - layersBoundingSphereCenterLocal.x;
+      ymax = northeastCornerLocal.y - layersBoundingSphereCenterLocal.y;
       return { xmin, ymin, xmax, ymax, zmin, zmax };
     }
   }
@@ -592,11 +647,11 @@ export default {
 
 <style scoped>
 ::v-deep .mapgis-ui-checkbox-wrapper {
-  font-size: 12px;
+  /* font-size: 12px; */
 }
 
 ::v-deep .mapgis-ui-radio-wrapper {
-  font-size: 12px;
+  /* font-size: 12px; */
 }
 
 .model {
@@ -605,6 +660,6 @@ export default {
 }
 
 .checkbox {
-  font-size: 12px;
+  /* font-size: 12px; */
 }
 </style>

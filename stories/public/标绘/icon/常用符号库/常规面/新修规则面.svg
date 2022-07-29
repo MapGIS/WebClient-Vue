@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="200" version="1.1" height="200" id="svg2" xmlns="http://www.w3.org/2000/svg"
+   xmlns:zondyPlotSymbol="https://www.mapgis.com" xmlns:zondyPlotSymbolItem="https://www.mapgis.com"
+   zondyPlotSymbol:version="1.0" zondyPlotSymbol:id="svg003" zondyPlotSymbol:name="" zondyPlotSymbol:desc=""
+   zondyPlotSymbol:type="simplearea" zondyPlotSymbol:pose="1">
+   <defs id="defs9864" />
+   <path    zondyPlotSymbolItem:type="10" id="rect4154" style="fill:none;stroke:#ff0000;stroke-width:10;stroke-linecap:square"
+      d="M 0,0 H 200 V 200 H 0 Z" />
+   <!-- <g  zondyPlotSymbolItem:type="21" id="g4178" style="display:inline">
+      <path  style="fill:#00ff00;fill-opacity:1;stroke:none" id="path3825-4"
+         d="m 82.360207,149.12734 11.76825,20.3832 h -23.53649 z m -48.882506,-1.28378 11.768247,20.3832 H 21.709452 Z m 22.621655,-21.6868 11.768251,20.3832 h -23.5365 z" />
+      <path  style="fill:#ff0000;fill-opacity:1;stroke:none" id="path3825-4-0"
+         d="m 169.15688,47.2371 11.76825,20.3832 h -23.53649 z m -48.8825,-1.28378 11.76824,20.3832 h -23.53649 z m 22.62165,-21.6868 11.76825,20.3832 h -23.5365 z" />
+   </g> -->
+   <!-- 右 -->
+   <path zondyPlotSymbolItem:type="13" zondyPlotSymbolItem:markerOrigin="160,100" zondyPlotSymbolItem:markerOffset="0.25" style="fill:#ff0000;fill-opacity:1;stroke:none" id="path4143" d="M 159.3427,107.36842 184.19984,99.699241 159.3427,92.330822" angle="0"/>
+   <!-- 左 -->
+   <path zondyPlotSymbolItem:type="13" zondyPlotSymbolItem:markerOrigin="39,100" zondyPlotSymbolItem:markerOffset="0.75"  style="fill:#ff0000;fill-opacity:1;stroke:none" id="path3784" d="m 40.622952,92.631578 -23.849623,7.36842 23.849623,7.368422" angle="180"/>
+   <!-- 上 -->
+   <path zondyPlotSymbolItem:type="13" zondyPlotSymbolItem:markerOrigin="100,73" zondyPlotSymbolItem:markerOffset="0" style="fill:#ff0000;fill-opacity:1;stroke:none" id="path4139" d="M 107.06767,74.50052 100,52.049385 92.932333,74.50052" angle="90"/>
+   <!-- 下 -->
+   <path zondyPlotSymbolItem:type="13" zondyPlotSymbolItem:markerOrigin="100,143" zondyPlotSymbolItem:markerOffset="0.5" style="fill:#ff0000;fill-opacity:1;stroke:none" id="path4141" d="m 107.06767,142.57609 -7.06766,22.15037 -7.067673,-22.15037" angle="270"/>
+    <!-- <text zondyPlotSymbolItem:pose="1"   zondyPlotSymbolItem:type="22" x="84.268074" y="92.17057"  RelativeToBorder="Forward" style="font-style:normal;font-weight:normal;font-size:15.86400509px;line-height:125%;font-family:Arial;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none" id="text3916" xml:space="preserve">
+        <tspan x="84.268074" y="92.17057" id="tspan3918">PBQ</tspan>
+    </text>
+    <text  zondyPlotSymbolItem:pose="0"   zondyPlotSymbolItem:type="22" x="76.669983" y="120"   RelativeToBorder="Forward" style="font-style:normal;font-weight:normal;font-size:15.34123993px;line-height:125%;font-family:Arial;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none" id="text3920" xml:space="preserve">
+        <tspan  x="76.669983" y="120" id="tspan3922">12JHS</tspan>
+    </text>
+    <path zondyPlotSymbolItem:pose="0" zondyPlotSymbolItem:type="22" RelativeToBorder="Forward"  style="fill:none;stroke:#ff0000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" id="path4158" d="m 74.302657,100.67669 53.682983,0"/>
+    <path zondyPlotSymbolItem:pose="0"  zondyPlotSymbolItem:type="22" RelativeToBorder="Forward"  style="fill:none;stroke:#ff0000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" id="path4144" d="m 148.00422,116.29397 c 0,2.46359 -1.99714,4.46073 -4.46073,4.46073 -2.4636,0 -4.46073,-1.99714 -4.46073,-4.46073 0,-2.4636 1.99713,-4.46074 4.46073,-4.46074 2.46359,0 4.46073,1.99714 4.46073,4.46074 z m -4.49156,-34.165974 0,30.826094 m 7.18387,-23.207446 0,15.652546 m -14.30609,-15.652546 0,15.652546"/>
+    <path  zondyPlotSymbolItem:pose="0"   zondyPlotSymbolItem:type="22" RelativeToBorder="Forward"  style="fill:none;stroke:#ff0000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" id="path3910" d="m 49.533888,120.42809 13.467685,0 m -6.418942,-38.389596 0,36.355096 m 8.472386,-27.369962 0,18.460002 m -16.872042,-18.460002 0,18.460002"/> -->
+</svg>

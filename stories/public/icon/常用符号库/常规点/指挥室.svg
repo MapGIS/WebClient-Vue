@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="200" version="1.1" height="200" id="svg2" xmlns="http://www.w3.org/2000/svg"
+   xmlns:zondyPlotSymbol="https://www.mapgis.com" xmlns:zondyPlotSymbolItem="https://www.mapgis.com"
+   zondyPlotSymbol:version="1.0" zondyPlotSymbol:id="svg003" zondyPlotSymbol:name="指挥室" zondyPlotSymbol:desc=""
+   zondyPlotSymbol:type="simplepoint" zondyPlotSymbol:pose="1">
+   <path
+      style="fill:none;stroke:#ff0000;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+      d="m 82,76 h 36" id="path12622" />
+   <path
+      style="fill:none;stroke:#ff0000;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+      d="m 82,105 h 36" id="path12624" />
+   <path
+      style="fill:none;stroke:#fe0000;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+      d="M 66.206897,180.24631 100,130.54187 l 33.37557,49.39624 z" id="path12616" />
+   <path
+      style="fill:none;stroke:#ff0000;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+      d="M 100,130.54187 V 28.571429" id="path12618" />
+   <path
+      style="fill:none;stroke:#ff0000;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+      d="m 82,50 h 36" id="path12620" />
+</svg>

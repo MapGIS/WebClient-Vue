@@ -14,18 +14,20 @@ Vue.use(MapgisMapboxComponents, {});
 Vue.use(MapgisCesiumComponents, {});
 
 window.webclient = {
-  ip: "develop.smaryun.com",
-  port: "8089",
+  ip: "192.168.82.89",
+  port: "8086/storybook",
+  igsIp: "192.168.199.71",
+  igsPort: "8089",
 };
 
 window.glyphs = "igs/rest/mrcs/vtiles/fonts"; //java版igs用这个接口
 // window.glyphs = "igs/rest/mrms/vtiles/fonts";//司马云用这个接口
 
 window.VueCesiumLibPath =
-  "http://develop.smaryun.com/static/libs/cdn/cesium/Cesium.js";
+  `http://${window.webclient.ip}:${window.webclient.port}/cesium/Cesium.js`;
 
 window.VueCesiumPluginPath =
-  "http://develop.smaryun.com/static/libs/cdn/cesium/webclient-cesium-plugin.min.js";
+  `http://${window.webclient.ip}:${window.webclient.port}/cesium/webclient-cesium-plugin.min.js`;
 
 async function initConfig() {
   const res = await axios.get("./config.json");
@@ -33,7 +35,7 @@ async function initConfig() {
   Object.keys(data).forEach((key) => {
     window[key] = data[key];
   });
-  console.log('当前站点的环境配置是:', data);
+  console.log("当前站点的环境配置是:", data);
 }
 
 initConfig();

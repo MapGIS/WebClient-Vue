@@ -15,7 +15,7 @@ export default {
     baseUrl:{
       description: "输入图层的baseUrl",
       table:{
-        defaultValue: { summary: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/layers` },
+        defaultValue: { summary: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/layers` },
       },
       control:'text'
     },
@@ -47,7 +47,7 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   data() {
     return {
-      // baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/layers`,
+      // baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/layers`,
       finishedResult: false,
       resultLayer: "",
       addResultToLayer: false
@@ -76,7 +76,7 @@ export const Overlay = Template.bind({});
 Overlay.args = {
   srcType: "Layer",
   // srcType: "Feature",
-  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/layers`,
+  baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/layers`,
   srcALayer: "gdbp://MapGISLocal/Templates/sfcls/湖北省市级区划",
   srcBLayer: "gdbp://MapGisLocal/专题图数据/sfcls/县城驻地",
   srcAFeature: {

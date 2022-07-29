@@ -18,7 +18,8 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       g3d: {
-        url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/场景图层-分层分户/SceneServer`,
+        url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/场景图层-分层分户/SceneServer`,
+        // url: "http://192.168.199.71:8089/igs/rest/services/图数据/分层分户0629/SceneServer",
         vueIndex: "test_g3d_layer1",
       },
     };
@@ -30,7 +31,8 @@ const Template = (args, { argTypes }) => ({
   },
   template: `<mapgis-web-scene @load="handleMapload" style="height:95vh">    
     <mapgis-3d-scene-layer v-bind="g3d" />
-    <mapgis-3d-stratified-household v-bind="$props" />
+    <mapgis-3d-stratified-household style="position: absolute;top: 10px;left: 10px;" v-bind="$props" />
+
     <mapgis-3d-statebar />
   </mapgis-web-scene>`,
 });
@@ -46,6 +48,8 @@ export const 分层分户 = Template.bind({});
       vueIndex: "test_g3d_layer1",
     },
   ],
+  dataStoreIp: "192.168.199.50",
+  dataStoreDataset: "Graph3/GraphDataset1",
 };
 
 分层分户.parameters = {

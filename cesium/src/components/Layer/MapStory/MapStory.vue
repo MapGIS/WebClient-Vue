@@ -111,6 +111,7 @@ export default {
           break;
         }
       }
+      this.$_save();
     },
     //删除章节
     $_deleteChapter(index, uuid) {
@@ -154,6 +155,7 @@ export default {
         "chapters": []
       };
       this.dataSourceCopy.push(story);
+      this.$_save();
     },
     $_storyPreview(story) {
       if (!this.enableOneMap) {

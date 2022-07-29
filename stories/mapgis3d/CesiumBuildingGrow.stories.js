@@ -27,14 +27,15 @@ const Template = (args, {argTypes}) => ({
                                url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752"/>
       <mapgis-3d-m3d-layer
           :url="m3d" vueIndex="test_building_layer"/>
-      <mapgis-3d-building-grow vueIndex="test_building_layer" v-if="loadedM3d"/>
+      <mapgis-3d-building-grow style="position: absolute;bottom: 100px;left: 10px;" vueIndex="test_building_layer" :initIsHideNode="initIsHideNode" v-if="loadedM3d"/>
       </mapgis-web-scene>
     `,
 });
 
 export const buildingGrow = Template.bind({});
 buildingGrow.args = {
-    m3d: 'http://192.168.88.204:8089/M3D/2.0/BIM%E6%A8%A1%E5%9E%8B%E7%94%9F%E9%95%BFtime/BIM%E6%A8%A1%E5%9E%8B%E7%94%9F%E9%95%BFtime.mcj'
+    m3d: `http://${window.webclient.ip}:${window.webclient.port}/M3D/2.0/BIM%E6%A8%A1%E5%9E%8B%E7%94%9F%E9%95%BFtime/BIM%E6%A8%A1%E5%9E%8B%E7%94%9F%E9%95%BFtime.mcj`,
+    initIsHideNode: false
 };
 buildingGrow.parameters = {
     docs: {

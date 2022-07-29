@@ -28,6 +28,11 @@ export default {
       type: Number,
       default: 50000
     },
+    // 显示柱状体的高度，实际高度 = 属性字段值 * heightScale
+    heightScale: {
+      type: Number,
+      default: 1
+    },
     // 是否为饼状体添加高度
     addExtrudedHeight: {
       type: Boolean,
@@ -47,6 +52,18 @@ export default {
     textHeightOffset: {
       type: Number,
       default: 10000
+    },
+    // 字体高度的可见性，相机高度高于该值时文字不可见
+    textScale: {
+      type: Object,
+      default: function() {
+        return {
+          near: 0,
+          nearValue: 1,
+          far: 5000000,
+          farValue: 0
+        }
+      }
     }
   },
   computed: {
@@ -61,14 +78,26 @@ export default {
     }
   },
   watch: {
-    // geojson: {
-    //   deep: true,
-    //   handler() {
-    //     if (this.geojson) {
-    //       this.addGraphLayer();
-    //     }
-    //   }
-    // },
+    geojson: {
+      deep: true,
+      handler() {
+        if (this.geojson) {
+          this.addGraphLayer();
+        }
+      }
+    },
+    heightScale: {
+      deep: true,
+      handler() {
+        this.addGraphLayer();
+      }
+    },
+    textScale : {
+      deep: true,
+      handler() {
+        this.addGraphLayer();
+      }
+    }
     // type: {
     //   deep: true,
     //   handler() {
@@ -80,7 +109,8 @@ export default {
   },
   data() {
     return {
-      thematicMapLayer: undefined
+      thematicMapLayer: undefined,
+      handler: undefined
     };
   },
   created() {
@@ -104,6 +134,10 @@ export default {
     },
     unmount() {
       this.removeGraphLayer();
+      this.handler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+      this.handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      this.handler.destroy();
+      this.handler = undefined;
       this.$emit("unload", this);
     },
     addGraphLayer() {
@@ -112,6 +146,7 @@ export default {
         const { Cesium, viewer } = this;
         this.thematicMapLayer = new Cesium.ThemeManager(viewer);
         this.thematicMapLayer.width = this.width;
+        this.thematicMapLayer.heightScale = this.heightScale;
         this.thematicMapLayer.attributeName = this.attributeName;
         this.thematicMapLayer.addGeoGeometry = false;
         this.thematicMapLayer.attributeColor = this.ceisumColors;
@@ -120,10 +155,39 @@ export default {
           this.textColor
         );
         this.thematicMapLayer.textHeightOffset = this.textHeightOffset;
+        const { near, nearValue, far, farValue } = this.textScale;
+        let nearFarScalar = new Cesium.NearFarScalar(near, nearValue, far, farValue);
+        this.thematicMapLayer.nearFarScalar = nearFarScalar;
         if (this.type === "Pie") {
           this.thematicMapLayer.addExtrudedHeight = this.addExtrudedHeight;
         }
         this.thematicMapLayer.addByGeoJson(this.geojson, this.type);
+        
+        let vm = this;
+        this.handler = this.handler || new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+        //增加hover事件
+        this.handler.setInputAction(function (movement) {
+
+          let pickedFeature = viewer.scene.pick(movement.endPosition);
+          if (pickedFeature !== undefined) {
+            vm.$emit('hover',pickedFeature); 
+          }
+          viewer.scene.requestRender();
+
+        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+        //增加click事件
+        this.handler.setInputAction(function (movement) {
+
+          let pickedFeature = viewer.scene.pick(movement.position);
+          console.log('pickedFeature',pickedFeature);
+          
+          if (pickedFeature !== undefined) {
+            vm.$emit('click',pickedFeature); 
+          }
+          viewer.scene.requestRender();
+
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
       }
     },
     removeGraphLayer() {

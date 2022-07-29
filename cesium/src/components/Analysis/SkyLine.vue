@@ -2,7 +2,10 @@
   <div>
     <slot>
       <div>
-        <mapgis-ui-setting-form :wrapper-width="200">
+        <mapgis-ui-setting-form
+          :layout="layout"
+          size="default"
+        >
           <mapgis-ui-form-item label="观察者信息">
             <mapgis-ui-input
               v-model="centerPosition"
@@ -17,9 +20,8 @@
             :props="observerProps"
           /> -->
           <mapgis-ui-form-item label="线宽度">
-            <mapgis-ui-input
+            <mapgis-ui-input-number-addon
               v-model.number="formData.skylineWidth"
-              type="number"
               min="0"
             />
           </mapgis-ui-form-item>
@@ -74,6 +76,15 @@ import {
 export default {
   name: "mapgis-3d-skyline",
   props: {
+    /**
+     * @type String
+     * @default "vertical"
+     * @description 表单布局
+     */
+    layout: {
+      type: String,
+      default: "vertical" // 'horizontal' 'vertical' 'inline'
+    },
     /**
      * @type Number
      * @default 2

@@ -2,11 +2,11 @@
   <div>
     <slot>
       <div class="mapgis-widget-visibility-analysis">
-    <mapgis-ui-setting-form v-model="formData" :wrapper-width="200">
-      <mapgis-ui-form-item label="附加高度(米)">
-        <mapgis-ui-input
+    <mapgis-ui-setting-form v-model="formData" :layout="layout" size="default">
+      <mapgis-ui-form-item label="附加高度">
+        <mapgis-ui-input-number-addon
             v-model.number="formData.exHeight"
-            type="number"
+            addon-after="米"
             :min="0"
             :step="0.1"
         />
@@ -66,6 +66,15 @@ export default {
   inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
+    /**
+     * @type String
+     * @default "vertical"
+     * @description 表单布局
+     */
+    layout: {
+    type: String,
+    default: "vertical" // 'horizontal' 'vertical' 'inline'
+    },
     /**
      * @type Number
      * @default 1.85
@@ -501,11 +510,11 @@ export default {
 }
 
 ::v-deep .mapgis-ui-form-item-label {
-  line-height: 40px;
+  /* line-height: 40px; */
 }
 
 ::v-deep .mapgis-ui-form label {
-  font-size: 12px;
+  /* font-size: 12px; */
 }
 
 ::v-deep .mapgis-ui-form-item {

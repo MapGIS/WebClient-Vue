@@ -61,7 +61,7 @@ export default {
   text-align: left;
   height: 32px;
   line-height: 32px;
-  margin: 10px 0;
+  margin: 8px 0;
 }
 
 .mapgis-ui-select-row-left-title, .mapgis-ui-select-row-left-select {
@@ -71,14 +71,15 @@ export default {
 }
 
 .mapgis-ui-select-row-left-title {
-  width: 70px;
+  width: 80px;
   text-align: left;
   padding-left: 10px;
-  font-size: 12px;
+  font-size: 14px;
+  color: var(--heading-color)
 }
 
 .mapgis-ui-select-row-left-select {
   padding-right: 10px;
-  width: calc(100% - 74px);
+  width: calc(100% - 84px);
 }
 </style>

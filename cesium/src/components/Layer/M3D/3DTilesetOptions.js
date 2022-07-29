@@ -42,6 +42,7 @@ export default {
   show: { type: Boolean, default: true },
   opacity: { type: Number, default: 1 },
   autoReset: { type: Boolean, default: true },
+  duration: { type: Number, default: 1 },
 
   /**
    * @type Object

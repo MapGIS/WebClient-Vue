@@ -80,3 +80,9 @@ export { default as MapgisThemeLayer } from "./components/layer/ThemeLayer/Theme
 export { default as MapgisThemeLayerCustom } from "./components/layer/ThemeLayer/ThemeLayerCustom";
 
 export { default as Mapgis2DComprehensiveQuery } from "./components/service/comprehensive-query/ComprehensiveQuery";
+
+// 标绘
+export { default as Mapgis2dPlot } from "./components/layer/2DPlot/plot.vue";
+export { default as Mapgis2dPlotLink } from "./components/layer/2DPlot/Plot2DLink.vue";
+export { default as Mapgis2dPlotLayer } from "./components/layer/2DPlot/plotLayer.vue";
+export { default as Mapgis2DPlotAnimation } from "./components/layer/2DPlot/plotAnimation.vue";

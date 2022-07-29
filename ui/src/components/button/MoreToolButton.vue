@@ -2,7 +2,7 @@
   <div class="mapgis-ui-more-tool-button-container">
     <mapgis-ui-base64-icon
       @click="$_click"
-      class="mapgis-ui-more-tool-button-icon" height="20px"
+      class="mapgis-ui-more-tool-button-icon" height="16px"
       type="more"/>
     <div v-show="showTool"
          class="mapgis-ui-more-tool-button"
@@ -40,8 +40,8 @@ export default {
       showTool: false,
       editStyle: {
         color: "#7A8DA0",
-        width: "20px",
-        height: "20px"
+        width: "16px",
+        height: "16px"
       }
     }
   },

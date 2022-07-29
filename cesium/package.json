@@ -1,9 +1,9 @@
 {
   "name": "@mapgis/webclient-vue-cesium",
-  "version": "15.6.0",
+  "version": "15.6.3",
   "description": "mapgis webclient-vue-cesium",
-  "main": "dist-libs/webclient-vue-cesium.umd.min.js",
-  "module1": "src/main.js",
+  "main1": "dist-libs/webclient-vue-cesium.umd.min.js",
+  "module": "src/main.js",
   "scripts": {
     "build": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-cesium src/main.js",
     "serve": "vue-cli-service build --target lib --name webclient-vue-cesium src/main.js --watch",
@@ -23,8 +23,10 @@
     ]
   },
   "dependencies": {
+    "@mapbox/mapbox-gl-style-spec": "13.23.1",
     "@mapgis/cesium": "^1.84.0",
     "@mapgis/webclient-es6-service": "^15.6.0",
+    "@mapgis/webclient-plot": "^1.0.5",
     "@mapgis/webclient-store": "^10.5.5",
     "@mapgis/webclient-vue-ui": "^15.6.0",
     "@turf/turf": "^5.1.6",
@@ -36,6 +38,7 @@
     "echarts-gl": "^2.0.9",
     "file-saver": "^2.0.5",
     "html2canvas": "^1.3.3",
+    "jspdf": "^2.5.1",
     "mapv": "^2.0.62",
     "moment": "^2.29.1",
     "node-sass": "^4.14.0",
@@ -47,8 +50,7 @@
     "vcolorpicker": "^1.1.0",
     "vuepress": "^1.8.2",
     "wangeditor-antd": "^1.0.7",
-    "webfont-matcher": "1.1.0",
-    "jspdf": "^2.5.1"
+    "webfont-matcher": "1.1.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.2.0",
@@ -65,8 +67,9 @@
     "less": "3.12.2",
     "less-loader": "7.0.2",
     "lint-staged": "^8.1.0",
-    "vue": "^2.6.6",
-    "vue-template-compiler": "^2.6.6",
+    "vue": "2.6.14",
+    "vue-server-renderer": "2.6.14",
+    "vue-template-compiler": "2.6.14",
     "vuepress-plugin-demo-block": "^0.7.2"
   },
   "keywords": [
