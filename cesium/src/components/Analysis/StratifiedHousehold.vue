@@ -696,6 +696,7 @@ export default {
         return c;
       });
       this.layerTree.splice(0, 1, children[0]);
+      this.restoreM3d();
     },
     disableIsolation() {
       let children = this.layerTree.map(c => {
@@ -727,7 +728,7 @@ export default {
           let m3dlayer = g3dLayer.getLayer(index);
           m3ds.push(m3dlayer);
         });
-        modelExplosion.multiLayerAxisExplosionWithAnimate(m3ds, {
+        modelExplosion.multiLayerAxisExplosionNoAnimate(m3ds, {
           direction: vector,
           expDistance: expDistance,
           speed: speed
@@ -752,6 +753,10 @@ export default {
       if (find && find.options) {
         const { modelExplosion } = find.options;
         modelExplosion.removeModelExplosion(m3ds);
+        setTimeout(function() {
+          // 将mapgism3d的modelExplosion属性修改为false，确保不对其他功能造成性能影响
+          modelExplosion.recover(m3ds);
+        }, 1000);
       }
     },
     handleMenu(menu) {
@@ -958,6 +963,9 @@ export default {
 
         if (!pickedFeature) {
           vm.clickvisible = false;
+          // 点击模型外去除高亮
+          vm.restoreHighlight();
+          vm.restoreM3d();
           return;
         }
 
