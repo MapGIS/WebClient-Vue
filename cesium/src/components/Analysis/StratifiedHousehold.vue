@@ -71,7 +71,7 @@
           </template>
           <template
             slot="title"
-            slot-scope="{ title, icon, version, gdbp, layerIndex, key }"
+            slot-scope="{ title, icon, version, gdbp, layerIndex, key, guid }"
           >
             <span
               :class="{
@@ -110,7 +110,8 @@
                       version,
                       gdbp,
                       layerIndex,
-                      key
+                      key,
+                      guid
                     })
                   "
                 />
@@ -156,6 +157,19 @@
       @changeSlider="changeSimpleSlider"
     >
     </mapgis-ui-slider-panel> -->
+
+    <!-- modal关系图谱 -->
+    <!-- <mapgis-ui-modal
+      v-model="showModal"
+      :footer="null"
+      :width="1000"
+      :centered="true"
+      class="attribute-model"
+      :bodyStyle="{ padding: '30px 10px 10px' }"
+      :destroyOnClose="true"
+    >
+      <mapgis-3d-relationship-graph :info="relationshipInfo" />
+    </mapgis-ui-modal> -->
   </div>
 </template>
 
@@ -314,6 +328,19 @@ export default {
               this.changeIsolation(payload);
             }
           }
+        },
+        {
+          title: "查看关系图谱",
+          tooltip: () => "查看关系图谱",
+          icon: () => "mapgis-share-alt",
+          click: payload => {
+            // this.relationshipInfo.layerTree = this.layerTree;
+            // 获取楼层id
+            this.relationshipInfo.floor = payload.guid;
+            this.relationshipInfo.layerIndex = payload.layerIndex;
+            this.relationshipInfo.isFloor = true;
+            this.$emit("show-relationship-graph", this.relationshipInfo);
+          }
         }
       ],
       layerTree: [],
@@ -335,7 +362,10 @@ export default {
       featureclickenable: this.enablePopup,
       disableLayerSelect: false,
       prePickFeature: undefined, // 上次选中的要素
-      prePickFeatureColor: undefined // 上次选中要素的颜色，便于恢复
+      prePickFeatureColor: undefined, // 上次选中要素的颜色，便于恢复
+      showModal: false,
+      relationshipInfo: {}, // 关系谱图相关信息
+      prevFloorId: undefined
     };
   },
   provide() {
@@ -349,6 +379,10 @@ export default {
   created() {},
   mounted() {
     this.mount();
+    // 设置关系图谱数据源信息
+    this.relationshipInfo.dataStoreIp = this.dataStoreIp;
+    this.relationshipInfo.dataStorePort = this.dataStorePort;
+    this.relationshipInfo.dataStoreDataset = "Graph3/GraphDataset2";
   },
   destroyed() {
     this.restoreHighlight();
@@ -420,6 +454,8 @@ export default {
           let layerIndexs = g3dLayer.getM3DLayerIndexes();
           let all = [];
           vm.m3ds = m3ds;
+          // m3ds传入关系图谱
+          vm.relationshipInfo.m3ds = m3ds;
           m3ds.forEach((m3d, i) => {
             // 形参的m3d并不是表示序号i对应的图层，下一行才是序号i对应的图层
             let gIndex = layerIndexs[i];
@@ -433,6 +469,7 @@ export default {
               layerIndex: gIndex,
               layerType,
               gdbp: gdbpUrl,
+              guid: m3d._guid,
               icon: "mapgis-layer",
               menu: "mapgis-down",
               scopedSlots: {
@@ -495,6 +532,18 @@ export default {
       let finds = this.layers.filter(l => l.vueIndex == vueIndex);
       if (finds && finds.length > 0) {
         this.$emit("change-layer", finds[0]);
+        // 动态添加关系图谱图标
+        const relationship = this.collapsemenus.find(
+          item => item.type === "relationship"
+        );
+        if (!relationship) {
+          this.collapsemenus.push({
+            title: "关系图谱",
+            icon: "mapgis-share-alt",
+            type: "relationship",
+            active: false
+          });
+        }
       }
     },
     getParentKey(key, tree) {
@@ -778,6 +827,14 @@ export default {
           this.menus[1].active = true;
           this.enableExplror();
         }
+      } else if (menu == "关系图谱") {
+        this.menus[2].active = true;
+        // 获取楼栋id
+        this.relationshipInfo.floor = "02203205GB00643000101";
+        this.relationshipInfo.layerTree = this.layerTree;
+        this.relationshipInfo.isFloor = false;
+        this.$emit("show-relationship-graph", this.relationshipInfo);
+        // this.showModal = true;
       }
     },
     $_pickEvent(movement) {
@@ -1044,6 +1101,102 @@ export default {
         show = res[res.length - 1];
       }
       return show;
+    },
+    floorHighlight(data) {
+      const { vueKey, innerVueIndex, vueCesium, Cesium } = this;
+      const { layerIndex, viewer, m3ds, version } = this;
+
+      const expDistance = 50;
+      const speed = 1;
+      let tileset;
+      if (m3ds) {
+        tileset = m3ds[data.layerIndex];
+      } else {
+        tileset = viewer.scene.layers.getM3DLayer(data.layerIndex);
+      }
+      if (!tileset) {
+        return;
+      }
+      let find = vueCesium.StratifiedHousehouldManager.findSource(
+        vueKey,
+        innerVueIndex
+      );
+      if (find && find.options) {
+        const { modelExplosion } = find.options;
+        const vectorLeft = new Cesium.Cartesian3(1, 0, 0);
+        const vectorUp = new Cesium.Cartesian3(0, 1, 0);
+        const vector = new Cesium.Cartesian3();
+        const angle = Cesium.Math.toRadians(-45);
+        vector.x =
+          vectorLeft.x * Math.cos(angle) + vectorUp.x * Math.sin(angle);
+        vector.y =
+          vectorLeft.y * Math.cos(angle) + vectorUp.y * Math.sin(angle);
+        vector.z =
+          vectorLeft.z * Math.cos(angle) + vectorUp.z * Math.sin(angle);
+        // 如果有移出的楼层则先还原
+        if (this.prevFloorId) {
+          modelExplosion.removeModelExplosion([m3ds[this.prevFloorId]]);
+        }
+        this.prevFloorId = data.layerIndex;
+        modelExplosion.multiLayerAxisExplosionNoAnimate([tileset], {
+          direction: vector,
+          expDistance: expDistance,
+          speed: speed
+        });
+        this.highlightM3d(data.layerIndex);
+      }
+    },
+    houseHighlight(data) {
+      const { viewer, g3dLayerIndex, featureHighlightColorProp } = this;
+      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+      let tileset = g3dLayer.getLayer(data.layerIndex + "");
+      tileset.pickedOid = data.oid || 5;
+      tileset.pickedColor = Cesium.Color.fromCssColorString(
+        featureHighlightColorProp
+      );
+    },
+    // 关系图谱打开的根节点为楼层时展示当前楼层
+    lockFloor(layerIndex) {
+      const { g3dLayerIndex, viewer } = this;
+
+      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
+      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+      let layerIndexs = g3dLayer.getM3DLayerIndexes();
+      this.featurevisible = false;
+      this.selectedKeys = [`${layerIndex}`];
+      layerIndexs.forEach(index => {
+        let m3dlayer = g3dLayer.getLayer(index);
+        if (index != layerIndex) {
+          m3dlayer.show = false;
+        } else {
+          m3dlayer.show = true;
+          viewer.camera.flyToBoundingSphere(m3dlayer.boundingSphere);
+        }
+      });
+      this.highlightM3d(layerIndex);
+    },
+    resizeGraph() {
+      // 楼栋状态下还原抽出的楼层到楼栋
+      if (this.prevFloorId) {
+        const { vueKey, innerVueIndex, vueCesium, m3ds } = this;
+        let find = vueCesium.StratifiedHousehouldManager.findSource(
+          vueKey,
+          innerVueIndex
+        );
+        if (find && find.options) {
+          const { modelExplosion } = find.options;
+          modelExplosion.removeModelExplosion([m3ds[this.prevFloorId]]);
+          this.restoreM3d();
+        }
+      }
+
+      // 楼层状态下还原楼栋
+      if (this.info.isFloor) {
+        this.restoreOrigindVisible();
+      }
+
+      // 取消高亮
+      this.restoreHighlight();
     }
   }
 };

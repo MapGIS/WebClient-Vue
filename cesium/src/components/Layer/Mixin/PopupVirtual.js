@@ -8,7 +8,7 @@ export default {
   name: "mapgis-3d-virtual-popup",
   inject: ["Cesium", "vueCesium", "viewer"],
   props: {
-    ...VueOptions,
+    ...VueOptions
   },
   mixins: [PopupMixin],
   data() {
@@ -16,7 +16,7 @@ export default {
   },
   components: {
     Popup,
-    PopupContent,
+    PopupContent
   },
   render(h) {
     // props
@@ -35,7 +35,7 @@ export default {
       type = "default",
       enableSeparate = true,
       popupType = "table",
-      fullHeight = 600,
+      fullHeight = 600
     } = popupOptions;
     const feature = properties
       ? { properties: properties }
@@ -51,11 +51,11 @@ export default {
       popupType,
       images: images,
       description: description,
-      title: title ? feature.properties[title] : "标题",
+      title: title ? feature.properties[title] : "标题"
     };
 
     if (!iPinMap) {
-      const fs = iClickFeatures.forEach((f) => {
+      const fs = iClickFeatures.forEach(f => {
         f.images = feature.properties.images || images;
         f.content = feature.properties.description || description;
       });
@@ -74,6 +74,7 @@ export default {
     delete popupOptions.title;
 
     if (customPopup || customTips) {
+      debugger;
       return (
         <Popup
           position={iClickPosition}
@@ -153,5 +154,5 @@ export default {
       );
     }
   },
-  methods: {},
+  methods: {}
 };
