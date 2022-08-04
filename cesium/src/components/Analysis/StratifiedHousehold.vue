@@ -1106,6 +1106,8 @@ export default {
       const { vueKey, innerVueIndex, vueCesium, Cesium } = this;
       const { layerIndex, viewer, m3ds, version } = this;
 
+      // this.restoreM3d();
+
       const expDistance = 50;
       const speed = 1;
       let tileset;
@@ -1138,6 +1140,7 @@ export default {
           modelExplosion.removeModelExplosion([m3ds[this.prevFloorId]]);
         }
         this.prevFloorId = data.layerIndex;
+        // this.selectedKeys = [`${data.layerIndex}`];
         modelExplosion.multiLayerAxisExplosionNoAnimate([tileset], {
           direction: vector,
           expDistance: expDistance,
@@ -1159,6 +1162,8 @@ export default {
     lockFloor(layerIndex) {
       const { g3dLayerIndex, viewer } = this;
 
+      // this.restoreHighlight();
+      // this.restoreM3d();
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let layerIndexs = g3dLayer.getM3DLayerIndexes();
@@ -1173,10 +1178,14 @@ export default {
           viewer.camera.flyToBoundingSphere(m3dlayer.boundingSphere);
         }
       });
-      this.highlightM3d(layerIndex);
+      // this.highlightM3d(layerIndex);
+    },
+    reloadGraph() {
+      this.restoreOrigindVisible();
+      this.restoreHighlight();
+      this.restoreM3d();
     },
     resizeGraph() {
-      // 楼栋状态下还原抽出的楼层到楼栋
       if (this.prevFloorId) {
         const { vueKey, innerVueIndex, vueCesium, m3ds } = this;
         let find = vueCesium.StratifiedHousehouldManager.findSource(
@@ -1191,12 +1200,12 @@ export default {
       }
 
       // 楼层状态下还原楼栋
-      if (this.info.isFloor) {
+      if (this.relationshipInfo.isFloor) {
         this.restoreOrigindVisible();
       }
-
       // 取消高亮
       this.restoreHighlight();
+      this.restoreM3d();
     }
   }
 };

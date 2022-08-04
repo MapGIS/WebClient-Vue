@@ -133,8 +133,8 @@ export default {
       },
       // l楼层节点样式
       floorStyle: {
-        fill: "#40a9ff",
-        stroke: "#096dd9"
+        fill: "#ff9900",
+        stroke: "#ffc20e"
       },
       // layout配置信息
       layoutConfig: {
@@ -143,6 +143,7 @@ export default {
         rankSep: 150
       },
       // 节点基本配置
+      // 楼层颜色#ffc168
       nodeDefualtConfig: {
         size: 26,
         normal: {
@@ -270,7 +271,7 @@ export default {
 
       that.graph.node(function(node) {
         return {
-          size: that.nodeDefualtConfig.size,
+          size: that.getNodeSize(node),
           style: node.styleInfo || that.nodeDefualtConfig.normal,
           labelCfg: that.nodeDefualtConfig.labelCfg,
           label: node.name || node.entityName
@@ -424,6 +425,7 @@ export default {
     formatFloor(dataList) {
       const floor = dataList.find(item => item.id === this.info.floor);
       floor.name = floor.properties["楼层号"];
+      floor.styleInfo = this.floorStyle;
       // 存放节点关系
       this.relationshipList = dataList.filter(item => item.relationshipName);
       const children = [];
@@ -668,7 +670,7 @@ export default {
     highlightFloor(id) {
       this.$emit("floor-highlight", {
         guid: id,
-        layerIndex: this.info.layerIndex || this.getLayerIndex(id)
+        layerIndex: this.getLayerIndex(id)
       });
     },
     getLayerIndex(id) {
@@ -680,6 +682,21 @@ export default {
         layerIndex: data["层号"] - 1,
         oid: data.oid
       });
+    },
+    getNodeSize(node) {
+      let size;
+      switch (node.entityName) {
+        case "楼幢":
+          size = 38;
+          break;
+        case "楼层":
+          size = 30;
+          break;
+        default:
+          size = this.nodeDefualtConfig.size;
+          break;
+      }
+      return size;
     }
   }
 };
