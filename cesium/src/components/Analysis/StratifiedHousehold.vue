@@ -1212,10 +1212,6 @@ export default {
           if (find && find.options) {
             const { modelExplosion } = find.options;
             modelExplosion.removeModelExplosion([m3ds[this.prevFloorId]]);
-            // window.m3ds = m3ds;
-            // window.modelExplosion = modelExplosion;
-            // window.restoreM3d = this.restoreM3d;
-            // window.highlightM3d = this.highlightM3d;
             this.restoreM3d();
           }
           this.lastPrevFloorId = this.prevFloorId;
