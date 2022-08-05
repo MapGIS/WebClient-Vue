@@ -167,7 +167,12 @@ export default {
             d: 20
           }
         }
-      }
+      },
+      // 图表初始大小
+      graphWidth: 980,
+      graphHeight: 700,
+      // 记录图表窗口是否最大化
+      graphMax: false
     };
   },
   created() {},
@@ -191,11 +196,12 @@ export default {
       // 重新渲染
       if (that.graph) {
         that.graph.destroy();
+        that.removeTooltip();
       }
       that.graph = new G6.TreeGraph({
         container: "relationship",
-        width: 980,
-        height: 700,
+        width: that.graphWidth,
+        height: that.graphHeight,
         pixelRatio: 2,
         linkCenter: true,
         modes: {
@@ -697,6 +703,28 @@ export default {
           break;
       }
       return size;
+    },
+    // 图表自适应
+    resizeGraph() {
+      if (!this.graphMax) {
+        const dom = document.getElementById("relationship");
+        this.graph.changeSize(dom.offsetWidth, dom.offsetHeight);
+      } else {
+        this.graph.changeSize(this.graphWidth, this.graphHeight);
+      }
+      this.graphMax = !this.graphMax;
+      this.graph.render();
+      this.graph.fitView();
+      this.graph.translate(-50, 0);
+    },
+    // 清除tooltip框
+    removeTooltip() {
+      let tooltip = document.getElementsByClassName("g6-tooltip");
+      if (tooltip && tooltip.length > 0) {
+        for (let i = tooltip.length - 1; i >= 0; i--) {
+          tooltip[i].remove();
+        }
+      }
     }
   }
 };
@@ -725,6 +753,9 @@ export default {
       left: 80% !important;
       //   visibility: inherit !important;
     }
+  }
+  .mapgis-ui-input-auto-width {
+    background-color: rgba(20, 20, 20, 0.3) !important;
   }
 }
 </style>

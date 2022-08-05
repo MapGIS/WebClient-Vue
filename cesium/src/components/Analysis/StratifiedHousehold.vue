@@ -365,7 +365,8 @@ export default {
       prePickFeatureColor: undefined, // 上次选中要素的颜色，便于恢复
       showModal: false,
       relationshipInfo: {}, // 关系谱图相关信息
-      prevFloorId: undefined
+      prevFloorId: undefined,
+      lastPrevFloorId: undefined // 记录楼栋切换楼层的最后一次prevFloorId
     };
   },
   provide() {
@@ -1106,7 +1107,7 @@ export default {
       const { vueKey, innerVueIndex, vueCesium, Cesium } = this;
       const { layerIndex, viewer, m3ds, version } = this;
 
-      // this.restoreM3d();
+      this.restoreM3d();
 
       const expDistance = 50;
       const speed = 1;
@@ -1162,8 +1163,10 @@ export default {
     lockFloor(layerIndex) {
       const { g3dLayerIndex, viewer } = this;
 
-      // this.restoreHighlight();
-      // this.restoreM3d();
+      this.highlightM3d(layerIndex + "");
+      this.restoreHighlight();
+      this.restoreM3d();
+
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let layerIndexs = g3dLayer.getM3DLayerIndexes();
@@ -1175,37 +1178,70 @@ export default {
           m3dlayer.show = false;
         } else {
           m3dlayer.show = true;
+          if (layerIndex === this.prevFloorId) {
+            this.restoreHighlight();
+            this.restoreM3d();
+          }
           viewer.camera.flyToBoundingSphere(m3dlayer.boundingSphere);
         }
       });
+
       // this.highlightM3d(layerIndex);
     },
     reloadGraph() {
-      this.restoreOrigindVisible();
+      // this.restoreOrigindVisible();
       this.restoreHighlight();
       this.restoreM3d();
     },
     resizeGraph() {
-      if (this.prevFloorId) {
-        const { vueKey, innerVueIndex, vueCesium, m3ds } = this;
-        let find = vueCesium.StratifiedHousehouldManager.findSource(
-          vueKey,
-          innerVueIndex
-        );
-        if (find && find.options) {
-          const { modelExplosion } = find.options;
-          modelExplosion.removeModelExplosion([m3ds[this.prevFloorId]]);
+      return new Promise(resolve => {
+        this.revertFloor().then(() => {
+          resolve();
+        });
+      });
+    },
+
+    revertFloor() {
+      return new Promise(resolve => {
+        if (this.prevFloorId) {
+          const { vueKey, innerVueIndex, vueCesium, m3ds } = this;
+          let find = vueCesium.StratifiedHousehouldManager.findSource(
+            vueKey,
+            innerVueIndex
+          );
+          if (find && find.options) {
+            const { modelExplosion } = find.options;
+            modelExplosion.removeModelExplosion([m3ds[this.prevFloorId]]);
+            // window.m3ds = m3ds;
+            // window.modelExplosion = modelExplosion;
+            // window.restoreM3d = this.restoreM3d;
+            // window.highlightM3d = this.highlightM3d;
+            this.restoreM3d();
+          }
+          this.lastPrevFloorId = this.prevFloorId;
+          this.prevFloorId = undefined;
+        }
+
+        if (this.relationshipInfo.isFloor) {
+          this.restoreOrigindVisible();
+        }
+
+        this.restoreHighlight();
+        this.restoreM3d();
+        resolve();
+      });
+    },
+
+    restoreFloor() {
+      return new Promise(resolve => {
+        if (this.lastPrevFloorId) {
+          this.highlightM3d(this.lastPrevFloorId + "");
+          this.lastPrevFloorId = undefined;
+          this.restoreHighlight();
           this.restoreM3d();
         }
-      }
-
-      // 楼层状态下还原楼栋
-      if (this.relationshipInfo.isFloor) {
-        this.restoreOrigindVisible();
-      }
-      // 取消高亮
-      this.restoreHighlight();
-      this.restoreM3d();
+        resolve();
+      });
     }
   }
 };
