@@ -298,6 +298,31 @@ export default {
         }
       }
     },
+    removeHighLight(svgPart) {
+      if (svgPart) {
+        if (svgPart.tagName !== "g") {
+          if (this.prevStroke) {
+            svgPart.style.stroke = this.prevStroke;
+          }
+          if (this.prevFill) {
+            svgPart.style.fill = this.prevFill;
+          }
+        } else {
+          let {children} = svgPart;
+          for (let i = 0; i < children.length; i++) {
+            if (children[i].tagName !== "g") {
+              let id = children[i].getAttribute("id")
+              if (this.prevStroke[id]) {
+                children[i].style.stroke = this.prevStroke[id];
+              }
+              if (this.prevFill[id]) {
+                children[i].style.fill = this.prevFill[id];
+              }
+            }
+          }
+        }
+      }
+    },
     setFillHighLight(svg) {
       if (svg.tagName === "g") {
         let {children} = svg;
@@ -399,6 +424,9 @@ export default {
             }
             this.setG(svg, g);
             break;
+        }
+        if(parts[i].getAttribute("id") === this.prevSvg.getAttribute("id")) {
+          this.removeHighLight(svg.children[svg.children.length - 1]);
         }
       }
       this.downloadSVG(svg.outerHTML);
