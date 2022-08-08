@@ -689,6 +689,12 @@ export default {
         oid: data.oid
       });
     },
+    // 获取户的layerIndex
+    getHouseIndex(id) {
+      const srcOption = this.graphData.find(item => item.dst === id)
+      const index = this.getLayerIndex(srcOption.src)
+      return index
+    },
     getNodeSize(node) {
       let size;
       switch (node.entityName) {

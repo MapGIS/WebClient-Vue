@@ -383,7 +383,7 @@ export default {
     // 设置关系图谱数据源信息
     this.relationshipInfo.dataStoreIp = this.dataStoreIp;
     this.relationshipInfo.dataStorePort = this.dataStorePort;
-    this.relationshipInfo.dataStoreDataset = "Graph3/GraphDataset2";
+    this.relationshipInfo.dataStoreDataset = "Graph3/GraphDataset8";
   },
   destroyed() {
     this.restoreHighlight();
@@ -1151,6 +1151,7 @@ export default {
       }
     },
     houseHighlight(data) {
+      this.restoreHighlight();
       const { viewer, g3dLayerIndex, featureHighlightColorProp } = this;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let tileset = g3dLayer.getLayer(data.layerIndex + "");
