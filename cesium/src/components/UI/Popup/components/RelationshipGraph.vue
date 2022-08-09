@@ -97,6 +97,19 @@ export default {
         "竣工日期",
         "项目名称"
       ], // 楼幢展示数据配置
+      obligeeTooltipConfig: [
+        "权利人名称",
+        "权利人性质",
+        "性别",
+        "民族",
+        "出生日期",
+        "地址",
+        "籍贯",
+        "电话",
+        "证件种类",
+        "法人代表",
+        "备注"
+      ], // 权利人展示数据配置
       isLock: false, // 查询结果高亮
       // 图表配置信息
       edgeLabelCfgHighlight: {
@@ -141,6 +154,11 @@ export default {
         direction: "LR", // H / V / LR / RL / TB / BT
         nodeSep: 50,
         rankSep: 150
+      },
+      layoutConfigFloor: {
+        direction: "LR", // H / V / LR / RL / TB / BT
+        nodeSep: 50,
+        rankSep: 120
       },
       // 节点基本配置
       // 楼层颜色#ffc168
@@ -231,6 +249,14 @@ export default {
                       }`
                     );
                   }
+                } else if (model.entityName === "权利人") {
+                  for (let i = 0; i < that.obligeeTooltipConfig.length; i++) {
+                    text.push(
+                      `<strong>${that.obligeeTooltipConfig[i]}</strong>: ${
+                        data[that.obligeeTooltipConfig[i]]
+                      }`
+                    );
+                  }
                 } else {
                   // 对象中只有一个key时直接遍历
                   for (let key in data) {
@@ -269,7 +295,9 @@ export default {
         nodeStateStyles: that.nodeStateStyles,
         edgeStateStyles: that.edgeStateStyles,
         layout: function layout(data) {
-          var result = Hierarchy.dendrogram(data, that.layoutConfig);
+          var result = that.info.isFloor
+            ? Hierarchy.dendrogram(data, that.layoutConfigFloor)
+            : Hierarchy.dendrogram(data, that.layoutConfig);
           G6.Util.radialLayout(result);
           return result;
         }
@@ -377,7 +405,7 @@ export default {
             {
               id: this.info.floor,
               pageOffset: 0,
-              step: 3,
+              step: 2,
               relationshipTypes: ["*"],
               direction: "Both",
               usePaging: false
@@ -434,22 +462,7 @@ export default {
       floor.styleInfo = this.floorStyle;
       // 存放节点关系
       this.relationshipList = dataList.filter(item => item.relationshipName);
-      const children = [];
-      // 获取根节点的下一级id数组
-      const householdList = [];
-      this.relationshipList.forEach(item => {
-        if (item.src === floor.id) {
-          householdList.push(item.dst);
-        }
-      });
-
-      dataList.forEach(item => {
-        if (householdList.includes(item.id)) {
-          item.name = item.properties["室号部位"];
-          children.push(item);
-        }
-      });
-      floor.children = children;
+      this.getFloorNext(floor, dataList);
       return floor;
     },
     // 过滤逻辑
@@ -516,17 +529,13 @@ export default {
       let floorList = [];
       list.forEach(item => {
         const floor = dataList.find(home => home.id === item.dst);
-        floorList.push(floor);
-
-        // 过滤逻辑
-        // if (JSON.stringify(queryParams) !== "{}") {
-        //   const flag = this.getConditionResult(floor, queryParams);
-        //   flag && floorList.push(floor);
-        // } else {
-        //   floorList.push(floor);
-        // }
+        floor && floorList.push(floor);
       });
-      floorList.forEach(item => (item.name = item.properties["室号部位"]));
+      floorList.forEach(
+        item =>
+          (item.name =
+            item.properties["室号部位"] || item.properties["权利人名称"])
+      );
       data.children = floorList;
       floorList.forEach(item => this.getFloorNext(item, dataList));
     },
@@ -691,9 +700,9 @@ export default {
     },
     // 获取户的layerIndex
     getHouseIndex(id) {
-      const srcOption = this.graphData.find(item => item.dst === id)
-      const index = this.getLayerIndex(srcOption.src)
-      return index
+      const srcOption = this.graphData.find(item => item.dst === id);
+      const index = this.getLayerIndex(srcOption.src);
+      return index;
     },
     getNodeSize(node) {
       let size;

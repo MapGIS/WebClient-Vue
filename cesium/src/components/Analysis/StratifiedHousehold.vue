@@ -383,7 +383,7 @@ export default {
     // 设置关系图谱数据源信息
     this.relationshipInfo.dataStoreIp = this.dataStoreIp;
     this.relationshipInfo.dataStorePort = this.dataStorePort;
-    this.relationshipInfo.dataStoreDataset = "Graph3/GraphDataset8";
+    this.relationshipInfo.dataStoreDataset = this.dataStoreDataset;
   },
   destroyed() {
     this.restoreHighlight();
