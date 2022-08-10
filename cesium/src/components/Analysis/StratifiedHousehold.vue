@@ -246,6 +246,10 @@ export default {
     dataStoreDataset: {
       type: String,
       default: "Graph3/GraphDataset1"
+    },
+    dataStoreStep: {
+      type: Number,
+      default: 2
     }
   },
   components: {
@@ -384,6 +388,7 @@ export default {
     this.relationshipInfo.dataStoreIp = this.dataStoreIp;
     this.relationshipInfo.dataStorePort = this.dataStorePort;
     this.relationshipInfo.dataStoreDataset = this.dataStoreDataset;
+    this.relationshipInfo.dataStoreStep = this.dataStoreStep;
   },
   destroyed() {
     this.restoreHighlight();

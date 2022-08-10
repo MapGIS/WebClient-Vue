@@ -149,6 +149,11 @@ export default {
         fill: "#ff9900",
         stroke: "#ffc20e"
       },
+      // 权利人节点样式
+      obligeeStyle: {
+        fill: "#128b4e",
+        stroke: "#2a5934"
+      },
       // layout配置信息
       layoutConfig: {
         direction: "LR", // H / V / LR / RL / TB / BT
@@ -163,7 +168,7 @@ export default {
       // 节点基本配置
       // 楼层颜色#ffc168
       nodeDefualtConfig: {
-        size: 26,
+        size: 24,
         normal: {
           fill: "#40a9ff",
           stroke: "#096dd9"
@@ -405,7 +410,7 @@ export default {
             {
               id: this.info.floor,
               pageOffset: 0,
-              step: 2,
+              step: this.info.dataStoreStep || 2,
               relationshipTypes: ["*"],
               direction: "Both",
               usePaging: false
@@ -529,7 +534,12 @@ export default {
       let floorList = [];
       list.forEach(item => {
         const floor = dataList.find(home => home.id === item.dst);
-        floor && floorList.push(floor);
+        if (floor) {
+          floor.properties["权利人名称"] &&
+            (floor.styleInfo = this.obligeeStyle);
+
+          floorList.push(floor);
+        }
       });
       floorList.forEach(
         item =>
@@ -712,6 +722,9 @@ export default {
           break;
         case "楼层":
           size = 30;
+          break;
+        case "权利人":
+          size = this.nodeDefualtConfig.size;
           break;
         default:
           size = this.nodeDefualtConfig.size;
