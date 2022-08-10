@@ -23,6 +23,8 @@
     ]
   },
   "dependencies": {
+    "@antv/g6": "3.1.1",
+    "@antv/hierarchy": "^0.6.8",
     "@mapbox/mapbox-gl-style-spec": "13.23.1",
     "@mapgis/cesium": "^1.84.0",
     "@mapgis/webclient-es6-service": "^15.6.0",
