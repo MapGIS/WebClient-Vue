@@ -59,7 +59,7 @@ export default {
      * 符号库url
      */
     symbolUrl: {
-      type: String,
+      type: [String, Object],
       required: true
     },
     /**
