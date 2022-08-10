@@ -380,10 +380,10 @@ export default {
       }
     },
     getNewSvg() {
-      if (this.type !== 0 && !this.isEditAll()) {
-        alert("没有编辑完毕！");
-        return;
-      }
+      // if (this.type !== 0 && !this.isEditAll()) {
+      //   alert("没有编辑完毕！");
+      //   return;
+      // }
 
       if (this.type === 4 && !this.hasMainLine()) {
         alert("没有主轴！");
@@ -763,9 +763,6 @@ export default {
           let sAtt = styles[i].split(":");
           styleArr[sAtt[0].trim()] = sAtt[1].trim();
         }
-      }
-      if (styleArr.hasOwnProperty("fill")) {
-        styleArr.fill = "none";
       }
       Object.keys(styleArr).forEach(function (key) {
         result += key + ":" + styleArr[key] + ";";
