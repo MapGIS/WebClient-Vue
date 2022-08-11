@@ -163,8 +163,21 @@
                   'direction',
                   'stRotation',
                   'repeatX',
-                  'repeatY'
+                  'repeatY',
+                  'offsetHeight'
                 ].indexOf(row.key) < 0
+              "
+            />
+            <!-- elevationMode的值2，1，0，-1 -->
+            <mapgis-ui-input-row-left
+              v-if="row.type === 'MapgisUiInputNumber'"
+              :title="row.title"
+              type="Number"
+              v-model="editPanelValues[row.key]"
+              v-show="
+                row.key === 'offsetHeight' &&
+                  (editPanelValues.elevationMode === undefined ||
+                    editPanelValues.elevationMode === -1)
               "
             />
             <mapgis-ui-input-row-left
@@ -986,7 +999,8 @@ export default {
         stRotation,
         isHermiteSpline,
         offsetHeight,
-        loop
+        loop,
+        elevationMode
       } = style;
 
       const { title, __flashStyle } = attributes;
@@ -1167,6 +1181,7 @@ export default {
           if (title) {
             editPanelValues.title = title;
           }
+          editPanelValues.elevationMode = elevationMode;
           break;
         case "polylineVolume":
           editPanelValues.id = id;
@@ -1213,6 +1228,7 @@ export default {
           if (title) {
             editPanelValues.title = title;
           }
+          editPanelValues.elevationMode = elevationMode;
           break;
         case "rectangle":
           editPanelValues.id = id;
@@ -1263,6 +1279,7 @@ export default {
             editPanelValues.repeatX = repeat.x;
             editPanelValues.repeatY = repeat.y;
           }
+          editPanelValues.elevationMode = elevationMode;
           break;
         case "circle":
           if (this.currentEditType === "circle") {
@@ -1327,6 +1344,7 @@ export default {
               editPanelValues.title = title;
             }
           }
+          editPanelValues.elevationMode = elevationMode;
           break;
         case "ellipsoid":
           editPanelValues.id = id;
