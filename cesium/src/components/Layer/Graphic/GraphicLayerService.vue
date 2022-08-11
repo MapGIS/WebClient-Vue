@@ -596,6 +596,26 @@ export default {
       }
       return editPanelValues;
     },
+    $_getClassificationType(elevationMode, Cesium) {
+      let classificationType = Cesium.ClassificationType.BOTH;
+      switch (elevationMode) {
+        case 2:
+          classificationType = Cesium.ClassificationType.BOTH;
+          break;
+        case 0:
+          classificationType = Cesium.ClassificationType.TERRAIN;
+          break;
+        case 1:
+          classificationType = Cesium.ClassificationType.CESIUM_3D_TILE;
+          break;
+        case -1:
+          classificationType = undefined;
+          break;
+        default:
+          break;
+      }
+      return classificationType;
+    },
     /**
      * 据面板显示参数数据生成绘制参数
      * @param editPanelValues Object 设置面板显示参数数据
@@ -606,6 +626,10 @@ export default {
     $_getDrawOptions(editPanelValues, currentEditType, Cesium) {
       let drawOptions = {},
         style;
+      const classificationType = this.$_getClassificationType(
+        editPanelValues.elevationMode,
+        Cesium
+      );
       switch (currentEditType) {
         case "point":
           drawOptions.style = {
@@ -716,7 +740,8 @@ export default {
             width: editPanelValues.width,
             materialType: editPanelValues.materialType,
             isHermiteSpline: editPanelValues.isHermiteSpline,
-            loop: editPanelValues.loop
+            loop: editPanelValues.loop,
+            classificationType
           };
           switch (editPanelValues.materialType) {
             case "Color":
@@ -771,7 +796,8 @@ export default {
                   editPanelValues.opacity / 100
                 ),
                 offsetHeight: editPanelValues.offsetHeight,
-                isPlanePolygon: false
+                isPlanePolygon: false,
+                classificationType
               };
               break;
             case "Image":
@@ -790,7 +816,8 @@ export default {
                   )
                 },
                 height: editPanelValues.height,
-                isPlanePolygon: false
+                isPlanePolygon: false,
+                classificationType
               };
               break;
           }
@@ -808,7 +835,8 @@ export default {
                   Cesium.Color.fromCssColorString(editPanelValues.color),
                   editPanelValues.opacity / 100
                 ),
-                offsetHeight: editPanelValues.offsetHeight
+                offsetHeight: editPanelValues.offsetHeight,
+                classificationType
               };
               break;
             case "Image":
@@ -825,7 +853,8 @@ export default {
                     editPanelValues.opacity / 100
                   )
                 },
-                stRotation: (Math.PI / 180) * editPanelValues.stRotation
+                stRotation: (Math.PI / 180) * editPanelValues.stRotation,
+                classificationType
               };
               break;
             case "text":
@@ -859,7 +888,8 @@ export default {
           style = {
             radius: Number(editPanelValues.radius),
             offsetHeight: editPanelValues.offsetHeight,
-            materialType: editPanelValues.materialType
+            materialType: editPanelValues.materialType,
+            classificationType
           };
           editPanelValues.materialType =
             editPanelValues.materialType || "Color";
