@@ -158,6 +158,7 @@ export default {
         } else if (Object.keys(next).length !== 0) {
           vm.urlWays = 'selected';
           vm.baseUrl = next.baseUrl;
+          vm.queryFields(vm.baseUrl);
           vm.featureStyle.startTimeField = next.startTimeField;
           vm.featureStyle.endTimeField = next.endTimeField;
           vm.featureStyle.heightField = next.heightField;
