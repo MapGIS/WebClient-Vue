@@ -157,6 +157,7 @@ export default {
       handler: function () {
         if(this.svgXML){
           this.screenOuterHTML = this.svgXML;
+          this.setType();
           this.$nextTick(function () {
             let svgDom = document.getElementById("SVGICON").children;
             this.getChild(svgDom[0]);
@@ -211,6 +212,24 @@ export default {
     }
   },
   methods: {
+    setType() {
+      //先这么判断，后期改成正则
+      if(this.screenOuterHTML.indexOf("zondyPlotSymbol:type=\"simpleline\"") > -1){
+        this.type = 1;
+      }
+      if(this.screenOuterHTML.indexOf("zondyPlotSymbol:type=\"simplepoint\"") > -1){
+        this.type = 0;
+      }
+      if(this.screenOuterHTML.indexOf("zondyPlotSymbol:type=\"simplearea\"") > -1){
+        this.type = 2;
+      }
+      if(this.screenOuterHTML.indexOf("zondyPlotSymbol:pose=\"0\"") > -1){
+        this.pose = 0;
+      }
+      if(this.screenOuterHTML.indexOf("zondyPlotSymbol:pose=\"1\"") > -1){
+        this.pose = 1;
+      }
+    },
     copy() {
       const input = document.createElement("input");
       input.setAttribute('readonly', 'readonly'); // 设置为只读, 防止在 ios 下拉起键盘
@@ -240,6 +259,7 @@ export default {
           "image/svg+xml"
       );
       this.screenOuterHTML = xml.documentElement.outerHTML;
+      this.setType();
       this.getChild(xml.documentElement);
       this.svgWidth = xml.documentElement.width.baseVal.valueAsString;
       this.svgHeight = xml.documentElement.height.baseVal.valueAsString;
@@ -284,6 +304,31 @@ export default {
           }
         } else {
           let {children} = this.prevSvg;
+          for (let i = 0; i < children.length; i++) {
+            if (children[i].tagName !== "g") {
+              let id = children[i].getAttribute("id")
+              if (this.prevStroke[id]) {
+                children[i].style.stroke = this.prevStroke[id];
+              }
+              if (this.prevFill[id]) {
+                children[i].style.fill = this.prevFill[id];
+              }
+            }
+          }
+        }
+      }
+    },
+    removeHighLight(svgPart) {
+      if (svgPart) {
+        if (svgPart.tagName !== "g") {
+          if (this.prevStroke) {
+            svgPart.style.stroke = this.prevStroke;
+          }
+          if (this.prevFill) {
+            svgPart.style.fill = this.prevFill;
+          }
+        } else {
+          let {children} = svgPart;
           for (let i = 0; i < children.length; i++) {
             if (children[i].tagName !== "g") {
               let id = children[i].getAttribute("id")
@@ -399,6 +444,9 @@ export default {
             }
             this.setG(svg, g);
             break;
+        }
+        if(parts[i].getAttribute("id") === this.prevSvg.getAttribute("id")) {
+          this.removeHighLight(svg.children[svg.children.length - 1]);
         }
       }
       this.downloadSVG(svg.outerHTML);
