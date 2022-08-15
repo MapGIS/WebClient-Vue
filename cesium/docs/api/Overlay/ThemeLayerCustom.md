@@ -31,7 +31,7 @@
 - **可选**
 - **侦听属性**
 - **默认值:**`矢量图层`
-- **描述:** 专题图层的Id。
+- **描述:** 专题图层的 Id。
 
 ### `type`
 
@@ -71,7 +71,7 @@
 - **可选**
 - **侦听属性**
 - **默认值**
-- **描述:** 必填项，外部可传入filter，内部监听filter实现交互。
+- **描述:** 必填项，外部可传入 filter，内部监听 filter 实现交互。
 
 ### `filterOptions`
 
@@ -79,7 +79,7 @@
 - **可选**
 - **侦听属性**
 - **默认值**
-- **描述:** 必填项，外部可传入filter，内部监听filterOptions实现样式变化。
+- **描述:** 必填项，外部可传入 filter，内部监听 filterOptions 实现样式变化。
 
 ### `autoReset`
 
@@ -87,7 +87,7 @@
 - **可选**
 - **侦听属性**
 - **默认值:**`true`
-- **描述:** 专题图跳转，在加载专题图时，视角会飞行到专题图上，和offsetHeight大小有关。
+- **描述:** 专题图跳转，在加载专题图时，视角会飞行到专题图上，和 offsetHeight 大小有关。
 
 ### `offsetHeight`
 
@@ -95,7 +95,7 @@
 - **可选**
 - **非侦听属性**
 - **默认值:`4000`**
-- **描述:** 专题图高度，当相机视角高度高于offsetHeight，专题图不可见；低于offsetHeight，专题图显示。
+- **描述:** 专题图高度，当相机视角高度高于 offsetHeight，专题图不可见；低于 offsetHeight，专题图显示。
 
 ### `enableHighlight`
 
@@ -135,7 +135,7 @@
 ### `@bbox`
 
 - **Description:** 解析数据时发送该事件
-- **Payload** geojson数据范围（包围盒）
+- **Payload** geojson 数据范围（包围盒）
 
 ### `@themeClick`
 
@@ -145,23 +145,23 @@
 ### `@themeHover`
 
 - **Description:** 鼠标移至专题图上时 发送该事件
-- **Payload** 鼠标经过的专题图所在的 entity属性
+- **Payload** 鼠标经过的专题图所在的 entity 属性
 
 ## 示例
 
 ```vue
-import { Style } from "@mapgis/webclient-es6-service";
-const { LineStyle, PointStyle, FillStyle, Shadow } = Style;
+import { Style } from "@mapgis/webclient-es6-service"; const { LineStyle,
+PointStyle, FillStyle, Shadow } = Style;
 <template>
   <mapgis-web-scene :style="{ height: '95vh' }">
-    <mapgis-3d-theme-layer-custom 
-        v-bind="$props"
-        @load="load"
-        @unload="unload"
-        @bbox="handlebbox"
-        @themeClick="handleClick" 
-        @themeHover="handleHover"
-      />
+    <mapgis-3d-theme-layer-custom
+      v-bind="$props"
+      @load="load"
+      @unload="unload"
+      @bbox="handlebbox"
+      @themeClick="handleClick"
+      @themeHover="handleHover"
+    />
   </mapgis-web-scene>
 </template>
 <script>
@@ -178,58 +178,57 @@ export default {
             start: 0,
             end: 3,
             symbolStyle: new FillStyle({
-              color: '#ff0000',
-              outlineColor: '#ff0000',
+              color: "#ff0000",
+              outlineColor: "#ff0000",
               outlineWidth: 1,
               opacity: 1,
-            })
+            }),
           },
           {
             start: 3,
             end: 6,
             symbolStyle: new FillStyle({
-              color: '#ff4b4b',
-              outlineColor: '#ff4b4b',
+              color: "#ff4b4b",
+              outlineColor: "#ff4b4b",
               outlineWidth: 1,
               opacity: 1,
-            })
+            }),
           },
           {
             start: 6,
             end: 9,
             symbolStyle: new FillStyle({
-              color: '#ff8282',
-              outlineColor: '#ff8282',
+              color: "#ff8282",
+              outlineColor: "#ff8282",
               outlineWidth: 1,
               opacity: 1,
-            })
+            }),
           },
           {
             start: 9,
             end: 12,
             symbolStyle: new FillStyle({
-              color: '#ffafaf',
-              outlineColor: '#ffafaf',
+              color: "#ffafaf",
+              outlineColor: "#ffafaf",
               outlineWidth: 1,
               opacity: 1,
-            })
+            }),
           },
           {
             start: 12,
             end: 15,
             symbolStyle: new FillStyle({
-              color: '#ffdcdc',
-              outlineColor: '#ffdcdc',
+              color: "#ffdcdc",
+              outlineColor: "#ffdcdc",
               outlineWidth: 1,
               opacity: 1,
-            })
-          }
-        ]
-      }
+            }),
+          },
+        ],
+      },
     };
   },
-  methods: {
-  },
+  methods: {},
 };
 </script>
 ```

@@ -5,17 +5,19 @@
 > [点此跳转到示例](#example)
 
 ## 缩略图
+
 ![plotAnimation.png](plotAnimation.png)
 
 ## 属性
 
-| 名称       | 类型                        | 默认值 | 描述                                         | 是否监听 |
-|----------|---------------------------| ------ |--------------------------------------------|------|
-| data     | String or Object or Array | 随机数   | 动画数据，可以为动画数据的url，单个动画配置对象，或者多个动画配置组成的数组    | 是    |
-| vueIndex | String or Number          | 随机数   | plotLayer 的唯一标识，随机生成的数字或字符串，不传则自动生成        | 否    |
-| vueKey   | String                    | 'default'  | cesium 球体的唯一标识，默认值 default，当分屏时使用此对象标识多个球体 | 否    |
+| 名称     | 类型                      | 默认值    | 描述                                                                         | 是否监听 |
+| -------- | ------------------------- | --------- | ---------------------------------------------------------------------------- | -------- |
+| data     | String or Object or Array | 随机数    | 动画数据，可以为动画数据的 url，单个动画配置对象，或者多个动画配置组成的数组 | 是       |
+| vueIndex | String or Number          | 随机数    | plotLayer 的唯一标识，随机生成的数字或字符串，不传则自动生成                 | 否       |
+| vueKey   | String                    | 'default' | cesium 球体的唯一标识，默认值 default，当分屏时使用此对象标识多个球体        | 否       |
 
 ### <span id="data">data</span>
+
 ```javascript
 //单个动画配置对象
 let data = {
@@ -114,16 +116,25 @@ let data = {
 ```
 
 ### 动画时间示意图
+
 ![plotAnimationDelay.png](plotAnimationDelay.png)
 
 ## <span id="example">示例</span>
 
 ```vue
-
 <template>
   <mapgis-web-scene style="height:95vh">
-    <mapgis-3d-plot-layer @loaded="handleLoaded" :dataSource="dataSource" :symbolUrl="symbolUrl"></mapgis-3d-plot-layer>
-    <mapgis-3d-plot- :data="data" :vueIndex="vueIndex" :vueKey="vueKey" v-if="vueKey && vueKey"/>
+    <mapgis-3d-plot-layer
+      @loaded="handleLoaded"
+      :dataSource="dataSource"
+      :symbolUrl="symbolUrl"
+    ></mapgis-3d-plot-layer>
+    <mapgis-3d-plot-
+      :data="data"
+      :vueIndex="vueIndex"
+      :vueKey="vueKey"
+      v-if="vueKey && vueKey"
+    />
   </mapgis-web-scene>
 </template>
 <script>
@@ -139,7 +150,7 @@ export default {
       //符号配置的URL
       symbolUrl: "",
       //态势推演配置文件
-      data: data
+      data: data,
     };
   },
   methods: {
@@ -148,8 +159,8 @@ export default {
       //返回vueIndex以及vueKey
       this.vueIndex = e.vueIndex;
       this.vueKey = e.vueKey;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="css"></style>

@@ -9,7 +9,7 @@ npm install --save @mapgis/webclient-vue-cesium
 yarn add @mapgis/webclient-vue-cesium
 ```
 
-::: tip 安装webclient-vue-cesium的同时，默认会自动安装 webclient-vue-ui
+::: tip 安装 webclient-vue-cesium 的同时，默认会自动安装 webclient-vue-ui
 原因：由于 webclient-vue-cesium 使用了大量内置的 webclient-vue-ui，因此会同步安装 webclient-vue-ui
 :::
 

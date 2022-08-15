@@ -1,11 +1,11 @@
 import * as turf from "@turf/turf";
 
-export const checkType = val =>
+export const checkType = (val) =>
   Object.prototype.toString.call(val).slice(8, -1);
 
-export const toKebabCase = str =>
+export const toKebabCase = (str) =>
   str
-    .replace(new RegExp("[A-Z]", "g"), letter => `-${letter.toLowerCase()}`)
+    .replace(new RegExp("[A-Z]", "g"), (letter) => `-${letter.toLowerCase()}`)
     .replace(new RegExp("^-"), "");
 /**
  * 通过 class 名获取 Dom 元素。
@@ -16,7 +16,7 @@ export const getDocumentByClassName = (htmlCollection, className) => {
   let temp;
   const BreakException = {};
   try {
-    Array.prototype.slice.call(htmlCollection).forEach(element => {
+    Array.prototype.slice.call(htmlCollection).forEach((element) => {
       if (element.className === className) {
         temp = element;
         throw BreakException;
@@ -153,7 +153,7 @@ export function makeCartesian3Array(vals) {
   }
 
   const coordinates = [];
-  vals.forEach(item => {
+  vals.forEach((item) => {
     coordinates.push(item.lng);
     coordinates.push(item.lat);
     coordinates.push(item.height);
@@ -171,7 +171,7 @@ export function makeCartesian3Array(vals) {
  */
 export function makeCartesian2Array(vals) {
   const cartesian2Array = [];
-  vals.forEach(item => {
+  vals.forEach((item) => {
     cartesian2Array.push(new Cesium.Cartesian2(item.x, item.y));
   });
   return cartesian2Array;
@@ -190,7 +190,7 @@ export function makeQuaternion(val) {
  * @param {Object} val
  */
 function parsePolygonHierarchyJson(val) {
-  val.forEach(element => {
+  val.forEach((element) => {
     element.positions = makeCartesian3Array(element.positions);
     if (element.holes) {
       parsePolygonHierarchyJson(element.holes);
@@ -347,8 +347,8 @@ export function makeOptions(val) {
       const result = {};
       Object.assign(result, val);
       result &&
-      result.markerColor &&
-      (result.markerColor = makeColor(result.markerColor));
+        result.markerColor &&
+        (result.markerColor = makeColor(result.markerColor));
       result && result.stroke && (result.stroke = makeColor(result.stroke));
       result && result.fill && (result.fill = makeColor(result.fill));
       return result;
@@ -420,12 +420,12 @@ export function Platform() {
     isPhone: isPhone,
     isAndroid: isAndroid,
     isPc: isPc,
-    isChrome: isChrome
+    isChrome: isChrome,
   };
 }
 
 export function captureScreenshot(viewer, showSplitter = false) {
-  const {when} = Cesium;
+  const { when } = Cesium;
   const deferred = when.defer();
   const scene = viewer.scene;
   var removeCallback = scene.postRender.addEventListener(function () {
@@ -463,11 +463,12 @@ export function captureScreenshot(viewer, showSplitter = false) {
 }
 
 export function getAllAttribution(viewer) {
-  const credits = viewer.scene.frameState.creditDisplay._currentFrameCredits.screenCredits.values.concat(
-    viewer.scene.frameState.creditDisplay._currentFrameCredits.lightboxCredits
-      .values
-  );
-  return credits.map(credit => credit.html);
+  const credits =
+    viewer.scene.frameState.creditDisplay._currentFrameCredits.screenCredits.values.concat(
+      viewer.scene.frameState.creditDisplay._currentFrameCredits.lightboxCredits
+        .values
+    );
+  return credits.map((credit) => credit.html);
 }
 
 /**
@@ -520,13 +521,16 @@ export function uuid() {
   if (window.performance && typeof window.performance.now === "function") {
     d += performance.now();
   }
-  const UuidStr = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
-    // tslint:disable-next-line: no-bitwise
-    const r = (d + Math.random() * 16) % 16 | 0;
-    d = Math.floor(d / 16);
-    // tslint:disable-next-line: no-bitwise
-    return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
-  });
+  const UuidStr = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+    /[xy]/g,
+    (c) => {
+      // tslint:disable-next-line: no-bitwise
+      const r = (d + Math.random() * 16) % 16 | 0;
+      d = Math.floor(d / 16);
+      // tslint:disable-next-line: no-bitwise
+      return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+    }
+  );
   return UuidStr;
 }
 
@@ -537,7 +541,7 @@ export function uuid() {
  */
 export function getCamera(viewer) {
   let camera = {
-    positionCartographic: {}
+    positionCartographic: {},
   };
   camera.positionCartographic.height =
     viewer.camera.positionCartographic.height;
@@ -553,19 +557,21 @@ export function getCamera(viewer) {
 
 export function getPolygonSamplePoints(options) {
   options = options || {};
-  let {positions} = options;
-  let {step} = options;
+  let { positions } = options;
+  let { step } = options;
   if (!positions || !step) return;
   let line = turf.lineString(positions);
   let bbox = turf.bbox(line);
   let bboxPolygon = turf.bboxPolygon(bbox);
-  let {coordinates} = bboxPolygon.geometry;
+  let { coordinates } = bboxPolygon.geometry;
   let points = coordinates[0];
   let width = points[1][0] - points[0][0];
   let height = points[3][1] - points[0][1];
   let widthStep = width / step;
   let heightStep = height / step;
-  let ps = [],result=[], startP = [points[0][0], points[0][1]];
+  let ps = [],
+    result = [],
+    startP = [points[0][0], points[0][1]];
   for (let i = 0; i < step; i++) {
     startP[0] = points[0][0];
     for (let j = 0; j < step; j++) {

@@ -239,6 +239,8 @@
   </mapgis-ui-setting-footer>
     </slot>
   </div>
+    </slot>
+  </div>
 </template>
 
 <script>

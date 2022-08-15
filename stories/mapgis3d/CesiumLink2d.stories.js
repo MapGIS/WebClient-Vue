@@ -14,11 +14,12 @@ const Template = (args, { argTypes }) => ({
   components: { Mapgis3dLink },
   data() {
     return {
-      link: false,
+      link: true,
       url1:
         "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
-      url2: "http://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      url2: "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
       rect: {},
+      intervalNum: 1
     };
   },
   watch: {
@@ -52,7 +53,7 @@ const Template = (args, { argTypes }) => ({
     <div class="cesium-item top-right">
       <mapgis-web-scene>
         <mapgis-3d-raster-layer :url="url1"> </mapgis-3d-raster-layer>
-        <mapgis-3d-link :enable="link" v-model="rect" ></mapgis-3d-link>
+        <mapgis-3d-link :enable="link" v-model="rect" :interval="intervalNum"></mapgis-3d-link>
       </mapgis-web-scene>
     </div>
     <div :class="{'control-2d-3d': true, 'link-active': link}" v-on:click="changeMode"></div>

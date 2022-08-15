@@ -114,7 +114,7 @@ module.exports = {
               ["/api/layer/Graphic/GraphicLayerService.md", "标绘图层-工具类"],
 
               ["/api/MapStory/MapStory.md", "地图故事图层"],
-                
+
               ["/api/layer/3DPlot/PlotLayer.md", "行业标绘图层"],
               ["/api/layer/3DPlot/Plot.md", "行业标绘绘制组件"],
               ["/api/layer/3DPlot/PlotAnimation.md", "态势推演组件"],
