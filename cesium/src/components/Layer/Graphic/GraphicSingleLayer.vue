@@ -549,7 +549,8 @@ export default {
         offsetHeight,
         loop,
         verticalOrigin,
-        horizontalOrigin
+        horizontalOrigin,
+        classificationType
       } = style;
 
       const { title, __flashStyle } = attributes;
@@ -698,6 +699,8 @@ export default {
           if (title) {
             editPanelValues.title = title;
           }
+          editPanelValues.elevationMode =
+            classificationType === undefined ? -1 : classificationType;
           break;
         case "polylineVolume":
           editPanelValues.id = id;
@@ -752,6 +755,8 @@ export default {
             editPanelValues.repeatX = 1;
             editPanelValues.repeatY = 1;
           }
+          editPanelValues.elevationMode =
+            classificationType === undefined ? -1 : classificationType;
           break;
         case "rectangle":
           editPanelValues.id = id;
@@ -812,6 +817,8 @@ export default {
             editPanelValues.repeatX = 1;
             editPanelValues.repeatY = 1;
           }
+          editPanelValues.elevationMode =
+            classificationType === undefined ? -1 : classificationType;
           break;
         case "circle":
           editPanelValues.offsetHeight = offsetHeight;
@@ -874,6 +881,8 @@ export default {
               editPanelValues.title = title;
             }
           }
+          editPanelValues.elevationMode =
+            classificationType === undefined ? -1 : classificationType;
           break;
         case "ellipsoid":
           editPanelValues.id = id;

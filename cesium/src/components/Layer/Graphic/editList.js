@@ -315,6 +315,35 @@ let editList = {
       key: "loop",
       value: false,
     },
+    // elevationMode表示Cesium.ClassificationType的值
+    // 2:Cesium.ClassificationType.BOTH,贴地形/模型表面
+    // 0:Cesium.ClassificationType.TERRAIN,贴地形表面
+    // 1:Cesium.ClassificationType.CESIUM_3D_TILE,贴模型表面
+    // -1:undefined,绝对高度
+    {
+      type: "MapgisUiSelect",
+      title: "高程类型",
+      key: "elevationMode",
+      value: 2,
+      dataSource: [
+        {
+          key: 2,
+          value: "贴地形/模型表面",
+        },
+        {
+          key: 0,
+          value: "贴地形表面",
+        },
+        {
+          key: 1,
+          value: "贴模型表面",
+        },
+        {
+          key: -1,
+          value: "绝对高度",
+        },
+      ],
+    },
   ],
   polylineVolume: [
     {
@@ -550,6 +579,30 @@ let editList = {
       value: 100,
     },
     {
+      type: "MapgisUiSelect",
+      title: "高程类型",
+      key: "elevationMode",
+      value: 2,
+      dataSource: [
+        {
+          key: 2,
+          value: "贴地形/模型表面",
+        },
+        {
+          key: 0,
+          value: "贴地形表面",
+        },
+        {
+          key: 1,
+          value: "贴模型表面",
+        },
+        {
+          key: -1,
+          value: "绝对高度",
+        },
+      ],
+    },
+    {
       type: "MapgisUiInputNumber",
       title: "离地高度",
       key: "offsetHeight",
@@ -644,6 +697,30 @@ let editList = {
       value: 100,
     },
     {
+      type: "MapgisUiSelect",
+      title: "高程类型",
+      key: "elevationMode",
+      value: 2,
+      dataSource: [
+        {
+          key: 2,
+          value: "贴地形/模型表面",
+        },
+        {
+          key: 0,
+          value: "贴地形表面",
+        },
+        {
+          key: 1,
+          value: "贴模型表面",
+        },
+        {
+          key: -1,
+          value: "绝对高度",
+        },
+      ],
+    },
+    {
       type: "MapgisUiInputNumber",
       title: "离地高度",
       key: "offsetHeight",
@@ -730,6 +807,30 @@ let editList = {
         {
           key: "CircleWaveMaterial",
           value: "动态圆波",
+        },
+      ],
+    },
+    {
+      type: "MapgisUiSelect",
+      title: "高程类型",
+      key: "elevationMode",
+      value: 2,
+      dataSource: [
+        {
+          key: 2,
+          value: "贴地形/模型表面",
+        },
+        {
+          key: 0,
+          value: "贴地形表面",
+        },
+        {
+          key: 1,
+          value: "贴模型表面",
+        },
+        {
+          key: -1,
+          value: "绝对高度",
         },
       ],
     },
