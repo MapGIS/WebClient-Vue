@@ -1,7 +1,7 @@
 import {
   FillStyle,
   LineStyle,
-  PointStyle,
+  PointStyle
 } from "@mapgis/webclient-es6-service/base/style";
 import bbox from "@turf/bbox";
 
@@ -15,32 +15,32 @@ export default {
     ...VueOptions,
     baseUrl: {
       type: [String, Object],
-      required: true,
+      required: true
     },
     layerId: {
       type: String,
-      default: "矢量图层",
+      default: "矢量图层"
     },
     // uniform unique range random gradual
     type: {
       type: String,
-      default: "uniform",
+      default: "uniform"
     },
     field: {
       type: String,
-      default: "",
+      default: ""
     },
     autoReset: {
       type: Boolean,
-      default: true,
+      default: true
     },
     offsetHeight: {
       type: Number,
-      default: 5000,
+      default: 5000
     },
     themeOptions: {
       type: Object,
-      default: function () {
+      default: function() {
         return {
           hasMaterial: false,
           // PolylineTrailLink PolylineArrow PolylineDash Image CircleWave，默认为PolylineTrailLink材质
@@ -49,25 +49,25 @@ export default {
             color: "#FF3300",
             outlineColor: "#FFFFFF",
             outlineWidth: 1,
-            opacity: 1,
+            opacity: 1
           },
           styleGroups: [{}],
-          gradualLayerStyle: {},
+          gradualLayerStyle: {}
         };
-      },
+      }
     },
     filter: {
       type: Object,
-      default: function () {
+      default: function() {
         return {
           filedName: "",
-          filedRange: [],
+          filedRange: []
         };
-      },
+      }
     },
     filterOptions: {
       type: Object,
-      default: function () {
+      default: function() {
         return {
           hasMaterial: false,
           materialType: "",
@@ -75,20 +75,20 @@ export default {
             color: "#FF3300",
             outlineColor: "#FFFFFF",
             outlineWidth: 1,
-            opacity: 1,
+            opacity: 1
           },
           styleGroups: [{}],
-          gradualLayerStyle: {},
+          gradualLayerStyle: {}
         };
-      },
+      }
     },
     enableHighlight: {
       type: Boolean,
-      default: false,
+      default: false
     },
     enableHighlightHover: {
       type: Boolean,
-      default: false,
+      default: false
     },
     highlightStyle: {
       type: Object,
@@ -98,31 +98,31 @@ export default {
             radius: 100,
             color: "#ff0000",
             outlineColor: "#ffffff",
-            outlineWidth: 1,
+            outlineWidth: 1
           },
           line: {
             width: 1,
-            color: "#ff0000",
+            color: "#ff0000"
           },
           polygon: {
             color: "#ffff00",
             outlineColor: "#ffffff",
             outlineWidth: 1,
-            opacity: 1,
-          },
+            opacity: 1
+          }
         };
-      },
+      }
     },
     visible: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
   methods: {
     $_setHeight(entities) {
       const { viewer } = this;
       const vm = this;
-      viewer.camera.changed.addEventListener(function () {
+      viewer.camera.changed.addEventListener(function() {
         const height = viewer.camera.positionCartographic.height / 1000;
         vm.$_changeVisible(entities, height);
       });
@@ -130,23 +130,23 @@ export default {
     $_changeVisible(entities, height) {
       if (!Array.isArray(entities)) return;
       if (this.visible && height < this.offsetHeight) {
-        entities.forEach((item) => (item.show = true));
+        entities.forEach(item => (item.show = true));
       } else {
-        entities.forEach((item) => (item.show = false));
+        entities.forEach(item => (item.show = false));
       }
     },
     async createCesiumObject() {
       const { baseUrl, options } = this;
       return new Cesium.GeoJsonDataSource.load(baseUrl, {
-        clampToGround: true,
+        clampToGround: true
       });
     },
     parseData(data) {
       const vm = this;
       if (typeof data === "string") {
         fetch(data)
-          .then((res) => res.json())
-          .then((geojson) => {
+          .then(res => res.json())
+          .then(geojson => {
             vm.parseBBox(geojson);
           });
       } else {
@@ -168,7 +168,7 @@ export default {
         let radius = geodesic.surfaceDistance;
         let boundingSphere = {
           center: center,
-          radius: radius,
+          radius: radius
         };
         this.viewer.scene.camera.viewBoundingSphere(
           boundingSphere,
@@ -227,7 +227,7 @@ export default {
         "c",
         "d",
         "e",
-        "f",
+        "f"
       ];
       for (let i = 0; i < 6; i++) {
         colorStr += randomArr[Math.ceil(Math.random() * (15 - 0) + 0)];
@@ -247,7 +247,7 @@ export default {
           radius,
           color,
           outlineColor,
-          outlineWidth,
+          outlineWidth
         };
       } else if (entity.polyline && !entity.polygon) {
         const { width, outlineWidth } = layerStyle;
@@ -255,7 +255,7 @@ export default {
           width,
           color,
           outlineColor,
-          outlineWidth,
+          outlineWidth
         };
       } else if (entity.polygon) {
         const { outlineWidth, opacity } = layerStyle;
@@ -263,7 +263,7 @@ export default {
           color,
           outlineColor,
           outlineWidth,
-          opacity,
+          opacity
         };
       }
       return tempLayerStyle;
@@ -320,12 +320,12 @@ export default {
         startColor,
         endColor,
         startOpacity,
-        endOpacity,
+        endOpacity
       } = gradualLayerStyle;
       let step = range.length - 1;
       const minRange = Math.min(...range);
       const maxRange = Math.max(...range);
-      const normalizeRange = range.map((item) => {
+      const normalizeRange = range.map(item => {
         return (item - minRange) / (maxRange - minRange);
       });
       // 生成均匀渐变颜色
@@ -373,7 +373,7 @@ export default {
           color: gradualColor[k] ? gradualColor[k] : color,
           outlineColor: gradualColor[k] ? gradualColor[k] : outlineColor,
           outlineWidth: outlineWidth ? outlineWidth : 0,
-          opacity: gradualOpacity[k] ? gradualOpacity[k] : opacity,
+          opacity: gradualOpacity[k] ? gradualOpacity[k] : opacity
         };
         gradualStyle.push(style);
       }
@@ -401,7 +401,7 @@ export default {
       for (let i = 0; i < entities.length; i++) {
         let entity = entities[i];
         let propertyName = entity._properties._propertyNames;
-        if (!propertyName.some((item) => item === field)) {
+        if (!propertyName.some(item => item === field)) {
           break;
         }
         for (let j = 0; j < valueArr.length; j++) {
@@ -419,7 +419,7 @@ export default {
       for (let i = 0; i < entities.length; i++) {
         let entity = entities[i];
         let propertyName = entity._properties._propertyNames;
-        if (!propertyName.some((item) => item === field)) {
+        if (!propertyName.some(item => item === field)) {
           break;
         }
         const entityValue = entity._properties[field]._value;
@@ -448,15 +448,17 @@ export default {
                 duration,
                 direction,
                 image,
-                color: colorRGB,
+                color: colorRGB
               };
-              entity.polyline.material =
-                new Cesium.PolylineTrailLinkMaterialProperty(trailLinkMaterial);
+              entity.polyline.material = new Cesium.PolylineTrailLinkMaterialProperty(
+                trailLinkMaterial
+              );
               entity.polyline.width = style.width;
               break;
             case "PolylineArrow":
-              entity.polyline.material =
-                new Cesium.PolylineArrowMaterialProperty(colorRGB);
+              entity.polyline.material = new Cesium.PolylineArrowMaterialProperty(
+                colorRGB
+              );
               entity.polyline.width = style.width;
               break;
             case "PolylineDash":
@@ -465,10 +467,11 @@ export default {
                 color: colorRGB,
                 gapColor: gapColorRGB,
                 dashLength,
-                dashPattern,
+                dashPattern
               };
-              entity.polyline.material =
-                new Cesium.PolylineDashMaterialProperty(dashMaterial);
+              entity.polyline.material = new Cesium.PolylineDashMaterialProperty(
+                dashMaterial
+              );
               entity.polyline.width = style.width;
               break;
             case "Image":
@@ -479,7 +482,7 @@ export default {
                   material.repeatY
                 ),
                 color: colorRGB,
-                transparent: false,
+                transparent: false
               };
               entity.polygon.material = new Cesium.ImageMaterialProperty(
                 imageMaterial
@@ -488,10 +491,11 @@ export default {
                 duration,
                 direction,
                 image,
-                color: colorRGB,
+                color: colorRGB
               };
-              entity.polyline.material =
-                new Cesium.PolylineTrailLinkMaterialProperty(imageMaterialLine);
+              entity.polyline.material = new Cesium.PolylineTrailLinkMaterialProperty(
+                imageMaterialLine
+              );
               entity.polyline.width = style.outlineWidth;
               break;
             case "CircleWave":
@@ -505,8 +509,8 @@ export default {
                   duration,
                   gradient,
                   color: colorRGB,
-                  count,
-                }),
+                  count
+                })
               });
               break;
             default:
@@ -514,10 +518,11 @@ export default {
                 duration,
                 direction,
                 image,
-                color: colorRGB,
+                color: colorRGB
               };
-              entity.polyline.material =
-                new Cesium.PolylineTrailLinkMaterialProperty(defaultMaterial);
+              entity.polyline.material = new Cesium.PolylineTrailLinkMaterialProperty(
+                defaultMaterial
+              );
               entity.polyline.width = style.width;
           }
         } else {
@@ -528,7 +533,7 @@ export default {
               semiMinorAxis: style.radius,
               outline: true,
               outlineWidth: style.outlineWidth,
-              material: Cesium.Color.fromCssColorString(style.color),
+              material: Cesium.Color.fromCssColorString(style.color)
             });
           } else if (entity.polyline && !entity.polygon) {
             entity.polyline.material = new Cesium.ColorMaterialProperty(
@@ -549,6 +554,6 @@ export default {
           }
         }
       }
-    },
-  },
+    }
+  }
 };

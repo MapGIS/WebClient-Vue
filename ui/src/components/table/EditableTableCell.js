@@ -14,24 +14,24 @@ export default {
      */
     column: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     record: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     size: {
       type: String,
       default: "small",
       validator(v) {
         return oneOf(v, ["large", "small"]);
-      }
-    }
+      },
+    },
   },
   render(h, ctx) {
     const { column, record, size } = this;
 
-    const onChange = _debounce(value => {
+    const onChange = _debounce((value) => {
       this.$emit("change", value);
     }, 200);
 
@@ -53,7 +53,7 @@ export default {
       case "Input":
         return (
           <mapgis-ui-input
-            onChange={e => onChange(e.target.value)}
+            onChange={(e) => onChange(e.target.value)}
             value={value}
             size={size}
             placeholder={"请输入"}
@@ -74,11 +74,12 @@ export default {
         );
       case "ColorPicker":
         return (
-          <mapgis-ui-sketch-color-picker-confirm
+          <mapgis-ui-sketch-color-picker
             onChange={onChange}
-            value={value}
+            color={value}
             size={size}
             autoWidth={true}
+            showColorText={false}
             border-radius={false}
             {...{ ...column.props }}
           />
@@ -87,5 +88,5 @@ export default {
         break;
     }
     return null;
-  }
+  },
 };
