@@ -356,13 +356,7 @@ export default {
       const { viewer } = this;
       const { g3dLayerIndex } = this;
       // 移除图层的时候，把高亮也移除
-      this.featurevisible = false;
-      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
-      if (find && find.options) {
-        let { primitiveCollection } = find.options;
-        let last = find.options.feature;
-        primitiveCollection.remove(last);
-      }
+      this.cancelHighlight();
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       g3dLayer.remove(true);
@@ -862,7 +856,20 @@ export default {
         this.queryStatic(movement);
       }
     },
-    cancelFeature() {},
+    cancelFeature() {
+      this.cancelHighlight();
+    },
+    cancelHighlight() {
+      const { vueCesium, vueKey, vueIndex } = this;
+      this.featurevisible = false;
+      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+      if (find && find.options) {
+        let { primitiveCollection } = find.options;
+        let last = find.options.feature;
+        primitiveCollection.remove(last);
+      }
+      this.restoreM3d();
+    },
     bindPopupEvent() {
       const { vueKey, vueIndex } = this;
       const { enablePopup, enableTips } = this;
