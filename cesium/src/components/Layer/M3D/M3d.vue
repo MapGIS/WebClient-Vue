@@ -123,7 +123,7 @@ export default {
           resolve => {
             let layerIndex;
             // 判断服务类型，三维场景服务调用Cesium底层appendSceneLayer，本质是调用appendSceneServer方法
-            if (url.indexOf('SceneServer') !== -1) {
+            if (url.indexOf("SceneServer") !== -1) {
               viewer.scene.layers.appendSceneLayer(url, {
                 ...$props,
                 loaded: vm.onSceneLoaded
@@ -138,7 +138,7 @@ export default {
                 loaded: vm.onM3dLoaded
               });
               resolve({ layerIndex: layerIndex });
-            };
+            }
           },
           reject => {}
         );
@@ -247,7 +247,7 @@ export default {
            */
           vm.layerIndex = layerIndex;
           let m3dLayer;
-          if (url.indexOf('SceneServer') == -1) {
+          if (url.indexOf("SceneServer") == -1) {
             m3dLayer = viewer.scene.layers.m3dLayersMap.get(layerIndex);
             let m3ds = [m3dLayer];
             vm.loopM3d(m3ds, "2.0");
@@ -273,7 +273,7 @@ export default {
     removeLayer() {
       const { url, layerIndex } = this;
       if (!layerIndex) return;
-      if (url.indexOf('SceneServer') != -1) {
+      if (url.indexOf("SceneServer") != -1) {
         viewer.scene.layers.removeSceneLayerByID(layerIndex);
       } else {
         viewer.scene.layers.removeM3DLayerByID(layerIndex);
@@ -364,9 +364,8 @@ export default {
           "pickStyle",
           tileset.pickedColor
         );
-        // @date 潘卓然 2022/01/21等cesium底层修复后再放开
-        /* tileset.pickedOid = oid;
-        tileset.pickedColor = Cesium.Color.fromCssColorString(color); */
+        tileset.pickedOid = oid;
+        tileset.pickedColor = Cesium.Color.fromCssColorString(color);
         let titlefield = popupOptions ? popupOptions.title : undefined;
         if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
           let result = feature.content.getAttributeByOID(oid) || {};
@@ -399,11 +398,10 @@ export default {
       if (version == "0.0" || version == "1.0") {
       } else if (version == "2.0") {
         let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
-        // @date 潘卓然 2022/01/21等cesium底层修复后再放开
-        /* tileset.pickedOid = oid;
+        tileset.pickedOid = oid;
         tileset.pickedColor = Cesium.Color.fromCssColorString(
-          "rgba(255, 255, 0, 0.6)"
-        ); */
+          "rgba(255, 255, 0, 0.5)"
+        );
       }
     },
     changeShow(show) {

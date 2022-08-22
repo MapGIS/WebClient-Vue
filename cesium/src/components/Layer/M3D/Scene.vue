@@ -868,6 +868,7 @@ export default {
         let last = find.options.feature;
         primitiveCollection.remove(last);
       }
+      this.restoreHighlight();
       this.restoreM3d();
     },
     bindPopupEvent() {
@@ -892,6 +893,7 @@ export default {
     unbindPopupEvent() {
       const { vueKey, vueIndex } = this;
       this.featurevisible = false;
+      this.restoreHighlight();
       this.restoreM3d();
       let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
       if (find && find.options.clickhandler) {
@@ -1019,6 +1021,9 @@ export default {
 
         if (!pickedFeature) {
           vm.clickvisible = false;
+          // 点击模型外去除高亮
+          vm.restoreHighlight();
+          vm.restoreM3d();
           return;
         }
 
@@ -1066,10 +1071,12 @@ export default {
             /* m3ds.forEach((index) => {
               let m3d = g3dLayer.getLayer(index);
               m3d && m3d.reset();
-            });
+            });*/
 
             tileset.pickedOid = oid;
-            tileset.pickedColor = Cesium.Color.fromCssColorString("#ffff00"); */
+            tileset.pickedColor = Cesium.Color.fromCssColorString(
+              "rgba(255,255,0,0.5)"
+            );
             if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
               let result = feature.content.getAttributeByOID(oid) || {};
               vm.featureproperties = result;
@@ -1086,6 +1093,20 @@ export default {
           vm.clickvisible = false;
         }
       }
+    },
+    restoreHighlight() {
+      const { g3dLayerIndex, viewer } = this;
+
+      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
+      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+      let m3ds = g3dLayer.getM3DLayerIndexes();
+      m3ds.forEach(index => {
+        let m3d = g3dLayer.getLayer(index);
+        if (m3d) {
+          m3d.reset(); //该函数目前底层MapGISM3DSet.reset无效 后期记得修改
+          m3d.pickedOid = undefined;
+        }
+      });
     },
     handleDynamicQuery() {
       this.featurevisible = false;
