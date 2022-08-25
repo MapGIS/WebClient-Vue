@@ -2,10 +2,22 @@
   <div class="light-setting">
     <mapgis-ui-switch-panel
       size="default"
-      label="太阳光照"
+      label="光照"
       :checked="lightSetting.sunlight"
       @changeChecked="enableSunlight"
     >
+      <mapgis-ui-form layout="vertical">
+        <mapgis-ui-form-item label="光照类型">
+          <mapgis-ui-select v-model="lightingMode">
+            <mapgis-ui-select-option :value="'DAYNIGHT_SHADING'">
+              太阳光照
+            </mapgis-ui-select-option>
+            <mapgis-ui-select-option :value="'VERTEX_LIGHTING'">
+              顶点光照
+            </mapgis-ui-select-option>
+          </mapgis-ui-select>
+        </mapgis-ui-form-item>
+      </mapgis-ui-form>
       <mapgis-ui-color-pick-panel
         label="光照颜色"
         :color="lightSetting.sunlightParams.lightColor"
@@ -40,6 +52,7 @@ export default {
         return {
           sunlight: false,
           sunlightParams: {
+            lightingMode: "DAYNIGHT_SHADING",
             lightColor: "rgba(255,255,255,255)"
           },
           lightIntensity: 10
@@ -55,10 +68,31 @@ export default {
       set() {
         this.$emit("updateLightSetting", this.lightSetting);
       }
+    },
+    lightingMode: {
+      get() {
+        return this.lightSetting.sunlightParams.lightingMode;
+      },
+      set(val) {
+        const { viewer, Cesium } = this;
+        this.lightSetting.sunlightParams.lightingMode = val;
+        viewer.scene.globe.lightingMode = Cesium.LightingMode[val];
+      }
     }
   },
   data() {
-    return {};
+    return {
+      lightingModes: [
+        {
+          key: "DAYNIGHT_SHADING",
+          value: "太阳光照"
+        },
+        {
+          key: "VERTEX_LIGHTING",
+          value: "顶点光照"
+        }
+      ]
+    };
   },
   watch: {
     initLightSetting(e) {
@@ -71,10 +105,11 @@ export default {
         return;
       }
       const { sunlight, sunlightParams, lightIntensity } = this.lightSetting;
-      const { lightColor } = sunlightParams;
+      const { lightColor, lightingMode } = sunlightParams;
       this.enableSunlight(sunlight);
       if (sunlight) {
         this.lightColorChange(lightColor);
+        viewer.scene.globe.lightingMode = Cesium.LightingMode[lightingMode];
       }
       this.lightIntensityChange(lightIntensity);
     },

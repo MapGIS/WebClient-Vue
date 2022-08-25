@@ -154,6 +154,7 @@ export default {
         this.initParams.lightSetting || {
           sunlight: false,
           sunlightParams: {
+            lightingMode: "DAYNIGHT_SHADING",
             lightColor: "rgba(255,255,255,255)"
           },
           lightIntensity: 10
