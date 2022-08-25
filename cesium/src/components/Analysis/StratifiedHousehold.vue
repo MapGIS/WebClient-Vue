@@ -1244,6 +1244,17 @@ export default {
         }
         resolve();
       });
+    },
+    changeFloor(data) {
+      const layerInfo = this.relationshipInfo.layerTree.find(
+        item => item.guid === data.guid
+      );
+      this.relationshipInfo.isFloor = data.isFloor;
+      this.relationshipInfo.floor = data.guid;
+      this.relationshipInfo.layerIndex = layerInfo
+        ? layerInfo.layerIndex
+        : undefined;
+      this.$emit("show-relationship-graph", this.relationshipInfo);
     }
   }
 };

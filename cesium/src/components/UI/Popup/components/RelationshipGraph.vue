@@ -42,7 +42,49 @@
           <mapgis-ui-button @click="resizeQueryparams">重置</mapgis-ui-button>
         </mapgis-ui-form-item>
       </mapgis-ui-setting-form>
-      <div id="relationship" class="relationship-graph" />
+      <mapgis-ui-setting-form :layout="'inline'" size="default">
+        <mapgis-ui-form-item label="关系图谱类型:">
+          <mapgis-ui-select
+            class="mapgis-3d-stratified-household-layers"
+            size="default"
+            v-model="currentType"
+            @change="handleSelectChange"
+          >
+            <mapgis-ui-select-option
+              v-for="(l, i) in relationshipTypeList"
+              :key="i"
+              :value="l.id"
+              >{{ l.label }}</mapgis-ui-select-option
+            >
+          </mapgis-ui-select>
+        </mapgis-ui-form-item>
+        <mapgis-ui-form-item label="" v-show="showRevert">
+          <mapgis-ui-button @click="goBack">返回</mapgis-ui-button>
+        </mapgis-ui-form-item>
+      </mapgis-ui-setting-form>
+      <div class="relationship-graph" id="relationship-graph">
+        <div id="relationship" class="relationship-graph-left" />
+        <div
+          v-show="showTooltip"
+          class="relationship-graph-right"
+          :style="{
+            width: tooltipWidth + 'px',
+            maxHeight: tooltipHeight + 'px'
+          }"
+        >
+          <div class="right-content" v-html="tooltipInfo" />
+          <div class="right-accessory" v-show="showAccessory">
+            <relation-accessory
+              ref="detailInfo"
+              :toType="toType"
+              :dataStoreIp="info.dataStoreIp"
+              :dataStorePort="info.dataStorePort"
+              :dataStoreDataset="info.dataStoreDataset"
+              @project-screen="projectScreen"
+            />
+          </div>
+        </div>
+      </div>
     </mapgis-ui-spin>
   </div>
 </template>
@@ -50,9 +92,11 @@
 import G6 from "@antv/g6/build/g6";
 import Hierarchy from "@antv/hierarchy";
 import axios from "axios";
+import RelationAccessory from "./RelationAccessory.vue";
 
 export default {
   name: "mapgis-3d-relationship-graph",
+  components: { RelationAccessory },
   props: {
     info: {
       type: Object,
@@ -119,8 +163,20 @@ export default {
           fill: "#099"
         }
       },
+      edgeTreeLabelCfgHighlight: {
+        style: {
+          lineWidth: 5,
+          fill: "#099"
+        }
+      },
       edgeLabelCfgNormal: {
         refY: 15,
+        style: {
+          lineWidth: 5,
+          fill: "#ccc"
+        }
+      },
+      edgeTreeLabelCfgNormal: {
         style: {
           lineWidth: 5,
           fill: "#ccc"
@@ -191,12 +247,48 @@ export default {
           }
         }
       },
+      edgeTreeDefualtConfig: {
+        shape: "cubic-horizontal",
+        style: {
+          stroke: "#A3B1BF"
+        }
+      },
       // 图表初始大小
-      graphWidth: 980,
+      graphWidth: 800,
       graphHeight: 700,
+      tooltipWidth: 180,
+      tooltipHeight: 700,
       // 记录图表窗口是否最大化
-      graphMax: false
+      graphMax: false,
+      tooltipInfo: undefined,
+      showAccessory: false,
+      // 当前展示信息的唯一标识
+      currentShowId: undefined,
+      relationshipTypeList: [
+        {
+          id: 1,
+          label: "辐射树"
+        },
+        {
+          id: 2,
+          label: "紧凑树"
+        }
+      ],
+      showRevert: false,
+      currentType: 1,
+      toType: 101,
+      floorOptionList: [],
+      // 紧凑树关闭的节点
+      closedNode: []
     };
+  },
+  computed: {
+    showTooltip() {
+      return this.tooltipInfo;
+    },
+    currentFloor() {
+      return this.floorOptionList[0] || undefined;
+    }
   },
   created() {},
   mounted() {
@@ -207,11 +299,17 @@ export default {
       const that = this;
       // 取消搜索后的锁定
       that.isLock = false;
+      that.currentShowId = undefined;
+      // 关闭tooltip提示框
+      that.showAccessory = false;
+      that.floorOptionList.push(that.info.floor);
       that.resizeQueryparams();
-      this.getGraphData().then(res => {
+      that.getGraphData().then(res => {
         const data = that.formatData(res.graphValues);
         that.graphData = res.graphValues;
-        that.initGraph(data);
+        that.currentType === 1
+          ? that.initGraph(data)
+          : that.initGraphTree(data);
       });
     },
     initGraph(data) {
@@ -228,74 +326,7 @@ export default {
         pixelRatio: 2,
         linkCenter: true,
         modes: {
-          default: [
-            "drag-canvas",
-            "zoom-canvas",
-            // 点提示框交互工具的配置
-            {
-              type: "tooltip",
-              formatText(model) {
-                let text = [];
-                const data = model.properties;
-                // js遍历对象是无序的，指定tooltip展示顺序
-                if (model.entityName === "房屋") {
-                  for (let i = 0; i < that.householdTooltipConfig.length; i++) {
-                    text.push(
-                      `<strong>${that.householdTooltipConfig[i]}</strong>: ${
-                        data[that.householdTooltipConfig[i]]
-                      }`
-                    );
-                  }
-                } else if (model.entityName === "楼幢") {
-                  for (let i = 0; i < that.floorTooltipConfig.length; i++) {
-                    text.push(
-                      `<strong>${that.floorTooltipConfig[i]}</strong>: ${
-                        data[that.floorTooltipConfig[i]]
-                      }`
-                    );
-                  }
-                } else if (model.entityName === "权利人") {
-                  for (let i = 0; i < that.obligeeTooltipConfig.length; i++) {
-                    text.push(
-                      `<strong>${that.obligeeTooltipConfig[i]}</strong>: ${
-                        data[that.obligeeTooltipConfig[i]]
-                      }`
-                    );
-                  }
-                } else {
-                  // 对象中只有一个key时直接遍历
-                  for (let key in data) {
-                    const element = data[key];
-                    text.push(`<strong>${key}</strong>: ${element}`);
-                  }
-                }
-                // .g6-node-tooltip中的字体颜色已被设置为最高优先级无法再次设置，再加一层div
-                return `<div class='tooltip-content' style='color:#fff !important'>${text.join(
-                  "<br />"
-                )}</div>`;
-              },
-              shouldUpdate: e => {
-                return true;
-              }
-            }
-            // 边提示框交互工具的配置
-            // {
-            //   type: "edge-tooltip",
-            //   formatText(model) {
-            //     const text =
-            //       "source: " +
-            //       model.source +
-            //       "<br/> target: " +
-            //       model.target +
-            //       "<br/> weight: " +
-            //       model.weight;
-            //     return text;
-            //   },
-            //   shouldUpdate: e => {
-            //     return true;
-            //   }
-            // }
-          ]
+          default: ["drag-canvas", "zoom-canvas"]
         },
         nodeStateStyles: that.nodeStateStyles,
         edgeStateStyles: that.edgeStateStyles,
@@ -328,6 +359,183 @@ export default {
       });
 
       that.graph.on("node:mouseenter", function(e) {
+        const model = e.item.get("model");
+        if (that.currentShowId === model.id) return;
+        this.currentShowId = model.id;
+        that.tooltipInfo = that.formatText(e.item.get("model"));
+        if (that.isLock) return;
+
+        const item = e.item;
+
+        that.graph.setAutoPaint(false);
+        that.graph.getNodes().forEach(function(node) {
+          that.graph.clearItemStates(node);
+          that.graph.setItemState(node, "dark", true);
+        });
+        that.graph.setItemState(item, "dark", false);
+        that.graph.setItemState(item, "highlight", true);
+        that.graph.getEdges().forEach(function(edge) {
+          if (edge.getSource() === item) {
+            that.graph.setItemState(edge.getTarget(), "dark", false);
+            that.graph.setItemState(edge.getTarget(), "highlight", true);
+            that.graph.setItemState(edge, "highlight", true);
+            highlightFont(edge);
+          } else if (edge.getTarget() === item) {
+            that.graph.setItemState(edge.getSource(), "dark", false);
+            that.graph.setItemState(edge.getSource(), "highlight", true);
+            that.graph.setItemState(edge, "highlight", true);
+            highlightFont(edge);
+          } else {
+            that.graph.setItemState(edge, "highlight", false);
+          }
+        });
+        that.graph.paint();
+        that.graph.setAutoPaint(true);
+      });
+
+      that.graph.on("node:click", function(e) {
+        const data = e.item.getModel();
+        if (data.entityName === "楼层") {
+          // if (!that.info.isFloor) {
+          //   that.highlightFloor(data.id);
+          // }
+          if (that.info.isFloor) return;
+          that.showRevert = true;
+          that.$emit("change-floor", { guid: data.id, isFloor: true });
+        } else if (data.entityName === "房屋") {
+          that.highlighthouse(data.properties);
+        }
+      });
+
+      function clearAllStats() {
+        if (that.isLock) return;
+        that.graph.setAutoPaint(false);
+        that.graph.getNodes().forEach(function(node) {
+          that.graph.clearItemStates(node);
+        });
+        that.graph.getEdges().forEach(function(edge) {
+          that.graph.clearItemStates(edge);
+          resizeFont(edge);
+        });
+        that.graph.paint();
+        that.graph.setAutoPaint(true);
+      }
+
+      function highlightFont(edge) {
+        that.graph.updateItem(edge, {
+          labelCfg: that.edgeLabelCfgHighlight
+        });
+      }
+
+      function resizeFont(edge) {
+        that.graph.updateItem(edge, {
+          labelCfg: that.edgeLabelCfgNormal
+        });
+      }
+
+      that.graph.on("node:mouseleave", clearAllStats);
+      that.loading = false;
+
+      that.graph.data(data);
+      that.graph.render();
+      that.graph.fitView();
+      // that.graph.translate(-50, 0);
+    },
+    initGraphTree(data) {
+      window.oncontextmenu = function(e) {
+        //取消默认的浏览器自带右键 很重要！！
+        e.preventDefault();
+      };
+      const that = this;
+      // 重新渲染
+      if (that.graph) {
+        that.graph.destroy();
+      }
+      that.graph = new G6.TreeGraph({
+        container: "relationship",
+        width: that.graphWidth,
+        height: that.graphHeight,
+        pixelRatio: 2,
+        modes: {
+          default: [
+            // {
+            //   type: "collapse-expand",
+            //   onChange: function onChange(item, collapsed) {
+            //     debugger;
+            //     var data = item.get("model").data;
+            //     data.collapsed = collapsed;
+            //     return true;
+            //   }
+            // },
+            "drag-canvas",
+            "zoom-canvas"
+          ]
+        },
+        defaultNode: that.nodeDefualtConfig,
+        defaultEdge: {
+          shape: "cubic-horizontal",
+          style: {
+            stroke: "#A3B1BF"
+          }
+        },
+        nodeStateStyles: that.nodeStateStyles,
+        edgeStateStyles: that.edgeStateStyles,
+        layout: {
+          type: "compactBox",
+          direction: that.info.isFloor ? "LR" : "H",
+          getId: function getId(d) {
+            return d.id;
+          },
+          getHeight: function getHeight() {
+            return 16;
+          },
+          getWidth: function getWidth() {
+            return 16;
+          },
+          getVGap: function getVGap() {
+            return 5;
+          },
+          getHGap: function getHGap() {
+            return 100;
+          }
+        }
+      });
+
+      that.graph.on("node:contextmenu", function(e) {
+        if (that.isLock) return;
+        const data = e.item.get("model");
+        data.collapsed = !data.collapsed;
+        that.graph.refreshLayout();
+        that.closedNode.push(data.id);
+      });
+      that.graph.node(function(node) {
+        return {
+          size: that.getNodeSize(node),
+          style: node.styleInfo || that.nodeDefualtConfig.normal,
+          labelCfg: {
+            ...that.nodeDefualtConfig.labelCfg
+            // position:
+            //   node.children && node.children.length > 0 ? "left" : "right"
+          },
+          label: node.name || node.entityName
+        };
+      });
+      that.graph.edge(function(edge) {
+        const arr = edge.id.split(":");
+        const relation = that.relationshipList.find(
+          item => item.src === arr[0] && item.dst === arr[1]
+        );
+        edge.label = relation ? relation.relationshipName : "包含";
+        edge.labelCfg = that.edgeTreeLabelCfgNormal;
+        return that.edgeTreeDefualtConfig;
+      });
+
+      that.graph.on("node:mouseenter", function(e) {
+        const model = e.item.get("model");
+
+        if (that.currentShowId === model.id) return;
+        this.currentShowId = model.id;
+        that.tooltipInfo = that.formatText(e.item.get("model"));
         if (that.isLock) return;
         const item = e.item;
 
@@ -360,9 +568,12 @@ export default {
       that.graph.on("node:click", function(e) {
         const data = e.item.getModel();
         if (data.entityName === "楼层") {
-          if (!that.info.isFloor) {
-            that.highlightFloor(data.id);
-          }
+          // if (!that.info.isFloor) {
+          //   that.highlightFloor(data.id);
+          // }
+          if (that.info.isFloor) return;
+          that.showRevert = true;
+          that.$emit("change-floor", { guid: data.id, isFloor: true });
         } else if (data.entityName === "房屋") {
           that.highlighthouse(data.properties);
         }
@@ -384,22 +595,23 @@ export default {
 
       function highlightFont(edge) {
         that.graph.updateItem(edge, {
-          labelCfg: that.edgeLabelCfgHighlight
+          labelCfg: that.edgeTreeLabelCfgHighlight
         });
       }
 
       function resizeFont(edge) {
         that.graph.updateItem(edge, {
-          labelCfg: that.edgeLabelCfgNormal
+          labelCfg: that.edgeTreeLabelCfgNormal
         });
       }
+
       that.graph.on("node:mouseleave", clearAllStats);
+
       that.loading = false;
 
       that.graph.data(data);
       that.graph.render();
       that.graph.fitView();
-      that.graph.translate(-50, 0);
     },
     getGraphData() {
       return new Promise((resolve, reject) => {
@@ -411,6 +623,7 @@ export default {
               id: this.info.floor,
               pageOffset: 0,
               step: this.info.dataStoreStep || 2,
+              // step: 1,
               relationshipTypes: ["*"],
               direction: "Both",
               usePaging: false
@@ -587,6 +800,16 @@ export default {
       }
     },
     highlightSerachData() {
+      // 图表类型为紧凑树时先把关闭的节点打开,否则会出问题
+      if (this.currentType === 2 && this.closedNode.length > 0) {
+        this.closedNode.forEach(item => {
+          const node = this.graph.findById(item).get("model");
+          node.collapsed = !node.collapsed;
+        });
+        this.graph.refreshLayout();
+        this.closedNode = [];
+      }
+
       let floorList = [];
       let params = this.formatQueryParams();
       // 判断根节点是楼层还是楼栋
@@ -735,15 +958,17 @@ export default {
     // 图表自适应
     resizeGraph() {
       if (!this.graphMax) {
-        const dom = document.getElementById("relationship");
-        this.graph.changeSize(dom.offsetWidth, dom.offsetHeight);
+        const dom = document.getElementById("relationship-graph");
+        this.graph.changeSize(
+          dom.offsetWidth - this.tooltipWidth,
+          dom.offsetHeight
+        );
       } else {
         this.graph.changeSize(this.graphWidth, this.graphHeight);
       }
       this.graphMax = !this.graphMax;
       this.graph.render();
       this.graph.fitView();
-      this.graph.translate(-50, 0);
     },
     // 清除tooltip框
     removeTooltip() {
@@ -753,7 +978,74 @@ export default {
           tooltip[i].remove();
         }
       }
+    },
+    // 组装tooltip框数据
+    formatText(model) {
+      let text = [];
+      const data = model.properties;
+      // js遍历对象是无序的，指定tooltip展示顺序
+      if (model.entityName === "房屋") {
+        for (let i = 0; i < this.householdTooltipConfig.length; i++) {
+          text.push(
+            `<strong>${this.householdTooltipConfig[i]}</strong>: ${
+              data[this.householdTooltipConfig[i]]
+            }`
+          );
+        }
+        this.showAccessory = true;
+        this.$nextTick(() => {
+          this.$refs.detailInfo.getAccessoryInfo({
+            fromID: model.properties.euid || undefined
+          });
+        });
+      } else if (model.entityName === "楼幢") {
+        for (let i = 0; i < this.floorTooltipConfig.length; i++) {
+          text.push(
+            `<strong>${this.floorTooltipConfig[i]}</strong>: ${
+              data[this.floorTooltipConfig[i]]
+            }`
+          );
+        }
+        this.showAccessory = false;
+      } else if (model.entityName === "权利人") {
+        for (let i = 0; i < this.obligeeTooltipConfig.length; i++) {
+          text.push(
+            `<strong>${this.obligeeTooltipConfig[i]}</strong>: ${
+              data[this.obligeeTooltipConfig[i]]
+            }`
+          );
+        }
+        this.showAccessory = false;
+      } else {
+        // 对象中只有一个key时直接遍历
+        for (let key in data) {
+          const element = data[key];
+          text.push(`<strong>${key}</strong>: ${element}`);
+        }
+        this.showAccessory = false;
+      }
+      return `${text.join("<br />")}`;
+    },
+    goBack() {
+      this.showRevert = false;
+      this.tooltipInfo = undefined;
+      this.$emit("change-floor", {
+        guid: this.currentFloor,
+        isFloor: false
+      });
+    },
+    handleSelectChange(val) {
+      this.currentType = val;
+      this.tooltipInfo = undefined;
+      this.init();
+    },
+    projectScreen() {}
+  },
+  beforeDestroy() {
+    if (this.graph) {
+      this.graph.destroy();
     }
+    this.floorOptionList = [];
   }
 };
 </script>
@@ -762,6 +1054,7 @@ export default {
   min-width: 980px;
   min-height: 700px;
   .relationship-graph {
+    display: flex;
     .g6-tooltip {
       border: 1px solid #e2e2e2;
       border-radius: 4px;
@@ -781,8 +1074,28 @@ export default {
       left: 80% !important;
       //   visibility: inherit !important;
     }
+
+    .relationship-graph-right {
+      border: 1px solid #e2e2e2;
+      border-radius: 4px;
+      font-size: 12px;
+      //   color: #545454;
+      padding: 10px 8px;
+      //   box-shadow: rgb(174, 174, 174) 0px 0px 10px;
+      border: 1px solid #545454;
+      white-space: normal;
+      word-break: break-all;
+      overflow: hidden;
+      height: 100%;
+      .right-accessory {
+        margin-top: 2px;
+        padding-top: 2px;
+        border-top: 1px solid #e2e2e2;
+      }
+    }
   }
-  .mapgis-ui-input-auto-width {
+  .mapgis-ui-input-auto-width,
+  .mapgis-ui-select-selection {
     background-color: rgba(20, 20, 20, 0.3) !important;
   }
 }
