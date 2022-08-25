@@ -69,6 +69,8 @@
     "sunlight": false,
     // 太阳光照参数
     "sunlightParams": {
+      // 光照类型，可设置为"DAYNIGHT_SHADING"太阳光照和"VERTEX_LIGHTING"顶点光照
+      "lightingMode": "DAYNIGHT_SHADING"
       // 太阳光照颜色
       "lightColor": "rgba(255,255,255,255)"
     },
@@ -196,10 +198,10 @@ export default {
         top: "10px",
         left: "10px",
         width: "320px",
-        background: "#fff",
-      },
+        background: "#fff"
+      }
     };
-  },
+  }
 };
 </script>
 ```
