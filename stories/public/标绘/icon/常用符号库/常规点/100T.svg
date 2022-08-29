@@ -10,6 +10,7 @@
    zondyPlotSymbol:desc=""
    zondyPlotSymbol:type="simplepoint"
    zondyPlotSymbol:pose="1"
+   zondyPlotSymbol:origin="0.175,0.98"
    sodipodi:docname="100T.svg"
    inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
