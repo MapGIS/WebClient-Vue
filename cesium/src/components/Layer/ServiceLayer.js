@@ -97,6 +97,9 @@ export default {
           vueKey,
           vueIndex
         );
+        if (!layer) {
+          return;
+        }
         if (this.layerStyleCopy.visible !== this.layerStyle.visible) {
           layer.source.show = this.layerStyle.visible;
         }
