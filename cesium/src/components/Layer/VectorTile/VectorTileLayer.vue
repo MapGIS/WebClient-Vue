@@ -1,8 +1,8 @@
 <script>
 import VectorTileOptions from "./VectorTileOptions";
 import ServiceLayer from "../ServiceLayer";
-import clonedeep from 'lodash.clonedeep'
-import VectorTileRender from './VectorTileRender';
+import clonedeep from "lodash.clonedeep";
+import VectorTileRender from "./VectorTileRender";
 
 export default {
   name: "mapgis-3d-vectortile-layer",
@@ -26,10 +26,10 @@ export default {
     layerStyle: {
       handler: function(next, old) {
         let { vueKey, vueIndex, vueCesium } = this;
-        let layer = vueCesium[this.managerName].findSource(
-          vueKey,
-          vueIndex
-        );
+        let layer = vueCesium[this.managerName].findSource(vueKey, vueIndex);
+        if (!layer) {
+          return;
+        }
         if (this.layerStyleCopy.visible !== this.layerStyle.visible) {
           layer.source.show = this.layerStyle.visible;
         }
@@ -120,7 +120,10 @@ export default {
       if (vectortilejson) {
         this.$watch("vectortilejson", {
           handler(nextStyle) {
-            if (typeof nextStyle === "object") {
+            if (
+              typeof nextStyle === "object" &&
+              this.$vectortile !== undefined
+            ) {
               !viewer.isDestroyed() && this.$vectortile.updateStyle(nextStyle);
             }
           },
