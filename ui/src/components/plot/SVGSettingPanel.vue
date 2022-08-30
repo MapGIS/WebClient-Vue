@@ -445,7 +445,7 @@ export default {
             this.setG(svg, g);
             break;
         }
-        if(parts[i].getAttribute("id") === this.prevSvg.getAttribute("id")) {
+        if(parts[i] && this.prevSvg && parts[i].getAttribute("id") === this.prevSvg.getAttribute("id")) {
           this.removeHighLight(svg.children[svg.children.length - 1]);
         }
       }
