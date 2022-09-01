@@ -61,6 +61,7 @@ export { default as MapgisOgcWmsLayer } from "./components/layer/ogc/OgcWmsLayer
 export { default as MapgisOgcWmtsLayer } from "./components/layer/ogc/OgcWmtsLayer";
 export { default as MapgisArcgisMapLayer } from "./components/layer/ArcGISServer/ArcGISMapLayer";
 export { default as MapgisArcgisTileLayer } from "./components/layer/ArcGISServer/ArcGISTileLayer";
+export { default as MapgisCustomTilerasterLayer } from "./components/layer/customtile/CustomRastertileLayer";
 
 export { default as MapgisTrackerLayer } from "./components/layer/tracker/TrackerLayer";
 export { default as MapgisClusterLayer } from "./components/layer/cluster/ClusterLayer";

@@ -200,6 +200,7 @@ module.exports = {
               ["/api/Layers/OGC/ogcWmsLayer.md", "OGC-WMS"],
               ["/api/Layers/ArcGISServer/ArcGISMapLayer.md", "ArcGIS地图"],
               ["/api/Layers/ArcGISServer/ArcGISTileLayer.md", "ArcGIS瓦片"],
+              ["/api/Layers/CustomTile/customtilelayer.md", "自定义栅格瓦片"],
               ["/api/Layers/VectorTile/mvtstyle.md", "MVT样式图层"],
               ["/api/Layers/2DPlot/PlotLayer.md", "行业标绘图层"],
               ["/api/Layers/2DPlot/Plot.md", "行业标绘绘制组件"],

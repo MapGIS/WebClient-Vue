@@ -2,7 +2,7 @@
 <svg width="200" version="1.1" height="200" id="svg2" xmlns="http://www.w3.org/2000/svg"
    xmlns:zondyPlotSymbol="https://www.mapgis.com" xmlns:zondyPlotSymbolItem="https://www.mapgis.com"
    zondyPlotSymbol:version="1.0" zondyPlotSymbol:id="svg003" zondyPlotSymbol:name="坦克旅" zondyPlotSymbol:desc=""
-   zondyPlotSymbol:type="simplepoint" zondyPlotSymbol:pose="1">
+   zondyPlotSymbol:type="simplepoint" zondyPlotSymbol:pose="1" zondyPlotSymbol:origin="0.175,0.98">
    <rect width="120" x="35" y="40" height="60"
       style="fill:#ffffff;fill-opacity:0.5;stroke:none;stroke-width:10;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
       id="rect4184" />

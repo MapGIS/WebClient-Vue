@@ -2,7 +2,7 @@
 <svg width="200" version="1.1" height="200" id="svg2" xmlns="http://www.w3.org/2000/svg"
    xmlns:zondyPlotSymbol="https://www.mapgis.com" xmlns:zondyPlotSymbolItem="https://www.mapgis.com"
    zondyPlotSymbol:version="1.0" zondyPlotSymbol:id="svg003" zondyPlotSymbol:name="指挥室" zondyPlotSymbol:desc=""
-   zondyPlotSymbol:type="simplepoint" zondyPlotSymbol:pose="1">
+   zondyPlotSymbol:type="simplepoint" zondyPlotSymbol:pose="1" zondyPlotSymbol:origin="0.5,0.9">
    <path
       style="fill:none;stroke:#ff0000;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
       d="m 82,76 h 36" id="path12622" />

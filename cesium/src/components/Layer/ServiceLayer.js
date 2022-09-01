@@ -3,40 +3,40 @@ export default {
   props: {
     baseUrl: {
       type: String,
-      default: null
+      default: null,
     },
     domain: {
       type: String,
-      default: null
+      default: null,
     },
     protocol: {
       type: String,
-      default: "http://"
+      default: "http://",
     },
     ip: {
       type: String,
-      default: null
+      default: null,
     },
     port: {
       type: String,
-      default: null
+      default: null,
     },
     serverName: {
       type: String,
-      default: null
+      default: null,
     },
     layerStyle: {
       type: Object,
-      default: function() {
+      default: function () {
         return {
           visible: true,
-          opacity: 1
+          opacity: 1,
         };
-      }
+      },
     },
     id: { type: String, default: "" },
     token: {
-      type: Object
+      type: Object,
     },
     options: {
       type: Object,
@@ -51,20 +51,20 @@ export default {
           enablePickFeatures: false,
           minimumLevel: 0,
           maximumLevel: 20,
-          credit: undefined
+          credit: undefined,
         };
-      }
+      },
     },
     vueKey: {
       type: String,
-      default: "default"
+      default: "default",
     },
     vueIndex: {
       type: Number,
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -86,12 +86,12 @@ export default {
       **/
       checkType: undefined,
       layerId: undefined,
-      optionsBack: undefined
+      optionsBack: undefined,
     };
   },
   watch: {
     layerStyle: {
-      handler: function() {
+      handler: function () {
         let { vueKey, vueIndex } = this;
         let layer = window.vueCesium[this.managerName].findSource(
           vueKey,
@@ -111,10 +111,10 @@ export default {
         }
         this.layerStyleCopy = { ...this.layerStyle };
       },
-      deep: true
+      deep: true,
     },
     options: {
-      handler: function() {
+      handler: function () {
         let vm = this;
         let isEqual = this.$_isEqual(vm.options, vm.optionsBack);
         if (!isEqual) {
@@ -123,18 +123,18 @@ export default {
           this.optionsBack = this.options;
         }
       },
-      deep: true
+      deep: true,
     },
     id: {
-      handler: function() {
+      handler: function () {
         const { vueIndex, vueKey } = this;
         let layer = window.vueCesium[this.managerName].findSource(
           vueKey,
           vueIndex
         );
         layer.source.id = this.id;
-      }
-    }
+      },
+    },
   },
   mounted() {
     this.optionsBack = this.options;
@@ -180,7 +180,7 @@ export default {
 
       //取得除options、layerStyle和id之外的必要参数
       const { $props, vueIndex, vueKey } = this;
-      Object.keys($props).forEach(function(key) {
+      Object.keys($props).forEach(function (key) {
         if (key !== "options" && key !== "layerStyle" && key !== "id") {
           opt[key] = $props[key];
         }
@@ -197,11 +197,11 @@ export default {
           ) {
             options.extensions.push({
               key: this.token.key,
-              value: this.token.value
+              value: this.token.value,
             });
           } else {
             options.extensions = [
-              { key: this.token.key, value: this.token.value }
+              { key: this.token.key, value: this.token.value },
             ];
           }
         } else {
@@ -282,7 +282,7 @@ export default {
 
       let manageOptions = {
         zIndex: providerZIndex,
-        id: imageryLayer.id
+        id: imageryLayer.id,
       };
 
       //如果providerZIndex为0，表示初始化地图时，没有设置zIndex，因此会按照初始化的顺序向上叠放
@@ -363,7 +363,7 @@ export default {
       }
       return {
         currentLayer: currentLayer,
-        index: index
+        index: index,
       };
     },
     $_getLayers() {
@@ -371,7 +371,7 @@ export default {
         vm = this;
 
       //遍历window.vueCesium下所有的Manager
-      Object.keys(window.vueCesium).forEach(function(key) {
+      Object.keys(window.vueCesium).forEach(function (key) {
         if (key.indexOf("Manager") > -1 && key !== "GlobesManager") {
           //取出含有与webScene组件相同vueKey的Manager对象
           if (window.vueCesium[key].hasOwnProperty("vueKey")) {
@@ -395,7 +395,7 @@ export default {
       });
 
       //对数组进行排序
-      Layers.sort(function(a, b) {
+      Layers.sort(function (a, b) {
         if (a.options && b.options) {
           return a.options.zIndex - b.options.zIndex;
         }
@@ -637,7 +637,7 @@ export default {
     $_checkProps(checkObj, checkType) {
       let vm = this;
       if (checkObj && checkType) {
-        Object.keys(checkObj).forEach(function(key) {
+        Object.keys(checkObj).forEach(function (key) {
           let result;
           if (checkType.hasOwnProperty(key) && typeof key === "string") {
             result = vm.$_checkValue(checkObj, key, checkType[key]);
@@ -706,6 +706,6 @@ export default {
         tilingScheme = new Cesium.GeographicTilingScheme();
       }
       return tilingScheme;
-    }
-  }
+    },
+  },
 };
