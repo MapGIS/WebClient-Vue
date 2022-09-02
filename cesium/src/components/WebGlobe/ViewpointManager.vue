@@ -307,7 +307,7 @@ export default {
           pitch: 0,
           roll: 0
         },
-        duration: 0.5
+        duration: 1.5
       },
 
       /* 视点列表 */
@@ -417,7 +417,6 @@ export default {
         cancelText: "取消",
         onCancel() {}
       });
-      console.log(index);
     },
 
     /**
@@ -425,7 +424,6 @@ export default {
      * @description 删除视点管理组子节点
      */
     clickDeleteChild(index, indexChild, item) {
-      console.log(item);
       const vm = this;
       this.$confirm({
         content: `确定删除'${item.name}'?`,
@@ -452,7 +450,6 @@ export default {
      */
     clickEdit(index) {
       this.editIndex = index + 1;
-      console.log(this.editIndex);
       this.showEdit = !this.showEdit;
     },
 
@@ -503,8 +500,6 @@ export default {
 
     addViewpointGroup(content) {
       this.testGroup.push({ viewGroupName: "飞行视点组", viewGroupItems: [] });
-
-      console.log("content");
     },
     /* 增加视点 */
     addViewpoint(index) {
@@ -521,7 +516,6 @@ export default {
     },
     /* 激活单个视点的编辑、删除菜单 */
     handleMenu(i, e) {
-      // console.log(i, e);
       this.active = i;
       if (this.active >= 0) {
         if (this.active % 2 === 0) {
@@ -545,7 +539,6 @@ export default {
     },
     /* 处理编辑器传回的config参数 */
     changeViewpoint(event) {
-      console.log(event);
       const val = event[0];
       const editTuple = event[1];
       const vm = this;
@@ -559,7 +552,6 @@ export default {
             (vm.testGroup[editTuple[0]].viewGroupItems.length + 1);
         }
         /* 增加视点 */
-        console.log(vm.testGroup);
         vm.testGroup[editTuple[0]].viewGroupItems.push(val);
       } else if (vm.mode === "edit") {
         if (val.name === "") {

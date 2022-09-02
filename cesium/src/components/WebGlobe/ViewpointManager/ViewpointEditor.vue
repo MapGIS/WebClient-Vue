@@ -26,6 +26,8 @@
       <mapgis-ui-input-number-panel
         size="medium"
         label="飞行时间"
+        :step="0.1"
+        :range="[0.0, 60]"
         v-model="duration"
         :labelCol="{ span: 6 }"
         :wrapperCol="{ span: 18 }"
@@ -36,7 +38,10 @@
             <img class="thumbnail" :src="image" />
           </mapgis-ui-col>
           <mapgis-ui-col :span="9" class="thumbnail-btn">
-            <mapgis-ui-button @click="screenshot" style="margin-bottom: 8px"
+            <mapgis-ui-button
+              @click="screenshot"
+              :loading="loading"
+              style="margin-bottom: 8px"
               >截图</mapgis-ui-button
             >
             <mapgis-ui-button @click="upload"
@@ -227,7 +232,6 @@ export default {
     show(val) {
       this.innerShow = val;
       if (val) {
-        console.log(Object.prototype.toString.call(this.config)[1]);
         //新增视点时，初始化设置当前视点camera参数
         this.initConfig(this.config);
       }
@@ -238,7 +242,6 @@ export default {
     config: {
       handler: function(val) {
         if (val) {
-          console.log(val);
           this.initConfig(val);
         }
       },
@@ -260,7 +263,7 @@ export default {
       innerShow: this.show,
       name: "",
       image: require("./upload/wuhan.jpg"),
-      duration: 0.5,
+      duration: 1.5,
       currentTime: undefined,
       longitude: undefined,
       latitude: undefined,
@@ -268,7 +271,7 @@ export default {
       heading: undefined,
       pitch: undefined,
       roll: undefined,
-
+      loading: false,
       resultConfig: undefined,
       spinning: false,
       labelCol: { span: 6 },
@@ -326,6 +329,7 @@ export default {
     },
     /* 截图 */
     screenshot() {
+      this.loading = true;
       this.spinning = true;
       const { viewer, Cesium } = this;
       const vm = this;
@@ -334,13 +338,17 @@ export default {
         allowTaint: true,
         useCORS: true
       };
-      html2canvas(viewer.scene.canvas, opt).then(function(canvas) {
-        let image = document.querySelector(".thumbnail");
-        // document.body.appendChild(canvas);
-        image.setAttribute("src", canvas.toDataURL());
-        vm.image = canvas.toDataURL();
-        vm.spinning = false;
-      });
+      html2canvas(viewer.scene.canvas, opt)
+        .then(function(canvas) {
+          let image = document.querySelector(".thumbnail");
+          // document.body.appendChild(canvas);
+          image.setAttribute("src", canvas.toDataURL());
+          vm.image = canvas.toDataURL();
+        })
+        .finally(() => {
+          vm.spinning = false;
+          vm.loading = false;
+        });
     },
     /* 上传本地图片 */
     upload() {
@@ -351,8 +359,6 @@ export default {
       file.onchange = function() {
         let fileData = this.files[0]; //获取到一个FileList对象中的第一个文件( File 对象),是我们上传的文件
         let pettern = /^image/;
-
-        // console.info(fileData.type)
 
         if (!pettern.test(fileData.type)) {
           alert("图片格式不正确");
@@ -365,8 +371,6 @@ export default {
         reader.readAsDataURL(fileData); //异步读取文件内容，结果用data:url的字符串形式表示
         /*当读取操作成功完成时调用*/
         reader.onload = function(e) {
-          // console.log(e); //查看对象
-          // console.log(this.result);//要的数据 这里的this指向FileReader（）对象的实例reader
           image.setAttribute("src", this.result);
           vm.image = this.result;
           vm.spinning = false;
