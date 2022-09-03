@@ -4,7 +4,9 @@
       v-if="isList"
       :columns="columnsTable"
       :data-source="fileList"
+      :showHeader="!isrelationShip"
       class="table-preview-container"
+      :class="isrelationShip ? 'relation-accessory-empty' : ''"
       size="small"
       :pagination="false"
       bordered
@@ -21,6 +23,9 @@
           width="15"
           style="margin-right: 5px"
         />
+        <mapgis-ui-tag v-if="isrelationShip && record.toType === videoToType">
+          可投放
+        </mapgis-ui-tag>
         <span>{{ record.name }}</span>
       </div>
       <span slot="operation" slot-scope="text, record">
@@ -28,7 +33,11 @@
         <a v-else :href="record.url">下载</a>
       </span>
     </mapgis-ui-table>
-    <ul v-else class="mp-file-previer-container">
+    <ul
+      v-else
+      class="mp-file-previer-container"
+      :class="isrelationShip ? 'relation-previer' : ''"
+    >
       <li v-if="fileList.length === 0" style="width: 100%; padding: 10px">
         <mapgis-ui-empty />
       </li>
@@ -36,15 +45,23 @@
         class="file-previer-item"
         v-for="file in fileList"
         :key="file.id"
-        :style="itemWidth"
+        :style="isrelationShip ? '' : itemWidth"
       >
         <div class="item-content" @click="preview(file)">
           <div class="image-container">
             <img :src="getTypeImage(file.type).image" width="100%" />
           </div>
           <mapgis-ui-tooltip>
-            <template slot="title"> {{ file.name }} </template>
-            <span>{{ file.name }}</span>
+            <template slot="title">
+              {{ file.name
+              }}<span v-if="isrelationShip && file.toType === videoToType"
+                >(可投放)</span
+              >
+            </template>
+            <span v-if="isrelationShip && file.toType === videoToType"
+              >{{ file.name }}(可投放)</span
+            >
+            <span v-else>{{ file.name }}</span>
           </mapgis-ui-tooltip>
         </div>
       </li>
@@ -82,7 +99,7 @@ import { fileType } from "./fileType.js";
 
 export default {
   components: {
-    preview,
+    preview
   },
   name: "mapgis-ui-file-preview",
   props: {
@@ -95,7 +112,7 @@ export default {
      */
     column: {
       type: Number,
-      default: 6,
+      default: 6
     },
     /**
      * [{
@@ -106,8 +123,22 @@ export default {
      */
     files: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
+    /**
+     * 当在关系图谱中显示时去除itemWidth返回的样式
+     */
+    isrelationShip: {
+      type: Boolean,
+      default: false
+    },
+    /**
+     * 当在关系图谱中显示toType为301的视频展示'可投放'tag标签
+     */
+    videoToType: {
+      type: Number,
+      default: 1
+    }
   },
   data() {
     return {
@@ -127,30 +158,30 @@ export default {
       fileType: [
         {
           image: image,
-          types: fileType.image,
+          types: fileType.image
         },
         {
           image: text,
-          types: fileType.text,
+          types: fileType.text
         },
         {
           image: video,
-          types: fileType.video,
-        },
+          types: fileType.video
+        }
       ],
       columnsTable: [
         {
           title: "文件名称",
           dataIndex: "name",
-          scopedSlots: { customRender: "name" },
+          scopedSlots: { customRender: "name" }
         },
         {
           title: "操作",
           dataIndex: "operation",
-          width: 100,
-          scopedSlots: { customRender: "operation" },
-        },
-      ],
+          width: this.isrelationShip ? "25%" : 100,
+          scopedSlots: { customRender: "operation" }
+        }
+      ]
     };
   },
   computed: {
@@ -166,7 +197,7 @@ export default {
         return {
           id: index,
           ...file,
-          type: type.toLowerCase(),
+          type: type.toLowerCase()
         };
       });
     },
@@ -176,7 +207,7 @@ export default {
       // 每个条目间距为10px
       const margin = `${(10 * (this.column + 1)) / this.column}px`;
       return { width: `calc(${percentage} - ${margin})` };
-    },
+    }
   },
   methods: {
     isPreviewData(file) {
@@ -216,20 +247,20 @@ export default {
      * 根据文件类型，获取默认展示的图片
      */
     getTypeImage(type) {
-      const typeItem = this.fileType.find((item) => item.types.includes(type));
+      const typeItem = this.fileType.find(item => item.types.includes(type));
       if (typeItem) {
         return {
           ...typeItem,
-          type,
+          type
         };
       }
       return {
         image: other,
         type: "other",
-        types: [],
+        types: []
       };
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -295,6 +326,41 @@ export default {
         word-break: break-all;
         width: 92%;
       }
+    }
+  }
+}
+.relation-previer {
+  flex-wrap: wrap;
+  .file-previer-item {
+    margin-left: 7px !important;
+    padding: 5px 0 0 !important;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    .item-content {
+      width: 60px;
+      span {
+        margin-top: 4px !important;
+      }
+    }
+  }
+  .image-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    > img {
+      width: 60px;
+      height: 80px;
+    }
+  }
+}
+.relation-accessory-empty {
+  .mapgis-ui-empty-image {
+    display: flex;
+    align-items: center;
+    > img {
+      width: 100% !important;
+      height: 70% !important;
     }
   }
 }
