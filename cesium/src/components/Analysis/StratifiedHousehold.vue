@@ -157,6 +157,19 @@
       @changeSlider="changeSimpleSlider"
     >
     </mapgis-ui-slider-panel> -->
+
+    <!-- modal关系图谱 -->
+    <!-- <mapgis-ui-modal
+      v-model="showModal"
+      :footer="null"
+      :width="1000"
+      :centered="true"
+      class="attribute-model"
+      :bodyStyle="{ padding: '30px 10px 10px' }"
+      :destroyOnClose="true"
+    >
+      <mapgis-3d-relationship-graph :info="relationshipInfo" />
+    </mapgis-ui-modal> -->
   </div>
 </template>
 
@@ -1231,6 +1244,17 @@ export default {
         }
         resolve();
       });
+    },
+    changeFloor(data) {
+      const layerInfo = this.relationshipInfo.layerTree.find(
+        item => item.guid === data.guid
+      );
+      this.relationshipInfo.isFloor = data.isFloor;
+      this.relationshipInfo.floor = data.guid;
+      this.relationshipInfo.layerIndex = layerInfo
+        ? layerInfo.layerIndex
+        : undefined;
+      this.$emit("show-relationship-graph", this.relationshipInfo);
     }
   }
 };

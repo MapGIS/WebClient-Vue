@@ -47,7 +47,7 @@ import { fileType } from "./fileType.js";
 
 export default {
   name: "Preview",
-  inject: ["getVideoStatus"],
+  inject: ["getProjectorStatus"],
   props: {
     url: {
       type: String,
@@ -106,7 +106,7 @@ export default {
       };
       this.$emit("project-screen", file);
       this.$nextTick(() => {
-        this.isProjected = this.getVideoStatus(this.name);
+        this.isProjected = this.getProjectorStatus(this.name);
       });
     },
     async getHlsSource() {
@@ -139,7 +139,7 @@ export default {
       }
 
       if (this.type === "hls") {
-        this.isProjected = this.getVideoStatus(this.name);
+        this.isProjected = this.getProjectorStatus(this.name);
       }
     }
   }
@@ -164,6 +164,8 @@ export default {
     }
   }
   .preview-content {
+    display: flex;
+    justify-content: center;
     flex: 1;
   }
 }
