@@ -11,6 +11,11 @@ export function initVueMap() {
     window.vueMap.PlotLayerManager || new PlotLayerManager();
   window.vueMap.PlotLayerGroupManager =
     window.vueMap.PlotLayerGroupManager || new PlotLayerGroupManager();
+  window.vueMap.PlotLayerData =
+    window.vueMap.PlotLayerData || new PlotLayerData();
+  window.vueMap.PlotManager = window.vueMap.PlotManager || new PlotManager();
+  window.vueMap.OneSymbolManager =
+    window.vueMap.OneSymbolManager || new OneSymbolManager();
   window.vueMap.PlotAnimationManager =
     window.vueMap.PlotAnimationManager || new PlotAnimationManager();
   window.vueMap.PlotSymbolManager =
@@ -36,7 +41,7 @@ export class BaseManager {
       parent: vueKey,
       key: vueIndex,
       source: source,
-      options: options,
+      options: options
     });
   }
 
@@ -75,7 +80,7 @@ export class BaseManager {
       return result;
     });
 
-    if (!source) {
+    if (source) {
       find.source = source;
     }
     return find;
@@ -123,7 +128,7 @@ export class BaseManager {
     if (find) {
       findSource = {
         ...find,
-        index: index,
+        index: index
       };
     }
     return findSource;
@@ -136,7 +141,7 @@ export class BaseManager {
 
   flatAllSource() {
     let flat = [];
-    Object.keys(this).forEach((k) => {
+    Object.keys(this).forEach(k => {
       if (k !== "vueKey") {
         flat = flat.concat(this[k]);
       }
@@ -148,6 +153,9 @@ export class BaseManager {
 export class MapManager extends BaseManager {}
 export class PlotLayerManager extends BaseManager {}
 export class PlotLayerGroupManager extends BaseManager {}
+export class PlotLayerData extends BaseManager {}
+export class PlotManager extends BaseManager {}
+export class OneSymbolManager extends BaseManager {}
 export class PlotAnimationManager extends BaseManager {}
 export class PlotSymbolManager extends BaseManager {}
 export class DrawToolManager extends BaseManager {}

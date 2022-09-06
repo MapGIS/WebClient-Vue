@@ -4,10 +4,12 @@
 <script>
 import axios from "axios";
 import plot from "@mapgis/webclient-plot";
-const {PlotLayer2DGroup = Zondy.Plot.PlotLayer2DGroup,
+const {
+  PlotLayer2DGroup = Zondy.Plot.PlotLayer2DGroup,
   PlotLayer2D = Zondy.Plot.PlotLayer2D,
   SymbolManager = Zondy.Plot.SymbolManager,
-  FabricLayer = Zondy.Plot.FabricLayer} = plot;
+  FabricLayer = Zondy.Plot.FabricLayer
+} = plot;
 
 export default {
   name: "mapgis-2d-plot-layer",
@@ -46,17 +48,16 @@ export default {
       default: 3
     }
   },
-  data() {
-    return {
-      dataSourceCopy: undefined
-    };
-  },
   watch: {
     dataSource: {
       handler: async function(json) {
         if (!json) return;
         if (typeof json === "object") {
-          this.dataSourceCopy = json;
+          window.vueMap.PlotLayerData.addSource(
+            this.vueKey,
+            this.vueIndex,
+            json
+          );
         }
       },
       deep: true,
@@ -74,7 +75,7 @@ export default {
     classificationType: {
       handler: function(val) {
         let layer = this.getLayer();
-        if(layer) {
+        if (layer) {
           layer.classificationType = this.classificationType;
         }
       },
@@ -126,10 +127,13 @@ export default {
         let layers = vm.getLayers();
         if (!layers) {
           let canvas;
-          let MapManager = window.vueMap.MapManager.findSource(map.vueKey, map.vueIndex);
-          if(!MapManager.options.canvas){
+          let MapManager = window.vueMap.MapManager.findSource(
+            map.vueKey,
+            map.vueIndex
+          );
+          if (!MapManager.options.canvas) {
             canvas = new FabricLayer(map, PlotLayer2DGroup);
-          }else {
+          } else {
             canvas = MapManager.options.canvas;
           }
           layers = canvas.getFabricCanvas();
@@ -141,7 +145,8 @@ export default {
         }
         layers.addLayer(layer);
 
-        if (!vm.dataSourceCopy) {
+        let dataSourceCopy = vm.getLayerData();
+        if (!dataSourceCopy) {
           axios.defaults.withCredentials = true;
           axios({
             method: "get",
@@ -149,14 +154,26 @@ export default {
             dataType: "text",
             timeout: 1000
           }).then(res => {
-            vm.dataSourceCopy = res.data;
-            vm.fromJSON(vm.dataSourceCopy);
+            window.vueMap.PlotLayerData.addSource(
+              vm.vueKey,
+              vm.vueIndex,
+              res.data
+            );
+            vm.fromJSON(res.data);
+            vm.$emit("loaded", {
+              vueKey: vm.vueKey,
+              vueIndex: vm.vueIndex,
+              vm: vm
+            });
           });
         } else {
-          vm.fromJSON(vm.dataSourceCopy);
+          vm.fromJSON(dataSourceCopy);
+          vm.$emit("loaded", {
+            vueKey: vm.vueKey,
+            vueIndex: vm.vueIndex,
+            vm: vm
+          });
         }
-
-        vm.$emit("loaded", { vueKey: vm.vueKey, vueIndex: vm.vueIndex, vm: vm });
       });
     },
     unmount() {
@@ -189,6 +206,13 @@ export default {
         this.vueIndex
       );
       return PlotLayerGroupManager && PlotLayerGroupManager.source;
+    },
+    getLayerData() {
+      let layerData = window.vueMap.PlotLayerData.findSource(
+        this.vueKey,
+        this.vueIndex
+      );
+      return layerData && layerData.source;
     },
     /**
      * @description: 导出json对象

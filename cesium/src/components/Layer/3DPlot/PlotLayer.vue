@@ -5,9 +5,11 @@
 <script>
 import axios from "axios";
 import plot from "@mapgis/webclient-plot";
-const {SymbolManager = window.Zondy.Plot.SymbolManager,
+const {
+  SymbolManager = window.Zondy.Plot.SymbolManager,
   PlotLayer3DGroup = window.Zondy.Plot.PlotLayer3DGroup,
-  PlotLayer3D = window.Zondy.Plot.PlotLayer3D} = plot;
+  PlotLayer3D = window.Zondy.Plot.PlotLayer3D
+} = plot;
 
 export default {
   name: "mapgis-3d-plot-layer",
@@ -59,17 +61,16 @@ export default {
       default: true
     }
   },
-  data() {
-    return {
-      dataSourceCopy: undefined
-    };
-  },
   watch: {
     dataSource: {
       handler: async function(json) {
         if (!json) return;
         if (typeof json === "object") {
-          this.dataSourceCopy = json;
+          window.vueCesium.PlotLayerData.addSource(
+            this.vueKey,
+            this.vueIndex,
+            json
+          );
         }
       },
       deep: true,
@@ -77,7 +78,7 @@ export default {
     },
     pickPlot: {
       handler: function(func) {
-        if(!this.isSetPick) {
+        if (!this.isSetPick) {
           return;
         }
         let layer = this.getLayer();
@@ -107,7 +108,7 @@ export default {
     classificationType: {
       handler: function(val) {
         let layer = this.getLayer();
-        if(layer) {
+        if (layer) {
           layer.classificationType = this.classificationType;
         }
       },
@@ -159,10 +160,7 @@ export default {
       }
       manager.getSymbols().then(function() {
         viewer.scene.globe.depthTestAgainstTerrain = false;
-        let layer = window.vueCesium.PlotLayerManager.findSource(
-          vm.vueKey,
-          vm.vueIndex
-        );
+        let layer = vm.getLayer();
         if (!layer) {
           layer = new PlotLayer3D(Cesium, viewer, {
             classificationType: vm.classificationType
@@ -173,10 +171,7 @@ export default {
             layer
           );
         }
-        let layers = window.vueCesium.PlotLayerGroupManager.findSource(
-          vm.vueKey,
-          vm.vueIndex
-        );
+        let layers = vm.getLayers();
         if (!layers) {
           layers = new PlotLayer3DGroup(viewer);
           window.vueCesium.PlotLayerGroupManager.addSource(
@@ -187,7 +182,8 @@ export default {
         }
         layers.addLayer(layer);
 
-        if (!vm.dataSourceCopy) {
+        let dataSourceCopy = vm.getLayerData();
+        if (!dataSourceCopy) {
           axios.defaults.withCredentials = true;
           axios({
             method: "get",
@@ -195,13 +191,26 @@ export default {
             dataType: "text",
             timeout: 2000
           }).then(res => {
-            vm.dataSourceCopy = res.data;
-            vm.fromJSON(JSON.parse(JSON.stringify(vm.dataSourceCopy)));
-            vm.$emit("loaded", { vueKey: vm.vueKey, vueIndex: vm.vueIndex, vm: vm });
+            window.vueCesium.PlotLayerData.addSource(
+              vm.vueKey,
+              vm.vueIndex,
+              res.data
+            );
+
+            vm.fromJSON(JSON.parse(JSON.stringify(res.data)));
+            vm.$emit("loaded", {
+              vueKey: vm.vueKey,
+              vueIndex: vm.vueIndex,
+              vm: vm
+            });
           });
         } else {
-          vm.fromJSON(JSON.parse(JSON.stringify(vm.dataSourceCopy)));
-          vm.$emit("loaded", { vueKey: vm.vueKey, vueIndex: vm.vueIndex, vm: vm });
+          vm.fromJSON(JSON.parse(JSON.stringify(dataSourceCopy)));
+          vm.$emit("loaded", {
+            vueKey: vm.vueKey,
+            vueIndex: vm.vueIndex,
+            vm: vm
+          });
         }
       });
     },
@@ -222,6 +231,13 @@ export default {
         this.vueIndex
       );
       return PlotLayerGroupManager && PlotLayerGroupManager.source;
+    },
+    getLayerData() {
+      let layerData = window.vueCesium.PlotLayerData.findSource(
+        this.vueKey,
+        this.vueIndex
+      );
+      return layerData && layerData.source;
     },
     /**
      * @description: 导出图层数据(json对象)

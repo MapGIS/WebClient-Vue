@@ -55,8 +55,6 @@ const Template = (args, { argTypes }) => ({
       jsonUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/test.json`,
       // 打包时使用
       // jsonUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/test.json`,
-      jsonData: undefined,
-      layer: undefined,
       manager: undefined,
     };
   },
@@ -65,7 +63,7 @@ const Template = (args, { argTypes }) => ({
       let map = e.map;
       let bbox = [
         [116.2396164394222, 36.857699114405676],
-        [119.38483688908019,33.044482287500756],
+        [119.38483688908019, 33.044482287500756],
       ];
       map.fitBounds(bbox, {
         duration: 0,
@@ -74,13 +72,15 @@ const Template = (args, { argTypes }) => ({
     handleLoad(e) {
       this.vueIndex1 = e.vueIndex;
       this.vueKey1 = e.vueKey;
+    },
+    getLayer() {
       let vueMap = this.vueMap || window.vueMap;
       if (!vueMap) return;
       let layerManager = vueMap.PlotLayerManager.findSource(
         this.vueKey1,
         this.vueIndex1
       );
-      this.layer = layerManager && layerManager.source;
+      return layerManager && layerManager.source;
     },
     deletePlot() {
       this.$refs.plot.deletePlot();
@@ -96,15 +96,17 @@ const Template = (args, { argTypes }) => ({
       let reader = new FileReader();
       reader.readAsText(e.target.files[0], "UTF-8");
       reader.onload = function (res) {
-        vm.jsonData = JSON.parse(res.target.result);
-        vm.layer.fromJSON(vm.jsonData);
+        let jsonData = JSON.parse(res.target.result);
+        let layer = vm.getLayer();
+        layer && layer.fromJSON(jsonData);
       };
     },
     /**
      * 导出功能
      */
     exportClick() {
-      let data = this.layer.toJSON();
+      let layer = this.getLayer();
+      let data = layer.toJSON();
       this.exportJSON(data, "test.json");
     },
     exportJSON(data, filename) {

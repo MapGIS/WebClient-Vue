@@ -32,23 +32,16 @@ const Template = (args, { argTypes }) => ({
       vueIndex1: undefined,
       vueKey1: undefined,
       jsonUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/test.json`,
-      jsonData: undefined,
-      layer: undefined,
+      // jsonData: undefined,
       manager: undefined,
-      classificationType: 3
+      classificationType: 3,
     };
   },
   methods: {
     handleLoaded(e) {
       this.vueIndex1 = e.vueIndex;
       this.vueKey1 = e.vueKey;
-      let vueCesium = this.vueCesium || window.vueCesium;
-      if (!vueCesium) return;
-      let layerManager = vueCesium.PlotLayerManager.findSource(
-        this.vueKey1,
-        this.vueIndex1
-      );
-      this.layer = layerManager && layerManager.source;
+
       e.vm.viewer.camera.flyTo({
         destination: Cesium.Cartesian3.fromDegrees(117.7646, 33.0881, 210000),
         orientation: {
@@ -56,8 +49,17 @@ const Template = (args, { argTypes }) => ({
           pitch: Cesium.Math.toRadians(-45),
           roll: 0,
         },
-        duration: 1
-      })
+        duration: 1,
+      });
+    },
+    getLayer() {
+      let vueCesium = this.vueCesium || window.vueCesium;
+      if (!vueCesium) return;
+      let layerManager = window.vueCesium.PlotLayerManager.findSource(
+        this.vueKey1,
+        this.vueIndex1
+      );
+      return layerManager && layerManager.source;
     },
     /**
      * 导入功能
@@ -70,8 +72,9 @@ const Template = (args, { argTypes }) => ({
       let reader = new FileReader();
       reader.readAsText(e.target.files[0], "UTF-8");
       reader.onload = function (res) {
-        vm.jsonData = JSON.parse(res.target.result);
-        vm.layer.fromJSON(vm.jsonData);
+        let jsonData = JSON.parse(res.target.result);
+        let layer = vm.getLayer();
+        layer && layer.fromJSON(jsonData);
       };
     },
     deletePlot() {
@@ -81,7 +84,8 @@ const Template = (args, { argTypes }) => ({
      * 导出功能
      */
     exportClick() {
-      let data = this.layer.toJSON();
+      let layer = this.getLayer();
+      let data = layer.toJSON();
       this.exportJSON(data, "test.json");
     },
     exportJSON(data, filename) {

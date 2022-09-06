@@ -129,6 +129,12 @@ export function initVueCesium() {
     window.vueCesium.PlotLayerManager || new PlotLayerManager();
   window.vueCesium.PlotLayerGroupManager =
     window.vueCesium.PlotLayerGroupManager || new PlotLayerGroupManager();
+  window.vueCesium.PlotLayerData =
+    window.vueCesium.PlotLayerData || new PlotLayerData();
+  window.vueCesium.PlotManager =
+    window.vueCesium.PlotManager || new PlotManager();
+  window.vueCesium.OneSymbolManager =
+    window.vueCesium.OneSymbolManager || new OneSymbolManager();
   window.vueCesium.PlotAnimationManager =
     window.vueCesium.PlotAnimationManager || new PlotAnimationManager();
   window.vueCesium.PlotSymbolManager =
@@ -225,7 +231,7 @@ export class BaseManager {
       return result;
     });
 
-    if (!source) {
+    if (source) {
       find.source = source;
     }
     return find;
@@ -353,5 +359,8 @@ export class AspectSlopeAnalysisManager extends BaseManager {}
 export class RotateManager extends BaseManager {}
 export class PlotLayerManager extends BaseManager {}
 export class PlotLayerGroupManager extends BaseManager {}
+export class PlotLayerData extends BaseManager {}
+export class PlotManager extends BaseManager {}
+export class OneSymbolManager extends BaseManager {}
 export class PlotAnimationManager extends BaseManager {}
 export class PlotSymbolManager extends BaseManager {}

@@ -59,8 +59,9 @@ const Template = (args, { argTypes }) => ({
       let reader = new FileReader();
       reader.readAsText(e.target.files[0], "UTF-8");
       reader.onload = function (res) {
-        vm.jsonData = JSON.parse(res.target.result);
-        vm.layer.fromJSON(vm.jsonData);
+        let jsonData = JSON.parse(res.target.result);
+        let layer = vm.getLayer();
+        layer && layer.fromJSON(jsonData);
       };
     },
     handleLoaded(e) {
@@ -69,13 +70,6 @@ const Template = (args, { argTypes }) => ({
         vm.dataSource = res.data;
         vm.vueIndex1 = e.vueIndex;
         vm.vueKey1 = e.vueKey;
-        let vueCesium = vm.vueCesium || window.vueCesium;
-        if (!vueCesium) return;
-        let layerManager = vueCesium.PlotLayerManager.findSource(
-          vm.vueKey1,
-          vm.vueIndex1
-        );
-        vm.layer = layerManager && layerManager.source;
         e.vm.viewer.camera.flyTo({
           destination: Cesium.Cartesian3.fromDegrees(117.7646, 33.0881, 210000),
           orientation: {
@@ -86,7 +80,16 @@ const Template = (args, { argTypes }) => ({
           duration: 1,
         });
       });
-    }
+    },
+    getLayer() {
+      let vueCesium = this.vueCesium || window.vueCesium;
+      if (!vueCesium) return;
+      let layerManager = window.vueCesium.PlotLayerManager.findSource(
+        this.vueKey1,
+        this.vueIndex1
+      );
+      return layerManager && layerManager.source;
+    },
   },
 });
 
