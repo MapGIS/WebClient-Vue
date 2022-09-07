@@ -77,13 +77,32 @@ export const 百度矢量图层 = Template.bind({});
   layerType: "Baidu.Normal.Map",
 };
 
-export const 自定义图层 = Template.bind({});
-自定义图层.args = {
+export const 百度遥感图层 = Template.bind({});
+百度遥感图层.args = {
+  layerId: "baidu_satellite_map",
+  layerType: "Baidu.Satellite.Map",
+};
+
+export const XYZ图层 = Template.bind({});
+XYZ图层.args = {
   layerId: "custom_wmts_map",
   layerType: "Custom.WMTS.Map",
   options: {
     url: "http://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
     minzoom: 0,
     maxzoom: 20,
+    schema: 'xyz',
+  },
+};
+
+export const BD09图层 = Template.bind({});
+BD09图层.args = {
+  layerId: "custom_wmts_map",
+  layerType: "Custom.WMTS.Map",
+  options: {
+    url: "http://online4.map.bdimg.com/onlinelabel/?qt=tile&x={x}&y={y}&z={z}&styles=pl&scaler=1&p=1",
+    minzoom: 0,
+    maxzoom: 20,
+    scheme: 'bd09',
   },
 };

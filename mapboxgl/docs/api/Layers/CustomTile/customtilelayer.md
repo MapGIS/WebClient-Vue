@@ -52,27 +52,30 @@
 | url     | String | http://custom:49526/{z}/{x}/{y}.jpg |
 | minzoom | Number | 0                                   |
 | maxzoom | Number | 20                                  |
+| scheme  | String | 'xyz' 或者 'bd09'                   |
 
 ## 示例
 
 ```vue
 <template>
-    <mapgis-web-map crs="EPSG:3857" :center="[107.19, 26.85]" :zoom="3">
-        <mapgis-custom-rastertile-layer layerId="gaode" layerType="GaoDe.Normal.Map" />
-    </mapgis-web-map>
+  <mapgis-web-map crs="EPSG:3857" :center="[107.19, 26.85]" :zoom="3">
+    <mapgis-custom-rastertile-layer
+      layerId="gaode"
+      layerType="GaoDe.Normal.Map"
+    />
+  </mapgis-web-map>
 </template>
 ```
-
 
 ```vue
 <template>
     <mapgis-web-map crs="EPSG:3857" :center="[107.19, 26.85]" :zoom="3">
-        <mapgis-custom-rastertile-layer layerId="custom" layerType="Custom.WMTS.Map" 
-          :options={ 
-            url: "http://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}", 
-            minzoom: 0, 
+        <mapgis-custom-rastertile-layer layerId="custom" layerType="Custom.WMTS.Map"
+          :options={
+            url: "http://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+            minzoom: 0,
             maxzoom: 20
-          } 
+          }
         >
         </mapgis-custom-rastertile-layer>
     </mapgis-web-map>
