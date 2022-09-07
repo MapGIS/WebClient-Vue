@@ -78,8 +78,9 @@ const Template = (args, { argTypes }) => ({
       let reader = new FileReader();
       reader.readAsText(e.target.files[0], "UTF-8");
       reader.onload = function (res) {
-        vm.jsonData = JSON.parse(res.target.result);
-        vm.layer.fromJSON(vm.jsonData);
+        let jsonData = JSON.parse(res.target.result);
+        let layer = vm.getLayer();
+        layer && layer.fromJSON(jsonData);
       };
     },
     handleLoad(e) {
@@ -88,14 +89,16 @@ const Template = (args, { argTypes }) => ({
         vm.dataSource = res.data;
         vm.vueIndex1 = e.vueIndex;
         vm.vueKey1 = e.vueKey;
-        let vueMap = vm.vueMap || window.vueMap;
-        if (!vueMap) return;
-        let layerManager = vueMap.PlotLayerManager.findSource(
-          vm.vueKey1,
-          vm.vueIndex1
-        );
-        vm.layer = layerManager && layerManager.source;
       });
+    },
+    getLayer() {
+      let vueMap = this.vueMap || window.vueMap;
+      if (!vueMap) return;
+      let layerManager = vueMap.PlotLayerManager.findSource(
+        this.vueKey1,
+        this.vueIndex1
+      );
+      return layerManager && layerManager.source;
     },
     setPick() {
       this.$refs.animation.setPick();

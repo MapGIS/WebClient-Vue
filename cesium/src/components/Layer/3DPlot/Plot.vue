@@ -97,10 +97,7 @@ export default {
       styleData: undefined,
       handler: undefined,
       // 符号
-      symbol: undefined,
       symbols: undefined,
-      // 图元
-      plot: undefined,
       // 记录是否完成绘制
       isDraw: false,
       searchResult: undefined,
@@ -128,13 +125,14 @@ export default {
   methods: {
     deletePlot() {
       let layer = this.getLayer();
-      if (layer && this.plot) {
-        layer.removePlot(this.plot);
+      let plot = this.getPlot();
+      if (layer && plot) {
+        layer.removePlot(plot);
         this.showStylePanel = false;
       }
     },
     mount() {
-      this.getSymbol();
+      this.getSymbolLib();
     },
     unmount() {
       if (window.vueCesium) {
@@ -153,13 +151,27 @@ export default {
         drawTool = new DrawTool(layer, {
           addedPlot: function(plot) {
             vm.isDraw = true;
-            vm.plot = plot;
+            let exist = vm.getPlot();
+            if (exist) {
+              window.vueCesium.PlotManager.changeSource(
+                vm.vueKey,
+                vm.vueIndex,
+                plot
+              );
+            } else {
+              window.vueCesium.PlotManager.addSource(
+                vm.vueKey,
+                vm.vueIndex,
+                plot
+              );
+            }
             let json = plot.getStyle();
             vm.parseStyleJson(json, plot._elem._symbol._src);
             let drawTool = vm.getDrawTool();
+            let symbol = vm.getSymbol();
             if (drawTool) {
               drawTool.stopDraw();
-              drawTool.drawPlot(vm.symbol);
+              drawTool.drawPlot(JSON.parse(JSON.stringify(symbol)));
             }
             // console.log("addedPlot--getStyle--json: ", json);
           }
@@ -183,7 +195,16 @@ export default {
       if (!layer) return;
       layer.pickPlot = async function(plot) {
         vm.isDraw = true;
-        vm.plot = plot;
+        let exist = vm.getPlot();
+        if (exist) {
+          window.vueCesium.PlotManager.changeSource(
+            vm.vueKey,
+            vm.vueIndex,
+            plot
+          );
+        } else {
+          window.vueCesium.PlotManager.addSource(vm.vueKey, vm.vueIndex, plot);
+        }
         vm.symbolType = plot._elem.type;
         vm.canFill = !plot.isMustFill;
         // console.log("canFill", vm.canFill);
@@ -203,7 +224,7 @@ export default {
     /**
      * 解析符号库
      */
-    getSymbol() {
+    getSymbolLib() {
       const vm = this;
       // console.log("symbolUrl", this.symbolUrl);
       let manager = this.getSymbolManager();
@@ -270,14 +291,28 @@ export default {
       this.isDraw = false;
       let manager = this.getSymbolManager();
       if (!manager) return;
-      this.symbol = manager.getLeafByID(data.icon.id);
+      let exist = this.getSymbol();
+      let symbol = manager.getLeafByID(data.icon.id);
+      if (exist) {
+        window.vueCesium.OneSymbolManager.changeSource(
+          vm.vueKey,
+          vm.vueIndex,
+          symbol
+        );
+      } else {
+        window.vueCesium.OneSymbolManager.addSource(
+          vm.vueKey,
+          vm.vueIndex,
+          symbol
+        );
+      }
       // 调用primitive上的getStyleJSON
-      this.symbol.getElement().then(function(res) {
+      symbol.getElement().then(function(res) {
         // console.log("symbol", res);
         vm.symbolType = res.type;
         vm.canFill = !res.isMustFill;
         // console.log("canFill", vm.canFill);
-        vm.symbol.style = res.getStyleJSON();
+        symbol.style = res.getStyleJSON();
         let json = res.getStyleJSON();
         vm.parseStyleJson(json, data.icon.src);
       });
@@ -285,7 +320,7 @@ export default {
       let drawTool = this.getDrawTool();
       if (drawTool) {
         drawTool.stopDraw();
-        drawTool.drawPlot(vm.symbol);
+        drawTool.drawPlot(symbol);
       }
     },
     /**
@@ -302,7 +337,7 @@ export default {
       json["symbolUrl"] = svgUrl;
       json = this.removeInvalidAttributes(json);
       this.showStylePanel = true;
-      this.styleData = json;
+      this.styleData = JSON.parse(JSON.stringify(json));
     },
     removeInvalidAttributes(json) {
       // 移除二维特有的属性
@@ -355,15 +390,17 @@ export default {
       if (e.key == "strokeColor") {
         e.key = "strokeStyle";
       }
+      let plot = this.getPlot();
+      let symbol = this.getSymbol();
       if (e.name && this.isDraw) {
-        return this.plot.setStyle(e.key, e.value, e.name);
+        return plot.setStyle(e.key, e.value, e.name);
       } else if (e.name && !this.isDraw) {
-        return (this.symbol.style.nodeStyles[e.name][e.key] = e.value);
+        return (symbol.style.nodeStyles[e.name][e.key] = e.value);
       }
       if (e.key === "classificationType") {
-        return this.plot.setStyle(e.key, Number(e.value));
+        return plot.setStyle(e.key, Number(e.value));
       }
-      return this.plot.setStyle(e.key, e.value);
+      return plot.setStyle(e.key, e.value);
     },
     /**
      * 搜索符号
@@ -431,6 +468,22 @@ export default {
         this.vueIndex
       );
       return DrawToolManager && DrawToolManager.source;
+    },
+    // 获取图元
+    getPlot() {
+      let PlotManager = window.vueCesium.PlotManager.findSource(
+        this.vueKey,
+        this.vueIndex
+      );
+      return PlotManager && PlotManager.source;
+    },
+    // 获取符号
+    getSymbol() {
+      let OneSymbolManager = window.vueCesium.OneSymbolManager.findSource(
+        this.vueKey,
+        this.vueIndex
+      );
+      return OneSymbolManager && OneSymbolManager.source;
     },
     getSymbolManager() {
       let PlotSymbolManager = window.PlotSymbolManager;
