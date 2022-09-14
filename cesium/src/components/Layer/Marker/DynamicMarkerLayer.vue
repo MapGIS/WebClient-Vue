@@ -1,11 +1,14 @@
 <template>
   <div>
     <mapgis-3d-marker-set-pro
+      ref="markerSetPro"
       :vue-key="vueKey"
       :markers="markers"
+      :popupShowType="popupShowType"
       @mouseenter="mouseEnterEvent"
       @mouseleave="mouseLeaveEvent"
       @popupload="popupLoad"
+      @show-marker-detail="showMarkerDetail"
     >
       <template slot="popup" slot-scope="slotProps">
         <slot name="popup" v-bind="slotProps"></slot>
@@ -80,6 +83,10 @@ export default {
       default: () => {
         return {};
       }
+    },
+    popupShowType: {
+      type: String,
+      default: "default"
     }
   },
   data() {
@@ -482,6 +489,9 @@ export default {
       };
       this.zoomOrPanTo(bound);
       this.highlightMarker(marker);
+    },
+    showMarkerDetail(data) {
+      this.$emit("show-popup", data);
     }
   }
 };

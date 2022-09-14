@@ -20,6 +20,7 @@
       :data-source="propertyKeys"
       size="small"
       class="table-marker"
+      :class="showAccessory ? '' : 'scene-popup-detail'"
       bordered
     >
       <mapgis-ui-list-item
@@ -37,7 +38,7 @@
       </mapgis-ui-list-item>
     </mapgis-ui-list>
     <!-- 如果存在实体编码Euid字段，则暂时附件按钮 -->
-    <template v-if="Euid">
+    <template v-if="Euid && showAccessory">
       <div class="iot-enclosure-title">附件</div>
       <ul class="iot-enclosure-container">
         <li title="非结构化文件">
@@ -114,6 +115,10 @@ export default {
     getProjectorStatus: {
       type: Function,
       default: () => {}
+    },
+    showAccessory: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -195,6 +200,12 @@ export default {
   margin-top: 10px;
   border-radius: 0;
   border-color: var(--primary-5);
+}
+
+.scene-popup-detail {
+  max-height: 100% !important;
+  margin-top: 0 !important;
+  /* width: 295px; */
 }
 
 .table-marker-item {

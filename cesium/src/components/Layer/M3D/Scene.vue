@@ -169,6 +169,15 @@
       >
       </mapgis-3d-popup-iot>
     </mapgis-3d-feature-popup>
+    <mapgis-3d-popup-feature-detail
+      v-if="showDetail && isUnClosePopup"
+      :properties="featureproperties"
+      :dataStoreIp="dataStoreIp"
+      :dataStorePort="dataStorePort"
+      :dataStoreDataset="dataStoreDataset"
+      @close-popup-window="closePopupWindow"
+      @project-screen="projectScreen"
+    />
   </div>
 </template>
 
@@ -183,7 +192,7 @@ const { G3DLayerType, M3DTileDataInfo } = G3D;
 
 export default {
   name: "mapgis-3d-scene-layer",
-  inject: ["Cesium", "vueCesium", "viewer"],
+  inject: ["Cesium", "vueCesium", "viewer", "popupShowType"],
   props: {
     ...G3DOptions,
     popupOptions: {
@@ -265,7 +274,9 @@ export default {
       featureproperties: undefined,
       featurevisible: undefined,
       featureclickenable: this.enablePopup,
-      iEnableIot: false
+      iEnableIot: false,
+      showDetail: false,
+      isUnClosePopup: true
     };
   },
   provide() {
@@ -842,6 +853,10 @@ export default {
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       if (!pickedFeature._content && pickedFeature.primitive) {
         this.featurevisible = true;
+        // 右侧展示气泡框展示控制条件之一，关闭再打开会进入这里，showDetail一个控制条件不够
+        if (!this.isUnClosePopup) {
+          this.isUnClosePopup = !this.isUnClosePopup;
+        }
         return;
       }
       let index = pickedFeature._content._tileset._layerIndex;
@@ -861,7 +876,15 @@ export default {
     },
     cancelHighlight() {
       const { vueCesium, vueKey, vueIndex } = this;
-      this.featurevisible = false;
+
+      if (this.popupShowType === "default") {
+        this.featurevisible = false;
+      } else {
+        if (this.popupShowType === "right" && this.isUnClosePopup) {
+          this.isUnClosePopup = !this.isUnClosePopup;
+        }
+      }
+
       let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
       if (find && find.options) {
         let { primitiveCollection } = find.options;
@@ -970,12 +993,20 @@ export default {
               }
               if (result && result.length > 0) {
                 let feature = result[0];
-                vm.featurevisible = true;
-                vm.featureposition = {
-                  longitude: lng,
-                  latitude: lat,
-                  height: height
-                };
+                if (vm.popupShowType === "default") {
+                  vm.featurevisible = true;
+                  vm.featureposition = {
+                    longitude: lng,
+                    latitude: lat,
+                    height: height
+                  };
+                } else if (vm.popupShowType === "right") {
+                  vm.showDetail = true;
+                  if (!vm.isUnClosePopup) {
+                    vm.isUnClosePopup = !vm.isUnClosePopup;
+                  }
+                }
+
                 vm.featureproperties = feature.property;
                 // _extrudedHeight和_height这样设置后才能贴模型
                 feature.geometryInstances.geometry._extrudedHeight = 0;
@@ -987,6 +1018,10 @@ export default {
                   "feature",
                   feature
                 );
+              } else {
+                if (vm.popupShowType === "right" && vm.isUnClosePopup) {
+                  vm.isUnClosePopup = !vm.isUnClosePopup;
+                }
               }
             },
             {
@@ -1004,6 +1039,7 @@ export default {
     },
     queryStatic(movement) {
       const vm = this;
+      vm.featurevisible = false;
       const { Cesium, viewer, version, g3dLayerIndex, popupOptions } = this;
       const { vueKey, vueIndex, vueCesium } = this;
       const scene = viewer.scene;
@@ -1027,6 +1063,8 @@ export default {
           return;
         }
 
+        vm.restoreHighlight();
+        vm.restoreM3d();
         let longitudeString2, latitudeString2, heightString2;
 
         if (Cesium.defined(cartesian2)) {
@@ -1038,14 +1076,20 @@ export default {
 
         if (cartesian || cartesian2) {
           if (vm.featureclickenable) {
-            vm.featurevisible = true;
+            if (vm.popupShowType === "default") {
+              vm.featurevisible = true;
+              vm.featureposition = {
+                longitude: longitudeString2,
+                latitude: latitudeString2,
+                height: heightString2
+              };
+            } else {
+              vm.showDetail = true;
+              if (!vm.isUnClosePopup) {
+                vm.isUnClosePopup = !vm.isUnClosePopup;
+              }
+            }
           }
-
-          vm.featureposition = {
-            longitude: longitudeString2,
-            latitude: latitudeString2,
-            height: heightString2
-          };
 
           let g3dLayer = viewer.scene.layers.getLayer(vm.g3dLayerIndex);
           let index = pickedFeature._content._tileset._layerIndex;
@@ -1114,6 +1158,12 @@ export default {
     },
     handleBackMain() {
       this.featureclickenable = this.enablePopup;
+    },
+    closePopupWindow() {
+      this.isUnClosePopup = false;
+    },
+    projectScreen(file) {
+      this.$emit("project-screen", file);
     }
   }
 };

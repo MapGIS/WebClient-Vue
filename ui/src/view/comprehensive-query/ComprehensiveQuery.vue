@@ -151,6 +151,7 @@ export default {
     onClose() {
       if (!this.locationPanelExpand && !this.searchPanelExpand) {
         this.searchInputExapnd = false;
+        this.$emit("close-popup");
         return;
       }
 
