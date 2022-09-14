@@ -4,12 +4,12 @@
       v-if="isList"
       :columns="columnsTable"
       :data-source="fileList"
-      :showHeader="!isrelationShip"
+      :showHeader="!isrelationShip && !isPopupFeatureDetail"
       class="table-preview-container"
       :class="isrelationShip ? 'relation-accessory-empty' : ''"
       size="small"
       :pagination="false"
-      bordered
+      :bordered="bordered"
       rowKey="id"
       :scroll="{ y: 200 }"
     >
@@ -138,6 +138,14 @@ export default {
     videoToType: {
       type: Number,
       default: 1
+    },
+    bordered: {
+      type: Boolean,
+      default: true
+    },
+    isPopupFeatureDetail: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -178,7 +186,7 @@ export default {
         {
           title: "操作",
           dataIndex: "operation",
-          width: this.isrelationShip ? "25%" : 100,
+          width: this.isrelationShip || this.isPopupFeatureDetail ? "25%" : 100,
           scopedSlots: { customRender: "operation" }
         }
       ]

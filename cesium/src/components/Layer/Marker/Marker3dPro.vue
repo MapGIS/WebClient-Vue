@@ -76,6 +76,10 @@ export default {
     currentMarkerId: {
       type: String,
       required: false
+    },
+    popupShowType: {
+      type: String,
+      default: "default"
     }
   },
   data() {
@@ -174,11 +178,16 @@ export default {
     },
     mouseOver(event) {
       const { changeEvent, fid } = event;
-      if (changeEvent) {
-        changeEvent(true);
+      if (this.popupShowType === "default") {
+        if (changeEvent) {
+          changeEvent(true);
+        } else {
+          this.showPopup = true;
+        }
       } else {
-        this.showPopup = true;
+        this.$emit("show-marker-detail", this.propertyKeys, fid);
       }
+
       this.$emit("marker-id", fid);
       this.$emit("mouseenter", event, fid);
     },

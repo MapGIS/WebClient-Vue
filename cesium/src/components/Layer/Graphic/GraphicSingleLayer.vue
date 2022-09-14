@@ -1519,6 +1519,7 @@ export default {
       }
     },
     $_getCenter(json) {
+      if (!json) return;
       let positions = [[]],
         center,
         polygonG,
