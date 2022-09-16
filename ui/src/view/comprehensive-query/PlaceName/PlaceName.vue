@@ -129,6 +129,12 @@ export default {
         this.showTypeChange();
         this.$emit("change-cluster", this.cluster);
       }
+    },
+    tab: {
+      immediate: true,
+      handler(val) {
+        this.$emit("select-item", val);
+      }
     }
   },
   mounted() {
