@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { styleAttributes } from "@mapgis/webclient-vue-ui/src/components/plot/test/attributeConfig";
+import { styleAttributes } from "@mapgis/webclient-vue-ui";
 import plot from "@mapgis/webclient-plot";
 const {
   SymbolManager = window.Zondy.Plot.SymbolManager,

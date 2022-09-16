@@ -68,5 +68,7 @@ export default {
   setLayoutSettingVisible,
   install
 };
+export { styleAttributes } from "./components/plot/test/attributeConfig";
+export { groupArr } from "./components/plot/test/attributeConfig";
 
 window.MapgisUi = UIComponents;
