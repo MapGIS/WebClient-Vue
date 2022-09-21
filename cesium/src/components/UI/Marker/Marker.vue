@@ -9,6 +9,7 @@
 
 <script>
 import axios from "axios";
+const makerKey = "mapgis-3d-marker-eventHandler";
 export default {
   name: "mapgis-3d-marker",
   inject: ["Cesium", "vueCesium", "viewer"],
@@ -33,14 +34,14 @@ export default {
      * 加载的marker的经度。使用entity方式加载marker，即usePrimitive为false时必传。
      */
     longitude: {
-      type: Number,
+      type: Number
       // required: true
     },
     /**
      * 加载的marker的纬度。使用entity方式加载marker，即usePrimitive为false时必传
      */
     latitude: {
-      type: Number,
+      type: Number
       // required: true
     },
     height: {
@@ -102,8 +103,8 @@ export default {
     /**
      * 聚类 和 primitive 加载时必传，加载使用的数据
      */
-    geojson:{
-      type: [ Object , String ]
+    geojson: {
+      type: [Object, String]
     },
     /**
      * 设置usePrimitive为true，底层将使用primitive的方式加载marker，在数据量大的时候会改善卡顿的现象
@@ -115,14 +116,14 @@ export default {
     /**
      * 是否开启动态圆特效
      */
-    enableCircle:{
+    enableCircle: {
       type: Boolean,
       default: false
     },
-    /** 
+    /**
      * 动态圆特效的初始半径
      */
-    radius:{
+    radius: {
       type: Number,
       default: 500000.0
     },
@@ -136,11 +137,11 @@ export default {
     /**
      * 动态圆特效的颜色
      */
-    circleColor:{
+    circleColor: {
       type: String,
       default: "#FF8C00"
     },
-    /** 
+    /**
      * 允许加载的最大圆特效数目，不建议超过300，否则容易卡顿
      */
     maxCircleNumber: {
@@ -154,7 +155,7 @@ export default {
       isMoveIn: false,
       isMoveOut: true,
       DynamicMarkerHandler: undefined,
-      DynamicMarkerLastActive: undefined,
+      DynamicMarkerLastActive: undefined
       // initH: 0,
       // circleRadius: this.radius,
     };
@@ -189,9 +190,9 @@ export default {
       let vm = this;
       const { vueKey, vueIndex, vueCesium } = this;
       vueCesium.getViewerByInterval(function(viewer) {
-        vueCesium.MarkerManager.addSource(vueKey, vueIndex,null,{
-          'entity': undefined,
-          'primitive': undefined
+        vueCesium.MarkerManager.addSource(vueKey, vueIndex, null, {
+          entity: undefined,
+          primitive: undefined
         });
         vm.$_init(viewer);
       }, this.vueKey);
@@ -207,37 +208,47 @@ export default {
         );
         let options = MarkerManager.options;
         viewer = vm.viewer || viewer;
-        if(options.entity){
-          if(vm.enableCluster){
+        if (options.entity) {
+          if (vm.enableCluster) {
             viewer.dataSources.remove(options.entity.dataSource);
-          }else{
+          } else {
             viewer.entities.remove(options.entity);
           }
-          vm.enableCircle && viewer.scene.primitives.remove(options.entity.circle);
+          vm.enableCircle &&
+            viewer.scene.primitives.remove(options.entity.circle);
         }
-        if(options.primitive){
+        if (options.primitive) {
           viewer.scene.primitives.remove(options.primitive.icon);
           viewer.scene.primitives.remove(options.primitive.label);
-          vm.enableCircle && viewer.scene.primitives.remove(options.primitive.circle);
+          vm.enableCircle &&
+            viewer.scene.primitives.remove(options.primitive.circle);
         }
         vueCesium.MarkerManager.deleteSource(vueKey, vueIndex);
-        
-        vm.DynamicMarkerHandler.removeInputAction(
-          vm.$_markerMouseAction,
-          Cesium.ScreenSpaceEventType.MOUSE_MOVE
-          // Cesium.ScreenSpaceEventType.LEFT_CLICK
-        );
-        vm.DynamicMarkerHandler.removeInputAction(
-          vm.$_markerClickAction,
-          Cesium.ScreenSpaceEventType.LEFT_CLICK
-        );
-        vm.DynamicMarkerHandler = undefined;
 
+        let eventHandlerManager = vueCesium.EventHandlerManager.findSource(
+          vueKey,
+          makerKey
+        );
+        let eventHandlerOptions = eventHandlerManager
+          ? eventHandlerManager.options
+          : undefined;
+        if (eventHandlerOptions && eventHandlerOptions.DynamicMarkerHandler) {
+          let dynamicMarkerHandler = eventHandlerOptions.DynamicMarkerHandler;
+          dynamicMarkerHandler.removeInputAction(
+            vm.$_markerMouseAction,
+            Cesium.ScreenSpaceEventType.MOUSE_MOVE
+          );
+          dynamicMarkerHandler.removeInputAction(
+            vm.$_markerClickAction,
+            Cesium.ScreenSpaceEventType.LEFT_CLICK
+          );
+          vueCesium.EventHandlerManager.deleteSource(vueKey, makerKey);
+        }
       }, vueKey);
-
     },
     $_init(viewer) {
       let vm = this;
+      let { vueKey } = this;
       let Cesium = this.Cesium || window.Cesium;
       let viewerMarker = this.viewer || viewer;
       //heightReference useless
@@ -282,31 +293,41 @@ export default {
       };
       this.$_append(label);
       this.marker = this;
-
-      if (!this.DynamicMarkerHandler) {
-        this.DynamicMarkerHandler = new Cesium.ScreenSpaceEventHandler(
+      let eventHandlerManager = vueCesium.EventHandlerManager.findSource(
+        vueKey,
+        makerKey
+      );
+      let eventHandlerOptions = eventHandlerManager
+        ? eventHandlerManager.options
+        : undefined;
+      let dynamicMarkerHandler;
+      if (eventHandlerOptions && eventHandlerOptions.DynamicMarkerHandler) {
+        dynamicMarkerHandler = eventHandlerOptions.DynamicMarkerHandler;
+      } else {
+        dynamicMarkerHandler = new Cesium.ScreenSpaceEventHandler(
           viewerMarker.scene.canvas
         );
-      }
-      this.DynamicMarkerHandler.removeInputAction(
-        vm.$_markerMouseAction,
-        Cesium.ScreenSpaceEventType.MOUSE_MOVE
-        // Cesium.ScreenSpaceEventType.LEFT_CLICK
-      );
-      this.DynamicMarkerHandler.setInputAction(
-        vm.$_markerMouseAction,
-        Cesium.ScreenSpaceEventType.MOUSE_MOVE
-        // Cesium.ScreenSpaceEventType.LEFT_CLICK
-      );
+        dynamicMarkerHandler.removeInputAction(
+          vm.$_markerMouseAction,
+          Cesium.ScreenSpaceEventType.MOUSE_MOVE
+        );
+        dynamicMarkerHandler.setInputAction(
+          vm.$_markerMouseAction,
+          Cesium.ScreenSpaceEventType.MOUSE_MOVE
+        );
 
-      this.DynamicMarkerHandler.removeInputAction(
-        vm.$_markerClickAction,
-        Cesium.ScreenSpaceEventType.LEFT_CLICK
-      );
-      this.DynamicMarkerHandler.setInputAction(
-        vm.$_markerClickAction,
-        Cesium.ScreenSpaceEventType.LEFT_CLICK
-      );
+        dynamicMarkerHandler.removeInputAction(
+          vm.$_markerClickAction,
+          Cesium.ScreenSpaceEventType.LEFT_CLICK
+        );
+        dynamicMarkerHandler.setInputAction(
+          vm.$_markerClickAction,
+          Cesium.ScreenSpaceEventType.LEFT_CLICK
+        );
+        vueCesium.EventHandlerManager.addSource(vueKey, makerKey, null, {
+          DynamicMarkerHandler: dynamicMarkerHandler
+        });
+      }
 
       // //监听相机的移动
       // vm.initH = viewerMarker.camera.positionCartographic.height;
@@ -323,19 +344,24 @@ export default {
       marker.flag = false;
       let markerManagers = vueCesium.MarkerManager[this.vueKey];
       for (let i = 0; i < markerManagers.length; i++) {
-        if(this.usePrimitive && markerManagers[i].options.primitive){
+        if (this.usePrimitive && markerManagers[i].options.primitive) {
           let primitiveCol = markerManagers[i].options.primitive;
-          let index = id.split('_')[1];
-          marker.flag = primitiveCol.icon.get(index) || primitiveCol.label && primitiveCol.label.get(index);
-          if(marker.flag){
+          let index = id.split("_")[1];
+          marker.flag =
+            primitiveCol.icon.get(index) ||
+            (primitiveCol.label && primitiveCol.label.get(index));
+          if (marker.flag) {
             // console.log('marker.flag',marker.flag);
             marker.iconLabel = {
               icon: primitiveCol.icon.get(index),
-              label: primitiveCol.label && primitiveCol.label.get(index),
+              label: primitiveCol.label && primitiveCol.label.get(index)
             };
             break;
           }
-        } else if (!this.usePrimitive && markerManagers[i].options.entity._id === id) {
+        } else if (
+          !this.usePrimitive &&
+          markerManagers[i].options.entity._id === id
+        ) {
           marker.flag = true;
           marker.label = markerManagers[i].options.entity.markLabel;
           break;
@@ -343,38 +369,35 @@ export default {
       }
       return marker;
     },
-    $_markerClickAction(ev){
+    $_markerClickAction(ev) {
       const { Cesium, viewer } = this;
       const vm = this;
       let scene = viewer.scene;
       if (scene.mode !== Cesium.SceneMode.MORPHING) {
         let pickedObject = scene.pick(ev.position);
-        if (
-          Cesium.defined(pickedObject) &&
-          pickedObject.hasOwnProperty("id")
-        ) {
+        if (Cesium.defined(pickedObject) && pickedObject.hasOwnProperty("id")) {
           // console.log('clickedObject',pickedObject);
           if (
-            !this.usePrimitive && 
+            !this.usePrimitive &&
             pickedObject.id.label &&
             vm.$_hasId(pickedObject.id.id).flag
           ) {
             let label = vm.$_hasId(pickedObject.id.id).label;
             vm.$emit("click", label);
           } else if (
-            !this.usePrimitive  &&
+            !this.usePrimitive &&
             this.enableCircle &&
             pickedObject.primitive
-          ){
+          ) {
             vm.$emit("click", pickedObject.primitive);
           } else if (
             this.usePrimitive &&
-            typeof pickedObject.id === 'string' &&
+            typeof pickedObject.id === "string" &&
             vm.$_hasId(pickedObject.id).flag
-          ){
+          ) {
             let iconLabel = vm.$_hasId(pickedObject.id).iconLabel;
             vm.$emit("click", iconLabel);
-          };
+          }
         }
       }
     },
@@ -382,19 +405,15 @@ export default {
       const { Cesium, viewer } = this;
       const vm = this;
       let scene = viewer.scene;
-      this.DynamicMarkerLastActive =
-        this.DynamicMarkerLastActive || undefined;
+      this.DynamicMarkerLastActive = this.DynamicMarkerLastActive || undefined;
       if (scene.mode !== Cesium.SceneMode.MORPHING) {
         let pickedObject = scene.pick(movement.endPosition);
         // let pickedObject = scene.pick(movement.position);
-        if (
-          Cesium.defined(pickedObject) &&
-          pickedObject.hasOwnProperty("id")
-        ) {
+        if (Cesium.defined(pickedObject) && pickedObject.hasOwnProperty("id")) {
           // console.log('pickedObject',pickedObject);
 
           if (
-            !this.usePrimitive && 
+            !this.usePrimitive &&
             pickedObject.id.label &&
             vm.$_hasId(pickedObject.id.id).flag
           ) {
@@ -412,10 +431,10 @@ export default {
               this.DynamicMarkerLastActive = label;
             }
           } else if (
-            !this.usePrimitive  &&
+            !this.usePrimitive &&
             this.enableCircle &&
             pickedObject.primitive
-          ){
+          ) {
             if (!vm.isMoveIn) {
               vm.isMoveIn = true;
               vm.isMoveOut = false;
@@ -431,9 +450,9 @@ export default {
             }
           } else if (
             this.usePrimitive &&
-            typeof pickedObject.id === 'string' &&
+            typeof pickedObject.id === "string" &&
             vm.$_hasId(pickedObject.id).flag
-          ){
+          ) {
             if (!vm.isMoveIn) {
               vm.isMoveIn = true;
               vm.isMoveOut = false;
@@ -447,7 +466,7 @@ export default {
               vm.$emit("mouseEnter", iconLabel);
               this.DynamicMarkerLastActive = iconLabel;
             }
-          };
+          }
         }
         if (!Cesium.defined(pickedObject)) {
           if (!vm.isMoveOut) {
@@ -462,12 +481,12 @@ export default {
       const vm = this;
       let geojson;
       geojson = this.geojson;
-      if( typeof geojson === 'string'){
-          const res = await axios.get(geojson);
-          geojson = res.data;
-      };
+      if (typeof geojson === "string") {
+        const res = await axios.get(geojson);
+        geojson = res.data;
+      }
       let iconLabel;
-      if(!this.usePrimitive){
+      if (!this.usePrimitive) {
         iconLabel = this.$_addLabelIcon(
           //文本内容
           this.text,
@@ -506,8 +525,8 @@ export default {
           // "data/picture/icon.png",
           this.iconUrl,
           this.iconWidth,
-          this.iconHeight,
-        )
+          this.iconHeight
+        );
       }
       //存储icon结果
       this.$_addIcon(iconLabel);
@@ -552,8 +571,8 @@ export default {
         console.log("Cesium缺失");
         return null;
       }
-      if ((!lon || !lat ) && !geojson) {
-        console.log('缺少marker位置信息');
+      if ((!lon || !lat) && !geojson) {
+        console.log("缺少marker位置信息");
         return null;
       }
       text = text || "";
@@ -570,15 +589,17 @@ export default {
       attribute = attribute || "";
       name = name || "pictureLabel";
 
-      if( this.enableCluster ){
+      if (this.enableCluster) {
         let circles;
-        if( this.enableCircle ){
-          circles = viewer.scene.primitives.add( new Cesium.PrimitiveCollection());
+        if (this.enableCircle) {
+          circles = viewer.scene.primitives.add(
+            new Cesium.PrimitiveCollection()
+          );
           // console.log('circles',circles);
         }
-        let dataSource = new Cesium.CustomDataSource('marker');
+        let dataSource = new Cesium.CustomDataSource("marker");
         //添加聚类数据
-        geojson.features.forEach(function(item,index){
+        geojson.features.forEach(function(item, index) {
           // console.log('item of geojson',item);
           let lon = item.geometry.coordinates[0];
           let lat = item.geometry.coordinates[1];
@@ -601,63 +622,66 @@ export default {
         dataSource.clustering.enabled = true;
         dataSource.clustering.pixelRange = 15;
         dataSource.clustering.minimumClusterSize = 2;
-        
+
         let preLength = 0;
         let i = 0;
-        dataSource.clustering.clusterEvent.addEventListener((clusteredEntities, cluster , clusters) => {
-          // console.log('clusteredEntities',clusteredEntities);
-          // console.log('clusters',clusters && clusters.length);
+        dataSource.clustering.clusterEvent.addEventListener(
+          (clusteredEntities, cluster, clusters) => {
+            // console.log('clusteredEntities',clusteredEntities);
+            // console.log('clusters',clusters && clusters.length);
 
-          cluster.label.show = false;
-          cluster.billboard.show = true;
-          cluster.billboard.image = iconUrl;
-          cluster.billboard.width = iconWidth;
-          cluster.billboard.height = iconHeight;
-          cluster.billboard.id = 'cluster_icon_' + i++;
-          cluster.billboard.entities = clusteredEntities;
-          // console.log('vm.enableCircle',vm.enableCircle);
-          
-          if(vm.enableCircle && clusters && (clusters.length !== preLength)){
-            if( clusters.length > vm.maxCircleNumber){
-              console.log('动态圆特效数目超出设置的范围');
-              return null;  
-            }
-            preLength = clusters.length;
+            cluster.label.show = false;
+            cluster.billboard.show = true;
+            cluster.billboard.image = iconUrl;
+            cluster.billboard.width = iconWidth;
+            cluster.billboard.height = iconHeight;
+            cluster.billboard.id = "cluster_icon_" + i++;
+            cluster.billboard.entities = clusteredEntities;
+            // console.log('vm.enableCircle',vm.enableCircle);
 
-            vm.viewer.scene.globe.enableLighting = true;
+            if (vm.enableCircle && clusters && clusters.length !== preLength) {
+              if (clusters.length > vm.maxCircleNumber) {
+                console.log("动态圆特效数目超出设置的范围");
+                return null;
+              }
+              preLength = clusters.length;
 
-            circles.removeAll();
-            clusters.forEach(function(item){
-              // console.log('item',item);
-              circles.add(new Cesium.Primitive({
-                geometryInstances: new Cesium.GeometryInstance({
-                  geometry: new Cesium.EllipseGeometry({
-                    center : item.position,
-                    height: 0,
-                    semiMinorAxis: vm.radius,
-                    semiMajorAxis: vm.radius,
-                  }),
-                }),
-                appearance: new Cesium.MaterialAppearance({
-                    material: Cesium.Material.fromType('CircleWaveMaterial',{
-                      duration: 1000,
-                      gradient: 0.5,
-                      color: Cesium.Color.fromCssColorString(vm.circleColor),
-                      count: 4
+              vm.viewer.scene.globe.enableLighting = true;
+
+              circles.removeAll();
+              clusters.forEach(function(item) {
+                // console.log('item',item);
+                circles.add(
+                  new Cesium.Primitive({
+                    geometryInstances: new Cesium.GeometryInstance({
+                      geometry: new Cesium.EllipseGeometry({
+                        center: item.position,
+                        height: 0,
+                        semiMinorAxis: vm.radius,
+                        semiMajorAxis: vm.radius
+                      })
+                    }),
+                    appearance: new Cesium.MaterialAppearance({
+                      material: Cesium.Material.fromType("CircleWaveMaterial", {
+                        duration: 1000,
+                        gradient: 0.5,
+                        color: Cesium.Color.fromCssColorString(vm.circleColor),
+                        count: 4
+                      })
                     })
-                }),
-              }));
-            })
-          }
+                  })
+                );
+              });
+            }
 
-          vm.$emit('cluster',clusteredEntities, cluster , clusters)
-        })
+            vm.$emit("cluster", clusteredEntities, cluster, clusters);
+          }
+        );
 
         this.viewer.dataSources.add(dataSource);
 
-        return {dataSource: dataSource, circle:circles};
-
-      }else {
+        return { dataSource: dataSource, circle: circles };
+      } else {
         const labelIcon = this.viewer.entities.add({
           name: text,
           position: this.Cesium.Cartesian3.fromDegrees(lon, lat, height),
@@ -715,35 +739,35 @@ export default {
           },
           description: attribute
         });
-  
+
         let circle;
-        if( this.enableCircle && !this.enableCluster ){
+        if (this.enableCircle && !this.enableCluster) {
           // this.viewer.clock.shouldAnimate = true;
           this.viewer.scene.globe.enableLighting = true;
-  
+
           circle = this.viewer.scene.primitives.add(
             new Cesium.Primitive({
               geometryInstances: new Cesium.GeometryInstance({
                 geometry: new Cesium.EllipseGeometry({
-                  center : new Cesium.Cartesian3.fromDegrees(lon, lat, height),
+                  center: new Cesium.Cartesian3.fromDegrees(lon, lat, height),
                   height: 0,
                   semiMinorAxis: vm.radius,
-                  semiMajorAxis: vm.radius,
-                }),
+                  semiMajorAxis: vm.radius
+                })
               }),
               appearance: new Cesium.MaterialAppearance({
-                  material: Cesium.Material.fromType('CircleWaveMaterial',{
-                    duration: 1000,
-                    gradient: 0.5,
-                    color: Cesium.Color.fromCssColorString(vm.circleColor),
-                    count: 4
-                  })
-              }),
+                material: Cesium.Material.fromType("CircleWaveMaterial", {
+                  duration: 1000,
+                  gradient: 0.5,
+                  color: Cesium.Color.fromCssColorString(vm.circleColor),
+                  count: 4
+                })
+              })
             })
           );
           // console.log('circle',circle);
         }
-  
+
         labelIcon.billboard.translucencyByDistance = new this.Cesium.NearFarScalar(
           1.5e5,
           1.0,
@@ -765,8 +789,8 @@ export default {
       fillColor,
       iconUrl,
       iconWidth,
-      iconHeight,
-    ){
+      iconHeight
+    ) {
       if (!this.Cesium) {
         console.log("Cesium缺失");
         return null;
@@ -788,97 +812,105 @@ export default {
       iconWidth = iconWidth || 27;
       iconHeight = iconHeight || 32;
 
-      let billboards = viewer.scene.primitives.add(new Cesium.BillboardCollection());
+      let billboards = viewer.scene.primitives.add(
+        new Cesium.BillboardCollection()
+      );
       let labels;
       let circles;
 
-      if( text !== ""){
+      if (text !== "") {
         labels = viewer.scene.primitives.add(new Cesium.LabelCollection());
       }
 
-      if(this.enableCircle){
-        circles = viewer.scene.primitives.add( new Cesium.PrimitiveCollection());
+      if (this.enableCircle) {
+        circles = viewer.scene.primitives.add(new Cesium.PrimitiveCollection());
         // console.log('circles',circles);
       }
 
       circles.removeAll();
-      geojson.features.forEach(function(item,index){
+      geojson.features.forEach(function(item, index) {
         // console.log('item of geojson',item);
         let lon = item.geometry.coordinates[0];
         let lat = item.geometry.coordinates[1];
         billboards.add({
-          position : Cesium.Cartesian3.fromDegrees(lon, lat, height),
-          horizontalOrigin : Cesium.HorizontalOrigin.TOP,
-          image : iconUrl,
-          id : 'icon_' + index,
-          width : iconWidth,
-          height : iconHeight,
-          translucencyByDistance : new Cesium.NearFarScalar(
+          position: Cesium.Cartesian3.fromDegrees(lon, lat, height),
+          horizontalOrigin: Cesium.HorizontalOrigin.TOP,
+          image: iconUrl,
+          id: "icon_" + index,
+          width: iconWidth,
+          height: iconHeight,
+          translucencyByDistance: new Cesium.NearFarScalar(
             1.5e5,
             1.0,
             1.5e7,
             1.0
           ),
-          pixelOffsetScaleByDistance : new Cesium.NearFarScalar(
-            1.5e5, 3.0,
-            1.5e7, 0.5
+          pixelOffsetScaleByDistance: new Cesium.NearFarScalar(
+            1.5e5,
+            3.0,
+            1.5e7,
+            0.5
           ),
           disableDepthTestDistance: Number.POSITIVE_INFINITY
         });
 
-        if ( labels ) {
+        if (labels) {
           labels.add({
-            id : 'label_' + index,
-            position : Cesium.Cartesian3.fromDegrees(lon, lat, height),
-            text : text,
-            font : font,
-            fillColor : fillColor,
-            style : Cesium.LabelStyle.FILL_AND_OUTLINE,
-            pixelOffset : new Cesium.Cartesian2(0.0, -iconHeight / 4),
-            horizontalOrigin : Cesium.VerticalOrigin.BOTTOM,
-            verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
-            translucencyByDistance :  new Cesium.NearFarScalar(
+            id: "label_" + index,
+            position: Cesium.Cartesian3.fromDegrees(lon, lat, height),
+            text: text,
+            font: font,
+            fillColor: fillColor,
+            style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+            pixelOffset: new Cesium.Cartesian2(0.0, -iconHeight / 4),
+            horizontalOrigin: Cesium.VerticalOrigin.BOTTOM,
+            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+            translucencyByDistance: new Cesium.NearFarScalar(
               1.5e5,
               1.0,
               1.5e7,
               0.0
             ),
-            pixelOffsetScaleByDistance : new Cesium.NearFarScalar(
+            pixelOffsetScaleByDistance: new Cesium.NearFarScalar(
               1.5e2,
               3.0,
               1.5e7,
               0.5
-            ),
-          }); 
-        };
-        
-        if ( vm.enableCircle ){
+            )
+          });
+        }
+
+        if (vm.enableCircle) {
           // console.log('geojson.features.length',geojson.features.length);
-          if(geojson.features.length > vm.maxCircleNumber){ 
-            console.log('动态圆特效数目超出设置的范围',geojson.features.length);
-            return null;   
+          if (geojson.features.length > vm.maxCircleNumber) {
+            console.log(
+              "动态圆特效数目超出设置的范围",
+              geojson.features.length
+            );
+            return null;
           }
 
-          circles.add(new Cesium.Primitive({
-            geometryInstances: new Cesium.GeometryInstance({
-              geometry: new Cesium.EllipseGeometry({
-                center : new Cesium.Cartesian3.fromDegrees(lon, lat, height),
-                height: 0,
-                semiMinorAxis: vm.radius,
-                semiMajorAxis: vm.radius,
+          circles.add(
+            new Cesium.Primitive({
+              geometryInstances: new Cesium.GeometryInstance({
+                geometry: new Cesium.EllipseGeometry({
+                  center: new Cesium.Cartesian3.fromDegrees(lon, lat, height),
+                  height: 0,
+                  semiMinorAxis: vm.radius,
+                  semiMajorAxis: vm.radius
+                })
               }),
-            }),
-            appearance: new Cesium.MaterialAppearance({
-                material: Cesium.Material.fromType('CircleWaveMaterial',{
+              appearance: new Cesium.MaterialAppearance({
+                material: Cesium.Material.fromType("CircleWaveMaterial", {
                   duration: 1000,
                   gradient: 0.5,
                   color: Cesium.Color.fromCssColorString(vm.circleColor),
                   count: 4
                 })
-            }),
-          }));
+              })
+            })
+          );
         }
-
       });
 
       let iconLableCollection = {
@@ -892,7 +924,7 @@ export default {
     $_addIcon(iconLabel) {
       const { vueKey, vueIndex } = this;
       let vueCesium = this.vueCesium || window.vueCesium;
-      let key = this.usePrimitive ? 'primitive' : 'entity';
+      let key = this.usePrimitive ? "primitive" : "entity";
       // console.log('iconLabel',iconLabel);
       vueCesium.MarkerManager.changeOptions(vueKey, vueIndex, key, iconLabel);
     },
