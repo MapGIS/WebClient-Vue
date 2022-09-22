@@ -23,28 +23,28 @@ export default {
         {
           events: ["moveend"],
           prop: "center",
-          getter: this.map.getCenter.bind(this.map)
+          getter: this.map.getCenter.bind(this.map),
         },
         {
           events: ["zoomend"],
           prop: "zoom",
-          getter: this.map.getZoom.bind(this.map)
+          getter: this.map.getZoom.bind(this.map),
         },
         {
           events: ["rotate"],
           prop: "bearing",
-          getter: this.map.getBearing.bind(this.map)
+          getter: this.map.getBearing.bind(this.map),
         },
         {
           events: ["pitch"],
           prop: "pitch",
-          getter: this.map.getPitch.bind(this.map)
-        }
+          getter: this.map.getPitch.bind(this.map),
+        },
         // TODO: make 'bounds' synced prop
         // { events: ['moveend', 'zoomend', 'rotate', 'pitch'], prop: 'bounds', getter: this.map.getBounds.bind(this.map) }
       ];
       syncedProps.forEach(({ events, prop, getter }) => {
-        events.forEach(event => {
+        events.forEach((event) => {
           if (this.$listeners[`update:${prop}`]) {
             this.map.on(event, this.$_updateSyncedPropsFabric(prop, getter));
           }
@@ -58,29 +58,38 @@ export default {
     $_loadMap() {
       // mapboxPromise = Promise.resolve(this.mapboxGl)
       const { company } = this;
+      // 通过this._props中splitScreen值判断是否处于分屏状态下，分屏状态下dragRotate和pitchWithRotate的值设为false（取消三维模式下的右键倾斜和旋转）
+      const props = JSON.parse(JSON.stringify(this._props));
+      if (props.splitScreen) {
+        props.dragRotate = false;
+        props.pitchWithRotate = false;
+      }
+      delete props.splitScreen;
       if (company.indexOf("mapgis") >= 0) {
-        return this.mapboxPromise.then(mapboxgl => {
+        return this.mapboxPromise.then((mapboxgl) => {
           this.mapbox = mapboxgl.default ? mapboxgl.default : mapboxgl;
-          return new Promise(resolve => {
+          return new Promise((resolve) => {
             const map = new mapboxgl.Map({
-              ...this._props,
+              // ...this._props,
+              ...props,
               preserveDrawingBuffer: true, //特别注意，打印的时候必须启动该配置项
               container: this.$refs.container,
-              style: this.mapStyle
+              style: this.mapStyle,
             });
             map.on("load", () => resolve(map));
           });
         });
       } else {
-        return this.mapboxPromise.then(mapboxgl => {
+        return this.mapboxPromise.then((mapboxgl) => {
           this.mapboxgl = mapboxgl.default ? mapboxgl.default : mapboxgl;
-          return new Promise(resolve => {
+          return new Promise((resolve) => {
             if (this.accessToken) this.mapboxgl.accessToken = this.accessToken;
             const map = new mapboxgl.Map({
-              ...this._props,
+              // ...this._props,
+              ...props,
               preserveDrawingBuffer: true,
               container: this.$refs.container,
-              style: this.mapStyle
+              style: this.mapStyle,
             });
             map.on("load", () => resolve(map));
           });
@@ -97,7 +106,7 @@ export default {
      * @param {*} events
      */
     $_bindMapEvents(events) {
-      Object.keys(this.$listeners).forEach(eventName => {
+      Object.keys(this.$listeners).forEach((eventName) => {
         if (events.includes(eventName)) {
           this.map.on(eventName, this.$_emitMapEvent);
         }
@@ -105,9 +114,9 @@ export default {
     },
 
     $_unbindEvents(events) {
-      events.forEach(eventName => {
+      events.forEach((eventName) => {
         this.map.off(eventName, this.$_emitMapEvent);
       });
-    }
-  }
+    },
+  },
 };
