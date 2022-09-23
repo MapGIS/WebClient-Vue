@@ -50,6 +50,7 @@
                   @click.stop="
                     () => {
                       scriptListCopy[activeIndex].timeLineName = nameToEdit;
+                      $emit('save', scriptListCopy[activeIndex]);
                       editState = false;
                     }
                   "
@@ -160,8 +161,8 @@ export default {
       this.$emit("edit", { index: index, list: this.scriptListCopy });
     },
     remove(index) {
-      this.scriptListCopy.splice(index, 1);
-      this.$emit("remove", this.scriptListCopy);
+      // this.scriptListCopy.splice(index, 1);
+      this.$emit("remove", this.scriptListCopy[index]);
     },
     addScript() {
       const vm = this;
@@ -184,40 +185,7 @@ export default {
       reader.readAsText(e.target.files[0], "UTF-8");
       reader.onload = function(res) {
         let json = JSON.parse(res.target.result);
-        if (json instanceof Array) {
-          let hasData = [];
-          for (let i = 0; i < json.length; i++) {
-            hasData[i] = false;
-          }
-          for (let i = 0; i < vm.scriptListCopy.length; i++) {
-            for (let j = 0; j < json.length; j++) {
-              hasData[j] = false;
-              if(vm.scriptListCopy[i].id === json[j].id){
-                vm.scriptListCopy[i] = json[j];
-                hasData[j] = true;
-                break;
-              }
-            }
-          }
-          for (let i = 0; i < hasData.length; i++) {
-            if (!hasData[i]) {
-              vm.scriptListCopy.push(json[i]);
-            }
-          }
-        } else {
-          let hasData = false;
-          for (let i = 0; i < vm.scriptListCopy.length; i++) {
-            if(vm.scriptListCopy[i].id === json.id){
-              vm.scriptListCopy[i] = json;
-              hasData = true;
-              break;
-            }
-          }
-          if(!hasData) {
-            vm.scriptListCopy.push(json);
-          }
-        }
-        vm.$emit("import", vm.scriptListCopy);
+        vm.$emit("import", json);
       };
     },
     /**
@@ -225,7 +193,7 @@ export default {
      */
     async exportClick() {
       await this.exportJSON(this.scriptListCopy, "script-list.json");
-      this.$emit("export", this.scriptListCopy);
+      // this.$emit("export", this.scriptListCopy);
     },
     exportJSON(data, filename) {
       // console.log(data, "exportJSON");

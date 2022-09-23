@@ -10,6 +10,7 @@
       @remove="removeList"
       @import="importList"
       @export="exportList"
+      @save="saveList"
       class="mapgis-3d-plot-animation-panel"
     ></mapgis-ui-plot-script-list>
     <mapgis-ui-plot-script
@@ -21,7 +22,10 @@
       :vueIndex="vueIndex"
       :is3dLayer="true"
       v-if="!showScriptList"
-      @return="e => (showScriptList = e)"
+      @return="e => {
+        showScriptList = e;
+        $emit('save', scriptListCopy[activeIndex]);
+      }"
       @play="playScript"
       @add="addScript"
       @change="scriptChange"
@@ -368,25 +372,22 @@ export default {
       this.activeIndex = scriptList.length - 1;
       this.initTimeline();
     },
-    removeList(scriptList) {
-      this.scriptListCopy = scriptList;
-      if (scriptList.length == 0) {
-        this.activeIndex = undefined;
-        return;
-      }
-      this.activeIndex =
-        this.activeIndex > scriptList.length - 1
-          ? scriptList.length - 1
-          : this.activeIndex;
+    removeList(script) {
+      this.$emit("remove", script);
     },
-    importList(scriptList) {
-      this.scriptListCopy = scriptList;
+    saveList(script) {
+      this.$emit("save", script);
+    },
+    importList(script) {
+      this.$emit("save", script);
+      // this.scriptListCopy = scriptList;
     },
     exportList(scriptList) {
-      this.$emit("export", scriptList);
+      // this.$emit("export", scriptList);
     },
-    scriptChange(e) {
-      this.scriptListCopy[this.activeIndex] = e.script;
+    scriptChange(script) {
+      // this.scriptListCopy[this.activeIndex] = e.script;
+      this.$emit("save", script);
     },
     animationChange(e) {
       let timeline = this.getPlotAnimation();
