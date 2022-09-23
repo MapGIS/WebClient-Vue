@@ -13,14 +13,14 @@
             <template v-for="(value, key, dataIdx) in dataCopy">
               <div
                 v-if="
-                  styleAttributes[key] &&
-                    collapse.id === styleAttributes[key].groupId
+                  styleAttributesUIConfig[key] &&
+                    collapse.id === styleAttributesUIConfig[key].groupId
                 "
                 :key="dataIdx"
               >
                 <mapgis-ui-col
                   :span="24"
-                  v-if="styleAttributes[key].type === 'nodes'"
+                  v-if="styleAttributesUIConfig[key].type === 'nodes'"
                 >
                   <mapgis-ui-space class="margin-top">
                     <mapgis-ui-tooltip
@@ -51,39 +51,41 @@
                 </mapgis-ui-col>
 
                 <mapgis-ui-col :span="12" v-else>
-                  <mapgis-ui-form-item :label="styleAttributes[key].title">
+                  <mapgis-ui-form-item
+                    :label="styleAttributesUIConfig[key].title"
+                  >
                     <mapgis-ui-sketch-color-picker
-                      v-if="styleAttributes[key].type === 'color'"
+                      v-if="styleAttributesUIConfig[key].type === 'color'"
                       v-model="dataCopy[key]"
                       @change="changeStyle(key, $event)"
                       :disableAlpha="false"
                       :showColorText="false"
                     />
                     <mapgis-ui-input-number-addon
-                      v-if="styleAttributes[key].type === 'number'"
+                      v-if="styleAttributesUIConfig[key].type === 'number'"
                       v-model="dataCopy[key]"
                       @change="changeStyle(key, $event)"
                       :min="
-                        styleAttributes[key].range
-                          ? styleAttributes[key].range[0]
+                        styleAttributesUIConfig[key].range
+                          ? styleAttributesUIConfig[key].range[0]
                           : -Infinity
                       "
                       :max="
-                        styleAttributes[key].range
-                          ? styleAttributes[key].range[1]
+                        styleAttributesUIConfig[key].range
+                          ? styleAttributesUIConfig[key].range[1]
                           : Infinity
                       "
-                      :step="styleAttributes[key].step || 1"
-                      :disabled="styleAttributes[key].disabled || false"
+                      :step="styleAttributesUIConfig[key].step || 1"
+                      :disabled="styleAttributesUIConfig[key].disabled || false"
                     />
                     <mapgis-ui-input
-                      v-if="styleAttributes[key].type === 'text'"
+                      v-if="styleAttributesUIConfig[key].type === 'text'"
                       v-model="dataCopy[key]"
                       @change="changeStyle(key, $event.target.value)"
-                      :disabled="styleAttributes[key].disabled || false"
+                      :disabled="styleAttributesUIConfig[key].disabled || false"
                     />
                     <mapgis-ui-switch-panel
-                      v-if="styleAttributes[key].type === 'boolean'"
+                      v-if="styleAttributesUIConfig[key].type === 'boolean'"
                       v-model="dataCopy[key]"
                       @changeChecked="changeStyle(key, $event)"
                       :showLabel="false"
@@ -93,10 +95,10 @@
                       size="small"
                     />
                     <mapgis-ui-select-panel
-                      v-if="styleAttributes[key].type === 'select'"
+                      v-if="styleAttributesUIConfig[key].type === 'select'"
                       v-model="dataCopy[key]"
                       @change="changeStyle(key, $event)"
-                      :selectOptions="styleAttributes[key].options"
+                      :selectOptions="styleAttributesUIConfig[key].options"
                       :showLabel="false"
                       :wrapperCol="24"
                     />
@@ -111,44 +113,44 @@
               <mapgis-ui-col
                 :span="12"
                 v-if="
-                  styleAttributes[k] &&
-                    collapse.id === styleAttributes[k].groupId
+                  styleAttributesUIConfig[k] &&
+                    collapse.id === styleAttributesUIConfig[k].groupId
                 "
                 :key="styleIdx"
               >
-                <mapgis-ui-form-item :label="styleAttributes[k].title">
+                <mapgis-ui-form-item :label="styleAttributesUIConfig[k].title">
                   <mapgis-ui-sketch-color-picker
-                    v-if="styleAttributes[k].type === 'color'"
+                    v-if="styleAttributesUIConfig[k].type === 'color'"
                     v-model="dataCopy[nodesName][componentName][k]"
                     @change="changeComponentStyle(k, $event)"
                     :disableAlpha="false"
                     :showColorText="false"
                   />
                   <mapgis-ui-input-number-addon
-                    v-if="styleAttributes[k].type === 'number'"
+                    v-if="styleAttributesUIConfig[k].type === 'number'"
                     v-model="dataCopy[nodesName][componentName][k]"
                     @change="changeComponentStyle(k, $event)"
                     :min="
-                      styleAttributes[k].range
-                        ? styleAttributes[k].range[0]
+                      styleAttributesUIConfig[k].range
+                        ? styleAttributesUIConfig[k].range[0]
                         : -Infinity
                     "
                     :max="
-                      styleAttributes[k].range
-                        ? styleAttributes[k].range[1]
+                      styleAttributesUIConfig[k].range
+                        ? styleAttributesUIConfig[k].range[1]
                         : Infinity
                     "
-                    :step="styleAttributes[k].step || 1"
-                    :disabled="styleAttributes[k].disabled || false"
+                    :step="styleAttributesUIConfig[k].step || 1"
+                    :disabled="styleAttributesUIConfig[k].disabled || false"
                   />
                   <mapgis-ui-input
-                    v-if="styleAttributes[k].type === 'text'"
+                    v-if="styleAttributesUIConfig[k].type === 'text'"
                     v-model="dataCopy[nodesName][componentName][k]"
                     @change="changeComponentStyle(k, $event.target.value)"
-                    :disabled="styleAttributes[k].disabled || false"
+                    :disabled="styleAttributesUIConfig[k].disabled || false"
                   />
                   <mapgis-ui-switch-panel
-                    v-if="styleAttributes[k].type === 'boolean'"
+                    v-if="styleAttributesUIConfig[k].type === 'boolean'"
                     v-model="dataCopy[nodesName][componentName][k]"
                     @changeChecked="changeComponentStyle(k, $event)"
                     :showLabel="false"
@@ -158,10 +160,10 @@
                     size="small"
                   />
                   <mapgis-ui-select-panel
-                    v-if="styleAttributes[k].type === 'select'"
+                    v-if="styleAttributesUIConfig[k].type === 'select'"
                     v-model="dataCopy[nodesName][componentName][k]"
                     @change="changeComponentStyle(k, $event)"
-                    :selectOptions="styleAttributes[k].options"
+                    :selectOptions="styleAttributesUIConfig[k].options"
                     :showLabel="false"
                     :wrapperCol="24"
                   />
@@ -176,7 +178,7 @@
 </template>
 
 <script>
-import { styleAttributes, groupArr } from "./test/attributeConfig";
+import { styleAttributesUIConfig, groupArr } from "./config/attributeConfig";
 import axios from "axios";
 
 export default {
@@ -192,7 +194,7 @@ export default {
     attributeConfig: {
       type: Object,
       default() {
-        return styleAttributes;
+        return styleAttributesUIConfig;
       }
     },
     groupConfig: {
@@ -243,7 +245,7 @@ export default {
     return {
       dataCopy: undefined,
       groupArr: JSON.parse(JSON.stringify(this.groupConfig)),
-      styleAttributes: JSON.parse(JSON.stringify(this.attributeConfig)),
+      styleAttributesUIConfig: JSON.parse(JSON.stringify(this.attributeConfig)),
       active: 0,
       nodesName: undefined,
       svgT: undefined,
@@ -257,8 +259,8 @@ export default {
   methods: {
     $_initComponentInfo() {
       const vm = this;
-      for (var i in this.styleAttributes) {
-        if (vm.styleAttributes[i].type === "nodes") {
+      for (var i in this.styleAttributesUIConfig) {
+        if (vm.styleAttributesUIConfig[i].type === "nodes") {
           vm.nodesName = i;
           let components = vm.dataCopy[i];
           vm.componentName = Object.keys(components)[0];
@@ -366,8 +368,8 @@ export default {
       const vm = this;
       let nodeObj = {};
       if (!vm.nodesName) {
-        for (var i in this.styleAttributes) {
-          if (vm.styleAttributes[i].type === "nodes") {
+        for (var i in this.styleAttributesUIConfig) {
+          if (vm.styleAttributesUIConfig[i].type === "nodes") {
             vm.nodesName = i;
           }
         }
@@ -375,8 +377,8 @@ export default {
       let name = Object.keys(vm.dataCopy[vm.nodesName])[vm.active];
       nodeObj = { ...nodeObj, ...vm.dataCopy[vm.nodesName][name] };
       this.group = new Array(vm.groupArr.length).fill(false);
-      for (var key in vm.styleAttributes) {
-        let index = vm.styleAttributes[key].groupId;
+      for (var key in vm.styleAttributesUIConfig) {
+        let index = vm.styleAttributesUIConfig[key].groupId;
         // 当存在分组下的属性时，将对应分类开关的显示设置为开启
         if (vm.dataCopy[key] || nodeObj[key]) {
           vm.group[index] = true;

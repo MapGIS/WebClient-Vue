@@ -24,7 +24,7 @@
       v-model="styleData"
       :baseUrl="baseUrl"
       :symbolType="symbolType"
-      :attributeConfig="styleAttributes"
+      :attributeConfig="styleAttributesUIConfig"
       @changeComponentStyle="changeStyle"
       @changeStyle="changeStyle"
     ></mapgis-ui-plot-attribute>
@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { styleAttributes } from "@mapgis/webclient-vue-ui";
+import { styleAttributesUIConfig } from "@mapgis/webclient-vue-ui";
 import plot from "@mapgis/webclient-plot";
 const {
   SymbolManager = window.Zondy.Plot.SymbolManager,
@@ -82,13 +82,13 @@ export default {
     }
   },
   created() {
-    this.styleAttributes = styleAttributes;
+    this.styleAttributesUIConfig = styleAttributesUIConfig;
     // 设置三维标绘的填充类型属性的选项
-    this.styleAttributes.fillStyleType.options = {
+    this.styleAttributesUIConfig.fillStyleType.options = {
       0: "无填充",
       1: "实填充"
     };
-    // console.log("styleAttributes", styleAttributes);
+    // console.log("styleAttributesUIConfig", styleAttributesUIConfig);
   },
   data() {
     return {
@@ -102,7 +102,7 @@ export default {
       isDraw: false,
       searchResult: undefined,
       symbolType: undefined,
-      styleAttributes: undefined,
+      styleAttributesUIConfig: undefined,
 
       canFill: true
     };

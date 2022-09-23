@@ -278,7 +278,7 @@
 </template>
 
 <script>
-import config from "./test/animationConfig.json";
+import config from "./config/animationConfig.json";
 import { rgbToHex } from "../../util/common/color-util.js";
 
 export default {
