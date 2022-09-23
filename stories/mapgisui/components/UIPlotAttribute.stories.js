@@ -1,14 +1,12 @@
 import MapgisUiPlotAttribute from "../../../ui/src/components/plot/Attribute.vue";
-import dataT from '../../../ui/src/components/plot/test/attribute.json'
+import dataT from "../../public/geojson/attribute.json";
 // import MarkDown from "../../../ui/docs/guide/base.md";
-import '../../style/card.css'
+import "../../style/card.css";
 
 export default {
   title: "界面/标绘/属性设置(可配置)",
   component: MapgisUiPlotAttribute,
-  argTypes: {
-
-  },
+  argTypes: {},
 };
 
 const Template = (args, { argTypes }) => ({
@@ -33,29 +31,29 @@ const Template = (args, { argTypes }) => ({
     >
     </mapgis-ui-plot-attribute>
   </div>`,
-  methods:{
-    dataF(e){
-      console.log('dataF',e);
+  methods: {
+    dataF(e) {
+      console.log("dataF", e);
     },
-    component(e){
-      console.log('component',e);
+    component(e) {
+      console.log("component", e);
     },
-    boolean(e){
-      console.log('boolean',e);
+    boolean(e) {
+      console.log("boolean", e);
     },
-    number(e){
-      console.log('number',e);
+    number(e) {
+      console.log("number", e);
     },
-    select(e){
-      console.log('width',e);
+    select(e) {
+      console.log("width", e);
     },
-    color(e){
-      console.log('color',e);
+    color(e) {
+      console.log("color", e);
     },
-    text(e){
-      console.log('text',e);
-    }
-  }
+    text(e) {
+      console.log("text", e);
+    },
+  },
 });
 
 export const Setting = Template.bind({});

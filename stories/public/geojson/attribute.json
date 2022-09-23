@@ -1,0 +1,47 @@
+{
+    "symbolId": 22,
+    "symbolName": "",
+    "symbolUrl":"标绘/icon/规则/二类区/0502.svg",
+    "show": true,
+    "featureId": "f73227b3-44b0-4040-8629-f89a0e992d74",
+    "compareLine": 0,
+    "compareLineWidth": 6,
+    "compareLineColor": "#099563",
+    "dimModHeight": 500,
+    "dimModAttitude": 1,
+    "isOpenWall": true,
+    "wallColor": "rgba(255,0,0,0.3)",
+    "nodeStyles": {
+        "tspan3918": {
+            "fillStyle": "rgba(0,0,0,1)",
+            "fillRule": "nonzero",
+            "fontStyle": "normal",
+            "fontVariant": "normal",
+            "fontWeight": "normal",
+            "fontSize": "15.86400509px",
+            "fontFamily": "\"Arial\"",
+            "strokeStyle": "none",
+            "lineCap": "butt",
+            "lineJoin": "miter",
+            "miterLimit": 4,
+            "lineWidth": 1
+        },
+        "path3000-17": {
+            "strokeColor": "rgba(255,0,0,1)",
+            "lineCap": "butt",
+            "lineJoin": "miter",
+            "miterLimit": 4,
+            "lineWidth": 10,
+            "fillRule": "nonzero"
+        },
+        "rect4184": {
+            "strokeColor": "rgba(255,0,0,1)",
+            "lineCap": "square",
+            "lineJoin": "miter",
+            "miterLimit": 4,
+            "lineWidth": 10,
+            "fillStyle": "rgba(255,255,255,0.5)",
+            "fillRule": "nonzero"
+        }
+    }
+}

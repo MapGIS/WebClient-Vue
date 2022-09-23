@@ -1,22 +1,19 @@
 import MapgisUiPlotSymbol from "../../../ui/src/components/plot/PlotSymbol.vue";
-import symbolD from '../../../ui/src/components/plot/test/symbol.json'
+import symbolD from "../../public/geojson/symbol.json";
 // import MarkDown from "../../../ui/docs/guide/base.md";
-import '../../style/card.css'
+import "../../style/card.css";
 
 export default {
   title: "界面/标绘/图标配置",
   component: MapgisUiPlotSymbol,
-  argTypes: {
-
-  },
+  argTypes: {},
 };
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisUiPlotSymbol },
   data() {
-    return {
-    };
+    return {};
   },
   template: `<div style="height:400px;">
     <mapgis-ui-plot-symbol 
@@ -25,14 +22,12 @@ const Template = (args, { argTypes }) => ({
     >
     </mapgis-ui-plot-symbol>
   </div>`,
-  methods:{
-
-  }
+  methods: {},
 });
 
 export const Symbol = Template.bind({});
 Symbol.args = {
-  data: symbolD
+  data: symbolD,
 };
 
 // Symbol.parameters = {

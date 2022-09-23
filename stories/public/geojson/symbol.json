@@ -1,0 +1,194 @@
+[
+  {
+    "children": [
+      {
+        "type": "最近使用",
+        "icon": [
+          {
+            "id": 1,
+            "src": "./style/images/u420.png"
+          },
+          {
+            "id": 2,
+            "src": "./style/images/u426.png"
+          },
+          {
+            "id": 3,
+            "src": "./style/images/u435.png"
+          },
+          {
+            "id": 4,
+            "src": "./style/images/u432.png"
+          },
+          {
+            "id": 5,
+            "src": "./style/images/u420.png"
+          }
+        ]
+      },
+      {
+        "type": "其他",
+        "icon": [
+          {
+            "id": 1,
+            "src": "./style/images/u432.png"
+          },
+          {
+            "id": 2,
+            "src": "./style/images/u420.png"
+          },
+          {
+            "id": 3,
+            "src": "./style/images/u423.png"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "规则",
+    "children": [
+      {
+        "type": "一类线",
+        "icon": [
+          {
+            "id": 1,
+            "src": "./style/images/u426.png"
+          },
+          {
+            "id": 2,
+            "src": "./style/images/u429.png"
+          },
+          {
+            "id": 3,
+            "src": "./style/images/u420.png"
+          }
+        ]
+      },
+      {
+        "type": "一类区",
+        "icon": [
+          {
+            "id": 1,
+            "src": "./style/images/u426.png"
+          },
+          {
+            "id": 2,
+            "src": "./style/images/u429.png"
+          },
+          {
+            "id": 3,
+            "src": "./style/images/u420.png"
+          }
+        ]
+      },
+      {
+        "type": "二类线",
+        "icon": [
+          {
+            "id": 1,
+            "src": "./style/images/u426.png"
+          },
+          {
+            "id": 2,
+            "src": "./style/images/u429.png"
+          },
+          {
+            "id": 3,
+            "src": "./style/images/u420.png"
+          }
+        ]
+      },
+      {
+        "type": "二类区",
+        "icon": [
+          {
+            "id": 1,
+            "src": "./style/images/u426.png"
+          },
+          {
+            "id": 2,
+            "src": "./style/images/u429.png"
+          },
+          {
+            "id": 3,
+            "src": "./style/images/u420.png"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "分类名称",
+    "children": [
+      {
+        "type": "一类线",
+        "icon": [
+          {
+            "id": 1,
+            "src": "./style/images/u426.png"
+          },
+          {
+            "id": 2,
+            "src": "./style/images/u429.png"
+          },
+          {
+            "id": 3,
+            "src": "./style/images/u420.png"
+          }
+        ]
+      },
+      {
+        "type": "一类区",
+        "icon": [
+          {
+            "id": 1,
+            "src": "./style/images/u426.png"
+          },
+          {
+            "id": 2,
+            "src": "./style/images/u429.png"
+          },
+          {
+            "id": 3,
+            "src": "./style/images/u420.png"
+          }
+        ]
+      },
+      {
+        "type": "二类线",
+        "icon": [
+          {
+            "id": 1,
+            "src": "./style/images/u426.png"
+          },
+          {
+            "id": 2,
+            "src": "./style/images/u429.png"
+          },
+          {
+            "id": 3,
+            "src": "./style/images/u420.png"
+          }
+        ]
+      },
+      {
+        "type": "二类区",
+        "icon": [
+          {
+            "id": 1,
+            "src": "./style/images/u426.png"
+          },
+          {
+            "id": 2,
+            "src": "./style/images/u429.png"
+          },
+          {
+            "id": 3,
+            "src": "./style/images/u420.png"
+          }
+        ]
+      }
+    ]
+  }
+]
