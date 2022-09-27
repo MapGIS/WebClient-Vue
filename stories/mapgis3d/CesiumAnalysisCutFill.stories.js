@@ -25,17 +25,17 @@ export default {
       },
       control: "number",
     },
-    lineColor: {
-      description: "分析区域边界颜色",
+    cutColor: {
+      description: "挖方颜色",
       table: {
-        defaultValue: { summary: "rgba(0,255,0,1)" },
+        defaultValue: { summary: "rgba(0,255,0,0.5)" },
       },
       control: "color",
     },
     fillColor: {
-      description: "分析区域面颜色",
+      description: "填方颜色",
       table: {
-        defaultValue: { summary: "rgba(0,0,255,0.3)" },
+        defaultValue: { summary: "rgba(0,0,255,0.5)" },
       },
       control: "color",
     },
@@ -63,7 +63,7 @@ const Template = (args, { argTypes }) => ({
       url: "http://t0.tianditu.gov.cn/img_c/wmts",
       //地形url TODO这里地址打包的时候改一下
       //terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/terrain",
-      terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`,
+      terrainUrl: `http://192.168.21.191:6163/igs/rest/g3d/terrain`,
       tileMatrixSet: "c",
       tilingScheme: "EPSG:4326",
       layer: "img",
@@ -90,7 +90,7 @@ const Template = (args, { argTypes }) => ({
       :xPaneNum="xPaneNum"
       :yPaneNum="yPaneNum"
       :height="height"
-      :lineColor="lineColor"
+      :cutColor="cutColor"
       :fillColor="fillColor"
       :dataType="dataType"
       :useMask="useMask"
@@ -118,14 +118,14 @@ const Template = (args, { argTypes }) => ({
       });
       //视点跳转（经度，纬度，视角高度，方位角，俯仰角，翻滚角）
       viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(121,24,5900),
-        orientation:{
+        destination: Cesium.Cartesian3.fromDegrees(121, 24, 5900),
+        orientation: {
           heading: Cesium.Math.toRadians(60),
           pitch: Cesium.Math.toRadians(-16),
           roll: 0,
         },
-        duration:1
-      })
+        duration: 1,
+      });
     },
   },
 });
@@ -135,8 +135,8 @@ export const 填挖方 = Template.bind({});
   xPaneNum: 16,
   yPaneNum: 16,
   height: 2000,
-  lineColor: "rgba(0,255,0,1)",
-  fillColor: "rgba(0,0,255,0.3)",
+  cutColor: "rgba(0, 0, 255, 0.5)",
+  fillColor: "rgba(255,165,0,0.5)",
   dataType: 2.0,
   useMask: true,
 };

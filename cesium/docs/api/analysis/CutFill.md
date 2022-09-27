@@ -42,21 +42,21 @@
 - **侦听属性**
 - **描述:** 平整高程
 
-### `lineColor`
+### `cutColor`
 
 - **类型:** `String`
 - **可选**
-- **默认值:** `rgba(0,255,0,1)`
+- **默认值:** `rgba(0, 0, 255, 0.5)`
 - **侦听属性**
-- **描述:** 分析区域边界颜色
+- **描述:** 挖方颜色
 
 ### `fillColor`
 
 - **类型:** `String`
 - **可选**
-- **默认值:** `rgba(0,0,255,0.3)`
+- **默认值:** `rgba(255,165,0,0.5)`
 - **侦听属性**
-- **描述:** 分析区域面颜色
+- **描述:** 填方颜色
 
 ### `dataType`
 
@@ -129,7 +129,7 @@
         :xPaneNum="xPaneNum"
         :yPaneNum="yPaneNum"
         :height="height"
-        :lineColor="lineColor"
+        :cutColor="cutColor"
         :fillColor="fillColor"
         :dataType="dataType"
       />
@@ -155,8 +155,8 @@ export default {
       xPaneNum: 16,
       yPaneNum: 16,
       height: 2000,
-      lineColor: "rgba(0,255,0,1)",
-      fillColor: "rgba(0,0,255,0.3)",
+      cutColor: "rgba(0, 0, 255, 0.5)",
+      fillColor: "rgba(255,165,0,0.5)",
       dataType: 2.0
     };
   },
@@ -214,7 +214,7 @@ export default {
         :xPaneNum="xPaneNum"
         :yPaneNum="yPaneNum"
         :height="height"
-        :lineColor="lineColor"
+        :cutColor="cutColor"
         :fillColor="fillColor"
         :dataType="dataType"
         @load="load"
@@ -248,8 +248,8 @@ export default {
       xPaneNum: 16,
       yPaneNum: 16,
       height: 2000,
-      lineColor: "rgba(0,255,0,1)",
-      fillColor: "rgba(0,0,255,0.3)",
+      cutColor: "rgba(0, 0, 255, 0.5)",
+      fillColor: "rgba(255,165,0,0.5)",
       dataType: 2.0,
       cutfillAnalysis: null
     };

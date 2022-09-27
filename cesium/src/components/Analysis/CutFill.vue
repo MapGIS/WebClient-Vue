@@ -14,11 +14,11 @@
         </mapgis-ui-group-tab>
         <mapgis-ui-setting-form :layout="layout" size="default">
           <mapgis-ui-row :gutter="8">
-            <mapgis-ui-col :span="12">	
+            <mapgis-ui-col :span="12">
               <mapgis-ui-form-item label="x方向采样点数">
                 <mapgis-ui-input-number-addon
                   v-model.number="xPaneNumCopy"
-                  min="0"
+                  :min="0"
                 />
               </mapgis-ui-form-item>
             </mapgis-ui-col>
@@ -26,7 +26,7 @@
               <mapgis-ui-form-item label="y方向采样点数">
                 <mapgis-ui-input-number-addon
                   v-model.number="yPaneNumCopy"
-                  min="0"
+                  :min="0"
                 />
               </mapgis-ui-form-item>
             </mapgis-ui-col>
@@ -34,22 +34,22 @@
           <mapgis-ui-form-item label="填挖规整高度">
             <mapgis-ui-input-number-addon
               v-model.number="heightCopy"
-              min="0"
+              :min="0"
               addon-after="米"
             />
           </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
         <mapgis-ui-group-tab title="样式设置"></mapgis-ui-group-tab>
         <mapgis-ui-setting-form :layout="layout" size="default">
-          <mapgis-ui-form-item label="边线">
+          <mapgis-ui-form-item label="填方颜色">
             <mapgis-ui-sketch-color-picker
-              :color.sync="lineColorCopy"
+              :color.sync="fillColorCopy"
               :disableAlpha="false"
             ></mapgis-ui-sketch-color-picker>
           </mapgis-ui-form-item>
-          <mapgis-ui-form-item label="填充">
+          <mapgis-ui-form-item label="挖方颜色">
             <mapgis-ui-sketch-color-picker
-              :color.sync="fillColorCopy"
+              :color.sync="cutColorCopy"
               :disableAlpha="false"
             ></mapgis-ui-sketch-color-picker>
           </mapgis-ui-form-item>
@@ -86,12 +86,12 @@
           </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
       </div>
-        <mapgis-ui-setting-footer>
-          <mapgis-ui-button type="primary" @click="analysis"
-            >分析</mapgis-ui-button
-          >
-          <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
-        </mapgis-ui-setting-footer>
+      <mapgis-ui-setting-footer>
+        <mapgis-ui-button type="primary" @click="analysis"
+          >分析</mapgis-ui-button
+        >
+        <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
+      </mapgis-ui-setting-footer>
     </slot>
     <mapgis-ui-mask
       v-if="useMask"
@@ -153,21 +153,21 @@ export default {
     },
     /**
      * @type String
-     * @default "rgba(0,255,0,1)"
-     * @description 分析区域边界颜色
+     * @default "rgba(0, 0, 255, 0.5)"
+     * @description 挖方颜色
      */
-    lineColor: {
+    cutColor: {
       type: String,
-      default: "rgba(0,255,0,1)"
+      default: "rgba(0, 0, 255, 0.5)"
     },
     /**
      * @type String
-     * @default "rgba(0,0,255,0.3)"
-     * @description 分析区域面颜色
+     * @default "rgba(255,165,0,0.5)"
+     * @description 填方颜色
      */
     fillColor: {
       type: String,
-      default: "rgba(0,0,255,0.3)"
+      default: "rgba(255,165,0,0.5)"
     },
     /**
      * @type Number
@@ -193,8 +193,8 @@ export default {
       xPaneNumCopy: 16,
       yPaneNumCopy: 16,
       heightCopy: 2000,
-      lineColorCopy: "rgba(0,255,0,1)",
-      fillColorCopy: "rgba(0,0,255,0.3)",
+      cutColorCopy: "rgba(0, 0, 255, 0.5)",
+      fillColorCopy: "rgba(255,165,0,0.5)",
       result: {
         height: "",
         surfaceArea: "",
@@ -252,9 +252,9 @@ export default {
       },
       immediate: true
     },
-    lineColor: {
+    cutColor: {
       handler() {
-        this.lineColorCopy = this.lineColor;
+        this.cutColorCopy = this.cutColor;
       },
       immediate: true
     },
@@ -293,23 +293,12 @@ export default {
     },
     unmount() {
       let { vueCesium, vueKey, vueIndex } = this;
-      let find = vueCesium.CutFillAnalysisManager.findSource(
-        vueKey,
-        vueIndex
-      );
+      let find = vueCesium.CutFillAnalysisManager.findSource(vueKey, vueIndex);
       if (find) {
         this.remove();
       }
       vueCesium.CutFillAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
-    },
-    /**
-     * @description rgba值转cesium内部color对象
-     * @param rgba - {String} rgba值
-     * @return {Object} cesium内部color对象
-     */
-    _getColor(rgba) {
-      return colorToCesiumColor(rgba);
     },
     /**
      * @description 获取SourceOptions,以方便获取填挖方分析对象和绘制对象
@@ -339,8 +328,6 @@ export default {
         "drawElement",
         drawElement
       );
-      const lineColor = this._getColor(this.lineColorCopy);
-      const fillColor = this._getColor(this.fillColorCopy);
 
       // 激活交互式绘制工具
       drawElement.startDrawingPolygon({
@@ -350,58 +337,6 @@ export default {
           this.remove();
           this.positions = result.positions;
           this.maskShow = true;
-
-          const linePointArr = [];
-          const polygonPointArr = [];
-          this.positions.forEach(element => {
-            const { lon, lat, height } = this._cartesianToDegrees(element);
-            linePointArr.push(lon);
-            linePointArr.push(lat);
-            polygonPointArr.push(lon);
-            polygonPointArr.push(lat);
-            polygonPointArr.push(height);
-          });
-
-          // 构造几何绘制控制对象
-          this.entityController = new window.CesiumZondy.Manager.EntityController({
-            viewer
-          });
-
-          // 绘制贴地形线
-          this.terrainLine = this.entityController.appendLine(
-            // 名称
-            "贴地形线",
-            // 点数组
-            linePointArr,
-            // 线宽
-            3,
-            // 线颜色
-            lineColor,
-            // 是否识别带高度的坐标
-            false,
-            // 是否贴地形
-            true,
-            // 附加属性
-            {}
-          );
-
-          // 构造区对象
-          const polygon = {
-            // 区
-            polygon: {
-              // 坐标
-              hierarchy: this.Cesium.Cartesian3.fromDegreesArrayHeights(
-                polygonPointArr
-              ),
-              // 颜色
-              material: fillColor,
-              // 分类类型：地形类型
-              classificationType: this.Cesium.ClassificationType.TERRAIN
-            }
-          };
-          // 绘制图形通用方法：对接Cesium原生特性
-          this.terrainPolygon = this.entityController.appendGraphics(polygon);
-
           this._doAnalysis();
         }
       });
@@ -467,7 +402,7 @@ export default {
         vueKey,
         vueIndex,
         "cutFillAnalysis",
-          cutFill
+        cutFill
       );
     },
     /**
@@ -480,36 +415,38 @@ export default {
         cutVolume: result.cutVolume,
         fillVolume: result.fillVolume
       };
-      let polygon = [];
-      let height = 100;
-      // 绘制填方结果
-      this.viewer.entities.add({
+      let polygon = this.positions;
+      let height = this.heightCopy;
+      this.fillEntity = new this.Cesium.Entity({
         polygon: {
           hierarchy: {
             positions: polygon
           },
           height: height,
           extrudedHeight: result.minHeight,
-          material: Cesium.Color.ORANGE
+          material: Cesium.Color.fromCssColorString(this.fillColorCopy)
         }
       });
+      // 绘制填方结果
+      this.viewer.entities.add(this.fillEntity);
       // 绘制挖方结果
       let polygonGeometry = new Cesium.PolygonGeometry({
         polygonHierarchy: new Cesium.PolygonHierarchy(polygon)
       });
-      // var geometry = Cesium.PolygonGeometry.createGeometry(polygonGeometry);
+
       let polygonInstance = new Cesium.GeometryInstance({
         geometry: polygonGeometry,
-        id: 'polygon',
+        id: "polygon",
         attributes: {
-          color: new Cesium.ColorGeometryInstanceAttribute(0.0, 0.0, 1.0, 0.8)
+          color: new Cesium.ColorGeometryInstanceAttribute.fromColor(
+            Cesium.Color.fromCssColorString(this.cutColorCopy)
+          )
         }
       });
-      this.viewer.scene.primitives.add(
-          new Cesium.GroundPrimitive({
-            geometryInstances: polygonInstance
-          })
-      );
+      this.cutVolume = new Cesium.GroundPrimitive({
+        geometryInstances: polygonInstance
+      });
+      this.viewer.scene.primitives.add(this.cutVolume);
       this.maskShow = false;
       this.$emit("success", result);
     },
@@ -520,7 +457,7 @@ export default {
      * @param {Object} cutFill 填挖方实例，使用createCutFill返回的实例
      * @param {Array} positions 填挖区域多边形的顶点数组
      */
-    startCutFill(cutFill, positions){
+    startCutFill(cutFill, positions) {
       const cutfillObject = cutFill;
       cutfillObject._pointsPolygon = positions;
       const minMax = cutfillObject.getMinAndMaxCartesian();
@@ -594,12 +531,11 @@ export default {
       this._reset();
 
       this._restoreDepthTestAgainstTerrain();
-      if (this.terrainLine) {
-        this.entityController.removeEntity(this.terrainLine);
-        this.entityController.removeEntity(this.terrainPolygon);
-        this.terrainLine = null;
-        this.terrainPolygon = null;
-        this.entityController = null;
+      if (this.cutVolume) {
+        this.viewer.scene.primitives.remove(this.cutVolume);
+        this.viewer.entities.remove(this.fillEntity);
+        this.cutVolume = null;
+        this.fillEntity = null;
       }
       this.$emit("remove");
     }
