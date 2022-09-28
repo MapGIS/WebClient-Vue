@@ -61,6 +61,7 @@
         @open-attribute-table="openAttributeTable"
         @color-cluster="colorCluster"
         @remove-attribute-table="removeAttributeTable"
+        @select-item="selectItem"
       ></place-name>
     </div>
   </div>
@@ -227,6 +228,9 @@ export default {
      */
     removeAttributeTable(exhibitionId) {
       this.$emit("remove-attribute-table", exhibitionId);
+    },
+    selectItem(data) {
+      this.$emit("select-item", data);
     }
   }
 };
