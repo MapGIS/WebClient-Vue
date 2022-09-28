@@ -27,17 +27,16 @@ const {
 export default {
   name: "mapgis-web-map",
 
-  mixins: [
-    withWatchers,
-    withAsyncActions,
-    withPrivateMethods,
-    withEvents
-  ],
+  mixins: [withWatchers, withAsyncActions, withPrivateMethods, withEvents],
 
   props: {
     mapboxGl: {
       type: Object,
       default: null
+    },
+    splitScreen: {
+      type: Boolean,
+      default: false
     },
     ...options
   },
@@ -104,9 +103,9 @@ export default {
   },
 
   created() {
-    const { company } = this;   
+    const { company } = this;
     initManager();
-    initVueMap(); 
+    initVueMap();
     this.map = null;
     this.propsIsUpdating = {};
     if (company.indexOf("mapgis") >= 0) {
@@ -121,38 +120,40 @@ export default {
   },
 
   mounted() {
-    this.$_loadMap().then(map => {
-      const { actions, mapbox } = this;
-      this.map = map;
-      const canvas = new FabricLayer(map, PlotLayer2DGroup);
-      canvas._containerId = map._container.id;
-      this.map.vueKey = this.vueKey;
-      this.map.vueIndex = this.vueIndex;
-      window.vueMap.MapManager.addSource(this.vueKey, this.vueIndex, map, {
-        canvas: canvas
+    this.$_loadMap()
+      .then(map => {
+        const { actions, mapbox } = this;
+        this.map = map;
+        const canvas = new FabricLayer(map, PlotLayer2DGroup);
+        canvas._containerId = map._container.id;
+        this.map.vueKey = this.vueKey;
+        this.map.vueIndex = this.vueIndex;
+        window.vueMap.MapManager.addSource(this.vueKey, this.vueIndex, map, {
+          canvas: canvas
+        });
+        this.vueMap = window.vueMap;
+        if (this.RTLTextPluginUrl !== undefined) {
+          this.mapbox.setRTLTextPlugin(
+            this.RTLTextPluginUrl,
+            this.$_RTLTextPluginError
+          );
+        }
+        const eventNames = Object.keys(mapEvents);
+        this.$_bindMapEvents(eventNames);
+        /*
+         * @date 2021-9-21
+         * @author 廖欣迪
+         * @description 为了使用异步的地图方法
+         * */
+        this.$_registerAsyncActions(map);
+        this.$_bindPropsUpdateEvents();
+        this.initialized = true;
+        this.$emit("load", { map, component: this, actions, mapbox });
+        this.bindSize();
+      })
+      .catch(function onRejected(error) {
+        document.write("错误：" + error);
       });
-      this.vueMap = window.vueMap;
-      if (this.RTLTextPluginUrl !== undefined) {
-        this.mapbox.setRTLTextPlugin(
-          this.RTLTextPluginUrl,
-          this.$_RTLTextPluginError
-        );
-      }
-      const eventNames = Object.keys(mapEvents);
-      this.$_bindMapEvents(eventNames);
-      /*
-      * @date 2021-9-21
-      * @author 廖欣迪
-      * @description 为了使用异步的地图方法
-      * */
-      this.$_registerAsyncActions(map);
-      this.$_bindPropsUpdateEvents();
-      this.initialized = true;
-      this.$emit("load", { map, component: this, actions, mapbox });
-      this.bindSize();
-    }).catch(function onRejected(error){
-      document.write('错误：' + error);
-    });
   },
 
   beforeDestroy() {
@@ -210,5 +211,4 @@ export default {
   width: 100% !important;
   height: 100vh !important;
 }
-
 </style>
