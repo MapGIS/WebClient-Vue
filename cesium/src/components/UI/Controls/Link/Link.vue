@@ -49,6 +49,11 @@ export default {
     enableRight: {
       type: Boolean,
       default: true
+    },
+    // 是否全部三维屏
+    isAll3d: {
+      type: Boolean,
+      default: false
     }
   },
   model: {
@@ -168,6 +173,7 @@ export default {
       vueCesium = vueCesium || window.vueCesium;
       let sources = vueCesium.ViewerManager.flatAllSource();
       let vm = this;
+      const that = this;
 
       this.stamp = new Date().getTime();
 
@@ -195,25 +201,38 @@ export default {
 
         screenSpaceEventType.forEach(item => {
           s.options.ScreenSpaceEventHandler.setInputAction(function(movement) {
-            if(vm.enableWheel && item.type == "WHEEL"){
+            if (vm.enableWheel && item.type == "WHEEL") {
               vm.active = true;
             }
             if (item.type == "LEFT_DOWN") {
               vm.active = true;
-            } else if (item.type == "LEFT_UP" || item.type == "RIGHT_UP" || item.type == "RIGHT_DOWN") {
+            } else if (
+              item.type == "LEFT_UP" ||
+              item.type == "RIGHT_UP" ||
+              item.type == "RIGHT_DOWN"
+            ) {
               vm.active = false;
             } else if (item.type == "MOUSE_MOVE") {
               if (!vm.active) return;
             }
 
-            if(!vm.enableRight && (item.type == "RIGHT_UP" || item.type == "RIGHT_DOWN")){
+            if (
+              !vm.enableRight &&
+              (item.type == "RIGHT_UP" || item.type == "RIGHT_DOWN")
+            ) {
               return;
             }
 
-            if(Cesium.Math.toDegrees(s.source.camera.pitch) < -120){
+            if (
+              Cesium.Math.toDegrees(s.source.camera.pitch) < -120 &&
+              !that.isAll3d
+            ) {
               return;
             }
-            if(Cesium.Math.toDegrees(s.source.camera.pitch) > -70){
+            if (
+              Cesium.Math.toDegrees(s.source.camera.pitch) > -70 &&
+              !that.isAll3d
+            ) {
               return;
             }
 

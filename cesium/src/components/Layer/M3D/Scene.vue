@@ -537,6 +537,7 @@ export default {
 
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+      if (!g3dLayer) return;
       let indexes = g3dLayer.getTerrainLayerIndexes();
       let terrains = g3dLayer.getTerrainLayers();
       indexes.forEach(i => {
@@ -575,6 +576,7 @@ export default {
 
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+      if (!g3dLayer) return;
       let indexes = g3dLayer.getVectorLayerIndexes();
       let vectors = g3dLayer.getVectorLayers();
       indexes.forEach(i => {
