@@ -47,7 +47,6 @@
 <script>
 import axios from "axios";
 import * as echarts from "echarts";
-import { random } from "../../../../../../ui/src/util/common/common-util";
 
 export default {
   name: "IotDetail",
