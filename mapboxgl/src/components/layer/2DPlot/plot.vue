@@ -186,9 +186,30 @@ export default {
         }
       }
     },
+    formatData(list) {
+      let symbols = list.symbols || [];
+      for (let i = 0; i < symbols.length; i++) {
+        if (symbols[i].type === "folder") {
+          symbols[i].id = symbols[i].symbolId;
+          symbols[i].path = symbols[i].symbolId;
+          let items = symbols[i].items || [];
+          for (let j = 0; j < items.length; j++) {
+            if (items[j].type === "folder") {
+              items[j].id = items[j].symbolId;
+              items[j].path = items[j].symbolId;
+              let icons = items[j].items || [];
+              for (let k = 0; k < icons.length; k++) {
+                icons[k].id = icons[k].symbolId;
+                icons[k].path = icons[k].symbolId;
+              }
+            }
+          }
+        }
+      }
+    },
     getSymbolLib() {
       const vm = this;
-      // console.log("symbolUrl", this.symbolUrl);
+      this.formatData(this.symbolUrl);
       let manager = this.getSymbolManager();
       if (!manager) {
         manager = new SymbolManager(this.symbolUrl, {
@@ -328,15 +349,15 @@ export default {
       }
       if (result.length > 0) {
         this.searchResult = {
-          path: "搜索结果/",
+          path: "搜索结果",
           name: "搜索结果",
-          id: "5bde21fe-f932-11e1-9052-ac74b1ee4018",
+          symbolId: "5bde21fe-f932-11e1-9052-ac74b1ee4018",
           type: "folder",
           items: [
             {
-              path: "符号库/",
+              path: "符号库",
               name: "符号库",
-              id: "51240178-f12e-11ec-9bce-ac74b1ee4018",
+              symbolId: "51240178-f12e-11ec-9bce-ac74b1ee4018",
               type: "folder",
               items: []
             }
@@ -344,7 +365,7 @@ export default {
         };
         for (let i = 0; i < result.length; i++) {
           this.searchResult.items[0].items.push({
-            id: result[i].id,
+            symbolId: result[i].id,
             name: result[i].name,
             type: result[i].type,
             path: result[i].src

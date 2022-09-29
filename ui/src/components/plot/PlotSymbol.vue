@@ -21,7 +21,7 @@
               :class="{ 'icon-wrapper-active': icon.id === currentIconID }"
               @click="onIconClick(icon, icons)"
             >
-              <img :src="baseUrl + icon.src" :title="icon.name"/>
+              <img :src="`${baseUrl}${icon.id}?f=image&timestamp=${new Date().getTime()}`" :title="icon.name"/>
             </div>
           </mapgis-ui-title-collapse>
         </template>
@@ -77,28 +77,28 @@ export default {
     },
     formatData() {
       let result = [];
-      let symbols = this.data.symbols;
+      let symbols = this.data.symbols || [];
       for (let i = 0; i < symbols.length; i++) {
         if (symbols[i].type === "folder") {
           result.push({
             children: [],
             title: symbols[i].name
           });
-          let items = symbols[i].items;
+          let items = symbols[i].items || [];
           for (let j = 0; j < items.length; j++) {
             if (items[j].type === "folder") {
               result[i].children.push({
-                id: items[j].id,
+                id: items[j].symbolId,
                 icon: [],
                 type: items[j].name
               });
-              let icons = items[j].items;
+              let icons = items[j].items || [];
               for (let k = 0; k < icons.length; k++) {
                 if (icons[k].type !== "folder") {
                   result[i].children[j].icon.push({
-                    id: icons[k].id,
+                    id: icons[k].symbolId,
                     name: icons[k].name,
-                    src: icons[k].path,
+                    // src: icons[k].path,
                     type: icons[k].type
                   });
                 }
