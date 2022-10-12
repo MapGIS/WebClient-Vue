@@ -1,7 +1,7 @@
 <template>
   <div :class="prefixCls">
     <!-- 测量控制按钮 -->
-    <mapgis-ui-toolbar :class="`${prefixCls}-toolbar`">
+    <mapgis-ui-toolbar :class="`${prefixCls}-toolbar`" :bordered="false">
       <!-- 面积或长度设置按钮 -->
       <mapgis-ui-toolbar-command-group>
         <mapgis-ui-toolbar-command
