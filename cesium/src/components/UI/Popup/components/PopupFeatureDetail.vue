@@ -8,6 +8,7 @@
       :visible.sync="showDetail"
       :min-width="320"
       :min-height="90"
+      :max-height="getMaxHeight"
       anchor="top-right"
       :verticalOffset="100"
       :horizontalOffset="50"
@@ -101,6 +102,9 @@ export default {
   computed: {
     Euid() {
       return this.properties.Euid;
+    },
+    getMaxHeight() {
+      return window.innerHeight - 300;
     }
   },
   watch: {
