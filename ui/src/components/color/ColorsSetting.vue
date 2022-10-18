@@ -116,7 +116,7 @@ export default {
           max,
           color
         }));
-        if (this.value instanceof Array && this.value[0] instanceof String) {
+        if (this.value instanceof Array && typeof this.value[0] === "string") {
           this.emitValue = [];
           this.tableData.forEach(item => {
             let hex = rgbaToHex(item.color, false);
@@ -182,7 +182,7 @@ export default {
         max,
         color
       }));
-      if (this.value instanceof Array && this.value[0] instanceof String) {
+      if (this.value instanceof Array && typeof this.value[0] === "string") {
         this.tableData = [];
         this.value.forEach(color => {
           vm.tableData.push({
@@ -199,7 +199,7 @@ export default {
     remove(index) {
       const length = this.tableData.length;
       // 传入的值只有颜色没有最大最小值时，如['rgba(222,222,222,0.2)]
-      if (this.value instanceof Array && this.value[0] instanceof String) {
+      if (this.value instanceof Array && typeof this.value[0] === "string") {
         this.tableData.splice(index, 1);
         return;
       }
