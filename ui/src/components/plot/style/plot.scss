@@ -126,6 +126,8 @@
   }
 
   &-content {
+    max-height: 150px;
+    overflow-y: scroll;
     margin-left: 16px;
     .list-item {
       padding-left: 8px;

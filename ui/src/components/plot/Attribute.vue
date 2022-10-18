@@ -9,7 +9,6 @@
           v-show="group && group[grpIdx]"
         >
           <mapgis-ui-row :gutter="8">
-            <!-- 基本属性和公共的样式属性 -->
             <template v-for="(value, key, dataIdx) in dataCopy">
               <div
                 v-if="
@@ -18,6 +17,7 @@
                 "
                 :key="dataIdx"
               >
+                <!-- 切换部件 -->
                 <mapgis-ui-col
                   :span="24"
                   v-if="styleAttributesUIConfig[key].type === 'nodes'"
@@ -50,6 +50,7 @@
                   </mapgis-ui-space>
                 </mapgis-ui-col>
 
+                <!-- 基本属性和公共的样式属性 -->
                 <mapgis-ui-col :span="12" v-else>
                   <mapgis-ui-form-item
                     :label="styleAttributesUIConfig[key].title"
