@@ -879,7 +879,7 @@ export default {
     cancelHighlight() {
       const { vueCesium, vueKey, vueIndex } = this;
 
-      if (this.popupShowType === "default") {
+      if (!this.popupShowType || this.popupShowType === "default") {
         this.featurevisible = false;
       } else {
         if (this.popupShowType === "right" && this.isUnClosePopup) {
@@ -995,7 +995,7 @@ export default {
               }
               if (result && result.length > 0) {
                 let feature = result[0];
-                if (vm.popupShowType === "default") {
+                if (!vm.popupShowType || vm.popupShowType === "default") {
                   vm.featurevisible = true;
                   vm.featureposition = {
                     longitude: lng,
@@ -1078,7 +1078,7 @@ export default {
 
         if (cartesian || cartesian2) {
           if (vm.featureclickenable) {
-            if (vm.popupShowType === "default") {
+            if (!vm.popupShowType || vm.popupShowType === "default") {
               vm.featurevisible = true;
               vm.featureposition = {
                 longitude: longitudeString2,
