@@ -147,6 +147,16 @@ export default {
     maxCircleNumber: {
       type: Number,
       default: 100
+    },
+    /**
+     * 设置图标的深度检测。
+     * 当设置为10000，表示当相机高度低于10000时，图标参与深度检测，当相机高度高于10000时，图标不参与深度检测；
+     * 当设置为0，表示不管高度为多少，都图标都参与深度检测，
+     * 当设置为Number.POSITIVE_INFINITY，表示不管高度为多少，图标都不参与深度检测
+     */
+    disableDepthTestDistance: {
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -155,7 +165,8 @@ export default {
       isMoveIn: false,
       isMoveOut: true,
       DynamicMarkerHandler: undefined,
-      DynamicMarkerLastActive: undefined
+      DynamicMarkerLastActive: undefined,
+      heightReferenceCopy: 1 // 默认为CLAMP_TO_GROUND
       // initH: 0,
       // circleRadius: this.radius,
     };
@@ -252,21 +263,21 @@ export default {
       let Cesium = this.Cesium || window.Cesium;
       let viewerMarker = this.viewer || viewer;
       //heightReference useless
-      let heightReference = Cesium.HeightReference.CLAMP_TO_GROUND;
+      this.heightReferenceCopy = Cesium.HeightReference.CLAMP_TO_GROUND;
       switch (this.heightReference) {
         case "clamped":
-          heightReference = Cesium.HeightReference.CLAMP_TO_GROUND;
+          this.heightReferenceCopy = Cesium.HeightReference.CLAMP_TO_GROUND;
           break;
         case "absolute":
-          heightReference = Cesium.HeightReference.NONE;
+          this.heightReferenceCopy = Cesium.HeightReference.NONE;
           break;
         case "above":
-          heightReference = Cesium.HeightReference.RELATIVE_TO_GROUND;
+          this.heightReferenceCopy = Cesium.HeightReference.RELATIVE_TO_GROUND;
           break;
       }
-      if (this.height > 0) {
-        heightReference = Cesium.HeightReference.NONE;
-      }
+      // if (this.height > 0) {
+      //   heightReference = Cesium.HeightReference.NONE;
+      // }
       let label = {
         //文本内容
         text: this.text,
@@ -289,7 +300,7 @@ export default {
         //图片位置：'center','top','bottom'
         iconPos: this.iconPos,
         //相对位置
-        heightReference: heightReference
+        heightReference: this.heightReferenceCopy
       };
       this.$_append(label);
       this.marker = this;
@@ -613,7 +624,9 @@ export default {
               image: iconUrl,
               width: iconWidth,
               height: iconHeight,
-              horizontalOrigin: vm.Cesium.HorizontalOrigin.TOP
+              horizontalOrigin: vm.Cesium.HorizontalOrigin.TOP,
+              verticalOrigin: vm.Cesium.VerticalOrigin.BOTTOM,
+              heightReference: vm.heightReferenceCopy
             }
           });
         });
@@ -706,9 +719,10 @@ export default {
               1.5e7,
               0.0
             ),
-            // 定位点
-            // verticalOrigin: this.root.VerticalOrigin.BOTTOM
-            horizontalOrigin: this.Cesium.HorizontalOrigin.TOP
+            horizontalOrigin: this.Cesium.HorizontalOrigin.TOP,
+            verticalOrigin: this.Cesium.VerticalOrigin.BOTTOM,
+            disableDepthTestDistance: this.disableDepthTestDistance,
+            heightReference: this.heightReferenceCopy
           },
           label: {
             // 文字标签
@@ -724,7 +738,7 @@ export default {
             // 随远近缩放
             pixelOffset: new this.Cesium.Cartesian2(0.0, -iconHeight / 4), // x,y方向偏移 相对于屏幕
             pixelOffsetScaleByDistance: new this.Cesium.NearFarScalar(
-              1.5e2,
+              1.5e5,
               3.0,
               1.5e7,
               0.5
@@ -735,7 +749,8 @@ export default {
               1.0,
               1.5e7,
               0.0
-            )
+            ),
+            heightReference: this.heightReferenceCopy
           },
           description: attribute
         });
@@ -767,15 +782,6 @@ export default {
           );
           // console.log('circle',circle);
         }
-
-        labelIcon.billboard.translucencyByDistance = new this.Cesium.NearFarScalar(
-          1.5e5,
-          1.0,
-          1.5e7,
-          1.0
-        ); // 不随距离的远近改变透明度
-        // labelIcon.pixelOffsetScaleByDistance = new Cesium.NearFarScalar(1.5e2, 0.0, 8.0e6, 10.0);// 随远近改变大小
-        labelIcon.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY;
         labelIcon.name = name;
         labelIcon.circle = circle;
         return labelIcon;
@@ -835,6 +841,7 @@ export default {
         billboards.add({
           position: Cesium.Cartesian3.fromDegrees(lon, lat, height),
           horizontalOrigin: Cesium.HorizontalOrigin.TOP,
+          verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
           image: iconUrl,
           id: "icon_" + index,
           width: iconWidth,
@@ -851,7 +858,7 @@ export default {
             1.5e7,
             0.5
           ),
-          disableDepthTestDistance: Number.POSITIVE_INFINITY
+          disableDepthTestDistance: this.disableDepthTestDistance
         });
 
         if (labels) {
