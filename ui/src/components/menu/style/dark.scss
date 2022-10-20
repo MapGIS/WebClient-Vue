@@ -77,7 +77,7 @@ $menu-prefix-cls: $ant-prefix + "-menu";
   &-dark &-submenu-open,
   &-dark &-submenu-selected,
   &-dark &-submenu-title:hover {
-    color: $menu-dark-highlight-color;
+    color: $menu-dark-highlight-color; // 这里也控制菜单选中的样式，但是被其他部分覆盖
     background-color: transparent;
     > a {
       color: $menu-dark-highlight-color;

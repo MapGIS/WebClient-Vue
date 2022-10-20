@@ -140,6 +140,7 @@ export { default as MapgisUiTreeSelectNode } from "./components/tree-select/Tree
 export { default as MapgisUiJsonEditor } from "./components/jsoneditor/JsonEditor.vue";
 export { default as MapgisUiCustomTreeSelect } from "./components/tree-select/CustomTreeSelect.vue";
 export { default as MapgisUiUpload } from "./components/upload/Upload.vue";
+export { default as MapgisUiUploadDragger } from "./components/upload/UploadDragger.vue";
 
 // Data Display
 export { default as MapgisUiAvatar } from "./components/avatar/Avatar.vue";
