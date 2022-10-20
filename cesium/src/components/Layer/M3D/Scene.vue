@@ -1021,7 +1021,11 @@ export default {
                   feature
                 );
               } else {
-                if (vm.popupShowType === "right" && vm.isUnClosePopup) {
+                if (
+                  vm.popupShowType &&
+                  vm.popupShowType === "right" &&
+                  vm.isUnClosePopup
+                ) {
                   vm.isUnClosePopup = !vm.isUnClosePopup;
                 }
               }
