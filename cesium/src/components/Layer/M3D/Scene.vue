@@ -192,7 +192,7 @@ const { G3DLayerType, M3DTileDataInfo } = G3D;
 
 export default {
   name: "mapgis-3d-scene-layer",
-  inject: ["Cesium", "vueCesium", "viewer", "popupShowType"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...G3DOptions,
     popupOptions: {
@@ -213,6 +213,11 @@ export default {
     dataStoreDataset: {
       type: String,
       default: "Graph3/GraphDataset1"
+    },
+    // 气泡框展示位置default、right
+    popupShowType: {
+      type: String,
+      default: "default"
     }
   },
   mixins: [PopupMixin],
@@ -879,7 +884,7 @@ export default {
     cancelHighlight() {
       const { vueCesium, vueKey, vueIndex } = this;
 
-      if (!this.popupShowType || this.popupShowType === "default") {
+      if (this.popupShowType === "default") {
         this.featurevisible = false;
       } else {
         if (this.popupShowType === "right" && this.isUnClosePopup) {
@@ -995,7 +1000,7 @@ export default {
               }
               if (result && result.length > 0) {
                 let feature = result[0];
-                if (!vm.popupShowType || vm.popupShowType === "default") {
+                if (vm.popupShowType === "default") {
                   vm.featurevisible = true;
                   vm.featureposition = {
                     longitude: lng,
@@ -1021,11 +1026,7 @@ export default {
                   feature
                 );
               } else {
-                if (
-                  vm.popupShowType &&
-                  vm.popupShowType === "right" &&
-                  vm.isUnClosePopup
-                ) {
+                if (vm.popupShowType === "right" && vm.isUnClosePopup) {
                   vm.isUnClosePopup = !vm.isUnClosePopup;
                 }
               }
@@ -1082,7 +1083,7 @@ export default {
 
         if (cartesian || cartesian2) {
           if (vm.featureclickenable) {
-            if (!vm.popupShowType || vm.popupShowType === "default") {
+            if (vm.popupShowType === "default") {
               vm.featurevisible = true;
               vm.featureposition = {
                 longitude: longitudeString2,
