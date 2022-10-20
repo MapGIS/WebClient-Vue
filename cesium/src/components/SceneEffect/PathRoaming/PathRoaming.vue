@@ -2,10 +2,7 @@
   <div>
     <slot>
       <div class="mapgis-path-roaming">
-        <mapgis-ui-setting-form
-          :layout="layout"
-          size="default"
-        >
+        <mapgis-ui-setting-form :layout="layout" size="default">
           <mapgis-ui-form-item label="移动速度">
             <mapgis-ui-row>
               <mapgis-ui-col :span="24">
@@ -48,7 +45,7 @@
             v-show="animationTypeCopy !== 1"
             size="large"
             label="方位角"
-            :range="[-180,180]"
+            :range="[-180, 180]"
             v-model="headingCopy"
             :disabled="animationTypeCopy === 1 ? true : false"
             @change="val => onEffectsChange(val, 'heading')"
@@ -57,7 +54,7 @@
             v-show="animationTypeCopy === 2"
             size="large"
             label="俯仰角"
-            :range="[-180,180]"
+            :range="[-180, 180]"
             v-model="pitchCopy"
             :disabled="animationTypeCopy !== 2 ? true : false"
             @change="val => onEffectsChange(val, 'pitch')"
@@ -66,7 +63,7 @@
             v-show="animationTypeCopy !== 1"
             size="large"
             label="距离"
-            :range="[1,200]"
+            :range="[1, 200]"
             v-model="rangeCopy"
             :disabled="animationTypeCopy === 1 ? true : false"
             @change="val => changeRange(val)"
@@ -149,8 +146,18 @@
         </div>
       </div>
       <mapgis-ui-setting-footer>
-        <mapgis-ui-button type="primary" :title="playTitle" @click="onClickStartOrPauseOrResume">{{ playTitle }}</mapgis-ui-button>
-        <mapgis-ui-button type="primary" :disabled="!isStart" @click="onClickStop">停止</mapgis-ui-button>
+        <mapgis-ui-button
+          type="primary"
+          :title="playTitle"
+          @click="onClickStartOrPauseOrResume"
+          >{{ playTitle }}</mapgis-ui-button
+        >
+        <mapgis-ui-button
+          type="primary"
+          :disabled="!isStart"
+          @click="onClickStop(false)"
+          >停止</mapgis-ui-button
+        >
       </mapgis-ui-setting-footer>
     </slot>
   </div>
@@ -393,22 +400,24 @@ export default {
       });
     },
     unmount() {
-      this.onClickStop();
+      this.onClickStop(true);
       this.$emit("unload", this);
     },
     onClickStartOrPauseOrResume() {
       if (!this.isStart) {
+        // 隐藏绘制的路线
+        this.$emit("hidden-road");
         // 设置播放动画的各项属性
         if (this.positions.length > 0) {
-          const path = this.positions
-            .map(item => {
-              return [item.x, item.y, item.z];
-            })
-            .reduce(function(a, b) {
-              return a.concat(b);
-            });
+          // const path = this.positions
+          //   .map(item => {
+          //     return [item.x, item.y, item.z];
+          //   })
+          //   .reduce(function(a, b) {
+          //     return a.concat(b);
+          //   });
           window.SceneWanderManager.animation.positions = this.Cesium.Cartesian3.fromDegreesArrayHeights(
-            path
+            this.positions
           );
           this._setAnimationAttr();
 
@@ -424,10 +433,12 @@ export default {
         this.isPause = !this.isPause;
       }
     },
-    onClickStop() {
+    onClickStop(flag) {
       if (this.isStart) window.SceneWanderManager.animation.stop();
       this.isStart = false;
       this.isPause = false;
+      // 显示绘制的路线
+      !flag && this.$emit("show-road");
     },
     _setAnimationAttr() {
       // 默认速度的单位为m/s，这里将公里每小时转换为m/s
@@ -509,9 +520,9 @@ export default {
 
 <style scoped>
 .mapgis-path-roaming {
-	max-height: calc(80vh);
-	overflow-y: auto;
-	overflow-x: hidden;
+  max-height: calc(80vh);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .roaming-actions {
   padding: 12px 0;

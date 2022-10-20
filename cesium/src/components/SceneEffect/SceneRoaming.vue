@@ -73,9 +73,7 @@
               </mapgis-ui-button>
             </div>
             <div v-else>
-              <mapgis-ui-button
-                @click="onAddPathCancel"
-              >
+              <mapgis-ui-button @click="onAddPathCancel">
                 取消
               </mapgis-ui-button>
               <mapgis-ui-button
@@ -111,6 +109,8 @@
             :isLoop="roamingPath.para.isLoop"
             :showPath="roamingPath.para.showPath"
             :showInfo="roamingPath.para.showInfo"
+            @hidden-road="hiddenRoad"
+            @show-road="showRoad"
           ></path-roaming>
         </div>
       </div>
@@ -198,6 +198,7 @@ export default {
     paths: {
       handler() {
         this.pathsCopy = this.paths;
+        this.drawLines();
       },
       deep: true,
       immediate: true
@@ -246,7 +247,8 @@ export default {
       linePoints: [],
       polyline: undefined,
       emptyImage: MapgisUiEmpty.PRESENTED_IMAGE_SIMPLE,
-      emptyDescription: "暂无数据"
+      emptyDescription: "暂无数据",
+      lastClickLineId: undefined
     };
   },
   created() {},
@@ -387,10 +389,15 @@ export default {
     onGotoPath(path) {
       this.roamingPath = path;
       this.roaming = true;
+
+      // 最近一次点击的路线
+      this.lastClickLineId = path.id + "";
+      this.showRoad();
     },
     onGotoHome() {
-      this.$refs.refPathRoaming.onClickStop();
+      this.$refs.refPathRoaming.onClickStop(true);
       this.roaming = false;
+      this.hiddenRoad();
     },
     onDeletePath(path) {
       const index = this.pathsCopy.indexOf(path);
@@ -409,6 +416,32 @@ export default {
         this.pathsCopy = paths;
       }
     },
+    drawLines() {
+      this.viewer.entities.removeAll();
+      this.pathsCopy.forEach(item => {
+        this.viewer.entities.add({
+          id: item.id + "",
+          show: false,
+          polyline: {
+            positions: this.Cesium.Cartesian3.fromDegreesArrayHeights(
+              item.path
+            ),
+            width: 5,
+            material: this.Cesium.Color.RED
+          }
+        });
+      });
+    },
+    hiddenRoad() {
+      const hiddenLine = this.viewer.entities.getById(this.lastClickLineId);
+      hiddenLine.show = false;
+    },
+    showRoad() {
+      const showLine = this.viewer.entities.getById(this.lastClickLineId);
+      showLine.show = true;
+      this.viewer.flyTo(showLine);
+    },
+
     _stopAdded() {
       if (this.draw) {
         this.draw.stopDrawing();
