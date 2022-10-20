@@ -157,6 +157,13 @@ export default {
     disableDepthTestDistance: {
       type: Number,
       default: 0
+    },
+    /**
+     * 文字标注相对于图标高度在y方向的偏移量比例，默认默认-0.5，及在y方向的偏移量为-0.5*this.iconHeight
+     */
+    pixelOffsetYScale: {
+      type: Number,
+      default: -0.5
     }
   },
   data() {
@@ -624,7 +631,7 @@ export default {
               image: iconUrl,
               width: iconWidth,
               height: iconHeight,
-              horizontalOrigin: vm.Cesium.HorizontalOrigin.TOP,
+              horizontalOrigin: vm.Cesium.HorizontalOrigin.CENTER,
               verticalOrigin: vm.Cesium.VerticalOrigin.BOTTOM,
               heightReference: vm.heightReferenceCopy
             }
@@ -719,7 +726,7 @@ export default {
               1.5e7,
               0.0
             ),
-            horizontalOrigin: this.Cesium.HorizontalOrigin.TOP,
+            horizontalOrigin: this.Cesium.HorizontalOrigin.CENTER,
             verticalOrigin: this.Cesium.VerticalOrigin.BOTTOM,
             disableDepthTestDistance: this.disableDepthTestDistance,
             heightReference: this.heightReferenceCopy
@@ -732,11 +739,14 @@ export default {
             fillColor: fillColor,
             outlineWidth: 1,
             verticalOrigin: this.Cesium.VerticalOrigin.BOTTOM, // 垂直方向以底部来计算标签的位置
-            horizontalOrigin: this.Cesium.HorizontalOrigin.BOTTOM, // 原点在下方
+            horizontalOrigin: this.Cesium.HorizontalOrigin.CENTER,
             // pixelOffset: lPixelOffset, // 偏移量
             // heightReference : this.root.HeightReference.CLAMP_TO_GROUND ,
             // 随远近缩放
-            pixelOffset: new this.Cesium.Cartesian2(0.0, -iconHeight / 4), // x,y方向偏移 相对于屏幕
+            pixelOffset: new this.Cesium.Cartesian2(
+              0.0,
+              this.pixelOffsetYScale * this.iconHeight
+            ), // x,y方向偏移 相对于屏幕
             pixelOffsetScaleByDistance: new this.Cesium.NearFarScalar(
               1.5e5,
               3.0,
@@ -840,7 +850,7 @@ export default {
         let lat = item.geometry.coordinates[1];
         billboards.add({
           position: Cesium.Cartesian3.fromDegrees(lon, lat, height),
-          horizontalOrigin: Cesium.HorizontalOrigin.TOP,
+          horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
           verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
           image: iconUrl,
           id: "icon_" + index,
@@ -869,8 +879,11 @@ export default {
             font: font,
             fillColor: fillColor,
             style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-            pixelOffset: new Cesium.Cartesian2(0.0, -iconHeight / 4),
-            horizontalOrigin: Cesium.VerticalOrigin.BOTTOM,
+            pixelOffset: new Cesium.Cartesian2(
+              0.0,
+              vm.pixelOffsetYScale * vm.iconHeight
+            ),
+            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
             verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
             translucencyByDistance: new Cesium.NearFarScalar(
               1.5e5,

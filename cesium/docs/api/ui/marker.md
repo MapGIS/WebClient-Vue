@@ -27,6 +27,7 @@
 | circleColor              | String        | "#FF8C00" | 动态圆特效的颜色。                                                                                                                                                                                                                                                | 否       |
 | maxCircleNumber          | Number        | 100       | 允许加载的最大动态圆特效数目，不建议同时加载过多，否则容易卡顿。                                                                                                                                                                                                  | 否       |
 | disableDepthTestDistance | Number        | 0         | 设置图标的深度检测。当设置为 10000，表示当相机高度低于 10000 时，图标参与深度检测，当相机高度高于 10000 时，图标不参与深度检测；当设置为 0，表示不管高度为多少，都图标都参与深度检测，当设置为 Number.POSITIVE_INFINITY，表示不管高度为多少，图标都不参与深度检测 | 否       |
+| pixelOffsetYScale        | Number        | -0.5      | 文字标注相对于图标高度在 y 方向的偏移量比例，默认默认-0.5，及在 y 方向的偏移量为-0.5\*this.iconHeight                                                                                                                                                             | 否       |
 
 ## 槽
 
