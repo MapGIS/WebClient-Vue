@@ -194,9 +194,10 @@ export default {
       let layer = this.getLayer();
       if (!layer) return;
       layer.pickPlot = async function(plot) {
+        if (!plot) return;
         vm.isDraw = true;
         let exist = vm.getPlot();
-        if (exist) {
+        if (exist !== undefined) {
           window.vueCesium.PlotManager.changeSource(
             vm.vueKey,
             vm.vueIndex,
@@ -247,7 +248,7 @@ export default {
      */
     getSymbolLib() {
       const vm = this;
-      // console.log("symbolUrl", this.symbolUrl);
+      // console.log("symbolUrl-3d", this.symbolUrl);
       this.formatData(this.symbolUrl);
       let manager = this.getSymbolManager();
       if (!manager) {
@@ -342,7 +343,7 @@ export default {
       let drawTool = this.getDrawTool();
       if (drawTool) {
         drawTool.stopDraw();
-        drawTool.drawPlot(symbol);
+        // drawTool.drawPlot(symbol);
       }
     },
     /**
