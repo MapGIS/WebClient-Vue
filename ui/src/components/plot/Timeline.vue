@@ -116,10 +116,12 @@ import moment from "moment";
 export default {
   name: "mapgis-ui-plot-timeline",
   props: {
+    /** 设置时间轴当前时间 */
     currentTime: {
       type: String,
       default: "2022-02"
     },
+    /** 显示时间轴当前时间的宽度，单位为px */
     curTimeWidth: {
       type: Number,
       default: null

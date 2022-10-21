@@ -125,9 +125,10 @@ export default {
       if (!layer) return;
       layer.editable = true;
       layer.pickPlot = async function(plot) {
+        if (!plot) return;
         vm.isDraw = true;
         let exist = vm.getPlot();
-        if (exist) {
+        if (exist !== undefined) {
           window.vueMap.PlotManager.changeSource(vm.vueKey, vm.vueIndex, plot);
         } else {
           window.vueMap.PlotManager.addSource(vm.vueKey, vm.vueIndex, plot);
@@ -209,6 +210,7 @@ export default {
     },
     getSymbolLib() {
       const vm = this;
+      // console.log("this.symbolUrl-2d", this.symbolUrl);
       this.formatData(this.symbolUrl);
       let manager = this.getSymbolManager();
       if (!manager) {

@@ -22,10 +22,12 @@
       :vueIndex="vueIndex"
       :is3dLayer="true"
       v-if="!showScriptList"
-      @return="e => {
-        showScriptList = e;
-        $emit('save', scriptListCopy[activeIndex]);
-      }"
+      @return="
+        e => {
+          showScriptList = e;
+          $emit('save', scriptListCopy[activeIndex]);
+        }
+      "
       @play="playScript"
       @add="addScript"
       @change="scriptChange"
@@ -85,7 +87,7 @@
 <script>
 import axios from "axios";
 import plot from "@mapgis/webclient-plot";
-const {TimeLine = window.Zondy.Plot.TimeLine} = plot;
+const { TimeLine = window.Zondy.Plot.TimeLine } = plot;
 
 export default {
   name: "mapgis-3d-plot-animation",
@@ -178,7 +180,7 @@ export default {
       },
       deep: true,
       immediate: true
-    }
+    },
     // vueIndex(val) {
     //   let layer = this.getLayer();
     //   if (layer) {
@@ -186,10 +188,10 @@ export default {
     //     this.initPlotAnimation();
     //   }
     // }
-    // value(e) {
-    //   let timeline = this.getPlotAnimation();
-    //   timeline && timeline.seek(e * 1000);
-    // }
+    value(e) {
+      let timeline = this.getPlotAnimation();
+      timeline && timeline.seek(e * 1000);
+    }
   },
   mounted() {
     this.mount();
