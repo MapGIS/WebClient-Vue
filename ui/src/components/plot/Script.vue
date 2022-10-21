@@ -83,8 +83,8 @@
     <mapgis-ui-divider v-if="activeIndex !== undefined" />
     <mapgis-ui-plot-animation
       :animation="scriptCopy.animations[activeIndex]"
-      :attrsItemOptions="attrsItemOptions"
-      :attrsItemColorOptions="attrsItemColorOptions"
+      :attrsItemOptions="attrsItemOptionsUsed"
+      :attrsItemColorOptions="attrsItemColorOptionsUsed"
       :idsOptions="idsOptions"
       :animationOptions="defaultAnimation"
       @change="animationChange"
@@ -100,6 +100,7 @@
     <mapgis-3d-draw
       v-if="is3dLayer"
       :enableControl="false"
+      :infinite="false"
       ref="draw"
       @drawCreate="getCoods"
     />
@@ -117,6 +118,7 @@ export default {
     plotId: {
       type: String
     },
+    // 属性动画中属性名称的选项
     attrsItemOptions: {
       type: Array,
       default: () => {
@@ -203,7 +205,10 @@ export default {
         "path-animation": "路径动画"
       },
       // 图元的部件名称
-      idsOptions: undefined
+      idsOptions: undefined,
+      // 属性动画中属性名称的选项
+      attrsItemOptionsUsed: undefined,
+      attrsItemColorOptionsUsed: undefined
     };
   },
   methods: {
@@ -271,6 +276,17 @@ export default {
     getIdsOptions(id) {
       let plot = this.getPlot(id);
       let json = plot.getStyle();
+      // 没有开启墙体时，属性动画中属性名称不显示墙体颜色的选项,反之显示
+      this.attrsItemColorOptionsUsed = this.attrsItemColorOptions.filter(
+        item => {
+          if (item === "wallColor") return json.isOpenWall ? true : false;
+          return true;
+        }
+      );
+      this.attrsItemOptionsUsed = this.attrsItemOptions.filter(item => {
+        if (item === "wallColor") return json.isOpenWall ? true : false;
+        return true;
+      });
       this.idsOptions = Object.keys(json.nodeStyles);
     },
     getPlot(id) {
@@ -301,8 +317,10 @@ export default {
         coords = b.map(pos => {
           return pos.slice(0, 2);
         });
+        this.$refs.draw.removeEntities(true);
       } else {
         coords = a.features[0].geometry.coordinates;
+        this.$refs.draw.toggleDeleteAll();
       }
       this.scriptCopy.animations[this.activeIndex].animationCoords = coords;
     }

@@ -174,7 +174,7 @@ export default {
               let symbol = vm.getSymbol();
               if (drawTool) {
                 drawTool.stopDraw();
-                drawTool.drawPlot(symbol);
+                // drawTool.drawPlot(symbol);
               }
             }
           });

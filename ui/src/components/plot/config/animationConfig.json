@@ -124,8 +124,8 @@
       "type": "显隐动画",
       "options": {
         "endStatus": {
-          "name": "最终可见性",
-          "desc": "动画最终状态",
+          "name": "最终隐藏",
+          "desc": "动画结束后是否隐藏图元",
           "type": "boolean",
           "default": false
         }
