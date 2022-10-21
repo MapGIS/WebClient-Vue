@@ -37,6 +37,15 @@ const Template = (args, { argTypes }) => ({
           />
           <mapgis-ui-iconfont type="mapgis-daochu" @click="exportClick"/>
           <mapgis-ui-iconfont type="mapgis-shanchu" @click="deletePlot"/>
+          <mapgis-ui-switch-panel
+           label="图层编辑"
+           v-model="editable"
+           @changeChecked="edit"
+           :isTitleBold="false"
+           :hasTopMargin="false"
+           :hasBottomMargin="false"
+           size="small"
+          />
         </mapgis-ui-space>
   </mapgis-web-map>`,
   data() {
@@ -56,6 +65,7 @@ const Template = (args, { argTypes }) => ({
       // 打包时使用
       // jsonUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/test.json`,
       manager: undefined,
+      editable: true,
     };
   },
   methods: {
@@ -81,6 +91,10 @@ const Template = (args, { argTypes }) => ({
         this.vueIndex1
       );
       return layerManager && layerManager.source;
+    },
+    edit(editable) {
+      let layer = this.getLayer();
+      layer.editable = editable;
     },
     deletePlot() {
       this.$refs.plot.deletePlot();

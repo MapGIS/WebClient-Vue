@@ -25,6 +25,15 @@ const Template = (args, { argTypes }) => ({
         />
         <mapgis-ui-iconfont type="mapgis-daochu" @click="exportClick"/>
         <mapgis-ui-iconfont type="mapgis-shanchu" @click="deletePlot"/>
+        <mapgis-ui-switch-panel
+         label="图层编辑"
+         v-model="editable"
+         @changeChecked="edit"
+         :isTitleBold="false"
+         :hasTopMargin="false"
+         :hasBottomMargin="false"
+         size="small"
+        />
       </mapgis-ui-space>
   </mapgis-web-scene>`,
   data() {
@@ -35,6 +44,7 @@ const Template = (args, { argTypes }) => ({
       // jsonData: undefined,
       manager: undefined,
       classificationType: 3,
+      editable: false,
     };
   },
   methods: {
@@ -60,6 +70,10 @@ const Template = (args, { argTypes }) => ({
         this.vueIndex1
       );
       return layerManager && layerManager.source;
+    },
+    edit(editable) {
+      let layer = this.getLayer();
+      layer.editable = editable;
     },
     /**
      * 导入功能
