@@ -50,6 +50,7 @@
       :speed="speed"
       :interval="interval"
       :intervalOptions="['时', '分', '秒']"
+      :currentTime="currentTime"
       :start="start"
       :backward="backward"
       :pause="pause"
@@ -73,6 +74,7 @@
         :speed="speed"
         :interval="interval"
         :intervalOptions="['时', '分', '秒']"
+        :currentTime="currentTime"
         @start="start"
         @backward="backward"
         @pause="pause"
@@ -143,6 +145,10 @@ export default {
     showTimeline: {
       type: Boolean,
       default: true
+    },
+    currentTime: {
+      type: String,
+      default: "2022-02"
     }
   },
   data() {
@@ -220,6 +226,7 @@ export default {
       const vm = this;
       let layer = this.getLayer();
       layer.pickPlot = function(plot) {
+        if (!plot) return;
         // console.log("plot-animation-3d", plot);
         let json = plot.getStyle();
         vm.nodeNames = Object.keys(json.nodeStyles);
