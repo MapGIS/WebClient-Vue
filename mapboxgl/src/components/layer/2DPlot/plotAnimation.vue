@@ -50,6 +50,7 @@
       :speed="speed"
       :interval="interval"
       :intervalOptions="['时', '分', '秒']"
+      :currentTime="currentTime"
       :start="start"
       :backward="backward"
       :pause="pause"
@@ -73,6 +74,7 @@
         :speed="speed"
         :interval="interval"
         :intervalOptions="['时', '分', '秒']"
+        :currentTime="currentTime"
         @start="start"
         @backward="backward"
         @pause="pause"
@@ -141,6 +143,10 @@ export default {
     showTimeline: {
       type: Boolean,
       default: true
+    },
+    currentTime: {
+      type: String,
+      default: "2022-02"
     }
   },
   data() {
@@ -222,6 +228,7 @@ export default {
       let layer = this.getLayer();
       // layer.editable = true;
       layer.pickPlot = function(plot) {
+        if (!plot) return;
         // console.log("plot-animation", plot);
         let json = plot.getStyle();
         // console.log("plot.getStyle", json);

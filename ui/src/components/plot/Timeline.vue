@@ -37,19 +37,35 @@
       <div
         class="timeline-current-time"
         :style="{ width: `${curTimeWidth}px` }"
+        v-if="isCurtimeEditing == false"
+        @click="isCurtimeEditing = true"
       >
-        {{ currentTime }}
+        {{ currentTimeUse }}
       </div>
+      <mapgis-ui-input
+        class="timeline-current-time"
+        :style="
+          curTimeWidth ? { width: `${curTimeWidth}px` } : { width: 'auto' }
+        "
+        v-if="isCurtimeEditing == true"
+        :value="currentTimeUse"
+        @change="editCurrentTime"
+      >
+        <template #addonAfter>
+          <mapgis-ui-iconfont
+            type="mapgis-check"
+            @click="changeCurrentTime"
+          ></mapgis-ui-iconfont>
+        </template>
+      </mapgis-ui-input>
 
       <mapgis-ui-tooltip>
-        <div class="timeline-current-speed">
-          倍速
-        </div>
+        <div class="timeline-current-speed">倍速</div>
         <template #title>
           <mapgis-ui-input-number
             v-model="speedCopy"
-            :formatter="value => `${value}X`"
-            :parser="value => value.replace('X', '')"
+            :formatter="(value) => `${value}X`"
+            :parser="(value) => value.replace('X', '')"
             :step="speedStep"
             :min="minSpeed"
             :max="maxSpeed"
@@ -100,7 +116,7 @@
         <div class="time-tick time-tick-lg-last">
           <span class="time-mark">240</span>
         </div>
-        <div class="timeline-needle" style="left: 0px;">
+        <div class="timeline-needle" style="left: 0px">
           <img src="./style/images/u196.png" class="timeline-needle-top" />
           <!-- <mapgis-ui-iconfont type="mapgis-down" class="timeline-needle-top" /> -->
           <div class="timeline-needle-bottom"></div>
@@ -119,34 +135,34 @@ export default {
     /** 设置时间轴当前时间 */
     currentTime: {
       type: String,
-      default: "2022-02"
+      default: "2022-02",
     },
     /** 显示时间轴当前时间的宽度，单位为px */
     curTimeWidth: {
       type: Number,
-      default: null
+      default: null,
     },
     /** 滑动条的值 */
     value: {
       type: Number,
-      default: 0
+      default: 0,
     },
     min: {
       type: Number,
-      default: 0
+      default: 0,
     },
     max: {
       type: Number,
-      default: 60
+      default: 60,
     },
     duration: {
       type: Number,
-      default: 24
+      default: 24,
     },
     /** 选择的时间间隔 */
     interval: {
       type: String,
-      default: "月"
+      default: "月",
     },
     // intervalPlaceholder: {
     //   type: String,
@@ -157,91 +173,91 @@ export default {
       type: Array,
       default: () => {
         return ["年", "月", "日", "时", "分", "秒"];
-      }
+      },
     },
     /** 倍速大小 */
     speed: {
       type: Number,
-      default: 1
+      default: 1,
     },
     /** 倍速改变步长值 */
     speedStep: {
       type: Number,
-      default: 1
+      default: 1,
     },
     /** 倍速最小值 */
     minSpeed: {
       type: Number,
-      default: 0
+      default: 0,
     },
     /** 倍速最大值 */
     maxSpeed: {
       type: Number,
-      default: 50
+      default: 50,
     },
     /**定义按钮的显示状态 */
     enableStart: {
       type: Boolean,
-      default: true
+      default: true,
     },
     enableBack: {
       type: Boolean,
-      default: true
+      default: true,
     },
     enablePause: {
       type: Boolean,
-      default: true
+      default: true,
     },
     enableForward: {
       type: Boolean,
-      default: true
+      default: true,
     },
     enableEnd: {
       type: Boolean,
-      default: true
+      default: true,
     },
     /**定义按钮的初始激活状态 */
     startActive: {
       type: Boolean,
-      default: false
+      default: false,
     },
     backActive: {
       type: Boolean,
-      default: false
+      default: false,
     },
     pauseActive: {
       type: Boolean,
-      default: false
+      default: false,
     },
     forwardActive: {
       type: Boolean,
-      default: false
+      default: false,
     },
     endActive: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // 是否禁用暂停按钮的功能
     disableBackward: {
       type: Boolean,
-      default: false
+      default: false,
     },
     disablePause: {
       type: Boolean,
-      default: false
+      default: false,
     },
     disableForward: {
       type: Boolean,
-      default: false
+      default: false,
     },
     loop: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   model: {
     prop: "value",
-    event: "change"
+    event: "change",
   },
   watch: {
     disableForward: {
@@ -249,93 +265,93 @@ export default {
         this.disableForwardCopy = next;
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     disableBackward: {
       handler(next) {
         this.disableBackwardCopy = next;
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     disablePause: {
       handler(next) {
         this.disablePauseCopy = next;
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     value: {
       handler(next) {
         this.valueCopy = next;
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     valueCopy: {
       handler(next) {
         this.valueChange();
         this.$emit("change", next);
       },
-      deep: true
+      deep: true,
     },
     width: {
       handler() {
         this.valueChange();
       },
-      deep: true
+      deep: true,
     },
     speed: {
       handler(next) {
         this.speedCopy = next;
       },
-      immediate: true
+      immediate: true,
     },
     speedCopy: {
       handler(next) {
         this.$emit("speedChange", next);
       },
-      deep: true
+      deep: true,
     },
     interval: {
       handler(next) {
         this.intervalCopy = next;
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     intervalCopy: {
       handler(next) {
         this.$emit("intervalChange", next);
         // console.log("intervalChange", next);
       },
-      deep: true
+      deep: true,
     },
     startActive: {
       handler(next) {
         this.startBtn = next;
-      }
+      },
     },
     backActive: {
       handler(next) {
         this.backBtn = next;
-      }
+      },
     },
     forwardActive: {
       handler(next) {
         this.forwardBtn = next;
-      }
+      },
     },
     pauseActive: {
       handler(next) {
         this.pauseBtn = next;
-      }
+      },
     },
     endActive: {
       handler(next) {
         this.endBtn = next;
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -355,11 +371,17 @@ export default {
       lasttime: undefined,
       curtime: undefined,
       showInterval: false,
+      // 当前时间是否处于编辑状态
+      isCurtimeEditing: false,
+      // 时间轴使用的当前时间
+      currentTimeUse: this.currentTime,
+      // 时间轴编辑当前时间时的输入
+      currentTimeEdit: undefined,
       // 时间轴的宽度
       width: undefined,
       disableBackwardCopy: this.disableBackward,
       disablePauseCopy: this.disablePause,
-      disableForwardCopy: this.disableForward
+      disableForwardCopy: this.disableForward,
     };
   },
   created() {
@@ -375,20 +397,20 @@ export default {
     mount() {
       const vm = this;
       this.getWindowWidth();
-      window.onresize = function() {
+      window.onresize = function () {
         vm.width = vm.$refs.timebar.clientWidth;
       };
 
       //实现时间轴的拖拽功能
       let ele = document.querySelector(".timeline-needle");
 
-      ele.onmousedown = function(ev) {
+      ele.onmousedown = function (ev) {
         ev.preventDefault();
         let width = vm.width;
         let initL = parseFloat(ele.style.left) || 0;
         let initX = ev.clientX - initL;
 
-        document.onmousemove = function(ev) {
+        document.onmousemove = function (ev) {
           let left = ev.clientX - initX;
           left = left < 0 ? 0 : left;
           left = left > width ? width : left;
@@ -396,7 +418,7 @@ export default {
           vm.valueCopy = vm.percent * (vm.max - vm.min) + vm.min;
         };
 
-        document.onmouseup = function() {
+        document.onmouseup = function () {
           document.onmouseup = null;
           document.onmousemove = null;
         };
@@ -534,7 +556,15 @@ export default {
       this.$emit("end");
 
       this.valueCopy = this.max;
-    }
-  }
+    },
+    editCurrentTime(e) {
+      console.log(e.target.value);
+      this.currentTimeEdit = e.target.value;
+    },
+    changeCurrentTime() {
+      this.currentTimeUse = this.currentTimeEdit || this.currentTime;
+      this.isCurtimeEditing = false;
+    },
+  },
 };
 </script>
