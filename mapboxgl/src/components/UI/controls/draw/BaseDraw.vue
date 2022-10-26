@@ -1,29 +1,29 @@
 <template>
   <div>
     <!-- slot for toolbar -->
-    <slot name="toolbar"/>
+    <slot name="toolbar" />
     <!-- slot for toolbar-item -->
-    <slot v-if="drawer"/>
+    <slot v-if="drawer" />
     <div class="mapgis-draw-control" v-show="enableControl">
       <mapgis-ui-space>
         <mapgis-ui-tooltip
-            v-for="(item, i) in draws"
-            :key="i"
-            placement="bottom"
+          v-for="(item, i) in draws"
+          :key="i"
+          placement="bottom"
         >
           <template slot="title">
             <span>{{ item.tip }}</span>
           </template>
           <mapgis-ui-button
-              shape="circle"
-              :type="item.type"
-              @click="item.click"
-              :class="item.className"
+            shape="circle"
+            :type="item.type"
+            @click="item.click"
+            :class="item.className"
           >
             <mapgis-ui-iconfont
-                :type="item.icon"
-                :class="item.className"
-                theme="filled"
+              :type="item.icon"
+              :class="item.className"
+              theme="filled"
             />
           </mapgis-ui-button>
         </mapgis-ui-tooltip>
@@ -47,7 +47,7 @@ import {
   CircleMode,
   DragCircleMode,
   DirectMode,
-  SimpleSelectMode,
+  SimpleSelectMode
 } from "@mapgis/mapbox-gl-draw-circle";
 import StaticMode from "@mapbox/mapbox-gl-draw-static-mode";
 
@@ -85,7 +85,7 @@ const drawEvents = {
   drawselectionchange: "draw.selectionchange",
   drawmodechange: "draw.modechange",
   drawrender: "draw.render",
-  drawactionable: "draw.actionable",
+  drawactionable: "draw.actionable"
 };
 
 export default {
@@ -103,18 +103,18 @@ export default {
       get drawer() {
         // 提供marker给子组件popup或者插槽槽
         return self.drawer;
-      },
+      }
     };
   },
 
   props: {
     editable: {
       type: Boolean,
-      default: true,
+      default: true
     },
-    closeEdit:{
+    closeEdit: {
       type: Boolean,
-      default: false,
+      default: false
     },
     // expandControl: {
     //   type: Boolean,
@@ -122,28 +122,28 @@ export default {
     // },
     enableControl: {
       type: Boolean,
-      default: false,
+      default: false
     },
     // mapbox drawer options
     keybindings: {
       type: Boolean,
-      default: true,
+      default: true
     },
     touchEnabled: {
       type: Boolean,
-      default: true,
+      default: true
     },
     boxSelect: {
       type: Boolean,
-      default: true,
+      default: true
     },
     clickBuffer: {
       type: Number,
-      default: 2,
+      default: 2
     },
     touchBuffer: {
       type: Number,
-      default: 25,
+      default: 25
     },
     controls: {
       type: Object,
@@ -154,33 +154,33 @@ export default {
           polygon: false,
           trash: false,
           combine_features: false,
-          uncombine_features: false,
+          uncombine_features: false
         };
-      },
+      }
     },
     displayControlsDefault: {
       type: Boolean,
-      default: true,
+      default: true
     },
     styles: {
       type: Array,
-      default: () => DefaultDrawStyle,
+      default: () => DefaultDrawStyle
     },
     modes: {
       type: Object,
-      default: () => modes,
+      default: () => modes
     },
     defaultMode: {
       type: String,
-      default: "simple_select",
+      default: "simple_select"
     },
     userProperties: {
       type: Boolean,
-      default: false,
+      default: false
     },
     showSize: {
       type: Boolean,
-      default: false,
+      default: false
     }
   },
 
@@ -201,44 +201,44 @@ export default {
           icon: "mapgis-huizhidian2",
           type: "primary",
           tip: "画点",
-          click: this.togglePoint,
+          click: this.togglePoint
         },
         {
           icon: "mapgis-huizhixian1",
           type: "primary",
           tip: "画线",
-          click: this.togglePolyline,
+          click: this.togglePolyline
         },
         {
           icon: "mapgis-huizhijuxing",
           type: "primary",
           tip: "画矩形",
-          click: this.toggleRect,
+          click: this.toggleRect
         },
         {
           icon: "mapgis-draw-polygon",
           type: "primary",
           tip: "画多边形",
-          click: this.togglePolygon,
+          click: this.togglePolygon
         },
         {
           icon: "mapgis-huizhiyuan1",
           type: "primary",
           tip: "画圆",
-          click: this.toggleCircle,
+          click: this.toggleCircle
         },
         {
           icon: "mapgis-icon_huizhiyuanxing",
           type: "primary",
           tip: "画半径",
-          click: this.toggleRadius,
+          click: this.toggleRadius
         },
         {
           icon: "mapgis-shanchu_dianji",
           type: "primary",
           tip: "删除选中图元",
-          click: this.toggleDelete,
-        },
+          click: this.toggleDelete
+        }
         /*{
           icon: "mapgis-shanchudangqianziceng",
           type: "primary",
@@ -263,14 +263,16 @@ export default {
       radius: 0,
       pushRadius: "mapgis-lashen",
       showMarkerCopy: false,
-      oldFeature: [{
-        geometry: {
-          coordinates: [],
-        },
-        id: "",
-        properties: {},
-        type: "Feature"
-      }],
+      oldFeature: [
+        {
+          geometry: {
+            coordinates: []
+          },
+          id: "",
+          properties: {},
+          type: "Feature"
+        }
+      ],
       showSizeStyle: this.styles
     };
   },
@@ -280,16 +282,12 @@ export default {
       if (this.initial) return;
       this.drawer.setLngLat(lngLat);
     },
-    draggable(next) {
-      if (this.initial) return;
-      this.drawer.setDraggable(next);
-    },
     styles: {
-      handler: function (news) {
+      handler: function(news) {
         this.oldStyles = this.combineStyle(news);
         this.showSizeStyle = news;
-      },
-    },
+      }
+    }
   },
 
   mounted() {
@@ -298,7 +296,7 @@ export default {
       let position = this.position;
       let pos = position.split("-");
       document.querySelector(".mapgis-draw-control").style =
-          pos[0] + ": 10px;" + pos[1] + ": 10px;";
+        pos[0] + ": 10px;" + pos[1] + ": 10px;";
       // if (this.expandControl) {
       //   this.changeFold();
       // } else {
@@ -333,7 +331,7 @@ export default {
       this.$_unbindEditEvents();
       this.$_unbindMeasureEvents();
       this.$_addDrawControl(this.drawer);
-      this.$_emitEvent("added", {drawer: this.drawer});
+      this.$_emitEvent("added", { drawer: this.drawer });
       this.$_unbindDrawEvents();
       this.$_bindSelfEvents(Object.keys(drawEvents));
     },
@@ -341,7 +339,7 @@ export default {
     $_initDraw() {
       const draweroptions = {
         ...this.$props,
-        styles: this.oldStyles,
+        styles: this.oldStyles
       };
       this.drawer = new MapboxDraw(draweroptions);
 
@@ -358,18 +356,21 @@ export default {
       // if (this.editable) {
       //   listeners = ["drawUpdate"].concat(Object.keys(this.$listeners));
       // } else {
-      listeners = ["drawUpdate", "drawCreate", "drawRender", "drawActionable"].concat(
-          Object.keys(this.$listeners)
-      );
+      listeners = [
+        "drawUpdate",
+        "drawCreate",
+        "drawRender",
+        "drawActionable"
+      ].concat(Object.keys(this.$listeners));
       // }
 
       // 使用vue的this.$listeners方式来订阅用户指定的事件
       // Object.keys(this.$listeners).forEach(eventName => {
-      listeners.forEach((eventName) => {
+      listeners.forEach(eventName => {
         if (events.includes(eventName)) {
           this.$_bindDrawEvents(
-              drawEvents[eventName],
-              vm.$_emitDrawEvent.bind(vm, eventName)
+            drawEvents[eventName],
+            vm.$_emitDrawEvent.bind(vm, eventName)
           );
         }
       });
@@ -382,17 +383,33 @@ export default {
       let mode = this.drawer.getMode();
       if (vm.drawRadius && eventName === "drawActionable") {
         if (!eventData.actions.trash) {
-          let style = vm.oldStyles.filter(s =>
-              s.id === "gl-draw-point-inactive")
+          let style = vm.oldStyles.filter(
+            s => s.id === "gl-draw-point-inactive"
+          );
           if (vm.map.getLayer("centerPoint")) {
-            vm.map.setPaintProperty("centerPoint", "circle-radius", style[0].paint['circle-radius']);
-            vm.map.setPaintProperty("centerPoint", "circle-color", style[0].paint['circle-color']);
+            vm.map.setPaintProperty(
+              "centerPoint",
+              "circle-radius",
+              style[0].paint["circle-radius"]
+            );
+            vm.map.setPaintProperty(
+              "centerPoint",
+              "circle-color",
+              style[0].paint["circle-color"]
+            );
           }
-          style = vm.oldStyles.filter(s =>
-              s.id === "gl-draw-line-inactive")
+          style = vm.oldStyles.filter(s => s.id === "gl-draw-line-inactive");
           if (vm.map.getLayer("extent")) {
-            vm.map.setPaintProperty("extent", "line-color", style[0].paint['line-color']);
-            vm.map.setPaintProperty("extent", "line-width", style[0].paint['line-width']);
+            vm.map.setPaintProperty(
+              "extent",
+              "line-color",
+              style[0].paint["line-color"]
+            );
+            vm.map.setPaintProperty(
+              "extent",
+              "line-width",
+              style[0].paint["line-width"]
+            );
           }
         }
       }
@@ -405,9 +422,9 @@ export default {
       }
       if (eventName === "drawUpdate" && mode === "direct_select") {
         if (
-            eventData.action == "change_coordinates" &&
-            eventData.features &&
-            eventData.features.length >= 0
+          eventData.action == "change_coordinates" &&
+          eventData.features &&
+          eventData.features.length >= 0
         ) {
           if (!turf.booleanEqual(eventData.features[0], vm.oldFeature)) {
             vm.addMarkerAndLine(eventData);
@@ -415,22 +432,22 @@ export default {
             let center = feature.properties.center;
             let area = Math.round(turf.area(feature)) / 1000000;
             let radiusinkm = feature.properties.radiusInKm;
-            this.$emit("update-radius", {area, radiusinkm, center});
+            this.$emit("update-radius", { area, radiusinkm, center });
           }
         }
-      } else if (eventName == "drawCreate" && !this.editable && !this.closeEdit) {
-        window.setTimeout(() => {
-          vm.drawer && vm.drawer.changeMode("simple_select");
-        }, 100);
-      } else if (eventName == "drawCreate" && this.closeEdit){
+      } else if (eventName == "drawCreate" && this.closeEdit) {
         window.setTimeout(() => {
           vm.drawer && vm.drawer.changeMode("static");
+        }, 100);
+      } else if (eventName == "drawCreate" && !this.editable) {
+        window.setTimeout(() => {
+          vm.drawer && vm.drawer.changeMode("simple_select");
         }, 100);
       }
       // if (eventName == "drawCreate" && mode == "direct_select" ) {
       //   this.drawer && this.drawer.changeMode("simple_select");
       // }
-      return this.$_emitSelfEvent({type: eventName}, eventData);
+      return this.$_emitSelfEvent({ type: eventName }, eventData);
     },
 
     $_compareStyle() {
@@ -442,27 +459,27 @@ export default {
     combineStyle(news) {
       let olds = this.oldStyles || DefaultDrawStyle;
       news = news || this.styles;
-      let combines = olds.filter((l) => {
-        return !news.find((f) => f.id === l.id);
+      let combines = olds.filter(l => {
+        return !news.find(f => f.id === l.id);
       });
       combines = combines.concat(news);
       return combines;
     },
 
     changeMapStyle(layers) {
-      let {map} = this;
-      layers.forEach((layer) => {
+      let { map } = this;
+      layers.forEach(layer => {
         if (map.getLayer(layer)) {
           if (layer.filter) {
             map.setFilter(layer.id, layer.filter);
           }
           if (layer.paint) {
-            Object.keys(layer.paint).forEach((key) => {
+            Object.keys(layer.paint).forEach(key => {
               map.setPaintProperty(layer.id, key, layer.paint[key]);
             });
           }
           if (layer.layout) {
-            Object.keys(layer.layout).forEach((key) => {
+            Object.keys(layer.layout).forEach(key => {
               map.setLayoutProperty(layer.id, key, layer.layout[key]);
             });
           }
@@ -535,10 +552,8 @@ export default {
       this.enableDrawer();
       this.drawer && this.drawer.deleteAll();
     },
-    toggleQueryByRect() {
-    },
-    toggleQueryByPolygon() {
-    },
+    toggleQueryByRect() {},
+    toggleQueryByPolygon() {},
     addMarkerAndLine(eventData) {
       const vm = this;
       let feature = eventData.features[0];
@@ -547,36 +562,49 @@ export default {
 
       // vm.markerCoordinate = [onePoint[0], onePoint[1]];
       let lineString = turf.lineString(
-          [
-            [onePoint.geometry.coordinates[0], onePoint.geometry.coordinates[1]],
-            [center[0], center[1]],
-          ],
-          {name: "line1"}
+        [
+          [onePoint.geometry.coordinates[0], onePoint.geometry.coordinates[1]],
+          [center[0], center[1]]
+        ],
+        { name: "line1" }
       );
       let point = turf.point([center[0], center[1]]);
       // let radiusinkm = Math.round(Math.sqrt(area / Math.PI));
       let radiusinkm = feature.properties.radiusInKm;
       vm.centerCoordinate = [center[0], center[1]];
       let midPoint = turf.midpoint(onePoint, point);
-      vm.markerCoordinate = [midPoint.geometry.coordinates[0], midPoint.geometry.coordinates[1]]
+      vm.markerCoordinate = [
+        midPoint.geometry.coordinates[0],
+        midPoint.geometry.coordinates[1]
+      ];
       vm.radius = parseInt(radiusinkm * 1000);
       if (vm.showSize) {
         vm.showMarkerCopy = true;
-        let pointStyle = vm.oldStyles.filter(s =>
-            s.id === "gl-draw-point-active")
-        let lineStyle = vm.oldStyles.filter(s =>
-            s.id === "gl-draw-line-active")
+        let pointStyle = vm.oldStyles.filter(
+          s => s.id === "gl-draw-point-active"
+        );
+        let lineStyle = vm.oldStyles.filter(
+          s => s.id === "gl-draw-line-active"
+        );
         // 先判断是否存在id为extent的线图层，有则删除，无则添加线图层
         if (vm.map.getLayer("centerPoint")) {
-          vm.map.getSource('centerPoint').setData(point);
+          vm.map.getSource("centerPoint").setData(point);
           if (vm.map.getLayer("centerPoint")) {
-            vm.map.setPaintProperty("centerPoint", "circle-radius", pointStyle[0].paint['circle-radius']);
-            vm.map.setPaintProperty("centerPoint", "circle-color", pointStyle[0].paint['circle-color']);
+            vm.map.setPaintProperty(
+              "centerPoint",
+              "circle-radius",
+              pointStyle[0].paint["circle-radius"]
+            );
+            vm.map.setPaintProperty(
+              "centerPoint",
+              "circle-color",
+              pointStyle[0].paint["circle-color"]
+            );
           }
         } else {
           vm.map.addSource("centerPoint", {
             type: "geojson",
-            data: point,
+            data: point
           });
           vm.map.addLayer({
             id: "centerPoint",
@@ -586,15 +614,23 @@ export default {
           });
         }
         if (vm.map.getLayer("extent")) {
-          vm.map.getSource('extent').setData(lineString);
+          vm.map.getSource("extent").setData(lineString);
           if (vm.map.getLayer("extent")) {
-            vm.map.setPaintProperty("extent", "line-color", lineStyle[0].paint['line-color']);
-            vm.map.setPaintProperty("extent", "line-width", lineStyle[0].paint['line-width']);
+            vm.map.setPaintProperty(
+              "extent",
+              "line-color",
+              lineStyle[0].paint["line-color"]
+            );
+            vm.map.setPaintProperty(
+              "extent",
+              "line-width",
+              lineStyle[0].paint["line-width"]
+            );
           }
         } else {
           vm.map.addSource("extent", {
             type: "geojson",
-            data: lineString,
+            data: lineString
           });
           vm.map.addLayer({
             id: "extent",
@@ -605,8 +641,8 @@ export default {
           });
         }
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -623,11 +659,10 @@ export default {
   /*left: 10px;*/
   z-index: 3000;
 }
-.radiusValue{
+.radiusValue {
   margin-bottom: calc(6vh);
   padding: 5px;
   border-radius: 5px;
   background-color: cornsilk;
 }
-
 </style>
