@@ -596,8 +596,8 @@ export default {
       let rainOptions = {
         speed,
         angle,
-        rainLength,
-        alpha
+        rainLength: length,
+        alpha: rainOpacity
       };
       this.$_enableWeather("Rain", rainOptions);
     },
@@ -616,7 +616,7 @@ export default {
       );
       let fogOptions = {
         fogcolor: color,
-        alpha: this.this.weatherSetting.fogParams.fogOpacity
+        alpha: this.weatherSetting.fogParams.fogOpacity
       };
       this.$_enableWeather("Fog", fogOptions);
     },
