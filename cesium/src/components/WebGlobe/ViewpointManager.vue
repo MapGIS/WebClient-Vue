@@ -246,35 +246,35 @@ export default {
           viewGroupItems: [
             {
               duration: 3,
-              image: "",
+              image: require("./ViewpointManager/upload/globe.jpg"),
               orientation: { heading: 360, roll: 0, pitch: -90 },
               name: "视点_1",
               destination: {
-                x: 112.50000000000001,
-                y: 34.50000000000017,
-                z: 31787777.818207026747
+                x: 104,
+                y: 28.011763478186143,
+                z: 10071759.273162084
               }
             },
             {
               duration: 3,
-              image: "",
+              image: require("./ViewpointManager/upload/china.jpg"),
               orientation: { heading: 360, roll: 0, pitch: -90 },
               name: "视点_2",
               destination: {
-                x: 102.50000000000001,
-                y: 24.50000000000017,
-                z: 3178777.818207026747
+                x: 108.91,
+                y: 32.52,
+                z: 5000000.0
               }
             },
             {
               duration: 3,
-              image: "",
+              image: require("./ViewpointManager/upload/wuhan.jpg"),
               orientation: { heading: 360, roll: 0, pitch: -90 },
               name: "视点_3",
               destination: {
-                x: 89.50000000000001,
-                y: 37.50000000000017,
-                z: 3178777.818207026747
+                x: 114.21,
+                y: 30.42,
+                z: 150000.0
               }
             }
           ]
