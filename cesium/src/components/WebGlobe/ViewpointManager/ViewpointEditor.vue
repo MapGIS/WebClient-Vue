@@ -25,7 +25,8 @@
       </mapgis-ui-form-item>
       <mapgis-ui-input-number-panel
         size="medium"
-        label="飞行时间"
+        label="飞行时间(s)"
+        :slider="false"
         v-model="duration"
         :labelCol="{ span: 6 }"
         :wrapperCol="{ span: 18 }"
