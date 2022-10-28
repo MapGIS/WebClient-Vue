@@ -638,6 +638,7 @@ export default {
     .collapse-item {
       .collapse-item-div {
         .content {
+          margin: 0 0 0 16px;
           .collapse-item-content {
             .collapse-item-left {
               margin: 10px 30px 10px -30px;
