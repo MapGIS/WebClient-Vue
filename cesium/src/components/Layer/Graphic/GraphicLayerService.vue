@@ -633,7 +633,7 @@ export default {
       switch (currentEditType) {
         case "point":
           drawOptions.style = {
-            disableDepthTestDistance: Number.POSITIVE_INFINITY,
+            disableDepthTestDistance: 0,
             color: Cesium.Color.fromAlpha(
               Cesium.Color.fromCssColorString(editPanelValues.color),
               editPanelValues.opacity / 100
