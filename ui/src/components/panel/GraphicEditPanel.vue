@@ -586,7 +586,6 @@ import icons from "../iconfont/GraphicBase64Icons";
 
 export default {
   name: "mapgis-ui-graphic-edit-panel",
-  inject: ["uploadUrl"],
   props: {
     editList: {
       type: Object
@@ -606,6 +605,10 @@ export default {
       default() {
         return [];
       }
+    },
+    uploadUrl: {
+      type: String,
+      default: ""
     }
   },
   watch: {

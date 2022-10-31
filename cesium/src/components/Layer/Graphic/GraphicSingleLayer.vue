@@ -19,6 +19,7 @@
         :dataSource="dataSourceCopy"
         :currentEditType="currentEditType"
         :graphicGroups="graphicGroups"
+        :uploadUrl="uploadUrl"
         @change="$_changeEditPanelValues"
         @changeGroup="$_changeGroup"
         @stopDrawing="$_stopDraw"
@@ -128,6 +129,10 @@ export default {
       default() {
         return [];
       }
+    },
+    uploadUrl: {
+      type: String,
+      default: ""
     }
   },
   data() {
@@ -2043,19 +2048,14 @@ export default {
           transform: graphic.modelMatrix,
           boundingSphere: graphic.boundingSphere,
           getViewModel: function(e) {
-            // console.log(e);
             if (graphic.type === "model") {
               const { heading, pitch, roll } = e.headingPitchRoll;
-              graphic.heading = heading;
-              graphic.pitch = pitch;
-              graphic.roll = roll;
 
               vm.editPanelValues.orientation = {
                 heading: heading ? Math.PI / heading : 0,
                 pitch: pitch ? Math.PI / pitch : 0,
                 roll: roll ? Math.PI / roll : 0
               };
-              graphic.positions = [e.position];
               vm.editPanelValues.positions = vm.$_cartesian3ToLongLat(
                 e.position
               );

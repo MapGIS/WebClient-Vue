@@ -51,6 +51,7 @@
       :models="models"
       :autoFlyToGraphic="autoFlyToGraphic"
       :groupGraphicIDs="groupGraphicIDs"
+      :uploadUrl="uploadUrl"
       ref="graphicLayer"
       v-model="currentLayer"
       @saveCamera="$_saveCamera"
@@ -112,6 +113,10 @@ export default {
       default: false
     },
     baseUrl: {
+      type: String,
+      default: ""
+    },
+    uploadUrl: {
       type: String,
       default: ""
     }
