@@ -33,6 +33,19 @@ export default {
             },
             control:'text'
         },
+        type:{
+            description:'瓦片加载模式',
+            type: { name: 'String', required: false },
+            defaultValue: 'raster',
+            table:{
+                type: { summary: 'String' },
+                defaultValue: { summary: 'raster' },
+            },
+            control:{
+                type:'select',
+                options:['raster','image-map']
+            }
+        },
         // baseUrl: "http://219.142.81.85/arcgis/rest/services/10wanZH/MapServer",
         bboxsr:{
             description:'',
