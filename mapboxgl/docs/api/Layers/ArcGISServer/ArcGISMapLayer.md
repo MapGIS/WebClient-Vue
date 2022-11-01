@@ -1,4 +1,4 @@
-# ArcGIS地图
+# ArcGIS 地图
 
 > mapgis-arcgis-map-layer
 
@@ -12,6 +12,13 @@ All common [layers props](/api/Layers/README.md#props)
 - **默认值:** `null`
 - **侦听属性**
 - **描述:** 地图请求的基地址路径。
+
+### `type`
+
+- **类型:** `String`
+- **默认值:** `raster`
+- **侦听属性**
+- **描述:** 瓦片请求加载模式，可选 raster、image-map。raster 以瓦片方式加载，image-map 以屏幕区域请求方式加载。
 
 ### `bboxsr`
 
@@ -108,26 +115,26 @@ import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
 import Mapbox from "@mapgis/mapbox-gl";
 import {
   MapgisWebMap,
-  MapgisArcgisMapLayer
+  MapgisArcgisMapLayer,
 } from "@mapgis/webclient-vue-mapboxgl";
 export default {
   components: {
     MapgisWebMap,
-    MapgisArcgisMapLayer
+    MapgisArcgisMapLayer,
   },
   data() {
     return {
       layers: "show:0,2,4,7,9,10,11,12",
       baseUrl:
         "http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer",
-      layerId: "arcgismap_layerid"
+      layerId: "arcgismap_layerid",
     };
   },
 
   created() {
     // 在组件中使用mapbox-gl.js的脚本库功能
     this.mapbox = Mapbox;
-  }
+  },
 };
 </script>
 <style lang="css">

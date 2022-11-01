@@ -7,48 +7,52 @@ export default {
   props: {
     baseUrl: {
       type: String,
-      default: null
+      default: null,
+    },
+    type: {
+      type: String,
+      default: "raster",
     },
     bboxsr: {
-      type: Number
+      type: Number,
     },
     imagesr: {
-      type: Number
+      type: Number,
     },
     layers: {
       type: String,
-      default: null
+      default: null,
     },
     width: {
       type: Number,
-      default: 256
+      default: 256,
     },
     height: {
       type: Number,
-      default: 256
+      default: 256,
     },
     format: {
       type: String,
-      default: "png"
+      default: "png",
     },
     f: {
       type: String,
-      default: "image"
+      default: "image",
     },
     dpi: {
       type: Number,
-      default: 96
+      default: 96,
     },
     transparent: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   created() {
     this.$_deferredMount();
 
     if (this.baseUrl) {
-      this.$watch("baseUrl", function(next) {
+      this.$watch("baseUrl", function (next) {
         if (this.initial) return;
         if (next !== "") {
           this.$_deferredUnMount();
@@ -57,13 +61,23 @@ export default {
       });
     }
     if (this.layers) {
-      this.$watch("layers", function(next) {
+      this.$watch("layers", function (next) {
         if (this.initial) return;
         if (next !== "") {
           this.$_deferredUnMount();
           this.$_deferredMount();
         }
       });
+
+      if (this.type) {
+        this.$watch("type", function (next) {
+          if (this.initial) return;
+          if (next !== "") {
+            this.$_deferredUnMount();
+            this.$_deferredMount();
+          }
+        });
+      }
     }
   },
   methods: {
@@ -114,12 +128,51 @@ export default {
 
     $_deferredMount() {
       this.$_init();
-      let source = {
-        type: "raster",
-        tiles: [this._url],
-        tileSize: this.tileSize,
-        ...this.source
-      };
+      let source;
+
+      let type = this.type;
+
+      if (type === "image-map") {
+        // image-map类型
+        source = {
+          url: this._url,
+          ...this.source,
+          rebaseRequestUrl: function (url, params) {
+            let bbox;
+            const code = this.map.getCRS().epsgCode.split(":")[1];
+            let bound;
+            if (code === "3857") {
+              bound = params.mercatorBound;
+            } else if (code === "4326") {
+              bound = params.latlngBounds;
+            } else {
+              throw new Error(`不支持EPSG:${code}的投影`);
+            }
+            bbox = bound.toString();
+            const [imageWidth, imageHeight] = params.imageSize;
+            const split = url.split("&");
+            split.forEach((part) => {
+              if (part.includes("size=")) {
+                url = url.replace(part, `size=${imageWidth},${imageHeight}`);
+              }
+              if (part.includes("bbox=")) {
+                url = url.replace(part, `bbox=${bbox}`);
+              }
+            });
+            return url;
+          },
+          type: "image-map",
+        };
+      } else {
+        // 瓦片类型
+        source = {
+          type: "raster",
+          tiles: [this._url],
+          tileSize: this.tileSize,
+          ...this.source,
+        };
+      }
+
       this.map.on("dataloading", this.$_watchSourceLoading);
       try {
         this.map.addSource(this.sourceId || this.layerId, source);
@@ -133,6 +186,6 @@ export default {
       this.$_bindLayerEvents(layerEvents);
       this.map.off("dataloading", this.$_watchSourceLoading);
       this.initial = false;
-    }
-  }
+    },
+  },
 };
