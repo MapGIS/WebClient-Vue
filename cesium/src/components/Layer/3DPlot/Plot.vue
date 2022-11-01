@@ -343,7 +343,7 @@ export default {
       let drawTool = this.getDrawTool();
       if (drawTool) {
         drawTool.stopDraw();
-        // drawTool.drawPlot(symbol);
+        drawTool.drawPlot(symbol);
       }
     },
     /**
