@@ -409,13 +409,6 @@ export default {
         this.$emit("hidden-road");
         // 设置播放动画的各项属性
         if (this.positions.length > 0) {
-          // const path = this.positions
-          //   .map(item => {
-          //     return [item.x, item.y, item.z];
-          //   })
-          //   .reduce(function(a, b) {
-          //     return a.concat(b);
-          //   });
           window.SceneWanderManager.animation.positions = this.Cesium.Cartesian3.fromDegreesArrayHeights(
             this.positions
           );

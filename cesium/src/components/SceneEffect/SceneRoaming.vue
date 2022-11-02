@@ -288,45 +288,46 @@ export default {
       const material = this.Cesium.Material.fromType("Color");
       material.uniforms.color = new this.Cesium.Color(0.9, 0.6, 0.1, 0.5);
       this.linePoints = [];
+      const vm = this;
 
       this.draw.startDrawingMarker({
         material,
         addDefaultMark: true,
         callback: coord => {
           // 获取当前坐标系标准
-          const ellipsoid = this.viewer.scene.globe.ellipsoid;
+          const ellipsoid = vm.viewer.scene.globe.ellipsoid;
           // 根据坐标系标准，将笛卡尔坐标转换为地理坐标
           const cartographic = ellipsoid.cartesianToCartographic(
             coord.position
           );
           // 获取该位置的经纬度坐标和镜头高度
-          const lonDegree = this.Cesium.Math.toDegrees(cartographic.longitude);
-          const latDegree = this.Cesium.Math.toDegrees(cartographic.latitude);
+          const lonDegree = vm.Cesium.Math.toDegrees(cartographic.longitude);
+          const latDegree = vm.Cesium.Math.toDegrees(cartographic.latitude);
           const height = cartographic.height;
 
-          this.addedPositions.push({
+          vm.addedPositions.push({
             x: lonDegree,
             y: latDegree,
             z: height
           });
 
-          this.linePoints.push(lonDegree);
-          this.linePoints.push(latDegree);
-          this.linePoints.push(height);
+          vm.linePoints.push(lonDegree);
+          vm.linePoints.push(latDegree);
+          vm.linePoints.push(height);
 
-          if (this.addedPositions.length > 1) {
-            if (this.polyline) {
-              this.viewer.entities.remove(this.polyline);
+          if (vm.addedPositions.length > 1) {
+            if (vm.polyline) {
+              vm.viewer.entities.remove(vm.polyline);
             }
 
-            this.polyline = this.viewer.entities.add({
+            vm.polyline = vm.viewer.entities.add({
               name: "scence-roaming",
               polyline: {
-                positions: this.Cesium.Cartesian3.fromDegreesArrayHeights(
-                  this.linePoints
+                positions: vm.Cesium.Cartesian3.fromDegreesArrayHeights(
+                  vm.linePoints
                 ),
                 width: 2,
-                material: this.Cesium.Color.RED,
+                material: vm.Cesium.Color.RED,
                 clampToGround: false
               }
             });
@@ -362,10 +363,17 @@ export default {
         showPath,
         showInfo
       } = this;
+      const pathPositions = this.addedPositions
+        .map(item => {
+          return [item.x, item.y, item.z];
+        })
+        .reduce(function(a, b) {
+          return a.concat(b);
+        });
       const path = {
         name: this.name,
         id: pathId,
-        path: this.addedPositions,
+        path: pathPositions,
         para: {
           speed,
           exHeight,
