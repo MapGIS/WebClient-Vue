@@ -109,7 +109,7 @@
             :isLoop="roamingPath.para.isLoop"
             :showPath="roamingPath.para.showPath"
             :showInfo="roamingPath.para.showInfo"
-            @hidden-road="hiddenRoad"
+            @remove-road="removeRoad"
             @show-road="showRoad"
           ></path-roaming>
         </div>
@@ -198,7 +198,6 @@ export default {
     paths: {
       handler() {
         this.pathsCopy = this.paths;
-        this.drawLines();
       },
       deep: true,
       immediate: true
@@ -275,6 +274,7 @@ export default {
       });
     },
     unmount() {
+      this.onGotoHome();
       this._stopAdded();
       this._stopRoaming();
       this.$emit("unload", this);
@@ -316,9 +316,7 @@ export default {
           vm.linePoints.push(height);
 
           if (vm.addedPositions.length > 1) {
-            if (vm.polyline) {
-              vm.viewer.entities.remove(vm.polyline);
-            }
+            vm.removeRoad();
 
             vm.polyline = vm.viewer.entities.add({
               name: "scence-roaming",
@@ -405,7 +403,7 @@ export default {
     onGotoHome() {
       this.$refs.refPathRoaming.onClickStop(true);
       this.roaming = false;
-      this.hiddenRoad();
+      this.removeRoad();
     },
     onDeletePath(path) {
       const index = this.pathsCopy.indexOf(path);
@@ -424,46 +422,40 @@ export default {
         this.pathsCopy = paths;
       }
     },
-    drawLines() {
-      this.viewer.entities.removeAll();
-      this.pathsCopy.forEach(item => {
-        this.viewer.entities.add({
-          id: item.id + "",
-          show: false,
-          polyline: {
-            positions: this.Cesium.Cartesian3.fromDegreesArrayHeights(
-              item.path
-            ),
-            width: 5,
-            material: this.Cesium.Color.RED
-          }
-        });
-      });
-    },
-    hiddenRoad() {
-      const hiddenLine = this.viewer.entities.getById(this.lastClickLineId);
-      hiddenLine.show = false;
+    removeRoad() {
+      if (this.polyline) {
+        this.viewer.entities.remove(this.polyline);
+        this.polyline = undefined;
+      }
     },
     showRoad() {
-      const showLine = this.viewer.entities.getById(this.lastClickLineId);
-      showLine.show = true;
-      this.viewer.flyTo(showLine);
+      this.removeRoad();
+      this.polyline = this.viewer.entities.add({
+        id: this.roamingPath.id + "",
+        polyline: {
+          positions: this.Cesium.Cartesian3.fromDegreesArrayHeights(
+            this.roamingPath.path
+          ),
+          width: 2,
+          material: this.Cesium.Color.RED,
+          clampToGround: false
+        }
+      });
+      this.viewer.flyTo(this.polyline);
     },
-
     _stopAdded() {
+      this.removeRoad();
       if (this.draw) {
         this.draw.stopDrawing();
       }
       this.interactiveAdding = false;
       this.addedPositions = [];
       this.linePoints = [];
-
-      if (this.polyline) {
-        this.viewer.entities.remove(this.polyline);
-      }
     },
     _stopRoaming() {
       this.$refs.refPathRoaming && this.$refs.refPathRoaming.onClickStop();
+      // onClickStop会触发showload，这里还要去除一下
+      this.removeRoad();
     },
     onGetPathRoaming() {
       return this.$refs.refPathRoaming;
