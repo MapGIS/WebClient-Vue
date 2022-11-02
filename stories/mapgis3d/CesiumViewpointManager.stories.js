@@ -4,13 +4,13 @@ import Mapgis3dViewpointManager from "../../cesium/src/components/WebGlobe/Viewp
 
 export default {
   title: "三维/场景子组件/视点管理",
-  component:Mapgis3dViewpointManager,
+  component: Mapgis3dViewpointManager,
   argTypes: {},
 };
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components:{'mapgis-3d-viewpoint-manager':Mapgis3dViewpointManager},
+  components: { "mapgis-3d-viewpoint-manager": Mapgis3dViewpointManager },
   data() {
     return {
       m3dUrl: `http://${webclient.ip}:${webclient.port}/igs/rest/g3d/ZondyModels`,
@@ -29,14 +29,13 @@ const Template = (args, { argTypes }) => ({
       :maximumScreenSpaceError="maximumScreenSpaceError"
       :url="m3dUrl"
   />
-  <mapgis-3d-viewpoint-manager style="position:absolute;top:10px;left:10px;"></mapgis-3d-viewpoint-manager>
+  <mapgis-3d-viewpoint-manager class="storybook-ui-card" style="width: 320px;"></mapgis-3d-viewpoint-manager>
 </mapgis-web-scene>
     `,
 });
 
 export const 视点管理 = Template.bind({});
-视点管理.args = {
-};
+视点管理.args = {};
 视点管理.parameters = {
   docs: {
     description: {
@@ -44,4 +43,3 @@ export const 视点管理 = Template.bind({});
     },
   },
 };
-
