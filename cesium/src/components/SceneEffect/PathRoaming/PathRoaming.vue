@@ -6,15 +6,8 @@
           <mapgis-ui-form-item label="移动速度">
             <mapgis-ui-row>
               <mapgis-ui-col :span="24">
-                <!-- <mapgis-ui-input
-                  v-model.number="speedCopy"
-                  type="number"
-                  :min="1"
-                  addon-after="公里/小时"
-                  :disabled="isStart ? true : false"
-                /> -->
                 <mapgis-ui-input-number-addon
-                  v-model.number="speedCopy"
+                  v-model.number="settingCopy.speed"
                   :min="1"
                   addon-after="公里/小时"
                   :disabled="isStart ? true : false"
@@ -25,15 +18,8 @@
           <mapgis-ui-form-item label="附加高程">
             <mapgis-ui-row>
               <mapgis-ui-col :span="24">
-                <!-- <mapgis-ui-input
-                  v-model.number="exHeightCopy"
-                  type="number"
-                  :min="0"
-                  addon-after="米"
-                  :disabled="isStart ? true : false"
-                /> -->
                 <mapgis-ui-input-number-addon
-                  v-model.number="exHeightCopy"
+                  v-model.number="settingCopy.exHeight"
                   :min="0"
                   addon-after="米"
                   :disabled="isStart ? true : false"
@@ -42,37 +28,37 @@
             </mapgis-ui-row>
           </mapgis-ui-form-item>
           <mapgis-ui-input-number-panel
-            v-show="animationTypeCopy !== 1"
+            v-show="settingCopy.animationType !== 1"
             size="large"
             label="方位角"
             :range="[-180, 180]"
-            v-model="headingCopy"
-            :disabled="animationTypeCopy === 1 ? true : false"
+            v-model="settingCopy.heading"
+            :disabled="settingCopy.animationType === 1 ? true : false"
             @change="val => onEffectsChange(val, 'heading')"
           />
           <mapgis-ui-input-number-panel
-            v-show="animationTypeCopy === 2"
+            v-show="settingCopy.animationType === 2"
             size="large"
             label="俯仰角"
             :range="[-180, 180]"
-            v-model="pitchCopy"
-            :disabled="animationTypeCopy !== 2 ? true : false"
+            v-model="settingCopy.pitch"
+            :disabled="settingCopy.animationType !== 2 ? true : false"
             @change="val => onEffectsChange(val, 'pitch')"
           />
           <mapgis-ui-input-number-panel
-            v-show="animationTypeCopy !== 1"
+            v-show="settingCopy.animationType !== 1"
             size="large"
             label="距离"
             :range="[1, 200]"
-            v-model="rangeCopy"
-            :disabled="animationTypeCopy === 1 ? true : false"
+            v-model="settingCopy.range"
+            :disabled="settingCopy.animationType === 1 ? true : false"
             @change="val => changeRange(val)"
           />
           <mapgis-ui-form-item label="视角">
             <mapgis-ui-row>
               <mapgis-ui-col :span="24">
                 <mapgis-ui-select
-                  v-model="animationTypeCopy"
+                  v-model="settingCopy.animationType"
                   @change="onTypeChange"
                 >
                   <mapgis-ui-select-option
@@ -89,7 +75,7 @@
             <mapgis-ui-row>
               <mapgis-ui-col :span="24">
                 <mapgis-ui-select
-                  v-model="interpolationAlgorithmCopy"
+                  v-model="settingCopy.interpolationAlgorithm"
                   :disabled="isStart ? true : false"
                 >
                   <mapgis-ui-select-option
@@ -124,21 +110,21 @@
         <div>
           <mapgis-ui-checkbox
             style="line-height:32px;"
-            :checked="isLoopCopy"
+            :checked="settingCopy.isLoop"
             @change="e => onCheckBoxChange(e.target.checked, 'isLoop')"
           >
             循环
           </mapgis-ui-checkbox>
           <mapgis-ui-checkbox
             style="line-height:32px;"
-            :checked="showPathCopy"
+            :checked="settingCopy.showPath"
             @change="e => onCheckBoxChange(e.target.checked, 'showPath')"
           >
             显示路径
           </mapgis-ui-checkbox>
           <mapgis-ui-checkbox
             style="line-height:32px;"
-            :checked="showInfoCopy"
+            :checked="settingCopy.showInfo"
             @change="e => onCheckBoxChange(e.target.checked, 'showInfo')"
           >
             显示提示信息
@@ -173,50 +159,27 @@ export default {
       type: String,
       default: "vertical" // 'horizontal' 'vertical' 'inline'
     },
+    setting: {
+      type: Object,
+      default: () => {
+        return {
+          speed: 10,
+          exHeight: 1,
+          heading: 90,
+          pitch: 0,
+          range: 1,
+          animationType: 1,
+          interpolationAlgorithm: "LagrangePolynomialApproximation",
+          isLoop: true,
+          showPath: true,
+          showInfo: true
+        };
+      }
+    },
     positions: {
       type: Array,
       required: true,
       default: () => []
-    },
-    speed: {
-      type: Number,
-      default: 10
-    },
-    exHeight: {
-      type: Number,
-      default: 1
-    },
-    heading: {
-      type: Number,
-      default: 90
-    },
-    pitch: {
-      type: Number,
-      default: 0
-    },
-    range: {
-      type: Number,
-      default: 1
-    },
-    animationType: {
-      type: Number,
-      default: 1
-    },
-    interpolationAlgorithm: {
-      type: String,
-      default: "LagrangePolynomialApproximation"
-    },
-    isLoop: {
-      type: Boolean,
-      default: true
-    },
-    showPath: {
-      type: Boolean,
-      default: true
-    },
-    showInfo: {
-      type: Boolean,
-      default: true
     },
     models: {
       type: Array,
@@ -245,79 +208,27 @@ export default {
       deep: true,
       immediate: true
     },
-    speed: {
+    setting: {
       handler() {
-        this.speedCopy = this.speed;
-      },
-      immediate: true
-    },
-    exHeight: {
-      handler() {
-        this.exHeightCopy = this.exHeight;
-      },
-      immediate: true
-    },
-    heading: {
-      handler() {
-        this.headingCopy = this.heading;
-      },
-      immediate: true
-    },
-    pitch: {
-      handler() {
-        this.pitchCopy = this.pitch;
-      },
-      immediate: true
-    },
-    range: {
-      handler() {
-        this.rangeCopy = this.range;
-      },
-      immediate: true
-    },
-    animationType: {
-      handler() {
-        this.animationTypeCopy = this.animationType;
-      },
-      immediate: true
-    },
-    interpolationAlgorithm: {
-      handler() {
-        this.interpolationAlgorithmCopy = this.interpolationAlgorithm;
-      },
-      immediate: true
-    },
-    isLoop: {
-      handler() {
-        this.isLoopCopy = this.isLoop;
-      },
-      immediate: true
-    },
-    showPath: {
-      handler() {
-        this.showPathCopy = this.showPath;
-      },
-      immediate: true
-    },
-    showInfo: {
-      handler() {
-        this.showInfoCopy = this.showInfo;
+        this.settingCopy = JSON.parse(JSON.stringify(this.setting));
       },
       immediate: true
     }
   },
   data() {
     return {
-      speedCopy: 10,
-      exHeightCopy: 1,
-      headingCopy: 90,
-      pitchCopy: 0,
-      rangeCopy: 1, // range<1,信息提示框会闪烁，必须限制大于等于1
-      animationTypeCopy: 1,
-      interpolationAlgorithmCopy: "LagrangePolynomialApproximation",
-      isLoopCopy: true,
-      showPathCopy: true,
-      showInfoCopy: true,
+      settingCopy: {
+        speed: 10,
+        exHeight: 1,
+        heading: 90,
+        pitch: 0,
+        range: 1,
+        animationType: 1,
+        interpolationAlgorithm: "LagrangePolynomialApproximation",
+        isLoop: true,
+        showPath: true,
+        showInfo: true
+      },
       isStart: false,
       isPause: false,
       perspectiveOptions: [
@@ -349,20 +260,6 @@ export default {
         }
       ],
       modelUrl: ""
-      // modelOptions: [
-      //   {
-      //     label: "人",
-      //     value: "models/CesiumModels/Cesium_Man.glb"
-      //   },
-      //   {
-      //     label: "卡车",
-      //     value: "models/CesiumModels/CesiumMilkTruck.glb"
-      //   },
-      //   {
-      //     label: "飞机",
-      //     value: "models/CesiumModels/Cesium_Air.gltf"
-      //   }
-      // ]
     };
   },
   created() {},
@@ -430,23 +327,37 @@ export default {
       if (this.isStart) window.SceneWanderManager.animation.stop();
       this.isStart = false;
       this.isPause = false;
-      // 显示绘制的路线
-      !flag && this.$emit("show-road");
+      if (!flag) {
+        // 显示绘制的路线
+        this.$emit("show-road");
+      } else {
+        // 退出配置界面时，触发以下函数
+        this.$emit("update-setting", this.settingCopy);
+      }
     },
     _setAnimationAttr() {
+      const {
+        speed,
+        exHeight,
+        heading,
+        pitch,
+        animationType,
+        interpolationAlgorithm,
+        isLoop,
+        showPath,
+        showInfo
+      } = this.settingCopy;
       // 默认速度的单位为m/s，这里将公里每小时转换为m/s
-      window.SceneWanderManager.animation.speed = (
-        this.speedCopy * 0.28
-      ).toFixed(2);
-      window.SceneWanderManager.animation.exHeight = this.exHeightCopy;
-      window.SceneWanderManager.animation.heading = this.headingCopy;
-      window.SceneWanderManager.animation.pitch = this.pitchCopy;
-      window.SceneWanderManager.animation.animationType = this.animationTypeCopy;
-      window.SceneWanderManager.animation.isLoop = this.isLoopCopy;
-      window.SceneWanderManager.animation.isShowPath = this.showPathCopy;
-      window.SceneWanderManager.animation.showInfo = this.showInfoCopy;
+      window.SceneWanderManager.animation.speed = (speed * 0.28).toFixed(2);
+      window.SceneWanderManager.animation.exHeight = exHeight;
+      window.SceneWanderManager.animation.heading = heading;
+      window.SceneWanderManager.animation.pitch = pitch;
+      window.SceneWanderManager.animation.animationType = animationType;
+      window.SceneWanderManager.animation.isLoop = isLoop;
+      window.SceneWanderManager.animation.isShowPath = showPath;
+      window.SceneWanderManager.animation.showInfo = showInfo;
 
-      switch (this.interpolationAlgorithmCopy) {
+      switch (interpolationAlgorithm) {
         case "LagrangePolynomialApproximation":
           window.SceneWanderManager.animation.interpolationAlgorithm = this.Cesium.LagrangePolynomialApproximation; // 拉格朗日插值
           break;
@@ -462,14 +373,14 @@ export default {
 
       // 若是上帝视角，设置动画的视角高度为200
       if (window.SceneWanderManager.animation.animationType === 3) {
-        this.rangeCopy = 200;
+        this.settingCopy.range = 200;
       } else {
-        this.rangeCopy = 1;
+        this.settingCopy.range = 1;
       }
-      window.SceneWanderManager.animation.range = this.rangeCopy;
+      window.SceneWanderManager.animation.range = this.settingCopy.range;
     },
     onCheckBoxChange(val, key) {
-      this[`${key}Copy`] = val;
+      this.settingCopy[key] = val;
       if (key === "showPath") {
         if (
           window.SceneWanderManager.animation &&
@@ -481,11 +392,6 @@ export default {
         window.SceneWanderManager.animation[key] = val;
       }
     },
-    // onSpeedChange(val) {
-    //   window.SceneWanderManager.animation.speed = parseFloat(
-    //     val * 0.28
-    //   ).toFixed(2);
-    // },
     onEffectsChange(val, key) {
       window.SceneWanderManager.animation[key] = this.Cesium.Math.toRadians(
         parseInt(val)
@@ -498,11 +404,11 @@ export default {
       window.SceneWanderManager.animation.animationType = value;
       // 若是上帝视角，设置动画的视角高度为200
       if (window.SceneWanderManager.animation.animationType === 3) {
-        this.rangeCopy = 200;
+        this.settingCopy.range = 200;
       } else {
-        this.rangeCopy = 1;
+        this.settingCopy.range = 1;
       }
-      window.SceneWanderManager.animation.range = this.rangeCopy;
+      window.SceneWanderManager.animation.range = this.settingCopy.range;
     },
     onModelChange(value) {
       window.SceneWanderManager.animation._modelUrl = value;

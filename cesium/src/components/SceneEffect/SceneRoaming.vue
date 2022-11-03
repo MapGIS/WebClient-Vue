@@ -99,16 +99,8 @@
             ref="refPathRoaming"
             :positions="roamingPath.path"
             :models="models"
-            :speed="roamingPath.para.speed"
-            :exHeight="roamingPath.para.exHeight"
-            :heading="roamingPath.para.heading"
-            :pitch="roamingPath.para.pitch"
-            :range="roamingPath.para.range"
-            :animationType="roamingPath.para.animationType"
-            :interpolationAlgorithm="roamingPath.para.interpolationAlgorithm"
-            :isLoop="roamingPath.para.isLoop"
-            :showPath="roamingPath.para.showPath"
-            :showInfo="roamingPath.para.showInfo"
+            :setting="roamingPath.para"
+            @update-setting="updateSetting"
             @remove-road="removeRoad"
             @show-road="showRoad"
           ></path-roaming>
@@ -133,45 +125,22 @@ export default {
       type: String,
       default: "vertical" // 'horizontal' 'vertical' 'inline'
     },
-    speed: {
-      type: Number,
-      default: 10
-    },
-    exHeight: {
-      type: Number,
-      default: 1
-    },
-    heading: {
-      type: Number,
-      default: 90
-    },
-    pitch: {
-      type: Number,
-      default: 0
-    },
-    range: {
-      type: Number,
-      default: 1
-    },
-    animationType: {
-      type: Number,
-      default: 1
-    },
-    interpolationAlgorithm: {
-      type: String,
-      default: "LagrangePolynomialApproximation"
-    },
-    isLoop: {
-      type: Boolean,
-      default: true
-    },
-    showPath: {
-      type: Boolean,
-      default: true
-    },
-    showInfo: {
-      type: Boolean,
-      default: true
+    setting: {
+      type: Object,
+      default: () => {
+        return {
+          speed: 10,
+          exHeight: 1,
+          heading: 90,
+          pitch: 0,
+          range: 1,
+          animationType: 1,
+          interpolationAlgorithm: "LagrangePolynomialApproximation",
+          isLoop: true,
+          showPath: true,
+          showInfo: true
+        };
+      }
     },
     models: {
       type: Array,
@@ -197,7 +166,7 @@ export default {
   watch: {
     paths: {
       handler() {
-        this.pathsCopy = this.paths;
+        this.pathsCopy = JSON.parse(JSON.stringify(this.paths));
       },
       deep: true,
       immediate: true
@@ -360,7 +329,7 @@ export default {
         isLoop,
         showPath,
         showInfo
-      } = this;
+      } = this.setting;
       const pathPositions = this.addedPositions
         .map(item => {
           return [item.x, item.y, item.z];
@@ -422,6 +391,15 @@ export default {
         this.pathsCopy = paths;
       }
     },
+    updateSetting(val) {
+      const vm = this;
+      this.pathsCopy.map(item => {
+        if (item.id == vm.roamingPath.id) {
+          item.para = { ...val };
+        }
+        return item;
+      });
+    },
     removeRoad() {
       if (this.polyline) {
         this.viewer.entities.remove(this.polyline);
@@ -453,9 +431,8 @@ export default {
       this.linePoints = [];
     },
     _stopRoaming() {
-      this.$refs.refPathRoaming && this.$refs.refPathRoaming.onClickStop();
-      // onClickStop会触发showload，这里还要去除一下
-      this.removeRoad();
+      // onClickStop必须传true，不然会显示路径
+      this.$refs.refPathRoaming && this.$refs.refPathRoaming.onClickStop(true);
     },
     onGetPathRoaming() {
       return this.$refs.refPathRoaming;
