@@ -8,55 +8,55 @@ export default {
   inject: ["Cesium", "vueCesium", "viewer"],
   components: {
     Popup,
-    PopupContent,
+    PopupContent
   },
   props: {
     vueKey: {
       type: String,
-      default: "default",
+      default: "default"
     },
     vueIndex: {
       type: Number,
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
-      },
+      }
     },
     layerId: {
       type: String,
-      default: "theme",
+      default: "theme"
     },
     autoReset: {
       type: Boolean,
-      default: true,
+      default: true
     },
     enableClick: {
       type: Boolean,
-      default: false,
+      default: false
     },
     enableHover: {
       type: Boolean,
-      default: false,
+      default: false
     },
     enableQuery: {
       type: Boolean,
-      default: false,
+      default: false
     },
     highlightSymbol: {
       type: Object,
       default: () => {
         return {};
-      },
+      }
     },
     queryInfo: {
       type: Object,
       default: () => {
         return {};
-      },
+      }
     },
     visible: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
   data() {
     return {
@@ -65,26 +65,26 @@ export default {
       forceRender: true,
       visiblePop: true,
       checkTypeResult: 0,
-      otherQueryDataArr: [],
+      otherQueryDataArr: []
     };
   },
   watch: {
     gemotryAttribute: {
-      handler: function (value) {
+      handler: function(value) {
         if (value) {
           this.popVisiable = true;
         }
-      },
+      }
     },
     enableQuery: {
-      handler: function (value) {
+      handler: function(value) {
         let layer = this.findDataSource(this.layerType);
         if (value) {
           this.queryPrimitive();
         } else {
           this.clearQuery();
         }
-      },
+      }
     },
     queryInfo: {
       handler(value) {
@@ -93,13 +93,13 @@ export default {
           this.queryPrimitive();
         }
       },
-      deep: true,
+      deep: true
     },
     visible: {
-      handler: function (value) {
+      handler: function(value) {
         this.changeVisible();
-      },
-    },
+      }
+    }
   },
   methods: {
     // 获取vueManager中的source
@@ -210,8 +210,12 @@ export default {
     // 清除查询样式
     clearQuery() {
       for (let i = 0; i < this.tempQueryDataArr.length; i++) {
-        let { queryPrimitive, id, attributes, beforeAttr } =
-          this.tempQueryDataArr[i];
+        let {
+          queryPrimitive,
+          id,
+          attributes,
+          beforeAttr
+        } = this.tempQueryDataArr[i];
         attributes.color = beforeAttr.color;
         attributes.show = beforeAttr.show;
       }
@@ -235,17 +239,21 @@ export default {
           );
           if (outlinePrimitive) {
             let idOutline = outlinePrimitive.geometryInstances[j].id;
-            let attributesOutline =
-              outlinePrimitive.getGeometryInstanceAttributes(idOutline);
-            attributesOutline.show =
-              new Cesium.ShowGeometryInstanceAttribute.toValue(visible);
+            let attributesOutline = outlinePrimitive.getGeometryInstanceAttributes(
+              idOutline
+            );
+            attributesOutline.show = new Cesium.ShowGeometryInstanceAttribute.toValue(
+              visible
+            );
           }
         }
       }
     },
     // 检查专题要素类型
     checkType() {
+      if (JSON.stringify(this.renderer) === "{}") return;
       let symbol = this.renderer.symbol || this.renderer.defaultSymbol;
+      if (!symbol) return;
       let symbolLayers = symbol.symbolLayers;
       if (!symbolLayers.resource) {
         this.checkTypeResult = 0;
@@ -281,8 +289,8 @@ export default {
         this.gemotryAttribute = [
           {
             layer: { id: "矢量图层" },
-            properties: primitive.extendAttr,
-          },
+            properties: primitive.extendAttr
+          }
         ];
         let oldPickedFeature = { color: pickedFeature.primitive._color };
         primitive._color = symbolLayers.material.color;
@@ -296,15 +304,15 @@ export default {
           this.gemotryAttribute = [
             {
               layer: { id: "矢量图层" },
-              properties: pickExtendAttr,
-            },
+              properties: pickExtendAttr
+            }
           ];
           let attributes = primitive.getGeometryInstanceAttributes(id);
           let beforeAttr = { color: attributes.color, show: attributes.show };
           this.tempHighlightData = {
             pickedFeature,
             attributes: beforeAttr,
-            pickExtendAttr,
+            pickExtendAttr
           };
           attributes.color = new Cesium.ColorGeometryInstanceAttribute.toValue(
             symbolLayers.material.color
@@ -347,6 +355,6 @@ export default {
       ) {
         this.clearQuery();
       }
-    },
-  },
+    }
+  }
 };
