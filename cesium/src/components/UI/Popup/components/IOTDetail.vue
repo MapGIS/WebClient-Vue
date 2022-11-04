@@ -212,7 +212,10 @@ export default {
               }
             },
             legend: {
-              data: categories
+              data: categories,
+              textStyle: {
+                color: "#fff"
+              }
             },
             animationDuration: 1500,
             animationEasingUpdate: "quinticInOut",
