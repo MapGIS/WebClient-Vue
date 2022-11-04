@@ -136,6 +136,7 @@
 <script>
 import BaseLayer from "./BaseLayer";
 import clonedeep from "lodash.clonedeep";
+import axios from "axios";
 
 export default {
   name: "mapgis-3d-bim-component",
@@ -344,8 +345,11 @@ export default {
             return;
           }
 
+          // tree数据改为从接口获取
+          const url = m3d ? m3d.resource._url : undefined;
+          url && this.getBIMTreeData(url);
           let tree = m3d ? m3d.m3dtree : undefined;
-          vm.parseTree(tree);
+          // vm.parseTree(tree);
           vm.$emit("loaded", { component: vm });
           let collection = new Cesium.PrimitiveCollection();
           vueCesium.BimManager.addSource(vueKey, innerVueIndex, m3d, {
@@ -389,20 +393,21 @@ export default {
     },
     // 构件树内部逻辑
     parseTree(tree) {
-      const displaytree = this.findDisplayTree(tree);
-      let cbtree = this.loopTreeNode(displaytree, "", undefined);
+      // const displaytree = this.findDisplayTree(tree);
+      let cbtree = this.loopTreeNode(tree, "", undefined);
       this.layerTree.splice(0, 1, cbtree);
     },
     loopTreeNode(node, prefix, parent) {
       const vm = this;
-      let key = `${prefix}_${node.depth}`;
-      vm.layerIds.push(node.index);
-      vm.allLayerIds.push(node.index);
+      // let key = `${prefix}_${node.depth}`;
+      let key = `${prefix}_${node.lodLevel}`;
+      vm.layerIds.push(node.name);
+      vm.allLayerIds.push(node.name);
 
       let cbnode = {
-        title: node.nodeName,
-        key: node.index,
-        index: node.index,
+        title: node.name,
+        key: node.name,
+        index: node.name,
         attMap: node.attMap && node.attMap._obj ? node.attMap._obj : {},
         icon: "mapgis-sanweiditu",
         children: [],
@@ -414,11 +419,13 @@ export default {
       if (cbnode.index == "rootNode") {
         cbnode.rootNode = true;
       }
-      node.m3dtreeChildren.forEach(child => {
-        let c = vm.loopTreeNode(child, key, cbnode);
-        cbnode.children.push(c);
-        cbnode.count += c.count;
-      });
+      if (node.childrenNode && node.childrenNode.length > 0) {
+        node.childrenNode.forEach(child => {
+          let c = vm.loopTreeNode(child, key, cbnode);
+          cbnode.children.push(c);
+          cbnode.count += c.count;
+        });
+      }
       if (cbnode.children.length <= 0) {
         [delete cbnode.children];
         cbnode.count = 1;
@@ -922,6 +929,26 @@ export default {
           /* m3d.pickedOid = undefined; */
         }
       }
+    },
+    // 获取选中的构建树tree数据
+    getBIMTreeData(url) {
+      return new Promise((resolve, reject) => {
+        const params = {
+          f: "json",
+          include: "descendants",
+          maxDepth: 10,
+          maxCount: 1000
+        };
+        axios
+          .get(url + "/nodes/root", { params })
+          .then(res => {
+            this.parseTree(res.data);
+          })
+          .catch(Error => {
+            this.$message.error("BIM构建树节点信息获取失败！");
+            reject(Error);
+          });
+      });
     }
   }
 };
