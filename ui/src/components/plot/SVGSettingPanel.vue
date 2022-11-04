@@ -2,8 +2,13 @@
   <div class="mapgis-ui-svg-setting-panel-container">
     <div class="mapgis-ui-svg-setting-panel-left">
       <div class="mapgis-ui-svg-setting-panel-svg">
-        <div class="mapgis-ui-svg-setting-panel-svg-outer" id="SVGICON" @click="clickOrigin" @mousemove="mouseMove"
-             v-html="screenOuterHTML"></div>
+        <div
+          class="mapgis-ui-svg-setting-panel-svg-outer"
+          id="SVGICON"
+          @click="clickOrigin"
+          @mousemove="mouseMove"
+          v-html="screenOuterHTML"
+        ></div>
       </div>
       <div class="mapgis-ui-svg-setting-panel-svg-config">
         <mapgis-ui-row style="margin: 10px 0">
@@ -11,34 +16,49 @@
         </mapgis-ui-row>
         <mapgis-ui-row style="margin: 10px 0">
           <span>名称:</span>
-          <mapgis-ui-input style="margin-top: 3px" v-model="name"/>
+          <mapgis-ui-input style="margin-top: 3px" v-model="name" />
         </mapgis-ui-row>
         <mapgis-ui-row style="margin: 10px 0">
-          <span>类型: </span><br>
+          <span>类型: </span><br />
           <div
-              :class="{'mapgis-ui-svg-setting-panel-active': type === 0}"
-              class="mapgis-ui-svg-setting-panel-check-one" @click="selectSymbolType('点')">点
+            :class="{ 'mapgis-ui-svg-setting-panel-active': type === 0 }"
+            class="mapgis-ui-svg-setting-panel-check-one"
+            @click="selectSymbolType('点')"
+          >
+            点
           </div>
           <div
-              :class="{'mapgis-ui-svg-setting-panel-active': type === 1}"
-              class="mapgis-ui-svg-setting-panel-check-one" @click="selectSymbolType('线')">线
+            :class="{ 'mapgis-ui-svg-setting-panel-active': type === 1 }"
+            class="mapgis-ui-svg-setting-panel-check-one"
+            @click="selectSymbolType('线')"
+          >
+            线
           </div>
           <div
-              style="margin-right: 0;"
-              :class="{'mapgis-ui-svg-setting-panel-active': type === 2}"
-              class="mapgis-ui-svg-setting-panel-check-one" @click="selectSymbolType('区')">区
+            style="margin-right: 0;"
+            :class="{ 'mapgis-ui-svg-setting-panel-active': type === 2 }"
+            class="mapgis-ui-svg-setting-panel-check-one"
+            @click="selectSymbolType('区')"
+          >
+            区
           </div>
         </mapgis-ui-row>
         <mapgis-ui-row style="margin: 10px 0">
-          <span>姿态: </span><br>
+          <span>姿态: </span><br />
           <div
-              style="margin-right: 20px"
-              :class="{'mapgis-ui-svg-setting-panel-active': pose === 0}"
-              class="mapgis-ui-svg-setting-panel-check-two" @click="selectSymbolPose('平躺')">平躺
+            style="margin-right: 20px"
+            :class="{ 'mapgis-ui-svg-setting-panel-active': pose === 0 }"
+            class="mapgis-ui-svg-setting-panel-check-two"
+            @click="selectSymbolPose('平躺')"
+          >
+            平躺
           </div>
           <div
-              :class="{'mapgis-ui-svg-setting-panel-active': pose === 1}"
-              class="mapgis-ui-svg-setting-panel-check-two" @click="selectSymbolPose('站立')">站立
+            :class="{ 'mapgis-ui-svg-setting-panel-active': pose === 1 }"
+            class="mapgis-ui-svg-setting-panel-check-two"
+            @click="selectSymbolPose('站立')"
+          >
+            站立
           </div>
         </mapgis-ui-row>
       </div>
@@ -49,7 +69,11 @@
         <div>大小: {{ svgWidth }} * {{ svgHeight }}</div>
         <div>
           鼠标位置: X {{ mouseX }} Y {{ mouseY }}
-          <span style="float: right;cursor: pointer;color: #00a0e9;" @click="copy">复制SVG代码</span>
+          <span
+            style="float: right;cursor: pointer;color: #00a0e9;"
+            @click="copy"
+            >复制SVG代码</span
+          >
         </div>
         <div class="mapgis-ui-svg-setting-panel-svg-content">
           {{ outerHTML }}
@@ -58,54 +82,89 @@
       <div class="mapgis-ui-svg-setting-panel-svg-part">
         <span style="font-weight: bolder">细节设置:</span>
         <div class="mapgis-ui-svg-setting-panel-svg-part-container">
-          <div class="mapgis-ui-svg-setting-panel-svg-part-container-left"
-            :style="{'overflow-y': Object.keys(parts).length > 4 ? 'scroll' : 'none'}"
+          <div
+            class="mapgis-ui-svg-setting-panel-svg-part-container-left"
+            :style="{
+              'overflow-y': Object.keys(parts).length > 4 ? 'scroll' : 'none'
+            }"
           >
             <div
-                :style="{background: part.id === currentPart.id ? 'rgb(24,144,255)' : 'none',color: part.id === currentPart.id ? 'white' : 'rgba(225, 225, 225, 1)'}"
-                style="padding: 12px 20px;cursor: pointer" @click="setCurrentPart(part)" :key="index"
-                v-for="(part,index) in parts">
+              :style="{
+                background:
+                  part.id === currentPart.id ? 'rgb(24,144,255)' : 'none',
+                color:
+                  part.id === currentPart.id
+                    ? 'white'
+                    : 'rgba(225, 225, 225, 1)'
+              }"
+              style="padding: 12px 20px;cursor: pointer"
+              @click="setCurrentPart(part)"
+              :key="index"
+              v-for="(part, index) in parts"
+            >
               {{ part.id }}
             </div>
           </div>
           <div class="mapgis-ui-svg-setting-panel-svg-part-container-right">
             <mapgis-ui-row v-show="type !== 0">
-              <span>类型:</span> <br>
-              <mapgis-ui-select style="width: 310px;margin-top: 5px" default-value="轴线符号" @change="selectPartType">
-                <mapgis-ui-select-option :key="index" v-for="(partTypeValue, index) in partTypes">{{
-                    partTypeValue
-                  }}
+              <span>类型:</span> <br />
+              <mapgis-ui-select
+                style="width: 310px;margin-top: 5px"
+                default-value="轴线符号"
+                @change="selectPartType"
+              >
+                <mapgis-ui-select-option
+                  :key="index"
+                  v-for="(partTypeValue, index) in partTypes"
+                  >{{ partTypeValue }}
                 </mapgis-ui-select-option>
               </mapgis-ui-select>
             </mapgis-ui-row>
             <mapgis-ui-row v-show="type !== 0 && type !== 2 && partType === 13">
-              <span>姿态:</span> <br>
-              <mapgis-ui-select style="width: 310px;margin-top: 5px" default-value="平躺" @change="selectPartPose">
-                <mapgis-ui-select-option :key="index" v-for="(partPoseValue, index) in partPoses">{{
-                    partPoseValue
-                  }}
+              <span>姿态:</span> <br />
+              <mapgis-ui-select
+                style="width: 310px;margin-top: 5px"
+                default-value="平躺"
+                @change="selectPartPose"
+              >
+                <mapgis-ui-select-option
+                  :key="index"
+                  v-for="(partPoseValue, index) in partPoses"
+                  >{{ partPoseValue }}
                 </mapgis-ui-select-option>
               </mapgis-ui-select>
             </mapgis-ui-row>
             <mapgis-ui-row v-show="type !== 0 && partType === 13">
-              <span>原点:</span> <br>
-              <mapgis-ui-input @change="addConfig" style="margin-top: 5px;width: 150px;margin-right: 6px" type="Number" v-model="originX"
-                               step=0.1
-                               max=200
-                               min=0
+              <span>原点:</span> <br />
+              <mapgis-ui-input
+                @change="addConfig"
+                style="margin-top: 5px;width: 150px;margin-right: 6px"
+                type="Number"
+                v-model="originX"
+                step="0.1"
+                max="200"
+                min="0"
               />
-              <mapgis-ui-input @change="addConfig" style="margin-top: 5px;width: 150px" type="Number" v-model="originY"
-                               step=0.1
-                               max=200
-                               min=0
+              <mapgis-ui-input
+                @change="addConfig"
+                style="margin-top: 5px;width: 150px"
+                type="Number"
+                v-model="originY"
+                step="0.1"
+                max="200"
+                min="0"
               />
             </mapgis-ui-row>
             <mapgis-ui-row v-show="type === 2 && partType === 13">
-              <span>位置:</span> <br>
-              <mapgis-ui-input @change="addConfig" style="margin-top: 5px;width: 310px" type="Number" v-model="markerOffset"
-                               step=0.01
-                               max=1
-                               min=0
+              <span>位置:</span> <br />
+              <mapgis-ui-input
+                @change="addConfig"
+                style="margin-top: 5px;width: 310px"
+                type="Number"
+                v-model="markerOffset"
+                step="0.01"
+                max="1"
+                min="0"
               />
             </mapgis-ui-row>
           </div>
@@ -114,8 +173,12 @@
     </div>
     <div class="mapgis-ui-svg-setting-panel-bottom">
       <mapgis-ui-row>
-<!--        <mapgis-ui-button style="float: right;margin-top: 7px;margin-right: 10px;">取消</mapgis-ui-button>-->
-        <mapgis-ui-button style="float: right;margin-top: 7px;margin-right: 10px;"  @click="getNewSvg">下载符号</mapgis-ui-button>
+        <!--        <mapgis-ui-button style="float: right;margin-top: 7px;margin-right: 10px;">取消</mapgis-ui-button>-->
+        <mapgis-ui-button
+          style="float: right;margin-top: 7px;margin-right: 10px;"
+          @click="getNewSvg"
+          >下载符号</mapgis-ui-button
+        >
       </mapgis-ui-row>
     </div>
   </div>
@@ -143,9 +206,9 @@ export default {
   },
   watch: {
     url: {
-      handler: function (obj) {
+      handler: function(obj) {
         let url = this.url;
-        if(this.baseUrl){
+        if (this.baseUrl) {
           url = this.baseUrl + url;
         }
         this.getSvg(url);
@@ -154,13 +217,13 @@ export default {
       immediate: true
     },
     svgXML: {
-      handler: function () {
-        if(this.svgXML){
+      handler: function() {
+        if (this.svgXML) {
           this.screenOuterHTML = this.svgXML;
-          this.$nextTick(function () {
+          this.$nextTick(function() {
             let svgDom = document.getElementById("SVGICON").children;
             this.getChild(svgDom[0]);
-          })
+          });
         }
       },
       deep: true,
@@ -186,6 +249,8 @@ export default {
       types: ["点", "线", "区"],
       //符号类型
       type: 0,
+      // 标绘符号类型值，
+      svgType: "simplepoint",
       //符号姿态，0：平躺，1：站立
       poses: ["平躺", "站立"],
       //符号姿态
@@ -193,7 +258,14 @@ export default {
       SVG_NS: "http://www.w3.org/2000/svg",
       //部件类型，10：轴线符号，11：延伸轴线符号，12：轴线平铺单元，13：轴线
       //上点符号，21:区填充图案（存在时，三维场景下整个符号贴地渲染）,22:区中心点符号
-      partTypes: ["轴线符号", "延伸轴线符号", "轴线平铺单元", "轴线上点符号", "区填充图案", "区中心点符号"],
+      partTypes: [
+        "轴线符号",
+        "延伸轴线符号",
+        "轴线平铺单元",
+        "轴线上点符号",
+        "区填充图案",
+        "区中心点符号"
+      ],
       //部件类型
       partType: 10,
       //符号姿态，0：平躺，1：站立
@@ -201,25 +273,25 @@ export default {
       //符号姿态
       partPose: 0,
       parts: {},
-      currentPart: {id: undefined},
+      currentPart: { id: undefined },
       outerHTML: undefined,
       screenOuterHTML: undefined,
       markerOffset: 0,
       prevSvg: undefined,
       prevStroke: undefined,
       prevFill: undefined
-    }
+    };
   },
   methods: {
     copy() {
       const input = document.createElement("input");
-      input.setAttribute('readonly', 'readonly'); // 设置为只读, 防止在 ios 下拉起键盘
+      input.setAttribute("readonly", "readonly"); // 设置为只读, 防止在 ios 下拉起键盘
       // input.setAttribute('value', value); // textarea 不能用此方式赋值, 否则无法复制内容
       input.value = this.outerHTML;
       document.body.appendChild(input);
       input.setSelectionRange(0, 9999); // 防止 ios 下没有全选内容而无法复制
       input.select();
-      document.execCommand('copy');
+      document.execCommand("copy");
       document.body.removeChild(input);
       this.$message.success("已经复制内容到剪贴板!");
     },
@@ -236,9 +308,25 @@ export default {
       });
 
       const xml = await new DOMParser().parseFromString(
-          res.data,
-          "image/svg+xml"
+        res.data,
+        "image/svg+xml"
       );
+      // 获取标绘符号类型
+      this.svgType =
+        xml.documentElement.attributes["zondyPlotSymbol:type"].value;
+      // console.log("type", this.svgType);
+      switch (this.svgType) {
+        case "simplepoint":
+          this.type = 0;
+          break;
+        case "simpleline":
+          this.type = 1;
+          break;
+        case "simplearea":
+          this.type = 2;
+          break;
+      }
+
       this.screenOuterHTML = xml.documentElement.outerHTML;
       this.getChild(xml.documentElement);
       this.svgWidth = xml.documentElement.width.baseVal.valueAsString;
@@ -256,7 +344,7 @@ export default {
       this.originX = this.mouseX;
       this.originY = this.mouseY;
       this.currentPart.markerOrigin = this.originX + "," + this.originY;
-      if(this.currentPart.type !== 13) {
+      if (this.currentPart.type !== 13) {
         this.setHighLight(e.target);
         this.outerHTML = e.target.outerHTML;
       }
@@ -283,10 +371,10 @@ export default {
             this.prevSvg.style.fill = this.prevFill;
           }
         } else {
-          let {children} = this.prevSvg;
+          let { children } = this.prevSvg;
           for (let i = 0; i < children.length; i++) {
             if (children[i].tagName !== "g") {
-              let id = children[i].getAttribute("id")
+              let id = children[i].getAttribute("id");
               if (this.prevStroke[id]) {
                 children[i].style.stroke = this.prevStroke[id];
               }
@@ -300,10 +388,14 @@ export default {
     },
     setFillHighLight(svg) {
       if (svg.tagName === "g") {
-        let {children} = svg;
+        let { children } = svg;
         for (let i = 0; i < children.length; i++) {
-          if (children[i].tagName !== "g" && children[i].style.fill !== "none") {
-            this.prevFill[children[i].getAttribute("id")] = children[i].style.fill;
+          if (
+            children[i].tagName !== "g" &&
+            children[i].style.fill !== "none"
+          ) {
+            this.prevFill[children[i].getAttribute("id")] =
+              children[i].style.fill;
             children[i].style.fill = "#00ffff";
           }
         }
@@ -318,10 +410,14 @@ export default {
     },
     setStrokeHighLight(svg) {
       if (svg.tagName === "g") {
-        let {children} = svg;
+        let { children } = svg;
         for (let i = 0; i < children.length; i++) {
-          if (children[i].tagName !== "g" && children[i].style.stroke !== "none") {
-            this.prevStroke[children[i].getAttribute("id")] = children[i].style.stroke;
+          if (
+            children[i].tagName !== "g" &&
+            children[i].style.stroke !== "none"
+          ) {
+            this.prevStroke[children[i].getAttribute("id")] =
+              children[i].style.stroke;
             children[i].style.stroke = "#00ffff";
           }
         }
@@ -355,11 +451,21 @@ export default {
             break;
           case "path":
             let id = parts[i].getAttribute("id");
-            if (this.parts[id].type === 10 || this.parts[id].type === 11 || this.parts[id].type === 12) {
+            if (
+              this.parts[id].type === 10 ||
+              this.parts[id].type === 11 ||
+              this.parts[id].type === 12
+            ) {
               delete this.parts[id].pose;
-              parts[i].setAttribute("style", this.correctStyle(parts[i].getAttribute("style")));
+              parts[i].setAttribute(
+                "style",
+                this.correctStyle(parts[i].getAttribute("style"))
+              );
             }
-            if (this.parts[id].type === 21 || (this.type === 2 && this.parts[id].type === 13)) {
+            if (
+              this.parts[id].type === 21 ||
+              (this.type === 2 && this.parts[id].type === 13)
+            ) {
               delete this.parts[id].pose;
             }
             this.setPath(svg, tag, parts[i]);
@@ -374,11 +480,14 @@ export default {
             this.setEllipse(svg, tag, parts[i]);
             break;
           case "g":
-            const {children} = parts[i];
+            const { children } = parts[i];
             let g = document.createElementNS(this.SVG_NS, "g");
             this.setZondyAtt(g, parts[i].getAttribute("id"));
             for (let j = 0; j < children.length; j++) {
-              let cTag = document.createElementNS(this.SVG_NS, children[j].tagName);
+              let cTag = document.createElementNS(
+                this.SVG_NS,
+                children[j].tagName
+              );
               switch (children[j].tagName) {
                 case "path":
                   this.setPath(g, cTag, children[j]);
@@ -468,9 +577,12 @@ export default {
       }
       tag.setAttribute("x", part.getAttribute("x"));
       tag.setAttribute("y", part.getAttribute("y"));
-      const {children} = part;
+      const { children } = part;
       for (let i = 0; i < children.length; i++) {
-        let tspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+        let tspan = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "tspan"
+        );
         tspan.setAttribute("id", children[i].getAttribute("id"));
         tspan.setAttribute("x", children[i].getAttribute("x"));
         tspan.setAttribute("y", children[i].getAttribute("y"));
@@ -517,10 +629,16 @@ export default {
           tag.setAttribute("zondyPlotSymbolItem:pose", this.parts[id].pose);
         }
         if (this.parts[id].hasOwnProperty("markerOrigin")) {
-          tag.setAttribute("zondyPlotSymbolItem:markerOrigin", this.parts[id].markerOrigin);
+          tag.setAttribute(
+            "zondyPlotSymbolItem:markerOrigin",
+            this.parts[id].markerOrigin
+          );
         }
         if (this.parts[id].hasOwnProperty("markerOffset")) {
-          tag.setAttribute("zondyPlotSymbolItem:markerOffset", this.parts[id].markerOffset);
+          tag.setAttribute(
+            "zondyPlotSymbolItem:markerOffset",
+            this.parts[id].markerOffset
+          );
         }
       }
     },
@@ -533,16 +651,20 @@ export default {
     },
     getChild(svg) {
       this.svg = svg;
-      this.$nextTick(function () {
+      this.$nextTick(function() {
         let svgDom = document.getElementById("SVGICON").children;
         if (svgDom.length > 0) {
           svgDom[0].setAttribute("width", "200");
           svgDom[0].setAttribute("height", "200");
         }
       });
-      let children = svg.children, parts = [];
+      let children = svg.children,
+        parts = [];
       for (let i = 0; i < children.length; i++) {
-        if (children[i].tagName.indexOf("sodipodi") < 0 && children[i].tagName !== "defs") {
+        if (
+          children[i].tagName.indexOf("sodipodi") < 0 &&
+          children[i].tagName !== "defs"
+        ) {
           this.partList.push("部件" + (this.partList.length + 1));
           parts.push(children[i]);
         }
@@ -558,14 +680,16 @@ export default {
       for (let i = 0; i < parts.length; i++) {
         let tag = document.createElementNS(this.SVG_NS, parts[i].tagName);
         this.parts[parts[i].getAttribute("id")] = {};
-        this.parts[parts[i].getAttribute("id")].id = parts[i].getAttribute("id");
+        this.parts[parts[i].getAttribute("id")].id = parts[i].getAttribute(
+          "id"
+        );
         this.parts[parts[i].getAttribute("id")].isEdit = false;
       }
     },
     isEditAll() {
       let isEditAll = true;
 
-      Object.keys(this.parts).forEach((key) => {
+      Object.keys(this.parts).forEach(key => {
         if (!this.parts[key].isEdit) {
           isEditAll = false;
         }
@@ -575,15 +699,18 @@ export default {
     },
     hasMainLine() {
       let hasMainLine = false;
-      Object.keys(this.parts).forEach((key) => {
-        if (this.parts[key].hasOwnProperty("type") && this.parts[key].type === 10) {
+      Object.keys(this.parts).forEach(key => {
+        if (
+          this.parts[key].hasOwnProperty("type") &&
+          this.parts[key].type === 10
+        ) {
           hasMainLine = true;
         }
       });
 
       return hasMainLine;
     },
-     addConfig() {
+    addConfig() {
       switch (this.type) {
         case 0:
           break;
@@ -709,7 +836,8 @@ export default {
     },
     correctStyle(style) {
       let styles = style.split(";");
-      let result = "", styleArr = {};
+      let result = "",
+        styleArr = {};
       for (let i = 0; i < styles.length; i++) {
         if (styles[i]) {
           let sAtt = styles[i].split(":");
@@ -719,17 +847,17 @@ export default {
       if (styleArr.hasOwnProperty("fill")) {
         styleArr.fill = "none";
       }
-      Object.keys(styleArr).forEach(function (key) {
+      Object.keys(styleArr).forEach(function(key) {
         result += key + ":" + styleArr[key] + ";";
       });
 
-      return result
+      return result;
     }
   },
   mounted() {
     axios.defaults.withCredentials = true;
   }
-}
+};
 </script>
 
 <style scoped>
@@ -822,7 +950,6 @@ export default {
 }
 
 .mapgis-ui-svg-setting-panel-button {
-
 }
 
 .mapgis-ui-svg-setting-panel-svg-part-container {
@@ -846,7 +973,7 @@ export default {
 }
 
 .mapgis-ui-svg-setting-panel-active {
-  color: rgb(24,144,255);
-  border-color: rgb(24,144,255);
+  color: rgb(24, 144, 255);
+  border-color: rgb(24, 144, 255);
 }
 </style>
