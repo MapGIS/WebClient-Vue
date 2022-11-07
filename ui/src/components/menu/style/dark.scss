@@ -1,6 +1,36 @@
 $menu-prefix-cls: $ant-prefix + "-menu";
 
 .#{$menu-prefix-cls} {
+  // &-inline-collapsed {
+  //   .#{$menu-prefix-cls}-item,
+  //   .#{$menu-prefix-cls}-submenu .#{$menu-prefix-cls}-submenu-title {
+  //     &:hover {
+  //       // color: white !important;
+  //       color: $hover-color !important;
+  //     }
+  //   }
+  // }
+  &-dark {
+    .#{$menu-prefix-cls}-item,
+    .#{$menu-prefix-cls}-submenu .#{$menu-prefix-cls}-submenu-title {
+      &:hover {
+        // color: white !important;
+        color: $primary-1 !important;
+      }
+    }
+  }
+  &-light {
+    .#{$menu-prefix-cls}-item,
+    .#{$menu-prefix-cls}-submenu .#{$menu-prefix-cls}-submenu-title {
+      &:hover {
+        // color: white !important;
+        color: $primary-6 !important;
+      }
+    }
+  }
+}
+
+.#{$menu-prefix-cls} {
   // dark theme
   &-dark,
   &-dark &-sub {

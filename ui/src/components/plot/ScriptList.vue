@@ -6,7 +6,11 @@
       default-active-key="1"
     >
       <mapgis-ui-space slot="tabBarExtraContent" :size="16">
-        <mapgis-ui-iconfont type="mapgis-daoru" @click="importClick">
+        <mapgis-ui-iconfont
+          type="mapgis-daoru"
+          @click="importClick"
+          title="导入"
+        >
         </mapgis-ui-iconfont>
         <input
           type="file"
@@ -17,6 +21,7 @@
         <mapgis-ui-iconfont
           type="mapgis-daochu"
           @click="exportClick"
+          title="导出"
         ></mapgis-ui-iconfont>
       </mapgis-ui-space>
       <mapgis-ui-tab-pane key="1" tab="脚本列表" class="control-content">
@@ -166,10 +171,37 @@ export default {
     },
     addScript() {
       const vm = this;
-      this.scriptListCopy.push({
-        timeLineName: "脚本" + (vm.scriptListCopy.length + 1),
-        animations: []
-      });
+      const leng = this.scriptListCopy.length;
+      if (leng === 0) {
+        this.scriptListCopy.push({
+          timeLineName: "脚本1",
+          animations: []
+        });
+      }
+      if (leng > 0) {
+        const num = parseInt(
+          this.scriptListCopy[leng - 1].timeLineName.substr(2)
+        );
+        console.log(num, typeof num);
+        if (isNaN(num)) {
+          console.log(false)
+          this.scriptListCopy.push({
+            timeLineName: "脚本1",
+            animations: []
+          });
+        } else {
+          console.log(true)
+          this.scriptListCopy.push({
+            timeLineName: "脚本" + (num + 1),
+            animations: []
+          });
+        }
+      }
+      // this.scriptListCopy.push({
+      //   timeLineName: "脚本" + (vm.scriptListCopy.length + 1),
+      //   animations: []
+      // });
+      console.log(this.scriptListCopy);
       this.activeIndex = vm.scriptListCopy.length - 1;
       this.$emit("addScript", this.scriptListCopy);
     },
@@ -185,6 +217,7 @@ export default {
       reader.readAsText(e.target.files[0], "UTF-8");
       reader.onload = function(res) {
         let json = JSON.parse(res.target.result);
+        console.log(json);
         vm.$emit("import", json);
       };
     },

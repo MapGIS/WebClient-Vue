@@ -11,7 +11,7 @@
             :collapse="icons.collapse === undefined ? collapse : icons.collapse"
             :hasTopMargin="false"
             :hasBottomMargin="false"
-            class="class-content"
+            :class="['class-content', icons.id == activeID ? 'activeColor': '']"
             @change="chooseFolder(icons.id)"
           >
             <div
@@ -54,6 +54,7 @@ export default {
   watch: {
     data: {
       handler: function(obj) {
+        console.log(obj)
         if (!obj) return;
         if (this.format) {
           this.formatData();
@@ -68,11 +69,14 @@ export default {
   data() {
     return {
       dataCopy: undefined,
-      currentIconID: undefined
+      currentIconID: undefined,
+      activeID: undefined
     };
   },
   methods: {
     chooseFolder(id) {
+      console.log(id)
+      this.activeID = id
       this.$emit("chooseFolder", id);
     },
     formatData() {
@@ -121,8 +125,13 @@ export default {
   }
 };
 </script>
-<style scoped>
+
+<style scoped lang="less">
 .icon-wrapper-active {
+  border: 1px solid #4f90f5;
+}
+.activeColor {
+  color: #4f90f5;
   border: 1px solid #4f90f5;
 }
 </style>
