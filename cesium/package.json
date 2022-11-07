@@ -1,6 +1,6 @@
 {
   "name": "@mapgis/webclient-vue-cesium",
-"version":"16.1.9",
+"version":"16.1.10",
   "description": "mapgis webclient-vue-cesium",
   "main": "dist-libs/webclient-vue-cesium.umd.min.js",
   "module1": "src/main.js",
