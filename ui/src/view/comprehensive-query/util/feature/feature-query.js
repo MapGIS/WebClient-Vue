@@ -1,14 +1,14 @@
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  function(thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P(function(resolve) {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))(function(resolve, reject) {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,7 +44,7 @@ export default class FeatureQuery {
    * @param {boolean} combine 是否走聚合查询方式。不涉及分页的，走IGS默认的，设置为向前光标速度更快；聚合查询做了优化，查询速度 比IGS默认的快速，支持属性聚合
    */
   static query(option, combine, is3D) {
-    return __awaiter(this, void 0, void 0, function* () {
+    return __awaiter(this, void 0, void 0, function*() {
       if (!option) {
         return null;
       }
@@ -60,7 +60,7 @@ export default class FeatureQuery {
     });
   }
   static isDataStoreQuery(option) {
-    return __awaiter(this, void 0, void 0, function* () {
+    return __awaiter(this, void 0, void 0, function*() {
       const { ip, port, gdbp } = option;
       let isDataStoreQuery = false;
       let DNSName = "";
@@ -72,7 +72,7 @@ export default class FeatureQuery {
         const result = yield DataSourceCatalog.getDataSource({
           ip,
           port,
-          isDetail: true,
+          isDetail: true
         });
         const dsName = gdbp.split("@")[1].split("/")[0];
         if (result && result.length > 0) {
@@ -87,7 +87,7 @@ export default class FeatureQuery {
       }
       return {
         isDataStoreQuery,
-        DNSName,
+        DNSName
       };
     });
   }
@@ -99,13 +99,13 @@ export default class FeatureQuery {
    * @returns {Promise<void>}
    */
   static igsQuery(option, combine, is3D) {
-    return __awaiter(this, void 0, void 0, function* () {
+    return __awaiter(this, void 0, void 0, function*() {
       if (!is3D && option.docName && option.layerIdxs !== undefined) {
         // 参数是否含有文档名和图层索引号
         const docInfo = yield DocumentCatalog.getDocInfo({
           serverName: option.docName,
           ip: option.ip,
-          port: option.port,
+          port: option.port
         });
         const data =
           docInfo === null || docInfo === void 0
@@ -197,7 +197,7 @@ export default class FeatureQuery {
           ? option.EnableDisplayCondition
           : false,
       Intersect: option.Intersect !== undefined ? option.Intersect : true,
-      MustInside: option.MustInside !== undefined ? option.MustInside : false,
+      MustInside: option.MustInside !== undefined ? option.MustInside : false
     });
     queryParam.struct = new Zondy.MRFS.QueryFeatureStruct({
       IncludeAttribute:
@@ -207,7 +207,7 @@ export default class FeatureQuery {
       IncludeWebGraphic:
         option.IncludeWebGraphic !== undefined
           ? option.IncludeWebGraphic
-          : false,
+          : false
     });
     queryParam.objectIds = option.objectIds || null;
     queryParam.orderField = option.orderField || null;
@@ -232,7 +232,7 @@ export default class FeatureQuery {
     if (option.gdbp && !option.docName) {
       // 矢量图层
       queryService = new Zondy.MRFS.QueryLayerFeature(queryParam, {
-        domain,
+        domain
       });
     } else {
       // 矢量文档
@@ -254,26 +254,26 @@ export default class FeatureQuery {
         docName,
         layerIdxs,
         {
-          domain,
+          domain
         }
       );
     }
     const promise = new Promise((resolve, reject) => {
       queryService.query(
-        (res) => {
+        res => {
           if (!res) {
             resolve(undefined);
           } else {
             resolve(res);
           }
         },
-        (error) => {
-          console.log(error);
+        error => {
+          window.console.log(error);
           reject(error);
         }
       );
     });
-    return promise.then((res) => {
+    return promise.then(res => {
       return res;
     });
   }
@@ -344,7 +344,7 @@ export default class FeatureQuery {
           ? option.EnableDisplayCondition
           : false,
       Intersect: option.Intersect !== undefined ? option.Intersect : true,
-      MustInside: option.MustInside !== undefined ? option.MustInside : false,
+      MustInside: option.MustInside !== undefined ? option.MustInside : false
     });
     queryParam.rule = rule.toJSON();
     const structs = new Zondy.MRFS.QueryFeatureStruct({
@@ -355,7 +355,7 @@ export default class FeatureQuery {
       IncludeWebGraphic:
         option.IncludeWebGraphic !== undefined
           ? option.IncludeWebGraphic
-          : false,
+          : false
     });
     queryParam.structs = structs.toJSON();
     queryParam.objectIds = option.objectIds || undefined;
@@ -402,7 +402,7 @@ export default class FeatureQuery {
     }
     const promise = new Promise((resolve, reject) => {
       axios.get(url, { params: queryParam }).then(
-        (res) => {
+        res => {
           const { data } = res;
           if (!data) {
             reject("undefined");
@@ -410,12 +410,12 @@ export default class FeatureQuery {
             resolve(data);
           }
         },
-        (error) => {
+        error => {
           reject(error);
         }
       );
     });
-    return promise.then((data) => {
+    return promise.then(data => {
       return data;
     });
   }
@@ -480,7 +480,7 @@ export default class FeatureQuery {
           ? option.EnableDisplayCondition
           : false,
       Intersect: option.Intersect !== undefined ? option.Intersect : true,
-      MustInside: option.MustInside !== undefined ? option.MustInside : false,
+      MustInside: option.MustInside !== undefined ? option.MustInside : false
     });
     queryParam.struct = new Zondy.MRFS.QueryFeatureStruct({
       IncludeAttribute:
@@ -490,7 +490,7 @@ export default class FeatureQuery {
       IncludeWebGraphic:
         option.IncludeWebGraphic !== undefined
           ? option.IncludeWebGraphic
-          : false,
+          : false
     });
     queryParam.objectIds = option.objectIds || null;
     queryParam.orderField = option.orderField || null;
@@ -525,8 +525,8 @@ export default class FeatureQuery {
         )
       );
     }
-    const promise = new Promise((resolve) => {
-      queryService.GetFeature((res) => {
+    const promise = new Promise(resolve => {
+      queryService.GetFeature(res => {
         if (!res) {
           resolve(undefined);
         } else {
@@ -534,7 +534,7 @@ export default class FeatureQuery {
         }
       });
     });
-    return promise.then((res) => {
+    return promise.then(res => {
       return res;
     });
   }
@@ -634,19 +634,19 @@ export default class FeatureQuery {
     queryParam.domain = domain;
     const promise = new Promise((resolve, reject) => {
       new Zondy.PostGIS.PostgisQueryService(queryParam).query(
-        (res) => {
+        res => {
           if (!res || !res.features) {
             reject("undefined");
           } else {
             resolve(res);
           }
         },
-        (error) => {
+        error => {
           reject(error);
         }
       );
     });
-    return promise.then((res) => {
+    return promise.then(res => {
       return res;
     });
   }
@@ -699,19 +699,19 @@ export default class FeatureQuery {
     }
     const promise = new Promise((resolve, reject) => {
       new fun(queryParam).query(
-        (res) => {
+        res => {
           if (!res || !res.t) {
             reject("undefined");
           } else {
             resolve(res.t);
           }
         },
-        (error) => {
+        error => {
           reject(error);
         }
       );
     });
-    return promise.then((res) => {
+    return promise.then(res => {
       return res;
     });
   }

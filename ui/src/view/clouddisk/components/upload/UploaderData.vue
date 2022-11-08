@@ -38,7 +38,7 @@
     </div>
     <div class="mapgis-ui-upload-data-main" @click="handleImportFile">
       <!-- <img src="./images/upload.png" style="padding-top:40px;" /> -->
-      <UploadIcon  class="mapgis-ui-upload-data-svg"/>
+      <UploadIcon class="mapgis-ui-upload-data-svg" />
       <p style="font-size:16px;">选择文件</p>
     </div>
     <p class="type-desc">{{ typeDescriptions[importDataType] }}</p>
@@ -61,7 +61,7 @@
 
 <script>
 import MapgisUiUploaderFoldertree from ".//UploaderFolderTree.vue";
-import UploadIcon from '../../../svg/MajesticonsCloudUpload'
+import UploadIcon from "../../../svg/MajesticonsCloudUpload";
 import UploadMixin from "../../../../mixin/UploaderMixin";
 import {
   openUploader,
@@ -73,7 +73,7 @@ import { uuid } from "../../util/uuid";
 export default {
   name: "importData",
   mixins: [UploadMixin],
-  components: { 
+  components: {
     MapgisUiUploaderFoldertree,
     UploadIcon
   },
@@ -150,7 +150,6 @@ export default {
           taskid: taskid
         }
       });
-      console.log('【本次上传对应taskid】', taskid)
       changeUploadWebsocketTaskId({
         webSocketTaskId: taskid
       });

@@ -128,18 +128,7 @@ export default {
       deep: true,
       immediate: true
     }
-    // scriptListCopy: {
-    //   handler: function(arr) {
-    //     this.$emit("change", JSON.parse(JSON.stringify(arr)));
-    //     console.log("scriptListhange", JSON.parse(JSON.stringify(arr)));
-    //   },
-    //   deep: true,
-    //   immediate: true
-    // }
   },
-  // created() {
-  //   this.scriptListCopy = JSON.parse(JSON.stringify(this.scriptList));
-  // },
   data() {
     return {
       scriptListCopy: undefined,
@@ -182,26 +171,19 @@ export default {
         const num = parseInt(
           this.scriptListCopy[leng - 1].timeLineName.substr(2)
         );
-        console.log(num, typeof num);
+
         if (isNaN(num)) {
-          console.log(false)
           this.scriptListCopy.push({
             timeLineName: "脚本1",
             animations: []
           });
         } else {
-          console.log(true)
           this.scriptListCopy.push({
             timeLineName: "脚本" + (num + 1),
             animations: []
           });
         }
       }
-      // this.scriptListCopy.push({
-      //   timeLineName: "脚本" + (vm.scriptListCopy.length + 1),
-      //   animations: []
-      // });
-      console.log(this.scriptListCopy);
       this.activeIndex = vm.scriptListCopy.length - 1;
       this.$emit("addScript", this.scriptListCopy);
     },
@@ -217,7 +199,6 @@ export default {
       reader.readAsText(e.target.files[0], "UTF-8");
       reader.onload = function(res) {
         let json = JSON.parse(res.target.result);
-        console.log(json);
         vm.$emit("import", json);
       };
     },
@@ -229,7 +210,6 @@ export default {
       // this.$emit("export", this.scriptListCopy);
     },
     exportJSON(data, filename) {
-      // console.log(data, "exportJSON");
       if (typeof data === "object") {
         data = JSON.stringify(data, undefined, 4);
       }

@@ -170,7 +170,6 @@ export default {
         symbolData.push(symbolCls);
       });
       vm.symbolData = symbolData;
-      console.log("symbolData", symbolData);
     });
   }
 };

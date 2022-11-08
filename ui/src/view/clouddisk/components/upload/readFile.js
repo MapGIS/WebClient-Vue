@@ -23,7 +23,6 @@ export function computedMd5(file) {
       end = start + chunkSize >= file.size ? file.size : start + chunkSize; // 结尾
       fileRender.readAsArrayBuffer(blobSlice.call(file, start, end));
     } else {
-      console.log("计算结束", SparkMD5.end());
     }
   };
 }

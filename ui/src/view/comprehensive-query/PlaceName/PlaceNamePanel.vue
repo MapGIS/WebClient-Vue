@@ -62,47 +62,47 @@ export default {
   props: {
     widgetInfo: {
       type: Object,
-      default: () => ({}),
+      default: () => ({})
     },
     name: {
       type: String,
-      default: "",
+      default: ""
     },
     activeTab: {
       type: String,
-      default: "",
+      default: ""
     },
     keyword: {
       type: String,
-      default: "",
+      default: ""
     },
     cluster: {
       type: Boolean,
-      default: false,
+      default: false
     },
     baseUrl: {
       type: String,
-      default: "",
+      default: ""
     },
     defaultMarkerIcon: {
       type: String,
-      default: "",
+      default: ""
     },
     selectedMarkerIcon: {
       type: String,
-      default: "",
+      default: ""
     },
     geometry: {
       type: Object,
-      default: () => ({}),
+      default: () => ({})
     },
     /**
      * dataStore多边形查询范围
      */
     geoJSONExtent: {
       type: Object,
-      default: () => ({}),
-    },
+      default: () => ({})
+    }
   },
   data() {
     return {
@@ -115,7 +115,7 @@ export default {
       activeFieldConfigs: [],
       spinning: false,
       geojson: { type: "FeatureCollection", features: [] },
-      selectMarkers: [],
+      selectMarkers: []
     };
   },
   computed: {
@@ -129,8 +129,8 @@ export default {
       return this.widgetInfo.placeName || this.widgetInfo.dataStore;
     },
     selectedItem() {
-      return this.allItems.find((item) => this.name === item.placeName);
-    },
+      return this.allItems.find(item => this.name === item.placeName);
+    }
   },
   watch: {
     cluster() {
@@ -141,14 +141,14 @@ export default {
       handler() {
         this.selectMarkers = [];
         this.updataMarkers();
-      },
-    },
+      }
+    }
   },
   beforeCreate() {},
   mounted() {
     let { showField } = this.selectedItem;
     if (showField.length <= 0) {
-      showField = this.config.defaultShowField
+      showField = this.config.defaultShowField;
     }
     const fields = [];
     const configs = [];
@@ -157,7 +157,7 @@ export default {
       fields.push(filed);
       configs.push({
         name: filed,
-        title: showField[j].showName,
+        title: showField[j].showName
       });
     }
     this.fieldConfigs = configs;
@@ -187,12 +187,10 @@ export default {
       if (!this.isDataStoreQuery) {
         const where =
           this.keyword && this.keyword !== ""
-            ? `${
-                this.selectedItem.searchField || this.config.allSearchName
-              } LIKE '%${this.keyword}%'`
-            : `${
-                this.selectedItem.searchField || this.config.allSearchName
-              } LIKE '%'`;
+            ? `${this.selectedItem.searchField ||
+                this.config.allSearchName} LIKE '%${this.keyword}%'`
+            : `${this.selectedItem.searchField ||
+                this.config.allSearchName} LIKE '%'`;
         await this.igsQuery(where);
       } else {
         const where = this.keyword;
@@ -216,7 +214,7 @@ export default {
         return {
           lon: center.geometry.coordinates[0],
           lat: center.geometry.coordinates[1],
-          dis: distance / 2,
+          dis: distance / 2
         };
       }
       return {};
@@ -253,7 +251,7 @@ export default {
         lon,
         lat,
         dis,
-        isEsGeoCode: true,
+        isEsGeoCode: true
       };
       try {
         const geoCode = await Feature.FeatureQuery.query(datastoreParams);
@@ -269,7 +267,7 @@ export default {
                 const allProperties = {
                   ...feature.detail,
                   ...feature.areaAddr,
-                  ...feature,
+                  ...feature
                 };
                 const field = this.fields[f];
                 properties[field] = allProperties[field];
@@ -281,8 +279,8 @@ export default {
               properties,
               geometry: {
                 type: "Point",
-                coordinates,
-              },
+                coordinates
+              }
             });
           }
           this.geojson = { type: "FeatureCollection", features: markerCoords };
@@ -292,7 +290,7 @@ export default {
           this.updataMarkers();
         }
       } catch (error) {
-        console.log(error);
+        window.console.log(error);
       }
     },
     /**
@@ -308,7 +306,7 @@ export default {
         rtnLabel: false,
         f: "json",
         where,
-        geometry: this.geometry,
+        geometry: this.geometry
       };
       const { queryWay } = this.config;
       if (queryWay === "doc") {
@@ -331,8 +329,9 @@ export default {
         if (!data || !data.SFEleArray) {
           return;
         }
-        const geoJSONData =
-          Feature.FeatureConvert.featureIGSToFeatureGeoJSON(data);
+        const geoJSONData = Feature.FeatureConvert.featureIGSToFeatureGeoJSON(
+          data
+        );
         const { features } = geoJSONData;
         const markerCoords = [];
         if (!this.cluster) {
@@ -352,7 +351,7 @@ export default {
           : features.length;
         this.updataMarkers();
       } catch (error) {
-        console.log(error);
+        window.console.log(error);
       } finally {
         this.spinning = false;
       }
@@ -387,7 +386,7 @@ export default {
         return this.selectedMarkerIcon;
       }
       return this.defaultMarkerIcon;
-    },
-  },
+    }
+  }
 };
 </script>

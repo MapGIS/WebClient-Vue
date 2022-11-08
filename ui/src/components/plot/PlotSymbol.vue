@@ -11,7 +11,10 @@
             :collapse="icons.collapse === undefined ? collapse : icons.collapse"
             :hasTopMargin="false"
             :hasBottomMargin="false"
-            :class="['class-content', icons.id == activeID ? 'activeColor': '']"
+            :class="[
+              'class-content',
+              icons.id == activeID ? 'activeColor' : ''
+            ]"
             @change="chooseFolder(icons.id)"
           >
             <div
@@ -21,7 +24,14 @@
               :class="{ 'icon-wrapper-active': icon.id === currentIconID }"
               @click="onIconClick(icon, icons)"
             >
-              <img :src="`${baseUrl}${icon.id}?f=image&timestamp=${new Date().getTime()}`" :title="icon.name"/>
+              <img
+                :src="
+                  `${baseUrl}${
+                    icon.id
+                  }?f=image&timestamp=${new Date().getTime()}`
+                "
+                :title="icon.name"
+              />
             </div>
           </mapgis-ui-title-collapse>
         </template>
@@ -54,7 +64,6 @@ export default {
   watch: {
     data: {
       handler: function(obj) {
-        console.log(obj)
         if (!obj) return;
         if (this.format) {
           this.formatData();
@@ -75,8 +84,7 @@ export default {
   },
   methods: {
     chooseFolder(id) {
-      console.log(id)
-      this.activeID = id
+      this.activeID = id;
       this.$emit("chooseFolder", id);
     },
     formatData() {
@@ -115,12 +123,10 @@ export default {
     },
     onSearch(value) {
       this.$emit("search", value);
-      // console.log("search", value);
     },
     onIconClick(icon, icons) {
       this.currentIconID = icon.id;
       this.$emit("click", { icon: icon, iconCol: icons });
-      // console.log("click", { icon: icon, iconCol: icons });
     }
   }
 };

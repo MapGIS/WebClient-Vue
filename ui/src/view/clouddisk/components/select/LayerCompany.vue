@@ -81,7 +81,7 @@ const SaveToCloudDisk = [
     // isLeaf: true,
     groupId: OWNERSHIP_GROUP_FOLDER,
     scopedSlots: { icon: "icon", title: "title" }
-  },
+  }
 ];
 
 export default {
@@ -148,25 +148,20 @@ export default {
               child.title = child.name;
               child.scopedSlots = { icon: "icon", title: "title" };
               if (child.childs && child.childs.length === 0) {
-                child.isLeaf = true
+                child.isLeaf = true;
               }
-              // else if (!child.childs) {
-              //   child.loading = false;
-              //   child.children = [];
-              // }
               return child;
             });
-            console.log("loadcompany", children);
             item.dataRef.children = children;
             this.data = [...this.data];
             resolve();
           })
           .catch(error => {
             let notification = {
-              message: '网络异常,请检查链接',
+              message: "网络异常,请检查链接",
               description: error,
-              onClick: function () {
-                console.warn('错误日志：', error);
+              onClick: function() {
+                console.warn("错误日志：", error);
               }
             };
             this.$notification.error(notification);
@@ -178,10 +173,13 @@ export default {
     },
     handleSelect(keys, e) {
       if (keys.length > 0) {
-        let groupId = e.node.dataRef.groupId
+        let groupId = e.node.dataRef.groupId;
         if (groupId >= 0) {
           if (groupId !== OWNERSHIP_GROUP_FOLDER) {
-            window.localStorage.setItem("mapgis_clouddisk_group_path", e.node.dataRef.path);
+            window.localStorage.setItem(
+              "mapgis_clouddisk_group_path",
+              e.node.dataRef.path
+            );
           }
         }
         this.$emit("url", groupId);

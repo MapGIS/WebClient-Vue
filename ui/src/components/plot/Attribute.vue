@@ -221,7 +221,6 @@ export default {
     data: {
       handler: function(obj) {
         this.dataCopy = obj;
-        // console.log("obj", obj);
       },
       deep: true,
       immediate: true
@@ -271,10 +270,9 @@ export default {
     async $_parseComponent() {
       const vm = this;
       this.svgT = this.svg || (await this.getSvg(this.dataCopy.symbolUrl));
-      // console.log('this.svgT', this.svgT, this.dataCopy.symbolUrl);
 
       if (!this.svgT) {
-        return console.log("缺少符号的svg元素！");
+        return window.console.log("缺少符号的svg元素！");
       }
       let svgContainer = document.querySelectorAll(".tab-item");
       svgContainer.forEach(node => {
@@ -288,7 +286,6 @@ export default {
       keyArr.forEach((key, index) => {
         let svgDom = vm.svgT;
         const cloneDom = vm.getSvgDomByKey(svgDom, key, 30, 30);
-        // console.log("cloneDom", cloneDom);
         svgContainer[index].appendChild(cloneDom);
       });
     },
@@ -297,7 +294,7 @@ export default {
      */
     async getSvg(url) {
       if (!url) {
-        return console.log("缺少符号的svgUrl");
+        return window.console.log("缺少符号的svgUrl");
       }
       if (this.baseUrl) {
         url = this.baseUrl + url;
@@ -322,7 +319,6 @@ export default {
       const partArr = [];
       const joinArr = [];
       this._applySvgDomArray(cloneDom, partArr);
-      // console.log("keyArr", keyArr);
       const deleteArr = partArr.filter(s => {
         if (keyArr.indexOf(s.getAttribute("id")) > -1) {
           joinArr.push(s);
@@ -334,7 +330,6 @@ export default {
         t.parentElement.removeChild(t);
       });
 
-      // console.log("joinArr", joinArr);
       const cloneDomWidth = parseInt(cloneDom.getAttribute("width"), 10);
       const cloneDomHeight = parseInt(cloneDom.getAttribute("height"), 10);
 
@@ -390,7 +385,6 @@ export default {
       if (JSON.stringify(vm.dataCopy[vm.nodesName]) == "{}") {
         vm.group[4] = false;
       }
-      // console.log("vm.group", vm.group);
     },
     // 切换部件
     changeComponent(nodeStyle, name, index) {

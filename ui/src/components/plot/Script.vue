@@ -178,14 +178,6 @@ export default {
         this.getIdsOptions(this.scriptCopy.animations[index].featureIds);
       }
     }
-    // scriptCopy: {
-    //   handler: function(obj) {
-    //     this.$emit("change", obj);
-    //     console.log("scriptchange", obj);
-    //   },
-    //   deep: true,
-    //   immediate: true
-    // }
   },
   created() {
     this.scriptCopy = this.script;
@@ -231,7 +223,6 @@ export default {
     },
     addAnimation(type) {
       const vm = this;
-      // console.log("add",type);
       if (!vm.plotId) {
         this.$message.warning("没有选中动画绑定的图元对象！");
         return;
@@ -265,10 +256,6 @@ export default {
       }
       this.scriptCopy.animations[vm.activeIndex] = e;
       this.$emit(event, { index: this.activeIndex, script: this.scriptCopy });
-      // console.log(
-      //   "change-----script",event,
-      //   this.scriptCopy.animations[vm.activeIndex]
-      // );
     },
     showScriptList() {
       this.$emit("return", true);

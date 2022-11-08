@@ -8,7 +8,7 @@ import { ObjectTool } from "../../utils/object-tool";
  * @enum {number}
  */
 export var LoadStatus;
-(function (LoadStatus) {
+(function(LoadStatus) {
   /**
    * 没有加载过
    */
@@ -33,7 +33,7 @@ export var LoadStatus;
  * @enum {number}
  */
 export var LayerType;
-(function (LayerType) {
+(function(LayerType) {
   /**
    * 未知
    */
@@ -231,23 +231,7 @@ export class Layer {
      * @memberof Layer
      */
     this.isVisible = true;
-    /**
-     * 根据URL创建对应的图层
-     *
-     * @date 19/03/2021
-     * @return {*}  {Promise<Layer>}
-     * @memberof Layer
-     */
-    //   fromIGServerUrl(): Promise<Layer> {
-    //     new Promise(resolve => {
-    //       setTimeout(() => {
-    //         resolve(new Layer())
-    //       }, 2000)
-    //     }).then(val => {
-    //       console.log(val)
-    //       return val
-    //     })
-    //   }
+
     this._fullExtent = new Rectangle(0.0, 0.0, 0.0, 0.0);
     if (!properties) return;
     if (properties.description) this.description = properties.description;

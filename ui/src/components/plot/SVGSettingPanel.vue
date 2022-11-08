@@ -314,7 +314,6 @@ export default {
       // 获取标绘符号类型
       this.svgType =
         xml.documentElement.attributes["zondyPlotSymbol:type"].value;
-      // console.log("type", this.svgType);
       switch (this.svgType) {
         case "simplepoint":
           this.type = 0;

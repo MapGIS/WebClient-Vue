@@ -85,7 +85,6 @@ utils.extend(Chunk.prototype, {
       this
     );
     var data = this.prepareXhrRequest(testMethod, true);
-    console.log(data);
     this.xhr.send(data);
 
     var $ = this;

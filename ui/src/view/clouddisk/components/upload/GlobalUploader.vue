@@ -189,13 +189,13 @@ export default {
     clouddiskParam: {
       type: Object,
       default: () => {
-        return {}
+        return {};
       }
     },
     clearParam: {
       type: Boolean,
       default: false
-    },
+    }
   },
   data() {
     return {
@@ -276,7 +276,7 @@ export default {
         this.options.headers.Authorization = token;
         this.initWebsocket();
         window.clearInterval(loopToken);
-      };
+      }
     }, 200);
   },
   mounted() {},
@@ -293,28 +293,40 @@ export default {
       immediate: true,
       handler(next) {
         if (next === true) {
-          localStorage.removeItem('mapgis_clouddisk_http')
-          localStorage.removeItem('mapgis_clouddisk_ip')
-          localStorage.removeItem('mapgis_clouddisk_socket')
-          localStorage.removeItem('mapgis_clouddisk_token')
-          localStorage.removeItem('mapgis_clouddisk_group_path')
-          localStorage.removeItem('mapgis_clouddisk_id')
+          localStorage.removeItem("mapgis_clouddisk_http");
+          localStorage.removeItem("mapgis_clouddisk_ip");
+          localStorage.removeItem("mapgis_clouddisk_socket");
+          localStorage.removeItem("mapgis_clouddisk_token");
+          localStorage.removeItem("mapgis_clouddisk_group_path");
+          localStorage.removeItem("mapgis_clouddisk_id");
         }
       }
     },
     clouddiskParam: {
       immediate: true,
       handler(next) {
-        if (next.mapgis_clouddisk_token && next.mapgis_clouddisk_token !== '') {
-          localStorage.setItem('mapgis_clouddisk_http', next.mapgis_clouddisk_http)
-          localStorage.setItem('mapgis_clouddisk_ip', next.mapgis_clouddisk_ip)
-          localStorage.setItem('mapgis_clouddisk_socket', next.mapgis_clouddisk_socket)
-          localStorage.setItem('mapgis_clouddisk_token', next.mapgis_clouddisk_token)
-          localStorage.setItem('mapgis_clouddisk_group_path', next.mapgis_clouddisk_group_path)
-          localStorage.setItem('mapgis_clouddisk_id', next.mapgis_clouddisk_id)
+        if (next.mapgis_clouddisk_token && next.mapgis_clouddisk_token !== "") {
+          localStorage.setItem(
+            "mapgis_clouddisk_http",
+            next.mapgis_clouddisk_http
+          );
+          localStorage.setItem("mapgis_clouddisk_ip", next.mapgis_clouddisk_ip);
+          localStorage.setItem(
+            "mapgis_clouddisk_socket",
+            next.mapgis_clouddisk_socket
+          );
+          localStorage.setItem(
+            "mapgis_clouddisk_token",
+            next.mapgis_clouddisk_token
+          );
+          localStorage.setItem(
+            "mapgis_clouddisk_group_path",
+            next.mapgis_clouddisk_group_path
+          );
+          localStorage.setItem("mapgis_clouddisk_id", next.mapgis_clouddisk_id);
         }
       }
-    },
+    }
   },
   computed: {
     tokenChange() {
@@ -386,7 +398,7 @@ export default {
     },
     onFileAdded(file) {
       let fileType = this.param.type;
-      if (fileType === 'csv') {
+      if (fileType === "csv") {
         changeUiState({ state: "check" });
       } else {
         changeUiState({ state: "upload" });
@@ -400,21 +412,12 @@ export default {
       this.showSpinName = file.name;
       this.computeMD5(file);
     },
-    onFilesAdded(files, fileList) {
-      // console.log("files add", files, fileList);
-    },
+    onFilesAdded(files, fileList) {},
     onFileProgress(rootFile, file, chunk) {
       changeUploadProgress({ progress: file.progress() });
       let uploadingCount = self.count;
       let uploadedCount = self.uploadCount;
       self.percent = (uploadedCount / (uploadedCount + uploadingCount)) * 100;
-      console.log(
-        "上传中" +
-          file.name +
-          chunk.startByte / 1024 / 1024 +
-          "~" +
-          chunk.endByte / 1024 / 1024
-      );
     },
     onFileSuccess(rootFile, file, response, chunk) {
       subUploaderCount();
@@ -433,9 +436,8 @@ export default {
       if (res.data.needMerge) {
         let type = self.param.type;
         let isCache = self.param.isCache;
-        let isGisImport = self.param.isGisImport
-        let taskid = self.param.taskid
-        // console.warn('本次上传对应taskid:', taskid)
+        let isGisImport = self.param.isGisImport;
+        let taskid = self.param.taskid;
         let gisFormat = type === "tiff" ? "raster" : "vector";
         let formdata = {
           // @date 2021/07/16
@@ -448,32 +450,18 @@ export default {
           gisFormat: gisFormat,
           isCache: isCache,
           isGisImport: isGisImport || false,
-          taskid: taskid || ''
+          taskid: taskid || ""
         };
-        console.log("mergeSimpleUpload 尝试发送", formdata);
         mergeSimpleUpload(formdata)
           .then(res => {
-            console.log("mergeSimpleUpload 成功发送", res);
             changeCsvUploadComplete({ csvUploadComplete: true });
-            // 文件合并成功
-            // let data = res.data
-            // Notice.success({
-            //   title: data.msg,
-            //   desc: JSON.stringify(data)
-            // })
-            // refresh();
-            // 入库 // 这里服务端自动做导入
-            // if (this.$store.state.upload.param.isImport && this.$store.state.upload.param.type !== 'tiff') {
-            //   this.importFile(this.$store.state.upload.param.folderDir, file.name)
-            // }
           })
-          .catch(e => { 
-            console.log("mergeSimpleUpload 失败发送", e);
+          .catch(e => {
+            window.console.log("mergeSimpleUpload 失败发送", e);
           });
 
         // 不需要合并 */
       } else {
-        console.log("上传成功");
         changeUploadProgress({ progress: 1 });
         changeCsvUploadComplete({ csvUploadComplete: true });
       }
@@ -520,8 +508,8 @@ export default {
                     let notification = {
                       message: errorCode,
                       description: msg,
-                      onClick: function () {
-                        console.warn('错误日志：', notification);
+                      onClick: function() {
+                        console.warn("错误日志：", notification);
                       }
                     };
                     self.$notification.error(notification);
@@ -529,7 +517,7 @@ export default {
                     let notification = {
                       message: "已添加导入任务",
                       description: "稍后可到任务日志中查看导入进程"
-                    }
+                    };
                     self.$notification.success(notification);
                     addGisCurrent(dirResult[0].url);
                   }
@@ -537,10 +525,10 @@ export default {
               })
               .catch(error => {
                 let notification = {
-                  message: '网络异常,请检查链接',
+                  message: "网络异常,请检查链接",
                   description: error,
-                  onClick: function () {
-                    console.warn('错误日志：', error);
+                  onClick: function() {
+                    console.warn("错误日志：", error);
                   }
                 };
                 self.$notification.error(notification);
@@ -595,13 +583,6 @@ export default {
           self.uploader.opts.query = {
             ...self.params
           };
-
-          console.log(
-            `MD5计算完毕：${file.id} ${
-              file.name
-            } MD5：${md5} 用时：${new Date().getTime() - time} ms`
-          );
-
           self.showSpin = false;
           file.uniqueIdentifier = md5;
           file.resume(); // 浏览器端必须是 pause 客户端可以是 resume
@@ -651,27 +632,38 @@ export default {
     },
 
     initWebsocket() {
-      let vm = this
+      let vm = this;
       const wsUrl = getWebSocketUrl();
       this.BacgroundWebsocketInstance = new WebSocket(wsUrl);
       this.updateWebsocket();
-      this.BacgroundWebsocketInstance.onopen = function () {
-        console.log(`【WebSocket连接成功】【${new Date().toLocaleString()}】`, wsUrl);
+      this.BacgroundWebsocketInstance.onopen = function() {
+        window.console.log(
+          `【WebSocket连接成功】【${new Date().toLocaleString()}】`,
+          wsUrl
+        );
       };
-      this.BacgroundWebsocketInstance.onerror = function (event) {
-        console.log(`【WebSocket连接错误】【${new Date().toLocaleString()}】`, event);
+      this.BacgroundWebsocketInstance.onerror = function(event) {
+        window.console.log(
+          `【WebSocket连接错误】【${new Date().toLocaleString()}】`,
+          event
+        );
       };
-      this.BacgroundWebsocketInstance.onclose = function (event) {
-        console.log(`【WebSocket已关闭连接】【${new Date().toLocaleString()}】`, event);
+      this.BacgroundWebsocketInstance.onclose = function(event) {
+        window.console.log(
+          `【WebSocket已关闭连接】【${new Date().toLocaleString()}】`,
+          event
+        );
       };
     },
     updateWebsocket() {
       const vm = this;
       this.BacgroundWebsocketInstance.onmessage = function(event) {
-        console.log(`【WebSocket接收消息中】【${new Date().toLocaleString()}】`, event)
+        window.console.log(
+          `【WebSocket接收消息中】【${new Date().toLocaleString()}】`,
+          event
+        );
         let flag = vm.isJSON(event.data);
         if (flag) {
-          // console.log('websocket', event);
           let data = JSON.parse(event.data);
           let action = data.action;
           let msgid = data.msgid;
@@ -683,25 +675,24 @@ export default {
             changeWebSocketMsgid({ msgid: msgid });
           }
         } else {
-          // console.log("发送成功！", event.data);
         }
       };
     },
     removeWebsocket() {},
-    isJSON (str) {
-      if (typeof str === 'string') {
+    isJSON(str) {
+      if (typeof str === "string") {
         try {
-          let obj = JSON.parse(str)
-          if (typeof obj === 'object' && obj) {
-            return true
+          let obj = JSON.parse(str);
+          if (typeof obj === "object" && obj) {
+            return true;
           } else {
-            return false
+            return false;
           }
         } catch (e) {
-          return false
+          return false;
         }
       }
-      return false
+      return false;
     }
   },
   destroyed() {

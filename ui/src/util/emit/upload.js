@@ -120,7 +120,7 @@ export const changeUploadErrorMsg = payload => {
 
 /**
  * @description 表示csv数据的首次上传是否完成
- * @param {Boolean} csvUploadComplete 
+ * @param {Boolean} csvUploadComplete
  */
 export const changeCsvUploadComplete = payload => {
   EventBus.$options.upload.csvUploadComplete = payload.csvUploadComplete;
@@ -129,7 +129,7 @@ export const changeCsvUploadComplete = payload => {
 
 /**
  * @description 记录最新一次导入操作的taskId，此taskId与WebSocket消息的MsgId相同时，即表示该消息涉及当前最新一次导入
- * @param {String} webSocketTaskId 
+ * @param {String} webSocketTaskId
  */
 export const changeUploadWebsocketTaskId = payload => {
   EventBus.$options.upload.webSocketTaskId = payload.webSocketTaskId;
@@ -143,14 +143,12 @@ export const changeUploadWebsocketTaskId = payload => {
 export const addCompleteUploaderCount = () => {
   let count = EventBus.$options.complete.uploadCount + 1;
   EventBus.$options.upload.uploadCount = count;
-  console.log("add-complete-uploader-count", EventBus.$options);
   EventBus.$emit("add-complete-uploader-count", count);
 };
 
 export const addCompleteUploaderResult = payload => {
   let uploads = EventBus.$options.complete.uploads.push(payload.file);
   EventBus.$options.uploads = uploads;
-  console.log("add-complete-uploader-result", EventBus.$options);
   EventBus.$emit("add-complete-uploader-result", uploads);
 };
 // -----------------------原始云盘 Complete 模块--------------------
@@ -177,7 +175,7 @@ export const changeWebSocketMsgid = payload => {
 };
 
 // -------------------------原始云盘 Path 模块-----------------------
-export const changePathUploaduri= payload => {
+export const changePathUploaduri = payload => {
   // console.warn("payload", payload);
   EventBus.$options.path.uploaduri = payload.uri;
   EventBus.$emit("change-path-uploaduri", payload.uri);

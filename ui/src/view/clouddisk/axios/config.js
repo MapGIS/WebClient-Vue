@@ -49,8 +49,7 @@ export default {
           }
           data = JSON.parse(data.trim(""));
         } catch (e) {
-          /* Ignore */
-          console.log("can not JSON.parse the response", e);
+          window.console.log("can not JSON.parse the response", e);
         }
       }
       return data;

@@ -44,7 +44,6 @@ export function createfolder(folderDir) {
 
 // 重命名
 export function renameFile(formdata) {
-  console.log(formdata.newFileName);
   const url = getMapGISUrl();
   const api = new API();
   const token = getMapgisToken();
