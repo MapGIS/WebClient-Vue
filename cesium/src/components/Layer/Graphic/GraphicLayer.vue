@@ -697,6 +697,9 @@ export default {
           break;
         }
       }
+    },
+    $_stopDrawAll() {
+      this.$refs.graphicLayer.$_stopDrawAll();
     }
   }
 };

@@ -1334,8 +1334,10 @@ export default {
       }
       //设置当前绘制图标类型为鼠标选中
       this.currentIconType = "mouse";
+
+      let graphicJSON = this.$_getJsonById(json.id);
       //获取设置面板显示参数
-      this.editPanelValues = this.$_getEditPanelValuesFromJSON(json);
+      this.editPanelValues = this.$_getEditPanelValuesFromJSON(graphicJSON);
       this.editPanelValues.showOutline = false;
       let graphic = this.$_getGraphicByID(json.id);
       if (graphic && graphic.heading) {
@@ -1346,10 +1348,8 @@ export default {
           roll: roll ? Math.PI / roll : 0
         };
       }
-      let graphicJSON = this.$_getJsonById(json.id);
-      this.$refs.editPanel.$_setEditPanelValues(
-        this.$_getEditPanelValuesFromJSON(graphicJSON)
-      );
+      this.$refs.editPanel.$_setEditPanelValues(this.editPanelValues);
+
       //定义视角高度
       const { style } = graphic;
       const { offsetHeight, extrudedHeight, radiusX, width, radius } = style;
@@ -1497,10 +1497,11 @@ export default {
           );
           break;
         case "model":
+          position = graphic.positions[0];
           let Cartesian3 = new Cesium.Cartesian3(
-            json.positions[0],
-            json.positions[1],
-            json.positions[2]
+            position.x,
+            position.y,
+            position.z
           );
           center = this.$_cartesian3ToLongLat(Cartesian3);
           destination = Cesium.Cartesian3.fromDegrees(
@@ -2038,37 +2039,35 @@ export default {
       const { Cesium, viewer } = this;
       const vm = this;
       if (
-        !this.transformEditor ||
-        this.transformEditor.id !== this.editPanelValues.id
+        !window.transformEditor ||
+        window.transformEditor.id !== this.editPanelValues.id
       ) {
-        //创建平移编辑器
-        this.transformEditor = new Cesium.ModelEditor({
-          container: viewer.container,
-          scene: viewer.scene,
-          transform: graphic.modelMatrix,
-          boundingSphere: graphic.boundingSphere,
-          getViewModel: function(e) {
-            if (graphic.type === "model") {
-              const { heading, pitch, roll } = e.headingPitchRoll;
-
-              vm.editPanelValues.orientation = {
-                heading: heading ? Math.PI / heading : 0,
-                pitch: pitch ? Math.PI / pitch : 0,
-                roll: roll ? Math.PI / roll : 0
-              };
-              vm.editPanelValues.positions = vm.$_cartesian3ToLongLat(
-                e.position
-              );
-              vm.$refs.editPanel.$_setEditPanelValues(vm.editPanelValues);
-            }
+        const { vueIndex, vueKey } = this;
+        let graphicLayer = this.$_getGraphicLayer(vueIndex, vueKey);
+        let getViewModel = function(e) {
+          if (graphic.type === "model") {
+            const { heading, pitch, roll } = e.headingPitchRoll;
+            vm.editPanelValues.orientation = {
+              heading: heading ? Math.PI / heading : 0,
+              pitch: pitch ? Math.PI / pitch : 0,
+              roll: roll ? Math.PI / roll : 0
+            };
+            vm.editPanelValues.positions = vm.$_cartesian3ToLongLat(e.position);
+            vm.$refs.editPanel.isUpdatePanel = false;
+            vm.$refs.editPanel.$_setEditPanelValues(vm.editPanelValues);
           }
-        });
-        this.transformEditor.id = this.editPanelValues.id;
+        };
+        //获取平移编辑器
+        window.transformEditor = graphicLayer.getTransformEditor(
+          graphic,
+          getViewModel
+        );
+        window.transformEditor.id = this.editPanelValues.id;
       } else {
-        this.transformEditor.transform = graphic.modelMatrix;
-        this.transformEditor.boundingSphere = graphic.boundingSphere;
+        window.transformEditor.transform = graphic.modelMatrix;
+        window.transformEditor.boundingSphere = graphic.boundingSphere;
       }
-      return this.transformEditor;
+      return window.transformEditor;
     },
     /**
      * 定位到模型
