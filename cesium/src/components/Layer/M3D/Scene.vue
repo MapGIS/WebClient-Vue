@@ -1145,19 +1145,19 @@ export default {
         }
       }
     },
+    // 动态单体化下该方法执行后会导致模型大面积高亮，参考禅道bug2356
     restoreHighlight() {
-      const { g3dLayerIndex, viewer } = this;
-
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      let m3ds = g3dLayer.getM3DLayerIndexes();
-      m3ds.forEach(index => {
-        let m3d = g3dLayer.getLayer(index);
-        if (m3d) {
-          m3d.reset(); //该函数目前底层MapGISM3DSet.reset无效 后期记得修改
-          m3d.pickedOid = undefined;
-        }
-      });
+      // const { g3dLayerIndex, viewer } = this;
+      // if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
+      // let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+      // let m3ds = g3dLayer.getM3DLayerIndexes();
+      // m3ds.forEach(index => {
+      //   let m3d = g3dLayer.getLayer(index);
+      //   if (m3d) {
+      //     m3d.reset(); //该函数目前底层MapGISM3DSet.reset无效 后期记得修改
+      //     m3d.pickedOid = undefined;
+      //   }
+      // });
     },
     handleDynamicQuery() {
       this.featurevisible = false;
