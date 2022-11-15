@@ -247,7 +247,8 @@ export default {
     getFileTypeByName(name) {
       const typeArr = name.split(".");
       if (typeArr && typeArr.length > 1) {
-        return typeArr[1];
+        // 文件中如果含有多个.会有问题，修改为获取数组的最后一个
+        return typeArr[typeArr.length - 1];
       }
       return "";
     },
