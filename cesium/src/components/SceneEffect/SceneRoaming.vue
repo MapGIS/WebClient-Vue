@@ -52,8 +52,40 @@
                 }
               "
             >
-              <template slot="position" slot-scope="text">
-                <div class="path-position" :title="text">{{ text }}</div>
+              <!-- <template slot="position" slot-scope="text, record">
+                <mapgis-ui-input
+                  v-if="record.editable"
+                  :value="text"
+                  @change="
+                    e => handleChange(e.target.value, record.number, record)
+                  "
+                />
+                <div v-else class="path-position" :title="text">{{ text }}</div>
+              </template> -->
+              <template
+                v-for="item in ['x', 'y', 'z']"
+                :slot="item"
+                slot-scope="text, record"
+              >
+                <mapgis-ui-input
+                  v-if="record.editable"
+                  :key="item"
+                  :value="text"
+                  @change="
+                    e => handleChange(e.target.value, record.number, item)
+                  "
+                />
+                <div v-else :key="item" class="path-position" :title="text">
+                  {{ text }}
+                </div>
+              </template>
+              <template slot="operation" slot-scope="text, record">
+                <span v-if="record.editable"
+                  ><a @click="savePosition(record.number)">保存</a></span
+                >
+                <span v-else
+                  ><a @click="editPosition(record.number)">编辑</a></span
+                >
               </template>
             </mapgis-ui-table>
             <mapgis-ui-empty
@@ -158,10 +190,15 @@ export default {
     pathTotal() {
       return `${this.pathsCopy.length}条路线`;
     },
-    positions() {
-      return this.addedPositions.map((position, index) => {
-        return { number: index + 1, ...position };
-      });
+    positions: {
+      get() {
+        return this.addedPositions.map((position, index) => {
+          return { number: index + 1, ...position };
+        });
+      },
+      set(val) {
+        this.addedPositions = [...val];
+      }
     }
   },
   watch: {
@@ -194,22 +231,29 @@ export default {
           dataIndex: "x",
           align: "center",
           ellipsis: true,
-          scopedSlots: { customRender: "position" }
+          scopedSlots: { customRender: "x" }
         },
         {
           title: "纬度",
           dataIndex: "y",
           align: "center",
           ellipsis: true,
-          scopedSlots: { customRender: "position" }
+          scopedSlots: { customRender: "y" }
         },
         {
           title: "高度",
           dataIndex: "z",
           align: "center",
           ellipsis: true,
-          scopedSlots: { customRender: "position" },
+          scopedSlots: { customRender: "z" },
           width: 60
+        },
+        {
+          title: "操作",
+          dataIndex: "operation",
+          align: "center",
+          ellipsis: true,
+          scopedSlots: { customRender: "operation" }
         }
       ],
       pathsCopy: [],
@@ -217,7 +261,8 @@ export default {
       polyline: undefined,
       emptyImage: MapgisUiEmpty.PRESENTED_IMAGE_SIMPLE,
       emptyDescription: "暂无数据",
-      lastClickLineId: undefined
+      lastClickLineId: undefined,
+      pointArr: [] // 存放新增路线时保存的点位信息
     };
   },
   created() {},
@@ -262,7 +307,7 @@ export default {
 
       this.draw.startDrawingMarker({
         material,
-        addDefaultMark: true,
+        addDefaultMark: false,
         callback: coord => {
           // 获取当前坐标系标准
           const ellipsoid = vm.viewer.scene.globe.ellipsoid;
@@ -300,6 +345,9 @@ export default {
               }
             });
           }
+
+          // 绘制点 根据linePoints的内容进行绘制点
+          vm.drawPoint(true);
         }
       });
     },
@@ -408,6 +456,14 @@ export default {
         this.polyline = undefined;
       }
     },
+    removePoint() {
+      if (this.pointArr && this.pointArr.length > 0) {
+        this.pointArr.forEach(item => {
+          this.viewer.entities.remove(item);
+        });
+        this.pointArr = [];
+      }
+    },
     showRoad() {
       this.removeRoad();
       this.polyline = this.viewer.entities.add({
@@ -423,8 +479,53 @@ export default {
       });
       this.viewer.flyTo(this.polyline);
     },
+    drawPoint(flag) {
+      // flag为true表示不需要重新绘制全部点（正常绘制路线），反之则为修改路线的点位，需要重新绘制点位
+      if (flag) {
+        // 取linePoints最后三位
+        const drawArr = [
+          this.linePoints[this.linePoints.length - 3],
+          this.linePoints[this.linePoints.length - 2],
+          this.linePoints[this.linePoints.length - 1]
+        ];
+        const point = this.viewer.entities.add({
+          position: this.Cesium.Cartesian3.fromDegrees(
+            drawArr[0],
+            drawArr[1],
+            drawArr[2]
+          ),
+          point: {
+            pixelSize: 10,
+            color: this.Cesium.Color.RED
+          }
+        });
+        this.pointArr.push(point);
+      } else {
+        this.removePoint();
+        for (let i = 0; i < this.linePoints.length - 1; i += 3) {
+          const drawArr = [
+            this.linePoints[i],
+            this.linePoints[i + 1],
+            this.linePoints[i + 2]
+          ];
+          const point = this.viewer.entities.add({
+            position: this.Cesium.Cartesian3.fromDegrees(
+              drawArr[0],
+              drawArr[1],
+              drawArr[2]
+            ),
+            point: {
+              pixelSize: 10,
+              color: this.Cesium.Color.RED
+            }
+          });
+          this.pointArr.push(point);
+        }
+      }
+    },
     _stopAdded() {
       this.removeRoad();
+      this.removePoint();
       if (this.draw) {
         this.draw.stopDrawing();
       }
@@ -441,6 +542,54 @@ export default {
     },
     _savePaths() {
       this.$emit("save-paths", this.pathsCopy);
+    },
+    savePosition(index) {
+      const newData = [...this.positions];
+      const target = newData.find(item => index === item.number);
+      if (target) {
+        delete target.editable;
+        this.positions = newData;
+      }
+      this.resizeRoaming();
+    },
+    editPosition(index) {
+      const newData = [...this.positions];
+      const currentKey = newData.find(item => item.number === index);
+      currentKey.editable = true;
+      this.positions = newData;
+    },
+    handleChange(value, index, column) {
+      const newData = [...this.positions];
+      const target = newData.find(item => index === item.number);
+      if (target) {
+        target[column] = value;
+        this.positions = newData;
+      }
+    },
+    // 重新绘制路线
+    resizeRoaming() {
+      this.linePoints = [];
+      this.addedPositions.forEach(item => {
+        this.linePoints.push(item.x);
+        this.linePoints.push(item.y);
+        this.linePoints.push(item.z);
+      });
+      if (this.addedPositions.length > 1) {
+        this.removeRoad();
+
+        this.polyline = this.viewer.entities.add({
+          name: "scence-roaming",
+          polyline: {
+            positions: this.Cesium.Cartesian3.fromDegreesArrayHeights(
+              this.linePoints
+            ),
+            width: 2,
+            material: this.Cesium.Color.RED,
+            clampToGround: false
+          }
+        });
+      }
+      this.drawPoint();
     }
   }
 };
