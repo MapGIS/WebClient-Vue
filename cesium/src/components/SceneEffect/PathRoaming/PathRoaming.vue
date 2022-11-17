@@ -172,7 +172,8 @@ export default {
           interpolationAlgorithm: "LagrangePolynomialApproximation",
           isLoop: true,
           showPath: true,
-          showInfo: true
+          showInfo: true,
+          modelUrl: ""
         };
       }
     },
@@ -200,7 +201,9 @@ export default {
     models: {
       handler() {
         if (this.models.length > 0 && this.models[0].value) {
-          this.modelUrl = this.models[0].value;
+          if (this.modelUrl === "" || !this.models.includes(this.modelUrl)) {
+            this.modelUrl = this.models[0].value;
+          }
         } else {
           this.modelUrl = "";
         }
@@ -211,6 +214,11 @@ export default {
     setting: {
       handler() {
         this.settingCopy = JSON.parse(JSON.stringify(this.setting));
+        // 确保this.settingCopy.modelUrl非空
+        this.modelUrl =
+          this.settingCopy.modelUrl && this.settingCopy.modelUrl !== ""
+            ? this.settingCopy.modelUrl
+            : "";
       },
       immediate: true
     }
@@ -412,6 +420,7 @@ export default {
     },
     onModelChange(value) {
       window.SceneWanderManager.animation._modelUrl = value;
+      this.settingCopy.modelUrl = value;
     }
   }
 };

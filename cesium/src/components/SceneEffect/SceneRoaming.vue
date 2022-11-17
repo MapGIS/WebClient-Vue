@@ -138,7 +138,8 @@ export default {
           interpolationAlgorithm: "LagrangePolynomialApproximation",
           isLoop: true,
           showPath: true,
-          showInfo: true
+          showInfo: true,
+          modelUrl: ""
         };
       }
     },
@@ -351,7 +352,8 @@ export default {
           interpolationAlgorithm,
           isLoop,
           showPath,
-          showInfo
+          showInfo,
+          modelUrl: ""
         }
       };
       this.pathsCopy.push(path);

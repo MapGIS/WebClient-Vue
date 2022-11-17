@@ -43,7 +43,8 @@
   "interpolationAlgorithm": "LagrangePolynomialApproximation",
   "isLoop": true,
   "showPath": true,
-  "showInfo": true
+  "showInfo": true,
+  "modelUrl": ""
 }
 ```
 
@@ -61,6 +62,7 @@
   | isLoop                 | Boolean | 是否循环。 默认 true                                                                                                                                                                                                                                                                                                                                      |
   | showPath               | Boolean | 是否显示路径。默认 true                                                                                                                                                                                                                                                                                                                                   |
   | showInfo               | Boolean | 是否显示提示信息。默认 true                                                                                                                                                                                                                                                                                                                               |
+  | modelUrl               | String  | 模型资源路径。默认"",可通过配置界面设置                                                                                                                                                                                                                                                                                                                   |
 
 ### `models`
 
@@ -187,7 +189,8 @@ export default {
         interpolationAlgorithm: "LagrangePolynomialApproximation",
         isLoop: true,
         showPath: true,
-        showInfo: true
+        showInfo: true,
+        modelUrl: ""
       },
       models: [
         {
@@ -278,7 +281,8 @@ export default {
         interpolationAlgorithm: "LagrangePolynomialApproximation",
         isLoop: true,
         showPath: true,
-        showInfo: true
+        showInfo: true,
+        modelUrl: ""
       },
       models: [
         {
