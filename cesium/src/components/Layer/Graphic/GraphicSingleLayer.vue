@@ -1504,6 +1504,7 @@ export default {
             position.z
           );
           center = this.$_cartesian3ToLongLat(Cartesian3);
+          this.destinationHeight += center.alt;
           destination = Cesium.Cartesian3.fromDegrees(
             center.lng,
             center.lat,
@@ -2088,7 +2089,8 @@ export default {
         json.positions[2]
       );
       const center = this.$_cartesian3ToLongLat(Cartesian3);
-      const destinationHeight = Number(graphic.boundingSphere.radius * 4);
+      const destinationHeight =
+        Number(graphic.boundingSphere.radius * 4) + center.alt;
       const destination = Cesium.Cartesian3.fromDegrees(
         center.lng,
         center.lat,
