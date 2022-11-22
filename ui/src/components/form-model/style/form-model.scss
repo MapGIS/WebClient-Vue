@@ -60,6 +60,7 @@ $form-explain-height: floor($form-explain-font-size * $line-height-base);
 // You should wrap labels and controls in .#{form-prefix-cls}-item for optimum spacing
 .#{form-prefix-cls}-item {
   label {
+    color: $label-color !important;
     position: relative;
 
     > .#{iconfont-css-prefix} {

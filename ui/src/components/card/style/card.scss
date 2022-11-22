@@ -6,12 +6,21 @@
   background-color: $card-body-background;
 
   @include e(body, "-") {
-    background-color: $card-head-background;
+    background-color: $body-background;
+    color: $text-color;
   }
 
   @include e(head, "-") {
-    background-color: $card-body-background;
+    background-color: $body-background;
+    color: $text-color;
     margin-bottom: 0px;
+    border-bottom: 1px solid $border-color-split;
+    .mapgis-ui-tabs {
+      color: inherit;
+    }
+    .mapgis-ui-tabs-bar {
+      border-bottom: none;
+    }
   }
 
   @include e(actions, "-") {
@@ -81,6 +90,14 @@
   }
 }
 
+.mapgis-ui-card-small {
+  .mapgis-ui-card-head {
+    .mapgis-ui-card-head-wrapper > .mapgis-ui-card-extra {
+      color: $text-color;
+    }
+  }
+}
+
 @include b(command-card) {
   $height-lg: 36px;
   $height-md: 30px;
@@ -99,7 +116,6 @@
       .mapgis-ui-card-head-title,
       .mapgis-ui-card-extra {
         padding: 0;
-        color: $text-color;
       }
     }
     .mapgis-ui-card-body {

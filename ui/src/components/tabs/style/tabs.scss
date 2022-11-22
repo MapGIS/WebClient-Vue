@@ -8,6 +8,10 @@
     border-bottom-color: $border-color-base;
   }
 
+  @include e(nav, '-') {
+    color: $text-color;
+  }
+
   @include e(bottom, '-') {
     & &-bar {
       border-top-color: $border-color-base;

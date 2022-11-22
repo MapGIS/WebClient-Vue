@@ -17,10 +17,6 @@ $form-explain-font-size: $font-size-base;
 $form-explain-precision: 1px;
 $form-explain-height: floor($form-explain-font-size * $line-height-base);
 
-.#{form-prefix-cls} {
-  // .reset-component;
-  // .reset-form;
-}
 
 .#{form-prefix-cls}-item-required::before {
   display: inline-block;
@@ -35,31 +31,29 @@ $form-explain-height: floor($form-explain-font-size * $line-height-base);
   }
 }
 
-// .#{form-prefix-cls}-item-label > label {
-//   color: $label-color;
+.#{form-prefix-cls} {
+  &-item {
+    &-label {
+      .mapgis-ui-form-item-no-colon {
+        color: $text-color;
+      }
+    }
+  }
+}
 
-//   &::after {
-//     & when ($form-item-trailing-colon=true) {
-//       content: ':';
-//     }
-//     & when not ($form-item-trailing-colon=true) {
-//       content: ' ';
-//     }
-
-//     position: relative;
-//     top: -0.5px;
-//     margin: 0 $form-item-label-colon-margin-right 0 $form-item-label-colon-margin-left;
-//   }
-
-//   &.#{form-prefix-cls}-item-no-colon::after {
-//     content: ' ';
-//   }
-// }
+.#{form-prefix-cls}-item {
+  > &-label {
+    & > label {
+      color: $label-color !important;
+    }
+  }
+}
 
 // Form items
 // You should wrap labels and controls in .@{form-prefix-cls}-item for optimum spacing
 .#{form-prefix-cls}-item {
   label {
+    color: $label-color;
     position: relative;
 
     > .#{iconfont-css-prefix} {

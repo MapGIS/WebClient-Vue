@@ -9,6 +9,7 @@
   }
   @include e(inner, '-') {
     background-color: $component-background;
+    border: none;
   }
   @include e(disabled, '-') {
     #{$prefix}-inner {

@@ -5,8 +5,8 @@ $layout-prefix-cls: $ant-prefix + "-layout";
 
 @include b (layout) {
   @include e(header, '-') {
-    background-color: $layout-header-background;
-    color: $primary-6;
+    background-color: $layout-background;
+    color: $heading-color;
   }
   @include e(content, '-') {
     background-color: $layout-background;

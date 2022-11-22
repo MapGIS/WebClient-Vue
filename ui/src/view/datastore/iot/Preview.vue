@@ -4,13 +4,13 @@
       <span>{{ this.name }}</span>
       <div>
         <span @click="projectScreen">
-          <a-checkable-tag v-if="type === 'hls'" v-model="isProjected">
-            <a-icon type="video-camera" />
+          <mapgis-ui-checkable-tag v-if="type === 'hls'" v-model="isProjected">
+            <mapgis-ui-iconfont type="mapgis-video-camera" />
             <span v-if="isProjected">已投放</span>
             <span v-else>投放</span>
-          </a-checkable-tag>
+          </mapgis-ui-checkable-tag>
         </span>
-        <a-icon type="close" @click="close" class="preview-title-icon" />
+        <mapgis-ui-iconfont type="mapgis-close" @click="close" class="preview-title-icon" />
       </div>
     </div>
     <div class="preview-content">

@@ -7,6 +7,22 @@
     background-color: $modal-content-bg;
   }
 
+  @include e(header, '-') {
+    border-bottom: 1px solid $modal-header-border-color-split;
+  }
+
+  @include e(title, '-') {
+    color: $title-color;
+  }
+
+  @include e(body, '-') {
+    color: $text-color;
+  }
+  
+  @include e(footer, '-') {
+    border-top: 1px solid $modal-header-border-color-split !important;
+  }
+
   @include e(close, '-') {
     color: $text-color-secondary;
   }

@@ -4,13 +4,9 @@
 @include b(collapse) {
   background-color: $collapse-header-bg;
 
-  @include e(header, "-") {
-    border-left: 3px solid $primary-5;
-    // color: $primary-5 !important;
-  }
-
   & > &-item > &-header {
-    border-left: 3px solid $primary-5 !important;
+    border-left: none !important;
+    color: $heading-color !important;
   }
 
   @include e(content, "-") {

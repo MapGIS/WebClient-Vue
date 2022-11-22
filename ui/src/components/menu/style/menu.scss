@@ -9,7 +9,7 @@ $menu-prefix-cls: $ant-prefix + "-menu";
   color: $menu-item-color;
   line-height: 0; // Fix display inline-block gap
   list-style: none;
-  background: $menu-bg;
+  background: $layout-background; // 侧边菜单的样式
   outline: none;
   box-shadow: $box-shadow-base;
   transition: $menu-bg 0.3s, width 0.3s cubic-bezier(0.2, 0, 0, 1) 0s;
@@ -115,9 +115,9 @@ $menu-prefix-cls: $ant-prefix + "-menu";
     z-index: 1000;
   }
 
-  &:not(&-horizontal) &-item-selected {
-    background-color: $menu-item-active-bg;
-  }
+  // &:not(&-horizontal) &-item-selected {
+  //   background-color: $menu-item-active-bg;
+  // }
 
   &-inline,
   &-vertical,

@@ -50,6 +50,7 @@ $list-prefix-cls: $ant-prefix + "-list";
   }
 
   &-item {
+    color: $text-color;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -58,7 +59,7 @@ $list-prefix-cls: $ant-prefix + "-list";
     &:hover {
       /* border-radius: 4px; */
       /* padding: 0px 20px; */
-      background: $list-item-hover-bg;
+      background: none;
     }
 
     &-content {
