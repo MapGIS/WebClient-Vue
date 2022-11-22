@@ -5,8 +5,7 @@ $menu-prefix-cls: $ant-prefix + "-menu";
   //   .#{$menu-prefix-cls}-item,
   //   .#{$menu-prefix-cls}-submenu .#{$menu-prefix-cls}-submenu-title {
   //     &:hover {
-  //       // color: white !important;
-  //       color: $hover-color !important;
+  //       color: $menu-item-active-bg !important;
   //     }
   //   }
   // }
@@ -14,20 +13,18 @@ $menu-prefix-cls: $ant-prefix + "-menu";
     .#{$menu-prefix-cls}-item,
     .#{$menu-prefix-cls}-submenu .#{$menu-prefix-cls}-submenu-title {
       &:hover {
-        // color: white !important;
-        color: $primary-1 !important;
+        color: $menu-dark-highlight-color !important;
       }
     }
   }
-  &-light {
-    .#{$menu-prefix-cls}-item,
-    .#{$menu-prefix-cls}-submenu .#{$menu-prefix-cls}-submenu-title {
-      &:hover {
-        // color: white !important;
-        color: $primary-6 !important;
-      }
-    }
-  }
+  // &-light {
+  //   .#{$menu-prefix-cls}-item,
+  //   .#{$menu-prefix-cls}-submenu .#{$menu-prefix-cls}-submenu-title {
+  //     &:hover {
+  //       color: $primary-6 !important;
+  //     }
+  //   }
+  // }
 }
 
 .#{$menu-prefix-cls} {
@@ -126,22 +123,23 @@ $menu-prefix-cls: $ant-prefix + "-menu";
   &-dark &-item:hover {
     background-color: $menu-dark-item-hover-bg;
   }
-
-  &-dark &-item-selected {
-    color: $menu-dark-highlight-color;
-    border-right: 0;
-    &::after {
-      border-right: 0;
-    }
-    > a,
-    > a:hover {
+  &-inline-collapsed {
+    &-dark &-item-selected {
       color: $menu-dark-highlight-color;
-    }
-    .#{iconfont-css-prefix} {
-      color: $menu-dark-selected-item-icon-color;
-    }
-    .#{iconfont-css-prefix} + span {
-      color: $menu-dark-selected-item-text-color;
+      border-right: 0;
+      &::after {
+        border-right: 0;
+      }
+      > a,
+      > a:hover {
+        color: $menu-dark-highlight-color;
+      }
+      .#{iconfont-css-prefix} {
+        color: $menu-dark-selected-item-icon-color;
+      }
+      .#{iconfont-css-prefix} + span {
+        color: $menu-dark-selected-item-text-color;
+      }
     }
   }
 

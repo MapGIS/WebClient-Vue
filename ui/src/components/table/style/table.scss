@@ -4,6 +4,9 @@
 
 @include b(table) {
   $table-prefix: &;
+  &-small {
+    border: 1px solid $border-color-base;
+  }
 }
 
 $table-prefix-cls: $ant-prefix + "-table";
@@ -394,6 +397,9 @@ $table-selection-column-width: 60px;
       .#{$table-prefix-cls}-placeholder {
         border-right: $border-width-base $border-style-base $border-color-split;
         border-left: $border-width-base $border-style-base $border-color-split;
+        .mapgis-ui-empty-image {
+          height: 100%;
+        }
       }
     }
 

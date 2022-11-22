@@ -132,12 +132,14 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
+@import "../../util/style/theme/theme.scss";
+// 这个位置是行业标绘选择时候的颜色提示
 .icon-wrapper-active {
-  border: 1px solid #4f90f5;
+  border: 1px solid $select-item-selected-color;
 }
 .activeColor {
-  color: #4f90f5;
-  border: 1px solid #4f90f5;
+  color: $select-item-selected-color;
+  border: 1px solid $select-item-selected-color;
 }
 </style>

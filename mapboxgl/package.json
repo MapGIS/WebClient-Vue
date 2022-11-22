@@ -1,6 +1,7 @@
+<<<<<<< Updated upstream
 {
   "name": "@mapgis/webclient-vue-mapboxgl",
-"version":"16.1.18",
+"version":"16.1.15",
   "description": "中地数码webclient-vue-mapboxgl",
   "main": "dist-libs/webclient-vue-mapboxgl.umd.min.js",
   "module1": "src/main.js",
@@ -88,3 +89,4 @@
   "author": "Wuhan Zondy Cyber Science&Technology Co.Ltd.",
   "license": "Apache2"
 }
+>>>>>>> Stashed changes

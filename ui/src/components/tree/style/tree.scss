@@ -2,8 +2,11 @@
 @import "../../../util/style/theme/theme.scss";
 
 @include b(tree) {
-  & li &-node-content-wrapper:hover {
-    background-color: var(--primary-2);
+  & li &-node-content-wrapper {
+    color: $text-color;
+    &:hover {
+      background-color: var(--primary-2);
+    }
   }
 
   &-checkbox-inner {

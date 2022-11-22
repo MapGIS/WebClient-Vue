@@ -3,6 +3,9 @@
 @import 'mixin.scss';
 
 @include b(input) {
+  background-color: $input-bg;
+  border: 1px solid $input-border-color;
+  color: $text-color;
   padding: 4px 8px;
   @include focus($primary-5, $primary-shadow-color);
   &[disabled] {
@@ -39,6 +42,9 @@
     }
   }
   @include e(number, '-') {
+    color: $text-color;
+    background-color: $component-background;
+    border: $border-color-base;
     @include focus($primary-5, $primary-shadow-color);
     &-focused {
       @include focus-color($primary-5, $primary-shadow-color);

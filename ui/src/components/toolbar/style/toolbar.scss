@@ -1,6 +1,13 @@
 @import "../../../util/style/mixins/mixins.scss";
 @import "../../../util/style/theme/theme.scss";
 
+@include b(toolbar-wrapper) {
+  background-color: red !important;
+  .toolbar-button-list {
+    background-color: orange;
+  }
+}
+
 @include b(toolbar) {
   display: flex;
   align-items: center;

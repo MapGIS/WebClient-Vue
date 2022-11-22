@@ -6,6 +6,9 @@
   $prefix: &;
 
   @include e(selection, "-") {
+    background-color: $select-background;
+    border: 1px solid $select-border-color;
+    color: $text-color;
     $prefix-selection: &;
     #{$prefix}-focused &,
     &:focus,
@@ -65,11 +68,13 @@
   @include e(dropdown, "-") {
     $prefix-dropdown: &;
     &-menu {
-      background: transparent;
+      // background: transparent;
+      background: $select-dropdown-bg !important;
       &-item-group-title {
         color: $text-color-secondary;
       }
       &-item {
+        color: $text-color;
         &:hover:not(&-disabled) {
           background-color: $select-item-hover-bg;
         }

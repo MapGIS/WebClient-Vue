@@ -1,7 +1,8 @@
 .#{$layout-prefix-cls} {
   &-sider {
     &-light {
-      background: $layout-sider-background-light;
+      // background: $layout-sider-background-light;
+      // background: $base-bg-color;
     }
     &-light &-trigger {
       color: $layout-trigger-color-light;

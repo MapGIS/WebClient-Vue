@@ -13,6 +13,7 @@
   }
 
   &-menu-item {
+    color: $text-color;
     &:hover {
       background-color: $primary-2;
     }

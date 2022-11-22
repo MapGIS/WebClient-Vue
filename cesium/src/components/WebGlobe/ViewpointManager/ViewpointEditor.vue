@@ -189,7 +189,7 @@
       style="top: 50%; left: 50%"
     />
     <template slot="footer">
-      <a-button type="primary" @click="getResultConfig">确定</a-button>
+      <mapgis-ui-button type="primary" @click="getResultConfig">确定</mapgis-ui-button>
     </template>
   </mapgis-ui-modal>
 </template>

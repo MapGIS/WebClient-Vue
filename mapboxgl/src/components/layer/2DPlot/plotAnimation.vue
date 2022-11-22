@@ -302,6 +302,7 @@ export default {
       let timeline = this.getPlotAnimation();
       if (timeline) {
         timeline.restore();
+        console.log(timeline)
         this.speed = 1;
         this.interval = "未设置";
         timeline.clear();
@@ -309,6 +310,7 @@ export default {
     },
     initTimeline() {
       let timeline = this.getPlotAnimation();
+      console.log(timeline)
       if (timeline) {
         this.clearTimeline();
         timeline.fromJSON(
@@ -377,8 +379,10 @@ export default {
       this.scriptListCopy = e.list;
     },
     addList(scriptList) {
+      console.log(scriptList)
       this.scriptListCopy = scriptList;
       this.activeIndex = scriptList.length - 1;
+      console.log(this.scriptListCopy, this.activeIndex)
       this.initTimeline();
     },
     removeList(script) {
@@ -388,6 +392,7 @@ export default {
       this.$emit("save", script);
     },
     importList(script) {
+      console.log(script)
       this.$emit("save", script);
       // this.scriptListCopy = scriptList;
     },

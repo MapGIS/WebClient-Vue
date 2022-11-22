@@ -2,8 +2,8 @@
 @import "../../../util/style/theme/theme.scss";
 
 .mapgis-ui-window-wrapper {
-  // background-color: @base-bg-color; // ws记录
-  background-color: #fff; // ws记录
+  background-color: $body-background; // ws记录
+  // background-color: #fff; // ws记录
   display: flex;
   flex-direction: column;
   overflow: hidden;
