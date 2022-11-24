@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 {
   "name": "@mapgis/webclient-vue-mapboxgl",
 "version":"16.1.15",
@@ -89,4 +88,3 @@
   "author": "Wuhan Zondy Cyber Science&Technology Co.Ltd.",
   "license": "Apache2"
 }
->>>>>>> Stashed changes
