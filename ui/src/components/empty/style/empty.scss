@@ -1,0 +1,11 @@
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+
+@include b(empty) {
+  &-normal {
+    color: $text-color;
+  }
+  @include e(description, '-') {
+    color: $text-color;
+  }
+}
