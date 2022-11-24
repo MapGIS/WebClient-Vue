@@ -66,6 +66,7 @@
   }
 
   @include e(dropdown, "-") {
+    background-color: $select-dropdown-bg;
     $prefix-dropdown: &;
     &-menu {
       // background: transparent;

@@ -10,6 +10,14 @@
     color: $text-color;
   }
 
+  @include e(bordered, '-') {
+    border: 1px solid $border-color-base;
+  }
+
+  @include e(extra, '-') {
+    color: $text-color;
+  }
+
   @include e(head, "-") {
     background-color: $body-background;
     color: $text-color;

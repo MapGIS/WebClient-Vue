@@ -37,6 +37,9 @@
       }
     }
   }
+  @include e(wrapper, '-') {
+    color: $text-color;
+  }
   @include e(button-wrapper, '-') {
     $prefix-button-wrapper: &;
     &:hover {

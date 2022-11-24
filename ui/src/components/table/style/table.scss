@@ -7,6 +7,7 @@
   &-small {
     border: 1px solid $border-color-base;
   }
+  color: $text-color;
 }
 
 $table-prefix-cls: $ant-prefix + "-table";
@@ -241,7 +242,7 @@ $table-selection-column-width: 60px;
   &-tbody > tr {
     & &-row-hover,
     &:hover {
-      background: $table-row-hover-bg;
+      background: $table-selected-row-hover-bg;
       &:not(.#{$table-prefix-cls}-expanded-row):not(.#{$table-prefix-cls}-row-selected)
         > td {
         background: $table-row-hover-bg;

@@ -42,6 +42,10 @@
     }
   }
 
+  @include e(content, '-') {
+    color: $text-color;
+  }
+
   @include e(left-content, '-') {
     #{$prefix} & {
       border-left-color: transparent;

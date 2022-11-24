@@ -16,6 +16,11 @@
   }
   @include e(group-addon, '-') {
     background-color: $input-addon-bg;
+    border: 1px solid $border-color-base;
+    color: $text-color;
+  }
+  @include e(suffix, '-') {
+    color: $text-color;
   }
   @include e(group, '-') {
     .mapgis-ui-input-affix-wrapper:first-child:last-child .mapgis-ui-input-number {
@@ -44,7 +49,7 @@
   @include e(number, '-') {
     color: $text-color;
     background-color: $component-background;
-    border: $border-color-base;
+    border: 1px solid $border-color-base;
     @include focus($primary-5, $primary-shadow-color);
     &-focused {
       @include focus-color($primary-5, $primary-shadow-color);

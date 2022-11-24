@@ -8,4 +8,7 @@
   @include e(description, '-') {
     color: $text-color;
   }
+  @include e(image, '-') {
+    height: 100%;
+  }
 }
