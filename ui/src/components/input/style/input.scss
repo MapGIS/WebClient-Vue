@@ -57,6 +57,13 @@
       &-up-inner, &-down-inner {
         color: $text-color-secondary;
       }
+      &-down {
+        border-top: 1px solid $border-color-base;
+      }
+      &-wrap {
+        border-left: 1px solid $border-color-base;
+        background-color: $input-bg;
+      }
     }
   }
   @include e(password, '-') {

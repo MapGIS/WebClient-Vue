@@ -134,7 +134,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../util/style/theme/theme.scss";
-// 这个位置是行业标绘选择时候的颜色提示
+// 这个位置是行业标绘选择时候的颜色提示(后台也受此处控制)
 .icon-wrapper-active {
   border: 1px solid $select-item-selected-color;
 }

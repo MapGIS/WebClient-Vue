@@ -57,7 +57,7 @@
   &#{&}-card {
     #{$prefix}-card-bar {
       #{$prefix}-tab {
-        background: $tabs-card-head-background;
+        background: transparent;
         border-color: $border-color-base;
         #{$prefix}-close-x {
           color: $text-color-secondary;

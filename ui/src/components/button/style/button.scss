@@ -2,6 +2,13 @@
 @import "../../../util/style/theme/theme.scss";
 @import "mixin.scss";
 
+.mapgis-ui-btn-primary[disabled] {
+  color: $text-color;
+  &:hover {
+    color: $text-color;
+  }
+}
+
 @include b(btn) {
   $prefix: &;
   @include button-color($text-color, $btn-default-bg, $btn-default-border);

@@ -6,6 +6,14 @@ $upload-item: $ant-prefix + "-upload-list-item";
 $upload-picture-card-size: 104px;
 $upload-picture-card-border-style: $border-style-base;
 
+.mapgis-ui-upload.mapgis-ui-upload-drag {
+  background-color: $input-bg;
+  border: $border-width-base dashed $border-color-base;
+}
+.mapgis-ui-upload.mapgis-ui-upload-btn {
+  color: $text-color;
+}
+
 .#{upload-prefix-cls} {
   // .reset-component;
 
@@ -67,8 +75,8 @@ $upload-picture-card-border-style: $border-style-base;
     width: 100%;
     height: 100%;
     text-align: center;
-    background: $background-color-light;
-    border: $border-width-base dashed $border-color-base;
+    // background: $input-bg !important;
+    // border: $border-width-base dashed $border-color-base;
     border-radius: $border-radius-base;
     cursor: pointer;
     transition: border-color 0.3s;
