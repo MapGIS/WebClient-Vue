@@ -4,6 +4,9 @@
 
 @include b(checkbox) {
   $prefix: &;
+  &-wrapper {
+    color: $text-color;
+  }
   &-wrapper:hover &-inner, &:hover &-inner, &-input:focus + &-inner {
     border-color: $hover-color;
   }

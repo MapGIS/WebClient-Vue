@@ -61,7 +61,6 @@ $form-explain-height: floor($form-explain-font-size * $line-height-base);
       vertical-align: top;
     }
   }
-
   // .reset-component;
 
   margin-bottom: $form-item-margin-bottom;
@@ -365,6 +364,9 @@ form {
   @include b(form-item-label) {
     line-height: 32px;
     padding: 0px;
+    & > label {
+      color: $label-color;
+    }
   }
 }
 
