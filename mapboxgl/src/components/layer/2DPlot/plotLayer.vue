@@ -133,6 +133,10 @@ export default {
           );
           if (!MapManager.options.canvas) {
             canvas = new FabricLayer(map, PlotLayer2DGroup);
+            canvas._containerId = map._container.id;
+            window.vueMap.MapManager.addSource(map.vueKey, map.vueIndex, map, {
+              canvas: canvas
+            });
           } else {
             canvas = MapManager.options.canvas;
           }

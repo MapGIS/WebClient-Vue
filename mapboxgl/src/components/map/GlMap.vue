@@ -18,11 +18,6 @@ import { initManager, initVueMap } from "./manager";
 
 import { addListener, removeListener } from "resize-detector";
 import debounce from "lodash/debounce";
-import plot from "@mapgis/webclient-plot";
-const {
-  PlotLayer2DGroup = window.Zondy.Plot.PlotLayer2DGroup,
-  FabricLayer = window.Zondy.Plot.FabricLayer
-} = plot;
 
 export default {
   name: "mapgis-web-map",
@@ -124,13 +119,8 @@ export default {
       .then(map => {
         const { actions, mapbox } = this;
         this.map = map;
-        const canvas = new FabricLayer(map, PlotLayer2DGroup);
-        canvas._containerId = map._container.id;
         this.map.vueKey = this.vueKey;
         this.map.vueIndex = this.vueIndex;
-        window.vueMap.MapManager.addSource(this.vueKey, this.vueIndex, map, {
-          canvas: canvas
-        });
         this.vueMap = window.vueMap;
         if (this.RTLTextPluginUrl !== undefined) {
           this.mapbox.setRTLTextPlugin(
