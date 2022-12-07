@@ -17,9 +17,10 @@ module.exports = {
   },
   configureWebpack: {
     externals: {
-      "vue": "vue",
-      "@mapbox/mapbox-gl-draw": "@mapbox/mapbox-gl-draw",
-      "@mapbox/mapbox-gl-draw-static-mode": "@mapbox/mapbox-gl-draw-static-mode",
+      vue: "vue",
+      "@mapgis/mapbox-gl-draw": "@mapgis/mapbox-gl-draw",
+      "@mapbox/mapbox-gl-draw-static-mode":
+        "@mapbox/mapbox-gl-draw-static-mode",
       "@mapgis/mapbox-gl": "@mapgis/mapbox-gl",
       "@mapgis/mapbox-gl-compare": "@mapgis/mapbox-gl-compare",
       "@mapgis/mapbox-gl-draw-circle": "@mapgis/mapbox-gl-draw-circle",
@@ -31,23 +32,23 @@ module.exports = {
       "@mapgis/webclient-vue-ui": "@mapgis/webclient-vue-ui",
       "@mapgis/webclient-plot": "@mapgis/webclient-plot",
       "@turf/turf": "@turf/turf",
-      "echarts": "echarts",
+      echarts: "echarts",
       "file-saver": "file-saver",
-      "html2canvas": "html2canvas",
+      html2canvas: "html2canvas",
       "map-promisified": "map-promisified",
       "mapbox-gl": "mapbox-gl",
       "mapbox-gl-draw-circle": "mapbox-gl-draw-circle",
       "mapbox-gl-draw-rectangle-mode": "mapbox-gl-draw-rectangle-mode",
-      "mapv": "mapv",
-      "moment": "moment",
+      mapv: "mapv",
+      moment: "moment",
       "node-sql-parser": "node-sql-parser",
       "postcss-inline-svg": "postcss-inline-svg",
       "resize-detector": "resize-detector",
       "v-contextmenu": "v-contextmenu",
       "v-jsoneditor": "v-jsoneditor",
-      "vcolorpicker": "vcolorpicker",
+      vcolorpicker: "vcolorpicker",
       "vue-runtime-helpers": "vue-runtime-helpers",
-      "vuepress": "vuepress"
-    }
-  }
+      vuepress: "vuepress",
+    },
+  },
 };

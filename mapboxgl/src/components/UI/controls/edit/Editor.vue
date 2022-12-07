@@ -41,8 +41,8 @@
 </template>
 
 <script>
-import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
-import * as MapboxDrawCom from "@mapbox/mapbox-gl-draw";
+import "@mapgis/mapbox-gl-draw/dist/mapbox-gl-draw.css";
+import * as MapboxDrawCom from "@mapgis/mapbox-gl-draw";
 const MapboxDraw = MapboxDrawCom.default;
 const modes = MapboxDrawCom.default.modes;
 import StaticMode from "@mapbox/mapbox-gl-draw-static-mode";

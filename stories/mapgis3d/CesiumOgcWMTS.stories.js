@@ -1,5 +1,4 @@
 import MapgisOgcWmtsLayer from "../../cesium/src/components/Layer/OGC/OGCWMTSLayer.vue";
-import TileInfo from "@mapgis/webclient-es6-service/utils/tile/TileInfo";
 
 export default {
   title: "三维/图层/OGC/WMTS",
