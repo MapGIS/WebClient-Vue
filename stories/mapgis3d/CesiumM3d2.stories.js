@@ -8,7 +8,7 @@ export default {
     show: true,
     opacity: 1.0,
     enablePopup: true,
-    highlightStyle: {color: 'rgba(255, 0, 0, 0.6)'}
+    highlightStyle: { color: 'rgba(255, 0, 0, 0.6)' }
   },
 };
 
@@ -21,8 +21,8 @@ const Template = (args, { argTypes }) => ({
   methods: {
     handleMapload(data) {
       const vm = this;
-      let component  = data.component;
-      component.viewer.extend(window.Cesium.viewerCesiumInspectorMixin); 
+      let component = data.component;
+      component.viewer.extend(window.Cesium.viewerCesiumInspectorMixin);
     },
   },
   template: `<mapgis-web-scene @load="handleMapload" style="height:95vh">    
@@ -33,13 +33,13 @@ const Template = (args, { argTypes }) => ({
 
 export const 基础 = Template.bind({});
 基础.args = {
-  // url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
-  url: `http://${window.webclient.ip}:${window.webclient.port}/M3D/2.0/M3DAttributeTest_BIN/zondy.mcj`,
+  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
+  // url: `http://${window.webclient.ip}:${window.webclient.port}/M3D/2.0/M3DAttributeTest_BIN/zondy.mcj`,
   // url: `http://${window.webclient.ip}:${window.webclient.port}/结果矿体/结果矿体.mcj`,
   // url: "http://192.168.81.98:8089/igs/rest/services/分层分户_0/M3dServer",
   show: true,
   opacity: 1.0,
-  highlightStyle: {color: 'rgba(255, 255, 0, 0.6)'},
+  highlightStyle: { color: 'rgba(255, 255, 0, 0.6)' },
   enablePopup: true,
   popupOptions: {
     title: "oid",
