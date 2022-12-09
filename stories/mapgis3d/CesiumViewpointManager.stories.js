@@ -3,7 +3,7 @@ import Markdown from "../../cesium/docs/api/analysis/ViewpointManager.md";
 import Mapgis3dViewpointManager from "../../cesium/src/components/WebGlobe/ViewpointManager.vue";
 
 export default {
-  title: "三维/场景子组件/视点管理",
+  title: "三维/场景控制/相机/视点管理",
   component: Mapgis3dViewpointManager,
   argTypes: {},
 };

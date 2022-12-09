@@ -2,7 +2,7 @@ import Mapgis3dOutputImage from "../../cesium/src/components/UI/Controls/OutputI
 import Markdown from "../../cesium/docs/api/ui/outputimage.md";
 
 export default {
-  title: "三维/场景子组件/截图",
+  title: "三维/场景控制/场景/截图",
   component: Mapgis3dOutputImage,
   argTypes: {},
 };

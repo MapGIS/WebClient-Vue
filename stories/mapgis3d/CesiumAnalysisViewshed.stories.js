@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/Viewshed.md";
 
 export default {
-    title: "三维/分析/可视域分析",
+    title: "三维/三维分析/综合分析/可视域",
     argTypes:{
         horizontAngle: {
             description:'观察点的水平视角',
@@ -76,8 +76,8 @@ const Template = (args, {argTypes}) => ({
     `
 });
 
-export const Viewshed = Template.bind({});
-Viewshed.args = {
+export const 可视域 = Template.bind({});
+可视域.args = {
     horizontAngle: 70,
     verticalAngle:60,
     maskColor: 'rgba(37, 218, 169, 0.2)',
@@ -85,7 +85,7 @@ Viewshed.args = {
     unVisibleColor:'#ff0000',
     exHeight:1.85
 };
-Viewshed.parameters = {
+可视域.parameters = {
     docs: {
         description: {
             component: Markdown,

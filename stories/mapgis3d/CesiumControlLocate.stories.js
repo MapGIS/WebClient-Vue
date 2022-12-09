@@ -1,7 +1,7 @@
 import Markdown from "../../cesium/docs/api/ui/locate.md";
 
 export default {
-    title: "三维/场景子组件/定位组件",
+    title: "三维/场景控制/相机/定位组件",
     argTypes: {
         mapSheetBoundaryStyle: {
             description: '图幅边界样式',
@@ -37,8 +37,8 @@ const Template = (args, { argTypes }) => ({
     </mapgis-web-scene>`
 });
 
-export const locate = Template.bind({});
-locate.args = {
+export const 定位组件 = Template.bind({});
+定位组件.args = {
     url: "http://t0.tianditu.gov.cn/img_c/wmts",
     tileMatrixSet: "c",
     tilingScheme: "EPSG:4326",
@@ -56,7 +56,7 @@ locate.args = {
     }
 };
 
-locate.parameters = {
+定位组件.parameters = {
     docs: {
         description: {
             component: Markdown,

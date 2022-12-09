@@ -3,7 +3,7 @@ import "../style/link.css";
 import * as axios from "axios";
 
 export default {
-  title: "三维/场景子组件/二三维联动/态势推演",
+  title: "三维/场景控制/联动/态势推演",
   component: Mapgis3dLink,
   argTypes: {
     timestamp: 100,

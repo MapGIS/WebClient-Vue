@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/CutFill.md";
 
 export default {
-  title: "三维/分析/填挖方分析",
+  title: "三维/三维分析/地形分析/填挖方",
   argTypes: {
     xPaneNum: {
       description: "X 坐标方向采样点的个数",

@@ -1,5 +1,5 @@
 export default {
-  title: "三维/图层/数据流/点",
+  title: "三维/数据图层/数据流/点",
   argTypes: {
     baseUrl: {
       description: "数据流地址",

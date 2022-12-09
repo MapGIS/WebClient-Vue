@@ -2,7 +2,7 @@ import Markdown from "../../cesium/docs/api/sceneeffect/SceneSetting.md";
 import Mapgis3dSeneSetting from "../../cesium/src/components/SceneEffect/SceneSetting";
 
 export default {
-  title: "三维/场景子组件/场景设置",
+  title: "三维/场景控制/控件/场景设置",
   component: Mapgis3dSeneSetting,
   argTypes: {},
 };

@@ -2,7 +2,7 @@ import Mapgis3dMarker from "../../cesium/src/components/UI/Marker/Marker.vue";
 import Markdown from "../../cesium/docs/api/ui/marker.md";
 
 export default {
-  title: "三维/场景子组件/Marker",
+  title: "三维/图形绘制/标注/图标",
   component: Mapgis3dMarker,
   argTypes: {
     longitude: 110,
@@ -90,8 +90,8 @@ const Template = (args, { argTypes }) => ({
   }
 });
 
-export const Marker = Template.bind({});
-Marker.args = {
+export const 图标 = Template.bind({});
+图标.args = {
   longitude: 114.4018,
   latitude: 30.4673,
   longitude2: 115,
@@ -100,7 +100,7 @@ Marker.args = {
   iconUrl: "http://develop.smaryun.com/static/data/picture/icon.png",
   text: "这是entity测试",
 };
-Marker.parameters = {
+图标.parameters = {
   docs: {
     description: {
       component: Markdown,

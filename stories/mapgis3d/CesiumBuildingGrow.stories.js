@@ -32,12 +32,12 @@ const Template = (args, {argTypes}) => ({
     `,
 });
 
-export const buildingGrow = Template.bind({});
-buildingGrow.args = {
+export const 单体建筑生长 = Template.bind({});
+单体建筑生长.args = {
     m3d: `http://${window.webclient.ip}:${window.webclient.port}/M3D/2.0/BIM%E6%A8%A1%E5%9E%8B%E7%94%9F%E9%95%BFtime/BIM%E6%A8%A1%E5%9E%8B%E7%94%9F%E9%95%BFtime.mcj`,
     initIsHideNode: false
 };
-buildingGrow.parameters = {
+单体建筑生长.parameters = {
     docs: {
         description: {
             component: Markdown,

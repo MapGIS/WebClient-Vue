@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/Skyline.md";
 
 export default {
-    title: "三维/分析/天际线分析",
+    title: "三维/三维分析/综合分析/天际线",
     argTypes: {
         skylineWidth: {
             //描述信息，即页面上Description那一栏的值
@@ -104,12 +104,12 @@ const Template = (args, {argTypes}) => ({
     }
 });
 
-export const Skyline = Template.bind({});
-Skyline.args = {
+export const 天际线 = Template.bind({});
+天际线.args = {
     skylineWidth: 2,
     skylineColor: 'rgb(255,0,0)',
 }
-Skyline.parameters = {
+天际线.parameters = {
     docs: {
         description: {
             component: Markdown,

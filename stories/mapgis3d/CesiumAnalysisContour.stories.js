@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/Contour.md";
 
 export default {
-  title: "三维/分析/等值线面分析",
+  title: "三维/三维分析/地形分析/等值线面",
   argTypes: {
     contourSpacing: {
       description: "等值线间距,单位米",

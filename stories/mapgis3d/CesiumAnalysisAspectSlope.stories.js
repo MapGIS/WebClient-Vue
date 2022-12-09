@@ -2,7 +2,7 @@ import "../style/card.css";
 import Mapgis3dAspectSlope from "../../cesium/src/components/Analysis/AspectSlope.vue";
 
 export default {
-    title: "三维/分析/坡向坡度分析",
+    title: "三维/三维分析/地形分析/坡向坡度",
     component:Mapgis3dAspectSlope,
     argTypes: {
         rampColors: {

@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/HeightLimited.md";
 
 export default {
-    title: "三维/分析/控高分析",
+    title: "三维/三维分析/模型分析/控高",
     argTypes: {
         color: {
             //描述信息，即页面上Description那一栏的值
@@ -98,8 +98,8 @@ const Template = (args, {argTypes}) => ({
     }
 });
 
-export const HeightLimited = Template.bind({});
-HeightLimited.args = {
+export const 控高 = Template.bind({});
+控高.args = {
     heightLimitColor: "rgba(255,0,0,0.5)",
     drawStyle: {
         color: "#FF8C00",
@@ -109,7 +109,7 @@ HeightLimited.args = {
     maxSliderHeight: 180,
     minSliderHeight: 0
 }
-HeightLimited.parameters = {
+控高.parameters = {
     docs: {
         description: {
             component: Markdown,

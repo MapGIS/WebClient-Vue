@@ -1,7 +1,7 @@
 import Markdown from "../../cesium/docs/api/layer/ArcGISServer/ArcGISTileLayer.md"
 
 export default {
-    title: "三维/图层/ArcGISServer/瓦片图层",
+    title: "三维/数据图层/影像/ArcGIS/瓦片图层",
 };
 
 const Template = (args, {argTypes}) => ({
@@ -12,8 +12,8 @@ const Template = (args, {argTypes}) => ({
     </mapgis-web-scene >`,
 });
 
-export const Tile = Template.bind({});
-Tile.args = {
+export const 瓦片图层 = Template.bind({});
+瓦片图层.args = {
     // url: "http://219.142.81.85/arcgis/rest/services/20wanZL/MapServer",
     baseUrl: "http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
     layerStyle: {

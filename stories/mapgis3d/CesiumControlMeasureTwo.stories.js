@@ -1,5 +1,5 @@
 export default {
-  title: "三维/场景子组件/量测-多屏",
+  title: "三维/通用工具/量测/多屏量测",
   argTypes: {
   },
 };
@@ -64,7 +64,7 @@ const Template = (args, { argTypes }) => ({
   }
 });
 
-export const MeasureTool = Template.bind({});
-MeasureTool.args = {
+export const 多屏量测 = Template.bind({});
+多屏量测.args = {
 };
 

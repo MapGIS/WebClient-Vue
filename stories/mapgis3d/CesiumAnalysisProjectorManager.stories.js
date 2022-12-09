@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/ProjectorManager.md";
 
 export default {
-  title: "三维/分析/视频投放/投放管理",
+  title: "三维/通用工具/视频投放/投放管理",
   argTypes: {
     projectorOverlayLayerList: {
       description: "视频投放图层数组",

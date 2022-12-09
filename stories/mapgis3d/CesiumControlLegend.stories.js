@@ -2,7 +2,7 @@ import ArcgisTileLayer from "../../cesium/src/components/Layer/ArcGISServer/ArcG
 import ArcgisMapLayer from "../../cesium/src/components/Layer/ArcGISServer/ArcGISMapLayer";
 
 export default {
-    title: "三维/场景子组件/arcgis图例"
+    title: "三维/图例/ArcGIS/图例"
 };
 
 const Template = (args, { argTypes }) => ({
@@ -19,8 +19,8 @@ const Template = (args, { argTypes }) => ({
     `
 });
 
-export const Legend = Template.bind({});
-Legend.args = {
+export const 图例 = Template.bind({});
+图例.args = {
     cameraView:{
         destination: {
             x: -2409221.7854387695,

@@ -1,7 +1,7 @@
 import Mapgis3dTileset from "../../cesium/src/components/Layer/M3D/3dTileset.vue";
 
 export default {
-  title: "三维/图层/3DTiles",
+  title: "三维/数据图层/3DTiles/大雁塔",
   component: Mapgis3dTileset,
   argTypes: {
     url: `http://${window.webclient.ip}:${window.webclient.port}/3DTileset/dayantaresult/tileset.json`,
@@ -32,8 +32,8 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-scene>`,
 });
 
-export const 标准3DTile = Template.bind({});
-标准3DTile.args = {
+export const 大雁塔 = Template.bind({});
+大雁塔.args = {
   url: `http://${window.webclient.ip}:${window.webclient.port}/3DTileset/dayantaresult/tileset.json`,
   opacity: 1.0,
 };

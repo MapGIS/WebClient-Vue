@@ -3,7 +3,7 @@ const { LineStyle, PointStyle, FillStyle } = Style;
 import Markdown from "../../cesium/docs/api/analysis/Overlay.md";
 
 export default {
-  title: "三维/分析/叠加分析",
+  title: "三维/三维分析/Turf空间分析/叠加",
   argTypes: {
     srcType: {
       description: "叠加数据源类型：图层级叠加Layer；要素级叠加Feature",
@@ -72,8 +72,8 @@ const Template = (args, { argTypes }) => ({
     `,
 });
 
-export const Overlay = Template.bind({});
-Overlay.args = {
+export const 叠加 = Template.bind({});
+叠加.args = {
   srcType: "Layer",
   // srcType: "Feature",
   baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/layers`,
@@ -107,7 +107,7 @@ Overlay.args = {
     ]
   }
 };
-Overlay.parameters = {
+叠加.parameters = {
   docs: {
     description: {
       component: Markdown,

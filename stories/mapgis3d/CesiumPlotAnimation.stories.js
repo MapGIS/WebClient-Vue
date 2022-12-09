@@ -5,7 +5,7 @@ import "../style/card.css";
 import * as axios from "axios";
 
 export default {
-  title: "三维/图层/标绘/态势推演",
+  title: "三维/三维标绘/行业标绘/态势推演",
   component: Mapgis3dPlotAnimation,
   argTypes: {},
 };

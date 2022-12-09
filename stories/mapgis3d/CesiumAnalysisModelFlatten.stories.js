@@ -1,5 +1,5 @@
 export default {
-  title: "三维/分析/模型压平",
+  title: "三维/三维分析/模型分析/模型压平",
 };
 
 const Template = (args, { argTypes }) => ({

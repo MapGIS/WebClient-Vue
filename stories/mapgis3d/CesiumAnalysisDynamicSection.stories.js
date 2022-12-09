@@ -3,7 +3,7 @@ import Mapgis3dTileset from "../../cesium/src/components/Layer/M3D/3dTileset.vue
 import Markdown from "../../cesium/docs/api/analysis/DynamicSection.md";
 
 export default {
-  title: "三维/分析/剖切分析",
+  title: "三维/三维分析/模型分析/剖切",
 };
 
 const Template = (args, { argTypes }) => ({

@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/Flood.md";
 
 export default {
-  title: "三维/分析/洪水淹没分析",
+  title: "三维/三维分析/综合分析/洪水淹没",
   argTypes: {
     startHeight: {
       description: "洪水淹没水体起始高度",

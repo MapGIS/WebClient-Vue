@@ -2,7 +2,7 @@
 import Mapgis3dBimComponent from "../../cesium/src/components/Analysis/BIM.vue";
 
 export default {
-  title: "三维/分析/BIM构件树",
+  title: "三维/数据图层/M3D模型/BIM构件树",
   component: Mapgis3dBimComponent,
   argTypes: {
     enableBim: true,
@@ -48,8 +48,8 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-scene>`,
 });
 
-export const BIM = Template.bind({});
-BIM.args = {
+export const BIM构件树 = Template.bind({});
+BIM构件树.args = {
   enableBim: true,
   enablePopup: true,
   outStyle: {

@@ -6,7 +6,7 @@ import Mapgis3dMapvHeaterLayer from "../../cesium/src/components/Overlay/themeLa
 
 
 export default {
-    title: "三维/可视化/热力图",
+    title: "三维/可视化/专题图/热力",
     argTypes: {
         enableModel: false,
     },
@@ -301,7 +301,7 @@ const Template = (args, {argTypes}) => ({
     `,
 });
 
-export const 热力图 = Template.bind({});
-热力图.args = {
+export const 热力 = Template.bind({});
+热力.args = {
     enableModel: false,
 };

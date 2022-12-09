@@ -3,7 +3,7 @@ import Markdown from "../../cesium/docs/api/ui/measure.md";
 import { 剖面 } from "./CesiumAnalysisProfile.stories";
 
 export default {
-  title: "三维/场景子组件/量测-修改量测样式",
+  title: "三维/通用工具/量测/修改量测样式",
   component: Mapgis3dMeasure,
   argTypes: {
     enableControl: true,
@@ -170,15 +170,15 @@ const Template = (args, { argTypes }) => ({
   },
 });
 
-export const 量测 = Template.bind({});
-量测.args = {
+export const 修改量测样式 = Template.bind({});
+修改量测样式.args = {
   enableControl: true,
   expandControl: true,
   hasSettingPanel: false,
   position: "top-left",
 };
 
-量测.parameters = {
+修改量测样式.parameters = {
   docs: {
     description: {
       component: Markdown,

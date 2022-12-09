@@ -2,7 +2,7 @@ import { Style } from "@mapgis/webclient-es6-service";
 const { LineStyle, PointStyle, FillStyle, Shadow } = Style;
 
 export default {
-  title: "三维/可视化/专题图/单值专题图/多边形数据",
+  title: "三维/可视化/专题图/单值/多边形数据",
 };
 
 const Template = (args, {argTypes}) => ({
@@ -40,7 +40,7 @@ export const 多边形数据 = Template.bind({});
 多边形数据.args = {
   // baseUrl: `http://${window.webclient.ip}/static/data/geojson/省级行政区.geojson`,
   baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/geojson/湖北省.json`,
-  
+
   visible: true,
   type: "unique",
   field: "name",

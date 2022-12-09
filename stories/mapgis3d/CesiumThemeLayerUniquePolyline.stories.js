@@ -3,7 +3,7 @@ import { PolyLine } from "@mapgis/webclient-es6-service/common";
 const { LineStyle, PointStyle, FillStyle, Shadow } = Style;
 
 export default {
-  title: "三维/可视化/专题图/单值专题图/线数据",
+  title: "三维/可视化/专题图/单值/线数据",
 };
 
 const Template = (args, {argTypes}) => ({

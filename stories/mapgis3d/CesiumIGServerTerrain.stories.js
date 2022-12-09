@@ -2,7 +2,7 @@ import MapgisWebScene from "../../cesium/src/components/WebGlobe/WebGlobe.vue";
 import Mapgis3dIgsTerrain from "../../cesium/src/components/Provider/TerrainProvider/IgsTerrainProvider.vue";
 
 export default {
-  title: "三维/图层/IGServer地形",
+  title: "三维/数据图层/地形/MapGIS地形/带法向",
   component: Mapgis3dIgsTerrain,
   argTypes: {
     // url: "http://develop.smaryun.com:6163/igs/rest/g3d/terrain",
@@ -35,8 +35,8 @@ const Template = (args, { argTypes }) => ({
 }; */
 
 // http://192.168.21.191:6163/igs/rest/g3d/DEM250_3D
-export const 有法向量 = Template.bind({});
-有法向量.args = {
+export const 带法向 = Template.bind({});
+带法向.args = {
   // url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/250DEM_3D`,
   url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/terrain/SceneServer`,
   show: true,

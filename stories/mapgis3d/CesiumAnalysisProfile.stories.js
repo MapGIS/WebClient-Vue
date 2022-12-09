@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/Profile.md";
 
 export default {
-  title: "三维/分析/剖面分析",
+  title: "三维/三维分析/地形分析/剖面",
   argTypes: {
     profileType: {
       description: "分析类型，0代表地形，1代表地形和模型兼容",

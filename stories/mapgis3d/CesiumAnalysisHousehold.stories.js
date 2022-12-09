@@ -3,7 +3,7 @@ import Mapgis3dRelationshipGraph from "../../cesium/src/components/UI/Popup/comp
 import Markdown from "../../cesium/docs/api/analysis/Household.md";
 
 export default {
-  title: "三维/分析/分层分户",
+  title: "三维/数据图层/M3D模型/MapGIS/分层分户",
   component: Mapgis3dStratifiedHousehold,
   argTypes: {
     enablePopup: true,

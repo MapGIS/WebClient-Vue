@@ -3,7 +3,7 @@ import Markdown from "../../cesium/docs/api/Overlay/GraphThemeLayer.md";
 import axios from "axios";
 
 export default {
-  title: "三维/可视化/统计专题图",
+  title: "三维/可视化/专题图/统计",
   component: Mapgis3dGraphThemeLayer,
   argTypes: {
     type: {
@@ -101,7 +101,7 @@ const Template = (args, { argTypes }) => ({
     },
     click(feature) {
       console.log('clickfeature',feature.id.feature);
-      
+
     },
     hover(feature) {
       // console.log('hover',feature);
@@ -127,8 +127,8 @@ const Template = (args, { argTypes }) => ({
     `,
 });
 
-export const 统计专题图 = Template.bind({});
-统计专题图.args = {
+export const 统计 = Template.bind({});
+统计.args = {
   geojson: {},
   type: "HorizontalColumn",
   attributeName: ["GDP_2007", "GDP_2008"],
@@ -146,7 +146,7 @@ export const 统计专题图 = Template.bind({});
     farValue: 0
   }
 };
-统计专题图.parameters = {
+统计.parameters = {
   docs: {
     description: {
       component: Markdown,

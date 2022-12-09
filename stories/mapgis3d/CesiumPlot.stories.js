@@ -4,7 +4,7 @@ import Markdown from "../../cesium/docs/api/layer/3DPlot/Plot.md";
 import "../style/card.css";
 
 export default {
-  title: "三维/图层/标绘/三维标绘",
+  title: "三维/三维标绘/行业标绘",
   component: Mapgis3dPlot,
   argTypes: {},
 };

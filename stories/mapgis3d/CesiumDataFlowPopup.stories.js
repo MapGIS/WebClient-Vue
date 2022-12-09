@@ -1,5 +1,5 @@
 export default {
-  title: "三维/图层/数据流/启用Popup",
+  title: "三维/数据图层/数据流/气泡",
   argTypes: {
     baseUrl: {
       description: "数据流地址",
@@ -81,8 +81,8 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-scene>`,
 });
 
-export const 点 = Template.bind({});
-点.args = {
+export const 气泡 = Template.bind({});
+气泡.args = {
   baseUrl: "ws://192.168.91.123:9382/dataflow/cars_xian/subscribe",
   enablePopup: true,
   popupOptions: {

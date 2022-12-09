@@ -2,7 +2,7 @@ import MapgisWebGlobe from "../../cesium/src/components/WebGlobe/WebGlobe.vue";
 import MapgisDocLayer from "../../cesium/src/components/Layer/IGServer/IgsDocLayer";
 
 export default {
-  title: "三维/图层/IGServer地图文档",
+  title: "三维/数据图层/影像/MapGIS/地图服务",
   component: MapgisDocLayer,
   argTypes: {
     baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
@@ -31,8 +31,8 @@ const Template = (args, { argTypes }) => ({
   }
 });
 
-export const DocLayer = Template.bind({});
-DocLayer.args = {
+export const 地图服务 = Template.bind({});
+地图服务.args = {
   baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/docs/北京市0630_hdf`,
   layers: "show:1,2,3,4,5,6,7,8,9,10",
   layerStyle: {

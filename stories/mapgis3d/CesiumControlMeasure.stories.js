@@ -2,7 +2,7 @@ import Mapgis3dMeasure from "../../cesium/src/components/UI/Controls/Measure/Mea
 import Markdown from "../../cesium/docs/api/ui/measure.md";
 
 export default {
-  title: "三维/场景子组件/量测",
+  title: "三维/通用工具/量测",
   component: Mapgis3dMeasure,
   argTypes: {
     enableControl: true,

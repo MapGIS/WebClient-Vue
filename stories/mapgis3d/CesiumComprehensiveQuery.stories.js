@@ -1,7 +1,7 @@
 import Markdown from "../../cesium/docs/api/service/comprehensiveQuery/comprehensiveQuery.md";
 
 export default {
-  title: "三维/服务/综合查询",
+  title: "三维/其他/综合查询",
   argTypes: {
     logo: {
       description: "左侧logo",

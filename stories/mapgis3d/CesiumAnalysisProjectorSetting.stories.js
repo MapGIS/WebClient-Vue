@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/ProjectorSetting.md";
 
 export default {
-  title: "三维/分析/视频投放/投放配置",
+  title: "三维/通用工具/视频投放/投放配置",
   argTypes: {
     settings: {
       description: "投放视频参数对象",

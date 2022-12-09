@@ -1,5 +1,5 @@
 export default {
-    title: "三维/图层/IGServer矢量图层",
+    title: "三维/数据图层/影像/MapGIS/矢量图层",
     argTypes: {
         baseUrl: {
             description: '服务基地址',
@@ -63,8 +63,8 @@ const Template = (args, { argTypes }) => ({
     `
 });
 
-export const Vector = Template.bind({});
-Vector.args = {
+export const 矢量图层 = Template.bind({});
+矢量图层.args = {
     baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/layers`,
     gdbps: "GDBP://MapGisLocal/北京市/ds/行政区/sfcls/北京市,GDBP://MapGisLocal/北京市/ds/交通/sfcls/主干道,GDBP://MapGisLocal/北京市/ds/行政区/sfcls/城镇_BJ"
 }

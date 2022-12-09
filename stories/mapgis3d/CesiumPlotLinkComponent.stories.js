@@ -4,7 +4,7 @@ import "../style/link.css";
 import "../style/state.css";
 
 export default {
-  title: "三维/场景子组件/二三维联动/标绘",
+  title: "三维/场景控制/联动/标绘",
   component: Mapgis3dLink,
   argTypes: {
     timestamp: 100,

@@ -1,7 +1,7 @@
 import Mapgis3dM3dLayer from "../../cesium/src/components/Layer/M3D/M3d.vue";
 
 export default {
-  title: "三维/图层/M3D/2.0 基础",
+  title: "三维/数据图层/M3D模型/M3D(2.0)",
   component: Mapgis3dM3dLayer,
   argTypes: {
     url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
@@ -31,8 +31,8 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-scene>`,
 });
 
-export const 基础 = Template.bind({});
-基础.args = {
+export const M3D = Template.bind({});
+M3D.args = {
   url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/ModelM3D/SceneServer`,
   // url: `http://${window.webclient.ip}:${window.webclient.port}/M3D/2.0/M3DAttributeTest_BIN/zondy.mcj`,
   // url: `http://${window.webclient.ip}:${window.webclient.port}/结果矿体/结果矿体.mcj`,

@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/sceneeffect/sceneroaming.md";
 
 export default {
-  title: "三维/场景漫游/路径管理",
+  title: "三维/场景控制/相机/漫游路径管理",
   argTypes: {
     speed: {
       description:
@@ -173,8 +173,8 @@ const Template = (args, { argTypes }) => ({
     `,
 });
 
-export const 路径管理 = Template.bind({});
-路径管理.args = {
+export const 漫游路径管理 = Template.bind({});
+漫游路径管理.args = {
   speed: 10,
   exHeight: 1,
   heading: 90,
@@ -201,7 +201,7 @@ export const 路径管理 = Template.bind({});
   ],
 };
 
-路径管理.parameters = {
+漫游路径管理.parameters = {
   docs: {
     description: {
       component: Markdown,

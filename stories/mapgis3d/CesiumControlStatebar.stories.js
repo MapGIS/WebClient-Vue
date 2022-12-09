@@ -2,7 +2,7 @@ import MapgisStatebar from "../../cesium/src/components/UI/Controls/State/StateC
 import Markdown from "../../cesium/docs/api/ui/statebar.md";
 
 export default {
-  title: "三维/场景子组件/地图状态",
+  title: "三维/场景控制/控件/地图状态",
   component: MapgisStatebar,
   argTypes: {
   },
@@ -17,8 +17,8 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-scene>`
 });
 
-export const BaseState = Template.bind({});
-BaseState.parameters = {
+export const 地图状态 = Template.bind({});
+地图状态.parameters = {
   docs: {
     description: {
       component: Markdown,

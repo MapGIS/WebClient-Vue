@@ -1,7 +1,7 @@
 import Markdown from "../../cesium/docs/api/layer/Graphic/GraphicLayer.md";
 
 export default {
-  title: "三维/图层/标绘图层",
+  title: "三维/三维标绘/基础标绘",
   argTypes: {
   },
 };

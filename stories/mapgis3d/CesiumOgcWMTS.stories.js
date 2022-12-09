@@ -1,7 +1,7 @@
 import MapgisOgcWmtsLayer from "../../cesium/src/components/Layer/OGC/OGCWMTSLayer.vue";
 
 export default {
-  title: "三维/图层/OGC/WMTS",
+  title: "三维/数据图层/影像/MapGIS/WMTS",
   component: MapgisOgcWmtsLayer,
   argTypes: {
     options: {
@@ -57,8 +57,8 @@ const Template = (args, { argTypes }) => ({
   }
 });
 
-export const OGCWMTS = Template.bind({});
-OGCWMTS.args = {
+export const WMTS = Template.bind({});
+WMTS.args = {
   baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/OGC_4326_CHINA/WMTSServer`,
   wmtsLayer: "beijing",
   tileMatrixSet: "EPSG:4326_北京市_028mm_GB",

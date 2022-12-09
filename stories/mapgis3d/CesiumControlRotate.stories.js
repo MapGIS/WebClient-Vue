@@ -1,7 +1,7 @@
 import Markdown from "../../cesium/docs/api/ui/rotate.md";
 
 export default {
-    title: "三维/场景子组件/绕点旋转",
+    title: "三维/场景控制/相机/绕点旋转",
     argTypes: {
     }
 }
@@ -34,8 +34,8 @@ const Template = (args, { argTypes }) => ({
     </mapgis-web-scene>`
 });
 
-export const rotate = Template.bind({});
-rotate.args = {
+export const 绕点旋转 = Template.bind({});
+绕点旋转.args = {
     url: "http://t7.tianditu.gov.cn/img_c/wmts",
     tileMatrixSet: "c",
     tilingScheme: "EPSG:4326",
@@ -57,7 +57,7 @@ rotate.args = {
     },
 };
 
-rotate.parameters = {
+绕点旋转.parameters = {
     docs: {
         description: {
             component: Markdown,

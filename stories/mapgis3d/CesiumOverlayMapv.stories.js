@@ -4,7 +4,7 @@ import { BaseServer } from "@mapgis/webclient-es6-service";
 import axios from "axios";
 
 export default {
-  title: "三维/可视化/MapV-方形网格密度",
+  title: "三维/可视化/MapV/方形网格密度",
 };
 
 const Template = (args, { argTypes }) => ({

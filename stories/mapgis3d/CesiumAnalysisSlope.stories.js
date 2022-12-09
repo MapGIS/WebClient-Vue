@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/Slope.md";
 
 export default {
-  title: "三维/分析/坡度分析",
+  title: "三维/三维分析/地形分析/坡度",
   argTypes: {
     rampColors: {
       description: "坡度分析角度颜色数组",
