@@ -172,6 +172,7 @@ module.exports = {
               ["/api/UI/Print/print.md", "打印"],
 
               ["/api/UI/Draw/draw.md", " 绘制"],
+              ["/api/UI/Draw/editor.md", " 编辑"],
               ["/api/UI/Measure/measure.md", "测量"],
               ["/api/UI/Legend/legend.md", "图例"],
               ["/api/UI/Hawkeye/hawkeye.md", "鹰眼"],

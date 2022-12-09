@@ -36,9 +36,9 @@
 </template>
 
 <script>
-import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
+import "@mapgis/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import * as turf from "@turf/turf";
-import * as MapboxDrawCom from "@mapbox/mapbox-gl-draw";
+import * as MapboxDrawCom from "@mapgis/mapbox-gl-draw";
 import { last, oneOf } from "../../../util/util";
 import MeasureTool from "./components/MeasureTool.vue";
 import MeasureMarker from "./components/MeasureMarker.vue";
