@@ -38,7 +38,7 @@ const Template = (args, { argTypes }) => ({
 export const 有法向量 = Template.bind({});
 有法向量.args = {
   // url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/250DEM_3D`,
-  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`,
+  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/terrain/SceneServer`,
   show: true,
   requestVertexNormals: true,
 };

@@ -131,7 +131,7 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       url: "http://t0.tianditu.gov.cn/img_c/wmts",
-      m3dUrl: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
+      m3dUrl: `http://${webclient.ip}:${webclient.port}/igs/rest/g3d/ZondyModels`,
       autoReset: true,
       maximumScreenSpaceError: 8,
       tileMatrixSet: "c",

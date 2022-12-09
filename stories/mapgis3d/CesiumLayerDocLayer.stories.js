@@ -5,7 +5,7 @@ export default {
   title: "三维/图层/IGServer地图文档",
   component: MapgisDocLayer,
   argTypes: {
-    baseUrl:"http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
+    baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
     layers: "show:1,2,3,4,5,6,7,8,9,10",
     layerStyle: {
       visible: true,
@@ -23,17 +23,17 @@ const Template = (args, { argTypes }) => ({
   template: `<mapgis-web-scene style="height:95vh">
     <mapgis-3d-igs-doc-layer v-bind="$props"/>
   </mapgis-web-scene>`,
-  data(){
+  data() {
     return {
     }
   },
-  methods:{
+  methods: {
   }
 });
 
 export const DocLayer = Template.bind({});
 DocLayer.args = {
-  baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/docs/北京市`,
+  baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/docs/北京市0630_hdf`,
   layers: "show:1,2,3,4,5,6,7,8,9,10",
   layerStyle: {
     visible: true,
