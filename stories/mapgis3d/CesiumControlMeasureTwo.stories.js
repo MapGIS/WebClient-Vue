@@ -32,19 +32,19 @@ const Template = (args, { argTypes }) => ({
         :timeline="false"></mapgis-web-scene>
     </div>
   `,
-  data(){
+  data() {
     return {
-      m3durl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
+      m3durl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/ZondyModels/SceneServer`,
       vueKey: "scene"
     }
   },
-  methods:{
+  methods: {
     handleLoad(measure) {
       console.log('地图加初始化完毕！', measure);
       this.measure = measure;
     },
-    measured(result){
-      console.log("result",result)
+    measured(result) {
+      console.log("result", result)
     },
     measureLength() {
       this.measure && this.measure.enableMeasureLength();

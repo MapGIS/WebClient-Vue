@@ -1,6 +1,6 @@
 import Mapgis3dMeasure from "../../cesium/src/components/UI/Controls/Measure/Measure.vue";
 import Markdown from "../../cesium/docs/api/ui/measure.md";
-import {剖面} from "./CesiumAnalysisProfile.stories";
+import { 剖面 } from "./CesiumAnalysisProfile.stories";
 
 export default {
   title: "三维/场景子组件/量测-修改量测样式",
@@ -58,7 +58,7 @@ const Template = (args, { argTypes }) => ({
   `,
   data() {
     return {
-      m3durl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
+      m3durl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/ZondyModels/SceneServer`,
       measure: null,
       measureOptions: {},
       toolbarVisible: this.hasSettingPanel,
@@ -130,10 +130,10 @@ const Template = (args, { argTypes }) => ({
         height: "32px !important",
         ...(control
           ? {
-              fontSize: "20px",
-              transition: "transform 0.2s",
-              transform: `rotate(${toolbarVisible ? "180deg" : "0"})`,
-            }
+            fontSize: "20px",
+            transition: "transform 0.2s",
+            transform: `rotate(${toolbarVisible ? "180deg" : "0"})`,
+          }
           : {}),
       });
     },
@@ -166,7 +166,7 @@ const Template = (args, { argTypes }) => ({
     if (!this.hasSettingPanel) {
       this.toolbarVisible = this.expandControl;
     }
-    this.measureOptions = {fillColor: "rgba(255, 255,0, 0.8)"};
+    this.measureOptions = { fillColor: "rgba(255, 255,0, 0.8)" };
   },
 });
 

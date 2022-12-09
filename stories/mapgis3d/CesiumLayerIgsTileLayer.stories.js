@@ -29,7 +29,7 @@ const Template = (args, { argTypes }) => ({
           pitch: -1.4832321184766042,
           roll: 3.1369303868636838,
         },
-      }" style="height: 95vh">
+      }">
         <mapgis-3d-igs-tile-layer v-bind="$props" />
     </mapgis-web-scene >`,
 });
@@ -37,7 +37,7 @@ const Template = (args, { argTypes }) => ({
 export const Tile = Template.bind({});
 Tile.args = {
   id: "IGServer-Tle-Layer",
-  baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/tile/北京市`,
+  baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/tile/OGC_4326_CHINA`,
   layerStyle: {
     visible: true,
     opacity: 1,

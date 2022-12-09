@@ -5,11 +5,13 @@ export default {
     argTypes: {
         mapSheetBoundaryStyle: {
             description: '图幅边界样式',
-            table:{
-                defaultValue:{ sammary:'{color: "#FFA500",\n' +
-                        '          opacity: 0.5}'},
+            table: {
+                defaultValue: {
+                    sammary: '{color: "#FFA500",\n' +
+                        '          opacity: 0.5}'
+                },
             },
-            control:'object'
+            control: 'object'
         }
     }
 }
@@ -46,11 +48,11 @@ locate.args = {
         key: "tk",
         value: "9c157e9585486c02edf817d2ecbc7752",
     },
-    baseUrl:"http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/docs/北京市",
-    boundaryStyle:{
+    baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/ogc/doc/北京市0630_hdf/WMSServer`,
+    boundaryStyle: {
         color: "#1E90FF",
         opacity: 0.5,
-        outlineColor:"rgba(0,191,255,0.5)"
+        outlineColor: "rgba(0,191,255,0.5)"
     }
 };
 

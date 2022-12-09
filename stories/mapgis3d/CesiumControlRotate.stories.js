@@ -48,12 +48,12 @@ rotate.args = {
     url1: "http://t7.tianditu.gov.cn/cva_c/wmts",
     tileMatrixSet1: "c",
     tilingScheme1: "EPSG:4326",
-    layer1:"cva",
-    baseUrl:"http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/docs/北京市",
-    boundaryStyle:{
+    layer1: "cva",
+    baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/北京市`,
+    boundaryStyle: {
         color: "#1E90FF",
         opacity: 0.5,
-        outlineColor:"rgba(0,191,255,0.5)"
+        outlineColor: "rgba(0,191,255,0.5)"
     },
 };
 

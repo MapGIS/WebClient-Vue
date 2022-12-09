@@ -19,7 +19,7 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       g3d: {
-        url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/场景图层-分层分户/SceneServer`,
+        url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/分层分户/SceneServer`,
         // url: "http://192.168.21.191:8089/igs/rest/services/分层分户/SceneServer",
         vueIndex: "73CBB58E-C31B-2C50-08F3-DBD70DDED1BCi",
       },
