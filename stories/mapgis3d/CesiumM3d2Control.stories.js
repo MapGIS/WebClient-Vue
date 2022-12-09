@@ -8,7 +8,7 @@ export default {
     show: true,
     opacity: 1.0,
     enablePopup: true,
-    highlightStyle: {color: 'rgba(255, 0, 0, 0.6)'}
+    highlightStyle: { color: 'rgba(255, 0, 0, 0.6)' }
   },
 };
 
@@ -31,11 +31,11 @@ const Template = (args, { argTypes }) => ({
 
 export const 图文关联 = Template.bind({});
 图文关联.args = {
-  // url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
-  url: `http://${window.webclient.ip}:${window.webclient.port}/M3D/2.0/20211105测试楼高_ty_result/20211105测试楼高_ty_result.mcj`,
+  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
+  // url: `http://${window.webclient.ip}:${window.webclient.port}/M3D/2.0/20211105测试楼高_ty_result/20211105测试楼高_ty_result.mcj`,
   show: true,
   opacity: 1.0,
-  highlightStyle: {color: 'rgba(255, 255, 0, 0.6)'},
+  highlightStyle: { color: 'rgba(255, 255, 0, 0.6)' },
   enablePopup: true,
   popupOptions: {
     title: "ID",
