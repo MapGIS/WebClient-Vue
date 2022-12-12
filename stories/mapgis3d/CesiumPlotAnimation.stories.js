@@ -37,9 +37,9 @@ const Template = (args, { argTypes }) => ({
     return {
       vueIndex1: undefined,
       vueKey1: undefined,
-      jsonUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/test.json`,
-      symbolUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/symbols.json`,
-      dataUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/animation.json`,
+      jsonUrl: `http://${window.webclient.ip}:8094/example/libs/cdn/webclient-plot/test.json`,
+      symbolUrl: `http://${window.webclient.ip}:8094/example/libs/cdn/webclient-plot/symbols.json`,
+      dataUrl: `http://${window.webclient.ip}:8094/example/libs/cdn/webclient-plot/animation.json`, ,
       // 打包时使用
       // jsonUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/test.json`,
       // symbolUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/symbols.json`,
