@@ -858,6 +858,7 @@ export default {
     },
     queryStatic(movement) {
       const vm = this;
+      vm.featureproperties = undefined;
       const { Cesium, viewer } = this;
       const { vueKey, innerVueIndex, vueCesium } = this;
       const scene = viewer.scene;
@@ -888,16 +889,6 @@ export default {
         }
 
         if (feature) {
-          if (vm.featureclickenable) {
-            vm.featurevisible = true;
-          }
-
-          vm.featureposition = {
-            longitude: longitudeString2,
-            latitude: latitudeString2,
-            height: heightString2
-          };
-
           // 等修复好卡顿后再放开
           /*m3d.pickedOid = oid;
            m3d.pickedColor = Cesium.Color.fromCssColorString(
@@ -922,6 +913,18 @@ export default {
               result = result || {};
               vm.featureproperties = result;
             });
+          }
+          if (
+            vm.featureclickenable &&
+            vm.featureproperties &&
+            Object.keys(vm.featureproperties).length > 0
+          ) {
+            vm.featurevisible = true;
+            vm.featureposition = {
+              longitude: longitudeString2,
+              latitude: latitudeString2,
+              height: heightString2
+            };
           }
         } else {
           vm.featureposition = undefined;
