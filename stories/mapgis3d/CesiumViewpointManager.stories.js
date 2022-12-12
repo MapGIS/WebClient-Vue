@@ -3,7 +3,7 @@ import Markdown from "../../cesium/docs/api/analysis/ViewpointManager.md";
 import Mapgis3dViewpointManager from "../../cesium/src/components/WebGlobe/ViewpointManager.vue";
 
 export default {
-  title: "三维/场景控制/相机/视点管理",
+  title: "三维/场景控制/相机",
   component: Mapgis3dViewpointManager,
   argTypes: {},
 };
@@ -13,8 +13,6 @@ const Template = (args, { argTypes }) => ({
   components: { "mapgis-3d-viewpoint-manager": Mapgis3dViewpointManager },
   data() {
     return {
-      m3dUrl: `http://${webclient.ip}:${webclient.port}/igs/rest/g3d/ZondyModels`,
-      // m3dUrl: "http://192.168.88.204:6163/igs/rest/g3d/汉阳BIM",
       autoReset: true,
       maximumScreenSpaceError: 8,
     };
@@ -27,7 +25,7 @@ const Template = (args, { argTypes }) => ({
   <mapgis-3d-m3d-layer
       :autoReset="autoReset"
       :maximumScreenSpaceError="maximumScreenSpaceError"
-      :url="m3dUrl"
+      :url="$props.m3dUrl"
   />
   <mapgis-3d-viewpoint-manager class="storybook-ui-card" style="width: 320px;"></mapgis-3d-viewpoint-manager>
 </mapgis-web-scene>
@@ -35,7 +33,9 @@ const Template = (args, { argTypes }) => ({
 });
 
 export const 视点管理 = Template.bind({});
-视点管理.args = {};
+视点管理.args = {
+  m3dUrl: `http://${webclient.igsIp}:${webclient.igsPort}/igs/rest/g3d/ZondyModels`
+};
 视点管理.parameters = {
   docs: {
     description: {

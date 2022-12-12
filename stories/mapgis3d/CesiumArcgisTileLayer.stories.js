@@ -1,7 +1,7 @@
 import Markdown from "../../cesium/docs/api/layer/ArcGISServer/ArcGISTileLayer.md"
 
 export default {
-    title: "三维/数据图层/影像/ArcGIS/瓦片图层",
+    title: "三维/数据图层/影像/ArcGIS",
 };
 
 const Template = (args, {argTypes}) => ({

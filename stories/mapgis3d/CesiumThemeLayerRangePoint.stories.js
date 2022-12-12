@@ -3,7 +3,7 @@ import { Style } from "@mapgis/webclient-es6-service";
 const { LineStyle, PointStyle, FillStyle, Shadow } = Style;
 
 export default {
-  title: "三维/可视化/专题图/分段专题图/点数据",
+  title: "三维/可视化/专题图/分段",
 };
 
 const Template = (args, {argTypes}) => ({
@@ -42,7 +42,7 @@ export const 点数据 = Template.bind({});
   // baseUrl: `http://${window.webclient.ip}/static/data/geojson/省级行政区.geojson`,
   // baseUrl: `http://develop.smaryun.com/static/data/geojson/省会城市.geojson`,
   baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/geojson/metroStation.json`,
-  
+
   visible: true,
   type: "range",
   // field: "name",

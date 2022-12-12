@@ -2,7 +2,7 @@
 import Mapgis3dBimComponent from "../../cesium/src/components/Analysis/BIM.vue";
 
 export default {
-  title: "三维/数据图层/M3D模型/BIM构件树",
+  title: "三维/数据图层/M3D模型",
   component: Mapgis3dBimComponent,
   argTypes: {
     enableBim: true,
@@ -30,10 +30,7 @@ const Template = (args, { argTypes }) => ({
   components: { Mapgis3dBimComponent },
   data() {
     return {
-      m3d: {
-        url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/BIM构建树/M3dServer`,
-        vueIndex: "test_bim_layer1"
-      }
+
     };
   },
   methods: {
@@ -42,7 +39,7 @@ const Template = (args, { argTypes }) => ({
     },
   },
   template: `<mapgis-web-scene @load="handleMapload" style="height:95vh">    
-    <mapgis-3d-m3d-layer v-bind="m3d" />
+    <mapgis-3d-m3d-layer :url="$props.m3d.url" :vueIndex="$props.m3d.vueIndex"/>
     <mapgis-3d-bim-component style="position: absolute;top: 10px;left: 10px;" v-bind="$props" />
     <mapgis-3d-statebar />
   </mapgis-web-scene>`,
@@ -50,6 +47,10 @@ const Template = (args, { argTypes }) => ({
 
 export const BIM构件树 = Template.bind({});
 BIM构件树.args = {
+  m3d: {
+    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/BIM构建树/M3dServer`,
+    vueIndex: "test_bim_layer1"
+  },
   enableBim: true,
   enablePopup: true,
   outStyle: {

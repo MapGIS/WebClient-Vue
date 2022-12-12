@@ -1,5 +1,5 @@
 export default {
-    title: "三维/场景控制/联动/卷帘"
+    title: "三维/场景控制/联动"
 };
 
 const Template = (args, { argTypes }) => ({

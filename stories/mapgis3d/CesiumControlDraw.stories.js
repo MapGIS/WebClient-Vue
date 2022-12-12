@@ -1,5 +1,5 @@
 export default {
-  title: "三维/图形绘制/交互工具/交互绘制",
+  title: "三维/图形绘制/交互工具",
   argTypes: {
     drawStyle:{
       description: "绘制样式：<br>" +

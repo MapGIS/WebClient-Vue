@@ -2,7 +2,7 @@ import xml from 'fast-xml-parser';
 import MapgisOgcWmsLayer from "../../cesium/src/components/Layer/OGC/OGCWMSLayer.vue";
 
 export default {
-  title: "三维/数据图层/影像/MapGIS/WMS",
+  title: "三维/数据图层/影像/MapGIS",
   component: MapgisOgcWmsLayer,
   argTypes: {
     baseUrl: {

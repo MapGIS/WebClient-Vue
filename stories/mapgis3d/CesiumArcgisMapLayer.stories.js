@@ -1,6 +1,6 @@
 import Markdown from "../../cesium/docs/api/layer/ArcGISServer/ArcGISMapLayer.md"
 export default {
-    title: "三维/数据图层/影像/ArcGIS/地图服务"
+    title: "三维/数据图层/影像/ArcGIS"
 };
 
 const Template = (args, {argTypes}) => ({

@@ -1,5 +1,5 @@
 export default {
-    title: "三维/数据图层/影像/MapGIS/矢量图层",
+    title: "三维/数据图层/影像/MapGIS",
     argTypes: {
         baseUrl: {
             description: '服务基地址',

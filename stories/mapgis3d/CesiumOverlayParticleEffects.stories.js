@@ -3,7 +3,7 @@ import Markdown from "../../cesium/docs/api/Overlay/ParticleEffects.md";
 
 
 export default {
-    title: "三维/可视化/粒子特效",
+    title: "三维/可视化",
     argTypes: {
         particleList:{
             description: "粒子特效参数配置集",
@@ -42,8 +42,6 @@ const Template = (args, {argTypes}) => ({
     data() {
         return {
             url: "http://t0.tianditu.gov.cn/img_c/wmts",
-            m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
-            // m3dUrl: `http://localhost:6163/igs/rest/g3d/BIM模型`,
             maximumScreenSpaceError: 8,
             tileMatrixSet: "c",
             tilingScheme: "EPSG:4326",
@@ -68,7 +66,7 @@ const Template = (args, {argTypes}) => ({
           :tilingScheme="tilingScheme"
           :token="token"
       ></mapgis-3d-ogc-wmts-layer>
-      <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"
+      <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="$props.m3dUrl"
                            @loaded="loaded"></mapgis-3d-m3d-layer>
       <mapgis-ui-card v-if="showParticle"
                       class="storybook-ui-card">
@@ -96,6 +94,7 @@ const Template = (args, {argTypes}) => ({
 
 export const 粒子特效 = Template.bind({});
 粒子特效.args = {
+    m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
     symbolList:[
         {
             guid: "9D09DB87-7955-9295-2E34-61E83C30D3AA",

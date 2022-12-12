@@ -1,7 +1,7 @@
 import Markdown from "../../cesium/docs/api/MapStory/MapStory.md";
 
 export default {
-    title: "三维/地图故事",
+    title: "三维",
     argTypes:{
     }
 }

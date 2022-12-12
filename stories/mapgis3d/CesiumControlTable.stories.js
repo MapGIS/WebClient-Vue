@@ -1,5 +1,5 @@
 export default {
-  title: "三维/其他/表格",
+  title: "三维/其他",
   argTypes: {
   }
 };

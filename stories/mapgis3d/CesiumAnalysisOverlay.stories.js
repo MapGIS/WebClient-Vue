@@ -3,7 +3,7 @@ const { LineStyle, PointStyle, FillStyle } = Style;
 import Markdown from "../../cesium/docs/api/analysis/Overlay.md";
 
 export default {
-  title: "三维/三维分析/Turf空间分析/叠加",
+  title: "三维/三维分析/Turf空间分析",
   argTypes: {
     srcType: {
       description: "叠加数据源类型：图层级叠加Layer；要素级叠加Feature",

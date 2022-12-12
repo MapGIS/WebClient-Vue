@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/ProjectorManager.md";
 
 export default {
-  title: "三维/通用工具/视频投放/投放管理",
+  title: "三维/通用工具/视频投放",
   argTypes: {
     projectorOverlayLayerList: {
       description: "视频投放图层数组",
@@ -76,7 +76,8 @@ const Template = (args, { argTypes }) => ({
 
 export const 投放管理 = Template.bind({});
 投放管理.args = {
-  modelUrl: "./CesiumModels/Cesium_Camera.glb",
+  m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
+  modelUrl: `http://${window.webclient.ip}:${window.webclient.port}/CesiumModels/Cesium_Camera.glb`,
   modelOffset: { headingOffset: -90, pitchOffset: 0, rollOffset: 0 },
   maxProjected: 10,
   hideVPInvisible: false,

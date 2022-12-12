@@ -1,6 +1,6 @@
 import path from "../assets/geojson/path"
 export default {
-  title: "三维/数据图层/数据流/模型",
+  title: "三维/数据图层/数据流",
   argTypes: {
     startTime: {
       description: "起始时间"

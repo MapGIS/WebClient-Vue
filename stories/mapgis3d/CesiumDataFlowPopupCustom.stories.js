@@ -1,5 +1,5 @@
 export default {
-  title: "三维/数据图层/数据流/自定义Popup",
+  title: "三维/数据图层/数据流",
   argTypes: {
     baseUrl: {
       description: "数据流地址",

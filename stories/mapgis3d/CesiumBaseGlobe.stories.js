@@ -2,7 +2,7 @@ import MapgisWebGlobe from "../../cesium/src/components/WebGlobe/WebGlobe.vue";
 import "../style/scene.css";
 
 export default {
-  title: "三维/场景控制/场景/三维球面",
+  title: "三维/场景控制/场景",
   component: MapgisWebGlobe,
   argTypes: {
     homeButton: false,

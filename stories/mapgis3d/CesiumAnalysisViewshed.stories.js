@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/Viewshed.md";
 
 export default {
-    title: "三维/三维分析/综合分析/可视域",
+    title: "三维/三维分析/综合分析",
     argTypes:{
         horizontAngle: {
             description:'观察点的水平视角',
@@ -83,7 +83,8 @@ export const 可视域 = Template.bind({});
     maskColor: 'rgba(37, 218, 169, 0.2)',
     visibleColor:'#00ff00',
     unVisibleColor:'#ff0000',
-    exHeight:1.85
+    exHeight:1.85,
+    m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`
 };
 可视域.parameters = {
     docs: {

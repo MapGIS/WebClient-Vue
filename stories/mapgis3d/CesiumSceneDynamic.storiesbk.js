@@ -1,7 +1,7 @@
 import Mapgis3dSceneLayer from "../../cesium/src/components/Layer/M3D/Scene.vue";
 
 export default {
-  title: "三维/数据图层/M3D模型/动态单体化",
+  title: "三维/数据图层/M3D模型",
   component: Mapgis3dSceneLayer,
   argTypes: {
     url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/dth`,

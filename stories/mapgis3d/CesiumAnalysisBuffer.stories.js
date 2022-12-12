@@ -3,7 +3,7 @@ const { LineStyle, PointStyle, FillStyle, Shadow } = Style;
 import Markdown from "../../cesium/docs/api/analysis/Buffer.md";
 
 export default {
-  title: "三维/三维分析/Turf空间分析/缓冲",
+  title: "三维/三维分析/Turf空间分析",
   argTypes: {
     srcType: {
       description: "缓冲数据源类型：图层级缓冲Layer；要素级缓冲Feature",

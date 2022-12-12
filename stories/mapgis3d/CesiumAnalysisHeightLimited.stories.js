@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/HeightLimited.md";
 
 export default {
-    title: "三维/三维分析/模型分析/控高",
+    title: "三维/三维分析/模型分析",
     argTypes: {
         color: {
             //描述信息，即页面上Description那一栏的值
@@ -68,8 +68,7 @@ const Template = (args, {argTypes}) => ({
                 "http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752",
             autoReset: true,
             maximumScreenSpaceError: 8,
-            m3dUrl1: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
-            // m3dUrl2: `http://localhost:6163/igs/rest/g3d/ceping`,
+            m3dUrl1: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`
         }
     },
     template: `
@@ -107,7 +106,8 @@ export const 控高 = Template.bind({});
     },
     heightLimit: 80,
     maxSliderHeight: 180,
-    minSliderHeight: 0
+    minSliderHeight: 0,
+    m3dUrl1: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`
 }
 控高.parameters = {
     docs: {

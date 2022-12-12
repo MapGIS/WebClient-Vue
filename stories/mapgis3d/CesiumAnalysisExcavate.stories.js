@@ -1,7 +1,7 @@
 import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/Excavate.md";
 export default {
-    title: "三维/三维分析/地形分析/开挖",
+    title: "三维/三维分析/地形分析",
     argTypes:{
         excaveteStyle:{
             description:'开挖分析的样式',

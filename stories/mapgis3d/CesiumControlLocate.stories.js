@@ -1,7 +1,7 @@
 import Markdown from "../../cesium/docs/api/ui/locate.md";
 
 export default {
-    title: "三维/场景控制/相机/定位组件",
+    title: "三维/场景控制/相机",
     argTypes: {
         mapSheetBoundaryStyle: {
             description: '图幅边界样式',

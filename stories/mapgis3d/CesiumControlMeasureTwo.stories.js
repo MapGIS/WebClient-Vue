@@ -1,5 +1,5 @@
 export default {
-  title: "三维/通用工具/量测/多屏量测",
+  title: "三维/通用工具/量测",
   argTypes: {
   },
 };
@@ -12,7 +12,7 @@ const Template = (args, { argTypes }) => ({
         :vueKey="vueKey"
         :animation="false"
         :timeline="false">
-      <mapgis-3d-m3d-layer :url="m3durl"> </mapgis-3d-m3d-layer>
+      <mapgis-3d-m3d-layer :url="$props.m3durl"> </mapgis-3d-m3d-layer>
       <mapgis-3d-measure
           :vueKey="vueKey"
           @load="handleLoad"
@@ -34,7 +34,6 @@ const Template = (args, { argTypes }) => ({
   `,
   data() {
     return {
-      m3durl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/ZondyModels/SceneServer`,
       vueKey: "scene"
     }
   },
@@ -66,5 +65,6 @@ const Template = (args, { argTypes }) => ({
 
 export const 多屏量测 = Template.bind({});
 多屏量测.args = {
+  m3durl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/ZondyModels/SceneServer`
 };
 

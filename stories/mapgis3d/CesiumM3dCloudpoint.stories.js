@@ -2,7 +2,7 @@ import MapgisWebScene from "../../cesium/src/components/WebGlobe/WebGlobe.vue";
 import Mapgis3dM3dLayer from "../../cesium/src/components/Layer/M3D/M3d.vue";
 
 export default {
-  title: "三维/数据图层/M3D模型/MapGIS/点云",
+  title: "三维/数据图层/M3D模型/MapGIS",
   component: Mapgis3dM3dLayer,
   argTypes: {
     url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
@@ -38,7 +38,5 @@ const Template = (args, { argTypes }) => ({
 export const 点云 = Template.bind({});
 点云.args = {
   url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/m3d_点云/SceneServer`,
-  // url:`http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/m3d_点云`,
   show: true,
-
 };

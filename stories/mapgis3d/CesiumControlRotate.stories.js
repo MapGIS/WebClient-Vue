@@ -1,7 +1,7 @@
 import Markdown from "../../cesium/docs/api/ui/rotate.md";
 
 export default {
-    title: "三维/场景控制/相机/绕点旋转",
+    title: "三维/场景控制/相机",
     argTypes: {
     }
 }

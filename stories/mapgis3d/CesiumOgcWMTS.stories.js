@@ -1,7 +1,7 @@
 import MapgisOgcWmtsLayer from "../../cesium/src/components/Layer/OGC/OGCWMTSLayer.vue";
 
 export default {
-  title: "三维/数据图层/影像/MapGIS/WMTS",
+  title: "三维/数据图层/影像/MapGIS",
   component: MapgisOgcWmtsLayer,
   argTypes: {
     options: {

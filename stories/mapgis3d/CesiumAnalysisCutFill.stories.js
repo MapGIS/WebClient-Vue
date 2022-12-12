@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/CutFill.md";
 
 export default {
-  title: "三维/三维分析/地形分析/填挖方",
+  title: "三维/三维分析/地形分析",
   argTypes: {
     xPaneNum: {
       description: "X 坐标方向采样点的个数",
@@ -61,9 +61,7 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       url: "http://t0.tianditu.gov.cn/img_c/wmts",
-      //地形url TODO这里地址打包的时候改一下
-      //terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/terrain",
-      terrainUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/terrain/SceneServer`,
+      terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/terrain/SceneServer`,
       tileMatrixSet: "c",
       tilingScheme: "EPSG:4326",
       layer: "img",
@@ -138,7 +136,7 @@ export const 填挖方 = Template.bind({});
   cutColor: "rgba(0, 0, 255, 0.5)",
   fillColor: "rgba(255,165,0,0.5)",
   dataType: 2.0,
-  useMask: true,
+  useMask: true
 };
 
 填挖方.parameters = {

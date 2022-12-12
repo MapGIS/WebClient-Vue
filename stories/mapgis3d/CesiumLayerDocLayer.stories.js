@@ -2,7 +2,7 @@ import MapgisWebGlobe from "../../cesium/src/components/WebGlobe/WebGlobe.vue";
 import MapgisDocLayer from "../../cesium/src/components/Layer/IGServer/IgsDocLayer";
 
 export default {
-  title: "三维/数据图层/影像/MapGIS/地图服务",
+  title: "三维/数据图层/影像/MapGIS",
   component: MapgisDocLayer,
   argTypes: {
     baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",

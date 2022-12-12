@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/Flood.md";
 
 export default {
-  title: "三维/三维分析/综合分析/洪水淹没",
+  title: "三维/三维分析/综合分析",
   argTypes: {
     startHeight: {
       description: "洪水淹没水体起始高度",
@@ -75,10 +75,7 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       url: "http://t0.tianditu.gov.cn/img_c/wmts",
-      //地形url TODO这里地址打包的时候改一下
-      //terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/terrain",
       terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`,
-      // terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/武汉地形`,
       tileMatrixSet: "c",
       tilingScheme: "EPSG:4326",
       layer: "img",
@@ -159,6 +156,7 @@ export const 洪水淹没 = Template.bind({});
   amplitude: 10,
   animationSpeed: 0.01,
   frequency: 500,
+  terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`
 };
 
 洪水淹没.parameters = {

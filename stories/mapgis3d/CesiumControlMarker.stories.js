@@ -2,7 +2,7 @@ import Mapgis3dMarker from "../../cesium/src/components/UI/Marker/Marker.vue";
 import Markdown from "../../cesium/docs/api/ui/marker.md";
 
 export default {
-  title: "三维/图形绘制/标注/图标",
+  title: "三维/图形绘制/标注",
   component: Mapgis3dMarker,
   argTypes: {
     longitude: 110,

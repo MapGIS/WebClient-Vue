@@ -1,7 +1,7 @@
 import Mapgis3dDebug from "../../cesium/src/components/UI/Controls/Debug/Debug.vue";
 
 export default {
-    title: "三维/场景控制/控件/帧率",
+    title: "三维/场景控制/控件",
     component: Mapgis3dDebug,
     argTypes: {
 

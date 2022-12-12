@@ -2,7 +2,7 @@ import { Style } from "@mapgis/webclient-es6-service";
 const { LineStyle, PointStyle, FillStyle, Shadow } = Style;
 
 export default {
-  title: "三维/可视化/专题图/随机/点数据",
+  title: "三维/可视化/专题图/随机",
 };
 
 const Template = (args, {argTypes}) => ({

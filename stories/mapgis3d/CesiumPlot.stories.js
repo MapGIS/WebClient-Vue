@@ -135,8 +135,8 @@ const Template = (args, { argTypes }) => ({
   },
 });
 
-export const 三维标绘 = Template.bind({});
-三维标绘.args = {
+export const 标绘 = Template.bind({});
+标绘.args = {
   symbolUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/symbols.json`,
   baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/`,
   useIGS: false
@@ -144,7 +144,7 @@ export const 三维标绘 = Template.bind({});
   // symbolUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/symbols.json`,
 };
 
-三维标绘.parameters = {
+标绘.parameters = {
   docs: {
     description: {
       component: Markdown,

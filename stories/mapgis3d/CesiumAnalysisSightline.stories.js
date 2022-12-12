@@ -1,7 +1,7 @@
 import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/Sightline.md";
 export default {
-    title: "三维/三维分析/综合分析/通视",
+    title: "三维/三维分析/综合分析",
     argTypes: {
         visibleColor: {
             description: '可视区域颜色',
@@ -56,7 +56,8 @@ export const 通视 = Template.bind({});
 通视.args = {
     exHeight:2.0,
     visibleColor:'#2E8B57',
-    unVisibleColor:'#FFA500'
+    unVisibleColor:'#FFA500',
+    m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
 }
 通视.parameters = {
     docs: {

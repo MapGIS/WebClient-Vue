@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/simulation/CityGrow.md";
 
 export default {
-  title: "三维/模拟仿真/城市生长",
+  title: "三维/模拟仿真",
   argTypes: {
   },
 };
@@ -32,7 +32,6 @@ const Template = (args, { argTypes }) => ({
 
 export const 城市生长 = Template.bind({});
 城市生长.args = {
-  // width:720,
   baseUrl:`http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/shengZhenBaiMo/MapServer`,
   featureStyle:{
     startTimeField:"startTime",

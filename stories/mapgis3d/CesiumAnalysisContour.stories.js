@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/Contour.md";
 
 export default {
-  title: "三维/三维分析/地形分析/等值线面",
+  title: "三维/三维分析/地形分析",
   argTypes: {
     contourSpacing: {
       description: "等值线间距,单位米",
@@ -33,8 +33,6 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       url: "http://t0.tianditu.gov.cn/img_c/wmts",
-      // 地形url TODO这里地址打包的时候改一下
-      //terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/terrain",
       terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`,
       tileMatrixSet: "c",
       tilingScheme: "EPSG:4326",
@@ -105,6 +103,7 @@ export const 等值线面 = Template.bind({});
   contourSpacing: 270,
   contourWidth: 2,
   contourColor: "rgb(255,0,0)",
+  terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`
 };
 
 等值线面.parameters = {
