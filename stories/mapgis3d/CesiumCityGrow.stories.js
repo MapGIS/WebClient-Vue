@@ -33,7 +33,7 @@ const Template = (args, { argTypes }) => ({
 export const 城市生长 = Template.bind({});
 城市生长.args = {
   // width:720,
-  baseUrl:`http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrfs/docs/shengZhenBaiMo/0/0`,
+  baseUrl:`http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/shengZhenBaiMo/MapServer`,
   featureStyle:{
     startTimeField:"startTime",
     endTimeField:"endTime",
