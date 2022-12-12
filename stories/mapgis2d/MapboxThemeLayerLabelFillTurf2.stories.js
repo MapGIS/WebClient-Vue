@@ -1,5 +1,5 @@
 export default {
-  title: "二维/图层/专题图/专题图添加标签/多边形数据-使用IGS生成标签(10.5.5以后可用)",
+  title: "二维/可是化/专题图/标签/多边形/IGS生成标签(10.5.5以后可用)",
   argTypes: {
     dataSource: {
       description: "使用IGS服务时，请传入一个IGS获取要素的服务地址，例如：'http://localhost:6163/igs/rest/mrfs/layer/query?f=json&gdbp=gdbp://MapGISLocalPlus/wuhan_new/sfcls/武汉市&structs={IncludeAttribute:true,IncludeGeometry:true,IncludeWebGraphic:false}&pageCount=200&page=0&cursorType=forward&rtnLabel=true'<br>" +
@@ -79,8 +79,8 @@ const Template = (args, {argTypes}) => ({
   }
 });
 
-export const  标签 = Template.bind({});
-标签.args = {
+export const  IGS生成标签 = Template.bind({});
+IGS生成标签.args = {
   dataSource: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrfs/layer/query?f=json&gdbp=gdbp://MapGISLocalPlus/wuhan_new/sfcls/武汉市&structs={IncludeAttribute:true,IncludeGeometry:true,IncludeWebGraphic:false}&pageCount=200&page=0&cursorType=forward&rtnLabel=true`,
   type: "uniform",
   field: "Name",

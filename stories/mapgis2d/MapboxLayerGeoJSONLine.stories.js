@@ -7,7 +7,7 @@ const { MarkerStyle, LineStyle, PointStyle, FillStyle } = Style;
 import '../style/popup.css';
 
 export default {
-  title: "二维/图层/GeoJSON图层/线",
+  title: "二维/数据图层/矢量/GeoJSON/线",
   component: MapgisGeojsonLayer,
   argTypes: {
     layer: {},

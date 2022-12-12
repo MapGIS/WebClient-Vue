@@ -2,7 +2,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisIgsTileLayer from "../../mapboxgl/src/components/layer/igserver/IgsTileLayer";
 
 export default {
-  title: "二维/图层/IGServer/IGS瓦片服务",
+  title: "二维/数据图层/影像/MapGIS/瓦片服务",
   component: MapgisIgsTileLayer,
   argTypes: {
     // serverName: {
@@ -80,8 +80,8 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-map>`,
 });
 
-export const IGS瓦片服务 = Template.bind({});
-IGS瓦片服务.args = {
+export const 瓦片服务 = Template.bind({});
+瓦片服务.args = {
   layerId: "igs_layer_layerid",
   baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/tile/北京市`,
 };

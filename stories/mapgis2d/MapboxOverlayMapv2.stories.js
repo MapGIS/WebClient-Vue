@@ -6,7 +6,7 @@ import {utilCurve, geojson, utilCityCenter, DataSet} from "mapv";
 
 
 export default {
-    title: "二维/可视化/MapV-动画",
+    title: "二维/可视化/MapV/飞行航线",
     component: MapgisMapv,
     argTypes: {}
 };
@@ -203,8 +203,8 @@ const Template = (args, {argTypes}) => ({
     `
 });
 
-export const mapv = Template.bind({});
-mapv.args = {
+export const 飞行航线 = Template.bind({});
+飞行航线.args = {
     mapvGeojson: {
         options: {
             gradient: {

@@ -4,7 +4,7 @@ import Markdown from "../../mapboxgl/docs/api/Layers/2DPlot/Plot.md";
 import "../style/card.css";
 
 export default {
-  title: "二维/图层/标绘/二维标绘",
+  title: "二维/二维标绘/行业标绘/二维标绘",
   component: Mapgis2dPlot,
   argTypes: {},
 };

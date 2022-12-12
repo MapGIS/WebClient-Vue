@@ -2,7 +2,7 @@ import MapgisStateControl from "../../mapboxgl/src/components/UI/controls/state/
 import "../style/state.css";
 
 export default {
-  title: "二维/地图子组件/状态栏",
+  title: "二维/场景控制/控件/状态栏",
   component: MapgisStateControl,
   argTypes: {
     default: {

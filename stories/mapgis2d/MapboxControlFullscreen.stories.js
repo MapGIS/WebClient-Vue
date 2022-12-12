@@ -2,7 +2,7 @@
 import MapgisFullscreen from "../../mapboxgl/src/components/UI/controls/FullscreenControl";
 
 export default {
-    title: "二维/地图子组件/全屏组件",
+    title: "二维/场景控制/控件/全屏组件",
     component: MapgisFullscreen,
     argTypes: {
         container:{

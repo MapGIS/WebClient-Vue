@@ -1,7 +1,7 @@
 import MapgisMeasure from "../../mapboxgl/src/components/UI/controls/measure/Measure.vue";
 
 export default {
-  title: "二维/地图子组件/量测",
+  title: "二维/通用工具/量测",
   component: MapgisMeasure,
   argTypes: {
     enableControl: true,

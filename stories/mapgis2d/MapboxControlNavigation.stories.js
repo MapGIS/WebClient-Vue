@@ -1,7 +1,7 @@
 import MapgisNavigation from "../../mapboxgl/src/components/UI/controls/NavigationControl";
 
 export default {
-    title: "二维/地图子组件/导航组件",
+    title: "二维/场景控制/控件/导航组件",
     component: MapgisNavigation,
     argTypes: {
         showCompass:{

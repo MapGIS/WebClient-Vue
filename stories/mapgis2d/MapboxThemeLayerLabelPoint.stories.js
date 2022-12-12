@@ -1,6 +1,6 @@
 import wuhan_house from "../assets/geojson/wuhan_house"
 export default {
-  title: "二维/图层/专题图/专题图添加标签/点数据",
+  title: "二维/可视化/专题图/标签/点",
   argTypes: {
     dataSource: {
       description: "geojson格式的数据源或者geojson数据源的URl，详见如下网址：<a href='https://geojson.org/' target='_blank'>https://geojson.org/  </a>",
@@ -78,8 +78,8 @@ const Template = (args, {argTypes}) => ({
   }
 });
 
-export const  标签 = Template.bind({});
-标签.args = {
+export const  点 = Template.bind({});
+点.args = {
   dataSource: wuhan_house,
   type: "uniform",
   field: "display_x",

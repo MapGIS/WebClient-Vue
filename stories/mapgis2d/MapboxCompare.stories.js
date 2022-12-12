@@ -3,7 +3,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisOgcWmtsLayer from "../../mapboxgl/src/components/layer/ogc/OgcWmtsLayer.js";
 
 export default {
-  title: "二维/地图子组件/卷帘",
+  title: "二维/场景控制/联动/卷帘",
   component: MapgisCompare,
   argTypes:{
     orientation: {
@@ -26,7 +26,7 @@ export default {
   }
 };
 
-export const Compare = (args, { argTypes }) => ({
+export const 卷帘 = (args, { argTypes }) => ({
 //   props: Object.keys(argTypes),
   components: { MapgisCompare, MapgisWebMap, MapgisOgcWmtsLayer },
   data (){

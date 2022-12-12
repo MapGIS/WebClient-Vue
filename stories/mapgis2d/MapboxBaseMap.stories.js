@@ -2,7 +2,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisWebMapMd from "../../mapboxgl/docs/guide/basemap.md";
 
 export default {
-    title: "二维/地图/基础",
+    title: "二维/场景控制/场景/二维地图",
     component: MapgisWebMap,
     argTypes: {
         mapStyle: {
@@ -92,8 +92,8 @@ const Template = (args, {argTypes}) => ({
 });
 
 
-export const 基础 = Template.bind({});
-基础.args = {
+export const 二维地图 = Template.bind({});
+二维地图.args = {
   mapStyle: {
     version: 8,
     sources: {},

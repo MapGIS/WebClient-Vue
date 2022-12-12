@@ -1,7 +1,7 @@
 import MapgisInspect from "../../mapboxgl/src/components/UI/controls/inspect/Inspect.vue";
 
 export default {
-  title: "二维/地图子组件/查询",
+  title: "二维/其他/查询",
   component: MapgisInspect,
   argTypes: {
     mode: "single",

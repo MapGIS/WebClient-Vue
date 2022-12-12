@@ -1,7 +1,7 @@
 import MapgisMvtEditor from "../../mapboxgl/src/components/layer/edit/Edit";
 
 export default {
-  title: "二维/图层/MVT/编辑样式",
+  title: "二维/数据图层/矢量/MVT/编辑",
   component: MapgisMvtEditor,
   argTypes: {},
 };

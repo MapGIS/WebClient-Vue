@@ -1,7 +1,7 @@
 import MapgisBuildingLayer from "../../mapboxgl/src/components/layer/building/BuildingLayer.vue";
 
 export default {
-  title: "二维/图层/建筑白膜",
+  title: "二维/数据图层/3D/建筑白膜",
   component: MapgisBuildingLayer,
   argTypes: {
     geojson:{
@@ -85,8 +85,8 @@ const Template = (args, { argTypes }) => ({
     `,
 });
 
-export const 小数据GEOJSON = Template.bind({});
-小数据GEOJSON.args = {
+export const 建筑白膜 = Template.bind({});
+建筑白膜.args = {
   // geojson: "http://develop.smaryun.com/static/data/geojson/building-500.geojson",
   geojson: `http://${window.webclient.ip}:${window.webclient.port}/static/data/geojson/building-500.geojson`,
   field: "height",

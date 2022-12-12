@@ -1,6 +1,6 @@
 import wuhan_subway from "../assets/geojson/wuhan_subway"
 export default {
-  title: "二维/图层/专题图/统一专题图/线数据",
+  title: "二维/可视化/专题图/统一/线",
   argTypes: {
     dataSource: {
       description: "geojson格式的数据源或者geojson数据源的URl，详见如下网址：<a href='https://geojson.org/' target='_blank'>https://geojson.org/  </a>",

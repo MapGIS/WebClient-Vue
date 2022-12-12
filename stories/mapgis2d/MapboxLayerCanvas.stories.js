@@ -3,7 +3,7 @@ import MapgisRasterLayer from "../../mapboxgl/src/components/layer/RasterLayer.j
 import MapgisCanvasLayer from "../../mapboxgl/src/components/layer/CanvasLayer.js";
 
 export default {
-  title: "二维/图层/画布图层",
+  title: "二维/数据图层/矢量/画布图层",
   component: MapgisCanvasLayer,
   // english Our exports that end in "Data" are not stories.
   // 中文 Data后缀的内容不是故事，而是Vue组件的方法
@@ -68,8 +68,8 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-map>`,
 });
 
-export const Canvas = Template.bind({});
-Canvas.args = {
+export const 画布图层 = Template.bind({});
+画布图层.args = {
   delay: true,
   layer: {
     source: "canvas_source_id",

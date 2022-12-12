@@ -2,7 +2,7 @@ import Markdown from "../../mapboxgl/docs/api/Layers/igserver/igsDocLayer.md";
 import MapgisIgsDocLayer from "../../mapboxgl/src/components/layer/igserver/IgsDocLayer";
 
 export default {
-  title: "二维/图层/IGServer/IGS地图文档",
+  title: "二维/数据图层/影像/MapGIS/地图服务",
   component: MapgisIgsDocLayer,
   argTypes: {
     layerId:  {
@@ -201,8 +201,8 @@ const Template = (args, { argTypes }) => ({
   },
 });
 
-export const 地图文档 = Template.bind({});
-地图文档.args = {
+export const 地图服务 = Template.bind({});
+地图服务.args = {
   layerId: "igs_layer_layerid",
   baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/docs/北京市`,
   layers: "show:0,1,2,3,4,5,6,7",
@@ -211,7 +211,7 @@ export const 地图文档 = Template.bind({});
   },
 };
 
-地图文档.parameters = {
+地图服务.parameters = {
   docs: {
     description: {
       component: Markdown,

@@ -2,7 +2,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisVectorLayer from "../../mapboxgl/src/components/layer/VectorLayer";
 
 export default {
-    title: "二维/图层/矢量图层",
+    title: "二维/数据图层/矢量/矢量",
     component: MapgisVectorLayer,
     argTypes: {
         layer: {
@@ -61,8 +61,8 @@ const Template = (args, { argTypes }) => ({
     }
 });
 
-export const 矢量图层 = Template.bind({});
-矢量图层.args = {
+export const 矢量 = Template.bind({});
+矢量.args = {
     layerId: "china_bound_id",
     sourceId: "vector_source_id",
     layer:{

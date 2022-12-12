@@ -2,7 +2,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisImageLayer from "../../mapboxgl/src/components/layer/ImageLayer.js";
 
 export default {
-  title: "二维/图层/图像图层",
+  title: "二维/数据图层/影像/影像",
   component: MapgisImageLayer,
   argTypes: {
     layer: {
@@ -52,8 +52,8 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-map>`,
 });
 
-export const Image = Template.bind({});
-Image.args = {
+export const 影像 = Template.bind({});
+影像.args = {
   layer: {
     source: "image_source_id",
     type: "raster",

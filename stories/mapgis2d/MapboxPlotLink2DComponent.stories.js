@@ -2,7 +2,7 @@ import Mapgis3dLink from "../../cesium/src/components/UI/Controls/Link/Link.vue"
 import "../style/link.css";
 
 export default {
-  title: "二维/场景子组件/二三维联动/标绘",
+  title: "二维/场景控制/联动/二三维联动/标绘",
   component: Mapgis3dLink,
   argTypes: {
     timestamp: 100,

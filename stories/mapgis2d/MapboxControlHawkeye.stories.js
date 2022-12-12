@@ -2,7 +2,7 @@ import MapgisHawkeye from "../../mapboxgl/src/components/UI/controls/hawkeye/Haw
 import MapgisAttribution from "../../mapboxgl/src/components/UI/controls/AttributionControl";
 
 export default {
-    title: "二维/地图子组件/鹰眼",
+    title: "二维/场景控制/控件/鹰眼",
     component: MapgisHawkeye,
     argTypes: {  },
 };

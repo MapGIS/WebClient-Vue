@@ -3,7 +3,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import ArcgisTileLayer from "../../mapboxgl/src/components/layer/ArcGISServer/ArcGISTileLayer.js";
 
 export default {
-    title: "二维/地图子组件/arcgis图例",
+    title: "二维/图例/ArcGIS/图例",
     component: MapgisArcgisLegend,
     argTypes: {  },
 };
@@ -83,5 +83,5 @@ const Template = (args, { argTypes }) => ({
     `
 });
 
-export const arcgis图例 = Template.bind({});
-arcgis图例.args = {}
+export const 图例 = Template.bind({});
+图例.args = {}

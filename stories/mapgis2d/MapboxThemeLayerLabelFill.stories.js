@@ -1,6 +1,6 @@
 import wuhan from "../assets/geojson/wuhan"
 export default {
-  title: "二维/图层/专题图/专题图添加标签/多边形数据",
+  title: "二维/可视化/专题图/标签/多边形",
   argTypes: {
     dataSource: {
       description: "geojson格式的数据源或者geojson数据源的URl，详见如下网址：<a href='https://geojson.org/' target='_blank'>https://geojson.org/  </a>",
@@ -76,8 +76,8 @@ const Template = (args, {argTypes}) => ({
   }
 });
 
-export const  标签 = Template.bind({});
-标签.args = {
+export const  多边形 = Template.bind({});
+多边形.args = {
   dataSource: wuhan,
   type: "uniform",
   field: "name",

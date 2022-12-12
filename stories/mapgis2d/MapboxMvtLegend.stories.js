@@ -1,7 +1,7 @@
 import MapgisMvtLegend from "../../mapboxgl/src/components/UI/controls/legend/LegendMvt.vue";
 
 export default {
-  title: "二维/地图子组件/MVT图例",
+  title: "二维/数据图层/矢量/MVT/图例",
   component: MapgisMvtLegend,
   argTypes: {
     outStyle: {
@@ -33,8 +33,8 @@ const Template = (args, { argTypes }) => ({
     </mapgis-web-map>`,
 });
 
-export const MVT图例 = Template.bind({});
-MVT图例.args = {
+export const 图例 = Template.bind({});
+图例.args = {
   outStyle: {
     position: "absolute",
     zIndex: 900,
