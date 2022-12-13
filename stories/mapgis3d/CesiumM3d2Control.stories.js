@@ -24,14 +24,14 @@ const Template = (args, { argTypes }) => ({
     },
   },
   template: `<mapgis-web-scene @load="handleMapload" style="height:95vh">    
-    <mapgis-3d-m3d-layer v-bind="$props" />
+    <mapgis-3d-scene-layer v-bind="$props" />
     <mapgis-3d-statebar />
   </mapgis-web-scene>`,
 });
 
 export const 图文关联 = Template.bind({});
 图文关联.args = {
-  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/BIM构建树/M3dServer`,
+  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/分层分户`,
   show: true,
   opacity: 1.0,
   highlightStyle: { color: 'rgba(255, 255, 0, 0.6)' },

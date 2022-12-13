@@ -39,7 +39,7 @@ const Template = (args, { argTypes }) => ({
     },
   },
   template: `<mapgis-web-scene @load="handleMapload" style="height:95vh">    
-    <mapgis-3d-m3d-layer :url="$props.m3d.url" :vueIndex="$props.m3d.vueIndex"/>
+    <mapgis-3d-scene-layer v-bind="$props.m3d"/>
     <mapgis-3d-bim-component style="position: absolute;top: 10px;left: 10px;" v-bind="$props" />
     <mapgis-3d-statebar />
   </mapgis-web-scene>`,
@@ -48,7 +48,7 @@ const Template = (args, { argTypes }) => ({
 export const BIM构件树 = Template.bind({});
 BIM构件树.args = {
   m3d: {
-    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/BIM构建树/M3dServer`,
+    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/分层分户`,
     vueIndex: "test_bim_layer1"
   },
   enableBim: true,

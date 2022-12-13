@@ -18,11 +18,6 @@ const Template = (args, { argTypes }) => ({
   components: { Mapgis3dStratifiedHousehold },
   data() {
     return {
-      g3d: {
-        url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/分层分户/SceneServer`,
-        // url: "http://192.168.21.191:8089/igs/rest/services/分层分户/SceneServer",
-        vueIndex: "73CBB58E-C31B-2C50-08F3-DBD70DDED1BCi",
-      },
       relationshipGraphShow: false,
       relationshipInfo: null,
     };
@@ -133,7 +128,7 @@ const Template = (args, { argTypes }) => ({
     },
   },
   template: `<mapgis-web-scene @load="handleMapload" style="height:95vh">    
-    <mapgis-3d-scene-layer v-bind="g3d" />
+    <mapgis-3d-scene-layer v-bind="$props.g3d" />
     <mapgis-3d-stratified-household style="position: absolute;top: 10px;left: 10px;" v-bind="$props" @show-relationship-graph="showRelationshipGraph" ref="stratifiedHousehold" />
     <!-- <mp-window-wrapper :visible="relationshipGraphShow"> -->
       <mapgis-ui-window
@@ -167,6 +162,10 @@ const Template = (args, { argTypes }) => ({
 
 export const 分层分户 = Template.bind({});
 分层分户.args = {
+  g3d: {
+    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/分层分户`,
+    vueIndex: "73CBB58E-C31B-2C50-08F3-DBD70DDED1BCi",
+  },
   enablePopup: true,
   enableDynamicQuery: false,
   enableStratifiedHouse: true,

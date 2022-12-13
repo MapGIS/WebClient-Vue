@@ -24,15 +24,14 @@ const Template = (args, { argTypes }) => ({
     },
   },
   template: `<mapgis-web-scene @load="handleMapload" style="height:95vh">    
-    <mapgis-3d-m3d-layer v-bind="$props" />
+    <mapgis-3d-scene-layer v-bind="$props" />
     <mapgis-3d-statebar />
   </mapgis-web-scene>`,
 });
 
 export const BIM = Template.bind({});
 BIM.args = {
-  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/BIM构建树/M3dServer`,
-  // url: `http://${window.webclient.ip}:${window.webclient.port}/M3D/2.0/高级住所模型/高级住所模型.mcj`,
+  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/分层分户`,
   show: true,
   opacity: 1.0,
   highlightStyle: { color: 'rgba(255, 255, 0, 0.6)' },
