@@ -34,6 +34,6 @@ const Template = (args, { argTypes }) => ({
 
 export const 大雁塔 = Template.bind({});
 大雁塔.args = {
-  url: `http://${window.webclient.igsIp}:${window.webclient.webClientPort}/3DData/ModelCache/3DTileset/dayantaresult/tileset.json`,
+  url: `http://${window.webclient.ip}:8200/3DData/ModelCache/3DTileset/dayantaresult/tileset.json`,
   opacity: 1.0,
 };
