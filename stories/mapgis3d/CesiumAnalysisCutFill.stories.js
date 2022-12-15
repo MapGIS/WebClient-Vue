@@ -136,7 +136,8 @@ export const 填挖方 = Template.bind({});
   cutColor: "rgba(0, 0, 255, 0.5)",
   fillColor: "rgba(255,165,0,0.5)",
   dataType: 2.0,
-  useMask: true
+  useMask: true,
+  terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/terrain/SceneServer`,
 };
 
 填挖方.parameters = {
