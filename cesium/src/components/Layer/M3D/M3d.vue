@@ -149,7 +149,7 @@ export default {
       const { $props } = this;
       let options = {};
       Object.keys($props).forEach(function (key) {
-        options[key] = $props.key;
+        options[key] = $props[key];
       });
       return options;
     },
