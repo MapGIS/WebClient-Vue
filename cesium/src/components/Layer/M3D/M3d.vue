@@ -149,7 +149,9 @@ export default {
       const { $props } = this;
       let options = {};
       Object.keys($props).forEach(function (key) {
-        options[key] = $props[key];
+        if($props[key]) {
+          options[key] = $props[key];
+        }
       });
       return options;
     },
@@ -281,9 +283,13 @@ export default {
         return;
       }
       if (url.indexOf("SceneServer") != -1) {
-        viewer.scene.layers.removeSceneLayerByID(layerIndex);
+        if(viewer.scene.layers.sceneLayerMap._length > 0){
+          viewer.scene.layers.removeSceneLayerByID(layerIndex);
+        }
       } else {
-        viewer.scene.layers.removeM3DLayerByID(layerIndex);
+        if(viewer.scene.layers.m3dLayersMap.length > 0) {
+          viewer.scene.layers.removeM3DLayerByID(layerIndex);
+        }
       }
     },
     unbindSource() {

@@ -744,7 +744,9 @@ export default {
       let originStyles = [];
       layerIndexs.forEach(index => {
         let m3dlayer = g3dLayer.getLayer(index);
-        originStyles.push(m3dlayer.style);
+        if(m3dlayer) {
+          originStyles.push(m3dlayer.style);
+        }
       });
       vueCesium.G3DManager.changeOptions(
         vueKey,
@@ -759,10 +761,13 @@ export default {
 
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+      if(!g3dLayer) return;
       if (find && find.options.originStyles) {
         find.options.originStyles.forEach((s, i) => {
           let m3dlayer = g3dLayer.getLayer(String(i));
-          m3dlayer.style = s;
+          if(m3dlayer) {
+            m3dlayer.style = s;
+          }
         });
       }
     },
@@ -775,7 +780,9 @@ export default {
       if (find && find.options.originStyles) {
         find.options.originStyles.forEach((s, i) => {
           let m3dlayer = g3dLayer.getLayer(String(i));
-          m3dlayer.show = true;
+          if(m3dlayer) {
+            m3dlayer.show = true;
+          }
         });
       }
     },
@@ -803,11 +810,13 @@ export default {
       this.selectedKeys = [`${layerIndex}`];
       layerIndexs.forEach(index => {
         let m3dlayer = g3dLayer.getLayer(index);
-        if (index != layerIndex) {
-          m3dlayer.show = false;
-        } else {
-          m3dlayer.show = true;
-          viewer.camera.flyToBoundingSphere(m3dlayer.boundingSphere);
+        if(m3dlayer) {
+          if (index != layerIndex) {
+            m3dlayer.show = false;
+          } else {
+            m3dlayer.show = true;
+            viewer.camera.flyToBoundingSphere(m3dlayer.boundingSphere);
+          }
         }
       });
       let children = this.layerTree[0].children.map(c => {
@@ -896,7 +905,9 @@ export default {
       if (find && find.options) {
         let { primitiveCollection } = find.options;
         let last = find.options.feature;
-        primitiveCollection.remove(last);
+        if(last) {
+          primitiveCollection.remove(last);
+        }
       }
       this.restoreHighlight();
       this.restoreM3d();
@@ -944,22 +955,24 @@ export default {
       this.selectLayerIndex = layerIndex;
       let g3dLayer = viewer.scene.layers.getLayer(this.g3dLayerIndex);
       let m3dlayer = g3dLayer.getLayer(`${layerIndex}`);
-      this.restoreM3d();
-      vueCesium.G3DManager.changeOptions(
-        vueKey,
-        vueIndex,
-        "pickerTileset",
-        m3dlayer
-      );
-      vueCesium.G3DManager.changeOptions(
-        vueKey,
-        vueIndex,
-        "pickerTilesetStyle",
-        m3dlayer.style
-      );
-      m3dlayer.style = new Cesium.Cesium3DTileStyle({
-        color: `color('#FFFF00', 1)`
-      });
+      if(m3dlayer) {
+        this.restoreM3d();
+        vueCesium.G3DManager.changeOptions(
+            vueKey,
+            vueIndex,
+            "pickerTileset",
+            m3dlayer
+        );
+        vueCesium.G3DManager.changeOptions(
+            vueKey,
+            vueIndex,
+            "pickerTilesetStyle",
+            m3dlayer.style
+        );
+        m3dlayer.style = new Cesium.Cesium3DTileStyle({
+          color: `color('#FFFF00', 1)`
+        });
+      }
     },
     queryDynamic(movement, layerIndex) {
       const vm = this;
