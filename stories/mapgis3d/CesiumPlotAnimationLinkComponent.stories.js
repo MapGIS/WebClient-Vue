@@ -119,11 +119,15 @@ const Template = (args, { argTypes }) => ({
       this.map.on("mouseup", function (e) {
         vm.mapboxActive = false;
       });
-      let mapboxManager = window.vueMap.MapManager.findSource(
-        "default",
-        this.vueIndex
-      );
-      let fabricCanvas = mapboxManager.options.canvas.getFabricCanvas();
+      let canvas = new e.Plot.FabricLayer(map, e.Plot.PlotLayer2DGroup);
+      canvas._containerId = map._container.id;
+      let mapboxManager = window.vueMap.MapManager.findSource("default", this.vueIndex);
+      if(!mapboxManager) {
+        window.vueMap.MapManager.addSource(this.vueKey, this.vueIndex, map, {
+          canvas: canvas
+        });
+      }
+      let fabricCanvas = canvas.getFabricCanvas();
       fabricCanvas.on("mouse:move", function () {
         if (vm.mapboxActive) {
           let bounds = vm.map.getBounds();

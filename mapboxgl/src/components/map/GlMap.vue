@@ -19,6 +19,12 @@ import { initManager, initVueMap } from "./manager";
 import { addListener, removeListener } from "resize-detector";
 import debounce from "lodash/debounce";
 
+import plot from "@mapgis/webclient-plot";
+const {
+  PlotLayer2DGroup = Zondy.Plot.PlotLayer2DGroup,
+  FabricLayer = Zondy.Plot.FabricLayer
+} = plot;
+
 export default {
   name: "mapgis-web-map",
 
@@ -138,7 +144,8 @@ export default {
         this.$_registerAsyncActions(map);
         this.$_bindPropsUpdateEvents();
         this.initialized = true;
-        this.$emit("load", { map, component: this, actions, mapbox });
+        let Plot = {PlotLayer2DGroup : PlotLayer2DGroup, FabricLayer: FabricLayer};
+        this.$emit("load", { map, component: this, actions, mapbox, Plot });
         this.bindSize();
       })
       .catch(function onRejected(error) {

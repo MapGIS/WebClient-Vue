@@ -34,7 +34,8 @@ const Template = (args, { argTypes }) => ({
       bbox: [
         [116.2396164394222, 36.857699114405676],
         [119.38483688908019,33.044482287500756],
-      ]
+      ],
+      useIGS: false
     };
   },
   watch: {
@@ -104,8 +105,15 @@ const Template = (args, { argTypes }) => ({
       this.map.on('mouseup', function (e) {
         vm.mapboxActive = false;
       });
+      let canvas = new e.Plot.FabricLayer(map, e.Plot.PlotLayer2DGroup);
+      canvas._containerId = map._container.id;
       let mapboxManager = window.vueMap.MapManager.findSource("default", this.vueIndex);
-      let fabricCanvas = mapboxManager.options.canvas.getFabricCanvas();
+      if(!mapboxManager) {
+        window.vueMap.MapManager.addSource(this.vueKey, this.vueIndex, map, {
+          canvas: canvas
+        });
+      }
+      let fabricCanvas = canvas.getFabricCanvas();
       fabricCanvas.on("mouse:move",function () {
         if(vm.mapboxActive){
           let bounds = vm.map.getBounds();
@@ -123,7 +131,7 @@ const Template = (args, { argTypes }) => ({
     <div class="cesium-item top-right">
       <mapgis-web-scene :vueIndex="vueIndex">
         <mapgis-3d-plot-layer :vueIndex="23456" :symbolUrl="symbolUrl" @loaded="handleLoaded" :dataSource="jsonUrl" v-if="manager"></mapgis-3d-plot-layer>
-        <mapgis-3d-plot :symbolUrl="symbolUrl" :vueIndex="vueIndex1" :vueKey="vueKey1" @loaded="manager=true" class="storybook-ui-card"/>
+        <mapgis-3d-plot :useIGS="useIGS" :symbolUrl="symbolUrl" :vueIndex="vueIndex1" :vueKey="vueKey1" @loaded="manager=true" class="storybook-ui-card"/>
         <mapgis-3d-raster-layer :url="url1"> </mapgis-3d-raster-layer>
         <mapgis-3d-link :timestamp="100" :enableWheel="true" :enable="link" v-model="rect" ></mapgis-3d-link>
         <mapgis-3D-plot-link :layers="layers" :containers="containers"></mapgis-3D-plot-link>
