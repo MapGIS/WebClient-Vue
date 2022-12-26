@@ -63,6 +63,7 @@ export { default as Mapgis3dCesiumHeaterLayer } from "./components/Overlay/theme
 export { default as Mapgis3dMapvHeaterLayer } from "./components/Overlay/themeLayer/heater/MapvHeater.vue";
 export { default as Mapgis3dGraphThemeLayer } from "./components/Overlay/themeLayer/GraphThemeLayer.vue";
 export { default as Mapgis3dThemeLayerCustom } from "./components/Overlay/themeLayer/ThemeLayerCustom.vue";
+export { default as Mapgis3dM3dSubsectionLayer } from "./components/Overlay/themeLayer/M3DSubSectionLayer.vue";
 
 export { default as Mapgis3dIgsTerrain } from "./components/Provider/TerrainProvider/IgsTerrainProvider.vue";
 export { default as Mapgis3dTerrainProvider } from "./components/Provider/TerrainProvider/TerrainProvider.vue";
