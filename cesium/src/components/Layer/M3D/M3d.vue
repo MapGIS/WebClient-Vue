@@ -282,6 +282,10 @@ export default {
       if (layerIndex === undefined) {
         return;
       }
+
+      const layer =  viewer.scene.layers.getLayer(layerIndex)
+      if(!layer) return
+
       if (url.indexOf("SceneServer") != -1) {
         if(viewer.scene.layers.sceneLayerMap._length > 0){
           viewer.scene.layers.removeSceneLayerByID(layerIndex);

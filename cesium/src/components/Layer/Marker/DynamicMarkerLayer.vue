@@ -463,6 +463,7 @@ export default {
     clearHighlightFeature(marker) {
       const { vueCesium, vueKey, vueIndex, layerStyle } = this;
       let dataSource = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
+      if(!dataSource) return;
       this.changeColor(dataSource.source);
     },
     highlightMarker(marker) {

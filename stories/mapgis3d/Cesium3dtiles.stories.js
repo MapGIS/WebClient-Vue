@@ -14,7 +14,6 @@ const Template = (args, { argTypes }) => ({
   components: { Mapgis3dTileset },
   data() {
     return {
-      opacity: 0.25,
     };
   },
   methods: {
