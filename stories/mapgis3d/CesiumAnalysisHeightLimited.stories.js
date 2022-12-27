@@ -68,7 +68,6 @@ const Template = (args, {argTypes}) => ({
                 "http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752",
             autoReset: true,
             maximumScreenSpaceError: 8,
-            m3dUrl1: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`
         }
     },
     template: `

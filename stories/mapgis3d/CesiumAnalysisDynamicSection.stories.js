@@ -9,8 +9,6 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   data() {
     return {
-      m3dUrl1: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/钻孔_2_钻孔模型s/SceneServer`,
-      m3dUrl2: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/钻孔分层点_Sur_000_Ent/SceneServer`
     };
   },
   template: `

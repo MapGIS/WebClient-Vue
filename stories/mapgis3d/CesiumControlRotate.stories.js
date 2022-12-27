@@ -49,7 +49,6 @@ export const 绕点旋转 = Template.bind({});
     tileMatrixSet1: "c",
     tilingScheme1: "EPSG:4326",
     layer1: "cva",
-    baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/北京市`,
     boundaryStyle: {
         color: "#1E90FF",
         opacity: 0.5,

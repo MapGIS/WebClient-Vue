@@ -420,7 +420,9 @@ export default {
       this.showRoad();
     },
     onGotoHome() {
-      this.$refs.refPathRoaming.onClickStop(true);
+      if(this.$refs.refPathRoaming){
+        this.$refs.refPathRoaming.onClickStop(true);
+      }
       this.roaming = false;
       this.removeRoad();
     },
