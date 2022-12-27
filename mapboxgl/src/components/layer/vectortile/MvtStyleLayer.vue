@@ -81,7 +81,7 @@ export default {
       this.$_initStyle(this.mode, this.mvtStyle);
       this.initStyle = this.mvtStyle;
       this.initial = false;
-      if (typeof this.mvtStyle === 'object') {
+      if (typeof this.mvtStyle === "object") {
         this.lastStyle = this.mvtStyle;
       }
     },
@@ -180,15 +180,24 @@ export default {
           newLayer = this.mergeLayers(oldStyle.layers, newStyle.layers);
           break;
       }
+      // 如果样式文件中，paint为null，则mapboxgl会报错，这里给个默认值
+      const layers = newLayer.map(item => {
+        if (!item.paint) {
+          item.paint = {
+            "text-color": "rgba(0,0,0,1)"
+          };
+        }
+        return item;
+      });
 
       let style = {
         version: oldStyle.version || newStyle.version,
         sprite: oldStyle.sprite || newStyle.sprite,
         glyphs: oldStyle.glyphs || newStyle.glyphs,
         sources: { ...oldStyle.sources, ...newStyle.sources },
-        layers: newLayer
+        layers: layers
       };
-      this.$emit('change-style', style);
+      this.$emit("change-style", style);
       return style;
     },
 
