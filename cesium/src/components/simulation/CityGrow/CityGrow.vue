@@ -304,7 +304,7 @@ export default {
     },
     onSliderChange(e) {
       let vm = this;
-      if (vm.layer) {
+      if (vm.layer && e) {
         vm.layer.cityGrowSetTime(e, false);
       }
     },
