@@ -40,7 +40,7 @@ const Template = (args, { argTypes }) => ({
     return {
       vueIndex1: undefined,
       vueKey1: undefined,
-      jsonUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/test.json`,
+      jsonUrl: `http://${window.webclient.ip}:8086/storybook/标绘/test.json`,
       // jsonData: undefined,
       manager: undefined,
       classificationType: 3,
