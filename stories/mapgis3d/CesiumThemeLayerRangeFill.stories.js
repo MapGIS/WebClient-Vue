@@ -40,7 +40,7 @@ const Template = (args, {argTypes}) => ({
 export const 多边形数据 = Template.bind({});
 多边形数据.args = {
   // baseUrl: `http://${window.webclient.ip}/static/data/geojson/省级行政区.geojson`,
-  baseUrl: `http://${window.webclient.ip}:8200/Vector/geojson/populationSizeGeoJson_2017.json`,
+  baseUrl: `http://${window.webclient.ip}:8200/Vector/json/populationSizeGeoJson_2017.json`,
 
   visible: true,
   type: "range",
