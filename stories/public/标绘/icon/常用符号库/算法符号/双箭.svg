@@ -1,14 +1,48 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Creator: CorelDRAW (评估版) -->
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="400px" height="400px" version="1.1"
-    style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
-    viewBox="0 0 400 400" xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:xodm="http://www.corel.com/coreldraw/odm/2003" xmlns:zondyPlotSymbol="https://www.mapgis.com"
-    xmlns:zondyPlotSymbolItem="https://www.mapgis.com" zondyPlotSymbol:version="1.0" zondyPlotSymbol:id="svg003"
-    zondyPlotSymbol:name="" zondyPlotSymbol:desc="" zondyPlotSymbol:type="doublearrow">
-    <defs>
-        <style type="text/css">
+
+<svg
+   xml:space="preserve"
+   width="400px"
+   height="400px"
+   version="1.1"
+   style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+   viewBox="0 0 400 400"
+   zondyPlotSymbol:version="1.0"
+   zondyPlotSymbol:id="49"
+   zondyPlotSymbol:name="双箭"
+   zondyPlotSymbol:desc=""
+   zondyPlotSymbol:type="doublearrow"
+   id="svg10"
+   sodipodi:docname="双箭.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:zondyPlotSymbol="https://www.mapgis.com"><sodipodi:namedview
+   id="namedview12"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:pageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   showgrid="false"
+   inkscape:zoom="1.03875"
+   inkscape:cx="193.98315"
+   inkscape:cy="136.70277"
+   inkscape:window-width="1920"
+   inkscape:window-height="1017"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="图层_x0020_1" />
+    <defs
+   id="defs4">
+        <style
+   type="text/css"
+   id="style2">
             <![CDATA[
             .str0 {
                 stroke: #ED3237;
@@ -22,9 +56,21 @@
             ]]>
         </style>
     </defs>
-    <g id="图层_x0020_1">
-        <metadata id="CorelCorpID_0Corel-Layer" />
-        <path class="fil0 str0"
-            d="M308.79 52.56c-16.22,14.3 -36.36,26.56 -63.16,38.39m-15.03 6.61c-18.97,7.67 -36.43,12.55 -56.69,17.43m-14.18 2.26l-24.51 3.55 7.74 -9.02 -78.84 19.06 80.04 16.6 -8.7 -9.07 24.43 3.97m13.69 4.49c16.46,7.14 27.63,18.67 30.63,31.42m-0.06 14.49c-3.17,13.89 -14.86,27.55 -31.95,36.19m-11.56 4.31l-24.48 3.17 8.25 -8.58 -79.66 16.92 79.21 18.64 -7.78 -8.64 23.34 2.91m13.78 2.19c20.09,3.86 39.42,9.77 57.54,17.13m15.78 6.9c24.79,11.65 46.85,25.89 64.9,40.96" />
-    </g>
+    <g
+   id="图层_x0020_1"
+   inkscape:label="图层 1">
+        <metadata
+   id="CorelCorpID_0Corel-Layer" />
+
+    <path
+   class="fil0"
+   d="m 64.383074,72.05181 78.199496,55.11693 -26.45391,6.79696 c 59.66001,67.08001 74.70416,43.64523 82.30416,55.17523 L 316.48941,247.56312 79.771783,352.81074 c -18.85,-43.56 46.958007,-186.79494 26.228007,-212.34493 l -19.387956,23.70515 z"
+   id="path7"
+   sodipodi:nodetypes="ccccccccc"
+   style="clip-rule:evenodd;fill:#ed3237;fill-rule:evenodd;image-rendering:optimizeQuality;shape-rendering:geometricPrecision;text-rendering:geometricPrecision" /><path
+   class="fil0"
+   d="m 205.41797,54.241941 68.57254,67.631979 -30.30469,-4.75539 c 59.66001,67.08001 113.21198,112.95931 120.81198,124.48931 l -99.03125,15.58224 -67.03373,-68.04915 c -18.85,-43.56 53.92874,-39.49095 33.19874,-65.04095 l -16.98122,18.89168 z"
+   id="path7-6"
+   sodipodi:nodetypes="ccccccccc"
+   style="clip-rule:evenodd;fill:#ed3237;fill-rule:evenodd;image-rendering:optimizeQuality;shape-rendering:geometricPrecision;text-rendering:geometricPrecision" /></g>
 </svg>

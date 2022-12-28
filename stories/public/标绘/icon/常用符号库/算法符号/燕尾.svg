@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Creator: CorelDRAW (评估版) -->
+
+<svg
+   xml:space="preserve"
+   width="200px"
+   height="200px"
+   version="1.1"
+   style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+   viewBox="0 0 200 200"
+   zondyPlotSymbol:version="1.0"
+   zondyPlotSymbol:id="47"
+   zondyPlotSymbol:name="燕尾箭头"
+   zondyPlotSymbol:desc=""
+   zondyPlotSymbol:type="tailedsquadarrow"
+   id="svg10"
+   sodipodi:docname="燕尾箭头.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:zondyPlotSymbol="https://www.mapgis.com"><sodipodi:namedview
+   id="namedview12"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:pageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   showgrid="false"
+   inkscape:zoom="2.9380287"
+   inkscape:cx="102.27946"
+   inkscape:cy="117.76604"
+   inkscape:window-width="1920"
+   inkscape:window-height="1017"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="图层_x0020_1" />
+    <defs
+   id="defs4">
+        <style
+   type="text/css"
+   id="style2">
+            <![CDATA[
+            .fil0 {
+                fill: #ED3237
+            }
+            ]]>
+        </style>
+    </defs>
+        <path
+   class="fil0"
+   d="M 28.490241,6.2876534 84.807537,36.376832 66.468761,36.133261 c 58.129999,65.379999 111.381149,87.962359 118.781149,99.212359 -8.37,-10.84 -38.23259,4.29988 -47.58259,-4.59012 10.3,24.31 -4.93732,24.8045 0.30268,49.1145 C 108.21652,124.73291 81.839892,75.096739 56.419892,43.756739 l -4.936229,14.885099 z"
+   id="path7"
+   sodipodi:nodetypes="ccccccccc" />
+</svg>

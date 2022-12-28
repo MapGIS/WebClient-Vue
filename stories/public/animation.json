@@ -624,6 +624,7 @@
       "endDelay": 0,
       "loop": 10,
       "timelineOffset": 48000,
+      "timelineOffset": 48000,
       "animationType": "blink-animation"
     },
     {
