@@ -9,7 +9,7 @@ export const setTheme = (themeStyle = {}, payload = {}) => {
       themeFactory.find(item => item.label === themeStyle) || themeFactory[1];
   }
   if (payload && payload instanceof Object) {
-    acceptedThemeStyle = {...acceptedThemeStyle, ...payload};
+    acceptedThemeStyle = { ...acceptedThemeStyle, ...payload };
   }
   const nextThemeData = dealWithTheme(acceptedThemeStyle);
   const nextTheme = {

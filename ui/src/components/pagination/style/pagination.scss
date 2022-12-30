@@ -2,6 +2,7 @@
 @import "../../../util/style/theme/theme.scss";
 
 @include b(pagination) {
+  color: $text-color;
   ul,
   ol {
     margin: 0;
@@ -36,7 +37,7 @@
     text-align: center;
     vertical-align: middle;
     list-style: none;
-    background-color: $component-background;
+    background-color: $component-background !important;
     border: $border-width-base $border-style-base $border-color-base;
     border-radius: $border-radius-base;
     outline: 0;
@@ -207,6 +208,10 @@
     margin: 0 10px 0 5px;
   }
 
+  &-item-ellipsis {
+    color: $text-color;
+  }
+
   &-options {
     display: inline-block;
     margin-left: 16px;
@@ -226,7 +231,8 @@
 
       input {
         // .input;
-
+        color: $text-color;
+        background-color: $component-background;
         width: 50px;
         margin: 0 8px;
       }
@@ -301,6 +307,7 @@
   &.mini &-next &-item-link {
     background: transparent;
     border-color: transparent;
+    color: $text-color-secondary;
     &::after {
       height: $pagination-item-size-sm;
       line-height: $pagination-item-size-sm;

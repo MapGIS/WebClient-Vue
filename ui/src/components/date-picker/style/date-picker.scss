@@ -15,6 +15,9 @@
     &:hover {
       color: $text-color-secondary;
     }
+    & {
+      background: $component-background;
+    }
   }
 }
 

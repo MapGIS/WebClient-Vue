@@ -10,6 +10,7 @@
   }
 
   @include e(content, "-") {
+    color: $text-color;
     background-color: $collapse-content-bg;
   }
 

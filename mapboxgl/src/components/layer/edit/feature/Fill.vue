@@ -24,7 +24,7 @@ const FillRules = [
   },
   {
     title: "抗锯齿",
-    icon: "mapgis-line",
+    icon: "mapgis-shezhiditu",
     type: "boolean",
     layerprop: "fill-antialias",
     layertype: "paint",

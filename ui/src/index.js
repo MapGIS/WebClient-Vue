@@ -72,3 +72,4 @@ export { styleAttributesUIConfig } from "./components/plot/config/attributeConfi
 export { groupArr } from "./components/plot/config/attributeConfig";
 
 window.MapgisUi = UIComponents;
+window.setTheme = setTheme;

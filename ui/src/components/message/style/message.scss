@@ -1,7 +1,8 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
 @include b(message) {
+  color: $text-color;
   &-notice-content {
     background: $message-background;
   }

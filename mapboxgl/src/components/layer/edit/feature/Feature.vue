@@ -131,3 +131,10 @@ export default {
 .mapgis-mvt-editor-feature {
 }
 </style>
+<style lang="scss" scoped>
+.mapgis-mvt-editor-feature-wrapper {
+  .mapgis-property-color-left {
+    color: $text-color;
+  }
+}
+</style>

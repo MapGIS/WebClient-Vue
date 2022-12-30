@@ -7,6 +7,7 @@
   &-small {
     border: 1px solid $border-color-base;
   }
+  color: $text-color;
 }
 
 $table-prefix-cls: $ant-prefix + "-table";
@@ -241,7 +242,7 @@ $table-selection-column-width: 60px;
   &-tbody > tr {
     & &-row-hover,
     &:hover {
-      background: $table-row-hover-bg;
+      background: $table-selected-row-hover-bg;
       &:not(.#{$table-prefix-cls}-expanded-row):not(.#{$table-prefix-cls}-row-selected)
         > td {
         background: $table-row-hover-bg;
@@ -416,6 +417,17 @@ $table-selection-column-width: 60px;
       .#{$table-prefix-cls}-header + .#{$table-prefix-cls}-body > table,
       .#{$table-prefix-cls}-body-inner > table {
         border-top: 0;
+      }
+
+      // 解决fixed表头问题
+      ::v-deep .#{$table-prefix-cls}-body-inner {
+        overflow: hidden !important;
+      }
+      .#{$table-prefix-cls}-hide-scrollbar {
+        overflow: hidden !important;
+        margin-bottom: unset !important;
+        padding-bottom: unset !important;
+        width: calc(100% - 6px);
       }
     }
 
@@ -739,6 +751,9 @@ $table-selection-column-width: 60px;
     .#{$table-prefix-cls}-thead > tr > th:last-child {
       border-top-right-radius: 0;
     }
+    .#{$table-prefix-cls}-tbody > tr > td:last-child {
+      border-right: $border-width-base $border-style-base $border-color-split;
+    }
   }
 
   &-fixed-right {
@@ -782,6 +797,7 @@ $table-selection-column-width: 60px;
 
   &-thead > tr > th.#{$table-prefix-cls}-selection-column,
   &-tbody > tr > td.#{$table-prefix-cls}-selection-column {
+    border-right: $border-width-base $border-style-base $border-color-split;
     text-align: center;
 
     .#{$ant-prefix}-radio-wrapper {
@@ -803,10 +819,41 @@ $table-selection-column-width: 60px;
   }
 }
 
+// 解决右侧表格线条颜色问题(注意第一个class是连着的)
+.mapgis-ui-table-small.mapgis-ui-table-bordered .mapgis-ui-table-content {
+  border-right: $border-width-base $border-style-base $border-color-split;
+}
+
 // mapgis table css
 .mapgis-baseTable td.mapgis-ui-table-row-cell-break-word > span {
   cursor: pointer;
   color: $table-header-color;
+}
+
+.mapgis-ui-table-small.mapgis-ui-table-bordered
+  .mapgis-ui-table-fixed-left
+  .mapgis-ui-table-tbody
+  > tr
+  > td:last-child,
+.mapgis-ui-table-small.mapgis-ui-table-bordered
+  .mapgis-ui-table-fixed-left
+  .mapgis-ui-table-thead
+  > tr
+  > th:last-child {
+  border-right: $border-width-base $border-style-base $border-color-split;
+}
+
+.#{$table-prefix-cls}-thead > tr:hover.#{$table-prefix-cls}-row-selected > td,
+.#{$table-prefix-cls}-tbody > tr:hover.#{$table-prefix-cls}-row-selected > td {
+  background: $table-row-hover-bg;
+}
+.#{$table-prefix-cls}-thead
+  > tr:hover.#{$table-prefix-cls}-row-selected
+  > td.#{$table-prefix-cls}-column-sort,
+.#{$table-prefix-cls}-tbody
+  > tr:hover.#{$table-prefix-cls}-row-selected
+  > td.#{$table-prefix-cls}-column-sort {
+  background: $table-row-hover-bg;
 }
 
 /**
@@ -820,7 +867,7 @@ $table-selection-column-width: 60px;
 } */
 
 .mapgis-table-collapse {
-  box-shadow: 0px 0px 4px 1px $nav-shadow-backgroud;;
+  box-shadow: 0px 0px 4px 1px $nav-shadow-backgroud;
 }
 
 .mapgis-table-collapse .anticon {

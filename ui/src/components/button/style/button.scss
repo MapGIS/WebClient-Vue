@@ -14,6 +14,13 @@
   @include button-color($text-color, $btn-default-bg, $btn-default-border);
   @include button-variant-other($btn-theme-bg);
 
+  @include e([disabled], '-') {
+    color: $text-color;
+    &:hover {
+      color: $text-color;
+    }
+  }
+
   @include e(primary, "-") {
     @include button-variant-primary(
       $btn-primary-color,

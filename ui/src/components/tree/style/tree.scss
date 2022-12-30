@@ -10,6 +10,52 @@
   }
 
   &-checkbox-inner {
-    background: #fff0;
+    background: transparent;
+    border: 1px solid $border-color-base;
   }
+
+  &-checkbox-indeterminate &-checkbox-inner {
+    background-color: transparent;
+    border-color: $border-color-base;
+  }
+
+  &-switcher {
+    color: $text-color !important;
+    background: transparent !important;
+  }
+}
+
+.#{$ant-prefix}-tree-checkbox-disabled .#{$ant-prefix}-tree-checkbox-inner {
+  border-color: $disabled-bg !important;
+}
+
+li.#{$ant-prefix}-tree-treenode-disabled
+  > span:not(.#{$ant-prefix}-tree-switcher),
+li.#{$ant-prefix}-tree-treenode-disabled
+  > .#{$ant-prefix}-tree-node-content-wrapper,
+li.#{$ant-prefix}-tree-treenode-disabled
+  > .#{$ant-prefix}-tree-node-content-wrapper
+  span {
+  color: $disabled-color;
+  cursor: not-allowed;
+}
+
+.#{$ant-prefix}-tree
+  li
+  .#{$ant-prefix}-tree-node-content-wrapper.#{$ant-prefix}-tree-node-selected {
+  background-color: $tree-node-selected-bg;
+}
+
+.#{$ant-prefix}-tree-checkbox-checked
+  .#{$ant-prefix}-tree-checkbox-inner::after {
+  position: absolute;
+  display: table;
+  border: 2px solid #fff;
+  // 这里必须加important才能使勾选样式正常显示
+  border-top: 0 !important;
+  border-left: 0 !important;
+  transform: rotate(45deg) scale(1) translate(-50%, -50%);
+  opacity: 1;
+  transition: all 0.2s cubic-bezier(0.12, 0.4, 0.29, 1.46) 0.1s;
+  content: "";
 }

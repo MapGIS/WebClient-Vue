@@ -23,8 +23,12 @@ module.exports = {
         {
           from: "build/webclient-vue-ui.scss",
           to: "webclient-vue-ui.scss"
+        },
+        {
+          from: "build/theme.scss",
+          to: "theme.scss"
         }
-      ]),
+      ])
       // new BundleAnalyzerPlugin()
       // new IgnorePlugin(/^\.\/locale$/, /moment$/)
     ],

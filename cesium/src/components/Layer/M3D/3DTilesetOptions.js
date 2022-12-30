@@ -15,14 +15,14 @@ export default {
    */
   vueIndex: {
     type: [String, Number],
-    default: () => (Math.random() * 100000000).toFixed(0)
+    default: () => (Math.random() * 100000000).toFixed(0),
   },
 
   highlightStyle: {
     type: Object,
     default: () => {
       return new ModelStyle({ color: "rgba(255, 255, 0, 0.6)" });
-    }
+    },
   },
 
   /** @deprecated
@@ -56,7 +56,7 @@ export default {
     }
    */
   offset: {
-    type: Object
+    type: Object,
   },
 
   /**
@@ -70,7 +70,7 @@ export default {
     }
    */
   scale: {
-    type: Object
+    type: Object,
   },
 
   /**
@@ -161,5 +161,5 @@ export default {
   debugShowGeometricError: { type: Boolean, default: false },
   debugShowRenderingStatistics: { type: Boolean, default: false },
   debugShowMemoryUsage: { type: Boolean, default: false },
-  debugShowUrl: { type: Boolean, default: false }
+  debugShowUrl: { type: Boolean, default: false },
 };

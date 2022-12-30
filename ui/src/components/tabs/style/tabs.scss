@@ -1,18 +1,19 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
+$tabs-prefix-cls: $ant-prefix + "-tabs";
 @include b(tabs) {
   $prefix: &;
 
-  @include e(bar, '-') {
+  @include e(bar, "-") {
     border-bottom-color: $border-color-base;
   }
 
-  @include e(nav, '-') {
+  @include e(nav, "-") {
     color: $text-color;
   }
 
-  @include e(bottom, '-') {
+  @include e(bottom, "-") {
     & &-bar {
       border-top-color: $border-color-base;
     }
@@ -26,29 +27,33 @@
     padding: 8px 4px;
   }
 
-  @include e(tab-prev tab-next, '-') {
+  @include e(tab-prev tab-next, "-") {
     color: $text-color-secondary;
   }
 
-  @include e(left-bar, '-') {
+  @include e(left-bar, "-") {
     #{$prefix} & {
       border-right-color: $border-color-base;
     }
   }
 
-  @include e(right-bar, '-') {
+  @include e(right-bar, "-") {
     #{$prefix} & {
       border-left-color: $border-color-base;
     }
   }
 
-  @include e(left-content, '-') {
+  @include e(content, "-") {
+    color: $text-color;
+  }
+
+  @include e(left-content, "-") {
     #{$prefix} & {
       border-left-color: transparent;
     }
   }
 
-  @include e(right-content, '-') {
+  @include e(right-content, "-") {
     #{$prefix} & {
       border-right-color: transparent;
     }
@@ -78,13 +83,13 @@
     }
   }
 
-  @include e(extra-content, '-') {
+  @include e(extra-content, "-") {
     #{$prefix}-new-tab {
       border-color: $border-color-base;
     }
   }
 
-  @include e(vertical, '-') {
+  @include e(vertical, "-") {
     &#{$prefix}-card {
       #{$prefix}-card-bar {
         &#{$prefix}-left-bar,
@@ -179,3 +184,23 @@
     margin-left: auto;
   }
 }
+
+.#{$tabs-prefix-cls} {
+  &-nav {
+    .#{$tabs-prefix-cls}-tab {
+      &-disabled {
+        &,
+        &:hover {
+          color: $disabled-color;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}
+
+// .#{$tabs-prefix-cls}-nav .#{$tabs-prefix-cls}-tab-disabled,
+// .#{$tabs-prefix-cls}-nav .#{$tabs-prefix-cls}-tab-disabled:hover {
+//   color: $disabled-color !important;
+//   cursor: not-allowed;
+// }
