@@ -2,7 +2,7 @@ import MapgisWebGlobe from "../../cesium/src/components/WebGlobe/WebGlobe.vue";
 import "../style/scene.css";
 
 export default {
-  title: "三维/场景/地图场景",
+  title: "三维/场景控制/场景",
   component: MapgisWebGlobe,
   argTypes: {
     homeButton: false,
@@ -90,8 +90,8 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-scene>`,
 });
 
-export const EmptyGlobe = Template.bind({});
-EmptyGlobe.args = {
+export const 三维球面 = Template.bind({});
+三维球面.args = {
   homeButton: false,
   navigationHelpButton: false,
   sceneModePicker: false,

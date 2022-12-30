@@ -248,7 +248,12 @@ export default {
     unmount() {
       let { vueCesium, vueKey, vueIndex } = this;
       let tool = this.findRotateTool();
-      tool.stop();
+      if(tool){
+        try{
+          tool.stop()
+        }catch{
+        }
+      }
       vueCesium.RotateManager.deleteSource(vueKey, vueIndex);
     },
     addRotatePointTool() {

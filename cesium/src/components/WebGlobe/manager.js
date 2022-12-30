@@ -139,6 +139,10 @@ export function initVueCesium() {
     window.vueCesium.PlotAnimationManager || new PlotAnimationManager();
   window.vueCesium.PlotSymbolManager =
     window.vueCesium.PlotSymbolManager || new PlotSymbolManager();
+  window.vueCesium.M3DSubSectionManager =
+    window.vueCesium.M3DSubSectionManager || new M3DSubSectionManager();
+  window.vueCesium.CompareManager =
+    window.vueCesium.CompareManager || new CompareManager();
 
   //在window.vueCesium下添加取得WebGlobe对象的方法
   window.vueCesium.getViewer = function (vueKey) {
@@ -364,3 +368,5 @@ export class PlotManager extends BaseManager {}
 export class OneSymbolManager extends BaseManager {}
 export class PlotAnimationManager extends BaseManager {}
 export class PlotSymbolManager extends BaseManager {}
+export class M3DSubSectionManager extends BaseManager {}
+export class CompareManager extends BaseManager {}

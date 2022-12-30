@@ -4,7 +4,7 @@ import Markdown from "../../cesium/docs/api/layer/3DPlot/Plot.md";
 import "../style/card.css";
 
 export default {
-  title: "三维/图层/标绘/三维标绘",
+  title: "三维/三维标绘/行业标绘",
   component: Mapgis3dPlot,
   argTypes: {},
 };
@@ -40,7 +40,7 @@ const Template = (args, { argTypes }) => ({
     return {
       vueIndex1: undefined,
       vueKey1: undefined,
-      jsonUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/test.json`,
+      jsonUrl: `http://${window.webclient.ip}:8086/storybook/标绘/test.json`,
       // jsonData: undefined,
       manager: undefined,
       classificationType: 3,
@@ -135,14 +135,16 @@ const Template = (args, { argTypes }) => ({
   },
 });
 
-export const 三维标绘 = Template.bind({});
-三维标绘.args = {
+export const 标绘 = Template.bind({});
+标绘.args = {
   symbolUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/symbols.json`,
+  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/`,
+  useIGS: false
   // 打包时使用
   // symbolUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/symbols.json`,
 };
 
-三维标绘.parameters = {
+标绘.parameters = {
   docs: {
     description: {
       component: Markdown,

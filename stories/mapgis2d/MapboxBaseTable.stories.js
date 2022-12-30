@@ -2,7 +2,7 @@ import {VFeature, SQLParameter} from "../../mapboxgl/src/components/util";
 import MapgisBaseTable from "../../mapboxgl/src/components/UI/controls/table/MapBoxBaseTable";
 
 export default {
-  title: "二维/地图子组件/表格",
+  title: "二维/其他/表格",
   component:MapgisBaseTable,
   argTypes: {
   },

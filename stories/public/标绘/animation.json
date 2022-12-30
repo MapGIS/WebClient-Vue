@@ -1,9 +1,8 @@
 {
   "timeLineName": "脚本测试",
-  "id": "165fdf8-sd04-4490-gh67-sklvbf945dgty",
   "animations": [
     {
-      "animationName": "属性动画_1",
+      "animationName": "动画2",
       "featureIds": "8db9a2d0-037e-4490-ba32-ce3681b1a31f",
       "duration": 1500,
       "easing": "Linear",
@@ -18,7 +17,7 @@
       "animationType": "attribute-animation"
     },
     {
-      "animationName": "显隐动画_1",
+      "animationName": "动画2",
       "featureIds": "8db9a2d0-037e-4490-ba32-ce3681b1a31f",
       "duration": 1500,
       "easing": "Linear",
@@ -30,7 +29,7 @@
       "animationType": "visible-animation"
     },
     {
-      "animationName": "生长动画_1",
+      "animationName": "动画2",
       "featureIds": "44689d9e-de87-4902-8f9f-ba7f80c4f497",
       "duration": 4000,
       "easing": "Linear",
@@ -41,7 +40,7 @@
       "animationType": "grow-animation"
     },
     {
-      "animationName": "路径动画_1",
+      "animationName": "动画2",
       "featureIds": "5857ad84-729d-403a-b9fe-3af8e8c72abf",
       "duration": 4000,
       "easing": "Linear",
@@ -60,7 +59,7 @@
       "animationType": "path-animation"
     },
     {
-      "animationName": "生长动画_2",
+      "animationName": "动画2",
       "featureIds": "48528050-5e52-44c9-b26a-92037700dc60",
       "duration": 4000,
       "easing": "Linear",
@@ -71,7 +70,7 @@
       "animationType": "grow-animation"
     },
     {
-      "animationName": "路径动画_2",
+      "animationName": "动画2",
       "featureIds": "1ee0b5c3-2afd-4586-92bb-75da96be95e0",
       "duration": 4000,
       "easing": "Linear",
@@ -90,7 +89,7 @@
       "animationType": "path-animation"
     },
     {
-      "animationName": "生长动画_3",
+      "animationName": "动画2",
       "featureIds": "682f26f6-b361-46bd-84b3-a85836a745b3",
       "duration": 4000,
       "easing": "Linear",
@@ -101,7 +100,7 @@
       "animationType": "grow-animation"
     },
     {
-      "animationName": "路径动画_3",
+      "animationName": "动画2",
       "featureIds": "77ec11b2-a1f1-49ab-a39a-9c261bad2096",
       "duration": 4000,
       "easing": "Linear",
@@ -120,7 +119,7 @@
       "animationType": "path-animation"
     },
     {
-      "animationName": "路径动画_4",
+      "animationName": "动画2",
       "featureIds": "5b66db10-5913-4677-a99d-2f9ca194fded",
       "duration": 4000,
       "easing": "Linear",
@@ -139,7 +138,7 @@
       "animationType": "path-animation"
     },
     {
-      "animationName": "属性动画_2",
+      "animationName": "动画2",
       "featureIds": "6215d060-3bc0-4781-b6d0-105f60842350",
       "duration": 3000,
       "easing": "Linear",
@@ -154,7 +153,7 @@
       "animationType": "attribute-animation"
     },
     {
-      "animationName": "生长动画_4",
+      "animationName": "动画2",
       "featureIds": "6215d060-3bc0-4781-b6d0-105f60842350",
       "duration": 3000,
       "easing": "Linear",
@@ -167,7 +166,7 @@
       "animationType": "grow-animation"
     },
     {
-      "animationName": "属性动画_3",
+      "animationName": "动画2",
       "featureIds": "35a1a288-7a82-40b9-b047-668edc6a38a4",
       "duration": 1500,
       "easing": "Linear",
@@ -182,7 +181,7 @@
       "animationType": "attribute-animation"
     },
     {
-      "animationName": "显隐动画_2",
+      "animationName": "动画2",
       "featureIds": "35a1a288-7a82-40b9-b047-668edc6a38a4",
       "duration": 1500,
       "easing": "Linear",
@@ -194,7 +193,7 @@
       "animationType": "visible-animation"
     },
     {
-      "animationName": "路径动画_5",
+      "animationName": "动画2",
       "featureIds": "372ae4fb-ef0f-40d9-9016-90d75523c168",
       "duration": 4000,
       "easing": "Linear",
@@ -244,7 +243,7 @@
       "animationType": "grow-animation"
     },
     {
-      "animationName": "闪烁动画",
+      "animationName": "动画2",
       "featureIds": "30978630-d601-4285-81b6-7d92db50f3fd",
       "duration": 300,
       "easing": "Linear",
@@ -255,7 +254,7 @@
       "animationType": "blink-animation"
     },
     {
-      "animationName": "属性动画_hasIds",
+      "animationName": "动画2",
       "featureIds": "30978630-d601-4285-81b6-7d92db50f3fd",
       "duration": 1000,
       "easing": "Linear",
@@ -428,6 +427,7 @@
       },
       "animationType": "attribute-animation"
     },
+
     {
       "animationName": "动画2",
       "featureIds": "39007eef-8c0a-48c5-8270-dc29aa4eee93",
@@ -624,6 +624,7 @@
       "endDelay": 0,
       "loop": 10,
       "timelineOffset": 48000,
+      "timelineOffset": 48000,
       "animationType": "blink-animation"
     },
     {
@@ -787,6 +788,736 @@
         [117.50356164187039, 34.65101357517207]
       ],
       "animationType": "path-animation"
+    },
+
+    {
+      "animationName": "动画2",
+      "featureIds": "1a338d0f-f441-42b8-a35c-dadac0fc1094",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 62000,
+      "animationType": "grow-animation"
+    },
+
+    {
+      "animationName": "动画2",
+      "featureIds": "6de886e0-d4e5-48f5-8c1f-d71ed640552e",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 62000,
+      "animationType": "grow-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "eb768027-2b83-4ea8-adb6-f33421566d49",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "showPath": false,
+      "timelineOffset": 62000,
+      "endPathRate": 0.88,
+      "symbolBindId": "1a338d0f-f441-42b8-a35c-dadac0fc1094",
+      "animationType": "path-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "4ff506ce-4824-40f3-808e-c75c06e6604e",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "showPath": false,
+      "timelineOffset": 62000,
+      "endPathRate": 0.88,
+      "symbolBindId": "6de886e0-d4e5-48f5-8c1f-d71ed640552e",
+      "animationType": "path-animation"
+    },
+
+    {
+      "animationName": "动画2",
+      "featureIds": "935c96bf-b525-469c-8529-a3f3b0ec9691",
+      "duration": 1500,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 68000,
+      "attrsItem": {
+        "attrName": "dimModHeight",
+        "value": [0, -3000]
+      },
+      "animationType": "attribute-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "935c96bf-b525-469c-8529-a3f3b0ec9691",
+      "duration": 1400,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 68000,
+      "endStatus": true,
+      "animationType": "visible-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "afbd2d4d-987e-4c1f-b8a3-c064409c1f19",
+      "duration": 2500,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "showPath": false,
+      "timelineOffset": 67500,
+      "endPathRate": 0.88,
+      "animationCoords": [
+        [118.41760368650453, 34.645071012733965],
+        [118.35960555891155, 34.603987587250565]
+      ],
+      "animationType": "path-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "772111cd-e94a-4116-b698-b3b740814b07",
+      "duration": 3000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 72000,
+      "animationType": "grow-animation"
+    },
+
+    {
+      "animationName": "动画2",
+      "featureIds": "1edc8dd8-4f50-4558-ad5e-165c4303f932",
+      "duration": 3000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "showPath": false,
+      "timelineOffset": 72000,
+      "endPathRate": 0.88,
+      "symbolBindId": "772111cd-e94a-4116-b698-b3b740814b07",
+      "animationType": "path-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "f487f7f6-666e-45ea-9d03-aa24f8b0e59a",
+      "duration": 3000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 75000,
+      "animationType": "grow-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "09d11237-4ed4-4367-8514-d28416db4527",
+      "duration": 3000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "showPath": false,
+      "timelineOffset": 75000,
+      "endPathRate": 0.88,
+      "symbolBindId": "f487f7f6-666e-45ea-9d03-aa24f8b0e59a",
+      "animationType": "path-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "a54d32c3-4458-4b2d-bb82-f5a27da92132",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 80000,
+      "animationType": "grow-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "f1cd42a7-0e72-419d-b1cc-0698d5f5b92b",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "showPath": false,
+      "timelineOffset": 80000,
+      "endPathRate": 0.88,
+      "symbolBindId": "a54d32c3-4458-4b2d-bb82-f5a27da92132",
+      "animationType": "path-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "36815913-abcc-43c1-8bec-448d7e3f9608",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 80000,
+      "animationType": "grow-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "b17ca35e-2860-4de5-b75e-fec15c770151",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "showPath": false,
+      "timelineOffset": 80000,
+      "endPathRate": 0.88,
+      "symbolBindId": "36815913-abcc-43c1-8bec-448d7e3f9608",
+      "animationType": "path-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "84f3c849-8f7d-480a-8d5c-1f6b936992a0",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 80000,
+      "animationType": "grow-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "64c7dd54-c327-4b51-a5f8-64bd75161f7b",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "showPath": false,
+      "timelineOffset": 80000,
+      "endPathRate": 0.6,
+      "symbolBindId": "84f3c849-8f7d-480a-8d5c-1f6b936992a0",
+      "animationType": "path-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "21b5521e-0ef5-4515-8ab3-63aae3e56321",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 80000,
+      "animationType": "grow-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "2a3b0f27-29de-4a20-9a8d-1d154861ec10",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "showPath": false,
+      "timelineOffset": 80000,
+      "endPathRate": 0.6,
+      "symbolBindId": "21b5521e-0ef5-4515-8ab3-63aae3e56321",
+      "animationType": "path-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "5b950055-5544-4122-a2ea-a623bec0b0cf",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 80000,
+      "animationType": "grow-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "9e4bbae4-036f-43b2-bf59-15add2852b31",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "showPath": false,
+      "timelineOffset": 80000,
+      "endPathRate": 0.6,
+      "symbolBindId": "5b950055-5544-4122-a2ea-a623bec0b0cf",
+      "animationType": "path-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "c54dd808-98f6-4165-a72b-efa15bb0a12b,cf5f03cd-d607-4dd9-9a46-fe1294dfccd8",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "showPath": false,
+      "timelineOffset": 80000,
+      "endPathRate": 0.6,
+      "symbolBindId": "21b5521e-0ef5-4515-8ab3-63aae3e56321",
+      "animationType": "path-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "19247009-4e0b-429d-8d7b-93af3b80ee02",
+      "duration": 10000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 85000,
+      "animationType": "grow-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "19247009-4e0b-429d-8d7b-93af3b80ee02",
+      "duration": 400,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 24,
+      "timelineOffset": 85000,
+      "blinkColors": ["#ffffff", "#000000"],
+      "animationType": "blink-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "d58b0972-fed2-4c94-8657-9c35f6ed0f6d",
+      "duration": 10000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "showPath": false,
+      "timelineOffset": 85000,
+      "symbolBindId": "19247009-4e0b-429d-8d7b-93af3b80ee02",
+      "animationType": "path-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "19247009-4e0b-429d-8d7b-93af3b80ee02",
+      "duration": 1000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "endStatus": true,
+      "timelineOffset": 95000,
+      "animationType": "visible-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "ae47f2ac-4d2c-47f1-8fd9-509a60171c27,3e1d33eb-906c-40d7-a9a0-433e5a23f6e0",
+      "duration": 1500,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 98000,
+      "attrsItem": {
+        "attrName": "dimModHeight",
+        "value": [1200, 0]
+      },
+      "animationType": "attribute-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "ae47f2ac-4d2c-47f1-8fd9-509a60171c27,3e1d33eb-906c-40d7-a9a0-433e5a23f6e0",
+      "duration": 1500,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 98000,
+      "endStatus": true,
+      "animationType": "visible-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "5f23701b-68b2-4a1b-bc83-13e559e79425",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 100000,
+      "animationType": "grow-animation"
+    },
+
+    {
+      "animationName": "动画2",
+      "featureIds": "54b08573-7f1e-480c-8f4b-ff7c5b0c2f6a",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "showPath": false,
+      "timelineOffset": 100000,
+      "endPathRate": 0.88,
+      "symbolBindId": "5f23701b-68b2-4a1b-bc83-13e559e79425",
+      "animationType": "path-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "9d874750-421f-4417-9551-6ccbd5115eaf",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 100000,
+      "animationType": "grow-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "da21fc8f-2bbf-4209-8d35-081f0c2fcdd2",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "showPath": false,
+      "timelineOffset": 100000,
+      "endPathRate": 0.88,
+      "symbolBindId": "9d874750-421f-4417-9551-6ccbd5115eaf",
+      "animationType": "path-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "9b629d0f-7551-41d8-8608-c71b369f635a",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "showPath": false,
+      "timelineOffset": 100000,
+      "animationCoords": [
+        [117.78868135494665, 34.274200857836156],
+        [117.54468237240779, 34.295894707639796]
+      ],
+      "animationType": "path-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "40c6a7ea-0e39-49b2-9c46-46cf164e79a2",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "showPath": false,
+      "timelineOffset": 100000,
+      "animationCoords": [
+        [118.4345394416866, 34.40144830359238],
+        [118.08528925406306, 34.32083818354516]
+      ],
+      "animationType": "path-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "cfe7a257-9873-414d-9301-d45b1842b075",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 100000,
+      "animationType": "grow-animation"
+    },
+
+    {
+      "animationName": "动画2",
+      "featureIds": "757d1baf-44d6-4274-b2fa-56d89db1b95c",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "showPath": false,
+      "timelineOffset": 100000,
+      "endPathRate": 0.88,
+      "symbolBindId": "cfe7a257-9873-414d-9301-d45b1842b075",
+      "animationType": "path-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "5cf24efc-882b-4fd5-8ce2-1de34ca56bed",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 100000,
+      "animationType": "grow-animation"
+    },
+
+    {
+      "animationName": "动画2",
+      "featureIds": "feec582a-3707-4bc5-a93c-3d7c5403db2b",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "showPath": false,
+      "timelineOffset": 100000,
+      "endPathRate": 0.95,
+      "symbolBindId": "5cf24efc-882b-4fd5-8ce2-1de34ca56bed",
+      "animationType": "path-animation"
+    },
+
+    {
+      "animationName": "动画2",
+      "featureIds": "5034e6f9-811f-4d64-a904-2653a79dc113",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 100000,
+      "animationType": "grow-animation"
+    },
+
+    {
+      "animationName": "动画2",
+      "featureIds": "341f0a19-0adf-40c5-952a-f899a7deeb5b",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "showPath": false,
+      "timelineOffset": 100000,
+      "endPathRate": 0.88,
+      "symbolBindId": "5034e6f9-811f-4d64-a904-2653a79dc113",
+      "animationType": "path-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "9a959898-c10f-4559-8e61-2a865cb2afcd",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 100000,
+      "animationType": "grow-animation"
+    },
+
+    {
+      "animationName": "动画2",
+      "featureIds": "d58b0972-fed2-4c94-8657-9c35f6ed0f6d",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "showPath": false,
+      "timelineOffset": 100000,
+      "endPathRate": 0.95,
+      "symbolBindId": "9a959898-c10f-4559-8e61-2a865cb2afcd",
+      "animationType": "path-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "3bd69abd-c6fc-4493-b57d-6284040813e5",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 100000,
+      "animationType": "grow-animation"
+    },
+
+    {
+      "animationName": "动画2",
+      "featureIds": "35dc813f-b764-43ab-8790-95d6c06eb3cb",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "showPath": false,
+      "timelineOffset": 100000,
+      "endPathRate": 0.88,
+      "symbolBindId": "3bd69abd-c6fc-4493-b57d-6284040813e5",
+      "animationType": "path-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "5f23701b-68b2-4a1b-bc83-13e559e79425,9d874750-421f-4417-9551-6ccbd5115eaf,5cf24efc-882b-4fd5-8ce2-1de34ca56bed,5f23701b-68b2-4a1b-bc83-13e559e79425,9d874750-421f-4417-9551-6ccbd5115eaf,5034e6f9-811f-4d64-a904-2653a79dc113,9a959898-c10f-4559-8e61-2a865cb2afcd,3bd69abd-c6fc-4493-b57d-6284040813e5,cfe7a257-9873-414d-9301-d45b1842b075",
+      "duration": 1000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 104000,
+      "endStatus": true,
+      "animationType": "visible-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "0088688a-ea8e-41ed-9483-7adda8de1904,620f2190-7a7f-493f-9766-a58ae3e25623",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 104000,
+      "attrsItem": {
+        "attrName": "dimModHeight",
+        "value": [0, 1200]
+      },
+      "animationType": "attribute-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "0088688a-ea8e-41ed-9483-7adda8de1904,620f2190-7a7f-493f-9766-a58ae3e25623",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 104000,
+      "startRate": 0,
+      "growMode": "center",
+      "animationType": "grow-animation"
+    },
+
+    {
+      "animationName": "动画2",
+      "featureIds": "d63f67aa-86ea-420b-bddd-1b34fda23e33,bf516a50-45ce-4aba-a328-aa275ec9e932",
+      "duration": 4000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 113000,
+      "attrsItem": {
+        "attrName": "strokeStyle",
+        "value": ["#0000ff", "#ff0000"],
+        "ids": "path4137-0"
+      },
+      "animationType": "attribute-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "d63f67aa-86ea-420b-bddd-1b34fda23e33,bf516a50-45ce-4aba-a328-aa275ec9e932",
+      "duration": 500,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 6,
+      "scaleRateArr":[1,1.2,1],
+      "timelineOffset": 113000,
+      "animationType": "scale-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "2c19d045-fae3-4266-aaca-d59e0670bab8",
+      "duration": 2000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 115000,
+      "attrsItem": {
+        "attrName": "wallColor",
+        "value": ["rgba(0,0,255,0.3)", "rgba(255,0,0,0.3)"]
+      },
+      "animationType": "attribute-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "2c19d045-fae3-4266-aaca-d59e0670bab8",
+      "duration": 2000,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 115000,
+      "attrsItem": {
+        "attrName": "strokeStyle",
+        "value": ["#0000ff", "#ff0000"],
+        "ids": "irregular"
+      },
+      "animationType": "attribute-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "2c19d045-fae3-4266-aaca-d59e0670bab8",
+      "duration": 1500,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 117000,
+      "attrsItem": {
+        "attrName": "dimModHeight",
+        "value": [1200, 0]
+      },
+      "animationType": "attribute-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "2c19d045-fae3-4266-aaca-d59e0670bab8,",
+      "duration": 1500,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 117000,
+      "endStatus": true,
+      "animationType": "visible-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "d63f67aa-86ea-420b-bddd-1b34fda23e33,bf516a50-45ce-4aba-a328-aa275ec9e932",
+      "duration": 1500,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 117000,
+      "attrsItem": {
+        "attrName": "dimModHeight",
+        "value": [0, -1200]
+      },
+      "animationType": "attribute-animation"
+    },
+    {
+      "animationName": "动画2",
+      "featureIds": "d63f67aa-86ea-420b-bddd-1b34fda23e33,bf516a50-45ce-4aba-a328-aa275ec9e932",
+      "duration": 1500,
+      "easing": "Linear",
+      "delay": 0,
+      "endDelay": 0,
+      "loop": 1,
+      "timelineOffset": 117000,
+      "endStatus": true,
+      "animationType": "visible-animation"
     }
   ]
 }

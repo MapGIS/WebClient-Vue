@@ -1,0 +1,16 @@
+<svg width="200" height="200" version="1.1" xmlns="http://www.w3.org/2000/svg"
+    xmlns:zondyPlotSymbol="https://www.mapgis.com" xmlns:zondyPlotSymbolItem="https://www.mapgis.com"
+    zondyPlotSymbol:version="1.0" zondyPlotSymbol:id="56" zondyPlotSymbol:name="" zondyPlotSymbol:desc=""
+    zondyPlotSymbol:type="simplepoint" zondyPlotSymbol:pose="0">
+    <path style="fill:none;stroke:#ff0000;stroke-width:3px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+        id="path12770"
+        d="M 20,45 C 20.495465,32.28975 26.481154,22.767308 45,20 h 110 c 14.49953,2.124074 23.28364,12.274698 25,25 v 110 c -0.12761,16.70652 -9.93547,23.53523 -25,25 H 45 C 30.901209,177.92915 21.587278,170.66095 20,155 Z">
+    </path>
+    <path style="stroke-width:0.0827247;fill:#ff0000;" id="path5"
+        d="m 131.30465,101.34396 -1.27065,-6.776816 4.65906,-3.3884 4.65906,3.3884 v 4.23552 z M 63.112943,114.05049 V 43.741031 l 16.094937,25.413063 4.65906,1.27065 -2.117754,11.01232 6.776816,10.58878 -4.235512,8.894566 8.471019,-9.741666 -8.471019,-11.43588 4.235512,-7.62392 7.623914,2.54131 5.929714,13.13008 20.754,9.31812 16.09494,16.518486 z m 57.179377,-13.55363 -18.21269,-8.471016 -8.471017,-13.97718 -2.964858,-1.27066 -2.117753,2.96486 8.471019,11.85943 -16.094937,14.824276 3.388406,-14.400726 -6.776814,-9.74167 1.270653,-8.89458 -2.541306,-0.42354 -8.89457,-14.40074 v 51.249666 l 61.414887,-0.42355 z m -9.74167,-14.824276 5.08261,-6.77682 5.08261,2.5413 0.42356,3.81196 -4.23551,5.50617 z m -11.012327,-17.78915 5.082617,-6.77681 9.74167,3.38841 v 3.81195 l -9.31812,5.50616 z m -20.753994,-9.31812 2.117755,-7.200364 h 5.08261 l 2.541308,5.082614 -2.117753,2.11775 z">
+    </path><text
+        style="font-style:normal;font-weight:600;font-size:32.0238px;line-height:1.25;font-family:sans-serif;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.800596"
+        id="text2695" x="37.626118" y="157.34502">
+        <tspan id="tspan2693" x="37.626118" y="157.34502">地质灾害</tspan>
+    </text>
+</svg>

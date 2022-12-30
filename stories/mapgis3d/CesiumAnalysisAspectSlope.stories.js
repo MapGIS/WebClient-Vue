@@ -2,7 +2,7 @@ import "../style/card.css";
 import Mapgis3dAspectSlope from "../../cesium/src/components/Analysis/AspectSlope.vue";
 
 export default {
-    title: "三维/分析/坡向坡度分析",
+    title: "三维/三维分析/地形分析",
     component:Mapgis3dAspectSlope,
     argTypes: {
         rampColors: {
@@ -26,8 +26,6 @@ const Template = (args, {argTypes}) => ({
     data() {
         return {
             url: "http://t0.tianditu.gov.cn/img_c/wmts",
-            //地形url TODO这里地址打包的时候改一下
-            //terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/terrain",
             terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`,
             tileMatrixSet: "c",
             tilingScheme: "EPSG:4326",
@@ -103,5 +101,6 @@ export const 坡向坡度 = Template.bind({});
         {min: 240, max: 300, color: "rgba(96, 125, 139, 0.5)"},
         {min: 300, max: 360, color: "rgba(76, 175, 80, 0.5)"},
     ],
-    gradual: true
+    gradual: true,
+    terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`
 };

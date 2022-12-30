@@ -4,7 +4,7 @@ import MapgisNavigationControl from "../../mapboxgl/src/components/UI/controls/N
 import axios from "axios";
 
 export default {
-  title: "二维/可视化/MapV-聚类",
+  title: "二维/可视化/MapV/聚类",
   component: MapgisMapvLayer,
   argTypes: {
     options: {},

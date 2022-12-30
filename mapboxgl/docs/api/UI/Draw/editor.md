@@ -1,5 +1,3 @@
-# 编辑
-
 > mapgis-edit
 
 [官方参数](https://github.com/mapbox/mapbox-gl-draw/blob/main/docs/API.md)
@@ -15,7 +13,7 @@
 - **类型:** `Object`
 - **侦听属性** watch 属性
 - **必传:**
-- **描述:** 初始化编辑的图形要素信息，默认是feature要素格式。
+- **描述:** 初始化编辑的图形要素信息，默认是 feature 要素格式。
 
 ### `styles`
 
@@ -32,13 +30,13 @@
       "all",
       ["==", "active", "false"],
       ["==", "$type", "Polygon"],
-      ["!=", "mode", "static"]
+      ["!=", "mode", "static"],
     ],
     paint: {
       "fill-color": "#3bb2d0",
       "fill-outline-color": "#3bb2d0",
-      "fill-opacity": 0.1
-    }
+      "fill-opacity": 0.1,
+    },
   },
   {
     id: "gl-draw-polygon-fill-active",
@@ -47,8 +45,8 @@
     paint: {
       "fill-color": "#fbb03b",
       "fill-outline-color": "#fbb03b",
-      "fill-opacity": 0.1
-    }
+      "fill-opacity": 0.1,
+    },
   },
   {
     id: "gl-draw-polygon-midpoint",
@@ -56,8 +54,8 @@
     filter: ["all", ["==", "$type", "Point"], ["==", "meta", "midpoint"]],
     paint: {
       "circle-radius": 3,
-      "circle-color": "#fbb03b"
-    }
+      "circle-color": "#fbb03b",
+    },
   },
   {
     id: "gl-draw-polygon-stroke-inactive",
@@ -66,16 +64,16 @@
       "all",
       ["==", "active", "false"],
       ["==", "$type", "Polygon"],
-      ["!=", "mode", "static"]
+      ["!=", "mode", "static"],
     ],
     layout: {
       "line-cap": "round",
-      "line-join": "round"
+      "line-join": "round",
     },
     paint: {
       "line-color": "#3bb2d0",
-      "line-width": 2
-    }
+      "line-width": 2,
+    },
   },
   {
     id: "gl-draw-polygon-stroke-active",
@@ -83,13 +81,13 @@
     filter: ["all", ["==", "active", "true"], ["==", "$type", "Polygon"]],
     layout: {
       "line-cap": "round",
-      "line-join": "round"
+      "line-join": "round",
     },
     paint: {
       "line-color": "#fbb03b",
       "line-dasharray": [0.2, 2],
-      "line-width": 2
-    }
+      "line-width": 2,
+    },
   },
   {
     id: "gl-draw-line-inactive",
@@ -98,16 +96,16 @@
       "all",
       ["==", "active", "false"],
       ["==", "$type", "LineString"],
-      ["!=", "mode", "static"]
+      ["!=", "mode", "static"],
     ],
     layout: {
       "line-cap": "round",
-      "line-join": "round"
+      "line-join": "round",
     },
     paint: {
       "line-color": "#3bb2d0",
-      "line-width": 2
-    }
+      "line-width": 2,
+    },
   },
   {
     id: "gl-draw-line-active",
@@ -115,13 +113,13 @@
     filter: ["all", ["==", "$type", "LineString"], ["==", "active", "true"]],
     layout: {
       "line-cap": "round",
-      "line-join": "round"
+      "line-join": "round",
     },
     paint: {
       "line-color": "#fbb03b",
       "line-dasharray": [0.2, 2],
-      "line-width": 2
-    }
+      "line-width": 2,
+    },
   },
   {
     id: "gl-draw-polygon-and-line-vertex-stroke-inactive",
@@ -130,12 +128,12 @@
       "all",
       ["==", "meta", "vertex"],
       ["==", "$type", "Point"],
-      ["!=", "mode", "static"]
+      ["!=", "mode", "static"],
     ],
     paint: {
       "circle-radius": 5,
-      "circle-color": "#fff"
-    }
+      "circle-color": "#fff",
+    },
   },
   {
     id: "gl-draw-polygon-and-line-vertex-inactive",
@@ -144,12 +142,12 @@
       "all",
       ["==", "meta", "vertex"],
       ["==", "$type", "Point"],
-      ["!=", "mode", "static"]
+      ["!=", "mode", "static"],
     ],
     paint: {
       "circle-radius": 3,
-      "circle-color": "#fbb03b"
-    }
+      "circle-color": "#fbb03b",
+    },
   },
   {
     id: "gl-draw-point-point-stroke-inactive",
@@ -159,13 +157,13 @@
       ["==", "active", "false"],
       ["==", "$type", "Point"],
       ["==", "meta", "feature"],
-      ["!=", "mode", "static"]
+      ["!=", "mode", "static"],
     ],
     paint: {
       "circle-radius": 5,
       "circle-opacity": 1,
-      "circle-color": "#fff"
-    }
+      "circle-color": "#fff",
+    },
   },
   {
     id: "gl-draw-point-inactive",
@@ -175,12 +173,12 @@
       ["==", "active", "false"],
       ["==", "$type", "Point"],
       ["==", "meta", "feature"],
-      ["!=", "mode", "static"]
+      ["!=", "mode", "static"],
     ],
     paint: {
       "circle-radius": 3,
-      "circle-color": "#3bb2d0"
-    }
+      "circle-color": "#3bb2d0",
+    },
   },
   {
     id: "gl-draw-point-stroke-active",
@@ -189,12 +187,12 @@
       "all",
       ["==", "$type", "Point"],
       ["==", "active", "true"],
-      ["!=", "meta", "midpoint"]
+      ["!=", "meta", "midpoint"],
     ],
     paint: {
       "circle-radius": 7,
-      "circle-color": "#fff"
-    }
+      "circle-color": "#fff",
+    },
   },
   {
     id: "gl-draw-point-active",
@@ -203,12 +201,12 @@
       "all",
       ["==", "$type", "Point"],
       ["!=", "meta", "midpoint"],
-      ["==", "active", "true"]
+      ["==", "active", "true"],
     ],
     paint: {
       "circle-radius": 5,
-      "circle-color": "#fbb03b"
-    }
+      "circle-color": "#fbb03b",
+    },
   },
   {
     id: "gl-draw-polygon-fill-static",
@@ -217,8 +215,8 @@
     paint: {
       "fill-color": "#404040",
       "fill-outline-color": "#404040",
-      "fill-opacity": 0.1
-    }
+      "fill-opacity": 0.1,
+    },
   },
   {
     id: "gl-draw-polygon-stroke-static",
@@ -226,12 +224,12 @@
     filter: ["all", ["==", "mode", "static"], ["==", "$type", "Polygon"]],
     layout: {
       "line-cap": "round",
-      "line-join": "round"
+      "line-join": "round",
     },
     paint: {
       "line-color": "#404040",
-      "line-width": 2
-    }
+      "line-width": 2,
+    },
   },
   {
     id: "gl-draw-line-static",
@@ -239,12 +237,12 @@
     filter: ["all", ["==", "mode", "static"], ["==", "$type", "LineString"]],
     layout: {
       "line-cap": "round",
-      "line-join": "round"
+      "line-join": "round",
     },
     paint: {
       "line-color": "#404040",
-      "line-width": 2
-    }
+      "line-width": 2,
+    },
   },
   {
     id: "gl-draw-point-static",
@@ -252,9 +250,9 @@
     filter: ["all", ["==", "mode", "static"], ["==", "$type", "Point"]],
     paint: {
       "circle-radius": 5,
-      "circle-color": "#404040"
-    }
-  }
+      "circle-color": "#404040",
+    },
+  },
 ];
 ```
 
@@ -272,7 +270,7 @@
 - **类型:** `Boolean`
 - **非侦听属性:**
 - **默认** false
-- **描述** 关闭编辑功能，当为true时，初始化结束绘制图形后禁止编辑该图形或者拖拽该图形。
+- **描述** 关闭编辑功能，当为 true 时，初始化结束绘制图形后禁止编辑该图形或者拖拽该图形。
 
 ### `controls`
 
@@ -297,21 +295,31 @@
 
 ### `default`
 
-## 示例1
+## 示例 1
+
 - **描述:** 默认编辑功能和默认内部样式
 
 ```vue
 <template>
-  <mapgis-web-map v-bind="{...mapOptions}" style="height:95vh">
-    <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
-    <mapgis-draw  :enableControl="true"/>
-    <mapgis-ui-collapse-card ref="edit-card" :outStyle="editStyle" position="bottom-left">
+  <mapgis-web-map v-bind="{ ...mapOptions }" style="height:95vh">
+    <mapgis-rastertile-layer
+      layerId="tdt"
+      url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752"
+    />
+    <mapgis-draw :enableControl="true" />
+    <mapgis-ui-collapse-card
+      ref="edit-card"
+      :outStyle="editStyle"
+      position="bottom-left"
+    >
       <span slot="title">要素编辑</span>
-      <mapgis-ui-iconfont type="mapgis-edit-square" slot="icon-hiden"/>
-      <mapgis-ui-iconfont type="mapgis-hide" slot="extra" @click="hideCard"/>
-      <mapgis-edit  :enableControl="true"
-                    :closeEdit="false"
-                    :feature="feature"/>
+      <mapgis-ui-iconfont type="mapgis-edit-square" slot="icon-hiden" />
+      <mapgis-ui-iconfont type="mapgis-hide" slot="extra" @click="hideCard" />
+      <mapgis-edit
+        :enableControl="true"
+        :closeEdit="false"
+        :feature="feature"
+      />
     </mapgis-ui-collapse-card>
   </mapgis-web-map>
 </template>
@@ -361,37 +369,45 @@ export default {
           mpLength: 51.64045457828864,
         },
       },
-    }
+    };
   },
   created() {},
-  methods:{
+  methods: {
     hideCard() {
-      this.$refs['edit-card'].hide();
-    }
-  }
+      this.$refs["edit-card"].hide();
+    },
+  },
 };
 </script>
-<style>
-
-</style>
-
+<style></style>
 ```
-## 示例2
+
+## 示例 2
 
 - **描述:** 采取禁用编辑功能和自定义禁用的图形样式
+
 ```vue
 <template>
-  <mapgis-web-map v-bind="{...mapOptions}" style="height:95vh">
-    <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
-    <mapgis-draw  :enableControl="true" :closeEdit="true"/>
-    <mapgis-ui-collapse-card ref="edit-card" :outStyle="editStyle" position="bottom-left">
+  <mapgis-web-map v-bind="{ ...mapOptions }" style="height:95vh">
+    <mapgis-rastertile-layer
+      layerId="tdt"
+      url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752"
+    />
+    <mapgis-draw :enableControl="true" :closeEdit="true" />
+    <mapgis-ui-collapse-card
+      ref="edit-card"
+      :outStyle="editStyle"
+      position="bottom-left"
+    >
       <span slot="title">要素编辑</span>
-      <mapgis-ui-iconfont type="mapgis-edit-square" slot="icon-hiden"/>
-      <mapgis-ui-iconfont type="mapgis-hide" slot="extra" @click="hideCard"/>
-      <mapgis-edit  :enableControl="true"
-                    :closeEdit="true"
-                    :feature="feature"
-                    :style="featureStyle"/>
+      <mapgis-ui-iconfont type="mapgis-edit-square" slot="icon-hiden" />
+      <mapgis-ui-iconfont type="mapgis-hide" slot="extra" @click="hideCard" />
+      <mapgis-edit
+        :enableControl="true"
+        :closeEdit="true"
+        :feature="feature"
+        :style="featureStyle"
+      />
     </mapgis-ui-collapse-card>
   </mapgis-web-map>
 </template>
@@ -441,7 +457,7 @@ export default {
           mpLength: 51.64045457828864,
         },
       },
-      featureStyle:[
+      featureStyle: [
         {
           id: "gl-draw-polygon-fill-static",
           type: "fill",
@@ -449,8 +465,8 @@ export default {
           paint: {
             "fill-color": "#3bb2d0",
             "fill-outline-color": "#3bb2d0",
-            "fill-opacity": 0.1
-          }
+            "fill-opacity": 0.1,
+          },
         },
         {
           id: "gl-draw-polygon-stroke-static",
@@ -458,25 +474,29 @@ export default {
           filter: ["all", ["==", "mode", "static"], ["==", "$type", "Polygon"]],
           layout: {
             "line-cap": "round",
-            "line-join": "round"
+            "line-join": "round",
           },
           paint: {
             "line-color": "#3bb2d0",
-            "line-width": 2
-          }
+            "line-width": 2,
+          },
         },
         {
           id: "gl-draw-line-static",
           type: "line",
-          filter: ["all", ["==", "mode", "static"], ["==", "$type", "LineString"]],
+          filter: [
+            "all",
+            ["==", "mode", "static"],
+            ["==", "$type", "LineString"],
+          ],
           layout: {
             "line-cap": "round",
-            "line-join": "round"
+            "line-join": "round",
           },
           paint: {
             "line-color": "#3bb2d0",
-            "line-width": 2
-          }
+            "line-width": 2,
+          },
         },
         {
           id: "gl-draw-point-static",
@@ -484,27 +504,22 @@ export default {
           filter: ["all", ["==", "mode", "static"], ["==", "$type", "Point"]],
           paint: {
             "circle-radius": 5,
-            "circle-color": "#3bb2d0"
-          }
-        }
-      ]
-    }
+            "circle-color": "#3bb2d0",
+          },
+        },
+      ],
+    };
   },
   created() {},
-  methods:{
+  methods: {
     hideCard() {
-      this.$refs['edit-card'].hide();
-    }
-  }
+      this.$refs["edit-card"].hide();
+    },
+  },
 };
 </script>
-<style>
-
-</style>
-
+<style></style>
 ```
-
-
 
 ## 事件
 
@@ -519,4 +534,12 @@ export default {
 
 ### `@change.feature`
 
-- **描述:** 当编辑组件的要素信息被更改后，向父组件抛出更新后的feature。
+- **描述:** 当编辑组件的要素信息被更改后，向父组件抛出更新后的 feature。
+
+## 编辑标绘说明
+
+在编辑状态下，单击标绘选中当前标绘物，这个时候标绘物的控制点信息将会以 Marker 点的形式绘制到屏幕上。
+
+点击标绘物控制点，标绘物会进入选中状态，图标大小会比原来的大，这个时候可以进行控制点的拖拽以及删除操作，点击`Del`键删除选中点。
+
+同时也支持批量操作控制点，按住`shift`键点击控制点，实现控制点的多选，这个时候可以进行控制点组的拖拽以及删除操作，点击`Del`键删除选中的控制点点组。

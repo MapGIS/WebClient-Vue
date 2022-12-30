@@ -5,7 +5,7 @@
    height="200"
    id="svg2"
    zondyPlotSymbol:version="1.0"
-   zondyPlotSymbol:id="svg003"
+   zondyPlotSymbol:id="6"
    zondyPlotSymbol:name="文本"
    zondyPlotSymbol:desc=""
    zondyPlotSymbol:type="simplepoint"
@@ -47,7 +47,7 @@
   <text
      xml:space="preserve"
      id="text2510"
-     style="font-size:40px;line-height:1.25;font-family:SimHei;-inkscape-font-specification:SimHei;white-space:pre;shape-inside:url(#rect2512);fill:#ffffff"
+     style="font-size:40px;line-height:1.25;font-family:SimHei;-inkscape-font-specification:SimHei;white-space:pre;shape-inside:url(#rect2512);fill:#ff0000"
      transform="translate(11.948052,10.909091)"><tspan
        x="50.908203"
        y="92.361328"

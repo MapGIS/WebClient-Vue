@@ -2,7 +2,7 @@ import Mapgis3dMeasure from "../../cesium/src/components/UI/Controls/Measure/Mea
 import Markdown from "../../cesium/docs/api/ui/measure.md";
 
 export default {
-  title: "三维/场景子组件/量测",
+  title: "三维/通用工具",
   component: Mapgis3dMeasure,
   argTypes: {
     enableControl: true,
@@ -19,7 +19,7 @@ const Template = (args, { argTypes }) => ({
     <mapgis-web-scene style="height:95vh"
       v-bind:animation="false"
       v-bind:timeline="false">
-      <mapgis-3d-m3d-layer :url="m3durl"> </mapgis-3d-m3d-layer>
+      <mapgis-3d-m3d-layer :url="$props.m3durl"> </mapgis-3d-m3d-layer>
       <div
         v-show="enableControl"
         :style="controlStyle"
@@ -58,7 +58,6 @@ const Template = (args, { argTypes }) => ({
   `,
   data() {
     return {
-      m3durl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
       measure: null,
       toolbarVisible: this.hasSettingPanel,
       toolbarBtns: [
@@ -190,6 +189,7 @@ export const 量测 = Template.bind({});
   expandControl: true,
   hasSettingPanel: false,
   position: "top-left",
+  m3durl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
 };
 
 量测.parameters = {

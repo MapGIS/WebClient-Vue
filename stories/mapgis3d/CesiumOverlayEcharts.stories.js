@@ -122,9 +122,9 @@ const Template = (args, {argTypes}) => ({
       </mapgis-web-scene>`
 });
 
-export const mapEcharts = Template.bind({});
+export const 空气质量 = Template.bind({});
 let busLines = {};
-mapEcharts.args = {
+空气质量.args = {
     baseUrl: "http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
     layerStyle: {
         visible: true,

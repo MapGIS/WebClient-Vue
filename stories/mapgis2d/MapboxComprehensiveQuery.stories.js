@@ -1,7 +1,7 @@
 import Markdown from "../../mapboxgl/docs/api/service/comprehensiveQuery/comprehensiveQuery.md"
 
 export default {
-  title: "二维/服务/综合查询",
+  title: "二维/其他/综合查询",
   argTypes: {
     logo: {
       description: "左侧logo",

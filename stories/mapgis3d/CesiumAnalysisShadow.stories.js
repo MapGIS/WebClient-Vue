@@ -3,7 +3,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/Shadow.md";
 
 export default {
-    title: "三维/分析/阴影分析",
+    title: "三维/三维分析/综合分析",
     argTypes: {
         shadowColor: {
             //描述信息，即页面上Description那一栏的值
@@ -71,15 +71,16 @@ const Template = (args, { argTypes }) => ({
     `
 });
 
-export const Shadow = Template.bind({});
-Shadow.args = {
+export const 阴影 = Template.bind({});
+阴影.args = {
     shadowColor:'rgba(0,255,0,255)',
     sunColor:'rgba(255,0,0,255)',
     minHeight:0,
     stretchHeight:19,
-    enableShadowRatio: true
+    enableShadowRatio: true,
+    m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`
 }
-Shadow.parameters = {
+阴影.parameters = {
     docs: {
         description: {
             component: Markdown,

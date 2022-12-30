@@ -121,7 +121,7 @@ class StateControl {
 
   bindEvent() {
     this._map.on("mousemove", this.handleMouseMove.bind(this));
-    this._map.on("wheel", this.handleWheel.bind(this));
+    this._map.on("zoomend", this.updateScaleAndLevel.bind(this));
     /* if (this.option.lng || this.option.lat) {
       this._map.on("mousemove", this.handleMouseMove.bind(this));
     }
@@ -132,7 +132,7 @@ class StateControl {
 
   unbindEvent() {
     this._map.off("mousemove", this.handleMouseMove.bind(this));
-    this._map.off("wheel", this.handleWheel.bind(this));
+    this._map.off("zoomend", this.updateScaleAndLevel.bind(this));
     /* if (this.option.lng || this.option.lat) {
       this._map.off("mousemove", this.handleMouseMove.bind(this));
     }
@@ -140,17 +140,19 @@ class StateControl {
       this._map.off("wheel", this.handleWheel.bind(this));
     } */
   }
-
   handleMouseMove(e) {
     const { lngLat } = e;
+    this.updateCoord(lngLat);
+  }
+
+  updateCoord(lngLat) {
     this.lng.textContent = /* "经度:" + */ lngLat.lng;
     this.lat.textContent = /* "纬度:" + */ lngLat.lat;
     this.value.lng = lngLat.lng;
     this.value.lat = lngLat.lat;
   }
 
-  handleWheel(e) {
-    let { target } = e;
+  updateScaleAndLevel() {
     if (!this._map) {
       return;
     }
@@ -164,11 +166,11 @@ class StateControl {
     let to = point([bounds._ne.lng, bounds._ne.lat]);
     let scale = distance(from, to, { units: "meters" });
 
-    this.level.textContent = "级别:" + target.getZoom().toFixed(2);
+    this.level.textContent = "级别:" + this._map.getZoom().toFixed(2);
     this.scale.textContent = "1 : " + parseInt(scale);
 
     this.value.scale = scale;
-    this.value.level = target.getZoom();
+    this.value.level = this._map.getZoom();
   }
 
   onAdd(map) {
@@ -177,6 +179,9 @@ class StateControl {
     this._container.className = "mapboxgl-ctrl";
     this.initDom(this._container);
     this.bindEvent();
+    this.updateScaleAndLevel();
+    const center = this._map.getCenter();
+    this.updateCoord(center);
     return this._container;
   }
 

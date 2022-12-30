@@ -3,42 +3,42 @@ const { LineStyle, PointStyle, FillStyle } = Style;
 import Markdown from "../../cesium/docs/api/analysis/Overlay.md";
 
 export default {
-  title: "三维/分析/叠加分析",
+  title: "三维/三维分析/Turf空间分析",
   argTypes: {
     srcType: {
       description: "叠加数据源类型：图层级叠加Layer；要素级叠加Feature",
-      table:{
+      table: {
         defaultValue: { summary: "Layer" },
       },
       control: 'text'
     },
-    baseUrl:{
+    baseUrl: {
       description: "输入图层的baseUrl",
-      table:{
+      table: {
         defaultValue: { summary: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/layers` },
       },
-      control:'text'
+      control: 'text'
     },
     srcALayer: {
       description: "输入被叠加图层的gdbp",
-      table:{
+      table: {
         defaultValue: { summary: "" },
       },
-      control:'text'
+      control: 'text'
     },
     srcBLayer: {
       description: "输入叠加图层的gdbp",
-      table:{
+      table: {
         defaultValue: { summary: "" },
       },
-      control:'text'
+      control: 'text'
     },
     srcAFeature: {
       description: "输入叠加要素的GeoJSON数据",
-      table:{
+      table: {
         defaultValue: { summary: {} },
       },
-      control:'object'
+      control: 'object'
     },
   }
 };
@@ -72,8 +72,8 @@ const Template = (args, { argTypes }) => ({
     `,
 });
 
-export const Overlay = Template.bind({});
-Overlay.args = {
+export const 叠加 = Template.bind({});
+叠加.args = {
   srcType: "Layer",
   // srcType: "Feature",
   baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/layers`,
@@ -89,7 +89,7 @@ Overlay.args = {
         "geometry": {
           "type": "Polygon",
           "coordinates": [
-            [ [114,30], [114,31], [115,31], [115,30], [114,30] ]
+            [[114, 30], [114, 31], [115, 31], [115, 30], [114, 30]]
           ]
         },
       },
@@ -100,17 +100,17 @@ Overlay.args = {
         "geometry": {
           "type": "Polygon",
           "coordinates": [
-            [ [115,30] , [115,31] , [116,31] , [116,30] , [115,30] ]
+            [[115, 30], [115, 31], [116, 31], [116, 30], [115, 30]]
           ]
         },
       },
     ]
   }
 };
-Overlay.parameters = {
+叠加.parameters = {
   docs: {
-      description: {
-          component: Markdown,
-      },
+    description: {
+      component: Markdown,
+    },
   },
 };

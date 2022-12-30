@@ -59,6 +59,13 @@ export default {
     baseUrl: {
       type: String,
       default: ""
+    },
+    /**
+     * 是否使用IGS作文文件服务，默认true
+     */
+    useIGS: {
+      type: Boolean,
+      default: true
     }
   },
   watch: {
@@ -90,6 +97,7 @@ export default {
     formatData() {
       let result = [];
       let symbols = this.data.symbols || [];
+      let vm = this;
       for (let i = 0; i < symbols.length; i++) {
         if (symbols[i].type === "folder") {
           result.push({
@@ -99,20 +107,43 @@ export default {
           let items = symbols[i].items || [];
           for (let j = 0; j < items.length; j++) {
             if (items[j].type === "folder") {
-              result[i].children.push({
-                id: items[j].symbolId,
-                icon: [],
-                type: items[j].name
-              });
+              //使用IGS作为文件服务，则根据symbolId获取图片
+              if(vm.useIGS){
+                result[i].children.push({
+                  id: items[j].symbolId,
+                  icon: [],
+                  type: items[j].name
+                });
+              }else {
+                //不使用IGS作为文件服务，则根据path获取图片
+                result[i].children.push({
+                  id: items[j].path,
+                  //这样写是因为不想破坏UI的逻辑
+                  symbolId: items[j].id,
+                  icon: [],
+                  type: items[j].name
+                });
+              }
               let icons = items[j].items || [];
               for (let k = 0; k < icons.length; k++) {
                 if (icons[k].type !== "folder") {
-                  result[i].children[j].icon.push({
-                    id: icons[k].symbolId,
-                    name: icons[k].name,
-                    // src: icons[k].path,
-                    type: icons[k].type
-                  });
+                  //使用IGS作为文件服务，则根据symbolId获取图片
+                  if(vm.useIGS){
+                    result[i].children[j].icon.push({
+                      id: icons[k].symbolId,
+                      name: icons[k].name,
+                      type: icons[k].type
+                    });
+                  }else {
+                    //不使用IGS作为文件服务，则根据path获取图片
+                    result[i].children[j].icon.push({
+                      id: icons[k].path,
+                      //这样写是因为不想破坏UI的逻辑
+                      symbolId: icons[k].id,
+                      name: icons[k].name,
+                      type: icons[k].type
+                    });
+                  }
                 }
               }
             }
@@ -134,7 +165,7 @@ export default {
 
 <style scoped lang="scss">
 @import "../../util/style/theme/theme.scss";
-// 这个位置是行业标绘选择时候的颜色提示
+// 这个位置是行业标绘选择时候的颜色提示(后台也受此处控制)
 .icon-wrapper-active {
   border: 1px solid $select-item-selected-color;
 }

@@ -9,7 +9,7 @@
    style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
    viewBox="0 0 200 200"
    zondyPlotSymbol:version="1.0"
-   zondyPlotSymbol:id="svg003"
+   zondyPlotSymbol:id="1"
    zondyPlotSymbol:name="三角形"
    zondyPlotSymbol:desc=""
    zondyPlotSymbol:type="triangle"
@@ -63,6 +63,6 @@
    sodipodi:nodetypes="cccc" />
         <metadata
    id="CorelCorpID_0Corel-Layer" />
-        
+
     </g>
 </svg>

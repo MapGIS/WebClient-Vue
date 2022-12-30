@@ -2,7 +2,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisArcgisTileLayer from "../../mapboxgl/src/components/layer/ArcGISServer/ArcGISTileLayer";
 
 export default {
-    title: "二维/图层/ArcGIS Server/ArcGIS瓦片",
+    title: "二维/数据图层/影像/ArcGIS/瓦片图层",
     component: MapgisArcgisTileLayer,
     argTypes: {
         layerId:  {
@@ -67,8 +67,8 @@ const Template = (args, { argTypes }) => ({
     </mapgis-web-map>`,
 });
 
-export const ArcGIS瓦片 = Template.bind({});
-ArcGIS瓦片.args = {
+export const 瓦片图层 = Template.bind({});
+瓦片图层.args = {
     layerId: "arcgis_tile_layerId",
     // sourceId: "arcgis_tile_sourceId",
     //baseUrl: "http://192.168.81.35:6080/arcgis/rest/services/study/wuhan_2/MapServer",

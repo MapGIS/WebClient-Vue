@@ -2,7 +2,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisRasterLayer from "../../mapboxgl/src/components/layer/RasterLayer.js";
 
 export default {
-  title: "二维/图层/栅格图层",
+  title: "二维/数据图层/影像/栅格",
   component: MapgisRasterLayer,
   argTypes: {
     url:  {
@@ -35,8 +35,8 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-map>`,
 });
 
-export const 栅格图层 = Template.bind({});
-栅格图层.args = {
+export const 栅格 = Template.bind({});
+栅格.args = {
   layerId: "raster_tdt",
   url:
     "http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752",

@@ -1,7 +1,7 @@
 import MapgisDocument from "../../mapboxgl/src/components/UI/document/Document.vue";
 
 export default {
-  title: "二维/地图子组件/地图文档",
+  title: "二维/场景控制/控件/地图文档",
   component: MapgisDocument,
   // english Our exports that end in "Data" are not stories.
   // 中文 Data后缀的内容不是故事，而是Vue组件的方法
@@ -21,8 +21,8 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-map>`,
 });
 
-export const 基础示例 = Template.bind({});
-基础示例.args = {
+export const 地图文档 = Template.bind({});
+地图文档.args = {
   wrapperStyle: {
     position: "absolute",
     background: "#ffffff",

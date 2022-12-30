@@ -1,7 +1,7 @@
  import Mapgis3dPopup from "../../cesium/src/components/UI/Popup/Popup.vue";
 
 export default {
-  title: "三维/场景子组件/Popup/自定义槽",
+  title: "三维/图形绘制/标注/气泡",
   component: Mapgis3dPopup,
   argTypes: {
     position: {

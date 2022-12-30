@@ -744,7 +744,9 @@ export default {
       let originStyles = [];
       layerIndexs.forEach(index => {
         let m3dlayer = g3dLayer.getLayer(index);
-        originStyles.push(m3dlayer.style);
+        if(m3dlayer) {
+          originStyles.push(m3dlayer.style);
+        }
       });
       vueCesium.G3DManager.changeOptions(
         vueKey,
@@ -759,10 +761,13 @@ export default {
 
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+      if(!g3dLayer) return;
       if (find && find.options.originStyles) {
         find.options.originStyles.forEach((s, i) => {
           let m3dlayer = g3dLayer.getLayer(String(i));
-          m3dlayer.style = s;
+          if(m3dlayer) {
+            m3dlayer.style = s;
+          }
         });
       }
     },
@@ -775,7 +780,9 @@ export default {
       if (find && find.options.originStyles) {
         find.options.originStyles.forEach((s, i) => {
           let m3dlayer = g3dLayer.getLayer(String(i));
-          m3dlayer.show = true;
+          if(m3dlayer) {
+            m3dlayer.show = true;
+          }
         });
       }
     },
@@ -803,11 +810,13 @@ export default {
       this.selectedKeys = [`${layerIndex}`];
       layerIndexs.forEach(index => {
         let m3dlayer = g3dLayer.getLayer(index);
-        if (index != layerIndex) {
-          m3dlayer.show = false;
-        } else {
-          m3dlayer.show = true;
-          viewer.camera.flyToBoundingSphere(m3dlayer.boundingSphere);
+        if(m3dlayer) {
+          if (index != layerIndex) {
+            m3dlayer.show = false;
+          } else {
+            m3dlayer.show = true;
+            viewer.camera.flyToBoundingSphere(m3dlayer.boundingSphere);
+          }
         }
       });
       let children = this.layerTree[0].children.map(c => {
@@ -896,7 +905,9 @@ export default {
       if (find && find.options) {
         let { primitiveCollection } = find.options;
         let last = find.options.feature;
-        primitiveCollection.remove(last);
+        if(last) {
+          primitiveCollection.remove(last);
+        }
       }
       this.restoreHighlight();
       this.restoreM3d();
@@ -944,25 +955,28 @@ export default {
       this.selectLayerIndex = layerIndex;
       let g3dLayer = viewer.scene.layers.getLayer(this.g3dLayerIndex);
       let m3dlayer = g3dLayer.getLayer(`${layerIndex}`);
-      this.restoreM3d();
-      vueCesium.G3DManager.changeOptions(
-        vueKey,
-        vueIndex,
-        "pickerTileset",
-        m3dlayer
-      );
-      vueCesium.G3DManager.changeOptions(
-        vueKey,
-        vueIndex,
-        "pickerTilesetStyle",
-        m3dlayer.style
-      );
-      m3dlayer.style = new Cesium.Cesium3DTileStyle({
-        color: `color('#FFFF00', 1)`
-      });
+      if(m3dlayer) {
+        this.restoreM3d();
+        vueCesium.G3DManager.changeOptions(
+            vueKey,
+            vueIndex,
+            "pickerTileset",
+            m3dlayer
+        );
+        vueCesium.G3DManager.changeOptions(
+            vueKey,
+            vueIndex,
+            "pickerTilesetStyle",
+            m3dlayer.style
+        );
+        m3dlayer.style = new Cesium.Cesium3DTileStyle({
+          color: `color('#FFFF00', 1)`
+        });
+      }
     },
     queryDynamic(movement, layerIndex) {
       const vm = this;
+      vm.featureproperties = undefined;
       const { Cesium, viewer, g3dLayerIndex } = this;
       const { vueKey, vueIndex, vueCesium } = this;
       let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
@@ -1000,21 +1014,25 @@ export default {
               }
               if (result && result.length > 0) {
                 let feature = result[0];
-                if (vm.popupShowType === "default") {
-                  vm.featurevisible = true;
-                  vm.featureposition = {
-                    longitude: lng,
-                    latitude: lat,
-                    height: height
-                  };
-                } else if (vm.popupShowType === "right") {
-                  vm.showDetail = true;
-                  if (!vm.isUnClosePopup) {
-                    vm.isUnClosePopup = !vm.isUnClosePopup;
+                vm.featureproperties = feature.property;
+                if (
+                  vm.featureproperties &&
+                  Object.keys(vm.featureproperties).length > 0
+                ) {
+                  if (vm.popupShowType === "default") {
+                    vm.featurevisible = true;
+                    vm.featureposition = {
+                      longitude: lng,
+                      latitude: lat,
+                      height: height
+                    };
+                  } else if (vm.popupShowType === "right") {
+                    vm.showDetail = true;
+                    if (!vm.isUnClosePopup) {
+                      vm.isUnClosePopup = !vm.isUnClosePopup;
+                    }
                   }
                 }
-
-                vm.featureproperties = feature.property;
                 // _extrudedHeight和_height这样设置后才能贴模型
                 feature.geometryInstances.geometry._extrudedHeight = 0;
                 feature.geometryInstances.geometry._height = 100000;
@@ -1046,6 +1064,7 @@ export default {
     },
     queryStatic(movement) {
       const vm = this;
+      vm.featureproperties = undefined;
       vm.featurevisible = false;
       const { Cesium, viewer, version, g3dLayerIndex, popupOptions } = this;
       const { vueKey, vueIndex, vueCesium } = this;
@@ -1082,22 +1101,6 @@ export default {
         }
 
         if (cartesian || cartesian2) {
-          if (vm.featureclickenable) {
-            if (vm.popupShowType === "default") {
-              vm.featurevisible = true;
-              vm.featureposition = {
-                longitude: longitudeString2,
-                latitude: latitudeString2,
-                height: heightString2
-              };
-            } else {
-              vm.showDetail = true;
-              if (!vm.isUnClosePopup) {
-                vm.isUnClosePopup = !vm.isUnClosePopup;
-              }
-            }
-          }
-
           let g3dLayer = viewer.scene.layers.getLayer(vm.g3dLayerIndex);
           let index = pickedFeature._content._tileset._layerIndex;
           vm.selectLayerIndex = index;
@@ -1140,6 +1143,25 @@ export default {
               });
             }
           }
+          if (
+            vm.featureclickenable &&
+            vm.featureproperties &&
+            Object.keys(vm.featureproperties).length > 0
+          ) {
+            if (vm.popupShowType === "default") {
+              vm.featurevisible = true;
+              vm.featureposition = {
+                longitude: longitudeString2,
+                latitude: latitudeString2,
+                height: heightString2
+              };
+            } else {
+              vm.showDetail = true;
+              if (!vm.isUnClosePopup) {
+                vm.isUnClosePopup = !vm.isUnClosePopup;
+              }
+            }
+          }
         } else {
           vm.clickvisible = false;
         }
@@ -1147,17 +1169,17 @@ export default {
     },
     // 动态单体化下该方法执行后会导致模型大面积高亮，参考禅道bug2356
     restoreHighlight() {
-      // const { g3dLayerIndex, viewer } = this;
-      // if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      // let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      // let m3ds = g3dLayer.getM3DLayerIndexes();
-      // m3ds.forEach(index => {
-      //   let m3d = g3dLayer.getLayer(index);
-      //   if (m3d) {
-      //     m3d.reset(); //该函数目前底层MapGISM3DSet.reset无效 后期记得修改
-      //     m3d.pickedOid = undefined;
-      //   }
-      // });
+      const { g3dLayerIndex, viewer } = this;
+      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
+      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+      let m3ds = g3dLayer.getM3DLayerIndexes();
+      m3ds.forEach(index => {
+        let m3d = g3dLayer.getLayer(index);
+        if (m3d) {
+          // m3d.reset(); //该函数目前底层MapGISM3DSet.reset无效 后期记得修改
+          m3d.pickedOid = undefined;
+        }
+      });
     },
     handleDynamicQuery() {
       this.featurevisible = false;

@@ -3,7 +3,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import "../style/print.css";
 
 export default {
-  title: "二维/地图子组件/打印",
+  title: "二维/场景控制/控件/打印",
   component: MapgisPrint,
   argTypes: {},
 };

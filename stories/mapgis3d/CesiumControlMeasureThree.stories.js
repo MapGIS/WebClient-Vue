@@ -1,9 +1,9 @@
 import Mapgis3dMeasure from "../../cesium/src/components/UI/Controls/Measure/Measure.vue";
 import Markdown from "../../cesium/docs/api/ui/measure.md";
-import {剖面} from "./CesiumAnalysisProfile.stories";
+import { 剖面 } from "./CesiumAnalysisProfile.stories";
 
 export default {
-  title: "三维/场景子组件/量测-修改量测样式",
+  title: "三维/通用工具/量测",
   component: Mapgis3dMeasure,
   argTypes: {
     enableControl: true,
@@ -21,7 +21,7 @@ const Template = (args, { argTypes }) => ({
       v-bind:animation="false"
       v-bind:timeline="false"
       :style="{height: '95vh'}">
-      <mapgis-3d-igs-m3d :url="m3durl"> </mapgis-3d-igs-m3d>
+      <mapgis-3d-m3d-layer :url="$props.m3durl"> </mapgis-3d-m3d-layer>
       <div
         v-show="enableControl"
         :style="controlStyle"
@@ -58,7 +58,6 @@ const Template = (args, { argTypes }) => ({
   `,
   data() {
     return {
-      m3durl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
       measure: null,
       measureOptions: {},
       toolbarVisible: this.hasSettingPanel,
@@ -130,10 +129,10 @@ const Template = (args, { argTypes }) => ({
         height: "32px !important",
         ...(control
           ? {
-              fontSize: "20px",
-              transition: "transform 0.2s",
-              transform: `rotate(${toolbarVisible ? "180deg" : "0"})`,
-            }
+            fontSize: "20px",
+            transition: "transform 0.2s",
+            transform: `rotate(${toolbarVisible ? "180deg" : "0"})`,
+          }
           : {}),
       });
     },
@@ -166,19 +165,20 @@ const Template = (args, { argTypes }) => ({
     if (!this.hasSettingPanel) {
       this.toolbarVisible = this.expandControl;
     }
-    this.measureOptions = {fillColor: "rgba(255, 255,0, 0.8)"};
+    this.measureOptions = { fillColor: "rgba(255, 255,0, 0.8)" };
   },
 });
 
-export const 量测 = Template.bind({});
-量测.args = {
+export const 修改量测样式 = Template.bind({});
+修改量测样式.args = {
   enableControl: true,
   expandControl: true,
   hasSettingPanel: false,
   position: "top-left",
+  m3durl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/ZondyModels/SceneServer`
 };
 
-量测.parameters = {
+修改量测样式.parameters = {
   docs: {
     description: {
       component: Markdown,

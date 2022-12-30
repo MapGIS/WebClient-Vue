@@ -3,7 +3,7 @@ import Mapgis3dArcgisTileLayer from "../../cesium/src/components/Layer/ArcGISSer
 import axios from "axios";
 
 export default {
-  title: "三维/可视化/MapV-聚类",
+  title: "三维/可视化/MapV",
 };
 
 const Template = (args, { argTypes }) => ({

@@ -16,6 +16,7 @@
         @search="searchIcon"
         v-if="symbolData"
         class="mapgis-2d-plot-panel"
+        :useIGS="useIGS"
       ></mapgis-ui-plot-symbol>
     </slot>
     <mapgis-ui-plot-attribute
@@ -72,6 +73,13 @@ export default {
     baseUrl: {
       type: String,
       default: ""
+    },
+    /**
+     * 是否使用IGS作文文件服务，默认true
+     */
+    useIGS: {
+      type: Boolean,
+      default: true
     }
   },
   watch: {
@@ -97,6 +105,7 @@ export default {
     };
   },
   mounted() {
+    console.log("useIGS",this.useIGS)
     this.mount();
   },
   destroyed() {
@@ -276,7 +285,14 @@ export default {
       let manager = this.getSymbolManager();
       if (!manager) return;
       let exist = this.getSymbol();
-      let symbol = manager.getLeafByID(data.icon.id);
+      let symbol;
+      //当使用IGS作为文件服务时，使用ID
+      if(vm.useIGS) {
+        symbol = manager.getLeafByID(data.icon.id);
+      }else {
+        //当不使用IGS作为文件服务时，使用symbolId
+        symbol = manager.getLeafByID(data.icon.symbolId);
+      }
       if (exist) {
         window.vueMap.OneSymbolManager.changeSource(
           vm.vueKey,

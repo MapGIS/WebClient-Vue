@@ -2,7 +2,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisOgcWmtsLayer from "../../mapboxgl/src/components/layer/ogc/OgcWmtsLayer.js";
 
 export default {
-  title: "二维/图层/OGC/WMTS-4326",
+  title: "二维/数据图层/影像/MapGIS/WMTS/4326",
   component: MapgisOgcWmtsLayer,
   argTypes: {
     baseUrl: {

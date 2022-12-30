@@ -15,7 +15,7 @@ const {
 // http://datav.aliyun.com/portal/school/atlas/area_selector#&lat=33.50475906922609&lng=104.32617187499999&zoom=4
 
 export default {
-  title: "二维/地图/事件",
+  title: "二维/场景控制/场景/事件",
   component: MapgisWebMap,
   argTypes: {},
 };

@@ -5,7 +5,7 @@ import Markdown from "../../cesium/docs/api/layer/IGServer/IgsFeatureLayer.md";
 import MapgisThemeLegend from "../../cesium/src/components/Layer/IGServer/Legend.vue";
 
 export default {
-  title: "三维/图层/IGSFeatureLayer/统一专题图",
+  title: "三维/可视化/专题图/MapGIS/统一",
   component: MapgisThemeLegend,
   argTypes: {
     vueKey: {

@@ -1,7 +1,7 @@
 import MapgisScale from "../../mapboxgl/src/components/UI/controls/ScaleControl";
 
 export default {
-    title: "二维/地图子组件/比例尺组件",
+    title: "二维/场景控制/控件/比例尺",
     component: MapgisScale,
     argTypes: {
         position: "bottom-left",
@@ -35,8 +35,8 @@ const Template = (args, { argTypes }) => ({
     `,
 });
 
-export const 比例尺组件 = Template.bind({});
-比例尺组件.args = {
+export const 比例尺 = Template.bind({});
+比例尺.args = {
     position: "bottom-left",
     zIndex: 900,
     maxWidth: 300,

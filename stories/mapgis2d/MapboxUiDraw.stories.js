@@ -3,7 +3,7 @@ import Markdown from "../../mapboxgl/docs/api/UI/Draw/draw.md"
 
 
 export default {
-  title: "二维/地图子组件/绘制",
+  title: "二维/二维标绘/基础标绘/绘制",
   component: MapgisDraw,
   argTypes: {
     enableControl: {

@@ -16,19 +16,19 @@ export default {
 
   methods: {
     $_initMapboxDom() {
-      window.mapboxDom = window.mapboxDom || {};
-      window.mapboxDom.draw = window.mapboxDom.draw || {};
-      window.mapboxDom.measure = window.mapboxDom.measure || {};
-      window.mapboxDom.edit = window.mapboxDom.edit || {};
-      window.mapboxDom.measureCom = window.mapboxDom.measureCom || {};
+      window.mapboxDom = {};
+      window.mapboxDom.draw =  {};
+      window.mapboxDom.measure = {};
+      window.mapboxDom.edit = {};
+      window.mapboxDom.measureCom = {};
       return window.mapboxDom;
     },
 
     $_initMapboxEvent() {
-      window.mapboxEvent = window.mapboxEvent || {};
-      window.mapboxEvent.draw = window.mapboxEvent.draw || [];
-      window.mapboxEvent.measure = window.mapboxEvent.measure || [];
-      window.mapboxEvent.edit = window.mapboxEvent.edit || [];
+      window.mapboxEvent = {};
+      window.mapboxEvent.draw = [];
+      window.mapboxEvent.measure = [];
+      window.mapboxEvent.edit = [];
       return window.mapboxEvent;
     },
 

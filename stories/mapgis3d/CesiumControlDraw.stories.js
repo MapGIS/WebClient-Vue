@@ -1,5 +1,5 @@
 export default {
-  title: "三维/场景子组件/绘制组件",
+  title: "三维/图形绘制/交互工具",
   argTypes: {
     drawStyle:{
       description: "绘制样式：<br>" +
@@ -58,8 +58,8 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-scene>`
 });
 
-export const draw = Template.bind({});
-draw.args = {
+export const 交互绘制 = Template.bind({});
+交互绘制.args = {
   enableControl: true,
   position:"top-right",
   drawStyle:{

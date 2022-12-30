@@ -1,7 +1,7 @@
 import MapgisEditor from "../../mapboxgl/src/components/UI/controls/edit/Editor.vue";
 
 export default {
-  title: "二维/地图子组件/编辑",
+  title: "二维/通用工具/量测/编辑",
   component: MapgisEditor,
   argTypes: {
     feature: {},

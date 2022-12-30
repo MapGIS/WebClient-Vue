@@ -1,5 +1,5 @@
 export default {
-    title: "三维/场景子组件/卷帘"
+    title: "三维/场景控制/联动"
 };
 
 const Template = (args, { argTypes }) => ({
@@ -29,5 +29,5 @@ const Template = (args, { argTypes }) => ({
     `
 });
 
-export const Compare = Template.bind({});
-Compare.args = {}
+export const 卷帘 = Template.bind({});
+卷帘.args = {}

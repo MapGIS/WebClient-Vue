@@ -4,7 +4,7 @@ import Markdown from "../../mapboxgl/docs/api/Layers/2DPlot/Plot.md";
 import "../style/card.css";
 
 export default {
-  title: "二维/图层/标绘/二维标绘",
+  title: "二维/二维标绘/行业标绘/二维标绘",
   component: Mapgis2dPlot,
   argTypes: {},
 };
@@ -24,6 +24,7 @@ const Template = (args, { argTypes }) => ({
               @click="slotProps.click"
               @search="slotProps.search"
               class="mapgis-2d-plot-panel"
+              :useIGS="false"
             ></mapgis-ui-plot-symbol>
           </template>
         </mapgis-2d-plot>      
@@ -62,8 +63,6 @@ const Template = (args, { argTypes }) => ({
         center: [116.19, 34.01],
       },
       jsonUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/test.json`,
-      // 打包时使用
-      // jsonUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/test.json`,
       manager: undefined,
       editable: true,
     };
@@ -158,8 +157,8 @@ const Template = (args, { argTypes }) => ({
 export const 二维标绘 = Template.bind({});
 二维标绘.args = {
   symbolUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/symbols.json`,
-  // 打包时使用
-  // symbolUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/symbols.json`,
+  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/`,
+  useIGS: false
 };
 
 二维标绘.parameters = {

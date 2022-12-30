@@ -5,7 +5,7 @@ import "../style/card.css";
 import * as axios from "axios";
 
 export default {
-  title: "三维/图层/标绘/态势推演",
+  title: "三维/三维标绘/行业标绘",
   component: Mapgis3dPlotAnimation,
   argTypes: {},
 };
@@ -16,9 +16,9 @@ const Template = (args, { argTypes }) => ({
   template: `<mapgis-web-scene style="height:95vh">
         <mapgis-3d-plot-layer @loaded="handleLoaded"
                               :isSetPick="false"
-                              :dataSource="jsonUrl" :symbolUrl="symbolUrl" v-if="manager"></mapgis-3d-plot-layer>
+                              :dataSource="$props.jsonUrl" :symbolUrl="$props.symbolUrl" v-if="manager"></mapgis-3d-plot-layer>
         <mapgis-3d-plot-animation :data="dataSource" :vueIndex="vueIndex1" :vueKey="vueKey1" v-if="vueIndex1"  ref="animation" />
-        <mapgis-3d-plot v-show="false" :symbolUrl="symbolUrl" :vueIndex="vueIndex1" :vueKey="vueKey1" 
+        <mapgis-3d-plot v-show="false" :symbolUrl="$props.symbolUrl" :vueIndex="vueIndex1" :vueKey="vueKey1" 
           class="storybook-ui-card" 
           @loaded="manager=true"
           :isSetPick="false"
@@ -37,17 +37,8 @@ const Template = (args, { argTypes }) => ({
     return {
       vueIndex1: undefined,
       vueKey1: undefined,
-      jsonUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/test.json`,
-      symbolUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/symbols.json`,
-      dataUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/animation.json`,
-      // 打包时使用
-      // jsonUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/test.json`,
-      // symbolUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/symbols.json`,
-      // dataUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/animation.json`,
       manager: undefined,
       dataSource: undefined,
-      // jsonUrl: `http://localhost:8895/标绘/test.json`,
-      // symbolUrl: `http://localhost:8895/标绘/symbols.json`,
     };
   },
   methods: {
@@ -66,7 +57,7 @@ const Template = (args, { argTypes }) => ({
     },
     handleLoaded(e) {
       const vm = this;
-      axios.get(vm.dataUrl).then((res) => {
+      axios.get(vm.$props.dataUrl).then((res) => {
         vm.dataSource = res.data;
         vm.vueIndex1 = e.vueIndex;
         vm.vueKey1 = e.vueKey;
@@ -95,7 +86,9 @@ const Template = (args, { argTypes }) => ({
 
 export const 态势推演 = Template.bind({});
 态势推演.args = {
-  // dataUrl: `http://localhost:8895/标绘/animation.json`,
+  jsonUrl: `http://${window.webclient.ip}:8086/storybook/标绘/test.json`,
+  symbolUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/symbols.json`,
+  dataUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/animation.json`,
 };
 
 态势推演.parameters = {

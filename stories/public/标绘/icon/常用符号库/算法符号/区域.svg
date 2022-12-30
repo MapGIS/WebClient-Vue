@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="200"
+   id="svg2"
+   version="1.1"
+   width="200"
+   zondyPlotSymbol:desc=""
+   zondyPlotSymbol:id="53"
+   zondyPlotSymbol:name=""
+   zondyPlotSymbol:pose="1"
+   zondyPlotSymbol:type="kidney"
+   zondyPlotSymbol:version="1.0"
+   sodipodi:docname="区域.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:zondyPlotSymbol="https://www.mapgis.com">
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     id="namedview4"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="4.155"
+     inkscape:cx="100"
+     inkscape:cy="70.998797"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <path
+     d="m 22.73338,115.1397 c 9.495957,17.54299 28.595993,32.07426 47.074347,39.58958 20.682994,8.41197 56.721113,10.64573 78.314963,4.96656 17.94325,-4.71906 25.86566,-15.31169 33.55586,-32.19631 6.24609,-13.71391 7.73157,-33.838199 -3.01693,-44.400156 C 161.52263,66.257822 119.63564,102.09801 96.847166,94.477734 74.348152,86.95425 64.966051,34.001789 41.4361,37.026659 28.897561,38.638538 16.89808,53.913802 12.802633,65.873753 7.422456,81.585507 14.827739,100.53468 22.73338,115.1397 Z"
+     id="path3000-17"
+     style="fill:none;stroke:#ff0000;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     sodipodi:nodetypes="sssssssss" />
+</svg>

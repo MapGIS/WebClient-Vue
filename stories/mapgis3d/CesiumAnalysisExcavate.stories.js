@@ -1,7 +1,7 @@
 import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/Excavate.md";
 export default {
-    title: "三维/分析/开挖分析",
+    title: "三维/三维分析/地形分析",
     argTypes:{
         excaveteStyle:{
             description:'开挖分析的样式',
@@ -30,8 +30,8 @@ const Template = (args, { argTypes }) => ({
     `
 });
 
-export const Excavate = Template.bind({});
-Excavate.args = {
+export const 开挖 = Template.bind({});
+开挖.args = {
     // m3dUrl:`http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/钻孔_2_钻孔模型s`,
     autoReset:true,
     // m3dUrl2:"http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
@@ -44,7 +44,7 @@ Excavate.args = {
         edgeWidth: 3
     }
 }
-Excavate.parameters = {
+开挖.parameters = {
     docs: {
         description: {
             component: Markdown,

@@ -1,6 +1,6 @@
 import wuhan from "../assets/geojson/wuhan"
 export default {
-  title: "二维/图层/专题图/专题图示例",
+  title: "二维/可视化/专题图/图例",
   argTypes: {
   },
 };
@@ -33,8 +33,8 @@ const Template = (args, {argTypes}) => ({
   }
 });
 
-export const 武汉2020年GDP = Template.bind({});
-武汉2020年GDP.args = {
+export const 图例 = Template.bind({});
+图例.args = {
   dataSource: wuhan,
   type: "range",
   field: "gdp",

@@ -1,7 +1,7 @@
 import MapgisAttribution from "../../mapboxgl/src/components/UI/controls/AttributionControl";
 
 export default {
-    title: "二维/地图子组件/属性组件",
+    title: "二维/其他/属性组件",
     component: MapgisAttribution,
     argTypes: {
         customAttribution: {

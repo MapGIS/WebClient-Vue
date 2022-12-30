@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/Profile.md";
 
 export default {
-  title: "三维/分析/剖面分析",
+  title: "三维/三维分析/地形分析",
   argTypes: {
     profileType: {
       description: "分析类型，0代表地形，1代表地形和模型兼容",
@@ -75,8 +75,6 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       url: "http://t0.tianditu.gov.cn/img_c/wmts",
-      //地形url TODO这里地址打包的时候改一下
-      //terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/terrain",
       terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`,
       tileMatrixSet: "c",
       tilingScheme: "EPSG:4326",
@@ -180,6 +178,7 @@ export const 剖面 = Template.bind({});
   showPolygon: false,
   samplePrecision: 2,
   useMask: true,
+  terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`
 };
 
 剖面.parameters = {

@@ -74,8 +74,7 @@
                   <template
                     slot="header"
                     v-if="showEditChild || editChildIndex !== indexChild + 1"
-                    >{{ itemChild.name }}</template
-                  >
+                    >{{ itemChild.name }}</template>
                   <template slot="header" v-else>
                     <mapgis-ui-input
                       :style="{ width: '150px', height: '22px' }"
@@ -103,7 +102,6 @@
                       <img
                         :src="itemChild.image"
                         alt=""
-                        @click.stop="clickImg(itemChild)"
                       />
                       <div
                         class="item-more-tool"
@@ -545,12 +543,12 @@ export default {
     },
     /* 处理编辑器传回的config参数 */
     changeViewpoint(event) {
-      console.log(event);
       const val = event[0];
       const editTuple = event[1];
       const vm = this;
+      // 传入当前视点参数
+      vm.config = val
       // 先判断新增或编辑视点的name是否为空
-
       if (vm.mode === "add") {
         if (val.name === "") {
           val.name =
@@ -567,7 +565,7 @@ export default {
             "视点" + "_" + (vm.testGroup[editTuple[0]].viewGroupItems + 1);
         }
         /* 编辑视点 */
-        Object.assign(
+         vm.testGroup[editTuple[0]].viewGroupItems[editTuple[1]]=Object.assign(
           vm.testGroup[editTuple[0]].viewGroupItems[editTuple[1]],
           val
         );

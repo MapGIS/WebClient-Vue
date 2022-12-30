@@ -3,7 +3,7 @@ import MapgisRasterLayer from "../../mapboxgl/src/components/layer/RasterLayer.j
 import MapgisMarker from "../../mapboxgl/src/components/UI/Marker.vue";
 
 export default {
-  title: "二维/地图子组件/标注",
+  title: "二维/图形绘制/标注/图标",
   component: MapgisMarker,
   // english Our exports that end in "Data" are not stories.
   // 中文 Data后缀的内容不是故事，而是Vue组件的方法
@@ -85,8 +85,8 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-map>`,
 });
 
-export const Marker = Template.bind({});
-Marker.args = {
+export const 图标 = Template.bind({});
+图标.args = {
   color: "#37495E",
   offset: [20, 20],
   coordinates: [110, 30],

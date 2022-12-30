@@ -1,7 +1,7 @@
 import Mapgis3dFeaturePopup from "../../cesium/src/components/UI/Popup/PopupFeature.vue";
 
 export default {
-  title: "三维/场景子组件/要素Popup/默认样式",
+  title: "三维/图形绘制/标注/气泡",
   component: Mapgis3dFeaturePopup,
   argTypes: {
     properties: {},
@@ -25,8 +25,8 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-scene>`,
 });
 
-export const 默认样式 = Template.bind({});
-默认样式.args = {
+export const 要素 = Template.bind({});
+要素.args = {
   properties: {
     name: "测试名称",
     id: "测试id",

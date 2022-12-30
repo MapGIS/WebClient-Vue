@@ -2,7 +2,7 @@ import Mapgis3dLink from "../../cesium/src/components/UI/Controls/Link/Link.vue"
 import "../style/link.css";
 
 export default {
-  title: "三维/场景子组件/多屏联动",
+  title: "三维/场景控制/联动",
   component: Mapgis3dLink,
   argTypes: {},
 };
@@ -55,5 +55,5 @@ const Template = (args, { argTypes }) => ({
   </div>`,
 });
 
-export const 三维联动 = Template.bind({});
-三维联动.args = {};
+export const 多屏联动 = Template.bind({});
+多屏联动.args = {};

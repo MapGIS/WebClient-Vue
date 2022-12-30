@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/sceneeffect/pathroaming.md";
 
 export default {
-  title: "三维/场景漫游/单路径",
+  title: "三维/场景控制/相机",
   argTypes: {
     positions: {
       description: "漫游路径坐标集合",
@@ -141,7 +141,7 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       url: "http://t0.tianditu.gov.cn/img_c/wmts",
-      m3dUrl: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
+      m3dUrl: `http://${webclient.igsIp}:${webclient.igsPort}/igs/rest/g3d/ZondyModels`,
       autoReset: true,
       maximumScreenSpaceError: 8,
       tileMatrixSet: "c",
@@ -184,8 +184,8 @@ const Template = (args, { argTypes }) => ({
     `,
 });
 
-export const 单路径 = Template.bind({});
-单路径.args = {
+export const 场景漫游 = Template.bind({});
+场景漫游.args = {
   positions: [
     { x: 114.40150642571967, y: 30.46598749322795, z: 7.771843648287394 },
     { x: 114.40168198567844, y: 30.46658777743634, z: 7.77844677044535 },
@@ -218,7 +218,7 @@ export const 单路径 = Template.bind({});
   ],
 };
 
-单路径.parameters = {
+场景漫游.parameters = {
   docs: {
     description: {
       component: Markdown,

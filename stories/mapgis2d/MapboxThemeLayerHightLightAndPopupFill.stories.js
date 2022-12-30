@@ -1,6 +1,6 @@
 import wuhan from "../assets/geojson/wuhan"
 export default {
-  title: "二维/图层/专题图/开启Tips和Popup/多边形数据",
+  title: "二维/可视化/专题图/开启Tips和Popup/多边形",
   argTypes: {
     dataSource: {
       description: "geojson格式的数据源或者geojson数据源的URl，详见如下网址：<a href='https://geojson.org/' target='_blank'>https://geojson.org/  </a>",
@@ -43,8 +43,8 @@ const Template = (args, {argTypes}) => ({
     </mapgis-web-map>`,
 });
 
-export const  开启Tips和Popup = Template.bind({});
-开启Tips和Popup.args = {
+export const  多边形 = Template.bind({});
+多边形.args = {
   dataSource: wuhan,
   type: "range",
   field: "adcode",

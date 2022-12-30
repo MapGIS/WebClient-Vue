@@ -1,7 +1,7 @@
 import Mapgis3dIgsTileLayer from "../../cesium/src/components/Layer/IGServer/IgsTileLayer.vue";
 
 export default {
-  title: "三维/图层/IGServer瓦片",
+  title: "三维/数据图层/影像/MapGIS",
   // component: Mapgis3dIgsTileLayer,
   argTypes: {
     id: "IGServer-Tle-Layer",
@@ -29,15 +29,15 @@ const Template = (args, { argTypes }) => ({
           pitch: -1.4832321184766042,
           roll: 3.1369303868636838,
         },
-      }" style="height: 95vh">
+      }">
         <mapgis-3d-igs-tile-layer v-bind="$props" />
     </mapgis-web-scene >`,
 });
 
-export const Tile = Template.bind({});
-Tile.args = {
+export const 瓦片服务 = Template.bind({});
+瓦片服务.args = {
   id: "IGServer-Tle-Layer",
-  baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/tile/北京市`,
+  baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/tile/OGC_4326_CHINA`,
   layerStyle: {
     visible: true,
     opacity: 1,

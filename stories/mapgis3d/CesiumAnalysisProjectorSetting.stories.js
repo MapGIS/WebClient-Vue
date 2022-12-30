@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/ProjectorSetting.md";
 
 export default {
-  title: "三维/分析/视频投放/投放配置",
+  title: "三维/通用工具/视频投放",
   argTypes: {
     settings: {
       description: "投放视频参数对象",
@@ -49,7 +49,6 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   data() {
     return {
-      m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
       autoReset: true,
       maximumScreenSpaceError: 8,
       isM3DLoaded: false,
@@ -57,7 +56,7 @@ const Template = (args, { argTypes }) => ({
   },
   template: `
       <mapgis-web-scene style="height: 95vh" v-on:load="handleLoad">
-      <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"></mapgis-3d-m3d-layer>
+      <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="$props.m3dUrl"></mapgis-3d-m3d-layer>
       <mapgis-ui-card v-if="isM3DLoaded" class="storybook-ui-card">
       <mapgis-3d-projector-setting style="height:70vh;" :settings="settings" :modelUrl="modelUrl" :modelOffset="modelOffset" :hideVPInvisible="hideVPInvisible"></mapgis-3d-projector-setting>
       </mapgis-ui-card>
@@ -75,7 +74,8 @@ const Template = (args, { argTypes }) => ({
 
 export const 投放配置 = Template.bind({});
 投放配置.args = {
-  modelUrl: "./CesiumModels/Cesium_Camera.glb",
+  m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
+  modelUrl: `http://${window.webclient.ip}:${window.webclient.port}/CesiumModels/Cesium_Camera.glb`,
   modelOffset: { headingOffset: -90, pitchOffset: 0, rollOffset: 0 },
   hideVPInvisible: false,
   settings: {

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Creator: CorelDRAW (评估版) -->
+
+<svg
+   xml:space="preserve"
+   width="200px"
+   height="200px"
+   version="1.1"
+   style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+   viewBox="0 0 200 200"
+   zondyPlotSymbol:version="1.0"
+   zondyPlotSymbol:id="52"
+   zondyPlotSymbol:name="单箭头"
+   zondyPlotSymbol:desc=""
+   zondyPlotSymbol:type="assaultarrow"
+   id="svg10"
+   sodipodi:docname="单箭头.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:zondyPlotSymbol="https://www.mapgis.com"><sodipodi:namedview
+   id="namedview9"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:pageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   showgrid="false"
+   inkscape:zoom="1.03875"
+   inkscape:cx="105.41516"
+   inkscape:cy="71.23947"
+   inkscape:window-width="1920"
+   inkscape:window-height="1017"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="图层_x0020_1" />
+    <defs
+   id="defs4">
+        <style
+   type="text/css"
+   id="style2">
+            <![CDATA[
+            .fil0 {
+                fill: #ED3237
+            }
+            ]]>
+        </style>
+    </defs>
+    <g
+   id="图层_x0020_1"
+   inkscape:label="图层 1">
+        <metadata
+   id="CorelCorpID_0Corel-Layer" />
+        <path
+   class="fil0"
+   d="M 28.420806,29.050674 85.922346,58.174825 57.701132,56.589488 C 117.36113,123.66949 140.18943,141.22832 147.78943,152.75832 L 131.55,161 l -5.84533,2.32893 c -18.85,-43.56 -56.590714,-77.078969 -77.320714,-102.628969 l -6.398649,25.572146 z"
+   id="path7"
+   sodipodi:nodetypes="ccccccccc" />
+    <path
+   style="fill:none;stroke:#ed3237;stroke-width:6.1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="m 87.467533,189.38312 c 1.21182,-4.47256 3.844091,-9.6551 16.027807,-14.47054 L 131.55,161 l 12.87,-7.64 20.1071,-9.11478 c 9.27414,-4.7153 18.42747,-7.13507 27.35602,-5.28418"
+   id="path2395"
+   sodipodi:nodetypes="cccccc" /></g>
+</svg>

@@ -42,8 +42,9 @@ export default {
   show: { type: Boolean, default: true },
   opacity: { type: Number, default: 1 },
   autoReset: { type: Boolean, default: true },
-  duration: { type: Number, default: 1},
-
+  duration: { type: Number, default: 1 },
+  // 剖切封边
+  fillClip: { type: Boolean, default: true },
   /**
    * @type Object
    * @description 模型的偏移方向，主要用来抬高/降低模型

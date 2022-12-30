@@ -19,7 +19,7 @@ import Markdown from "../../cesium/docs/api/layer/Geojson/geojson.md";
 import MapgisThemeLegend from "../../cesium/src/components/Layer/IGServer/Legend.vue";
 
 export default {
-  title: "三维/图层/geojson/统一专题图",
+  title: "三维/可视化/专题图/统一",
   component: MapgisThemeLegend,
   argTypes: {
     vueKey: {
@@ -64,7 +64,7 @@ const Template = (args, { argTypes }) => ({
 export const 点 = Template.bind({});
 // data: `http://${window.webclient.ip}:${window.webclient.port}/geojson/metroStation.json`
 点.args = {
-  data: `http://192.168.21.191:8088/Vector/geojson/metroStation_topo.json`,
+  data: `http://192.168.21.191:8088/Vector/json/metroStation_topo.json`,
   autoReset: true,
   renderer: new SimpleRenderer({
     type: "simple",
@@ -83,7 +83,7 @@ export const 点 = Template.bind({});
 export const 线 = Template.bind({});
 // data: `http://${window.webclient.ip}:${window.webclient.port}/geojson/metro.json`
 线.args = {
-  data: `http://192.168.21.191:8088/Vector/geojson/metro.json`,
+  data: `http://192.168.21.191:8088/Vector/json/metro.json`,
   autoReset: true,
   renderer: new SimpleRenderer({
     type: "simple",
@@ -101,7 +101,7 @@ export const 线 = Template.bind({});
 export const 区 = Template.bind({});
 // data: `http://${window.webclient.ip}:${window.webclient.port}/geojson/populationSizeGeoJson_2017.json`
 区.args = {
-  data: "http://192.168.21.191:8088/Vector/geojson/metro.json",
+  data: "http://192.168.21.191:8088/Vector/json/metro.json",
   autoReset: true,
   renderer: new SimpleRenderer({
     type: "simple",

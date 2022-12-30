@@ -3,7 +3,7 @@ import Markdown from "../../cesium/docs/api/simulation/PondingSimulation.md"
 import Mapgis3dPondingSimulation from "../../cesium/src/components/simulation/PondingSimulation.vue";
 
 export default {
-  title: "三维/模拟仿真/积水仿真",
+  title: "三维/模拟仿真",
   component: Mapgis3dPondingSimulation,
   argTypes: {},
 };
@@ -13,10 +13,6 @@ const Template = (args, { argTypes }) => ({
   components: { "mapgis-3d-ponding-simulation": Mapgis3dPondingSimulation },
   data() {
     return {
-      // terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/terrain",
-      terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/武汉地形`,
-      // terrainUrl: "http://192.168.81.98:6163/igs/rest/g3d/wuhan_srtm",
-      m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
       rasterUrl:"http://t4.tianditu.com/DataServer?T=img_w&L={z}&Y={y}&X={x}&tk=2ddaabf906d4b5418aed0078e1657029",
       maximumScreenSpaceError: 8,
 
@@ -33,7 +29,7 @@ const Template = (args, { argTypes }) => ({
         v-on:load="handleLoad"
     >
         <mapgis-3d-raster-layer :url="rasterUrl" />
-        <mapgis-3d-igs-terrain :url="terrainUrl" />
+        <mapgis-3d-igs-terrain :url="$props.terrainUrl" />
         <mapgis-3d-ponding-simulation
             ref="simulation"
             @isPonding="e=>{pond = e}"
@@ -88,7 +84,9 @@ const Template = (args, { argTypes }) => ({
 });
 
 export const 积水仿真 = Template.bind({});
-积水仿真.args = {};
+积水仿真.args = {
+  terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/terrain/SceneServer`
+};
 积水仿真.parameters = {
   docs:{
     description:{

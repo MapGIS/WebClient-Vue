@@ -3,7 +3,7 @@ import Markdown from "../../mapboxgl/docs/api/Layers/OGC/ogcWmsLayer.md"
 import MapgisOgcWmsLayer from "../../mapboxgl/src/components/layer/ogc/OgcWmsLayer.js";
 
 export default {
-  title: "二维/图层/OGC/WMS-4326",
+  title: "二维/数据图层/影像/MapGIS/WMS/4326",
   component: MapgisOgcWmsLayer,
   argTypes: {
     baseUrl: {

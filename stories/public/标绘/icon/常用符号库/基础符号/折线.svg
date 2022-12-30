@@ -9,7 +9,7 @@
    style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
    viewBox="0 0 200 200"
    zondyPlotSymbol:version="1.0"
-   zondyPlotSymbol:id="svg003"
+   zondyPlotSymbol:id="5"
    zondyPlotSymbol:name="折线"
    zondyPlotSymbol:desc=""
    zondyPlotSymbol:type="pathway"
@@ -58,7 +58,7 @@
    inkscape:groupmode="layer">
         <metadata
    id="CorelCorpID_0Corel-Layer" />
-        
+
     <path
    style="fill:none;stroke:#ff0000;stroke-width:6.13107;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
    d="M 23.896104,28.051948 182.33766,180.25974"

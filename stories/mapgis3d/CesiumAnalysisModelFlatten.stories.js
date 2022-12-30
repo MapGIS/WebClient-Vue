@@ -1,5 +1,5 @@
 export default {
-  title: "三维/分析/模型压平",
+  title: "三维/三维分析/模型分析",
 };
 
 const Template = (args, { argTypes }) => ({
@@ -8,7 +8,6 @@ const Template = (args, { argTypes }) => ({
     return {
       url:
         "http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752",
-      m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
       autoReset: true,
       maximumScreenSpaceError: 8,
       vueKey: "default",
@@ -26,7 +25,6 @@ const Template = (args, { argTypes }) => ({
   },
   template: `
     <mapgis-web-scene style="height: 95vh">
-<!--        <mapgis-3d-raster-layer :url="url" />-->
         <mapgis-3d-m3d-layer 
             :vueKey="vueKey" 
             :vueIndex="vueIndex" 
@@ -48,4 +46,6 @@ const Template = (args, { argTypes }) => ({
 });
 
 export const 模型压平 = Template.bind({});
-模型压平.args = {};
+模型压平.args = {
+  m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`
+};

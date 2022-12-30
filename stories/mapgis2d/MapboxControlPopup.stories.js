@@ -4,7 +4,7 @@ import MapgisMarker from "../../mapboxgl/src/components/UI/Marker.vue";
 import MapgisPopup from "../../mapboxgl/src/components/UI/Popup.vue";
 
 export default {
-  title: "二维/地图子组件/气泡",
+  title: "二维/图形绘制/标注/气泡",
   component: MapgisPopup,
   // english Our exports that end in "Data" are not stories.
   // 中文 Data后缀的内容不是故事，而是Vue组件的方法
@@ -58,8 +58,8 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-map>`,
 });
 
-export const Popup = Template.bind({});
-Popup.args = {
+export const 气泡 = Template.bind({});
+气泡.args = {
   anchor: "top",
   show: true,
   offset: [0, 0],

@@ -2,7 +2,7 @@ import Markdown from "../../cesium/docs/api/sceneeffect/SceneSetting.md";
 import Mapgis3dSeneSetting from "../../cesium/src/components/SceneEffect/SceneSetting";
 
 export default {
-  title: "三维/场景子组件/场景设置",
+  title: "三维/场景控制/控件",
   component: Mapgis3dSeneSetting,
   argTypes: {},
 };
@@ -25,7 +25,7 @@ const Template = (args, { argTypes }) => ({
     `,
   data() {
     return {
-      m3dUrl: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
+      m3dUrl: `http://${webclient.ip}:${webclient.port}/igs/rest/g3d/ZondyModels`,
       autoReset: true,
       maximumScreenSpaceError: 8,
     };

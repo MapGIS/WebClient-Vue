@@ -50,7 +50,7 @@ export default {
       let vm = this;
       const { viewer, $props } = this;
       if (viewer.isDestroyed()) return
-      let terrianlayer = viewer.scene.layers.appendG3DLayer(`${this.url}`, {
+      let terrianlayer = viewer.scene.layers.appendSceneLayer(`${this.url}`, {
         ...$props,
         getDocLayerIndexes:vm._handleTerrianLoaded
       });

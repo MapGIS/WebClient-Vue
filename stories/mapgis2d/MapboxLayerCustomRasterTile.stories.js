@@ -2,7 +2,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisCustomRastertileLayer from "../../mapboxgl/src/components/layer/customtile/CustomRastertileLayer.vue";
 
 export default {
-  title: "二维/图层/自定义栅格图层",
+  title: "二维/数据图层/影像/自定义栅格图层",
   component: MapgisCustomRastertileLayer,
   argTypes: {
     layerId: {

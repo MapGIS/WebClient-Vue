@@ -4,7 +4,7 @@ import MapgisNavigationControl from "../../mapboxgl/src/components/UI/controls/N
 import { BaseServer } from "@mapgis/webclient-es6-service";
 
 export default {
-  title: "二维/可视化/MapV",
+  title: "二维/可视化/MapV/方格型网络",
   component: MapgisMapvLayer,
   argTypes: {},
 };
@@ -53,8 +53,8 @@ const Template = (args, { argTypes }) => ({
     `,
 });
 
-export const mapv = Template.bind({});
-mapv.args = {
+export const 方格型网络 = Template.bind({});
+方格型网络.args = {
   options: {
     postRender:true,
     context: "2d",

@@ -39,9 +39,9 @@
 
 <script>
 import * as turf from "@turf/turf";
-import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
+import "@mapgis/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import DrawRectangle from "mapbox-gl-draw-rectangle-mode";
-import * as MapboxDrawCom from "@mapbox/mapbox-gl-draw";
+import * as MapboxDrawCom from "@mapgis/mapbox-gl-draw";
 import RadiusMode from "@mapgis/mapbox-gl-draw-radius";
 import {
   CircleMode,

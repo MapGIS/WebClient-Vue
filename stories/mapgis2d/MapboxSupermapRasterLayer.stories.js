@@ -2,7 +2,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisSupermapRasterLayer from "../../mapboxgl/src/components/layer/SupermapServer/SupermapRasterLayer";
 
 export default {
-    title: "二维/图层/Supermap Server/Supermap Raster",
+    title: "二维/数据图层/影像/超图/栅格",
     component: MapgisSupermapRasterLayer,
     argTypes: {
         layerId:  {
@@ -66,8 +66,8 @@ const Template = (args, { argTypes }) => ({
     </mapgis-web-map>`,
 });
 
-export const supermap = Template.bind({});
-supermap.args = {
+export const 栅格 = Template.bind({});
+栅格.args = {
     layerId: "arcgismap_layerid",
     sourceId:'arcgismap_sourceid',
     baseUrl: "http://192.168.84.158:31708/iserver/services/map-mongodb-420000_SL_0518_SKY_20200620-3k6ybamafh/rest/maps/420000_SL_0518_SKY_20200620",

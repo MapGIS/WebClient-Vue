@@ -1,14 +1,48 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Creator: CorelDRAW (评估版) -->
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="400px" height="400px" version="1.1"
-    style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
-    viewBox="0 0 400 400" xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:xodm="http://www.corel.com/coreldraw/odm/2003" xmlns:zondyPlotSymbol="https://www.mapgis.com"
-    xmlns:zondyPlotSymbolItem="https://www.mapgis.com" zondyPlotSymbol:version="1.0" zondyPlotSymbol:id="svg003"
-    zondyPlotSymbol:name="" zondyPlotSymbol:desc="" zondyPlotSymbol:type="multiarrow">
-    <defs>
-        <style type="text/css">
+
+<svg
+   xml:space="preserve"
+   width="400px"
+   height="400px"
+   version="1.1"
+   style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+   viewBox="0 0 400 400"
+   zondyPlotSymbol:version="1.0"
+   zondyPlotSymbol:id="50"
+   zondyPlotSymbol:name="多箭头"
+   zondyPlotSymbol:desc=""
+   zondyPlotSymbol:type="multiarrow"
+   id="svg10"
+   sodipodi:docname="多箭头.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:zondyPlotSymbol="https://www.mapgis.com"><sodipodi:namedview
+   id="namedview12"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:pageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   showgrid="false"
+   inkscape:zoom="1.03875"
+   inkscape:cx="184.3562"
+   inkscape:cy="225.27076"
+   inkscape:window-width="1920"
+   inkscape:window-height="1017"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="图层_x0020_1" />
+    <defs
+   id="defs4">
+        <style
+   type="text/css"
+   id="style2">
             <![CDATA[
             .str0 {
                 stroke: #ED3237;
@@ -22,9 +56,26 @@
             ]]>
         </style>
     </defs>
-    <g id="图层_x0020_1">
-        <metadata id="CorelCorpID_0Corel-Layer" />
-        <path class="fil0 str0"
-            d="M292.07 345.08c-13.14,-11.05 -29.44,-20.53 -51.14,-29.68m-69.56 -110.84l-19.85 -2.74 6.27 6.97 -63.84 -14.74 64.81 -12.83 -7.04 7.01 19.78 -3.07m11.08 -3.47c13.33,-5.52 22.37,-14.43 24.8,-24.29m-0.04 -11.2c-2.57,-10.74 -12.03,-21.31 -25.87,-27.99m-9.36 -3.33l-19.83 -2.46 6.69 6.64 -64.51 -13.08 64.14 -14.41 -6.3 6.68 18.9 -2.25m11.15 -1.7c16.27,-2.98 31.93,-7.55 46.6,-13.24m12.78 -5.34c20.07,-9 37.94,-20.01 52.55,-31.67m-65.53 266.24c-15.36,-5.93 -29.5,-9.7 -45.9,-13.47m-11.48 -1.76l-19.85 -2.74 6.27 6.98 -63.84 -14.75 64.81 -12.83 -7.04 7.01 19.78 -3.06m11.08 -3.47c13.33,-5.53 22.37,-14.44 24.8,-24.3m-0.04 -11.2c-2.57,-10.74 -12.03,-21.31 -25.87,-27.98" />
-    </g>
+    <g
+   id="图层_x0020_1"
+   inkscape:label="图层 1">
+        <metadata
+   id="CorelCorpID_0Corel-Layer" />
+
+    <path
+   class="fil0"
+   d="m 56.922179,93.750606 63.741901,50.873604 -21.563091,6.27368 c 48.630011,61.91566 59.267301,70.1982 65.462211,80.84053 l 97.85565,24.01127 -192.95304,97.14483 C 54.100815,312.68811 107.74218,180.48053 90.844759,156.89756 l -15.803493,21.88015 z"
+   id="path7"
+   sodipodi:nodetypes="ccccccccc"
+   style="clip-rule:evenodd;fill:#ed3237;fill-rule:evenodd;stroke-width:0.867389;image-rendering:optimizeQuality;shape-rendering:geometricPrecision;text-rendering:geometricPrecision" /><path
+   class="fil0"
+   d="m 134.49625,68.845898 55.89479,62.425152 -24.70193,-4.38928 c 48.63001,61.91566 92.28123,104.26281 98.47614,114.90515 l -28.29598,33.71671 -62.09499,3.64426 c -15.36499,-40.20642 -1.01341,-122.2392 -17.91084,-145.82216 l -13.8417,17.43725 z"
+   id="path7-6"
+   sodipodi:nodetypes="ccccccccc"
+   style="clip-rule:evenodd;fill:#ed3237;fill-rule:evenodd;stroke-width:0.867389;image-rendering:optimizeQuality;shape-rendering:geometricPrecision;text-rendering:geometricPrecision" /><path
+   class="fil0"
+   d="m 222.56403,51.948091 55.8948,62.425149 -24.70193,-4.38928 c 48.63001,61.91566 107.45243,151.67228 113.64734,162.31462 l -92.94425,0.53025 -51.62957,3.53122 c -15.36499,-40.20642 37.99824,-136.34916 21.10081,-159.93213 l -13.84171,17.43725 z"
+   id="path7-6-9"
+   sodipodi:nodetypes="ccccccccc"
+   style="clip-rule:evenodd;fill:#ed3237;fill-rule:evenodd;stroke-width:0.867389;image-rendering:optimizeQuality;shape-rendering:geometricPrecision;text-rendering:geometricPrecision" /></g>
 </svg>

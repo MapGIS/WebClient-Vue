@@ -1,7 +1,7 @@
 import Markdown from "../../cesium/docs/api/ui/rotate.md";
 
 export default {
-    title: "三维/场景子组件/绕点旋转",
+    title: "三维/场景控制/相机",
     argTypes: {
     }
 }
@@ -34,8 +34,8 @@ const Template = (args, { argTypes }) => ({
     </mapgis-web-scene>`
 });
 
-export const rotate = Template.bind({});
-rotate.args = {
+export const 绕点旋转 = Template.bind({});
+绕点旋转.args = {
     url: "http://t7.tianditu.gov.cn/img_c/wmts",
     tileMatrixSet: "c",
     tilingScheme: "EPSG:4326",
@@ -48,16 +48,15 @@ rotate.args = {
     url1: "http://t7.tianditu.gov.cn/cva_c/wmts",
     tileMatrixSet1: "c",
     tilingScheme1: "EPSG:4326",
-    layer1:"cva",
-    baseUrl:"http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/docs/北京市",
-    boundaryStyle:{
+    layer1: "cva",
+    boundaryStyle: {
         color: "#1E90FF",
         opacity: 0.5,
-        outlineColor:"rgba(0,191,255,0.5)"
+        outlineColor: "rgba(0,191,255,0.5)"
     },
 };
 
-rotate.parameters = {
+绕点旋转.parameters = {
     docs: {
         description: {
             component: Markdown,

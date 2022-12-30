@@ -933,6 +933,7 @@ export default {
     },
     queryDynamic(movement) {
       const vm = this;
+      vm.featureproperties = undefined;
       const { Cesium, viewer, g3dLayerIndex } = this;
       const { vueKey, innerVueIndex, vueCesium } = this;
       let find = vueCesium.StratifiedHousehouldManager.findSource(
@@ -975,13 +976,19 @@ export default {
               }
               if (result && result.length > 0) {
                 let feature = result[0];
-                vm.featurevisible = true;
-                vm.featureposition = {
-                  longitude: lng,
-                  latitude: lat,
-                  height: height
-                };
+
                 vm.featureproperties = feature.property;
+                if (
+                  vm.featureproperties &&
+                  Object.keys(vm.featureproperties).length > 0
+                ) {
+                  vm.featurevisible = true;
+                  vm.featureposition = {
+                    longitude: lng,
+                    latitude: lat,
+                    height: height
+                  };
+                }
                 // _extrudedHeight和_height这样设置后才能贴模型
                 feature.geometryInstances.geometry._extrudedHeight = 0;
                 feature.geometryInstances.geometry._height = 100000;
@@ -1009,6 +1016,7 @@ export default {
     },
     queryStatic(movement) {
       const vm = this;
+      vm.featureproperties = undefined;
       const { Cesium, viewer, version, g3dLayerIndex } = this;
       const { featureHighlightColorProp } = this;
       const scene = viewer.scene;
@@ -1042,16 +1050,6 @@ export default {
         }
 
         if (cartesian || cartesian2) {
-          if (vm.featureclickenable) {
-            vm.featurevisible = true;
-          }
-
-          vm.featureposition = {
-            longitude: longitudeString2,
-            latitude: latitudeString2,
-            height: heightString2
-          };
-
           if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
           let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
           let index = pickedFeature._content._tileset._layerIndex;
@@ -1086,6 +1084,18 @@ export default {
                 vm.featureproperties = result;
               });
             }
+          }
+          if (
+            vm.featureclickenable &&
+            vm.featureproperties &&
+            Object.keys(vm.featureproperties).length > 0
+          ) {
+            vm.featurevisible = true;
+            vm.featureposition = {
+              longitude: longitudeString2,
+              latitude: latitudeString2,
+              height: heightString2
+            };
           }
         } else {
           vm.clickvisible = false;

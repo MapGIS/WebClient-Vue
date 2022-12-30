@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/Slope.md";
 
 export default {
-  title: "三维/分析/坡度分析",
+  title: "三维/三维分析/地形分析",
   argTypes: {
     rampColors: {
       description: "坡度分析角度颜色数组",
@@ -22,8 +22,6 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       url: "http://t0.tianditu.gov.cn/img_c/wmts",
-      //地形url TODO这里地址打包的时候改一下
-      //terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/terrain",
       terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`,
       tileMatrixSet: "c",
       tilingScheme: "EPSG:4326",
@@ -95,6 +93,7 @@ export const 坡度 = Template.bind({});
     { min: 60, max: 75, color: "rgba(96, 125, 139, 0.5)" },
     { min: 75, max: 90, color: "rgba(76, 175, 80, 0.5)" },
   ],
+  terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`
 };
 
 坡度.parameters = {

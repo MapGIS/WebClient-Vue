@@ -1,6 +1,6 @@
 import wuhan_house from "../assets/geojson/wuhan_house"
 export default {
-  title: "二维/图层/专题图/开启Tips和Popup/点数据",
+  title: "二维/可视化/专题图/开启Tips和Popup/点",
   argTypes: {
     dataSource: {
       description: "geojson格式的数据源或者geojson数据源的URl，详见如下网址：<a href='https://geojson.org/' target='_blank'>https://geojson.org/  </a>",
@@ -61,8 +61,8 @@ const Template = (args, {argTypes}) => ({
     </mapgis-web-map>`,
 });
 
-export const  开启高亮和PopUp = Template.bind({});
-开启高亮和PopUp.args = {
+export const  点 = Template.bind({});
+点.args = {
   dataSource: wuhan_house,
   type: "range",
   field: "display_x",

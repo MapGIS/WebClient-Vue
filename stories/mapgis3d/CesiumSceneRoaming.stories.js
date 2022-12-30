@@ -2,7 +2,7 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/sceneeffect/sceneroaming.md";
 
 export default {
-  title: "三维/场景漫游/路径管理",
+  title: "三维/场景控制/相机",
   argTypes: {
     speed: {
       description:
@@ -131,7 +131,6 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       url: "http://t0.tianditu.gov.cn/img_c/wmts",
-      m3dUrl: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
       autoReset: true,
       maximumScreenSpaceError: 8,
       tileMatrixSet: "c",
@@ -154,27 +153,28 @@ const Template = (args, { argTypes }) => ({
           :tilingScheme="tilingScheme"
           :token="token"
       ></mapgis-3d-ogc-wmts-layer>
-      <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl" />
+      <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="$props.m3dUrl" />
       <mapgis-ui-card class="storybook-ui-card">
         <mapgis-3d-scene-roaming 
-        :speed="speed"
-        :exHeight="exHeight"
-        :heading="heading"
-        :pitch="pitch"
-        :range="range"
-        :animationType="animationType"
-        :interpolationAlgorithm="interpolationAlgorithm"
-        :isLoop="isLoop"
-        :showPath="showPath"
-        :showInfo="showInfo"
-        :models="models"/>
+        :speed="$props.speed"
+        :exHeight="$props.exHeight"
+        :heading="$props.heading"
+        :pitch="$props.pitch"
+        :range="$props.range"
+        :animationType="$props.animationType"
+        :interpolationAlgorithm="$props.interpolationAlgorithm"
+        :isLoop="$props.isLoop"
+        :showPath="$props.showPath"
+        :showInfo="$props.showInfo"
+        :models="$props.models"/>
       </mapgis-ui-card>
       </mapgis-web-scene>
     `,
 });
 
-export const 路径管理 = Template.bind({});
-路径管理.args = {
+export const 漫游路径管理 = Template.bind({});
+漫游路径管理.args = {
+  m3dUrl: `http://${webclient.igsIp}:${webclient.igsPort}/igs/rest/g3d/ZondyModels`,
   speed: 10,
   exHeight: 1,
   heading: 90,
@@ -188,20 +188,20 @@ export const 路径管理 = Template.bind({});
   models: [
     {
       label: "人",
-      value: "./CesiumModels/Cesium_Man.glb",
+      value: `http://${webclient.ip}:${webclient.port}/CesiumModels/Cesium_Man.glb`,
     },
     {
       label: "卡车",
-      value: "./CesiumModels/CesiumMilkTruck.glb",
+      value: `http://${webclient.ip}:${webclient.port}/CesiumModels/CesiumMilkTruck.glb`,
     },
     {
       label: "飞机",
-      value: "./CesiumModels/Cesium_Air.gltf",
+      value: `http://${webclient.ip}:${webclient.port}/CesiumModels/Cesium_Air.gltf`,
     },
   ],
 };
 
-路径管理.parameters = {
+漫游路径管理.parameters = {
   docs: {
     description: {
       component: Markdown,

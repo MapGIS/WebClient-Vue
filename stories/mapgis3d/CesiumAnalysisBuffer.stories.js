@@ -3,7 +3,7 @@ const { LineStyle, PointStyle, FillStyle, Shadow } = Style;
 import Markdown from "../../cesium/docs/api/analysis/Buffer.md";
 
 export default {
-  title: "三维/分析/缓冲分析",
+  title: "三维/三维分析/Turf空间分析",
   argTypes: {
     srcType: {
       description: "缓冲数据源类型：图层级缓冲Layer；要素级缓冲Feature",
@@ -85,8 +85,8 @@ const Template = (args, { argTypes }) => ({
 <mapgis-3d-geojson-layer v-if="finishedFeature && addResultToLayer" :layerStyle="layerStyle" :baseUrl="resultFeature"/>
 </mapgis-web-scene> */}
 
-export const Buffer = Template.bind({});
-Buffer.args = {
+export const 缓冲 = Template.bind({});
+缓冲.args = {
   srcType: "Layer",
   // srcType: "Feature",
   baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/layers`,
@@ -133,7 +133,7 @@ Buffer.args = {
     ]
   }
 };
-Buffer.parameters = {
+缓冲.parameters = {
   docs: {
       description: {
           component: Markdown,
