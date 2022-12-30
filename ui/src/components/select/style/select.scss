@@ -26,6 +26,8 @@
       &:hover {
         color: $text-color-secondary;
       }
+      background: $input-bg;
+      color: $text-color-secondary;
     }
     &--multiple {
       #{$prefix-selection}__choice {
@@ -110,15 +112,18 @@
   }
 }
 
-.mapgis-ui-select-outline-title,.mapgis-ui-select-outline > div {
+.mapgis-ui-select-outline-title,
+.mapgis-ui-select-outline > div {
   color: $panel-option-color;
   background: $panel-backgroud;
 }
 
-.mapgis-ui-select-outline .mapgis-ui-select-arrow svg, .mapgis-ui-select-outline-option {
+.mapgis-ui-select-outline .mapgis-ui-select-arrow svg,
+.mapgis-ui-select-outline-option {
   color: $panel-option-color;
 }
 
-.mapgis-ui-select-outline-option, .mapgis-ui-select-dropdown-menu {
+.mapgis-ui-select-outline-option,
+.mapgis-ui-select-dropdown-menu {
   background: $panel-backgroud;
 }

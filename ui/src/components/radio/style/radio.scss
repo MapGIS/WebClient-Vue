@@ -1,5 +1,5 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
 @include b(radio) {
   $prefix: &;
@@ -9,14 +9,14 @@
   &-input:focus + &-inner {
     border-color: $radio-dot-color;
   }
-  @include e(input, '-') {
+  @include e(input, "-") {
     &:focus {
       + #{$prefix}-inner {
         box-shadow: none;
       }
     }
   }
-  @include e(checked, '-') {
+  @include e(checked, "-") {
     &::after {
       border-color: $radio-dot-color;
     }
@@ -24,12 +24,15 @@
       border-color: $radio-dot-color;
     }
   }
-  @include e(inner, '-') {
+  @include e(inner, "-") {
     &::after {
       background-color: $radio-dot-color;
     }
   }
-  @include e(disabled, '-') {
+  @include e(disabled, "-") {
+    + span {
+      color: $disabled-color;
+    }
     #{$prefix}-inner {
       border-color: $disabled-border-color !important;
       &::after {
@@ -37,10 +40,10 @@
       }
     }
   }
-  @include e(wrapper, '-') {
+  @include e(wrapper, "-") {
     color: $text-color;
   }
-  @include e(button-wrapper, '-') {
+  @include e(button-wrapper, "-") {
     $prefix-button-wrapper: &;
     &:hover {
       color: $radio-dot-color;
@@ -90,7 +93,7 @@
       }
     }
   }
-  @include e(group, '-') {
+  @include e(group, "-") {
     $prefix-button-wrapper: #{$prefix}-button-wrapper;
     &-solid {
       #{$prefix-button-wrapper}-checked:not(#{$prefix-button-wrapper}-disabled) {

@@ -11,7 +11,8 @@ export const LayoutSiderProps = {
   defaultCollapsed: false,
   reverseArrow: false,
   width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  collapsedWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+  collapsedWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  theme: PropTypes.oneOf(["light", "dark", "technology"]).def("dark")
 };
 
 export default {

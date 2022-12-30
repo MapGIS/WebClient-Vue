@@ -22,6 +22,9 @@
   @include e(suffix, '-') {
     color: $text-color;
   }
+  @include e(prefix, '-') {
+    color: $text-color;
+  }
   @include e(group, '-') {
     .mapgis-ui-input-affix-wrapper:first-child:last-child .mapgis-ui-input-number {
       border-radius: 4px;
@@ -39,6 +42,9 @@
     }
   }
   @include e(affix-wrapper, '-') {
+    .mapgis-ui-input-prefix {
+      color: $text-color;
+    } 
     .mapgis-ui-input-number:not(:last-child) {
       padding-right: 41px;
     }

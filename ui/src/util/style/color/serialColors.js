@@ -186,7 +186,8 @@ export function dealWithTheme(nextThemeStyle) {
   const functionSerialColorsReplacer = getFunctionSerialColors(themeStyleData);
   const nextThemeStyleData = Object.assign({}, themeStyleData, {
     selectedColor: serialColorsReplacer[1],
-    hoverColor: serialColorsReplacer[4],
+    // 影响在theme.json中设置的hoverColor样式
+    // hoverColor: serialColorsReplacer[4],
     clickColor: serialColorsReplacer[6]
   });
   const nextThemeData = {
@@ -278,8 +279,8 @@ export function dealWithLayout(nextLayoutStyle) {
   });
 
   const nextLayoutData = {
-    layoutStyle: layoutInfo,
-  }
+    layoutStyle: layoutInfo
+  };
 
   const rootStyle = `:root ${JSON.stringify(variables, null, 2)
     .replace(/(:.+),/g, "$1;")

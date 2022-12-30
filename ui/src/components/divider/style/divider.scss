@@ -3,6 +3,9 @@
 
 @include b (divider) {
   background: $border-color-base !important;
+  &-inner-text {
+    color: $heading-color;
+  }
 }
 
 $divider-prefix-cls: $ant-prefix + "-divider";
@@ -81,11 +84,6 @@ $divider-prefix-cls: $ant-prefix + "-divider";
       top: 50%;
       width: 5%;
     }
-  }
-
-  &-inner-text {
-    display: inline-block;
-    padding: 0 24px;
   }
 
   &-dashed {

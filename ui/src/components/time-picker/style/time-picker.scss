@@ -14,6 +14,24 @@ $timepicker-item-height: 32px;
   }
 }
 
+@include b(time-picker) {
+  @include e(input, '-') {
+    & {
+      border: 1px solid $time-picke-input-border-color;
+      background-color: $time-picke-input-bg;
+      color: $text-color;
+    }
+  }
+  @include e(clear, '-') {
+    &:hover {
+      color: $text-color-secondary;
+    }
+    & {
+      background: $component-background;
+    }
+  }
+}
+
 .#{timepicker-prefix-cls}-panel {
   // .reset-component;
 

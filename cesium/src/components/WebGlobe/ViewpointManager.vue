@@ -624,9 +624,9 @@ export default {
   ::v-deep .mapgis-ui-collapse-content-box {
     padding: 0;
   }
-  ::v-deep .mapgis-ui-collapse .mapgis-ui-collapse-item {
-    border-bottom: 0;
-  }
+  // ::v-deep .mapgis-ui-collapse .mapgis-ui-collapse-item {
+  //   border-bottom: 0;
+  // }
   ::v-deep
     .mapgis-ui-collapse
     > .mapgis-ui-collapse-item-active
@@ -678,14 +678,16 @@ export default {
         height: 25px;
         line-height: 25px;
         border: 1px solid var(--border-color-base);
-        background-color: var(--border-color-base);
+        // background-color: var(--border-color-base);
         border-top: 0;
-        color: #6296ff;
+        // color: #6296ff;
         cursor: pointer;
+        background-color: var(--primary-6);
+        color: var(--btn-primary-color);
       }
-      span:hover {
-        color: #3b7cff;
-      }
+      // span:hover {
+      //   color: #3b7cff;
+      // }
     }
   }
   ::v-deep .mapgis-ui-collapse-header {

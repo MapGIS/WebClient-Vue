@@ -1,33 +1,6 @@
 $menu-prefix-cls: $ant-prefix + "-menu";
 
 .#{$menu-prefix-cls} {
-  // &-inline-collapsed {
-  //   .#{$menu-prefix-cls}-item,
-  //   .#{$menu-prefix-cls}-submenu .#{$menu-prefix-cls}-submenu-title {
-  //     &:hover {
-  //       color: $menu-item-active-bg !important;
-  //     }
-  //   }
-  // }
-  &-dark {
-    .#{$menu-prefix-cls}-item,
-    .#{$menu-prefix-cls}-submenu .#{$menu-prefix-cls}-submenu-title {
-      &:hover {
-        color: $menu-dark-highlight-color !important;
-      }
-    }
-  }
-  // &-light {
-  //   .#{$menu-prefix-cls}-item,
-  //   .#{$menu-prefix-cls}-submenu .#{$menu-prefix-cls}-submenu-title {
-  //     &:hover {
-  //       color: $primary-6 !important;
-  //     }
-  //   }
-  // }
-}
-
-.#{$menu-prefix-cls} {
   // dark theme
   &-dark,
   &-dark &-sub {
@@ -104,8 +77,8 @@ $menu-prefix-cls: $ant-prefix + "-menu";
   &-dark &-submenu-open,
   &-dark &-submenu-selected,
   &-dark &-submenu-title:hover {
-    color: $menu-dark-highlight-color; // 这里也控制菜单选中的样式，但是被其他部分覆盖
-    background-color: transparent;
+    color: $menu-dark-highlight-color;
+    // background-color: transparent;
     > a {
       color: $menu-dark-highlight-color;
     }
@@ -121,25 +94,24 @@ $menu-prefix-cls: $ant-prefix + "-menu";
     }
   }
   &-dark &-item:hover {
-    background-color: $menu-dark-item-hover-bg;
+    // background-color: $menu-dark-item-hover-bg;
   }
-  &-inline-collapsed {
-    &-dark &-item-selected {
-      color: $menu-dark-highlight-color;
+
+  &-dark &-item-selected {
+    color: $menu-dark-highlight-color;
+    border-right: 0;
+    &::after {
       border-right: 0;
-      &::after {
-        border-right: 0;
-      }
-      > a,
-      > a:hover {
-        color: $menu-dark-highlight-color;
-      }
-      .#{iconfont-css-prefix} {
-        color: $menu-dark-selected-item-icon-color;
-      }
-      .#{iconfont-css-prefix} + span {
-        color: $menu-dark-selected-item-text-color;
-      }
+    }
+    > a,
+    > a:hover {
+      color: $menu-dark-highlight-color;
+    }
+    .#{iconfont-css-prefix} {
+      color: $menu-dark-selected-item-icon-color;
+    }
+    .#{iconfont-css-prefix} + span {
+      color: $menu-dark-selected-item-text-color;
     }
   }
 

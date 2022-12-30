@@ -1,7 +1,7 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 // @import './checkbox-mixin.scss';
-@import './tree-mixin.scss';
+@import "./tree-mixin.scss";
 
 $select-prefix-cls: $ant-prefix + "-select";
 $select-tree-prefix-cls: $ant-prefix + "-select-tree";
@@ -11,6 +11,10 @@ $select-tree-prefix-cls: $ant-prefix + "-select-tree";
 @include b(select-tree) {
   &-checkbox-inner {
     background: #fff0;
+  }
+
+  @include e(switcher, "-") {
+    color: $text-color;
   }
 }
 
@@ -37,7 +41,7 @@ $select-tree-prefix-cls: $ant-prefix + "-select-tree";
     }
     .#{select-tree-prefix-cls}-node-content-wrapper {
       display: inline-block;
-      width: 'calc(100% - 24px)';
+      width: "calc(100% - 24px)";
       margin: 0;
       padding: 3px 5px;
       color: $text-color;
@@ -56,7 +60,7 @@ $select-tree-prefix-cls: $ant-prefix + "-select-tree";
       &.#{select-tree-prefix-cls}-checkbox {
         margin: 0 4px 0 0;
         + .#{select-tree-prefix-cls}-node-content-wrapper {
-          width: 'calc(100% - 46px)';
+          width: "calc(100% - 46px)";
         }
       }
       &.#{select-tree-prefix-cls}-switcher,
@@ -216,4 +220,15 @@ $select-tree-prefix-cls: $ant-prefix + "-select-tree";
     background: $white;
     box-shadow: $box-shadow-base;
   }
+}
+
+.#{$select-tree-prefix-cls}
+  li
+  .#{$select-tree-prefix-cls}-node-content-wrapper {
+  color: $text-color;
+}
+.#{$select-tree-prefix-cls}
+  li
+  .#{$select-tree-prefix-cls}-node-content-wrapper.#{$select-tree-prefix-cls}-node-selected {
+  background-color: $primary-2;
 }
