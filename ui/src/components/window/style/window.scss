@@ -15,7 +15,7 @@
     font-size: 14px;
     height: 36px;
     // border-bottom: 1px solid $border-color; // ws记录
-    border-bottom: 1px solid #f0f0f0; // ws记录
+    border-bottom: 1px solid $border-color-split; // ws记录
     &.shrink {
       border-bottom: none;
     }
@@ -26,6 +26,7 @@
     }
     .actions {
       padding: 8px 0;
+      color: $text-color;
       .action {
         cursor: pointer;
         padding-left: 8px;
