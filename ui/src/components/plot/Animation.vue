@@ -453,6 +453,8 @@ export default {
       if (type == "attribute-animation") {
         params.attrsItem.attrName =
           params.attrsItem.attrName || this.attrsItemColorOptions[0];
+          // 给属性动画compareLineColor添加默认值
+        params.attrsItem.value=[this.defaultColor]
         params.attrsItem.ids = params.attrsItem.ids || this.idsOptions[0];
       }
       return params;
