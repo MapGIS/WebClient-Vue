@@ -386,7 +386,15 @@ export default {
       this.initTimeline();
     },
     removeList(script) {
-      this.$emit("remove", script);
+      // 修改二维态势推演删除无效问题
+      // 遍历脚本列表
+      for (let i = 0; i < this.scriptListCopy.length; i++) {
+        // 判断
+        if(this.scriptListCopy[i].timeLineName==script.timeLineName){
+          // 删除
+          this.scriptListCopy.splice(i,1)
+        }
+      }
     },
     saveList(script) {
       this.$emit("save", script);
