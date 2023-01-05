@@ -59,7 +59,7 @@ const Template = (args, { argTypes }) => ({
 
 export const WMTS = Template.bind({});
 WMTS.args = {
-  baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/OGC_4326_CHINA/WMTSServer`,
+  baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/Tile/EPSG_4326_WORLD_TILE/WMTSServer`,
   wmtsLayer: "beijing",
   tileMatrixSet: "EPSG:4326_北京市_028mm_GB",
   tilingScheme: "EPSG:4326",

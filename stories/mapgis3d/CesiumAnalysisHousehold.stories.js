@@ -128,7 +128,7 @@ const Template = (args, { argTypes }) => ({
     },
   },
   template: `<mapgis-web-scene @load="handleMapload" style="height:95vh">    
-    <mapgis-3d-scene-layer v-bind="$props.g3d" />
+    <mapgis-3d-scene-layer v-bind="$props.sceneLayer" />
     <mapgis-3d-stratified-household style="position: absolute;top: 10px;left: 10px;" v-bind="$props" @show-relationship-graph="showRelationshipGraph" ref="stratifiedHousehold" />
     <!-- <mp-window-wrapper :visible="relationshipGraphShow"> -->
       <mapgis-ui-window
@@ -162,8 +162,8 @@ const Template = (args, { argTypes }) => ({
 
 export const 分层分户 = Template.bind({});
 分层分户.args = {
-  g3d: {
-    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/分层分户`,
+  sceneLayer: {
+    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/Scene/高级住所模型/SceneServer`,
     vueIndex: "73CBB58E-C31B-2C50-08F3-DBD70DDED1BCi",
   },
   enablePopup: true,

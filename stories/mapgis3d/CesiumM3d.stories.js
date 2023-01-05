@@ -5,7 +5,7 @@ export default {
   title: "三维/数据图层/M3D模型/M3D(1.0)",
   component: Mapgis3dM3dLayer,
   argTypes: {
-    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
+    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/M3Dv1/ZondyModels/M3dServer`,
     show: true,
     opacity: 1.0,
     layers: '',
@@ -37,7 +37,7 @@ const Template = (args, { argTypes }) => ({
 
 export const M3D = Template.bind({});
 M3D.args = {
-  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
+  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/M3Dv1/ZondyModels/M3dServer`,
   show: true,
   opacity: 0.5,
 };
