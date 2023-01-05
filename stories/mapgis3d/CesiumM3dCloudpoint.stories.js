@@ -5,7 +5,7 @@ export default {
   title: "三维/数据图层/M3D模型/MapGIS",
   component: Mapgis3dM3dLayer,
   argTypes: {
-    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
+    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/Scene/zondyM3D_PointCloud/SceneServer`,
     show: true,
     opacity: 1.0,
     layers: '',
@@ -37,6 +37,6 @@ const Template = (args, { argTypes }) => ({
 
 export const 点云 = Template.bind({});
 点云.args = {
-  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/m3d_点云/SceneServer`,
+  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/Scene/zondyM3D_PointCloud/SceneServer`,
   show: true,
 };

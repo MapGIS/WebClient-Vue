@@ -33,7 +33,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 地图服务 = Template.bind({});
 地图服务.args = {
-  baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/docs/北京市0630_hdf`,
+  baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsNetPort}/igs/rest/mrms/docs/Hubei4326`,
   layers: "show:1,2,3,4,5,6,7,8,9,10",
   layerStyle: {
     visible: true,

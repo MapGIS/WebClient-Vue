@@ -38,7 +38,7 @@ const Template = (args, { argTypes }) => ({
 export const 带法向 = Template.bind({});
 带法向.args = {
   // url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/250DEM_3D`,
-  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/terrain/SceneServer`,
+  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/Scene/TwTerrain/SceneServer`,
   show: true,
   requestVertexNormals: true,
 };
