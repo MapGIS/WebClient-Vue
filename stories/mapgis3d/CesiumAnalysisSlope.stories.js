@@ -93,7 +93,7 @@ export const 坡度 = Template.bind({});
     { min: 60, max: 75, color: "rgba(96, 125, 139, 0.5)" },
     { min: 75, max: 90, color: "rgba(76, 175, 80, 0.5)" },
   ],
-  terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`
+  terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:TwTerrain`
 };
 
 坡度.parameters = {
