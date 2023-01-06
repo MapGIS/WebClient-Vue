@@ -97,6 +97,7 @@ export { default as Mapgis3dStratifiedHousehold } from "./components/Analysis/St
 export { default as Mapgis3dProjectorManger } from "./components/Analysis/scene-projector/ProjectorManager.vue";
 export { default as Mapgis3dProjectorSetting } from "./components/Analysis/scene-projector/ProjectorSetting.vue";
 export { default as Mapgis3dBimComponent } from "./components/Analysis/BIM.vue";
+export { default as Mapgis3dExplosionAnalysis } from "./components/Analysis/Explosion.vue";
 
 //融合组件
 export { default as Mapgis3dComponentMix } from "./components/UI/mixComponent/GeojsonCom";
