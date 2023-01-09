@@ -6,7 +6,7 @@ export default {
   component: Mapgis3dIgsTerrain,
   argTypes: {
     // url: "http://develop.smaryun.com:6163/igs/rest/g3d/terrain",
-    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`,
+    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:TwTerrain`,
     show: true,
     requestVertexNormals: false,
   },
@@ -16,7 +16,7 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisWebScene, Mapgis3dIgsTerrain },
   template: `<mapgis-web-scene style="height:95vh">
-    <mapgis-3d-raster-layer url="http://t1.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
+    <mapgis-3d-raster-layer url="http://t1.tianditu.com/DataServer?T=img_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
     <mapgis-3d-igs-terrain v-bind="$props" @terrain-loaded="loaded"/>
     <mapgis-3d-statebar />
   </mapgis-web-scene>`,
@@ -38,7 +38,7 @@ const Template = (args, { argTypes }) => ({
 export const 带法向 = Template.bind({});
 带法向.args = {
   // url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/250DEM_3D`,
-  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/terrain/SceneServer`,
+  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:TwTerrain`,
   show: true,
   requestVertexNormals: true,
 };

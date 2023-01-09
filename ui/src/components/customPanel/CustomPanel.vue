@@ -11,243 +11,6 @@
         :customProps="rects.customProps"
         @change="$_change"
       />
-      <!--      <div v-if="rects.type === 'Div'">-->
-      <!--        <div v-for="(rect,index) in rects" :key="index" :style="rect.style" :class="rect.className">-->
-      <!--          <div>-->
-      <!--            {{ rect.title }}-->
-      <!--          </div>-->
-      <!--          <div v-for="(item,itemIndex) in rect.rows" :key="itemIndex">-->
-      <!--            <mapgis-ui-row-->
-      <!--                v-if="item.type === 'multiCols'"-->
-      <!--                :ref="item.id"-->
-      <!--            >-->
-      <!--              <mapgis-ui-col-->
-      <!--                  :span="12"-->
-      <!--                  v-for="(child,index) in item.children"-->
-      <!--                  :key="index"-->
-      <!--              >-->
-      <!--                <mapgis-ui-mix-row-->
-      <!--                    v-if="child.type === 'MapgisUiInput'"-->
-      <!--                    :title="child.title"-->
-      <!--                    :value="child.value"-->
-      <!--                    :type="child.type"-->
-      <!--                    :titleStyle="child.titleStyle"-->
-      <!--                />-->
-      <!--              </mapgis-ui-col>-->
-      <!--            </mapgis-ui-row>-->
-      <!--            <mapgis-ui-mix-row-->
-      <!--                v-if="item.type === 'MapgisUiInput'"-->
-      <!--                :title="item.title"-->
-      <!--                :value="item.value"-->
-      <!--                :type="item.type"-->
-      <!--                :ref="item.id"-->
-      <!--                :regExp="item.regExp"-->
-      <!--            />-->
-      <!--            <mapgis-ui-mix-row-->
-      <!--                v-if="item.type === 'MapgisUiInputNumber'"-->
-      <!--                :title="item.title"-->
-      <!--                :value="item.value"-->
-      <!--                :type="item.type"-->
-      <!--                :ref="item.id"-->
-      <!--            />-->
-      <!--            <mapgis-ui-mix-row-->
-      <!--                v-if="item.type === 'MapgisUiSlider'"-->
-      <!--                :title="item.title"-->
-      <!--                :value="item.value"-->
-      <!--                :type="item.type"-->
-      <!--                :ref="item.id"-->
-      <!--            />-->
-      <!--            <mapgis-ui-mix-row-->
-      <!--                v-if="item.type === 'MapgisUiSelect'"-->
-      <!--                :title="item.title"-->
-      <!--                :value="item.value"-->
-      <!--                :type="item.type"-->
-      <!--                :ref="item.id"-->
-      <!--            />-->
-      <!--            <mapgis-ui-mix-row-->
-      <!--                v-if="item.type === 'MapgisUiColorPicker'"-->
-      <!--                :title="item.title"-->
-      <!--                :value="item.value"-->
-      <!--                :type="item.type"-->
-      <!--                :ref="item.id"-->
-      <!--            />-->
-      <!--          </div>-->
-      <!--        </div>-->
-      <!--      </div>-->
-      <!--      <mapgis-ui-collapse v-if="rect.type === 'MapgisUiCollapse'">-->
-      <!--        <mapgis-ui-collapse-panel :header="rect.title" v-for="(rect,index) in rects" :key="index"-->
-      <!--                                  :style="rect.style" :class="rect.className">-->
-      <!--          <div v-for="(item,itemIndex) in rect.rows" :key="itemIndex">-->
-      <!--            <mapgis-ui-row-->
-      <!--                v-if="item.type === 'multiCols'"-->
-      <!--                :ref="item.id"-->
-      <!--            >-->
-      <!--              <mapgis-ui-col-->
-      <!--                  :span="12"-->
-      <!--                  v-for="(child,index) in item.children"-->
-      <!--                  :key="index"-->
-      <!--              >-->
-      <!--                <mapgis-ui-mix-row-->
-      <!--                    v-if="child.type === 'MapgisUiInput'"-->
-      <!--                    :title="child.title"-->
-      <!--                    :value="child.value"-->
-      <!--                    :type="child.type"-->
-      <!--                />-->
-      <!--              </mapgis-ui-col>-->
-      <!--            </mapgis-ui-row>-->
-      <!--            <mapgis-ui-mix-row-->
-      <!--                v-if="item.type === 'MapgisUiInput'"-->
-      <!--                :title="item.title"-->
-      <!--                :value="item.value"-->
-      <!--                :type="item.type"-->
-      <!--                :ref="item.id"-->
-      <!--                :regExp="item.regExp"-->
-      <!--            />-->
-      <!--            <mapgis-ui-mix-row-->
-      <!--                v-if="item.type === 'MapgisUiInputNumber'"-->
-      <!--                :title="item.title"-->
-      <!--                :value="item.value"-->
-      <!--                :type="item.type"-->
-      <!--                :ref="item.id"-->
-      <!--            />-->
-      <!--            <mapgis-ui-mix-row-->
-      <!--                v-if="item.type === 'MapgisUiSlider'"-->
-      <!--                :title="item.title"-->
-      <!--                :value="item.value"-->
-      <!--                :type="item.type"-->
-      <!--                :ref="item.id"-->
-      <!--            />-->
-      <!--            <mapgis-ui-mix-row-->
-      <!--                v-if="item.type === 'MapgisUiSelect'"-->
-      <!--                :title="item.title"-->
-      <!--                :value="item.value"-->
-      <!--                :type="item.type"-->
-      <!--                :ref="item.id"-->
-      <!--            />-->
-      <!--            <mapgis-ui-mix-row-->
-      <!--                v-if="item.type === 'MapgisUiColorPicker'"-->
-      <!--                :title="item.title"-->
-      <!--                :value="item.value"-->
-      <!--                :type="item.type"-->
-      <!--                :ref="item.id"-->
-      <!--            />-->
-      <!--          </div>-->
-      <!--        </mapgis-ui-collapse-panel>-->
-      <!--      </mapgis-ui-collapse>-->
-      <!--      <div v-if="rects.type === 'MapgisUiCard'">-->
-      <!--        <mapgis-ui-card :title="rect.title" v-for="(rect,index) in rects" :key="index" :style="rect.style"-->
-      <!--                        :class="rect.className">-->
-      <!--          <div v-for="(item,itemIndex) in rect.rows" :key="itemIndex">-->
-      <!--            <mapgis-ui-row-->
-      <!--                v-if="item.type === 'multiCols'"-->
-      <!--                :ref="item.id"-->
-      <!--            >-->
-      <!--              <mapgis-ui-col-->
-      <!--                  :span="12"-->
-      <!--                  v-for="(child,index) in item.children"-->
-      <!--                  :key="index"-->
-      <!--              >-->
-      <!--                <mapgis-ui-row v-if="child.type === 'MapgisUiInput'">-->
-      <!--                  <mapgis-ui-col span="6">-->
-      <!--                    <p class="mix-row-title" :style="child.titleStyle">{{ child.title }}</p>-->
-      <!--                  </mapgis-ui-col>-->
-      <!--                  <mapgis-ui-col span="18">-->
-      <!--                    <mapgis-ui-form-item-->
-      <!--                        :validate-status="child.validateStatus"-->
-      <!--                    >-->
-      <!--                      <mapgis-ui-input-->
-      <!--                          v-model="child.value"-->
-      <!--                          :ref="child.id"-->
-      <!--                          @change="$_change(child.id,child.value,child.filter)"-->
-      <!--                      />-->
-      <!--                    </mapgis-ui-form-item>-->
-      <!--                    <mapgis-ui-form-item-->
-      <!--                        validate-status="error"-->
-      <!--                        :help="child.errorMessage"-->
-      <!--                        v-if="child.validateStatus === 'error'"-->
-      <!--                    />-->
-      <!--                  </mapgis-ui-col>-->
-      <!--                </mapgis-ui-row>-->
-      <!--              </mapgis-ui-col>-->
-      <!--            </mapgis-ui-row>-->
-      <!--            <mapgis-ui-row v-if="item.type === 'MapgisUiInput'">-->
-      <!--              <mapgis-ui-col :span="item.props.titleCol">-->
-      <!--                <p class="mix-row-title" :style="item.titleStyle">{{ item.title }}</p>-->
-      <!--              </mapgis-ui-col>-->
-      <!--              <mapgis-ui-col :span="item.props.inputCol">-->
-      <!--                <mapgis-ui-form-item-->
-      <!--                    :validate-status="item.validateStatus"-->
-      <!--                >-->
-      <!--                  <mapgis-ui-input-->
-      <!--                      v-model="item.value"-->
-      <!--                      @change="$_change(item.id,item.value,item.filter)"-->
-      <!--                      :ref="item.id"-->
-      <!--                  />-->
-      <!--                </mapgis-ui-form-item>-->
-      <!--                <mapgis-ui-form-item-->
-      <!--                    validate-status="error"-->
-      <!--                    :help="item.errorMessage"-->
-      <!--                    v-if="item.validateStatus === 'error'"-->
-      <!--                />-->
-      <!--              </mapgis-ui-col>-->
-      <!--            </mapgis-ui-row>-->
-      <!--            <mapgis-ui-mix-row-->
-      <!--                v-if="item.type === 'MapgisUiInputNumber'"-->
-      <!--                :title="item.title"-->
-      <!--                v-model="item.value"-->
-      <!--                :type="item.type"-->
-      <!--                :ref="item.id"-->
-      <!--                :props="item.props"-->
-      <!--                @change="$_change(item.id,item.value,item.filter)"-->
-      <!--            />-->
-      <!--            <mapgis-ui-mix-row-->
-      <!--                v-if="item.type === 'MapgisUiSlider'"-->
-      <!--                :title="item.title"-->
-      <!--                v-model="item.value"-->
-      <!--                :type="item.type"-->
-      <!--                :ref="item.id"-->
-      <!--                :props="item.props"-->
-      <!--                @change="$_change(item.id,item.value,item.filter)"-->
-      <!--            />-->
-      <!--            <mapgis-ui-mix-row-->
-      <!--                v-if="item.type === 'MapgisUiSelect'"-->
-      <!--                :title="item.title"-->
-      <!--                v-model="item.value"-->
-      <!--                :type="item.type"-->
-      <!--                :ref="item.id"-->
-      <!--                :props="item.props"-->
-      <!--                :dataSource="item.dataSource"-->
-      <!--                @change="$_change(item.id,item.value,item.filter)"-->
-      <!--            />-->
-      <!--            <mapgis-ui-mix-row-->
-      <!--                v-if="item.type === 'MapgisUiGrediantSelect'"-->
-      <!--                :title="item.title"-->
-      <!--                v-model="item.value"-->
-      <!--                :type="item.type"-->
-      <!--                :ref="item.id"-->
-      <!--                :props="item.props"-->
-      <!--                :dataSource="item.dataSource"-->
-      <!--                @change="$_change(item.id,item.value,item.filter)"-->
-      <!--            />-->
-      <!--            <mapgis-ui-mix-row-->
-      <!--                v-if="item.type === 'MapgisUiColorPicker'"-->
-      <!--                :title="item.title"-->
-      <!--                v-model="item.value"-->
-      <!--                :type="item.type"-->
-      <!--                :ref="item.id"-->
-      <!--                :props="item.props"-->
-      <!--                @change="$_change(item.id,item.value,item.filter)"-->
-      <!--            />-->
-      <!--            <mapgis-ui-mix-row-->
-      <!--                v-if="item.type === 'MapgisUiThemeList'"-->
-      <!--                :type="item.type"-->
-      <!--                :ref="item.id"-->
-      <!--                :props="item.props"-->
-      <!--                @change="$_change"-->
-      <!--            />-->
-      <!--          </div>-->
-      <!--        </mapgis-ui-card>-->
-      <!--      </div>-->
     </div>
   </div>
 </template>
@@ -361,10 +124,114 @@ export default {
                 startData: listProps.startData
               });
               break;
+            case "MapgisUiExplosionRange":
+              forms[rects[i].id] = this.$_formatExplosionRange({
+                checkBoxArr: listProps.checkBoxArr,
+                directions: listProps.directions,
+                dataSource: listProps.dataSource,
+                startData: listProps.startData
+              });
+              break;
+            case "MapgisUiExplosionUnique":
+              forms[rects[i].id] = this.$_formatExplosionUnique({
+                checkBoxArr: listProps.checkBoxArr,
+                directions: listProps.directions,
+                dataSource: listProps.dataSource
+              });
+              break;
           }
         }
       }
       return forms;
+    },
+    $_formatExplosionUnique(data) {
+      let dataSource = data.dataSource;
+      let checkBoxArr = data.checkBoxArr;
+      let directions = data.directions;
+      let newData = [];
+      if (dataSource && dataSource.length > 0) {
+        if (checkBoxArr && checkBoxArr.length > 0) {
+          newData.push({
+            value: dataSource[0],
+            direction: directions[0],
+            checkBox: checkBoxArr[0]
+          });
+          for (let i = 0; i < dataSource.length; i++) {
+            newData.push({
+              value: dataSource[i],
+              direction: directions[i],
+              checkBox: checkBoxArr[i]
+            });
+          }
+        } else {
+          /*** 爆炸分析属性单值的格式：
+          valueGroups: [
+            //field字段所对应分段爆炸样式，默认用direction
+           {
+            value: 30, //字段值
+            direction: 0,0,1000// 爆炸方向设置，对应new Cesium.Cartesian3(0,0,1000)
+          }]
+          */
+          newData.push({
+            value: dataSource[0],
+            direction: directions[0]
+          });
+          for (let i = 1; i < dataSource.length; i++) {
+            newData.push({
+              value: dataSource[i],
+              direction: directions[i]
+            });
+          }
+        }
+      }
+      return newData;
+    },
+    $_formatExplosionRange(data) {
+      let dataSource = data.dataSource;
+      let checkBoxArr = data.checkBoxArr;
+      let directions = data.directions;
+      let newData = [];
+      if (dataSource && dataSource.length > 0) {
+        if (checkBoxArr && checkBoxArr.length > 0) {
+          newData.push({
+            start: data.startData,
+            end: dataSource[0],
+            direction: directions[0],
+            checkBox: checkBoxArr[0]
+          });
+          for (let i = 0; i < dataSource.length; i++) {
+            newData.push({
+              start: dataSource[i - 1],
+              end: dataSource[i],
+              direction: directions[i],
+              checkBox: checkBoxArr[i]
+            });
+          }
+        } else {
+          /*** 爆炸分析属性分段的格式：
+          valueGroups: [
+            //field字段所对应分段爆炸样式，默认用direction
+           {
+            start: 0, //起始值
+            end: 30, //结束值
+            direction: 0,0,1000// 爆炸方向设置，对应new Cesium.Cartesian3(0,0,1000)
+          }]
+          */
+          newData.push({
+            start: data.startData,
+            end: dataSource[0],
+            direction: directions[0]
+          });
+          for (let i = 1; i < dataSource.length; i++) {
+            newData.push({
+              start: dataSource[i - 1],
+              end: dataSource[i],
+              direction: directions[i]
+            });
+          }
+        }
+      }
+      return newData;
     },
     $_formatThemeListSymbol(data) {
       let dataSource = data.dataSource;

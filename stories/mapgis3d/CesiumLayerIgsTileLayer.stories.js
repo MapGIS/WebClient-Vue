@@ -37,7 +37,7 @@ const Template = (args, { argTypes }) => ({
 export const 瓦片服务 = Template.bind({});
 瓦片服务.args = {
   id: "IGServer-Tle-Layer",
-  baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/tile/OGC_4326_CHINA`,
+  baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsNetPort}/igs/rest/mrms/tile/北京市Tile`,
   layerStyle: {
     visible: true,
     opacity: 1,

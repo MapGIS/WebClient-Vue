@@ -456,9 +456,17 @@ export default {
 
     handleChangeStatebar(next) {
       // console.log(next);
+      const { viewer } = this;
       this.basicSetting.statebar = next;
       const vm = this;
-
+      viewer.statebar = this.basicSetting.statebar;
+      let statebars = document.getElementsByClassName("mapgis-3d-statebar")
+      if(viewer.statebar){
+        statebars[0].style.display="block"
+      }else{
+        statebars[0].style.display="none"
+      }
+      
       // 改变状态栏的上下位置
       if (vm.basicSetting.timeline) {
         vm.$nextTick(function() {

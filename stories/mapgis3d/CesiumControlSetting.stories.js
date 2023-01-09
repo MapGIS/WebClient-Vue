@@ -25,7 +25,7 @@ const Template = (args, { argTypes }) => ({
     `,
   data() {
     return {
-      m3dUrl: `http://${webclient.ip}:${webclient.port}/igs/rest/g3d/ZondyModels`,
+      m3dUrl: `http://${webclient.igsIp}:${webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`,
       autoReset: true,
       maximumScreenSpaceError: 8,
     };

@@ -47,5 +47,5 @@ const Template = (args, { argTypes }) => ({
 
 export const 模型压平 = Template.bind({});
 模型压平.args = {
-  m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`
+  m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`
 };

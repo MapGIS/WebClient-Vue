@@ -58,7 +58,7 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   data() {
     return {
-      m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
+      m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`,
       autoReset: true,
       maximumScreenSpaceError: 8,
     };
@@ -76,7 +76,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 投放管理 = Template.bind({});
 投放管理.args = {
-  m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
+  m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`,
   modelUrl: `http://${window.webclient.ip}:${window.webclient.port}/CesiumModels/Cesium_Camera.glb`,
   modelOffset: { headingOffset: -90, pitchOffset: 0, rollOffset: 0 },
   maxProjected: 10,

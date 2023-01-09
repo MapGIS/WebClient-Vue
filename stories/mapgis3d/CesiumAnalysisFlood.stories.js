@@ -75,7 +75,7 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       url: "http://t0.tianditu.gov.cn/img_c/wmts",
-      terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`,
+      terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:TwTerrain`,
       tileMatrixSet: "c",
       tilingScheme: "EPSG:4326",
       layer: "img",
@@ -156,7 +156,7 @@ export const 洪水淹没 = Template.bind({});
   amplitude: 10,
   animationSpeed: 0.01,
   frequency: 500,
-  terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`
+  terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:TwTerrain`
 };
 
 洪水淹没.parameters = {

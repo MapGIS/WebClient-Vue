@@ -15,9 +15,11 @@ Vue.use(MapgisCesiumComponents, {});
 
 window.webclient = {
   ip: "192.168.82.89",
-  port: "8086/storybook",
-  igsIp: "192.168.199.71",
+  port: "8086",
+  igsIp: "192.168.82.89",
   igsPort: "8089",
+  igsNetPort:"6163",
+  filePort:"8200"
 };
 
 window.glyphs = "igs/rest/mrcs/vtiles/fonts"; //java版igs用这个接口

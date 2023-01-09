@@ -4,7 +4,7 @@ export default {
   title: "三维/数据图层/M3D模型/MapGIS",
   component: Mapgis3dM3dLayer,
   argTypes: {
-    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/BIM构建树/M3dServer`,
+    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/Scene/school-all-new/SceneServer`,
     show: true,
     opacity: 1.0,
     enablePopup: true,
@@ -31,7 +31,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 图文关联 = Template.bind({});
 图文关联.args = {
-  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/分层分户`,
+  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/Scene/school-all-new/SceneServer`,
   show: true,
   opacity: 1.0,
   highlightStyle: { color: 'rgba(255, 255, 0, 0.6)' },

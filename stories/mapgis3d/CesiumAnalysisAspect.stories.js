@@ -22,7 +22,7 @@ const Template = (args, {argTypes}) => ({
     data() {
         return {
             url: "http://t0.tianditu.gov.cn/img_c/wmts",
-            terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`,
+            terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:TwTerrain`,
             tileMatrixSet: "c",
             tilingScheme: "EPSG:4326",
             layer: "img",
@@ -96,7 +96,7 @@ export const 坡向 = Template.bind({});
         {min: 240, max: 300, color: "rgba(96, 125, 139, 0.5)"},
         {min: 300, max: 360, color: "rgba(76, 175, 80, 0.5)"},
     ],
-    terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`
+    terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:TwTerrain`
 };
 
 坡向.parameters = {
