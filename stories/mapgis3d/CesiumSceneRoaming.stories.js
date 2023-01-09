@@ -174,7 +174,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 漫游路径管理 = Template.bind({});
 漫游路径管理.args = {
-  m3dUrl: `http://${webclient.igsIp}:${webclient.igsPort}/igs/rest/g3d/ZondyModels`,
+  m3dUrl: `http://${webclient.igsIp}:${webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`,
   speed: 10,
   exHeight: 1,
   heading: 90,

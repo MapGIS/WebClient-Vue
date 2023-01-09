@@ -32,7 +32,7 @@ const Template = (args, { argTypes }) => ({
     data() {
         return {
             url: "http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752",
-            m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
+            m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`,
             autoReset: true,
             maximumScreenSpaceError: 8
         }
@@ -57,7 +57,7 @@ export const 通视 = Template.bind({});
     exHeight:2.0,
     visibleColor:'#2E8B57',
     unVisibleColor:'#FFA500',
-    m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
+    m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`,
 }
 通视.parameters = {
     docs: {

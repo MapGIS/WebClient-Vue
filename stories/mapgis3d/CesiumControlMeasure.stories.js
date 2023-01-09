@@ -189,7 +189,7 @@ export const 量测 = Template.bind({});
   expandControl: true,
   hasSettingPanel: false,
   position: "top-left",
-  m3durl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
+  m3durl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`,
 };
 
 量测.parameters = {

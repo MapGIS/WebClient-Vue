@@ -65,7 +65,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 矢量图层 = Template.bind({});
 矢量图层.args = {
-    baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/layers`,
+    baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsNetPort}/igs/rest/mrms/layers`,
     gdbps: "GDBP://MapGisLocal/北京市/ds/行政区/sfcls/北京市,GDBP://MapGisLocal/北京市/ds/交通/sfcls/主干道,GDBP://MapGisLocal/北京市/ds/行政区/sfcls/城镇_BJ"
 }
 

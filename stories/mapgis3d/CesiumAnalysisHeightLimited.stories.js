@@ -106,7 +106,7 @@ export const 控高 = Template.bind({});
     heightLimit: 80,
     maxSliderHeight: 180,
     minSliderHeight: 0,
-    m3dUrl1: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`
+    m3dUrl1: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`
 }
 控高.parameters = {
     docs: {

@@ -68,7 +68,7 @@ const Template = (args, { argTypes }) => ({
       //视点跳转（经度，纬度，视角高度，方位角，俯仰角，翻滚角）
       viewer.camera.flyTo({
         // destination: Cesium.Cartesian3.fromDegrees(121, 24, 5900),//台湾
-        destination: Cesium.Cartesian3.fromDegrees(114.35, 30.65, 5900),
+        destination: Cesium.Cartesian3.fromDegrees(121, 24, 5900),
         orientation: {
           heading: Cesium.Math.toRadians(60),
           pitch: Cesium.Math.toRadians(-16),
@@ -85,7 +85,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 积水仿真 = Template.bind({});
 积水仿真.args = {
-  terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/terrain/SceneServer`
+  terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:TwTerrain`
 };
 积水仿真.parameters = {
   docs:{

@@ -5,7 +5,7 @@ export default {
   title: "三维/数据图层/影像/MapGIS",
   component: MapgisDocLayer,
   argTypes: {
-    baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
+    baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/Hubei4326",
     layers: "show:1,2,3,4,5,6,7,8,9,10",
     layerStyle: {
       visible: true,

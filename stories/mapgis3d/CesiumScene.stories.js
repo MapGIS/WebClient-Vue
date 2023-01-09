@@ -36,7 +36,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 场景展示 = Template.bind({});
 场景展示.args = {
-  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
+  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`,
   layers: "show:0,1",
   maximumScreenSpaceError: 4,
   opacity: 0.5,
