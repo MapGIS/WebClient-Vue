@@ -8,7 +8,7 @@
     >
       <mapgis-ui-form layout="vertical">
         <mapgis-ui-form-item label="光照类型">
-          <mapgis-ui-select v-model="lightingMode">
+          <mapgis-ui-select v-model="lightingMode[0].key">
             <mapgis-ui-select-option :value="'DAYNIGHT_SHADING'">
               太阳光照
             </mapgis-ui-select-option>
@@ -82,7 +82,7 @@ export default {
   },
   data() {
     return {
-      lightingModes: [
+      lightingMode: [
         {
           key: "DAYNIGHT_SHADING",
           value: "太阳光照"
