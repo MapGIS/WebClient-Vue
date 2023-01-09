@@ -6,7 +6,7 @@ export default {
   component: Mapgis3dIgsTerrain,
   argTypes: {
     // url: "http://develop.smaryun.com:6163/igs/rest/g3d/terrain",
-    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/terrain`,
+    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:TwTerrain`,
     show: true,
     requestVertexNormals: false,
   },
@@ -38,7 +38,7 @@ const Template = (args, { argTypes }) => ({
 export const 带法向 = Template.bind({});
 带法向.args = {
   // url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/250DEM_3D`,
-  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/Scene/TwTerrain/SceneServer`,
+  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:TwTerrain`,
   show: true,
   requestVertexNormals: true,
 };
