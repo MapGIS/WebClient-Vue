@@ -27,7 +27,7 @@ const Template = (args, {argTypes}) => ({
     data() {
         return {
             url: "http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752",
-            m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
+            m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`,
             autoReset: true,
             maximumScreenSpaceError: 8,
             skyline2dChart: null,
@@ -108,7 +108,7 @@ export const 天际线 = Template.bind({});
 天际线.args = {
     skylineWidth: 2,
     skylineColor: 'rgb(255,0,0)',
-    m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`
+    m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`
 }
 天际线.parameters = {
     docs: {

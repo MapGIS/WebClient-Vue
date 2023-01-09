@@ -94,7 +94,7 @@ const Template = (args, {argTypes}) => ({
 
 export const 粒子特效 = Template.bind({});
 粒子特效.args = {
-    m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/ZondyModels`,
+    m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`,
     symbolList:[
         {
             guid: "9D09DB87-7955-9295-2E34-61E83C30D3AA",

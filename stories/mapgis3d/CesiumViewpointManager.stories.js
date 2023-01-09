@@ -34,7 +34,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 视点管理 = Template.bind({});
 视点管理.args = {
-  m3dUrl: `http://${webclient.igsIp}:${webclient.igsPort}/igs/rest/g3d/ZondyModels`
+  m3dUrl: `http://${webclient.igsIp}:${webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`
 };
 视点管理.parameters = {
   docs: {
