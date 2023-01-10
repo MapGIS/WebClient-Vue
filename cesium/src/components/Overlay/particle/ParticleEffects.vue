@@ -149,6 +149,7 @@
               class="mapgis-ui-number-style"
               size="large"
               label="发射速率(个/秒)"
+              :range="[2, 60]"
               v-model="emissionRateCopy"
               @change="val => onChangeEffect(val, 'emissionRate')"
             />
