@@ -74,6 +74,6 @@ export const 剖切 = Template.bind({});
   distance: 0,
   showM3D: true,
   showTiles: false,
-  m3dUrl1: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/Scene/钻孔模型/SceneServer`,
-  m3dUrl2: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/Scene/钻孔分层点/SceneServer`
+  m3dUrl1: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/M3Dv1/钻孔模型/M3dServer`,
+  m3dUrl2: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/M3Dv1/地质体/M3dServer`
 };
