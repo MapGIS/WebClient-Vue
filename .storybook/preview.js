@@ -14,8 +14,8 @@ Vue.use(MapgisMapboxComponents, {});
 Vue.use(MapgisCesiumComponents, {});
 
 window.webclient = {
-  ip: "192.168.82.89",
-  port: "8086",
+  ip: "localhost",
+  port: "8895",
   igsIp: "192.168.82.89",
   igsPort: "8089",
   igsNetPort:"6163",
