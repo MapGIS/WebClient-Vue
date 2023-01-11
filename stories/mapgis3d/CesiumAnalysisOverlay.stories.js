@@ -77,8 +77,8 @@ export const 叠加 = Template.bind({});
   srcType: "Layer",
   // srcType: "Feature",
   baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/layers`,
-  srcALayer: "gdbp://MapGISLocal/Templates/sfcls/湖北省市级区划",
-  srcBLayer: "gdbp://MapGisLocal/专题图数据/sfcls/县城驻地",
+  srcALayer: "gdbp://MapGISLocalPlus/北京市/ds/行政区/sfcls/北京市",
+  srcBLayer: "gdbp://MapGISLocalPlus/北京市/ds/POI/sfcls/主题公园POI",
   srcAFeature: {
     "type": "FeatureCollection",
     "features": [

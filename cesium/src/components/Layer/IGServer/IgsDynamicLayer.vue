@@ -42,10 +42,10 @@ export default {
     methods: {
         initUrl(service) {
             let _url;
-
             //优先判断url方式
             if (this.baseUrl) {
                 _url = this.baseUrl;
+                
             } else if (this.domain) {
                 _url = this.domain + service;
             } else {

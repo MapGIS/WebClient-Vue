@@ -90,7 +90,7 @@ export const 缓冲 = Template.bind({});
   srcType: "Layer",
   // srcType: "Feature",
   baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/layers`,
-  srcLayer: "gdbp://MapGISLocal/Templates/sfcls/湖北省市级区划",
+  srcLayer: "gdbp://MapGISLocalPlus/北京市/ds/行政区/sfcls/北京市",
   srcFeature: {
     "type": "FeatureCollection",
     "features": [
