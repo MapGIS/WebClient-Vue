@@ -35,14 +35,14 @@
     </mapgis-ui-table>
     <ul
       v-else
-      class="mp-file-previer-container"
-      :class="isrelationShip ? 'relation-previer' : ''"
+      class="mp-file-preview-container"
+      :class="isrelationShip ? 'relation-preview' : ''"
     >
       <li v-if="fileList.length === 0" style="width: 100%; padding: 10px">
         <mapgis-ui-empty />
       </li>
       <li
-        class="file-previer-item"
+        class="file-preview-item"
         v-for="file in fileList"
         :key="file.id"
         :style="isrelationShip ? '' : itemWidth"
@@ -306,7 +306,7 @@ export default {
   display: flex;
   align-items: center;
 }
-.mp-file-previer-container {
+.mp-file-preview-container {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -317,12 +317,12 @@ export default {
   max-height: 300px;
   overflow: auto;
   &,
-  file-previer-item {
+  file-preview-item {
     padding: 0;
     margin: 0;
     list-style: none;
   }
-  .file-previer-item {
+  .file-preview-item {
     // width: calc(~'25% - 12.5px');
     padding: 10px;
     margin-left: 10px;
@@ -366,9 +366,9 @@ export default {
     }
   }
 }
-.relation-previer {
+.relation-preview {
   flex-wrap: wrap;
-  .file-previer-item {
+  .file-preview-item {
     margin-left: 7px !important;
     padding: 5px 0 0 !important;
     justify-content: center;
