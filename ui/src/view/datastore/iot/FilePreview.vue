@@ -14,7 +14,7 @@
       :scroll="{ y: 200 }"
     >
       <div
-        class="mp-file-previer-table-cneter"
+        class="mp-file-preview-table-center"
         slot="name"
         slot-scope="text, record"
       >
@@ -302,7 +302,7 @@ export default {
 </script>
 
 <style lang="less">
-.mp-file-previer-table-cneter {
+.mp-file-preview-table-center {
   display: flex;
   align-items: center;
 }
@@ -404,7 +404,7 @@ export default {
 </style>
 
 <style lang="less" scoped>
-.mp-file-previer-table-cneter{
+.mp-file-preview-table-center{
   span{
     display: block;
     white-space: nowrap;
