@@ -264,7 +264,7 @@ export default {
     getFileTypeByName(name) {
       const typeArr = name.split(".");
       if (typeArr && typeArr.length > 1) {
-        return typeArr[1];
+        return typeArr[typeArr.length-1];
       }
       return "";
     }
