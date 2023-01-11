@@ -19,6 +19,7 @@ const Template = (args, { argTypes }) => ({
         :tilingScheme="tilingScheme"
         :token="token"
     ></mapgis-3d-ogc-wmts-layer>
+    <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true"/>
     <mapgis-3d-ogc-wmts-layer
         :baseUrl="url1"
         :wmtsLayer="layer1"
@@ -36,6 +37,8 @@ const Template = (args, { argTypes }) => ({
 
 export const 绕点旋转 = Template.bind({});
 绕点旋转.args = {
+    // 添加台湾地形
+    terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:TwTerrain`,
     url: "http://t7.tianditu.gov.cn/img_c/wmts",
     tileMatrixSet: "c",
     tilingScheme: "EPSG:4326",
