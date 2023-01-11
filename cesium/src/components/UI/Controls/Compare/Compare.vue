@@ -240,12 +240,14 @@ export default {
     },
     umount() {
       let { vueCesium, vueKey, vueIndex } = this;
-      let find = vueCesium.CompareManager.findSource(vueKey, vueIndex);
-      if (find) {
-        this.remove();
+      if(vueCesium && vueCesium.CompareManager){
+        let find = vueCesium.CompareManager.findSource(vueKey, vueIndex);
+        if (find) {
+          this.remove();
+        }
+        vueCesium.CompareManager.deleteSource(vueKey, vueIndex);
+        this.$emit("unload", this);
       }
-      vueCesium.CompareManager.deleteSource(vueKey, vueIndex);
-      this.$emit("unload", this);
     },
     remove() {
       const { viewer } = this;
