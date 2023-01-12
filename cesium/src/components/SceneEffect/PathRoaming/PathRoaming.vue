@@ -398,7 +398,8 @@ export default {
       if (key === "showPath") {
         if (
           window.SceneWanderManager.animation &&
-          window.SceneWanderManager.animation.animationModel
+          window.SceneWanderManager.animation.animationModel &&
+          window.SceneWanderManager.animation.animationModel.pathCopy
         ) {
           window.SceneWanderManager.animation.animationModel.pathCopy.show._value = val;
         }
