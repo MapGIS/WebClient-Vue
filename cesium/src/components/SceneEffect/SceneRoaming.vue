@@ -547,6 +547,11 @@ export default {
     },
     savePosition(index) {
       const newData = [...this.positions];
+      for (let i = 0;i < newData.length;i++) {
+        newData[i].x = Number(newData[i].x);
+        newData[i].y = Number(newData[i].y);
+        newData[i].z = Number(newData[i].z);
+      }
       const target = newData.find(item => index === item.number);
       if (target) {
         delete target.editable;
