@@ -314,7 +314,7 @@ export default {
         this.$emit("remove-road");
         // 设置播放动画的各项属性
         if (this.positions.length > 0) {
-          const positions = JSON.parse(JSON.stringify(this.positions)).flatMap((t)=> [t.x,t.y,t.z]).flat()
+          const positions = JSON.parse(JSON.stringify(this.positions));
           window.SceneWanderManager.animation.positions = this.Cesium.Cartesian3.fromDegreesArrayHeights(
            positions
           );
