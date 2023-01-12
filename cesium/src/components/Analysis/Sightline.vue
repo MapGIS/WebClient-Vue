@@ -182,10 +182,12 @@ export default {
               if (newVal.exHeight !== oldVal.exHeight) {
                 // 改变通视分析工具的附加高度(分析工具的观察点坐标也会同时更新)
                 visiblityAnalysis.exHeight = newVal.exHeight - oldVal.exHeight;
-                // 改变观察点坐标
-                this.viewPoint.position._value = item.viewPosition;
-                // 记录新的观察点坐标
-                this.viewPosition = item.viewPosition;
+                if(this.viewPoint){
+                  // 改变观察点坐标
+                  this.viewPoint.position._value = item.viewPosition;
+                  // 记录新的观察点坐标
+                  this.viewPosition = item.viewPosition;
+                }
               }
             }
           });
