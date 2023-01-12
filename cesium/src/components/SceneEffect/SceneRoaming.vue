@@ -413,6 +413,9 @@ export default {
     },
     onGotoPath(path) {
       this.roamingPath = path;
+      for (let i = 0;i < this.roamingPath.path.length;i++) {
+        this.roamingPath.path[i] = Number(this.roamingPath.path[i]);
+      }
       this.roaming = true;
 
       // 最近一次点击的路线
