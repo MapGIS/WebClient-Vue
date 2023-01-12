@@ -34,7 +34,7 @@
         </mapgis-ui-setting-form>
         <mapgis-ui-setting-footer>
           <mapgis-ui-button type="primary" @click="clearModelFlatten(true)">还原</mapgis-ui-button>
-          <mapgis-ui-button type="primary" @click="startModelFlatten">清除</mapgis-ui-button>
+          <mapgis-ui-button type="primary" @click="startModelFlatten">开始</mapgis-ui-button>
         </mapgis-ui-setting-footer>
       <!-- <mapgis-ui-select-row-left
           title="M3D模型"
