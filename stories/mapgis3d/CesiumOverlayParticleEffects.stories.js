@@ -105,7 +105,7 @@ export const 粒子特效 = Template.bind({});
         {
             guid: "F9FDE880-8F5B-AEDF-CA95-ADC54F02A34F",
             name: "烟雾",
-            image: `./smoke.png`,
+            image: `./img/smoke.png`,
             iconUrl: "mapgis-yanwu",
         },
         {

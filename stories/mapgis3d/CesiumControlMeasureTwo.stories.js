@@ -65,6 +65,6 @@ const Template = (args, { argTypes }) => ({
 
 export const 多屏量测 = Template.bind({});
 多屏量测.args = {
-  m3durl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/Scene/ZondyModels/SceneServer`
+  m3durl: `http://${window.webclient.igsIp}:${window.webclient.filePort}/3DData/ModelCache/M3D/1.0/ZondyFaceModels/ZondyFaceModels.mcj`
 };
 

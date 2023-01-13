@@ -17,12 +17,26 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { Mapgis3dPopup },
-  template: `<mapgis-web-scene style="height:95vh">
+  template: `<mapgis-web-scene style="height:95vh" v-on:load="handleLoad">
     <mapgis-3d-raster-layer url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />    
     <mapgis-3d-popup v-bind="$props">
       <div style="margin-top:20px">自定义槽内容</div>
     </mapgis-3d-popup>
   </mapgis-web-scene>`,
+  methods: {
+
+    handleLoad(e) {
+      const {component, Cesium} = e;
+      Cesium.Ion.defaultAccessToken =
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiM2Q0ZGMxYy1iZGZkLTQ4OWItODlhMy1iOWNkMDE0M2U3YWEiLCJpZCI6NTEzNSwiaWF0IjoxNjA2MjE0OTkyfQ.2aktNrUASlLsPwSFtkgKBTQLJTAnOTyjgKDRQmnafiE";
+      const {viewer} = component;
+        //视点跳转（经度，纬度，视角高度，方位角，俯仰角，翻滚角）
+        viewer.camera.flyTo({
+            destination: Cesium.Cartesian3.fromDegrees(110, 30, 300),
+            duration: 1
+        })
+    },
+  },
 });
 
 export const 复杂样式 = Template.bind({});

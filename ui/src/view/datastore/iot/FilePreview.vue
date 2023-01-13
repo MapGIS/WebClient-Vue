@@ -14,7 +14,7 @@
       :scroll="{ y: 200 }"
     >
       <div
-        class="mp-file-previer-table-cneter"
+        class="mp-file-preview-table-center"
         slot="name"
         slot-scope="text, record"
       >
@@ -26,23 +26,23 @@
         <mapgis-ui-tag v-if="isrelationShip && record.toType === videoToType">
           可投放
         </mapgis-ui-tag>
-        <span>{{ record.name }}</span>
+        <span :title="record.name">{{ record.name }}</span>
       </div>
-      <span slot="operation" slot-scope="text, record">
+      <span slot="operation" slot-scope="text, record" class="action">
         <a v-if="isPreviewData(record)" @click="preview(record)">预览</a>
-        <a v-else :href="record.url">下载</a>
+        <a href="javascript:void(0);" @click="download(record.url,record.name)">下载</a>
       </span>
     </mapgis-ui-table>
     <ul
       v-else
-      class="mp-file-previer-container"
-      :class="isrelationShip ? 'relation-previer' : ''"
+      class="mp-file-preview-container"
+      :class="isrelationShip ? 'relation-preview' : ''"
     >
       <li v-if="fileList.length === 0" style="width: 100%; padding: 10px">
         <mapgis-ui-empty />
       </li>
       <li
-        class="file-previer-item"
+        class="file-preview-item"
         v-for="file in fileList"
         :key="file.id"
         :style="isrelationShip ? '' : itemWidth"
@@ -218,6 +218,34 @@ export default {
     }
   },
   methods: {
+    /**
+     * 文件下载重命名
+     */
+    download(url,name){
+      this.getBlob(url).then(blob=>{
+        this.saveAs(blob,name)
+      })
+    },
+    getBlob(url){
+      return new Promise(resolve=>{
+        const xhr=new XMLHttpRequest()
+        xhr.open('GET',url,true)
+        xhr.responseType='blob'
+        xhr.onload=()=>{
+          if(xhr.status===200){
+            resolve(xhr.response)
+          }
+        }
+        xhr.send()
+      })
+    },
+    saveAs(blob,filename){
+      const link=document.createElement('a')
+      link.href=window.URL.createObjectURL(blob)
+      link.download=filename
+      link.click()
+      link.remove()
+    },
     isPreviewData(file) {
       const { type } = this.getTypeImage(file.type);
       if (type === "other") {
@@ -274,11 +302,11 @@ export default {
 </script>
 
 <style lang="less">
-.mp-file-previer-table-cneter {
+.mp-file-preview-table-center {
   display: flex;
   align-items: center;
 }
-.mp-file-previer-container {
+.mp-file-preview-container {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -289,12 +317,12 @@ export default {
   max-height: 300px;
   overflow: auto;
   &,
-  file-previer-item {
+  file-preview-item {
     padding: 0;
     margin: 0;
     list-style: none;
   }
-  .file-previer-item {
+  .file-preview-item {
     // width: calc(~'25% - 12.5px');
     padding: 10px;
     margin-left: 10px;
@@ -338,9 +366,9 @@ export default {
     }
   }
 }
-.relation-previer {
+.relation-preview {
   flex-wrap: wrap;
-  .file-previer-item {
+  .file-preview-item {
     margin-left: 7px !important;
     padding: 5px 0 0 !important;
     justify-content: center;
@@ -371,6 +399,25 @@ export default {
       width: 100% !important;
       height: 70% !important;
     }
+  }
+}
+</style>
+
+<style lang="less" scoped>
+.mp-file-preview-table-center{
+  span{
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    word-break: break-all;
+    width: 85%;
+  }
+}
+
+.action{
+  a{
+    margin-right: 3px;
   }
 }
 </style>

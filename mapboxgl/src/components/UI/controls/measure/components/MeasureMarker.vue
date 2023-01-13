@@ -10,7 +10,8 @@
     <div slot="default">
       <slot name="popup">
         <div :class="`${prefixCls}-popup-content`" :style="markerStyle">
-          <p>周长：{{ perimeter }}</p>
+          <p v-if="area">周长：{{ perimeter }}</p>
+          <p>长度：{{ perimeter }}</p>
           <p v-if="area">面积：{{ area }}</p>
         </div>
       </slot>
