@@ -175,7 +175,7 @@ export const 修改量测样式 = Template.bind({});
   expandControl: true,
   hasSettingPanel: false,
   position: "top-left",
-  m3durl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/M3Dv1/ZondyModels/M3dServer`
+  m3durl: `http://${window.webclient.igsIp}:${window.webclient.filePort}/3DData/ModelCache/M3D/1.0/ZondyFaceModels/ZondyFaceModels.mcj`
 };
 
 修改量测样式.parameters = {

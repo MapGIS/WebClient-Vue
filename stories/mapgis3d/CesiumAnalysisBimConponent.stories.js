@@ -48,7 +48,7 @@ const Template = (args, { argTypes }) => ({
 export const BIM构件树 = Template.bind({});
 BIM构件树.args = {
   sceneLayer: {
-    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/Scene/school-all-new/SceneServer`,
+    url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/Scene/高级住所模型/SceneServer`,
     vueIndex: "test_bim_layer1"
   },
   enableBim: true,
