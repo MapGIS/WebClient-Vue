@@ -1,22 +1,22 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
-@import '../../input/style/mixin';
-@import '../../button/style/mixin';
-@import '../../grid/style/mixin';
-@import './mixin';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+@import "../../input/style/mixin";
+@import "../../button/style/mixin";
+@import "../../grid/style/mixin";
+@import "./mixin";
 
 $form-prefix-cls: $ant-prefix + "form";
 $form-component-height: $input-height-base;
 $form-component-max-height: $input-height-lg;
 $form-feedback-icon-size: $font-size-base;
-$form-help-margin-top: ($form-component-height - $form-component-max-height) / 2 + 2px;
+$form-help-margin-top: ($form-component-height - $form-component-max-height) / 2 +
+  2px;
 $form-explain-font-size: $font-size-base;
 // Extends additional 1px to fix precision issue.
 // https://github.com/ant-design/ant-design/issues/12803
 // https://github.com/ant-design/ant-design/issues/8220
 $form-explain-precision: 1px;
 $form-explain-height: floor($form-explain-font-size * $line-height-base);
-
 
 .#{form-prefix-cls}-item-required::before {
   display: inline-block;
@@ -25,7 +25,7 @@ $form-explain-height: floor($form-explain-font-size * $line-height-base);
   font-size: $font-size-base;
   font-family: SimSun, sans-serif;
   line-height: 1;
-  content: '*';
+  content: "*";
   .#{form-prefix-cls}-hide-required-mark & {
     display: none;
   }
@@ -77,7 +77,10 @@ $form-explain-height: floor($form-explain-font-size * $line-height-base);
   }
 
   &-with-help {
-    margin-bottom: max(0, $form-item-margin-bottom - $form-explain-height - $form-help-margin-top);
+    margin-bottom: max(
+      0,
+      $form-item-margin-bottom - $form-explain-height - $form-help-margin-top
+    );
   }
 
   &-label {
@@ -152,7 +155,9 @@ form {
     // https://github.com/ant-design/ant-design/issues/4431
     > .#{ant-prefix}-select .#{ant-prefix}-select-arrow,
     > .#{ant-prefix}-select .#{ant-prefix}-select-selection__clear,
-    :not(.#{ant-prefix}-input-group-addon) > .#{ant-prefix}-select .#{ant-prefix}-select-arrow,
+    :not(.#{ant-prefix}-input-group-addon)
+      > .#{ant-prefix}-select
+      .#{ant-prefix}-select-arrow,
     :not(.#{ant-prefix}-input-group-addon)
       > .#{ant-prefix}-select
       .#{ant-prefix}-select-selection__clear {
@@ -167,7 +172,8 @@ form {
 
     .#{ant-prefix}-cascader-picker {
       &-arrow {
-        margin-right: ($form-component-height / 2) + $form-feedback-icon-size - 13px;
+        margin-right: ($form-component-height / 2) + $form-feedback-icon-size -
+          13px;
       }
       &-clear {
         right: ($form-component-height / 2) + $form-feedback-icon-size - 2px;
@@ -202,8 +208,8 @@ form {
     background: transparent;
   }
 
-  input[type='radio'],
-  input[type='checkbox'] {
+  input[type="radio"],
+  input[type="checkbox"] {
     width: 14px;
     height: 14px;
   }
@@ -367,6 +373,12 @@ form {
     & > label {
       color: $label-color;
     }
+  }
+}
+
+@include b(form-item-label) {
+  & > label {
+    color: $label-color;
   }
 }
 
@@ -551,7 +563,8 @@ form {
         border-color: $error-color;
       }
     }
-    &.#{ant-prefix}-mention-active:not([disabled]) .#{ant-prefix}-mention-editor,
+    &.#{ant-prefix}-mention-active:not([disabled])
+      .#{ant-prefix}-mention-editor,
     .#{ant-prefix}-mention-editor:not([disabled]):focus {
       // .active($error-color);
     }
@@ -598,7 +611,8 @@ form {
     margin-bottom: $form-item-margin-bottom;
 
     &-with-help {
-      margin-bottom: $form-item-margin-bottom - $form-explain-height - $form-help-margin-top;
+      margin-bottom: $form-item-margin-bottom - $form-explain-height -
+        $form-help-margin-top;
     }
   }
 }
@@ -663,8 +677,6 @@ form {
     transform: scale(1);
   }
 }
-
-
 
 .mapgis-ui-setting-form {
   white-space: normal;
