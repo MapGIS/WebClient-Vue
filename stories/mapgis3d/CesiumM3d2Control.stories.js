@@ -31,7 +31,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 图文关联 = Template.bind({});
 图文关联.args = {
-  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/Scene/school-all-new/SceneServer`,
+  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/Scene/高级住所模型/SceneServer`,
   show: true,
   opacity: 1.0,
   highlightStyle: { color: 'rgba(255, 255, 0, 0.6)' },

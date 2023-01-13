@@ -31,7 +31,7 @@ const Template = (args, { argTypes }) => ({
 
 export const BIM = Template.bind({});
 BIM.args = {
-  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/Scene/school-all-new/SceneServer`,
+  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/Scene/高级住所模型/SceneServer`,
   show: true,
   opacity: 1.0,
   highlightStyle: { color: 'rgba(255, 255, 0, 0.6)' },
