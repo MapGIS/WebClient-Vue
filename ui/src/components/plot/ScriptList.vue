@@ -186,6 +186,7 @@ export default {
       }
       this.activeIndex = vm.scriptListCopy.length - 1;
       this.$emit("addScript", this.scriptListCopy);
+      this.$emit('saveNewScript',this.scriptListCopy[this.scriptListCopy.length-1])
     },
     /**
      * 导入功能
@@ -210,10 +211,12 @@ export default {
       // this.$emit("export", this.scriptListCopy);
     },
     exportJSON(data, filename) {
-      if (typeof data === "object") {
-        data = JSON.stringify(data, undefined, 4);
+      let dataCopy=JSON.parse(JSON.stringify(data))
+      dataCopy.forEach(item=>delete item.scriptId)
+      if (typeof dataCopy === "object") {
+        dataCopy = JSON.stringify(dataCopy, undefined, 4);
       }
-      var blob = new Blob([data], { type: "text/json" }),
+      var blob = new Blob([dataCopy], { type: "text/json" }),
         e = document.createEvent("MouseEvents"),
         a = document.createElement("a");
       a.download = filename;

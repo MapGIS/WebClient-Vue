@@ -11,6 +11,7 @@
       @import="importList"
       @export="exportList"
       @save="saveList"
+      @saveNewScript='saveNewScript'
       class="mapgis-2d-plot-animation-panel"
     ></mapgis-ui-plot-script-list>
     <mapgis-ui-plot-script
@@ -23,15 +24,16 @@
       :is3dLayer="false"
       v-if="!showScriptList"
       @return="
-        e => {
+        (e,script) => {
           showScriptList = e;
-          $emit('save', scriptListCopy[activeIndex]);
+          $emit('save', script);
         }
       "
       @play="playScript"
       @add="addScript"
       @change="scriptChange"
       @animationChange="animationChange"
+      @updateScript='saveNewScript'
       class="mapgis-2d-plot-animation-panel"
     ></mapgis-ui-plot-script>
     <slot
@@ -385,6 +387,11 @@ export default {
       console.log(this.scriptListCopy, this.activeIndex)
       this.initTimeline();
     },
+    //保存新增空脚本或者更新脚本
+    saveNewScript(script){
+      debugger
+      this.$emit('save',script)
+    },
     removeList(script) {
       // 修改二维态势推演删除无效问题
       // 遍历脚本列表
@@ -395,6 +402,7 @@ export default {
           this.scriptListCopy.splice(i,1)
         }
       }
+      this.$emit('remove',script)
     },
     saveList(script) {
       this.$emit("save", script);
