@@ -1,7 +1,7 @@
 <template>
   <div class="plot-script-panel">
     <mapgis-ui-group-tab
-      title="<< 返回脚本列表"
+      title="<< 返回脚本列表并保存更新"
       :isTitleBold="false"
       size="small"
       @click.native="showScriptList"
@@ -211,12 +211,11 @@ export default {
     editScript() {
       this.nameToEdit = this.scriptCopy.timeLineName;
       this.editState = true;
-      this.$emit("edit");
+      // this.$emit("edit");
     },
     editScriptName() {
       this.scriptCopy.timeLineName = this.nameToEdit;
       this.editState = false;
-      this.$emit("change", this.scriptCopy);
     },
     editAnimation(index) {
       this.activeIndex = index;
@@ -258,7 +257,7 @@ export default {
       this.$emit(event, { index: this.activeIndex, script: this.scriptCopy });
     },
     showScriptList() {
-      this.$emit("return", true);
+      this.$emit("return", true,this.scriptCopy);
     },
     getIdsOptions(id) {
       let plot = this.getPlot(id);
