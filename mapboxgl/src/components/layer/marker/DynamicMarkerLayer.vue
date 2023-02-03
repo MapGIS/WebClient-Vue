@@ -239,14 +239,14 @@ export default {
         ymax: mapBoundArray[1][1]
       };
       // 先查看是否在地图范围内
-      if (
-        bound.xmin > mapBound.xmin &&
-        bound.ymin > mapBound.ymin &&
-        bound.xmax < mapBound.xmax &&
-        bound.ymax < mapBound.ymax
-      ) {
-        return;
-      }
+      // if (
+      //   bound.xmin > mapBound.xmin &&
+      //   bound.ymin > mapBound.ymin &&
+      //   bound.xmax < mapBound.xmax &&
+      //   bound.ymax < mapBound.ymax
+      // ) {
+      //   return;
+      // }
       // 然后查看两个矩形的范围大小，如果选择集的范围较当前大，需要做缩放
       if (
         bound.xmax - bound.xmin > mapBound.xmax - mapBound.xmin ||
