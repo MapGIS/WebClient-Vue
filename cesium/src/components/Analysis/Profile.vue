@@ -3,10 +3,7 @@
     <slot>
       <div class="mapgis-widget-profile-analysis">
         <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
-        <mapgis-ui-setting-form 
-          :layout="layout"
-          size="default"
-        >
+        <mapgis-ui-setting-form :layout="layout" size="default">
           <mapgis-ui-form-item label="剖切线颜色">
             <mapgis-ui-sketch-color-picker
               :color.sync="polylineGroundColorCopy"
@@ -17,7 +14,7 @@
           <mapgis-ui-form-item label="采样精度">
             <mapgis-ui-input-number-addon
               v-model.number="samplePrecisionCopy"
-              min="0"
+              :min="0"
               addon-after="米"
             />
           </mapgis-ui-form-item>
@@ -27,12 +24,16 @@
               :disableAlpha="true"
             ></mapgis-ui-sketch-color-picker>
           </mapgis-ui-form-item>
-          <mapgis-ui-switch-panel label="显示剖切面" v-model="showPolygonCopy" size="default" >
+          <mapgis-ui-switch-panel
+            label="显示剖切面"
+            v-model="showPolygonCopy"
+            size="default"
+          >
             <mapgis-ui-form-item label="剖切面高度" v-show="showPolygonCopy">
               <mapgis-ui-input
                 v-model.number="polygonHeightCopy"
                 type="number"
-                min="0"
+                :min="0"
                 addon-after="(米)"
               />
             </mapgis-ui-form-item>

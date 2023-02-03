@@ -30,7 +30,7 @@
           <mapgis-ui-form-item label="洪水上涨速度">
             <mapgis-ui-input-number-addon
               v-model.number="floodSpeedCopy"
-              min="0"
+              :min="0"
               addon-after="米/秒"
             />
           </mapgis-ui-form-item>
@@ -59,7 +59,7 @@ import {
   isDepthTestAgainstTerrainEnable,
   setDepthTestAgainstTerrainEnable
 } from "../WebGlobe/util";
-import {getPolygonSamplePoints} from "../Utils/util";
+import { getPolygonSamplePoints } from "../Utils/util";
 
 export default {
   name: "mapgis-3d-analysis-flood",
@@ -173,7 +173,7 @@ export default {
     defaultOffsetHeight: {
       type: Number,
       default: -200
-    },
+    }
   },
   data() {
     return {
@@ -222,7 +222,7 @@ export default {
     startHeightCopy: {
       handler() {
         const options = this._getSourceOptions();
-        if(!options) return;
+        if (!options) return;
         const { floodAnalysis } = options;
         if (!floodAnalysis) return;
         this.changeStartHeight = true;
@@ -291,15 +291,10 @@ export default {
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
         vm.$emit("load", vm);
-        vueCesium.FloodAnalysisManager.addSource(
-          vueKey,
-          vueIndex,
-          dataSource,
-          {
-            drawElement: null,
-            floodAnalysis: null
-          }
-        );
+        vueCesium.FloodAnalysisManager.addSource(vueKey, vueIndex, dataSource, {
+          drawElement: null,
+          floodAnalysis: null
+        });
       });
     },
     unmount() {
@@ -343,36 +338,50 @@ export default {
           this.positions = result.positions;
           let cartP = [];
           for (let i = 0; i < result.positions.length; i++) {
-            let cartPosition = Cesium.Cartographic.fromCartesian(result.positions[i]);
-            cartP.push([Cesium.Math.toDegrees(cartPosition.longitude), Cesium.Math.toDegrees(cartPosition.latitude)]);
+            let cartPosition = Cesium.Cartographic.fromCartesian(
+              result.positions[i]
+            );
+            cartP.push([
+              Cesium.Math.toDegrees(cartPosition.longitude),
+              Cesium.Math.toDegrees(cartPosition.latitude)
+            ]);
           }
           let positions = getPolygonSamplePoints({
             positions: cartP,
             step: this.step
           });
-          let positionsC = [], that = this;
+          let positionsC = [],
+            that = this;
           for (let i = 0; i < positions.length; i++) {
-            positionsC.push(Cesium.Cartesian3.fromDegrees(positions[i][0], positions[i][1], 0));
+            positionsC.push(
+              Cesium.Cartesian3.fromDegrees(positions[i][0], positions[i][1], 0)
+            );
           }
-          let sampleElevationTool = new Cesium.SampleElevationTool(viewer, positionsC, 'terrain', function (sampleResult) {
-            let max = sampleResult[0].height;
-            let min = sampleResult[0].height;
-            for (let i = 1; i < sampleResult.length; i++) {
-              if(max < sampleResult[i].height){
-                max = sampleResult[i].height;
+          let sampleElevationTool = new Cesium.SampleElevationTool(
+            viewer,
+            positionsC,
+            "terrain",
+            function(sampleResult) {
+              let max = sampleResult[0].height;
+              let min = sampleResult[0].height;
+              for (let i = 1; i < sampleResult.length; i++) {
+                if (max < sampleResult[i].height) {
+                  max = sampleResult[i].height;
+                }
+                if (min > sampleResult[i].height) {
+                  min = sampleResult[i].height;
+                }
               }
-              if(min > sampleResult[i].height){
-                min = sampleResult[i].height;
+              if (!that.changeMaxHeight) {
+                that.maxHeightCopy = Number(max) + that.defaultOffsetHeight;
               }
-            }
-            if(!that.changeMaxHeight){
-              that.maxHeightCopy = Number(max) + that.defaultOffsetHeight;
-            }
-            if(!that.changeStartHeight){
-              that.startHeightCopy = Number(min);
-            }
-            that._doAnalysis();
-          }, {level: 12});
+              if (!that.changeStartHeight) {
+                that.startHeightCopy = Number(min);
+              }
+              that._doAnalysis();
+            },
+            { level: 12 }
+          );
           sampleElevationTool.start();
         }
       });
@@ -402,7 +411,8 @@ export default {
       } = this;
 
       // 初始化洪水淹没分析类
-      floodAnalysis = floodAnalysis || new Cesium.FloodAnalysis(this.viewer, positions);
+      floodAnalysis =
+        floodAnalysis || new Cesium.FloodAnalysis(this.viewer, positions);
       //设置洪水淹没区域最低开始高度
       floodAnalysis.minHeight = Number(minHeight);
       //设置洪水淹没区域最高高度
@@ -445,11 +455,8 @@ export default {
      */
     _getSourceOptions() {
       const { vueCesium, vueKey, vueIndex } = this;
-      const find = vueCesium.FloodAnalysisManager.findSource(
-        vueKey,
-        vueIndex
-      );
-      if(!find) return;
+      const find = vueCesium.FloodAnalysisManager.findSource(vueKey, vueIndex);
+      if (!find) return;
       const { options } = find;
       return options;
     },

@@ -26,7 +26,7 @@
             <mapgis-ui-input-number
               autoWidth
               v-model.number="formData1.contourWidthCopy"
-              min="0"
+              :min="0"
             />
           </mapgis-ui-form-item>
           <mapgis-ui-form-item label="线颜色">

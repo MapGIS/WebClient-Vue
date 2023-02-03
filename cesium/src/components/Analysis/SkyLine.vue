@@ -2,10 +2,7 @@
   <div>
     <slot>
       <div>
-        <mapgis-ui-setting-form
-          :layout="layout"
-          size="default"
-        >
+        <mapgis-ui-setting-form :layout="layout" size="default">
           <mapgis-ui-form-item label="观察者信息">
             <mapgis-ui-input
               v-model="centerPosition"
@@ -22,7 +19,7 @@
           <mapgis-ui-form-item label="线宽度">
             <mapgis-ui-input-number-addon
               v-model.number="formData.skylineWidth"
-              min="0"
+              :min="0"
             />
           </mapgis-ui-form-item>
           <!-- <mapgis-ui-mix-row

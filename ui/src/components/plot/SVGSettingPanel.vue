@@ -142,8 +142,8 @@
                 type="Number"
                 v-model="originX"
                 step="0.1"
-                max="200"
-                min="0"
+                :max="200"
+                :min="0"
               />
               <mapgis-ui-input
                 @change="addConfig"
@@ -151,8 +151,8 @@
                 type="Number"
                 v-model="originY"
                 step="0.1"
-                max="200"
-                min="0"
+                :max="200"
+                :min="0"
               />
             </mapgis-ui-row>
             <mapgis-ui-row v-show="type === 2 && partType === 13">
@@ -163,8 +163,8 @@
                 type="Number"
                 v-model="markerOffset"
                 step="0.01"
-                max="1"
-                min="0"
+                :max="1"
+                :min="0"
               />
             </mapgis-ui-row>
           </div>

@@ -2,92 +2,109 @@
   <div class="mapgis-widget-heightLimited-analysis">
     <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
     <mapgis-ui-color-pick-panel
-        :label="colorLabel"
-        :color="colorCopy"
-        :size="size"
-        :disableAlpha="false"
-        :labelCol="24"
-				:wrapperCol="24"
-        style="font-size: 13px"
-        @input="val =>
-                  (colorCopy = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
-          ">
+      :label="colorLabel"
+      :color="colorCopy"
+      :size="size"
+      :disableAlpha="false"
+      :labelCol="24"
+      :wrapperCol="24"
+      style="font-size: 13px"
+      @input="
+        val =>
+          (colorCopy = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
+      "
+    >
     </mapgis-ui-color-pick-panel>
-        <mapgis-ui-input-number-panel
-            label="最高高度"
-            :step="1"
-            :range="[minSliderHeightCopy,10000]"
-            v-model="maxSliderHeightCopy"
-            @change="val => setMaxHeight(val)"
-            style="font-size: 13px"/>
     <mapgis-ui-input-number-panel
-        label="控制高度"
-        :step="1"
-        :range="[minSliderHeightCopy,maxSliderHeightCopy]"
-        v-model="heightLimitCopy"
-        @change="val => setInput(val)"
-        style="font-size: 13px"/>
+      label="最高高度"
+      :step="1"
+      :range="[minSliderHeightCopy, 10000]"
+      v-model="maxSliderHeightCopy"
+      @change="val => setMaxHeight(val)"
+      style="font-size: 13px"
+    />
+    <mapgis-ui-input-number-panel
+      label="控制高度"
+      :step="1"
+      :range="[minSliderHeightCopy, maxSliderHeightCopy]"
+      v-model="heightLimitCopy"
+      @change="val => setInput(val)"
+      style="font-size: 13px"
+    />
     <!-- <mapgis-ui-switch-panel label="控高面显示" v-model="enablePolygonCopy" size="small" :isTitleBold="false" style="margin:0px;"></mapgis-ui-switch-panel> -->
-    <mapgis-ui-group-tab title="控高面显示" :isTitleBold="true" :hasTopMargin="false" :hasBottomMargin="true">
-      <mapgis-ui-switch
-        slot="handle"
-        v-model="enablePolygonCopy"
-        size="small"
-      >
+    <mapgis-ui-group-tab
+      title="控高面显示"
+      :isTitleBold="true"
+      :hasTopMargin="false"
+      :hasBottomMargin="true"
+    >
+      <mapgis-ui-switch slot="handle" v-model="enablePolygonCopy" size="small">
       </mapgis-ui-switch>
     </mapgis-ui-group-tab>
-    <mapgis-3d-draw v-on:drawcreate="handleCreate" v-on:load="handleDrawLoad"
-                    :drawStyle="drawStyleCopy"
-                    :enableControl="enableControl">
+    <mapgis-3d-draw
+      v-on:drawcreate="handleCreate"
+      v-on:load="handleDrawLoad"
+      :drawStyle="drawStyleCopy"
+      :enableControl="enableControl"
+    >
       <div class="parent_div">
         <mapgis-ui-group-tab title="分析范围"></mapgis-ui-group-tab>
-        <mapgis-ui-radio-group v-model="radioValue" style="line-height:32px;padding-bottom:8px;">
-          <mapgis-ui-radio
-              :value=1
-          >
+        <mapgis-ui-radio-group
+          v-model="radioValue"
+          style="line-height:32px;padding-bottom:8px;"
+        >
+          <mapgis-ui-radio :value="1">
             绘制区域
           </mapgis-ui-radio>
-          <mapgis-ui-radio
-              :value=2
-          >
+          <mapgis-ui-radio :value="2">
             输入区域
           </mapgis-ui-radio>
         </mapgis-ui-radio-group>
-        <div style="text-align: left;padding-bottom:8px;" v-if="radioValue === 1">
+        <div
+          style="text-align: left;padding-bottom:8px;"
+          v-if="radioValue === 1"
+        >
           <mapgis-ui-tooltip
-              v-for="(item, i) in draws"
-              :key="i"
-              placement="top"
+            v-for="(item, i) in draws"
+            :key="i"
+            placement="top"
           >
             <template slot="title">
               <span>{{ item.tip }}</span>
             </template>
             <mapgis-ui-button
-                shape="circle"
-                :type="item.type"
-                @click="item.click"
-                :class="item.className"
-                style="margin: 0 8px"
+              shape="circle"
+              :type="item.type"
+              @click="item.click"
+              :class="item.className"
+              style="margin: 0 8px"
             >
               <mapgis-ui-iconfont
-                  :type="item.icon"
-                  :class="item.className"
-                  theme="filled"
+                :type="item.icon"
+                :class="item.className"
+                theme="filled"
               />
             </mapgis-ui-button>
           </mapgis-ui-tooltip>
         </div>
         <div v-if="radioValue === 2">
-          <mapgis-ui-setting-form :layout="layout" size="default" class="mapgis-ui-setting-form">
+          <mapgis-ui-setting-form
+            :layout="layout"
+            size="default"
+            class="mapgis-ui-setting-form"
+          >
             <mapgis-ui-form-item label="圆心" style="text-align: center">
               <mapgis-ui-row :gutter="8">
-                <mapgis-ui-col :span="12">	
+                <mapgis-ui-col :span="12">
                   <mapgis-ui-input-number-addon
                     v-model.number="circleCenter.longitude"
                     allow-clear
                   >
-                    <mapgis-ui-tooltip slot="addonBefore" :title="inputDefaultVal1">
-                      <mapgis-ui-iconfont type="mapgis-xzhouyidong"/>
+                    <mapgis-ui-tooltip
+                      slot="addonBefore"
+                      :title="inputDefaultVal1"
+                    >
+                      <mapgis-ui-iconfont type="mapgis-xzhouyidong" />
                     </mapgis-ui-tooltip>
                   </mapgis-ui-input-number-addon>
                 </mapgis-ui-col>
@@ -96,8 +113,11 @@
                     v-model.number="circleCenter.latitude"
                     allow-clear
                   >
-                    <mapgis-ui-tooltip slot="addonBefore" :title="inputDefaultVal2">
-                      <mapgis-ui-iconfont type="mapgis-yzhouyidong"/>
+                    <mapgis-ui-tooltip
+                      slot="addonBefore"
+                      :title="inputDefaultVal2"
+                    >
+                      <mapgis-ui-iconfont type="mapgis-yzhouyidong" />
                     </mapgis-ui-tooltip>
                   </mapgis-ui-input-number-addon>
                 </mapgis-ui-col>
@@ -106,7 +126,7 @@
             <mapgis-ui-form-item label="半径">
               <mapgis-ui-input-number-addon
                 v-model.number="radius"
-                min="0"
+                :min="0"
                 addon-after="米"
               />
             </mapgis-ui-form-item>
@@ -126,7 +146,7 @@
 <script>
 import BaseLayer from "./BaseLayer";
 import Mapgis3dDraw from "../UI/Controls/Draw/Draw";
-import {deepEqual} from "../Utils/deepequal";
+import { deepEqual } from "../Utils/deepequal";
 import * as turf from "@turf/turf";
 
 export default {
@@ -184,7 +204,7 @@ export default {
         return {
           color: "#FF8C00",
           opacity: 0.6
-        }
+        };
       }
     },
     /* 是否显示控高面 */
@@ -193,7 +213,7 @@ export default {
       default: false
     }
   },
-  components: {Mapgis3dDraw},
+  components: { Mapgis3dDraw },
   inject: ["Cesium", "vueCesium", "viewer"],
   data() {
     return {
@@ -236,23 +256,23 @@ export default {
           type: "primary",
           tip: "绘制圆",
           click: this.drawCircle
-        },
+        }
       ],
       radioValue: 1,
-      inputDefaultVal1: '经度',
-      inputDefaultVal2: '纬度',
+      inputDefaultVal1: "经度",
+      inputDefaultVal2: "纬度",
       circleCenter: {
         longitude: "",
         latitude: ""
       },
       radius: 0,
       // layout: "horizontal",
-      labelCol: {span: 5},
-      wrapperCol: {span: 19},
+      labelCol: { span: 5 },
+      wrapperCol: { span: 19 },
       lnglat: undefined,
 
       enablePolygonCopy: this.enablePolygon
-    }
+    };
   },
   mounted() {
     this.mount();
@@ -272,11 +292,14 @@ export default {
     colorCopy: {
       immediate: true,
       handler(next) {
-        let {vueCesium, vueKey, vueIndex} = this;
-        let find = vueCesium.HeightLimitedAnalysisManager.findSource(vueKey, vueIndex);
+        let { vueCesium, vueKey, vueIndex } = this;
+        let find = vueCesium.HeightLimitedAnalysisManager.findSource(
+          vueKey,
+          vueIndex
+        );
         if (find && find.options) {
           if (this.lnglat) {
-            let {heightLimitedAnalysis} = find.options;
+            let { heightLimitedAnalysis } = find.options;
             if (heightLimitedAnalysis) {
               this.heightLimitedAnalysis(this.lnglat);
             }
@@ -308,11 +331,11 @@ export default {
         this.drawStyleCopy = next;
       }
     },
-    enablePolygon(e){
+    enablePolygon(e) {
       this.enablePolygonCopy = e;
     },
-    enablePolygonCopy(){
-      if(this.lnglat){
+    enablePolygonCopy() {
+      if (this.lnglat) {
         this.startHeightAnalysis();
       }
     }
@@ -320,27 +343,26 @@ export default {
   methods: {
     async createCesiumObject() {
       return new Promise(
-          resolve => {
-            resolve();
-          },
-          reject => {
-          }
+        resolve => {
+          resolve();
+        },
+        reject => {}
       );
     },
     mount() {
-      const {viewer, vueCesium, vueKey, vueIndex} = this;
+      const { viewer, vueCesium, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function (dataSource) {
+      promise.then(function(dataSource) {
         vm.$emit("load", vm);
         vueCesium.HeightLimitedAnalysisManager.addSource(
-            vueKey,
-            vueIndex,
-            dataSource,
-            {
-              heightLimitedAnalysis: null,
-              lnglat: null
-            }
+          vueKey,
+          vueIndex,
+          dataSource,
+          {
+            heightLimitedAnalysis: null,
+            lnglat: null
+          }
         );
       });
     },
@@ -362,11 +384,18 @@ export default {
             }
             break;
           case 2:
-            if (vm.circleCenter.longitude && vm.circleCenter.latitude && vm.radius) {
+            if (
+              vm.circleCenter.longitude &&
+              vm.circleCenter.latitude &&
+              vm.radius
+            ) {
               //先清除
               vm.lnglat = undefined;
               // 根据用户输入的圆心和半径计算圆范围的坐标点
-              let circle = [vm.circleCenter.longitude, vm.circleCenter.latitude];
+              let circle = [
+                vm.circleCenter.longitude,
+                vm.circleCenter.latitude
+              ];
               vm.lnglat = vm.calculateCirclePosition(circle, vm.radius / 1000);
               this.heightLimitedAnalysis(vm.lnglat);
             } else {
@@ -387,19 +416,19 @@ export default {
     setInput(data) {
       let vm = this;
       vm.heightLimitCopy = data;
-      let {vueCesium, vueKey, vueIndex} = this;
+      let { vueCesium, vueKey, vueIndex } = this;
       let find = vueCesium.HeightLimitedAnalysisManager.findSource(
-          vueKey,
-          vueIndex
+        vueKey,
+        vueIndex
       );
-      let {options} = find;
-      let {heightLimitedAnalysis} = options;
+      let { options } = find;
+      let { heightLimitedAnalysis } = options;
       if (heightLimitedAnalysis) {
         // 设置限高高度
         heightLimitedAnalysis.height = data;
       }
     },
-    setMaxHeight(val){},
+    setMaxHeight(val) {},
 
     changeColor(e) {
       this.colorCopy = e;
@@ -459,7 +488,7 @@ export default {
       }
       vm.cartesian3 = cartesian3;
       // 绘制完直接进行控高分析
-      vm.startHeightAnalysis()
+      vm.startHeightAnalysis();
     },
 
     //开始控高分析
@@ -467,14 +496,14 @@ export default {
       const vm = this;
       // 先remove
       this.remove();
-      let {heightLimitCopy, vueCesium, viewer} = this;
+      let { heightLimitCopy, vueCesium, viewer } = this;
       if (lnglat) {
         vm.lnglat = lnglat;
         vueCesium.HeightLimitedAnalysisManager.changeOptions(
-            vm.vueKey,
-            vm.vueIndex,
-            "lnglat",
-            lnglat
+          vm.vueKey,
+          vm.vueIndex,
+          "lnglat",
+          lnglat
         );
         //控高分析边界点数组
         let pnts = [];
@@ -482,12 +511,12 @@ export default {
           pnts.push(new Cesium.Cartesian3(lnglat[i][0], lnglat[i][1], 0));
         }
         let cesiumColor = Cesium.Color.fromCssColorString(vm.colorCopy);
-        
-        let polygonColor; 
-        if( vm.enablePolygonCopy ) {
-          polygonColor = Cesium.Color.BLACK.withAlpha(0.5)
-        }else {
-          polygonColor = Cesium.Color.BLACK.withAlpha(0)
+
+        let polygonColor;
+        if (vm.enablePolygonCopy) {
+          polygonColor = Cesium.Color.BLACK.withAlpha(0.5);
+        } else {
+          polygonColor = Cesium.Color.BLACK.withAlpha(0);
         }
 
         //调用控高分析接口
@@ -501,17 +530,18 @@ export default {
         });
         heightLimited.add();
         vueCesium.HeightLimitedAnalysisManager.changeOptions(
-            vm.vueKey,
-            vm.vueIndex,
-            "heightLimitedAnalysis",
-            heightLimited
+          vm.vueKey,
+          vm.vueIndex,
+          "heightLimitedAnalysis",
+          heightLimited
         );
       }
     },
 
     //绘制方式返回的点坐标是经纬度坐标
     getAllPointByDegree(lnglat1, lnglat2) {
-      let p3 = [], p4 = [];
+      let p3 = [],
+        p4 = [];
       p3.push(lnglat1[0]);
       p3.push(lnglat2[1]);
       p3.push(lnglat1[2]);
@@ -523,16 +553,19 @@ export default {
     },
 
     handleChange(e) {
-      let a1 = this.models.filter((m) => {
+      let a1 = this.models.filter(m => {
         return m.title === e;
-      })
+      });
       this.model = a1[0];
       this.toggleDelete();
     },
 
     remove() {
-      const {vueKey, vueIndex, vueCesium} = this;
-      let find = vueCesium.HeightLimitedAnalysisManager.findSource(vueKey, vueIndex);
+      const { vueKey, vueIndex, vueCesium } = this;
+      let find = vueCesium.HeightLimitedAnalysisManager.findSource(
+        vueKey,
+        vueIndex
+      );
       if (find && find.options) {
         if (find.options.heightLimitedAnalysis) {
           let analysis = find.options.heightLimitedAnalysis;
@@ -544,15 +577,14 @@ export default {
       }
     },
     unmount() {
-      let {vueCesium, vueKey, vueIndex} = this;
+      let { vueCesium, vueKey, vueIndex } = this;
       this.removeDraw();
       this.remove();
       // 这段代码可以认为是对应的vue的获取destroyed生命周期
       vueCesium.HeightLimitedAnalysisManager.deleteSource(vueKey, vueIndex);
     }
   }
-}
-
+};
 </script>
 
 <style scoped>
@@ -564,7 +596,7 @@ export default {
   display: inline-block;
   position: relative;
 }
-.mapgis-ui-setting-form{
+.mapgis-ui-setting-form {
   /*height: 16px;*/
   font-size: 14px;
   font-family: Microsoft YaHei;
@@ -574,10 +606,10 @@ export default {
 ::v-deep .mapgis-ui-form-item {
   /* margin-bottom: 12px; */
 }
-::v-deep .mapgis-ui-form-item-control{
-  text-align: center!important;
+::v-deep .mapgis-ui-form-item-control {
+  text-align: center !important;
 }
-::v-deep .mapgis-ui-input-number-panel{
+::v-deep .mapgis-ui-input-number-panel {
   /* padding: 0; */
 }
 </style>
