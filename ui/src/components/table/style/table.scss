@@ -240,6 +240,7 @@ $table-selection-column-width: 60px;
 
   &-thead > tr,
   &-tbody > tr {
+    background: transparent;
     & &-row-hover,
     &:hover {
       background: $table-selected-row-hover-bg;
@@ -464,7 +465,7 @@ $table-selection-column-width: 60px;
     position: relative;
     min-width: 96px;
     margin-left: -8px;
-    background: $component-background;
+    background: $content-background;
     border-radius: $border-radius-base;
     box-shadow: $box-shadow-base;
 
