@@ -1,10 +1,10 @@
 <template>
-  <span/>
+  <span />
 </template>
 <script>
-import {DataSet} from "mapv";
-import {MapvLayer} from "./mapv/MapvLayer";
-import {VFeature} from "../../components/util/geomtry/Feature";
+import { DataSet } from "mapv";
+import { MapvLayer } from "./mapv/MapvLayer";
+import { VFeature } from "../../components/util/geomtry/Feature";
 
 export default {
   name: "mapgis-mapv-layer",
@@ -56,7 +56,7 @@ export default {
   },
   methods: {
     createMapboxObject() {
-      const {map} = this;
+      const { map } = this;
       this.dataset = this.initData();
       if (!this.dataset) {
         return;
@@ -68,9 +68,9 @@ export default {
       let data = [];
       geojson = geojson || this.geojson;
       if (!geojson || geojson.length == 0) return;
-      if (!(geojson.hasOwnProperty("features"))){
+      if (!geojson.hasOwnProperty("features")) {
         geojson = this.$_convertData(geojson);
-      };
+      }
       // 构造数据
       var features = geojson.features;
       if (!features) {
@@ -81,54 +81,58 @@ export default {
         const fType = feature.geometry.type;
         const coordinates = feature.geometry.coordinates;
         let countValue = feature.properties[this.countField];
-        if (countValue){
-          countValue = vm.isNumber(countValue) ? count : Number(countValue);
+        if (countValue) {
+          countValue = vm.isNumber(countValue)
+            ? countValue
+            : Number(countValue);
         } else {
-          countValue = 30 * Math.random()
+          countValue = 1;
         }
         let timeValue = feature.properties.time;
-        if (timeValue){
+        if (timeValue) {
           timeValue = vm.isNumber(timeValue) ? timeValue : Number(timeValue);
         } else {
-          timeValue = 100 * Math.random()
+          timeValue = 100 * Math.random();
         }
         if (fType === "Point") {
           let obj = Object.assign(
-              {
-                geometry: {
-                  type: "Point",
-                  coordinates: coordinates
-                },
-                // count: feature.properties[this.countField] || 1,
-                // count: vm.isNumber(count) ? count : Number(count) || 1,
-                count: countValue,
-                time: timeValue
+            {
+              geometry: {
+                type: "Point",
+                coordinates: coordinates
               },
-              feature.properties
+              // count: feature.properties[this.countField] || 1,
+              // count: vm.isNumber(count) ? count : Number(count) || 1,
+              count: countValue,
+              time: timeValue
+            },
+            feature.properties
           );
           data.push(obj);
         } else if (fType === "LineString") {
           let obj = Object.assign(
-              {
-                geometry: {
-                  type: "LineString",
-                  coordinates: coordinates
-                },
-                count: countValue,
-                time: timeValue
-              }, feature.properties
+            {
+              geometry: {
+                type: "LineString",
+                coordinates: coordinates
+              },
+              count: countValue,
+              time: timeValue
+            },
+            feature.properties
           );
           data.push(obj);
         } else if (fType === "Polygon") {
           let obj = Object.assign(
-              {
-                geometry: {
-                  type: "Polygon",
-                  coordinates: coordinates
-                },
-                count: countValue,
-                time: timeValue
-              }, feature.properties
+            {
+              geometry: {
+                type: "Polygon",
+                coordinates: coordinates
+              },
+              count: countValue,
+              time: timeValue
+            },
+            feature.properties
           );
           data.push(obj);
         }
@@ -136,18 +140,18 @@ export default {
       let dataSet = new DataSet(data);
       return dataSet;
     },
-    isNumber(obj){
-      typeof obj === "number" && !isNaN(obj)
+    isNumber(obj) {
+      typeof obj === "number" && !isNaN(obj);
     },
-    $_convertData(geojson){
-        let data = VFeature.resultToGeojson(geojson);
-        return data;
+    $_convertData(geojson) {
+      let data = VFeature.resultToGeojson(geojson);
+      return data;
     },
     mount() {
       this.mapvLayer = this.createMapboxObject();
     },
     unmount() {
-      const {map, mapvLayer} = this;
+      const { map, mapvLayer } = this;
       return map && mapvLayer.destroy();
     }
   },
