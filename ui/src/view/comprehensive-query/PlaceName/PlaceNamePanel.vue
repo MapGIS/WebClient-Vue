@@ -357,8 +357,12 @@ export default {
       }
     },
     mouseOver(index) {
+      if(this.config.panToCenterEventType === 'click'){
+        return
+      }else{
       this.selectMarkers = [this.geojson.features[index].properties.markerId];
       this.updataMarkers();
+      }
     },
     mouseLeave(index) {
       this.selectMarkers = [];
@@ -376,7 +380,13 @@ export default {
      * 点击列表的回调事件
      */
     setActivePoint(index) {
+      if(this.config.panToCenterEventType === 'hover'){
+        return
+      }else{
+      this.selectMarkers = [this.geojson.features[index].properties.markerId];
       this.$emit("click-item", this.geojson.features[index]);
+      this.updataMarkers();
+      }
     },
     /**
      * 列表高亮图标
