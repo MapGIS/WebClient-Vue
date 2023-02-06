@@ -193,7 +193,9 @@
     "svgSelectPanelHeadColor": "rgb(233, 233, 233)",
     "svgActiveTypeColor": "rgb(186, 181, 181)",
     "oneMapBg": "rgb(255, 255, 255)",
-    "mapStoryHover": "rgb(230, 247, 255)"
+    "mapStoryHover": "rgb(230, 247, 255)",
+    "darkHeaderBackground": "#001529",
+    "darkHeaderColor": "#fff"
   },
   {
     "title": "科技风格",
