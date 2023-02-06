@@ -122,7 +122,7 @@ export default {
   margin-top: 10px;
 }
 
-.mapgis-table-marker > .mapgis-table-marker-item {
+.mapgis-table-marker .mapgis-table-marker-item {
   padding: 0;
   font-size: 10px;
 }

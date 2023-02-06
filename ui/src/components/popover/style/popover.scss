@@ -296,7 +296,7 @@ $popup-width: 280px;
   width: auto;
   height: fit-content;
   padding: 0;
-  background-color: $popover-background;
+  background-color: $popover-background !important;
 }
 
 .mapboxgl-popup-header {
@@ -467,9 +467,6 @@ $popup-width: 280px;
     }
   }
 }
-
-
-
 
 $popover-prefix-cls: $ant-prefix + "-popover";
 
