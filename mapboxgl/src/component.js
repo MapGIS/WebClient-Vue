@@ -22,9 +22,6 @@ export { default as MapgisPrint } from "./components/UI/controls/print/Print";
 export { default as MapgisDraw } from "./components/UI/controls/draw/BaseDraw";
 export { default as MapgisMeasure } from "./components/UI/controls/measure/Measure";
 export { default as MapgisEditor } from "./components/UI/controls/edit/Editor";
-// export { default as BaseDrawItem from "./components/UI/controls/draw/BaseDrawItem";
-// https://gist.github.com/godismyjudge95/a4ea43263db53b90b05511c911cd0034
-// export { default as MapgisFixDraw } from "./components/UI/controls/drawfix/FixDraw";
 export { default as MapgisHawkeye } from "./components/UI/controls/hawkeye/Hawkeye";
 export { default as MapgisArcgisLegend } from "./components/UI/controls/legend/Legend";
 
