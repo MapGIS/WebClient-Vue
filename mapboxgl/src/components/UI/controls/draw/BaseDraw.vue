@@ -49,7 +49,7 @@ import {
   DirectMode,
   SimpleSelectMode
 } from "@mapgis/mapbox-gl-draw-circle";
-import StaticMode from "@mapbox/mapbox-gl-draw-static-mode";
+import StaticMode from "@mapgis/mapbox-gl-draw-static-mode";
 
 const modes = MapboxDrawCom.default.modes;
 const MapboxDraw = MapboxDrawCom.default;
@@ -378,7 +378,6 @@ export default {
 
     // 按照@mapgis/webclient-vue-mapboxgl的规范 发送事件 ，其实就是用{type：eventName}包装事件名
     $_emitDrawEvent(eventName, eventData, payload) {
-      // console.log("_emitDrawEvent", eventName, eventData, payload);
       const vm = this;
       let mode = this.drawer.getMode();
       if (vm.drawRadius && eventName === "drawActionable") {

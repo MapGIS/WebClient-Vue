@@ -242,7 +242,7 @@ export default {
      * 更新测量面积和长度
      */
     $_updateLengthOrArea() {
-      if (!this.measure) return;
+      if (!this.measure || !this.measure.getAll) return;
       const data = this.measure.getAll();
       let geographyPerimeter = 0;
       let geographyArea = 0;

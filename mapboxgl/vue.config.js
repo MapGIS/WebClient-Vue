@@ -19,8 +19,8 @@ module.exports = {
     externals: {
       vue: "vue",
       "@mapgis/mapbox-gl-draw": "@mapgis/mapbox-gl-draw",
-      "@mapbox/mapbox-gl-draw-static-mode":
-        "@mapbox/mapbox-gl-draw-static-mode",
+      "@mapgis/mapbox-gl-draw-static-mode":
+        "@mapgis/mapbox-gl-draw-static-mode",
       "@mapgis/mapbox-gl": "@mapgis/mapbox-gl",
       "@mapgis/mapbox-gl-compare": "@mapgis/mapbox-gl-compare",
       "@mapgis/mapbox-gl-draw-circle": "@mapgis/mapbox-gl-draw-circle",
