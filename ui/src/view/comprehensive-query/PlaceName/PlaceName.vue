@@ -245,8 +245,8 @@ export default {
     /**
      * 当前点击的条目的回调函数
      */
-    clickItem(feature) {
-      this.$emit("click-item", feature);
+    clickItem(feature,markerId) {
+      this.$emit("click-item", feature,markerId);
     },
     openDSResultSet(item, isDelete) {
       const { queryWay, ip, port } = this.config;
