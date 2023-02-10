@@ -138,8 +138,13 @@ export default {
     }
   },
   mounted() {
+    // 这里选择的是selected中还没值并且allItens中有值的
     if (this.selected.length === 0 && this.allItems.length > 0) {
-      this.selected = [this.allItems[0].placeName];
+      this.allItems.forEach((item) => { if(item.select ===true){
+        this.selected.push(item.placeName)
+      } 
+    })
+      // this.selected = [this.allItems[2].placeName];
     }
   },
   methods: {
