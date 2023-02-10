@@ -1,3 +1,7 @@
+<template>
+  <div></div>
+</template>
+
 <script>
 import VueOptions from "../../Base/Vue/VueOptions";
 export default {
