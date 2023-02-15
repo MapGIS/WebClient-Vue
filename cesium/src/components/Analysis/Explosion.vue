@@ -160,11 +160,11 @@ export default {
         {
           label: "分段",
           value: "MapgisUiExplosionRange"
-        },
-        {
-          label: "随机",
-          value: "MapgisUiExplosionRandom"
         }
+        // {
+        //   label: "随机",
+        //   value: "MapgisUiExplosionRandom"
+        // }
       ],
       currentModelId: undefined,
       explosionFields: [],
