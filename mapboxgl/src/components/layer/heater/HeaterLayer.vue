@@ -85,6 +85,7 @@ export default {
         heaterColor,
         map
       } = this;
+
       let source = {
         type: "geojson",
         data: geojson
@@ -95,52 +96,45 @@ export default {
         id: id,
         type: "heatmap",
         source: id,
+        maxzoom: 24,
+        layout: {
+          visibility: "visible"
+        },
         paint: {
-          "heatmap-weight": [
-            "interpolate",
-            ["linear"],
-            ["get", field],
-            min,
-            0,
-            max,
-            1
-          ],
-          /* "heatmap-intensity": [
-            "interpolate",
-            ["linear"],
-            ["zoom"],
-            0,
-            1,
-            9,
-            3,
-            16,
-            6
-          ], */
+          // increase weight as diameter breast height increases
+          "heatmap-weight": {
+            property: field,
+            type: "exponential",
+            stops: [
+              [min, 0],
+              [max, 1]
+            ]
+          },
+          // increase intensity as zoom level increases
+          "heatmap-intensity": {
+            stops: [
+              [11, 1],
+              [16, 3]
+            ]
+          },
+          // assign color values be applied to points depending on their density
           "heatmap-color": heaterColor,
-          "heatmap-radius": [
-            "interpolate",
-            ["linear"],
-            ["zoom"],
-            0,
-            2,
-            9,
-            heaterRadius / 2,
-            16,
-            heaterRadius,
-            20,
-            heaterRadius * 1.5
-          ],
-          "heatmap-opacity": [
-            "interpolate",
-            ["linear"],
-            ["zoom"],
-            7,
-            1,
-            9,
-            0.9,
-            20,
-            0.6
-          ]
+          // increase radius as zoom increases
+          "heatmap-radius": {
+            stops: [
+              [11, 15],
+              [16, 20]
+            ]
+          },
+          // decrease opacity to transition into the circle layer
+          "heatmap-opacity": {
+            default: 1,
+            stops: [
+              [12, 1],
+              [15, 0.5],
+              [18, 0]
+            ]
+          }
         }
       });
       this.$emit("added", { map, component: this, layerId: id });
