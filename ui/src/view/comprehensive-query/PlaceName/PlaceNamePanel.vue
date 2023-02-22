@@ -8,7 +8,7 @@
             :key="item.properties.markerId"
             @mouseover="mouseOver(i)"
             @mouseleave="mouseLeave(i)"
-            @click="setActivePoint(i,item.properties.markerId)"
+            @click="setActivePoint(i)"
           >
             <div class="img-place-name-panel">
               <img :src="activeImage(item.properties.markerId)" />
@@ -357,14 +357,17 @@ export default {
       }
     },
     mouseOver(index) {
-      if(this.config.panToCenterEventType === 'click'){
-        return
-      }else{
-      this.selectMarkers = [this.geojson.features[index].properties.markerId];
-      this.updataMarkers();
+      if (this.config.panToCenterEventType === "click") {
+        return;
+      } else {
+        this.selectMarkers = [this.geojson.features[index].properties.markerId];
+        this.updataMarkers();
       }
     },
     mouseLeave(index) {
+      if (this.config.panToCenterEventType === "click") {
+        return;
+      }
       this.selectMarkers = [];
       this.updataMarkers();
     },
@@ -379,13 +382,13 @@ export default {
     /**
      * 点击列表的回调事件
      */
-    setActivePoint(index,markerId) {
-      if(this.config.panToCenterEventType === 'hover'){
-        return
-      }else{
-      this.selectMarkers = [this.geojson.features[index].properties.markerId];
-      this.$emit("click-item", this.geojson.features[index],markerId);
-      this.updataMarkers();
+    setActivePoint(index) {
+      if (this.config.panToCenterEventType === "hover") {
+        return;
+      } else {
+        this.selectMarkers = [this.geojson.features[index].properties.markerId];
+        this.$emit("click-item", this.geojson.features[index]);
+        this.updataMarkers();
       }
     },
     /**

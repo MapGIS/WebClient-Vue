@@ -205,6 +205,9 @@ export default {
 
         return marker;
       });
+      if (markers.length === 0) {
+        this.selects.forEach(this.onClearHighlightFeature);
+      }
       this.markers = markers;
     },
     getMarkerIndex(fid) {
@@ -357,18 +360,22 @@ export default {
     onClearHighlightFeature(fid) {
       const marker = this.getMarker(fid);
       this.clearHighlightMarker(marker);
+      this.clearHighlightFeature(marker);
     },
     onHighlightFeature(fid) {
       const marker = this.getMarker(fid);
-      let bbox = turfjs.bbox(marker.feature);
+      let bbox = Feature.getGeoJSONFeatureBound(marker.feature);
       let bound = {
-        xmin: bbox[0],
-        ymin: bbox[1],
-        xmax: bbox[2],
-        ymax: bbox[3]
+        xmin: bbox.xmin,
+        ymin: bbox.ymin,
+        xmax: bbox.xmax,
+        ymax: bbox.ymax
       };
-      this.zoomOrPanTo(bound);
+      if (marker.feature.geometry.type !== "Point") {
+        this.zoomTo(bound);
+      }
       this.highlightMarker(marker);
+      this.highlightFeature(marker);
     }
   }
 };
