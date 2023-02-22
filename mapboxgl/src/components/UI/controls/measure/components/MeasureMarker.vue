@@ -30,10 +30,14 @@ export default {
   }),
   computed: {
     area({ marker }) {
-      return marker.planeArea;
+      return marker.geographyArea !== undefined
+        ? marker.geographyArea
+        : marker.projectionArea;
     },
     perimeter({ marker }) {
-      return marker.planeLength || marker.planePerimeter;
+      return marker.geographyPerimeter !== undefined
+        ? marker.geographyPerimeter
+        : marker.projectionPerimeter;
     },
     coordinates({ marker }) {
       return marker.coordinates || [];

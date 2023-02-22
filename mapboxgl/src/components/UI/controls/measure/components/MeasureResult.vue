@@ -1,7 +1,9 @@
 <template>
   <div v-if="selfResult" class="measure-result">
     <div v-for="{ label, value } in selfResultOptions" :key="value">
-      {{ label }}：{{ selfResult[value] }}
+      <span v-if="selfResult[value] !== undefined">
+        {{ label }}：{{ selfResult[value] }}
+      </span>
     </div>
   </div>
 </template>
@@ -28,40 +30,38 @@ export default {
   data: vm => ({
     selfResult: {
       coordinates: [],
-      planeLength: "",
-      ellipsoidLength: "",
-      planePerimeter: "",
-      planeArea: "",
-      ellipsoidPerimeter: "",
-      ellipsoidArea: ""
+      projectionPerimeter: "",
+      projectionArea: "",
+      geographyPerimeter: "",
+      geographyArea: ""
     },
     selfResultMap: {
       [measureModeMap.line]: [
         {
           label: "投影平面长度",
-          value: "planeLength"
+          value: "projectionPerimeter"
         },
         {
           label: "椭球实地长度",
-          value: "ellipsoidLength"
+          value: "geographyPerimeter"
         }
       ],
       [measureModeMap.polygon]: [
         {
           label: "投影平面周长",
-          value: "planePerimeter"
+          value: "projectionPerimeter"
         },
         {
           label: "投影平面面积",
-          value: "planeArea"
+          value: "projectionArea"
         },
         {
           label: "椭球实地周长",
-          value: "ellipsoidPerimeter"
+          value: "geographyPerimeter"
         },
         {
           label: "椭球实地面积",
-          value: "ellipsoidArea"
+          value: "geographyArea"
         }
       ]
     }
@@ -171,34 +171,44 @@ export default {
           coordinates
         } = nResult;
         const { areaR, perimeterR, perimeterUnit, areaUnit } = this.unitOptions;
-        const perimeter = `${this.precision(
-          projectionPerimeter / perimeterR
-        )} ${perimeterUnit}`;
-        const geoPerimeter = `${this.precision(
-          geographyPerimeter / perimeterR
-        )} ${perimeterUnit}`;
+        let perimeter;
+        if (projectionPerimeter !== undefined) {
+          perimeter = `${this.precision(
+            projectionPerimeter / perimeterR
+          )} ${perimeterUnit}`;
+        }
+        let geoPerimeter;
+        if (geographyPerimeter !== undefined) {
+          geoPerimeter = `${this.precision(
+            geographyPerimeter / perimeterR
+          )} ${perimeterUnit}`;
+        }
 
         switch (this.mode) {
           case measureModeMap.line:
             _result = {
-              planeLength: perimeter,
-              ellipsoidLength: geoPerimeter,
+              projectionPerimeter: perimeter,
+              geographyPerimeter: geoPerimeter,
               coordinates: last(coordinates)
             };
             break;
           case measureModeMap.polygon: {
-            const planeArea = `${this.precision(
-              projectionArea / areaR
-            )} ${areaUnit}`;
-            const ellipsoidArea = `${this.precision(
-              geographyArea / areaR
-            )} ${areaUnit}`;
+            let projArea;
+            if (projectionArea !== undefined) {
+              projArea = `${this.precision(
+                projectionArea / areaR
+              )} ${areaUnit}`;
+            }
+            let geoArea;
+            if (geographyArea !== undefined) {
+              geoArea = `${this.precision(geographyArea / areaR)} ${areaUnit}`;
+            }
 
             _result = {
-              planeArea,
-              ellipsoidArea,
-              planePerimeter: perimeter,
-              ellipsoidPerimeter: geoPerimeter,
+              projectionArea: projArea,
+              geographyArea: geoArea,
+              projectionPerimeter: perimeter,
+              geographyPerimeter: geoPerimeter,
               coordinates: VPoint.getCenterOfGravityPoint(coordinates[0])
             };
             break;
