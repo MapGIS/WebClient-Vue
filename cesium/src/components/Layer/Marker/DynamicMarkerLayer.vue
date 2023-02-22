@@ -21,7 +21,7 @@
 import { Style } from "@mapgis/webclient-es6-service";
 import VueOptions from "../../Base/Vue/VueOptions";
 import Mapgis3dMarkerSetPro from "./Marker3dSetPro.vue";
-import * as turfjs from "@turf/turf";
+import * as Feature from "../../service/comprehensive-query/util/feature";
 
 const { MarkerStyle, LineStyle, PointStyle, FillStyle } = Style;
 const DefaultActiveImagePlotting =
@@ -194,7 +194,7 @@ export default {
         return;
       }
       let markers = geojson.features.map((f, i) => {
-        let coordinates = turfjs.center(f).geometry.coordinates;
+        let coordinates = Feature.getGeoJSONFeatureCenter(f);
         let id =
           f.properties && f.properties[idField] ? f.properties[idField] : i;
         let marker = {
@@ -257,9 +257,9 @@ export default {
         ymax: b_ymax
       } = this.getViewExtend();
       // 先查看是否在地图范围内
-      if (xmin > b_xmin && ymin > b_ymin && xmax < b_xmax && ymax < b_ymax) {
-        return;
-      }
+      // if (xmin > b_xmin && ymin > b_ymin && xmax < b_xmax && ymax < b_ymax) {
+      //   return;
+      // }
       // 然后查看两个矩形的范围大小，如果选择集的范围较当前大，需要做缩放
       if (xmax - xmin > b_xmax - b_xmin || ymax - ymin > b_ymax - b_ymin) {
         this.zoomTo({ xmin, ymin, xmax, ymax });
@@ -268,6 +268,8 @@ export default {
       }
     },
     mouseEnterEvent(e, id) {
+      const { highlight } = this;
+      if (!highlight) return;
       // 高亮要素
       const marker = this.getMarker(id);
       const { highlightStyle } = this;
@@ -282,6 +284,8 @@ export default {
       }
     },
     mouseLeaveEvent(e, id) {
+      const { highlight } = this;
+      if (!highlight) return;
       const marker = this.getMarker(id);
       if (marker) {
         this.clearHighlightFeature(marker);
@@ -395,7 +399,7 @@ export default {
       if (!find) return;
       for (let i = 0; i < find.source.entities.values.length; i++) {
         let entity = find.source.entities.values[i];
-        if (entity.properties[idField] == marker.feature.properties.fid) {
+        if (entity.properties[idField]._value == marker.fid) {
           if (entity.ellipse) {
             const style = hpoint.toCesiumStyle(Cesium);
             const { color, pixelSize, outlineColor } = style;
@@ -463,7 +467,7 @@ export default {
     clearHighlightFeature(marker) {
       const { vueCesium, vueKey, vueIndex, layerStyle } = this;
       let dataSource = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
-      if(!dataSource) return;
+      if (!dataSource) return;
       this.changeColor(dataSource.source);
     },
     highlightMarker(marker) {
@@ -481,15 +485,20 @@ export default {
     },
     onHighlightFeature(fid) {
       const marker = this.getMarker(fid);
-      let bbox = turfjs.bbox(marker.feature);
+      let bbox = Feature.getGeoJSONFeatureBound(marker.feature);
       let bound = {
-        xmin: bbox[0],
-        ymin: bbox[1],
-        xmax: bbox[2],
-        ymax: bbox[3]
+        xmin: bbox.xmin,
+        ymin: bbox.ymin,
+        xmax: bbox.xmax,
+        ymax: bbox.ymax
       };
-      this.zoomOrPanTo(bound);
+      if (marker.feature.geometry.type !== "Point") {
+        this.zoomTo(bound);
+      } else {
+        this.zoomOrPanTo(bound);
+      }
       this.highlightMarker(marker);
+      this.highlightFeature(marker);
     },
     showMarkerDetail(data) {
       this.$emit("show-popup", data);

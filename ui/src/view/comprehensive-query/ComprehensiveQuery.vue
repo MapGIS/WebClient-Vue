@@ -202,8 +202,8 @@ export default {
     /**
      * 当前点击的条目的回调函数
      */
-    clickItem(feature,markerId) {
-      this.$emit("click-item", feature,markerId);
+    clickItem(feature) {
+      this.$emit("click-item", feature);
     },
     /**
      * 当前选中的坐标
