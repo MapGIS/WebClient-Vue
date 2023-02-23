@@ -205,8 +205,13 @@ export default {
 
         return marker;
       });
+      //关闭时清除高亮
       if (markers.length === 0) {
         this.selects.forEach(this.onClearHighlightFeature);
+      }
+      //切换时清除高亮
+      if (this.selects.length === 0) {
+        this.markers.forEach(this.clearHighlightFeature);
       }
       this.markers = markers;
     },
