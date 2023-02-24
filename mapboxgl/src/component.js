@@ -51,6 +51,7 @@ export { default as MapgisRasterLayer } from "./components/layer/RasterLayer";
 export { default as MapgisIgsTileLayer } from "./components/layer/igserver/IgsTileLayer";
 export { default as MapgisIgsDocLayer } from "./components/layer/igserver/IgsDocLayer";
 export { default as MapgisIgsVectorLayer } from "./components/layer/igserver/IgsVectorLayer";
+export { default as MapgisIgsFeatureLayer } from "./components/layer/igserver/IgsFeatureLayer";
 export { default as MapgisIgsTdtLayer } from "./components/layer/igserver/IgsTdtLayer";
 export { default as MapgisArcgisLayer } from "./components/layer/ArcgisLayer";
 export { default as MapgisGoogleLayer } from "./components/layer/GoogleLayer";
