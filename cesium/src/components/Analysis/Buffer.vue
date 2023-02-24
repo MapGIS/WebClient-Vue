@@ -28,7 +28,10 @@
           :layout="layout"
           labelAlign="left"
           :colon="false"
-          v-if="srcType == 'Feature' && bufferMethod === 'client'"
+          v-if="
+            srcType == 'Feature' &&
+              (bufferMethod === 'client' || renderMethod === 'client')
+          "
         >
           <mapgis-ui-form-model-item label="设置半径">
             <mapgis-ui-input-number
@@ -54,6 +57,20 @@
           <!-- <mapgis-ui-form-model-item label="步长">
 						<mapgis-ui-input v-model=steps></mapgis-ui-input>
 					</mapgis-ui-form-model-item> -->
+          <mapgis-ui-form-model-item label="渲染方式">
+            <mapgis-ui-radio-group
+              v-model="renderMethod"
+              :options="[
+                { label: '客户端渲染', value: 'client' },
+                {
+                  label: '服务端渲染',
+                  value: 'server',
+                  disabled: bufferMethod === 'client'
+                }
+              ]"
+            >
+            </mapgis-ui-radio-group>
+          </mapgis-ui-form-model-item>
           <mapgis-ui-form-model-item label="轮廓宽度">
             <mapgis-ui-input-number-addon
               v-model="colorLineWidth"
@@ -114,7 +131,10 @@
           :layout="layout"
           labelAlign="left"
           :colon="false"
-          v-if="srcType == 'Layer' || bufferMethod === 'server'"
+          v-if="
+            srcType == 'Layer' ||
+              (bufferMethod === 'server' && renderMethod === 'server')
+          "
         >
           <mapgis-ui-form-model-item label="缓冲半径">
             <mapgis-ui-radio-group
@@ -205,6 +225,52 @@
             >
             </mapgis-ui-radio-group>
           </mapgis-ui-form-model-item>
+          <mapgis-ui-form-model-item label="渲染方式">
+            <mapgis-ui-radio-group
+              v-model="renderMethod"
+              :options="[
+                { label: '客户端渲染', value: 'client' },
+                { label: '服务端渲染', value: 'server' }
+              ]"
+            >
+            </mapgis-ui-radio-group>
+          </mapgis-ui-form-model-item>
+          <div v-if="renderMethod === 'client'">
+            <mapgis-ui-form-model-item label="轮廓宽度">
+              <mapgis-ui-input-number-addon
+                v-model="colorLineWidth"
+              ></mapgis-ui-input-number-addon>
+            </mapgis-ui-form-model-item>
+            <mapgis-ui-color-pick-panel
+              label="轮廓颜色"
+              :color="colorCopyLine"
+              :labelCol="24"
+              :wrapperCol="24"
+              :size="size"
+              :disableAlpha="false"
+              :colorStyle="colorStyle"
+              @input="
+                val =>
+                  (colorCopyLine = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
+              "
+            >
+            </mapgis-ui-color-pick-panel>
+            <mapgis-ui-color-pick-panel
+              label="填充颜色"
+              :color="colorCopyFill"
+              :wrapperCol="24"
+              :size="size"
+              :disableAlpha="false"
+              :colorStyle="colorStyle"
+              @input="
+                val => (
+                  (colorCopyFill = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`),
+                  (colorCopyOpacity = `${val.rgba.a}`)
+                )
+              "
+            >
+            </mapgis-ui-color-pick-panel>
+          </div>
           <mapgis-ui-group-tab
             title="输出结果"
             id="title-space"
@@ -336,13 +402,16 @@ export default {
       bufferAdd: true,
       // 监听组件内部缓冲状态，结束this.$emit("listenFinish", finish)
       finish: false,
-      bufferMethod: "client"
+      bufferMethod: "client",
+      renderMethod: "client"
     };
   },
   watch: {
     srcType(val, oldval) {
       if (val == "Feature" && this.bufferMethod === "client") {
         this.destLayer = this.currentTime();
+        this.bufferMethod = "client";
+        this.renderMethod = "client";
       } else {
         this.destLayer = this.srcLayer + this.currentTime();
       }
@@ -350,8 +419,20 @@ export default {
     bufferMethod(val, oldval) {
       if (val == "client") {
         this.destLayer = this.currentTime();
+        this.renderMethod = val;
       } else {
         this.isByAtt = false;
+        this.destLayer = this.srcLayer + this.currentTime();
+      }
+    },
+    renderMethod(val, oldval) {
+      if (
+        val === "client" &&
+        this.bufferMethod === "client" &&
+        this.srcType !== "Layer"
+      ) {
+        this.destLayer = this.currentTime();
+      } else {
         this.destLayer = this.srcLayer + this.currentTime();
       }
     },
@@ -491,7 +572,8 @@ export default {
         var clsBufBySRt = new ClassBufferBySingleRing({
           ip: this.baseUrl.split("/")[2].split(":")[0],
           port: this.baseUrl.split("/")[2].split(":")[1],
-          isByAtt: this.isByAtt
+          isByAtt: this.isByAtt,
+          color: 6
         });
         if (this.isByAtt == false) {
           clsBufBySRt.leftRad = this.realLeftRad;
@@ -558,7 +640,8 @@ export default {
         //设置要素缓冲分析左半径
         leftRad: this.realLeftRad,
         //设置要素缓冲分析右半径
-        rightRad: this.realRightRad
+        rightRad: this.realRightRad,
+        color: 6
       });
       /*设置缓冲分析参数*/
       //设置几何信息
@@ -578,7 +661,21 @@ export default {
       });
     },
     AnalysisSuccess(data) {
-      this.$emit("listenLayer", this.destLayer);
+      // this.$emit("listenLayer", this.destLayer);
+      // 设置缓冲区样式
+      const bufferStyle = new FillStyle({
+        color: this.colorCopyFill,
+        outlineColor: this.colorCopyLine,
+        outlineWidth: Number(this.colorLineWidth),
+        opacity: Number(this.colorCopyOpacity)
+      });
+      // 传出gdbp路径，缓冲区样式，renderType类型
+      this.$emit(
+        "listenLayer",
+        this.destLayer,
+        bufferStyle,
+        this.renderMethod.toUpperCase()
+      );
     },
     cancel() {
       Object.assign(this.$data, this.$options.data());

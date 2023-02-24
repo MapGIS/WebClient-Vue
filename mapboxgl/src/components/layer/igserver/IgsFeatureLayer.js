@@ -37,6 +37,34 @@ export default {
       type: String,
       default: new Date().getTime().toString(),
     },
+    gdbps: {
+      type: [String, Array],
+    },
+    visible: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  render(h) {
+    return h("div", [
+      h("mapgis-geojson-layer", {
+        ref: "geojsonLayer",
+        props: {
+          layerId: this.layerId,
+          sourceId: this.sourceId,
+          visible: this.visible,
+          data: this.baseUrl,
+          layerStyle: this.layerStyle.featureStyle,
+          enablePopup: this.enablePopup,
+          popupOptions: this.popupOptions,
+          enableTips: this.enableTips,
+          tipsOptions: this.tipsOptions,
+          highlightStyle: this.layerStyle.highlightStyle,
+          customPopup: this.customPopup,
+          customTips: this.customTips,
+        },
+      }),
+    ]);
   },
   methods: {
     $_init() {
