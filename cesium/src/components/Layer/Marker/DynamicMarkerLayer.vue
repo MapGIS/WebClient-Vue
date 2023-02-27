@@ -422,6 +422,7 @@ export default {
             entity.polygon.show = true;
             entity.polygon.material = material;
             entity.polygon.outlineColor = outlineColor;
+            entity.polygon.outline = true;
           }
         } else {
           if (entity.ellipse) {
