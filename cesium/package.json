@@ -1,6 +1,6 @@
 {
   "name": "@mapgis/webclient-vue-cesium",
-  "version": "16.1.18",
+  "version": "16.2.0",
   "description": "mapgis webclient-vue-cesium",
   "main": "dist-libs/webclient-vue-cesium.umd.min.js",
   "module1": "src/main.js",
@@ -31,7 +31,6 @@
     "@mapgis/webclient-plot": "^16.0.0",
     "@mapgis/webclient-store": "^10.5.5",
     "@mapgis/webclient-vue-ui": "^16.0.0",
-    "@mapgis/mapbox-gl": "^16.0.0",
     "@turf/turf": "^5.1.6",
     "@vuepress/plugin-active-header-links": "^1.7.1",
     "@vuepress/plugin-nprogress": "^1.7.1",
