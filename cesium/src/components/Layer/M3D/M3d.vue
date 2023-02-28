@@ -78,6 +78,10 @@ export default {
     tileIndex(next) {
       this.tile.tileIndex = next;
     },
+    url(next) {
+      this.unmount();
+      this.mount();
+    },
     layers(next) {
       if (this.initial) return;
       this.layerList = this.parseLayers(next);
