@@ -305,6 +305,10 @@ export default {
         }
 
         this.measureResult = { ...result };
+        // 绘制结束后，解绑测量事件，在启动绘制的时候，会绑定，防止与draw组件绘制事件冲突；
+        // 如果从测量组件切换到draw组件，在切换前还是需要调用remove事件，清除测量结果，
+        // 因为在调用draw组件绘制时，会清空之前用来测量的要素，只剩下测量结果，很奇怪
+        this.$_unbindMeasureEvents();
       }
     },
     /**
@@ -366,7 +370,7 @@ export default {
         styles: this.measureStyle
       };
       this.measure = new MapboxDraw(draweroptions);
-      this.$_bindSelfEvents(Object.keys(measureEvents));
+      // this.$_bindSelfEvents(Object.keys(measureEvents));
       this.initial = false;
     },
     /**
