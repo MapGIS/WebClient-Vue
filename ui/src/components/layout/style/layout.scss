@@ -77,7 +77,7 @@ $layout-prefix-cls: $ant-prefix + "-layout";
       // https://github.com/ant-design/ant-design/issues/7967
       // solution from https://stackoverflow.com/a/33132624/3040605
       padding-top: 0.1px;
-      background: $layout-header-background;
+      background: transparent;
     }
 
     &-has-trigger {
