@@ -211,6 +211,9 @@ export default {
       let { map, id } = this;
       let uncluster_circle = id + "_uncluster_circle";
       map.off("mouseenter", uncluster_circle, function(e) {});
+      if (this.popup) {
+        this.popup.remove();
+      }
     },
     updatePopup() {
       const { map, mapbox, coordinates } = this;
@@ -227,6 +230,9 @@ export default {
     updateData(geojson) {
       let { map, id } = this;
       map.getSource(id).setData(geojson);
+      if (this.popup) {
+        this.popup.remove();
+      }
     }
   }
 };
