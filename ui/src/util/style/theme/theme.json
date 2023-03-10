@@ -255,7 +255,7 @@
     "cardBackground": "#081a37e6",
     "headerBackground": "#142745e6",
     "footerBackground": "#081a37e6",
-    "layoutBackground": "#142745e6",
+    "layoutBackground": "transparent",
     "siderBackground": "#142745e6",
     "drawerBackground": "#081a37e6",
     "popupBackground": "#142745e6",

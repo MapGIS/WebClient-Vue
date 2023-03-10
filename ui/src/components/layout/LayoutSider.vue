@@ -12,7 +12,8 @@ export const LayoutSiderProps = {
   reverseArrow: false,
   width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   collapsedWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  theme: PropTypes.oneOf(["light", "dark", "technology"]).def("dark")
+  // ant-design-vue中的theme只有light和dark两种样式，科技风technology传进来控制台会报错，但不会影响代码运行
+  theme: PropTypes.oneOf(["light", "dark"]).def("dark")
 };
 
 export default {
