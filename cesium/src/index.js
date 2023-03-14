@@ -15,6 +15,7 @@ import IgsTileLayer from "./components/Layer/IGServer/IgsTileLayer.vue";
 import RasterLayer from "./components/Layer/RasterTile/BaseRasterLayer.vue";
 import OgcWmtsLayer from "./components/Layer/OGC/OGCWMTSLayer.vue";
 import OgcWmsLayer from "./components/Layer/OGC/OGCWMSLayer.vue";
+import OgcWfsLayer from "./components/Layer/OGC/OGCWFSLayer.vue";
 
 // 矢量瓦片
 import VectorTileLayer from "./components/Layer/VectorTile/VectorTileLayer.vue";
@@ -47,6 +48,7 @@ export const CesiumIgsDocLayer = IgsDocLayer;
 export const CesiumIgsTileLayer = IgsTileLayer;
 export const CesiumOgcWmtsLayer = OgcWmtsLayer;
 export const CesiumOgcWmsLayer = OgcWmsLayer;
+export const CesiumOgcWfsLayer = OgcWfsLayer;
 
 export const MapgisVectorTileLayer = VectorTileLayer;
 
@@ -77,6 +79,7 @@ const Components = [
   CesiumIgsTileLayer,
   CesiumOgcWmtsLayer,
   CesiumOgcWmsLayer,
+  CesiumOgcWfsLayer,
 
   MapgisVectorTileLayer,
 
