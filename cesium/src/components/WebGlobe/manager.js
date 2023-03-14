@@ -52,6 +52,8 @@ export function initVueCesium() {
     window.vueCesium.FloodAnalysisManager || new FloodAnalysisManager();
   window.vueCesium.OGCWMSManager =
     window.vueCesium.OGCWMSManager || new OGCWMSManager();
+  window.vueCesium.OGCWFSManager =
+    window.vueCesium.OGCWFSManager || new OGCWFSManager();
   window.vueCesium.DragEditManager =
     window.vueCesium.DragEditManager || new DragEditManager();
   window.vueCesium.VectorTileManager =
@@ -314,6 +316,7 @@ export class DragEditManager extends BaseManager {}
 export class PopupManager extends BaseManager {}
 export class OGCWMTSManager extends BaseManager {}
 export class OGCWMSManager extends BaseManager {}
+export class OGCWFSManager extends BaseManager {}
 export class VectorTileManager extends BaseManager {}
 export class AdvancedAnalysisManager extends BaseManager {}
 export class DrawToolManager extends BaseManager {}
