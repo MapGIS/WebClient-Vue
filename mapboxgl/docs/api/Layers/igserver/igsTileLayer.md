@@ -25,25 +25,43 @@ All common [layers props](/api/Layers/README.md#props)
   ```
 
 ### `tileSize`
- - **类型:** `Number`
+
+- **类型:** `Number`
 - **默认值:** `512`
-- **描述:** 加载瓦片的大小，如果数据瓦片本身是256大小的设置512大小会被强制拉伸至512大小。
+- **描述:** 加载瓦片的大小，如果数据瓦片本身是 256 大小的设置 512 大小会被强制拉伸至 512 大小。
 
 | 512                     | 256                     |
 | :---------------------- | :---------------------- |
 | ![512](../tile/512.png) | ![256](../tile/256.png) |
 
 ::: tip 天地图模糊
-请传入tileSize为256即可，2种方式
-``` vue
+请传入 tileSize 为 256 即可，2 种方式
+
+```vue
 <mapgis-igs-tile-layer :tileSize="256" />
 ```
-``` vue
-<mapgis-igs-tile-layer :source="{'tileSize': 256}" />
+
+```vue
+<mapgis-igs-tile-layer :source="{ tileSize: 256 }" />
 ```
+
+### `minimumLevel`
+
+- **类型:** `Number`
+- **默认值:** `0`
+- **非侦听属性**
+- **描述:** 最小缩放级别
+
+### `maximumLevel`
+
+- **类型:** `Number`
+- **默认值:** `22`
+- **非侦听属性**
+- **描述:** 最大缩放级别
+
 :::
 
-``` vue
+```vue
 <template>
   <div class="hello">
     <mapgis-web-map crs="EPSG:4326" :center="[107.19, 26.85]" :zoom="3">
@@ -55,6 +73,7 @@ All common [layers props](/api/Layers/README.md#props)
     </mapgis-web-map>
 </template>
 ```
+
 ### `zoomOffset`
 
 - **类型:** `Number`

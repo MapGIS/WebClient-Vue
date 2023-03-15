@@ -13,6 +13,14 @@ export default {
     serverName: {
       type: String,
       require: true
+    },
+    minimumLevel: {
+      type: String,
+      default: 0
+    },
+    maximumLevel: {
+      type: String,
+      default: 22
     }
   },
   methods: {
@@ -65,6 +73,8 @@ export default {
         tiles: [this._url],
         tileSize: this.tileSize,
         mapgisOffset: this._zoomOffset,
+        maxZoom: this.maximumLevel,
+        minZoom: this.minimumLevel,
         ...this.source
       };
       this.map.on("dataloading", this.$_watchSourceLoading);
