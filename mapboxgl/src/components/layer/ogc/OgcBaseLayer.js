@@ -32,6 +32,8 @@ export default {
         tiles: [this._url],
         tileSize: this.tileSize,
         mapgisOffset: this.zoomOffset,
+        maxZoom: this.maximumLevel,
+        minZoom: this.minimumLevel,
         ...this.source
       };
 
