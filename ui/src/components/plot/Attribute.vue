@@ -398,6 +398,9 @@ export default {
       });
     },
     changeComponentStyle(key, value) {
+      if (key === "fontSize") {
+        value = `${value}px`;
+      }
       const vm = this;
 
       this.$emit("changeComponentStyle", {

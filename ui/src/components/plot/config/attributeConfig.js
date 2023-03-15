@@ -89,8 +89,8 @@ export const styleAttributesUIConfig = {
     groupId: 6,
     options: {
       0: "无填充",
-      1: "实填充",
-      2: "渐变填充"
+      1: "实填充"
+      // 2: "渐变填充"
     }
   },
   fillStyle: {
@@ -98,20 +98,20 @@ export const styleAttributesUIConfig = {
     type: "color",
     groupId: 6
   },
-  fillGradType: {
-    title: "渐变类型",
-    type: "select",
-    groupId: 6,
-    options: {
-      1: "线性渐变",
-      2: "辐射渐变"
-    }
-  },
-  fillGradColor: {
-    title: "填充渐变颜色",
-    type: "color",
-    groupId: 6
-  },
+  // fillGradType: {
+  //   title: "渐变类型",
+  //   type: "select",
+  //   groupId: 6,
+  //   options: {
+  //     1: "线性渐变",
+  //     2: "辐射渐变"
+  //   }
+  // },
+  // fillGradColor: {
+  //   title: "填充渐变颜色",
+  //   type: "color",
+  //   groupId: 6
+  // },
   // fillRule: {
   //   title: "填充规则",
   //   type: "text",
@@ -122,18 +122,18 @@ export const styleAttributesUIConfig = {
     type: "text",
     groupId: 7
   },
-  fontStyle: {
-    title: "字体样式",
-    type: "select",
-    groupId: 7,
-    options: ["normal", "italic"]
-  },
-  fontVariant: {
-    title: "字体变体",
-    type: "select",
-    groupId: 7,
-    options: ["normal", "small-caps"]
-  },
+  // fontStyle: {
+  //   title: "字体样式",
+  //   type: "select",
+  //   groupId: 7,
+  //   options: ["normal", "italic"]
+  // },
+  // fontVariant: {
+  //   title: "字体变体",
+  //   type: "select",
+  //   groupId: 7,
+  //   options: ["normal", "small-caps"]
+  // },
   fontWeight: {
     title: "字体粗细",
     type: "select",
