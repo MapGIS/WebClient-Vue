@@ -95,10 +95,12 @@ $menu-prefix-cls: $ant-prefix + "-menu";
   }
   &-dark &-item:hover {
     // background-color: $menu-dark-item-hover-bg;
+    color: $hover-color;
   }
 
   &-dark &-item-selected {
-    color: $menu-dark-highlight-color;
+    // color: $menu-dark-highlight-color;
+    color: $hover-color;
     border-right: 0;
     &::after {
       border-right: 0;
