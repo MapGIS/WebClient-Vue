@@ -6,20 +6,21 @@
   background-color: $card-body-background;
 
   @include e(body, "-") {
-    background-color: $body-background;
+    // background-color: $body-background;
+    background-color: transparent;
     color: $text-color;
   }
 
-  @include e(bordered, '-') {
+  @include e(bordered, "-") {
     border: 1px solid $border-color-base;
   }
 
-  @include e(extra, '-') {
+  @include e(extra, "-") {
     color: $text-color;
   }
 
   @include e(head, "-") {
-    background-color: $body-background;
+    // background-color: $body-background;
     color: $text-color;
     margin-bottom: 0px;
     border-bottom: 1px solid $border-color-split;

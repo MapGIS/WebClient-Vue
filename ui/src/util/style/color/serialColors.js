@@ -38,7 +38,7 @@ const antdFunctionColors = {
   infoColor: $blue6,
   successColor: $green6,
   warningColor: $glod6,
-  dangerColor: $red6
+  dangerColor: $red6,
 };
 
 const isBrowser = typeof window !== "undefined";
@@ -47,6 +47,61 @@ const isNativeSupport =
   window.CSS &&
   window.CSS.supports &&
   window.CSS.supports("(--a: 0)");
+
+const replaceColorList = [
+  "background",
+  // "backgroundLight",
+  "backgroundBase",
+  "dataCardBackground",
+  "selectedColor",
+  "hoverColor",
+  // "headingColor",
+  "disabledBgColor",
+  "disabledBorderColor",
+  "borderColorBase",
+  "btnPrimaryColor",
+  "buttonBorderDefaultColor",
+  "buttonDefaultBackground",
+  "paginationBorderDefaultColor",
+  "componentBackground",
+  "switchBackground",
+  "switchDisabledBgColor",
+  "switchDisabledAfterColor",
+  "inputAddonBackground",
+  "emptyBackground",
+  "selectDropdownBackground",
+  // "selectItemHoverBg",
+  "avatarBackground",
+  "tooltipBackground",
+  "cardBackground",
+  "headerBackground",
+  "footerBackground",
+  "layoutBackground",
+  "siderBackground",
+  "drawerBackground",
+  "popupBackground",
+  "popoverBackground",
+  "modalBackground",
+  "ribbonBackground",
+  "messageBackground",
+  "mentionBackground",
+  "radioInnerDisabledBg",
+  "collapseCardHeaderBg",
+  "collapseCardBackground",
+  "searchArrowIconBg",
+  "sliderRailBackgroundColor",
+  "divBackground",
+  "divBorderColor",
+  "contentBackground",
+  "navBackground",
+  "navContentBackground",
+  "navSelectedBackground",
+  "navBorderBackground",
+  "dropdownBackground",
+  "panelBackground",
+  "tableBackground",
+  "darkHeaderBackground",
+];
 
 export function getColorWithOpacity(color, opacity, isStack = true) {
   if (!color) {
@@ -64,9 +119,7 @@ export function getColorWithOpacity(color, opacity, isStack = true) {
 }
 
 export function getDarkenColor(color, amount) {
-  return tinyColor(color)
-    .darken(amount)
-    .toString();
+  return tinyColor(color).darken(amount).toString();
 }
 
 export function getDerivedColorsByTextColor(textColor, opacity) {
@@ -81,7 +134,7 @@ export function getDerivedColorsByTextColor(textColor, opacity) {
   return derivedColor;
 }
 
-export function getPrimarySerialColors(nextThemeInfo) {
+export function getPrimarySerialColors(nextThemeInfo, opacity = 1) {
   const series = [];
   const nextThemeStyle = nextThemeInfo;
   let prevPrimaryColor;
@@ -98,20 +151,30 @@ export function getPrimarySerialColors(nextThemeInfo) {
     switch (index) {
       case 2:
         nextColor = prevPrimaryColor
-          ? getColorWithOpacity(acceptColor, 0.15)
-          : colorPalette(acceptColor, index);
+          ? getColorWithOpacity(acceptColor, 0.15 * opacity)
+          : getColorWithOpacity(colorPalette(acceptColor, index), opacity);
         break;
       case 5:
-        nextColor = colorPalette(acceptColor, index);
+        nextColor = getColorWithOpacity(
+          colorPalette(acceptColor, index),
+          opacity
+        );
         break;
       case 6:
-        nextColor = acceptColor;
+        // nextColor = getColorWithOpacity(acceptColor, 1, false);
+        nextColor = getColorWithOpacity(acceptColor, opacity);
         break;
       case 7:
-        nextColor = colorPalette(acceptColor, index);
+        nextColor = getColorWithOpacity(
+          colorPalette(acceptColor, index),
+          opacity
+        );
         break;
       default:
-        nextColor = colorPalette(acceptColor, index);
+        nextColor = getColorWithOpacity(
+          colorPalette(acceptColor, index),
+          opacity
+        );
         break;
     }
     series.push(nextColor);
@@ -127,7 +190,7 @@ export function getFunctionSerialColors(functionColors) {
     if (antdFunctionColors.hasOwnProperty(key)) {
       const color = acceptFunctionColors[key] || antdFunctionColors[key];
       nextFunctionSerialColors[key] = [];
-      seriesIndex.forEach(item => {
+      seriesIndex.forEach((item) => {
         const nextColor = item === 6 ? color : colorPalette(color, item);
         nextFunctionSerialColors[key].push(nextColor);
       });
@@ -165,7 +228,7 @@ export function getExtralColors(
     dangerShadowColor: getColorWithOpacity(functionColors.dangerColor[4], 0.25),
     disabledDarkenBgColor10: getDarkenColor(themeStyleData.disabledBgColor, 10),
     tableHeaderSortActiveBg,
-    tableHeaderFilterActiveBg: getDarkenColor(tableHeaderSortActiveBg, 5)
+    tableHeaderFilterActiveBg: getDarkenColor(tableHeaderSortActiveBg, 5),
   };
   return extraSerialColors;
 }
@@ -173,7 +236,7 @@ export function getExtralColors(
 export function dealWithTheme(nextThemeStyle) {
   const defaultThemeStyle = nextThemeStyle.style || "light";
   const defaultTheme = themeFactory.find(
-    item => item.label === defaultThemeStyle
+    (item) => item.label === defaultThemeStyle
   );
   // 合并 lightTheme 是因为可能其他 theme 没有完整的参数，如 disableColor
   const themeStyleData = Object.assign(
@@ -182,13 +245,16 @@ export function dealWithTheme(nextThemeStyle) {
     defaultTheme,
     nextThemeStyle
   );
-  const serialColorsReplacer = getPrimarySerialColors(themeStyleData);
+  const serialColorsReplacer = getPrimarySerialColors(
+    themeStyleData,
+    themeStyleData.opacity || 1
+  );
   const functionSerialColorsReplacer = getFunctionSerialColors(themeStyleData);
   const nextThemeStyleData = Object.assign({}, themeStyleData, {
     selectedColor: serialColorsReplacer[1],
     // 影响在theme.json中设置的hoverColor样式
     // hoverColor: serialColorsReplacer[4],
-    clickColor: serialColorsReplacer[6]
+    clickColor: serialColorsReplacer[6],
   });
   const nextThemeData = {
     themeStyle: nextThemeStyleData,
@@ -198,7 +264,7 @@ export function dealWithTheme(nextThemeStyle) {
       themeStyleData,
       serialColorsReplacer,
       functionSerialColorsReplacer
-    )
+    ),
   };
   setRootStyle(nextThemeData);
   return nextThemeData;
@@ -209,12 +275,12 @@ function setRootStyle(themeData) {
     themeStyle,
     primarySerialColors,
     functionSerialColors,
-    extraSerialColors
+    extraSerialColors,
   } = themeData;
   const primaryColor = themeStyle.colorGroup[0];
   const variables = {
     "--antd-wave-shadow-color": primaryColor,
-    "--primary-color": primaryColor
+    "--primary-color": primaryColor,
   };
   const themeInfo = Object.assign({}, themeStyle, extraSerialColors);
   const themeKeys = Object.keys(themeInfo);
@@ -228,7 +294,7 @@ function setRootStyle(themeData) {
       variables[varKey] = color;
     });
   }
-  themeKeys.forEach(key => {
+  themeKeys.forEach((key) => {
     if (!isArray(themeInfo[key])) {
       const varKey = `--${key.replace(/[A-Z]/g, "-$&").toLowerCase()}`;
       variables[varKey] = themeInfo[key];
@@ -250,7 +316,7 @@ function setRootStyle(themeData) {
       silent: true,
       onlyLegacy: true,
       variables: {},
-      watch: false
+      watch: false,
     };
     if (!isNativeSupport) {
       options.onlyLegacy = false;
@@ -265,13 +331,13 @@ function setRootStyle(themeData) {
 export function dealWithLayout(nextLayoutStyle) {
   const defaultLayoutStyle = nextLayoutStyle || "admin";
   const defaultLayout = layoutFactory.find(
-    item => item.label === defaultLayoutStyle.label
+    (item) => item.label === defaultLayoutStyle.label
   );
   const layoutInfo = Object.assign({}, defaultLayout);
   const variables = {};
 
   const layoutKeys = Object.keys(layoutInfo);
-  layoutKeys.forEach(key => {
+  layoutKeys.forEach((key) => {
     if (!isArray(layoutInfo[key])) {
       const varKey = `--${key.replace(/[A-Z]/g, "-$&").toLowerCase()}`;
       variables[varKey] = layoutInfo[key];
@@ -279,7 +345,7 @@ export function dealWithLayout(nextLayoutStyle) {
   });
 
   const nextLayoutData = {
-    layoutStyle: layoutInfo
+    layoutStyle: layoutInfo,
   };
 
   const rootStyle = `:root ${JSON.stringify(variables, null, 2)
@@ -298,7 +364,7 @@ export function dealWithLayout(nextLayoutStyle) {
       silent: true,
       onlyLegacy: true,
       variables: {},
-      watch: false
+      watch: false,
     };
     if (!isNativeSupport) {
       options.onlyLegacy = false;
@@ -309,4 +375,21 @@ export function dealWithLayout(nextLayoutStyle) {
   }
   antdLayoutTag.innerHTML = rootStyle;
   return nextLayoutData;
+}
+
+export function dealWithBackgroundOpacity(themeData) {
+  const opacity = themeData.opacity || 0.5;
+  replaceColorList.forEach((item) => {
+    if (themeData[item]) {
+      themeData[item] = setColorOpacity(themeData[item], opacity);
+    }
+  });
+}
+
+export function setColorOpacity(color, opacity) {
+  const arr = color.split(",");
+  const alpha = arr[arr.length - 1].replace(")", "");
+  const newAlpha = Number(alpha) * opacity;
+  arr.splice(arr.length - 1, 1, newAlpha + ")");
+  return arr.join();
 }
