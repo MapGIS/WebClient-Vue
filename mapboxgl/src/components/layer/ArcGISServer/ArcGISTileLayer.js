@@ -62,8 +62,8 @@ export default {
         tiles: [this._url],
         tileSize: this.tileSize,
         mapgisOffset: this._zoomOffset,
-        maxZoom: this.maximumLevel,
-        minZoom: this.minimumLevel,
+        maxzoom: this.maximumLevel,
+        minzoom: this.minimumLevel,
         ...this.source
       };
       //this.map.on为指定类型的事件添加侦听器，可以选择限制为指定样式层中的功能。
