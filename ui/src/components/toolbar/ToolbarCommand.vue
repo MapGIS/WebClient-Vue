@@ -15,6 +15,18 @@
       <mapgis-ui-icon :icon="icon" />
     </div>
     <mapgis-ui-iconfont
+      v-else-if="icon.startsWith('mapgis')"
+      :class="{
+        'mapgis-ui-toolbar-command': true,
+        active: active,
+        disabled: disabled,
+        'hover-bordered': hoverBordered,
+        [`mapgis-ui-toolbar-command-${size}`]: !!size
+      }"
+      @click="onClick"
+      :type="icon"
+    />
+    <mapgis-ui-ant-icon
       v-else
       :class="{
         'mapgis-ui-toolbar-command': true,
