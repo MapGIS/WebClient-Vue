@@ -55,7 +55,8 @@ $table-selection-column-width: 60px;
     font-weight: 700;
     text-align: left;
     background: $table-header-bg;
-    border-bottom: $border-width-base $border-style-base $border-color-split;
+    border-bottom: $border-width-base $border-style-base $border-color-base;
+    border-right: $border-width-base $border-style-base $border-color-base;
     transition: $table-header-bg 0.3s ease;
 
     &[colspan]:not([colspan="1"]) {
@@ -234,7 +235,7 @@ $table-selection-column-width: 60px;
   }
 
   &-tbody > tr > td {
-    border-bottom: $border-width-base $border-style-base $border-color-split;
+    border-bottom: $border-width-base $border-style-base $border-color-base;
     transition: background 0.3s;
   }
 
@@ -330,7 +331,7 @@ $table-selection-column-width: 60px;
 
   &-tbody > tr.#{$table-prefix-cls}-row-selected td {
     color: $table-selected-row-color;
-    background: $table-selected-row-bg;
+    background: $table-background;
   }
 
   &-thead > tr > th.#{$table-prefix-cls}-column-sort {
@@ -390,7 +391,7 @@ $table-selection-column-width: 60px;
     .#{$table-prefix-cls}-body > table,
     .#{$table-prefix-cls}-fixed-left table,
     .#{$table-prefix-cls}-fixed-right table {
-      border: $border-width-base $border-style-base $border-color-split;
+      border: $border-width-base $border-style-base $border-color-base;
       border-right: 0;
       border-bottom: 0;
     }
@@ -433,12 +434,12 @@ $table-selection-column-width: 60px;
     }
 
     .#{$table-prefix-cls}-thead > tr:not(:last-child) > th {
-      border-bottom: $border-width-base $border-style-base $border-color-split;
+      border-bottom: $border-width-base $border-style-base $border-color-base;
     }
 
     .#{$table-prefix-cls}-thead > tr > th,
     .#{$table-prefix-cls}-tbody > tr > td {
-      border-right: $border-width-base $border-style-base $border-color-split;
+      border-right: $border-width-base $border-style-base $border-color-base;
     }
   }
 
@@ -798,7 +799,7 @@ $table-selection-column-width: 60px;
 
   &-thead > tr > th.#{$table-prefix-cls}-selection-column,
   &-tbody > tr > td.#{$table-prefix-cls}-selection-column {
-    border-right: $border-width-base $border-style-base $border-color-split;
+    // border-right: $border-width-base $border-style-base $border-color-split;
     text-align: center;
 
     .#{$ant-prefix}-radio-wrapper {
@@ -822,7 +823,7 @@ $table-selection-column-width: 60px;
 
 // 解决右侧表格线条颜色问题(注意第一个class是连着的)
 .mapgis-ui-table-small.mapgis-ui-table-bordered .mapgis-ui-table-content {
-  border-right: $border-width-base $border-style-base $border-color-split;
+  border-right: $border-width-base $border-style-base $border-color-base;
 }
 
 // mapgis table css
@@ -841,12 +842,12 @@ $table-selection-column-width: 60px;
   .mapgis-ui-table-thead
   > tr
   > th:last-child {
-  border-right: $border-width-base $border-style-base $border-color-split;
+  border-right: $border-width-base $border-style-base $border-color-base;
 }
 
 .#{$table-prefix-cls}-thead > tr:hover.#{$table-prefix-cls}-row-selected > td,
 .#{$table-prefix-cls}-tbody > tr:hover.#{$table-prefix-cls}-row-selected > td {
-  background: $table-row-hover-bg;
+  background: $table-background;
 }
 .#{$table-prefix-cls}-thead
   > tr:hover.#{$table-prefix-cls}-row-selected
@@ -854,7 +855,7 @@ $table-selection-column-width: 60px;
 .#{$table-prefix-cls}-tbody
   > tr:hover.#{$table-prefix-cls}-row-selected
   > td.#{$table-prefix-cls}-column-sort {
-  background: $table-row-hover-bg;
+  background: $table-background;
 }
 
 /**
