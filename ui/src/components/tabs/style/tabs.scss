@@ -70,7 +70,7 @@ $tabs-prefix-cls: $ant-prefix + "-tabs";
       }
       #{$prefix}-tab-active {
         background: transparent;
-        border-bottom-color: $body-background-without-opacity;
+        border-bottom-color: $border-color-base;
       }
       #{$prefix}-tab-disabled {
         #{$prefix}-close-x {
