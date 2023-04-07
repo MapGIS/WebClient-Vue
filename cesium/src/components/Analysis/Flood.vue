@@ -195,6 +195,7 @@ export default {
     this.mount();
   },
   destroyed() {
+    debugger;
     this.unmount();
   },
   computed: {
@@ -286,6 +287,7 @@ export default {
       );
     },
     mount() {
+      debugger;
       const { vueCesium, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
@@ -448,6 +450,11 @@ export default {
         "floodAnalysis",
         floodAnalysis
       );
+      this.$emit("showProgress", {
+        startHeightCopy: this.startHeightCopy,
+        maxHeightCopy: this.maxHeightCopy,
+        floodSpeedCopy: this.floodSpeedCopy
+      });
     },
     /**
      * @description 获取SourceOptions,以方便获取洪水淹没分析对象和绘制对象
