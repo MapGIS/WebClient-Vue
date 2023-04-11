@@ -12,11 +12,11 @@ export default {
     default: 0
   },
   minimumLevel: {
-    type: String,
+    type: Number,
     default: 0
   },
   maximumLevel: {
-    type: String,
+    type: Number,
     default: 22
   }
 };

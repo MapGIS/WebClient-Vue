@@ -30,6 +30,14 @@ export default {
     removeForce: {
       type: Boolean,
       default: true
+    },
+    minimumLevel: {
+      type: Number,
+      default: 0
+    },
+    maximumLevel: {
+      type: Number,
+      default: 22
     }
   },
 
@@ -180,12 +188,19 @@ export default {
           newLayer = this.mergeLayers(oldStyle.layers, newStyle.layers);
           break;
       }
+      const self = this;
       // 如果样式文件中，paint为null，则mapboxgl会报错，这里给个默认值
       const layers = newLayer.map(item => {
         if (!item.paint) {
           item.paint = {
             "text-color": "rgba(0,0,0,1)"
           };
+        }
+        if (item.minzoom !== undefined && item.minzoom < self.minimumLevel) {
+          item.minzoom = self.minimumLevel;
+        }
+        if (item.maxzoom !== undefined && item.maxzoom > self.maximumLevel) {
+          item.maxzoom = self.maximumLevel;
         }
         return item;
       });

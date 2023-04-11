@@ -2,7 +2,7 @@ import {
   getLayers,
   getFonts,
   getVectorTileSource,
-  getSpritePng
+  getSpritePng,
 } from "./vectortile/MapgisVectorTileLayer";
 import VectorTileProvider from "./vectortile/VectorTileProvider";
 import VectorTileStyle from "./vectortile/MapgisVectorTileStyle";
@@ -24,6 +24,8 @@ import axios from "axios";
  * @param {Cesium.TilingScheme} [option.tilingScheme] 矢量瓦片瓦片切分规则：经纬度还是墨卡托
  * @param {String} [option.token] 第三方需要的token，比如mapbox
  * @param {String} [option.show=true] 是否可见
+ * @param {Number} [option.maximumLevel=20] 最大级别
+ * @param {Number} [option.minimumLevel=0] 最小级别
   * @param {String} [option.callback] 加载矢量瓦片成功回调，返回Provider
  * @example 
  * vectortileLayer = new VectorTileLayer(
@@ -61,6 +63,8 @@ export class VectorTileRender {
     this.mvtStyle = options.mvtStyle;
     this.styleUrl = options.styleUrl;
     this.tilingScheme = options.tilingScheme;
+    this.maximumLevel = options.maximumLevel || 20;
+    this.minimumLevel = options.minimumLevel || 0;
     this.provider = null;
 
     this.initDevicePixelRatio();
@@ -112,8 +116,8 @@ export class VectorTileRender {
     const vm = this;
     if (!this.vectortilejson) {
       fetch(this.url)
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           vm.vectortilejson = data;
           vm.requestStyleData(vm.vectortilejson);
         });
@@ -139,10 +143,10 @@ export class VectorTileRender {
     var sources = getVectorTileSource(vectortilejson);
     var spritepng = getSpritePng(vectortilejson);
     fetch(vectortilejson.sprite + ".json")
-      .then(res => {
+      .then((res) => {
         res.json();
       })
-      .then(data => {
+      .then((data) => {
         let spritedata = data;
         vm.styleData = {
           vectortilejson: vectortilejson,
@@ -150,7 +154,7 @@ export class VectorTileRender {
           spritedata: spritedata,
           spritepng: spritepng,
           fonts: getFonts,
-          sources: sources
+          sources: sources,
         };
         vm.addLayer(vm.styleData);
       });
@@ -199,7 +203,9 @@ export class VectorTileRender {
         opacity: this.opacity,
         threadId: this.threadId,
         show: this.show,
-        tilingScheme: this.tilingScheme
+        tilingScheme: this.tilingScheme,
+        maximumLevel: this.maximumLevel,
+        minimumLevel: this.minimumLevel,
       });
       this.provider = this.viewer.imageryLayers.addImageryProvider(vectortile);
       this.provider.show = this.show;
@@ -232,7 +238,7 @@ export class VectorTileRender {
   setLayoutProperty(layerId, key, value) {
     if (!this.vectortilejson || !this.vectortilejson.layers) return;
     const { layers } = this.vectortilejson;
-    let finds = layers.filter(l => {
+    let finds = layers.filter((l) => {
       return l.id === layerId;
     });
     let layer = finds && finds.length > 0 ? finds[0] : undefined;
@@ -254,7 +260,7 @@ export class VectorTileRender {
   setPaintProperty(layerId, key, value) {
     if (!this.vectortilejson || !this.vectortilejson.layers) return;
     const { layers } = this.vectortilejson;
-    let finds = layers.filter(l => {
+    let finds = layers.filter((l) => {
       return l.id === layerId;
     });
     let layer = finds && finds.length > 0 ? finds[0] : undefined;
@@ -274,7 +280,7 @@ export class VectorTileRender {
   setFilter(layerId, rule) {
     if (!this.vectortilejson || !this.vectortilejson.layers) return;
     const { layers } = this.vectortilejson;
-    let finds = layers.filter(l => {
+    let finds = layers.filter((l) => {
       return l.id === layerId;
     });
     let layer = finds && finds.length > 0 ? finds[0] : undefined;
