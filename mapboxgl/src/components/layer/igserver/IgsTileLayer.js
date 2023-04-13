@@ -15,11 +15,11 @@ export default {
       require: true
     },
     minimumLevel: {
-      type: String,
+      type: Number,
       default: 0
     },
     maximumLevel: {
-      type: String,
+      type: Number,
       default: 22
     }
   },

@@ -59,8 +59,13 @@ export default {
       return new Promise(
         resolve => {
           let vectortile;
+
+          const minimumLevel = $props.options.minimumLevel || 0;
+          const maximumLevel = $props.options.maximumLevel || 20;
           const opt = {
             ...$props,
+            minimumLevel,
+            maximumLevel,
             tilingScheme: tileScheme,
             callback: () => {
               resolve(vectortile);
