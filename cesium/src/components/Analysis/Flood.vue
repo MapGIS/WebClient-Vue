@@ -45,7 +45,7 @@
           <mapgis-ui-button type="primary" @click="analysis"
             >分析</mapgis-ui-button
           >
-          <mapgis-ui-button @click="clear">清除</mapgis-ui-button>
+          <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
         </mapgis-ui-setting-footer>
       </div>
     </slot>
@@ -497,6 +497,7 @@ export default {
      */
     remove() {
       this._removeFlood();
+      this.$emit("closeProgress");
       const { vueCesium, vueKey, vueIndex } = this;
       const options = this._getSourceOptions();
       const { drawElement } = options;
@@ -514,9 +515,6 @@ export default {
 
       this.positions = null;
       this.recalculate = false;
-    },
-    clear() {
-      this.$emit("clear");
     }
   }
 };
