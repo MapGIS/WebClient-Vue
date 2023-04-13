@@ -45,7 +45,7 @@
           <mapgis-ui-button type="primary" @click="analysis"
             >分析</mapgis-ui-button
           >
-          <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
+          <mapgis-ui-button @click="clear">清除</mapgis-ui-button>
         </mapgis-ui-setting-footer>
       </div>
     </slot>
@@ -164,15 +164,6 @@ export default {
     step: {
       type: Number,
       default: 500
-    },
-    /**
-     * @type Number
-     * @default -200
-     * @description 默认偏移高度，只会生效一次
-     */
-    defaultOffsetHeight: {
-      type: Number,
-      default: -200
     }
   },
   data() {
@@ -195,7 +186,6 @@ export default {
     this.mount();
   },
   destroyed() {
-    debugger;
     this.unmount();
   },
   computed: {
@@ -287,7 +277,6 @@ export default {
       );
     },
     mount() {
-      debugger;
       const { vueCesium, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
@@ -374,13 +363,11 @@ export default {
                   min = sampleResult[i].height;
                 }
               }
-              if (!that.changeMaxHeight) {
-                that.maxHeightCopy = Number(max) + that.defaultOffsetHeight;
-              }
-              if (!that.changeStartHeight) {
-                that.startHeightCopy = Number(min);
-              }
-              that._doAnalysis();
+              that.$emit("showProgress", {
+                startHeightCopy: that.startHeightCopy,
+                maxHeightCopy: that.maxHeightCopy,
+                floodSpeedCopy: that.floodSpeedCopy
+              });
             },
             { level: 12 }
           );
@@ -450,11 +437,6 @@ export default {
         "floodAnalysis",
         floodAnalysis
       );
-      this.$emit("showProgress", {
-        startHeightCopy: this.startHeightCopy,
-        maxHeightCopy: this.maxHeightCopy,
-        floodSpeedCopy: this.floodSpeedCopy
-      });
     },
     /**
      * @description 获取SourceOptions,以方便获取洪水淹没分析对象和绘制对象
@@ -532,6 +514,9 @@ export default {
 
       this.positions = null;
       this.recalculate = false;
+    },
+    clear() {
+      this.$emit("clear");
     }
   }
 };
