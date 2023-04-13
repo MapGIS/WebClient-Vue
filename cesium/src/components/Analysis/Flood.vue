@@ -164,15 +164,6 @@ export default {
     step: {
       type: Number,
       default: 500
-    },
-    /**
-     * @type Number
-     * @default -200
-     * @description 默认偏移高度，只会生效一次
-     */
-    defaultOffsetHeight: {
-      type: Number,
-      default: -200
     }
   },
   data() {
@@ -372,13 +363,11 @@ export default {
                   min = sampleResult[i].height;
                 }
               }
-              if (!that.changeMaxHeight) {
-                that.maxHeightCopy = Number(max) + that.defaultOffsetHeight;
-              }
-              if (!that.changeStartHeight) {
-                that.startHeightCopy = Number(min);
-              }
-              that._doAnalysis();
+              that.$emit("showProgress", {
+                startHeightCopy: that.startHeightCopy,
+                maxHeightCopy: that.maxHeightCopy,
+                floodSpeedCopy: that.floodSpeedCopy
+              });
             },
             { level: 12 }
           );
@@ -508,6 +497,7 @@ export default {
      */
     remove() {
       this._removeFlood();
+      this.$emit("closeProgress");
       const { vueCesium, vueKey, vueIndex } = this;
       const options = this._getSourceOptions();
       const { drawElement } = options;

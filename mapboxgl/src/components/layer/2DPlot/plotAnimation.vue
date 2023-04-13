@@ -11,7 +11,7 @@
       @import="importList"
       @export="exportList"
       @save="saveList"
-      @saveNewScript='saveNewScript'
+      @saveNewScript="saveNewScript"
       class="mapgis-2d-plot-animation-panel"
     ></mapgis-ui-plot-script-list>
     <mapgis-ui-plot-script
@@ -24,7 +24,7 @@
       :is3dLayer="false"
       v-if="!showScriptList"
       @return="
-        (e,script) => {
+        (e, script) => {
           showScriptList = e;
           $emit('save', script);
         }
@@ -33,7 +33,7 @@
       @add="addScript"
       @change="scriptChange"
       @animationChange="animationChange"
-      @updateScript='saveNewScript'
+      @updateScript="saveNewScript"
       class="mapgis-2d-plot-animation-panel"
     ></mapgis-ui-plot-script>
     <slot
@@ -304,7 +304,7 @@ export default {
       let timeline = this.getPlotAnimation();
       if (timeline) {
         timeline.restore();
-        console.log(timeline)
+        console.log(timeline);
         this.speed = 1;
         this.interval = "未设置";
         timeline.clear();
@@ -312,7 +312,7 @@ export default {
     },
     initTimeline() {
       let timeline = this.getPlotAnimation();
-      console.log(timeline)
+      console.log(timeline);
       if (timeline) {
         this.clearTimeline();
         timeline.fromJSON(
@@ -381,34 +381,33 @@ export default {
       this.scriptListCopy = e.list;
     },
     addList(scriptList) {
-      console.log(scriptList)
+      console.log(scriptList);
       this.scriptListCopy = scriptList;
       this.activeIndex = scriptList.length - 1;
-      console.log(this.scriptListCopy, this.activeIndex)
+      console.log(this.scriptListCopy, this.activeIndex);
       this.initTimeline();
     },
     //保存新增空脚本或者更新脚本
-    saveNewScript(script){
-      debugger
-      this.$emit('save',script)
+    saveNewScript(script) {
+      this.$emit("save", script);
     },
     removeList(script) {
       // 修改二维态势推演删除无效问题
       // 遍历脚本列表
       for (let i = 0; i < this.scriptListCopy.length; i++) {
         // 判断
-        if(this.scriptListCopy[i].timeLineName==script.timeLineName){
+        if (this.scriptListCopy[i].timeLineName == script.timeLineName) {
           // 删除
-          this.scriptListCopy.splice(i,1)
+          this.scriptListCopy.splice(i, 1);
         }
       }
-      this.$emit('remove',script)
+      this.$emit("remove", script);
     },
     saveList(script) {
       this.$emit("save", script);
     },
     importList(script) {
-      console.log(script)
+      console.log(script);
       this.$emit("save", script);
       // this.scriptListCopy = scriptList;
     },
