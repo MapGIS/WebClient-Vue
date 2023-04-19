@@ -249,7 +249,7 @@ export default {
       this.enableSkyAtmosphere(skyAtmosphere);
       this.enableShadow(shadow);
       this.enableDepthTest(depthTest);
-      this.enableFPS(compass);
+      this.enableFPS(FPS);
       this.enableTimeline(timeline);
       this.enableCompass(compass);
       this.enableZoom(zoom);
@@ -460,13 +460,13 @@ export default {
       this.basicSetting.statebar = next;
       const vm = this;
       viewer.statebar = this.basicSetting.statebar;
-      let statebars = document.getElementsByClassName("mapgis-3d-statebar")
-      if(viewer.statebar){
-        statebars[0].style.display="block"
-      }else{
-        statebars[0].style.display="none"
+      let statebars = document.getElementsByClassName("mapgis-3d-statebar");
+      if (viewer.statebar) {
+        statebars[0].style.display = "block";
+      } else {
+        statebars[0].style.display = "none";
       }
-      
+
       // 改变状态栏的上下位置
       if (vm.basicSetting.timeline) {
         vm.$nextTick(function() {

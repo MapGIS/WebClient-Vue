@@ -350,8 +350,8 @@ a:hover {
 .compass {
   pointer-events: auto;
   position: absolute;
-  right: 0px;
-  top: 100px;
+  left: 0px;
+  top: 550px;
   width: 95px;
   height: 95px;
   overflow: hidden;
