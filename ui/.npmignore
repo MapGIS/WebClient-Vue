@@ -1,0 +1,12 @@
+build/
+node_modules/
+src/
+.browserslistrc
+.eslintignore
+.eslintrc.js
+.gitignore
+.postcssrc.js
+babel.config.js
+prettier.config.js
+vue.config.js
+yarn.lock
