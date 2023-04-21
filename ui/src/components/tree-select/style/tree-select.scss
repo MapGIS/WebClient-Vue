@@ -10,7 +10,7 @@ $select-tree-prefix-cls: $ant-prefix + "-select-tree";
 
 @include b(select-tree) {
   &-checkbox-inner {
-    background: #fff0;
+    background: transparent;
   }
 
   @include e(switcher, "-") {
@@ -148,13 +148,13 @@ $select-tree-prefix-cls: $ant-prefix + "-select-tree";
     }
   }
   li &-treenode-disabled {
-    > span:not(.#{select-tree-prefix-cls}-switcher),
-    > .#{select-tree-prefix-cls}-node-content-wrapper,
-    > .#{select-tree-prefix-cls}-node-content-wrapper span {
+    > span:not(.#{$select-tree-prefix-cls}-switcher),
+    > .#{$select-tree-prefix-cls}-node-content-wrapper,
+    > .#{$select-tree-prefix-cls}-node-content-wrapper span {
       color: $disabled-color;
       cursor: not-allowed;
     }
-    > .#{select-tree-prefix-cls}-node-content-wrapper:hover {
+    > .#{$select-tree-prefix-cls}-node-content-wrapper:hover {
       background: transparent;
     }
   }
@@ -168,31 +168,33 @@ $select-tree-prefix-cls: $ant-prefix + "-select-tree";
   }
 }
 
-.#{select-prefix-cls}-tree-dropdown {
+.#{$select-prefix-cls}-tree-dropdown {
+  color: $text-color;
   // .reset-component;
-  .#{select-prefix-cls}-dropdown-search {
+  .#{$select-prefix-cls}-dropdown-search {
     position: sticky;
     top: 0;
     z-index: 1;
     display: block;
     padding: 4px;
-    background: $component-background;
+    background: transparent;
     .#{select-prefix-cls}-search__field__wrap {
       width: 100%;
     }
-    .#{select-prefix-cls}-search__field {
+    .#{$select-prefix-cls}-search__field {
       box-sizing: border-box;
       width: 100%;
       padding: 4px 7px;
       border: $border-width-base $border-style-base $border-color-base;
       border-radius: 4px;
       outline: none;
+      background: transparent;
     }
-    &.#{select-prefix-cls}-search--hide {
+    &.#{$select-prefix-cls}-search--hide {
       display: none;
     }
   }
-  .#{select-prefix-cls}-not-found {
+  .#{$select-prefix-cls}-not-found {
     display: block;
     padding: 7px 16px;
     color: $disabled-color;
@@ -231,4 +233,21 @@ $select-tree-prefix-cls: $ant-prefix + "-select-tree";
   li
   .#{$select-tree-prefix-cls}-node-content-wrapper.#{$select-tree-prefix-cls}-node-selected {
   background-color: $primary-2;
+}
+
+.#{$select-tree-prefix-cls}-checkbox-indeterminate
+  .#{$select-tree-prefix-cls}-checkbox-inner {
+  background-color: transparent;
+  border-color: $border-color-base;
+}
+
+li.#{$select-tree-prefix-cls}-treenode-disabled
+  > span:not(.#{$select-tree-prefix-cls}-switcher),
+li.#{$select-tree-prefix-cls}-treenode-disabled
+  > .#{$select-tree-prefix-cls}-node-content-wrapper,
+li.#{$select-tree-prefix-cls}-treenode-disabled
+  > .#{$select-tree-prefix-cls}-node-content-wrapper
+  span {
+  color: $disabled-color;
+  cursor: not-allowed;
 }
