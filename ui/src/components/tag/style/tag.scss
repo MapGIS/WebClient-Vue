@@ -1,16 +1,17 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
 $tag-prefix-cls: $ant-prefix + "-tag";
 
 @include b(tag) {
-  background: $tag-default-bg;
-  .#{$iconfont-css-prefix}-close {
-    color: $text-color-secondary;
-  }
+  // background: $tag-default-bg;
+  color: $text-color;
+  // .#{$iconfont-css-prefix}-close {
+  //   color: $text-color-secondary;
+  // }
 }
 
-.#{tag-prefix-cls} {
+.#{$tag-prefix-cls} {
   // .reset-component;
 
   display: inline-block;
@@ -43,7 +44,7 @@ $tag-prefix-cls: $ant-prefix + "-tag";
     padding: 0 8px;
   }
 
-  .#{iconfont-css-prefix}-close {
+  .#{$iconfont-css-prefix}-close {
     // .iconfont-size-under-12px(10px);
 
     margin-left: 3px;

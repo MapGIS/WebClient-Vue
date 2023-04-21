@@ -252,6 +252,12 @@ export { default as MapgisUiGlobalSocket } from "./view/datastore/stream/GlobalS
 // comprehensive-query
 export { default as MapgisUiComprehensiveQuery } from "./view/comprehensive-query/ComprehensiveQuery.vue";
 
+// tree-check-list
+export { default as MapgisUiLayerCheckList } from "./view/layer-list/LayerCheckList.vue";
+
+// select-list
+export { default as MapgisUiLayerSelectList } from "./view/layer-list/LayerSelectList.vue";
+
 // chart
 export { default as MapgisUiChartFlow } from "./components/charts/Flow.vue";
 

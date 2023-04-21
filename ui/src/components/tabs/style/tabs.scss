@@ -24,7 +24,7 @@ $tabs-prefix-cls: $ant-prefix + "-tabs";
     padding: 12px 4px;
   }
   .mapgis-ui-tabs .mapgis-ui-tabs-small-bar .mapgis-ui-tabs-tab {
-    padding: 8px 4px;
+    padding: 0 4px;
   }
 
   @include e(tab-prev tab-next, "-") {
