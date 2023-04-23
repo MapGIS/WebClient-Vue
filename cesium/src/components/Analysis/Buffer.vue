@@ -273,10 +273,17 @@
           </div>
           <mapgis-ui-group-tab
             title="输出结果"
-            id="title-space"
+            :isTitleBold="false"
+            :hasTopMargin="false"
             :hasBottomMargin="false"
-          />
-          <!-- <mapgis-ui-form-model-item label="输出结果"> -->
+          >
+            <mapgis-ui-tooltip slot="handle" title="导出" @click="exportResult">
+              <mapgis-ui-iconfont class="iconfont-btn" type="mapgis-daochu" />
+            </mapgis-ui-tooltip>
+            <mapgis-ui-tooltip slot="handle" title="删除" @click="deleteResult">
+              <mapgis-ui-iconfont class="iconfont-btn" type="mapgis-shanchu" />
+            </mapgis-ui-tooltip>
+          </mapgis-ui-group-tab>
           <mapgis-ui-form-model-item>
             <mapgis-ui-row>
               <mapgis-ui-col :span="24">
@@ -679,6 +686,12 @@ export default {
     },
     cancel() {
       Object.assign(this.$data, this.$options.data());
+    },
+    exportResult() {
+      this.$emit("exportResult");
+    },
+    deleteResult() {
+      this.$emit("deleteResult");
     }
   },
   computed: {
@@ -707,10 +720,7 @@ export default {
 .mapgis-ui-form-item {
   margin-bottom: 0px;
 }
-/* .mapgis-ui-form-item-control {
-	width: 214px;
-	text-align: left;
-	line-height: 40px;
-	overflow: hidden;
-} */
+.iconfont-btn {
+  margin: 0 5px;
+}
 </style>

@@ -200,7 +200,7 @@ export { default as MapgisUiPlacement } from "./components/placement/Placement.v
 export { default as MapgisUiWindow } from "./components/window/Window.vue";
 export { default as MapgisUiWindowCard } from "./components/window/WindowCard.vue";
 export { default as MapgisUiWindowWrapper } from "./components/window/WindowWrapper.vue";
-
+export { default as MapgisUiExportFileModal } from "./components/export-file-modal/ExportFileModal.vue";
 // Color
 export { default as MapgisUiColorSimplePicker } from "./components/color/ColorSimple.vue";
 export { default as MapgisUiColorsSetting } from "./components/color/ColorsSetting.vue";
