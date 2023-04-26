@@ -98,16 +98,13 @@
               <!-- 批量操作 -->
               <mapgis-ui-setting-footer>
                 <div v-show="isBatch">
-                  <mapgis-ui-button
-                    @click="_cancelPutProjectors"
+                  <mapgis-ui-button @click="_cancelPutProjectors"
                     >取消投放</mapgis-ui-button
                   >
-                  <mapgis-ui-button
-                    @click="_putProjectors"
+                  <mapgis-ui-button @click="_putProjectors"
                     >投放视频</mapgis-ui-button
                   >
-                  <mapgis-ui-button
-                    @click="_deleteProjectors"
+                  <mapgis-ui-button @click="_deleteProjectors"
                     >删除</mapgis-ui-button
                   >
                 </div>
@@ -123,11 +120,7 @@
               </mapgis-ui-setting-footer>
             </div>
           </mapgis-ui-tab-pane>
-          <mapgis-ui-tab-pane
-            key="2"
-            tab="设置面板"
-            id="parameter-formList"
-          >
+          <mapgis-ui-tab-pane key="2" tab="设置面板" id="parameter-formList">
             <mapgis-3d-projector-setting
               class="control-content"
               v-if="
@@ -340,7 +333,7 @@ export default {
       currentEditProjector: null, //当前编辑projector对象
       tabBarStyle: {
         margin: "0",
-        textAlign: "center",
+        textAlign: "center"
         // borderBottom: "1px solid #F0F0F0"
       },
       emptyImage: undefined,
@@ -360,7 +353,9 @@ export default {
         current: 1,
         size: "small",
         pageSize: 20
-      }
+      },
+      graphicsLayer: undefined,
+      graphicsLayerIdSave: undefined
     };
   },
   created() {},
@@ -389,6 +384,10 @@ export default {
     },
     unmount() {
       this.$emit("unload", this);
+    },
+    _getId(random) {
+      random = random || 10000000000;
+      return parseInt(String(Math.random() * random));
     },
     _initPutProjectors() {
       this.viewer.scene.visualAnalysisManager.removeAll();
@@ -551,9 +550,30 @@ export default {
           },
           hFOV: 15, // 水平视场角
           vFOV: 15, // 垂直视场角
-          hintLineVisible: true // 是否显示投放区域线
+          hintLineVisible: true, // 是否显示投放区域线
+          projectAreaCoords: [],
+          radioValueProType: 1, //选择投放方式是绘制还是摄像头参数输入，1是绘制方式，2是摄像头参数方式，默认绘制方式
+          radioValueClingOrNo: 1, //选择是否贴场景绘制，1是贴场景，2是不贴场景，默认贴
+          offsetHeightOrNo: false, //是否设置离地高度
+          offsetHeight: 5, //离地高度
+          graphicId: [],
+          graphicsLayerId: undefined
         }
       };
+      if (!this.graphicsLayer) {
+        this.graphicsLayer = new Cesium.GraphicsLayer(viewer);
+        let vueKey = "default";
+        let vueIndex = this._getId();
+        this.graphicsLayerIdSave = vueIndex;
+        viewer.scene.layers.appendGraphicsLayer(this.graphicsLayer);
+        window.vueCesium.GraphicsLayerManager.addSource(
+          vueKey,
+          vueIndex,
+          this.graphicsLayer
+        );
+      }
+      newProjector.params.graphicsLayerId = this.graphicsLayerIdSave;
+
       this.putProjector(newProjector);
       this.currentEditProjector = newProjector;
       this.activeKey = "2";
@@ -564,11 +584,22 @@ export default {
     _deleteProjectors() {
       const projectorList = [...this.projectorList];
       const { selectedIds } = this;
+      for (let i = 0; i < selectedIds.length; i++) {
+        const projector = this.projectorList.find(
+          item => item.id === selectedIds[i]
+        );
+        if (projector.params.graphicId) {
+          this.removeGraphic(projector.params.graphicId);
+        }
+      }
       this.projectorList = projectorList.filter(
         item => !selectedIds.includes(item.id)
       );
       // 取消被删除projector的投放
       for (let i = 0; i < selectedIds.length; i++) {
+        const projector = this.projectorList.find(
+          item => item.id === selectedIds[i]
+        );
         this.cancelPutProjector(selectedIds[i]);
         if (
           this.currentEditProjector &&
@@ -611,6 +642,13 @@ export default {
         const projector = this.projectorList.find(
           item => item.id === selectedIds[i]
         );
+        if (projector.params.graphicId) {
+          for (let i = 0; i < projector.params.graphicId.length; i++) {
+            this.graphicsLayer.getGraphicByID(
+              projector.params.graphicId[i]
+            ).show = true;
+          }
+        }
         this.putProjector(projector);
       }
       const projectorList = [...this.projectorList];
@@ -628,6 +666,16 @@ export default {
     _cancelPutProjectors() {
       const { selectedIds } = this;
       for (let i = 0; i < selectedIds.length; i++) {
+        const projector = this.projectorList.find(
+          item => item.id === selectedIds[i]
+        );
+        if (projector.params.graphicId) {
+          for (let i = 0; i < projector.params.graphicId.length; i++) {
+            this.graphicsLayer.getGraphicByID(
+              projector.params.graphicId[i]
+            ).show = false;
+          }
+        }
         this.cancelPutProjector(selectedIds[i]);
       }
       const projectorList = [...this.projectorList];
@@ -683,10 +731,21 @@ export default {
      */
     _onDeleteProjector(id) {
       const projectorList = [...this.projectorList];
+      this.removeGraphic(
+        projectorList.find(item => item.id == id).params.graphicId
+      );
       this.projectorList = projectorList.filter(item => item.id !== id);
       this.cancelPutProjector(id);
       if (this.currentEditProjector && this.currentEditProjector.id === id) {
         this.currentEditProjector = null;
+      }
+    },
+    // 移除graphic
+    removeGraphic(graphicId) {
+      if (this.graphicsLayer) {
+        for (var i = 0; i < graphicId.length; i++) {
+          this.graphicsLayer.removeGraphicByID(graphicId[i]);
+        }
       }
     },
     /**
@@ -700,6 +759,13 @@ export default {
       if (scenePro) {
         // 视频已经被投放，则取消投放
         this.cancelPutProjector(projector.id);
+        if (projector.params.graphicId) {
+          for (let i = 0; i < projector.params.graphicId.length; i++) {
+            this.graphicsLayer.getGraphicByID(
+              projector.params.graphicId[i]
+            ).show = false;
+          }
+        }
         isProjected = false;
         this._changeIsProjected(isProjected, projector.id);
       } else {
@@ -721,6 +787,14 @@ export default {
           });
         } else {
           this.putProjector(projector);
+          // 非绘制投放面方式下，没有graphicId
+          if (projector.params.graphicId) {
+            for (let i = 0; i < projector.params.graphicId.length; i++) {
+              this.graphicsLayer.getGraphicByID(
+                projector.params.graphicId[i]
+              ).show = true;
+            }
+          }
           isProjected = true;
           this._changeIsProjected(isProjected, projector.id);
         }
@@ -738,21 +812,31 @@ export default {
      * 定位到摄像机位置
      */
     _onLocate(item) {
-      const { cameraPosition, orientation } = item.params;
+      const { cameraPosition, orientation, projectAreaCoords } = item.params;
       const { Cesium, viewer } = this;
-      const destination = Cesium.Cartesian3.fromDegrees(
-        cameraPosition.x,
-        cameraPosition.y,
-        cameraPosition.z
-      );
-      viewer.camera.flyTo({
-        destination,
-        orientation: {
-          heading: Cesium.Math.toRadians(orientation.heading), // 绕垂直于地心的轴旋转 ,相当于头部左右转
-          pitch: Cesium.Math.toRadians(orientation.pitch), // 绕经度线旋转， 相当于头部上下
-          roll: Cesium.Math.toRadians(orientation.roll) // 绕纬度线旋转 ，面对的一面瞬时针转
-        }
-      });
+      // 摄像头参数投放方式下，projectAreaCoords为undefined
+      if (!projectAreaCoords) {
+        const destination = Cesium.Cartesian3.fromDegrees(
+          cameraPosition.x,
+          cameraPosition.y,
+          cameraPosition.z
+        );
+        viewer.camera.flyTo({
+          destination,
+          orientation: {
+            heading: Cesium.Math.toRadians(orientation.heading), // 绕垂直于地心的轴旋转 ,相当于头部左右转
+            pitch: Cesium.Math.toRadians(orientation.pitch), // 绕经度线旋转， 相当于头部上下
+            roll: Cesium.Math.toRadians(orientation.roll) // 绕纬度线旋转 ，面对的一面瞬时针转
+          }
+        });
+      } else {
+        // 绘制投放方式下
+        viewer.camera.flyTo({
+          destination: Cesium.Rectangle.fromCartesianArray(
+            Cesium.Cartesian3.fromDegreesArray(projectAreaCoords)
+          )
+        });
+      }
     }
   }
 };
