@@ -29,6 +29,9 @@ $tabs-prefix-cls: $ant-prefix + "-tabs";
 
   @include e(tab-prev tab-next, "-") {
     color: $text-color-secondary;
+    &:hover {
+      color: $primary-5;
+    }
   }
 
   @include e(left-bar, "-") {
