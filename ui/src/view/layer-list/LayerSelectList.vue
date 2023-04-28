@@ -47,7 +47,7 @@ export default {
     // 节点是否可以多选
     checkable: {
       type: Boolean,
-      default: true
+      default: false
     },
     // 是否显示清除按钮
     allowClear: {
@@ -56,8 +56,8 @@ export default {
     },
     // 数据目录中选中的document图层
     layers: {
-      type: Object,
-      default: () => {}
+      type: Array,
+      default: () => []
     },
     // 默认选中的keys
     selectKeys: {
@@ -85,7 +85,7 @@ export default {
   },
   computed: {
     selectLayers() {
-      return this.dealLayers(this.layers.clone().defaultMap.layers()) || [];
+      return this.dealLayers(this.layers) || [];
     },
     componentWidth() {
       return typeof this.width === "number"
@@ -171,6 +171,7 @@ export default {
       return newLayers;
     },
     emitkeys(keys) {
+      keys = this.checkable ? keys : [keys];
       const needSelectList = [];
       keys.forEach(item => {
         const data = this.layerListArr.find(child => child.value === item);

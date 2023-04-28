@@ -17,8 +17,8 @@ export default {
   props: {
     // 数据目录中选中的document图层
     layers: {
-      type: Object,
-      default: () => {}
+      type: Array,
+      default: () => []
     },
     // 默认展开的tree节点，若设置某个节点展开，其父级节点也会展开
     expandedKeys: {
@@ -64,10 +64,7 @@ export default {
   computed: {
     checkLayers() {
       return (
-        this.layers
-          .clone()
-          .defaultMap.layers()
-          .filter(item => [6, 5, 23, 11].includes(item.type)) || []
+        this.layers.filter(item => [6, 5, 23, 11].includes(item.type)) || []
       );
     }
   },
