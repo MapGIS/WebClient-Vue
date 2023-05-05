@@ -162,6 +162,7 @@ export default {
       default: () => {
         return {
           speed: 10,
+          elevationType: "addition",
           exHeight: 1,
           heading: 90,
           pitch: 0,
@@ -369,6 +370,7 @@ export default {
       const pathId = this.getPathId();
       const {
         speed,
+        elevationType,
         exHeight,
         heading,
         pitch,
@@ -392,6 +394,7 @@ export default {
         path: pathPositions,
         para: {
           speed,
+          elevationType,
           exHeight,
           heading,
           pitch,
@@ -413,7 +416,7 @@ export default {
     },
     onGotoPath(path) {
       this.roamingPath = path;
-      for (let i = 0;i < this.roamingPath.path.length;i++) {
+      for (let i = 0; i < this.roamingPath.path.length; i++) {
         this.roamingPath.path[i] = Number(this.roamingPath.path[i]);
       }
       this.roaming = true;
@@ -423,7 +426,7 @@ export default {
       this.showRoad();
     },
     onGotoHome() {
-      if(this.$refs.refPathRoaming){
+      if (this.$refs.refPathRoaming) {
         this.$refs.refPathRoaming.onClickStop(true);
       }
       this.roaming = false;
@@ -550,7 +553,7 @@ export default {
     },
     savePosition(index) {
       const newData = [...this.positions];
-      for (let i = 0;i < newData.length;i++) {
+      for (let i = 0; i < newData.length; i++) {
         newData[i].x = Number(newData[i].x);
         newData[i].y = Number(newData[i].y);
         newData[i].z = Number(newData[i].z);

@@ -15,7 +15,21 @@
               </mapgis-ui-col>
             </mapgis-ui-row>
           </mapgis-ui-form-item>
-          <mapgis-ui-form-item label="附加高程">
+          <mapgis-ui-form-item label="高程类型">
+            <mapgis-ui-row>
+              <mapgis-ui-col :span="24">
+                <mapgis-ui-radio-group v-model="settingCopy.elevationType">
+                  <mapgis-ui-radio value="addition">
+                    附加高程
+                  </mapgis-ui-radio>
+                  <mapgis-ui-radio value="absolute">
+                    绝对高程
+                  </mapgis-ui-radio>
+                </mapgis-ui-radio-group>
+              </mapgis-ui-col>
+            </mapgis-ui-row>
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="高程">
             <mapgis-ui-row>
               <mapgis-ui-col :span="24">
                 <mapgis-ui-input-number-addon
@@ -164,6 +178,7 @@ export default {
       default: () => {
         return {
           speed: 10,
+          elevationType: "addition",
           exHeight: 1,
           heading: 90,
           pitch: 0,
@@ -219,6 +234,10 @@ export default {
           this.settingCopy.modelUrl && this.settingCopy.modelUrl !== ""
             ? this.settingCopy.modelUrl
             : "";
+        // 高程类型如果为空默认设置为附加高程
+        if (!this.settingCopy.elevationType) {
+          this.settingCopy.elevationType = "addition";
+        }
       },
       immediate: true
     }
@@ -315,13 +334,24 @@ export default {
         // 设置播放动画的各项属性
         if (this.positions.length > 0) {
           let positions;
-          if(this.positions[0] instanceof Object) {
-            positions = JSON.parse(JSON.stringify(this.positions)).flatMap((t)=> [t.x,t.y,t.z]).flat();
-          }else {
-            positions = JSON.parse(JSON.stringify(this.positions));
+          if (this.positions[0] instanceof Object) {
+            positions = JSON.parse(JSON.stringify(this.positions))
+              .flatMap(t => [
+                t.x,
+                t.y,
+                this.settingCopy.elevationType === "addition"
+                  ? t.z
+                  : this.settingCopy.exHeight
+              ])
+              .flat();
+          } else {
+            positions =
+              this.settingCopy.elevationType === "addition"
+                ? JSON.parse(JSON.stringify(this.positions))
+                : this.getAbsolutePositions();
           }
           window.SceneWanderManager.animation.positions = this.Cesium.Cartesian3.fromDegreesArrayHeights(
-           positions
+            positions
           );
           this._setAnimationAttr();
 
@@ -352,6 +382,7 @@ export default {
     _setAnimationAttr() {
       const {
         speed,
+        elevationType,
         exHeight,
         heading,
         pitch,
@@ -361,9 +392,12 @@ export default {
         showPath,
         showInfo
       } = this.settingCopy;
+
       // 默认速度的单位为m/s，这里将公里每小时转换为m/s
       window.SceneWanderManager.animation.speed = (speed * 0.28).toFixed(2);
-      window.SceneWanderManager.animation.exHeight = exHeight;
+      // 绝对高程下exHeight设置为1
+      window.SceneWanderManager.animation.exHeight =
+        elevationType === "addition" ? exHeight : 1;
       window.SceneWanderManager.animation.heading = heading;
       window.SceneWanderManager.animation.pitch = pitch;
       window.SceneWanderManager.animation.animationType = animationType;
@@ -428,6 +462,14 @@ export default {
     onModelChange(value) {
       window.SceneWanderManager.animation._modelUrl = value;
       this.settingCopy.modelUrl = value;
+    },
+    // 绝对高程下z轴直接设置为高程值
+    getAbsolutePositions() {
+      const arr = [...this.positions];
+      for (let i = 2; i < arr.length; i += 3) {
+        arr[i] = this.settingCopy.exHeight;
+      }
+      return arr;
     }
   }
 };
