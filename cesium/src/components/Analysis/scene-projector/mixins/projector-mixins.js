@@ -60,20 +60,8 @@ export default {
         default:
           break;
       }
-      const {
-        cameraPosition,
-        orientation,
-        hFOV,
-        vFOV,
-        hintLineVisible,
-        projectAreaCoords,
-        radioValueProType,
-        radioValueClingOrNo,
-        offsetHeightOrNo,
-        offsetHeight,
-        graphicId,
-        graphicsLayerId,
-      } = params;
+      const { cameraPosition, orientation, hFOV, vFOV, hintLineVisible } =
+        params;
       const viewPosition = Cesium.Cartographic.toCartesian(
         Cesium.Cartographic.fromDegrees(
           cameraPosition.x,
@@ -106,13 +94,6 @@ export default {
       scenePro.horizontAngle = hFOV;
       scenePro.verticalAngle = vFOV;
       scenePro.hideVPInvisible = hideVPInvisible;
-      scenePro.projectAreaCoords = projectAreaCoords;
-      scenePro.radioValueProType = radioValueProType;
-      scenePro.radioValueClingOrNo = radioValueClingOrNo;
-      scenePro.offsetHeightOrNo = offsetHeightOrNo;
-      scenePro.offsetHeight = offsetHeight;
-      scenePro.graphicId = graphicId;
-      scenePro.graphicsLayerId = graphicsLayerId;
       return scenePro;
     },
     /**
