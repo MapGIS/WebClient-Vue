@@ -284,8 +284,8 @@ export default {
       let layers = viewer.imageryLayers._layers;
       layers.forEach(layer => {
         layer.show = true;
-        layers.swipeEnabled = false;
-        layers.swipeInverse = 0;
+        layer.swipeEnabled = false;
+        layer.swipeInverse = 0;
       });
       let slider = document.getElementsByClassName("slider");
       if (slider.length > 0) {
