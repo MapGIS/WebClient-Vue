@@ -309,9 +309,9 @@
 
 <script>
 // 引入es6-service内置封装接口
-import { MRFWS, MRCS } from "@mapgis/webclient-es6-service";
-const { ClassBufferBySingleRing, FeatureBuffBySingleRing } = MRFWS;
-const { VectorLayer } = MRCS;
+import * as Zondy from "@mapgis/webclient-es6-service";
+const { ClassBufferBySingleRing, FeatureBuffBySingleRing } = Zondy.MRFWS;
+const { VectorLayer } = Zondy.MRCS;
 // 引入第三方turf->buffer
 import * as turf from "@turf/turf";
 import { setDepthTestAgainstTerrainEnable } from "../WebGlobe/util";
@@ -490,12 +490,48 @@ export default {
     },
     // 查询IGServer，实现获取gdbp图层中的属性字段名称与类型
     getAttribute() {
-      var vectorLayer = new VectorLayer({
-        ip: (this.baseUrl || "").split("/")[2].split(":")[0],
-        port: (this.baseUrl || "").split("/")[2].split(":")[1]
+      var domain;
+      if (!!this.baseUrl && this.baseUrl.length > 0) {
+        var url = new URL(this.baseUrl);
+        domain = url.origin;
+      }
+      //创建查询结构对象
+      var queryStruct = new Zondy.MRFS.QueryFeatureStruct();
+      //是否包含几何图形信息
+      queryStruct.IncludeGeometry = false;
+      //指定查询规则
+      var rule = new Zondy.MRFS.QueryFeatureRule({
+        //是否将要素的可见性计算在内
+        EnableDisplayCondition: false,
+        //是否完全包含
+        MustInside: false,
+        //是否仅比较要素的外包矩形
+        CompareRectOnly: false,
+        //是否相交
+        Intersect: true
       });
-      vectorLayer.getLayerInfo(this.srcLayer, this.onSuccess, () => {
-        console.log("获取图层详细信息请求失败");
+      //实例化查询参数对象
+      var queryParam = new Zondy.MRFS.QueryByLayerParameter(this.srcLayer, {
+        //结果格式
+        resultFormat: "json",
+        //查询结构
+        struct: queryStruct,
+        //查询规则
+        rule: rule
+      });
+      //设置查询分页号
+      queryParam.pageIndex = 0;
+      //设置查询要素数目
+      queryParam.recordNumber = 1;
+      //实例化地图文档查询服务对象
+      var queryService = new Zondy.MRFS.QueryLayerFeature(queryParam, {
+        ip: (this.baseUrl || "").split("/")[2].split(":")[0],
+        port: (this.baseUrl || "").split("/")[2].split(":")[1],
+        domain
+      });
+      //执行查询操作，querySuccess为成功回调，queryError为失败回调
+      queryService.query(this.onSuccess, () => {
+        console.log("获取图层属性信息请求失败");
       });
     },
     onSuccess(data) {
