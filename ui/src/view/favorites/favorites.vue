@@ -155,6 +155,11 @@ export default {
     showType: {
       type: String,
       default: "image"
+    },
+    // baseUrl 用于回显图片
+    baseUrl: {
+      type: String,
+      default: ""
     }
   },
   data() {
@@ -183,7 +188,7 @@ export default {
   computed: {
     getImage() {
       return image => {
-        return image.replace(/[\r\n]/g, "");
+        return `${this.baseUrl}${image}`;
       };
     }
   },
