@@ -199,7 +199,7 @@ export default {
   overflow: auto;
   margin-top: 10px;
   border-radius: 0;
-  border-color: var(--primary-5);
+  /* border-color: var(--primary-5); */
 }
 
 .scene-popup-detail {
@@ -214,7 +214,7 @@ export default {
 }
 
 .table-marker-item:nth-child(2n) {
-  background-color: var(--primary-1);
+  background-color: var(--background-light);
 }
 
 .table-marker-item > div {
@@ -227,7 +227,7 @@ export default {
 
 .table-marker-item > div:first-child {
   width: 120px;
-  border-right: 1px solid var(--primary-5);
+  border-right: 1px solid var(--border-color-base);
 }
 
 .table-marker-item > div:last-child {
