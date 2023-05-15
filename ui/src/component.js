@@ -255,6 +255,9 @@ export { default as MapgisUiComprehensiveQuery } from "./view/comprehensive-quer
 // tree-check-list
 export { default as MapgisUiLayerCheckList } from "./view/layer-list/LayerCheckList.vue";
 
+// favorites
+export { default as mapgisUiFavorites } from "./view/favorites/favorites.vue";
+
 // select-list
 export { default as MapgisUiLayerSelectList } from "./view/layer-list/LayerSelectList.vue";
 

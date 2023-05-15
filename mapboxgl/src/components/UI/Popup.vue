@@ -58,7 +58,7 @@ export default {
      *  'top', 'bottom', 'left', 'right', 'top-left', 'top-right', 'bottom-left', 'bottom-right'
      */
     anchor: {
-      validator (value) {
+      validator(value) {
         let allowedValues = [
           "top",
           "bottom",
@@ -95,7 +95,7 @@ export default {
     onlyText: {
       type: Boolean,
       default: false
-    },        
+    },
 
     showed: {
       type: Boolean,
@@ -113,7 +113,7 @@ export default {
     }
   },
 
-  data () {
+  data() {
     return {
       initial: true,
       popup: undefined
@@ -122,13 +122,13 @@ export default {
 
   computed: {
     open: {
-      get () {
+      get() {
         if (this.popup !== undefined) {
           return this.popup.isOpen();
         }
         return false;
       },
-      set (value) {
+      set(value) {
         if (this.map && this.popup) {
           if (!value) {
             this.popup.remove();
@@ -141,7 +141,7 @@ export default {
   },
 
   watch: {
-    coordinates (lngLat) {
+    coordinates(lngLat) {
       if (this.initial) return;
       this.popup.setLngLat(lngLat);
       if (this.showed) {
@@ -149,7 +149,7 @@ export default {
       }
     },
 
-    showed (next, prev) {
+    showed(next, prev) {
       if (next !== prev) {
         this.open = next;
         if (this.marker) {
@@ -159,27 +159,25 @@ export default {
     }
   },
 
-  created () {
+  created() {
     this.popup = new this.mapbox.Popup(this.$props);
   },
 
-  updated() {
+  updated() {},
 
-  },
-
-  mounted () {
+  mounted() {
     this.$_addPopup();
     this.initial = false;
   },
 
-  beforeDestroy () {
+  beforeDestroy() {
     if (this.map) {
       this.popup.remove();
     }
   },
 
   methods: {
-    $_addPopup () {
+    $_addPopup() {
       this.popup = new this.mapbox.Popup(this.$props);
       if (this.coordinates !== undefined) {
         this.popup.setLngLat(this.coordinates);
@@ -210,14 +208,19 @@ export default {
       }
     },
 
-    $_emitSelfEvent (event) {
+    $_emitSelfEvent(event) {
       this.$_emitMapEvent(event, { popup: this.popup });
     },
 
-    remove () {
+    remove() {
       this.popup.remove();
       this.$_emitEvent("removed", { popup: this.popup });
     }
   }
 };
 </script>
+<style lang="scss">
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+  border-top-color: $popover-background !important;
+}
+</style>

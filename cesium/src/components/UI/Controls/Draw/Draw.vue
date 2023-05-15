@@ -1,34 +1,33 @@
 <template>
   <div>
     <!-- slot for toolbar -->
-    <slot name="toolbar"/>
+    <slot name="toolbar" />
     <!-- slot for toolbar-item -->
-    <slot v-if="initial"/>
+    <slot v-if="initial" />
     <mapgis-ui-card :customPosition="position" class="mapgis-3d-draw-control">
       <div v-show="enableControl">
         <mapgis-ui-space>
           <mapgis-ui-tooltip
-              v-for="(item, i) in draws"
-              :key="i"
-              placement="bottom"
+            v-for="(item, i) in draws"
+            :key="i"
+            placement="bottom"
           >
             <template slot="title">
               <span>{{ item.tip }}</span>
             </template>
             <mapgis-ui-button
-                shape="circle"
-                :type="item.type"
-                @click="item.click"
-                :class="item.className"
+              shape="circle"
+              :type="item.type"
+              @click="item.click"
+              :class="item.className"
             >
               <mapgis-ui-iconfont
-                  :type="item.icon"
-                  :class="item.className"
-                  theme="filled"
+                :type="item.icon"
+                :class="item.className"
+                theme="filled"
               />
             </mapgis-ui-button>
           </mapgis-ui-tooltip>
-
         </mapgis-ui-space>
       </div>
     </mapgis-ui-card>
@@ -42,8 +41,8 @@ const drawEvents = {
   // es6
   drawCreate: "draw.create",
   // brower
-  drawcreate: "draw.create",
-}
+  drawcreate: "draw.create"
+};
 export default {
   name: "mapgis-3d-draw",
   mixins: [],
@@ -68,7 +67,7 @@ export default {
     drawStyle: {
       type: Object,
       default: () => {
-        return {}
+        return {};
       }
     },
     vueKey: {
@@ -85,13 +84,13 @@ export default {
   data() {
     return {
       drawStyleCopy: {
-        color: '#FF0000',
+        color: "#FF0000",
         opacity: 1,
         outlineWidth: 1,
         //边线颜色
-        outlineColor: '#000000',
+        outlineColor: "#000000",
         //线宽
-        width: 2,
+        width: 2
       },
       initial: false,
       drawOption: "",
@@ -142,8 +141,7 @@ export default {
     };
   },
 
-  created() {
-  },
+  created() {},
   mounted() {
     this.drawStyleCopy = Object.assign(this.drawStyleCopy, this.drawStyle);
     this.mount();
@@ -154,13 +152,13 @@ export default {
   watch: {
     //贴地
     clampToGround: {
-      handler: function (newVal, oldVal) {
+      handler: function(newVal, oldVal) {
         this.unmount();
         this.mount();
       }
     },
     drawStyle: {
-      handler: function () {
+      handler: function() {
         this.drawStyleCopy = Object.assign(this.drawStyleCopy, this.drawStyle);
       },
       deep: true
@@ -169,25 +167,21 @@ export default {
   methods: {
     mount() {
       let vm = this;
-      const {vueKey, vueIndex} = this;
+      const { vueKey, vueIndex } = this;
       //轮询，直到webGlobe有值，才会显示slot，这是为了保证draw组件不在webscene组件里面也能正常使用
-      let interval = setInterval(function () {
+      let interval = setInterval(function() {
         let viewer = vm.getWebGlobe();
         if (viewer) {
           clearInterval(interval);
           vm.initial = true;
           vm.$emit("load", vm);
-          window.vueCesium.DrawToolManager.addSource(
-              vueKey,
-              vueIndex,
-              []
-          );
+          window.vueCesium.DrawToolManager.addSource(vueKey, vueIndex, []);
         }
       }, 50);
     },
 
     unmount() {
-      let {vueKey, vueIndex, vueCesium} = this;
+      let { vueKey, vueIndex, vueCesium } = this;
       if (!vueCesium) {
         vueCesium = window.vueCesium;
       }
@@ -207,12 +201,15 @@ export default {
     },
 
     removeEntities(unmount) {
-      let {vueKey, vueIndex} = this;
+      let { vueKey, vueIndex } = this;
 
       let viewer = this.getWebGlobe();
       // 取得viewer后，清空当前绘制
       if (viewer) {
-        let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex);
+        let drawEntities = window.vueCesium.DrawToolManager.findSource(
+          vueKey,
+          vueIndex
+        );
         if (drawEntities) {
           drawEntities = drawEntities.source;
           for (let i = 0; i < drawEntities.length; i++) {
@@ -234,7 +231,7 @@ export default {
     },
     getWebGlobe() {
       let viewerDraw;
-      let {viewer, vueCesium, Cesium, vueKey, vueIndex} = this;
+      let { viewer, vueCesium, Cesium, vueKey, vueIndex } = this;
       if (!vueCesium) {
         vueCesium = window.vueCesium;
       }
@@ -247,12 +244,19 @@ export default {
       } else {
         //当viewer不存在，则表示要通过vueKey获取
         let GlobesManager = vueCesium.GlobesManager;
-        if (GlobesManager.hasOwnProperty(this.vueKey) && GlobesManager[this.vueKey].length > 0 && GlobesManager[this.vueKey][0].hasOwnProperty("source")) {
+        if (
+          GlobesManager.hasOwnProperty(this.vueKey) &&
+          GlobesManager[this.vueKey].length > 0 &&
+          GlobesManager[this.vueKey][0].hasOwnProperty("source")
+        ) {
           viewerDraw = GlobesManager[this.vueKey][0].source;
         }
       }
       if (!this.infinite) {
-        let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex);
+        let drawEntities = window.vueCesium.DrawToolManager.findSource(
+          vueKey,
+          vueIndex
+        );
         if (drawEntities) {
           drawEntities = drawEntities.source;
           for (let i = 0; i < drawEntities.length; i++) {
@@ -275,7 +279,7 @@ export default {
       this.drawOption = "enableDrawPoint";
       let viewerDraw = this.getWebGlobe();
       const vm = this;
-      let {vueCesium, Cesium, vueKey, vueIndex, drawStyleCopy} = this;
+      let { vueCesium, Cesium, vueKey, vueIndex, drawStyleCopy } = this;
       if (!vueCesium) {
         vueCesium = window.vueCesium;
       }
@@ -284,16 +288,20 @@ export default {
       }
       let drawElement = this.getDrawElement(viewerDraw);
       if (this.clampToGround) {
-        drawElement.setGroundPrimitiveType('BOTH');
+        drawElement.setGroundPrimitiveType("BOTH");
       } else {
-        drawElement.setGroundPrimitiveType('NONE');
+        drawElement.setGroundPrimitiveType("NONE");
       }
-      const outlineColor = new Cesium.Color.fromCssColorString(drawStyleCopy.outlineColor).withAlpha(drawStyleCopy.opacity);
-      const color = new Cesium.Color.fromCssColorString(drawStyleCopy.color).withAlpha(drawStyleCopy.opacity);
+      const outlineColor = new Cesium.Color.fromCssColorString(
+        drawStyleCopy.outlineColor
+      ).withAlpha(drawStyleCopy.opacity);
+      const color = new Cesium.Color.fromCssColorString(
+        drawStyleCopy.color
+      ).withAlpha(drawStyleCopy.opacity);
       drawElement.startDrawingMarker({
         addDefaultMark: false,
         color: color,
-        callback: function (result) {
+        callback: function(result) {
           let position = result.position;
           let cartographic = Cesium.Cartographic.fromCartesian(position);
           let lng = Cesium.Math.toDegrees(cartographic.longitude);
@@ -301,7 +309,7 @@ export default {
           let height = cartographic.height; //模型高度
           //添加点：经度、纬度、高程、名称、像素大小、颜色、外边线颜色、边线宽度
           let drawEntity = viewerDraw.entities.add({
-            name: '点',
+            name: "点",
             position: Cesium.Cartesian3.fromDegrees(lng, lat, height),
             point: {
               // 点
@@ -314,31 +322,36 @@ export default {
           if (!vm.infinite) {
             drawElement.stopDrawing();
           }
-          let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
+          let drawEntities = window.vueCesium.DrawToolManager.findSource(
+            vueKey,
+            vueIndex
+          ).source;
           drawEntities.push(drawEntity);
-          vm.$emit('drawCreate', position, [lng, lat, height], viewerDraw);
-          vm.$emit('drawcreate', position, [lng, lat, height], viewerDraw);
+          vm.$emit("drawCreate", position, [lng, lat, height], viewerDraw);
+          vm.$emit("drawcreate", position, [lng, lat, height], viewerDraw);
         }
       });
     },
     enableDrawLine(disableDraw) {
       this.drawOption = "enableDrawLine";
       let viewerDraw = this.getWebGlobe();
-      let {Cesium, vueKey, vueIndex, drawStyleCopy} = this;
+      let { Cesium, vueKey, vueIndex, drawStyleCopy } = this;
       if (!Cesium) {
         Cesium = window.Cesium;
       }
       let vm = this;
       let drawElement = this.getDrawElement(viewerDraw);
       if (this.clampToGround) {
-        drawElement.setGroundPrimitiveType('BOTH');
+        drawElement.setGroundPrimitiveType("BOTH");
       } else {
-        drawElement.setGroundPrimitiveType('NONE');
+        drawElement.setGroundPrimitiveType("NONE");
       }
-      const color = new Cesium.Color.fromCssColorString(drawStyleCopy.color).withAlpha(drawStyleCopy.opacity);
+      const color = new Cesium.Color.fromCssColorString(
+        drawStyleCopy.color
+      ).withAlpha(drawStyleCopy.opacity);
       drawElement.startDrawingPolyline({
         color: color,
-        callback: function (result) {
+        callback: function(result) {
           let positions = result.positions;
           let degreeArr = [];
           for (let i = 0; i < positions.length; i++) {
@@ -356,14 +369,17 @@ export default {
               geodesic: true
             });
             let drawEntity = viewerDraw.scene.primitives.add(polyline);
-            let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
+            let drawEntities = window.vueCesium.DrawToolManager.findSource(
+              vueKey,
+              vueIndex
+            ).source;
             drawEntities.push(drawEntity);
           }
           if (!vm.infinite) {
             drawElement.stopDrawing();
           }
-          vm.$emit('drawCreate', positions, degreeArr, viewerDraw);
-          vm.$emit('drawcreate', positions, degreeArr, viewerDraw);
+          vm.$emit("drawCreate", positions, degreeArr, viewerDraw);
+          vm.$emit("drawcreate", positions, degreeArr, viewerDraw);
         }
       });
     },
@@ -371,22 +387,24 @@ export default {
     enableDrawPolygon(disableDraw) {
       this.drawOption = "enableDrawPolygon";
       let viewerDraw = this.getWebGlobe();
-      let {Cesium, vueKey, vueIndex} = this;
+      let { Cesium, vueKey, vueIndex } = this;
       if (!Cesium) {
         Cesium = window.Cesium;
       }
       let vm = this;
-      let {drawStyleCopy} = this;
+      let { drawStyleCopy } = this;
       let drawElement = this.getDrawElement(viewerDraw);
       if (this.clampToGround) {
-        drawElement.setGroundPrimitiveType('BOTH');
+        drawElement.setGroundPrimitiveType("BOTH");
       } else {
-        drawElement.setGroundPrimitiveType('NONE');
+        drawElement.setGroundPrimitiveType("NONE");
       }
-      const colorStyle = new Cesium.Color.fromCssColorString(drawStyleCopy.color).withAlpha(drawStyleCopy.opacity);
+      const colorStyle = new Cesium.Color.fromCssColorString(
+        drawStyleCopy.color
+      ).withAlpha(drawStyleCopy.opacity);
       drawElement.startDrawingPolygon({
         color: colorStyle,
-        callback: function (result) {
+        callback: function(result) {
           let positions = result.positions;
           let degreeArr = [];
           for (let i = 0; i < positions.length; i++) {
@@ -399,19 +417,22 @@ export default {
           if (!disableDraw || typeof disableDraw !== "boolean") {
             let polygon = new Cesium.DrawElement.PolygonPrimitive({
               positions: positions,
-              material: Cesium.Material.fromType('Color', {
+              material: Cesium.Material.fromType("Color", {
                 color: colorStyle
-              }),
+              })
             });
             let drawEntity = viewerDraw.scene.primitives.add(polygon);
-            let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
+            let drawEntities = window.vueCesium.DrawToolManager.findSource(
+              vueKey,
+              vueIndex
+            ).source;
             drawEntities.push(drawEntity);
           }
           if (!vm.infinite) {
             drawElement.stopDrawing();
           }
-          vm.$emit('drawCreate', positions, degreeArr, viewerDraw);
-          vm.$emit('drawcreate', positions, degreeArr, viewerDraw);
+          vm.$emit("drawCreate", positions, degreeArr, viewerDraw);
+          vm.$emit("drawcreate", positions, degreeArr, viewerDraw);
         }
       });
     },
@@ -420,41 +441,56 @@ export default {
     enableDrawRectangle(disableDraw) {
       this.drawOption = "enableDrawRectangle";
       let viewerDraw = this.getWebGlobe();
-      let {Cesium, vueKey, vueIndex, drawStyleCopy} = this;
+      let { Cesium, vueKey, vueIndex, drawStyleCopy } = this;
       if (!Cesium) {
         Cesium = window.Cesium;
       }
       let vm = this;
       let drawElement = this.getDrawElement(viewerDraw);
       if (this.clampToGround) {
-        drawElement.setGroundPrimitiveType('BOTH');
+        drawElement.setGroundPrimitiveType("BOTH");
       } else {
-        drawElement.setGroundPrimitiveType('NONE');
+        drawElement.setGroundPrimitiveType("NONE");
       }
-      const colorStyle = new Cesium.Color.fromCssColorString(drawStyleCopy.color).withAlpha(drawStyleCopy.opacity);
+      const colorStyle = new Cesium.Color.fromCssColorString(
+        drawStyleCopy.color
+      ).withAlpha(drawStyleCopy.opacity);
 
       drawElement.startDrawingExtent({
         color: colorStyle,
-        callback: function (result) {
+        callback: function(result) {
           let extent = result.extent;
           if (!disableDraw || typeof disableDraw !== "boolean") {
             let rectangle = new Cesium.DrawElement.ExtentPrimitive({
               extent: extent,
-              material: Cesium.Material.fromType('Color', {
+              material: Cesium.Material.fromType("Color", {
                 color: colorStyle
-              }),
+              })
             });
             let drawEntity = viewerDraw.scene.primitives.add(rectangle);
 
-            let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
+            let drawEntities = window.vueCesium.DrawToolManager.findSource(
+              vueKey,
+              vueIndex
+            ).source;
             drawEntities.push(drawEntity);
           }
-          let radianPoints = [extent.west, extent.north, extent.east, extent.south];
+          let radianPoints = [
+            extent.west,
+            extent.north,
+            extent.east,
+            extent.south
+          ];
           let ellipsoid = viewerDraw.scene.globe.ellipsoid;
-          let Cartesian3Points = Cesium.Cartesian3.fromRadiansArray(radianPoints, ellipsoid);
+          let Cartesian3Points = Cesium.Cartesian3.fromRadiansArray(
+            radianPoints,
+            ellipsoid
+          );
           let degreeArr = [];
           for (let i = 0; i < Cartesian3Points.length; i++) {
-            let cartographic = Cesium.Cartographic.fromCartesian(Cartesian3Points[i]);
+            let cartographic = Cesium.Cartographic.fromCartesian(
+              Cartesian3Points[i]
+            );
             let lng = Cesium.Math.toDegrees(cartographic.longitude);
             let lat = Cesium.Math.toDegrees(cartographic.latitude);
             let height = result.height;
@@ -463,8 +499,20 @@ export default {
           if (!vm.infinite) {
             drawElement.stopDrawing();
           }
-          vm.$emit('drawCreate', Cartesian3Points, degreeArr, viewerDraw, extent);
-          vm.$emit('drawcreate', Cartesian3Points, degreeArr, viewerDraw, extent);
+          vm.$emit(
+            "drawCreate",
+            Cartesian3Points,
+            degreeArr,
+            viewerDraw,
+            extent
+          );
+          vm.$emit(
+            "drawcreate",
+            Cartesian3Points,
+            degreeArr,
+            viewerDraw,
+            extent
+          );
         }
       });
     },
@@ -473,24 +521,26 @@ export default {
     enableDrawCircle() {
       this.drawOption = "enableDrawCircle";
       let viewerDraw = this.getWebGlobe();
-      let {Cesium, vueKey, vueIndex, drawStyleCopy} = this;
+      let { Cesium, vueKey, vueIndex, drawStyleCopy } = this;
       if (!Cesium) {
         Cesium = window.Cesium;
       }
       let vm = this;
       let drawElement = this.getDrawElement(viewerDraw);
       if (this.clampToGround) {
-        drawElement.setGroundPrimitiveType('BOTH');
+        drawElement.setGroundPrimitiveType("BOTH");
       } else {
-        drawElement.setGroundPrimitiveType('NONE');
+        drawElement.setGroundPrimitiveType("NONE");
       }
-      const colorStyle = new Cesium.Color.fromCssColorString(drawStyleCopy.color).withAlpha(drawStyleCopy.opacity);
+      const colorStyle = new Cesium.Color.fromCssColorString(
+        drawStyleCopy.color
+      ).withAlpha(drawStyleCopy.opacity);
       drawElement.startDrawingCircle({
         color: colorStyle,
-        callback: function (result) {
+        callback: function(result) {
           let center = result.center;
           let radius = result.radius;
-          console.log('circle', center)
+          console.log("circle", center);
           // alert(center.toString() + ' ' + radius.toString());
           var centerCartographic = Cesium.Cartographic.fromCartesian(center);
           let height = centerCartographic.height;
@@ -499,7 +549,7 @@ export default {
             radius: radius,
             height: height,
             asynchronous: false,
-            material: Cesium.Material.fromType('Color', {
+            material: Cesium.Material.fromType("Color", {
               color: colorStyle
             })
           });
@@ -508,11 +558,14 @@ export default {
           }
           let drawEntity = viewerDraw.scene.primitives.add(redCircle);
 
-          let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
+          let drawEntities = window.vueCesium.DrawToolManager.findSource(
+            vueKey,
+            vueIndex
+          ).source;
           drawEntities.push(drawEntity);
 
-          vm.$emit('drawCreate', center, radius, viewerDraw);
-          vm.$emit('drawcreate', center, radius, viewerDraw);
+          vm.$emit("drawCreate", center, radius, viewerDraw);
+          vm.$emit("drawcreate", center, radius, viewerDraw);
         }
       });
     }
