@@ -98,84 +98,13 @@
           </div>
         </mapgis-ui-setting-form>
         <mapgis-ui-group-tab title="投放方式选择" />
-        <mapgis-ui-radio-group v-model="radioValueProType" class="padding">
+        <mapgis-ui-radio-group v-model="renderType" class="padding">
+          <mapgis-ui-radio :value="0">输入摄像头参数</mapgis-ui-radio>
           <mapgis-ui-radio :value="1">绘制投放面</mapgis-ui-radio>
-          <mapgis-ui-radio :value="2">输入摄像头参数</mapgis-ui-radio>
         </mapgis-ui-radio-group>
 
-        <!-- 绘制投放面方式 -->
-        <!-- <mapgis-ui-group-tab title="绘制投放面" /> -->
-        <mapgis-3d-draw
-          @drawCreate="handleDrawCreate"
-          @load="handleDrawLoad"
-          :drawStyle="drawStyleCopy"
-          :enableControl="enableControl"
-        >
-          <div v-if="radioValueProType === 1" style="margin-top: 7px;">
-            <mapgis-ui-group-tab title="绘制投影区域" style="display:inline" />
-            <div class="padding_draw">
-              <mapgis-ui-tooltip
-                v-for="(item, i) in draws"
-                :key="i"
-                placement="bottom"
-              >
-                <template slot="title">
-                  <span>{{ item.tip }}</span>
-                </template>
-                <mapgis-ui-button
-                  :ghost="true"
-                  type="link"
-                  @click="item.click"
-                  style="margin: 0 -5px "
-                >
-                  <mapgis-ui-iconfont :type="item.icon" theme="filled" />
-                </mapgis-ui-button>
-              </mapgis-ui-tooltip>
-            </div>
-            <!-- 贴场景or不贴场景（radio二选一） -->
-            <div class="padding_cla">
-              <mapgis-ui-radio-group v-model="radioValueClingOrNo">
-                <mapgis-ui-radio :value="1">贴场景</mapgis-ui-radio>
-                <mapgis-ui-radio :value="2">不贴场景</mapgis-ui-radio>
-              </mapgis-ui-radio-group>
-            </div>
-            <div v-if="radioValueClingOrNo === 2">
-              <mapgis-ui-group-tab
-                :isTitleBold="true"
-                :hasTopMargin="false"
-                :hasBottomMargin="false"
-                style="paddingBottom:8px;"
-              >
-                <span slot="title">
-                  设置离地高度
-                  <mapgis-ui-tooltip slot="handle" placement="top">
-                    <template slot="title">
-                      <span>{{ infoOffsetHeight }}</span>
-                    </template>
-                    <mapgis-ui-iconfont type="mapgis-info"></mapgis-ui-iconfont>
-                  </mapgis-ui-tooltip>
-                </span>
-                <mapgis-ui-switch
-                  slot="handle"
-                  size="small"
-                  v-model="offsetHeightOrNo"
-                  @change="!offsetHeightOrNo"
-                />
-              </mapgis-ui-group-tab>
-              <mapgis-ui-form-item label="离地高度" v-if="offsetHeightOrNo">
-                <mapgis-ui-input-number-addon
-                  v-model.number="offsetHeight"
-                  addon-after="米"
-                  :min="0"
-                  :step="0.1"
-                />
-              </mapgis-ui-form-item>
-            </div>
-          </div>
-        </mapgis-3d-draw>
-
         <!-- 摄像头参数方式 -->
-        <div v-if="radioValueProType === 2">
+        <div v-if="renderType === 0">
           <mapgis-ui-group-tab>
             <span slot="title">
               摄像头参数
@@ -403,6 +332,63 @@
           </mapgis-ui-col>
         </mapgis-ui-row> -->
         </div>
+
+        <!-- 绘制投放面方式 -->
+        <!-- <mapgis-ui-group-tab title="绘制投放面" /> -->
+        <mapgis-3d-draw
+          @drawCreate="handleDrawCreate"
+          @load="handleDrawLoad"
+          :drawStyle="drawStyleCopy"
+          :enableControl="enableControl"
+        >
+          <div v-if="renderType === 1" style="margin-top: 7px;">
+            <mapgis-ui-group-tab title="绘制投影区域" style="display:inline" />
+            <div class="padding_draw">
+              <mapgis-ui-tooltip
+                v-for="(item, i) in draws"
+                :key="i"
+                placement="bottom"
+              >
+                <template slot="title">
+                  <span>{{ item.tip }}</span>
+                </template>
+                <mapgis-ui-button
+                  :ghost="true"
+                  type="link"
+                  @click="item.click"
+                  style="margin: 0 -5px "
+                >
+                  <mapgis-ui-iconfont :type="item.icon" theme="filled" />
+                </mapgis-ui-button>
+              </mapgis-ui-tooltip>
+            </div>
+
+            <mapgis-ui-setting-form
+              :layout="layout"
+              size="default"
+              class="mapgis-ui-setting-form"
+            >
+              <mapgis-ui-form-item label="高度设置">
+                <mapgis-ui-select
+                  v-model="heightReference"
+                  :options="heightReferenceTypes"
+                >
+                </mapgis-ui-select>
+              </mapgis-ui-form-item>
+              <mapgis-ui-form-item
+                label="离地高度"
+                v-if="heightReference === 1"
+              >
+                <mapgis-ui-input-number-addon
+                  v-model.number="offsetHeight"
+                  addon-after="米"
+                  :min="0"
+                  :step="0.1"
+                />
+              </mapgis-ui-form-item>
+            </mapgis-ui-setting-form>
+          </div>
+        </mapgis-3d-draw>
       </div>
       <mapgis-ui-setting-footer>
         <mapgis-ui-button type="primary" @click="_okClick"
@@ -448,9 +434,9 @@ export default {
             hFOV: 15, // 水平视场角
             vFOV: 15, // 垂直视场角
             hintLineVisible: true, // 是否显示投放区域线
-            projectAreaCoords: [], // 绘制投放区域方式下存储绘制点位坐标
-            radioValueProType: 1,
-            radioValueClingOrNo: 1, //是否贴场景选择
+            areaCoords: [], // 绘制投放区域方式下存储绘制点位坐标
+            renderType: 0,
+            heightReference: 2, //是否贴场景选择
             offsetHeightOrNo: false, //是否设置离地高度
             offsetHeight: 5 //离地高度
           },
@@ -466,6 +452,10 @@ export default {
     layout: {
       type: String,
       default: "vertical" // 'horizontal' 'vertical' 'inline'
+    },
+    currentProjectorOverlayLayerId: {
+      type: String,
+      default: ""
     }
   },
   watch: {
@@ -475,7 +465,7 @@ export default {
         this.scenePro = this.putProjector(this.settingsCopy);
         this._changeProjectorType();
       },
-      deep: true,
+      // deep: true,
       immediate: true
     },
     videoSource: {
@@ -494,11 +484,11 @@ export default {
     },
     projectorType: {
       handler() {
-        this.cancelPutProjector(this.id);
+        this.cancelPutProjector(this.settingsCopy);
         this.scenePro = undefined;
         this._changeProjector();
       },
-      deep: true,
+      // deep: true,
       immediate: false
     }
   },
@@ -551,28 +541,20 @@ export default {
         this.imgUrl !== ""
       );
     },
-    radioValueProType: {
+    renderType: {
       get: function() {
-        return this.settingsCopy.params.radioValueProType;
+        return this.settingsCopy.params.renderType;
       },
       set: function(params) {
-        this.settingsCopy.params.radioValueProType = params;
+        this.settingsCopy.params.renderType = params;
       }
     },
-    radioValueClingOrNo: {
+    heightReference: {
       get: function() {
-        return this.settingsCopy.params.radioValueClingOrNo;
+        return this.settingsCopy.params.heightReference;
       },
       set: function(params) {
-        this.settingsCopy.params.radioValueClingOrNo = params;
-      }
-    },
-    offsetHeightOrNo: {
-      get: function() {
-        return this.settingsCopy.params.offsetHeightOrNo;
-      },
-      set: function(params) {
-        this.settingsCopy.params.offsetHeightOrNo = params;
+        this.settingsCopy.params.heightReference = params;
       }
     },
     offsetHeight: {
@@ -581,22 +563,6 @@ export default {
       },
       set: function(params) {
         this.settingsCopy.params.offsetHeight = params;
-      }
-    },
-    graphicId: {
-      get: function() {
-        return this.settingsCopy.params.graphicId;
-      },
-      set: function(params) {
-        this.settingsCopy.params.graphicId = params;
-      }
-    },
-    graphicsLayerId: {
-      get: function() {
-        return this.settingsCopy.params.graphicsLayerId;
-      },
-      set: function(params) {
-        this.settingsCopy.params.graphicsLayerId = params;
       }
     }
   },
@@ -638,16 +604,16 @@ export default {
           click: this.drawPolygon
         }
       ],
-      //投放方式的选择
-      // radioValueProType: 1,
-      //是否贴场景选择
-      // radioValueClingOrNo: 1,
-      infoOffsetHeight:
-        "不贴场景模式下，如果未设置离地高度，则默认使用边界点的高度",
-      //是否设置离地高度
-      // offsetHeightOrNo: false,
-      //离地高度
-      // offsetHeight: 5,
+      // 离地高度设置
+      heightReferenceTypes: [
+        { value: 0, label: "使用边界点的高度" },
+        {
+          value: 1,
+          label: "忽略边界点的高度,使用指定的高度"
+        },
+        { value: 2, label: "贴场景" }
+      ],
+
       graphic: undefined
     };
   },
@@ -678,7 +644,7 @@ export default {
     unmount() {
       this.$emit("unload", this);
       if (!this.settings.isProjected) {
-        this.cancelPutProjector(this.id);
+        this.cancelPutProjector(this.settings);
         this.scenePro = undefined;
       }
       if (this.drawer) {
@@ -725,7 +691,7 @@ export default {
         case Cesium.SceneProjectorType.IMAGE:
           if (!this.imgUrl || this.imgUrl.length == 0) {
             // this.scenePro.textureSource = undefined;
-            this.cancelPutProjector(this.id);
+            this.cancelPutProjector(this.settingsCopy);
             this.scenePro = undefined;
           } else {
             if (!this.scenePro) {
@@ -740,7 +706,7 @@ export default {
           const { videoUrl } = this.videoSource;
           if (!videoUrl || videoUrl.length == 0) {
             // this.scenePro.textureSource = undefined;
-            this.cancelPutProjector(this.id);
+            this.cancelPutProjector(this.settingsCopy);
             this.scenePro = undefined;
           } else {
             if (!this.scenePro) {
@@ -981,12 +947,20 @@ export default {
     },
     // 绘制矩形投影面
     drawRectangle() {
-      // 调用draw组件中，绘制矩形
-      this.drawer && this.drawer.enableDrawRectangle();
+      if (this.videoSource.videoUrl || this.imgUrl) {
+        // 调用draw组件中，绘制矩形
+        this.drawer && this.drawer.enableDrawRectangle();
+      } else {
+        this.$message.error("请先添加数据源");
+      }
     },
     // 绘制多边形投影面
     drawPolygon() {
-      this.drawer && this.drawer.enableDrawPolygon();
+      if (this.videoSource.videoUrl || this.imgUrl) {
+        this.drawer && this.drawer.enableDrawPolygon();
+      } else {
+        this.$message.error("请先添加数据源");
+      }
     },
 
     // draw组件的回调函数
@@ -996,24 +970,21 @@ export default {
       const vm = this;
       // 获取坐标系
       const ellipsoid = viewer.scene.globe.ellipsoid;
-      let vueKey = "default";
-      vm.graphicsLayer = window.vueCesium.GraphicsLayerManager.findSource(
-        vueKey,
-        vm.graphicsLayerId
-      ).source;
+
       const videoElement = document.getElementById("demovideo_html5_api");
+
       // 矩形
       if (param2.length === 2) {
         // 获取矩形的位置坐标
         let lnglatArr = vm.getRectDegrees(param2[0], param2[1]);
-        vm.params.projectAreaCoords = lnglatArr;
+        vm.params.areaCoords = lnglatArr;
         let type = "rectangle";
         let position = Cesium.Cartesian3.fromDegreesArray(lnglatArr, ellipsoid);
         vm.createProject(type, position, videoElement);
       } else {
         // 多边形
         let degreeArr = vm.getPolygonDegrees(param2);
-        vm.params.projectAreaCoords = degreeArr;
+        vm.params.areaCoords = degreeArr;
         let type = "polygon";
         let position = cartesian3;
         // 投影
@@ -1031,31 +1002,34 @@ export default {
       // 把判断是图片还是视频的逻辑放在这里，理由：矩形和多边形都要支持添加 图片和视频(mp4)，视频和图片的区别在于，图片不需要创建video元素，视频要，二者都要创建graphic实例，但style中的image有区别
       if (vm.projectorType === "image") {
         vm.graphic = vm.createGraphic(type, position, vm.imgUrl);
-        vm.graphicId.push(vm.graphic._id);
-        vm.graphicsLayer.addGraphic(vm.graphic);
+        window.graphicsLayer.addGraphic(vm.graphic);
       } else if (
         vm.projectorType === "video" &&
         vm.videoSource.protocol === "mp4"
       ) {
         vm.graphic = vm.createGraphic(type, position, videoElement);
-        vm.graphicId.push(vm.graphic._id);
-        vm.graphicsLayer.addGraphic(vm.graphic);
+        window.graphicsLayer.addGraphic(vm.graphic);
       } else if (
         vm.projectorType === "video" &&
         vm.videoSource.protocol === "m3u8"
       ) {
         vm.graphic = vm.createGraphic(type, position, videoElement);
-        vm.graphicId.push(vm.graphic._id);
-        vm.graphicsLayer.addGraphic(vm.graphic);
+        window.graphicsLayer.addGraphic(vm.graphic);
       }
     },
 
     createGraphic(type, position, element) {
       let typeGraphic = new Cesium.Graphic({
+        /**
+         * 修改说明：graphic指定id，如果直接使用this.settingsCopy.id会受到vue的影响，所以在id后方加一个"graphic"标识；
+         * 修改人：王涵
+         * 修改时间：2023/5/12
+         */
+        id: this.settingsCopy.id + "graphic",
         //类型
         type: type,
         //几何点坐标
-        positions: position,
+        positions: JSON.parse(JSON.stringify(position)),
         //样式
         style: {
           // 图片材质
@@ -1066,12 +1040,12 @@ export default {
             repeat: new Cesium.Cartesian2(1.0, 1.0)
           }),
           // 固定高度
-          perPositionHeight: !this.offsetHeightOrNo,
+          perPositionHeight: this.heightReference === 0,
           // 离地高度
           offsetHeight: this.offsetHeight,
           // 是否贴地
           classificationType:
-            this.radioValueClingOrNo === 1
+            this.heightReference === 2
               ? Cesium.ClassificationType.BOTH
               : undefined
         }
@@ -1116,12 +1090,10 @@ export default {
     _okClick() {
       // 退出配置前，先恢复投放状态
       if (!this.settings.isProjected) {
-        this.cancelPutProjector(this.id);
+        this.cancelPutProjector(this.settings);
         this.scenePro = undefined;
       }
-      for (let i = 0; i < this.graphicId.length; i++) {
-        this.graphicsLayer.getGraphicByID(this.graphicId[i]).show = false;
-      }
+      window.graphicsLayer.getGraphicByID(this.id + "graphic").show = false;
       this.graphic = undefined;
       this.$emit("update-settings", this.settingsCopy);
     },
@@ -1130,7 +1102,7 @@ export default {
      */
     _cancelClick() {
       // 退出配置前，先恢复投放状态,先取消，再恢复投放状态，以确保投放参数是配置之前的参数
-      this.cancelPutProjector(this.id);
+      this.cancelPutProjector(this.settings);
       this.scenePro = undefined;
       if (this.settings.isProjected) {
         this.putProjector(this.settings);

@@ -17,6 +17,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    currentProjectorOverlayLayerId: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
@@ -44,83 +48,81 @@ export default {
         projector.params.projectorType,
         projector.params.videoSource.protocol
       );
-      scenePro = new Cesium.SceneProjector(proType);
-      viewer.scene.visualAnalysisManager.add(scenePro, id);
-      switch (proType) {
-        case Cesium.SceneProjectorType.IMAGE:
-          scenePro.textureSource = params.imgUrl;
-          break;
-        case Cesium.SceneProjectorType.VIDEO:
-        case Cesium.SceneProjectorType.HLS:
-          scenePro.textureSource = params.videoSource.videoUrl;
-          break;
-        case Cesium.SceneProjectorType.COLOR:
-          scenePro.textureSource = new Cesium.Color(1, 0, 0, 1);
-          break;
-        default:
-          break;
-      }
       const {
         cameraPosition,
         orientation,
         hFOV,
         vFOV,
         hintLineVisible,
-        projectAreaCoords,
-        radioValueProType,
-        radioValueClingOrNo,
-        offsetHeightOrNo,
-        offsetHeight,
-        graphicId,
-        graphicsLayerId,
+        areaCoords,
       } = params;
-      const viewPosition = Cesium.Cartographic.toCartesian(
-        Cesium.Cartographic.fromDegrees(
-          cameraPosition.x,
-          cameraPosition.y,
-          cameraPosition.z
-        )
-      );
-      scenePro.viewPosition = viewPosition;
-      let targetPosition = Cesium.AlgorithmLib.pickFromRay(
-        viewer.scene,
-        viewPosition,
-        { heading: orientation.heading, pitch: orientation.pitch }
-      );
-      if (!targetPosition) {
-        targetPosition = Cesium.AlgorithmLib.pickFromRay(
+      scenePro = new Cesium.SceneProjector(proType);
+      viewer.scene.visualAnalysisManager.add(scenePro, id);
+
+      if (areaCoords && areaCoords.length) {
+        window.graphicsLayer.getGraphicByID(id + "graphic").show = true;
+      } else {
+        switch (proType) {
+          case Cesium.SceneProjectorType.IMAGE:
+            scenePro.textureSource = params.imgUrl;
+            break;
+          case Cesium.SceneProjectorType.VIDEO:
+          case Cesium.SceneProjectorType.HLS:
+            scenePro.textureSource = params.videoSource.videoUrl;
+            break;
+          case Cesium.SceneProjectorType.COLOR:
+            scenePro.textureSource = new Cesium.Color(1, 0, 0, 1);
+            break;
+          default:
+            break;
+        }
+        const viewPosition = Cesium.Cartographic.toCartesian(
+          Cesium.Cartographic.fromDegrees(
+            cameraPosition.x,
+            cameraPosition.y,
+            cameraPosition.z
+          )
+        );
+        scenePro.viewPosition = viewPosition;
+
+        let targetPosition = Cesium.AlgorithmLib.pickFromRay(
           viewer.scene,
           viewPosition,
-          {
-            heading: orientation.heading,
-            pitch: orientation.pitch,
-            distance: 150,
-          }
+          { heading: orientation.heading, pitch: orientation.pitch }
         );
-        scenePro.targetPosition = targetPosition;
-      } else {
-        scenePro.targetPosition = targetPosition;
+        if (!targetPosition) {
+          targetPosition = Cesium.AlgorithmLib.pickFromRay(
+            viewer.scene,
+            viewPosition,
+            {
+              heading: orientation.heading,
+              pitch: orientation.pitch,
+              distance: 150,
+            }
+          );
+          scenePro.targetPosition = targetPosition;
+        } else {
+          scenePro.targetPosition = targetPosition;
+        }
+        scenePro.horizontAngle = hFOV;
+        scenePro.verticalAngle = vFOV;
+        scenePro.roll = orientation.roll;
+        scenePro.hintLineVisible = hintLineVisible;
+        scenePro.hideVPInvisible = hideVPInvisible;
       }
-      scenePro.roll = orientation.roll;
-      scenePro.hintLineVisible = hintLineVisible;
-      scenePro.horizontAngle = hFOV;
-      scenePro.verticalAngle = vFOV;
-      scenePro.hideVPInvisible = hideVPInvisible;
-      scenePro.projectAreaCoords = projectAreaCoords;
-      scenePro.radioValueProType = radioValueProType;
-      scenePro.radioValueClingOrNo = radioValueClingOrNo;
-      scenePro.offsetHeightOrNo = offsetHeightOrNo;
-      scenePro.offsetHeight = offsetHeight;
-      scenePro.graphicId = graphicId;
-      scenePro.graphicsLayerId = graphicsLayerId;
       return scenePro;
     },
     /**
      * 取消投放
      */
-    cancelPutProjector(id) {
-      this.viewer.scene.visualAnalysisManager.removeByID(id);
-      this._removeCameraMarker(id);
+    cancelPutProjector(projector) {
+      this.viewer.scene.visualAnalysisManager.removeByID(projector.id);
+      if (projector.params.areaCoords && projector.params.areaCoords.length) {
+        window.graphicsLayer.getGraphicByID(
+          projector.id + "graphic"
+        ).show = false;
+      }
+      this._removeCameraMarker(projector.id);
     },
     /**
      * 获取相机模型矩阵
