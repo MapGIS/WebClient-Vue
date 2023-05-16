@@ -9,7 +9,7 @@ export default class DocumentCatalog {
    * @param {Number} param.port 服务端口
    */
   static getTiles({ ip, port }) {
-    const url = `http://${ip}:${port}/igs/rest/mrcs/tiles?version=2&f=json`;
+    const url = `${window.location.protocol}//${ip}:${port}/igs/rest/mrcs/tiles?version=2&f=json`;
     const promise = new Promise((resolve, reject) => {
       axios.get(url).then(
         (res) => {
@@ -36,7 +36,7 @@ export default class DocumentCatalog {
    * @param {Number} param.port 服务端口
    */
   static getDocs({ ip, port }) {
-    const url = `http://${ip}:${port}/igs/rest/mrcs/docs?version=2&f=json`;
+    const url = `${window.location.protocol}//${ip}:${port}/igs/rest/mrcs/docs?version=2&f=json`;
     const promise = new Promise((resolve, reject) => {
       axios.get(url).then(
         (res) => {
@@ -147,7 +147,7 @@ export default class DocumentCatalog {
    * @param {string} param.name 服务名
    */
   static getMapInfoService({ ip, port, name }) {
-    const url = `http://${ip}:${port}/igs/rest/mrms/info/${name}?guid=`;
+    const url = `${window.location.protocol}//${ip}:${port}/igs/rest/mrms/info/${name}?guid=`;
     const promise = new Promise((resolve, reject) => {
       axios.get(url).then(
         (res) => {

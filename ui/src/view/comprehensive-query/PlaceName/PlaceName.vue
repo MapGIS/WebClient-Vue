@@ -310,7 +310,7 @@ export default {
             layerIndex: LayerIndex,
             serverName: docName,
             geometry: this.geometry,
-            serverUrl: `http://${ip}:${port}/igs/rest/mrms/docs/${docName}`,
+            serverUrl: `${window.location.protocol}//${ip}:${port}/igs/rest/mrms/docs/${docName}`,
             where
           }
         };

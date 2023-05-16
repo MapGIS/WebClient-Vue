@@ -52,6 +52,7 @@
               gdbp,
               ip,
               port,
+              domain,
               layerIndex,
               layerType,
               key,
@@ -98,6 +99,7 @@
                       gdbp,
                       ip,
                       port,
+                      domain,
                       layerIndex,
                       key
                     })
@@ -119,6 +121,7 @@
                       gdbp,
                       ip,
                       port,
+                      domain,
                       layerIndex,
                       key
                     })
@@ -139,6 +142,7 @@
         :gdbp="gdbp"
         :ip="ip"
         :port="port"
+        :domain="domain"
         @enable-dynamic-query="handleDynamicQuery"
       >
       </m3d-menus>
@@ -274,6 +278,7 @@ export default {
       version: undefined,
       ip: "localhost",
       port: "6163",
+      domain: undefined,
       isolation: false,
       featureposition: undefined, // {longitude: 0, latitude: 0, height: 0},
       featureproperties: undefined,
@@ -348,9 +353,10 @@ export default {
 
       let version = this.parseVersion();
       let server = this.parseServer();
-      let { ip, port } = server;
+      let { ip, port, domain } = server;
       this.ip = ip;
       this.port = port;
+      this.domain = domain;
       let g3dLayer = this.createCesiumObject();
       let layers = this.parseLayers();
       if (!layers) this.layerIds = [];
@@ -382,7 +388,7 @@ export default {
     // 图层回调解析
     getDocLayerIndexes(indexes, g3d) {
       const { vueIndex, vueKey, vueCesium, viewer, enablePopup } = this;
-      const { ip, port } = this;
+      const { ip, port, domain } = this;
       const vm = this;
       let layers = this.parseLayers();
       // 该回调只触发一次
@@ -433,6 +439,7 @@ export default {
               layerType,
               ip,
               port,
+              domain,
               gdbp: gdbpUrl,
               icon: "mapgis-layer",
               menu: "mapgis-down",
@@ -617,17 +624,14 @@ export default {
     },
     parseServer(url) {
       url = url || this.url;
-      let ip = new RegExp(/^[http:]*[https:]*\/\/.*\//);
-      let ips = url.match(ip);
-      let temp = ips[0].split("http://");
-      let domains = temp[1].split(":");
-      ip = domains[0];
-      let port = domains[1].split("/")[0];
-      this.ip = ip;
-      this.port = port;
+      const urlObj = new URL(url);
+      this.ip = urlObj.hostname;
+      this.port = urlObj.port;
+      this.domain = urlObj.origin;
       return {
-        ip,
-        port
+        ip: this.ip,
+        port: this.port,
+        domain: this.domain
       };
     },
     parseVersion(url) {
@@ -724,12 +728,13 @@ export default {
       }
     },
     handleActiveItemKey(layer) {
-      const { title, version, gdbp, ip, port, layerIndex, key } = layer;
+      const { title, version, gdbp, ip, port, domain, layerIndex, key } = layer;
       this.title = title;
       this.gdbp = gdbp;
       this.version = version;
       this.ip = ip;
       this.port = port;
+      this.domain = domain;
       this.selectLayerIndex = layerIndex;
       this.layerKey = key;
       this.$refs.card && this.$refs.card.togglePanel();
@@ -744,7 +749,7 @@ export default {
       let originStyles = [];
       layerIndexs.forEach(index => {
         let m3dlayer = g3dLayer.getLayer(index);
-        if(m3dlayer) {
+        if (m3dlayer) {
           originStyles.push(m3dlayer.style);
         }
       });
@@ -761,11 +766,11 @@ export default {
 
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      if(!g3dLayer) return;
+      if (!g3dLayer) return;
       if (find && find.options.originStyles) {
         find.options.originStyles.forEach((s, i) => {
           let m3dlayer = g3dLayer.getLayer(String(i));
-          if(m3dlayer) {
+          if (m3dlayer) {
             m3dlayer.style = s;
           }
         });
@@ -780,7 +785,7 @@ export default {
       if (find && find.options.originStyles) {
         find.options.originStyles.forEach((s, i) => {
           let m3dlayer = g3dLayer.getLayer(String(i));
-          if(m3dlayer) {
+          if (m3dlayer) {
             m3dlayer.show = true;
           }
         });
@@ -810,7 +815,7 @@ export default {
       this.selectedKeys = [`${layerIndex}`];
       layerIndexs.forEach(index => {
         let m3dlayer = g3dLayer.getLayer(index);
-        if(m3dlayer) {
+        if (m3dlayer) {
           if (index != layerIndex) {
             m3dlayer.show = false;
           } else {
@@ -905,7 +910,7 @@ export default {
       if (find && find.options) {
         let { primitiveCollection } = find.options;
         let last = find.options.feature;
-        if(last) {
+        if (last) {
           primitiveCollection.remove(last);
         }
       }
@@ -955,19 +960,19 @@ export default {
       this.selectLayerIndex = layerIndex;
       let g3dLayer = viewer.scene.layers.getLayer(this.g3dLayerIndex);
       let m3dlayer = g3dLayer.getLayer(`${layerIndex}`);
-      if(m3dlayer) {
+      if (m3dlayer) {
         this.restoreM3d();
         vueCesium.G3DManager.changeOptions(
-            vueKey,
-            vueIndex,
-            "pickerTileset",
-            m3dlayer
+          vueKey,
+          vueIndex,
+          "pickerTileset",
+          m3dlayer
         );
         vueCesium.G3DManager.changeOptions(
-            vueKey,
-            vueIndex,
-            "pickerTilesetStyle",
-            m3dlayer.style
+          vueKey,
+          vueIndex,
+          "pickerTilesetStyle",
+          m3dlayer.style
         );
         m3dlayer.style = new Cesium.Cesium3DTileStyle({
           color: `color('#FFFF00', 1)`

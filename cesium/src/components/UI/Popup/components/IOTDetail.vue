@@ -102,7 +102,7 @@ export default {
       this.loading = true;
       try {
         const res = await axios.get(
-          `http://${this.dataStoreIp}:${this.dataStorePort}/datastore/rest/services/dataset/relations`,
+          `${window.location.protocol}//${this.dataStoreIp}:${this.dataStorePort}/datastore/rest/services/dataset/relations`,
           {
             params: {
               fromID: this.Euid,
@@ -169,7 +169,7 @@ export default {
       graphChart.showLoading();
       axios
         .post(
-          `http://${this.dataStoreIp}:${this.dataStorePort}/datastore/rest/services/dataset/nebula/${this.dataStoreDataset}/knowledgeGraph/graph/query?type=graphRelationType`,
+          `${window.location.protocol}//${this.dataStoreIp}:${this.dataStorePort}/datastore/rest/services/dataset/nebula/${this.dataStoreDataset}/knowledgeGraph/graph/query?type=graphRelationType`,
           {
             id: this.Euid,
             pageSize: this.pageSize,
@@ -332,7 +332,7 @@ export default {
         if (names.length > 0) {
           const name = names[names.length - 1];
           const { ip, port, provider } = JSON.parse(toExtInfo);
-          const url = `http://${this.dataStoreIp}:${this.dataStorePort}/datastore/rest/services/file/${provider}${toDataUrl}/download?isPreview=true`;
+          const url = `${window.location.protocol}//${this.dataStoreIp}:${this.dataStorePort}/datastore/rest/services/file/${provider}${toDataUrl}/download?isPreview=true`;
           arr.push({
             name,
             url
@@ -345,7 +345,7 @@ export default {
       const arr = [];
       rtn.forEach(({ toDataUrl, toExtInfo, toID }) => {
         const { ip, port, provider } = JSON.parse(toExtInfo);
-        const url = `http://${this.dataStoreIp}:${this.dataStorePort}/datastore/rest/services/dataset/${provider}${toDataUrl}/iots/devices/videos`;
+        const url = `${window.location.protocol}//${this.dataStoreIp}:${this.dataStorePort}/datastore/rest/services/dataset/${provider}${toDataUrl}/iots/devices/videos`;
         arr.push({
           name: toID,
           type: "hls",

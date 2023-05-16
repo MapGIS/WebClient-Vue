@@ -955,7 +955,7 @@ export default {
         this.loading = true;
         axios
           .post(
-            `http://${this.info.dataStoreIp}:${this.info.dataStorePort}/datastore/rest/services/dataset/nebula/${this.info.dataStoreDataset}/knowledgeGraph/graph/query?type=graphRelationType`,
+            `${window.location.protocol}//${this.info.dataStoreIp}:${this.info.dataStorePort}/datastore/rest/services/dataset/nebula/${this.info.dataStoreDataset}/knowledgeGraph/graph/query?type=graphRelationType`,
             {
               id: this.info.floor,
               pageOffset: 0,

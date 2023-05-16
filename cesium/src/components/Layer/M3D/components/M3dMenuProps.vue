@@ -53,6 +53,9 @@ export default {
     },
     port: {
       type: String
+    },
+    domain: {
+      type: String
     }
   },
   data() {
@@ -280,7 +283,7 @@ export default {
     },
     $_gdbpquery(oid, gdbp) {
       const vm = this;
-      const { ip, port } = this;
+      const { ip, port, domain } = this;
       let queryParam = new window.CesiumZondy.Query.G3DDocQuery();
       queryParam.gdbp = encodeURI(gdbp);
       queryParam.structs =
@@ -288,6 +291,7 @@ export default {
       queryParam.objectIds = oid;
       queryParam.serverIp = ip;
       queryParam.serverPort = port;
+      queryParam.domain = domain;
       queryParam.queryG3DFeature(
         result => {
           if (result != null) {

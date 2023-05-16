@@ -25,6 +25,7 @@
         :gdbp="gdbp"
         :ip="ip"
         :port="port"
+        :domain="domain"
       >
       </m3d-menu-props>
       <m3d-menu-explosion
@@ -101,6 +102,9 @@ export default {
       type: String
     },
     port: {
+      type: String
+    },
+    domain: {
       type: String
     }
   },

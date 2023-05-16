@@ -8,12 +8,14 @@ export default class DataSourceCatalog {
    * @param {Boolean} param.isDetail 是否获取详情
    */
   static getDataSource({ ip, port, isDetail = false }) {
-    const url = `http://${ip}:${port}/igs/rest/mrcs/datasource?f=json&${
+    const url = `${
+      window.location.protocol
+    }//${ip}:${port}/igs/rest/mrcs/datasource?f=json&${
       isDetail ? "getAtt" : "getAttr"
     }=true`;
     const promise = new Promise((resolve, reject) => {
       axios.get(url).then(
-        (res) => {
+        res => {
           const { data } = res;
           if (!data) {
             resolve(undefined);
@@ -21,12 +23,12 @@ export default class DataSourceCatalog {
             resolve(data);
           }
         },
-        (error) => {
+        error => {
           reject(error);
         }
       );
     });
-    return promise.then((data) => {
+    return promise.then(data => {
       return data;
     });
   }
@@ -40,10 +42,10 @@ export default class DataSourceCatalog {
    * @param {String} param.password 密码
    */
   static getDataBase({ ip, port, dataSource, user, password }) {
-    const url = `http://${ip}:${port}/igs/rest/mrcs/datasource/${dataSource}?user=${user}&psw=${password}&f=json`;
+    const url = `${window.location.protocol}//${ip}:${port}/igs/rest/mrcs/datasource/${dataSource}?user=${user}&psw=${password}&f=json`;
     const promise = new Promise((resolve, reject) => {
       axios.get(url).then(
-        (res) => {
+        res => {
           const { data } = res;
           if (!data) {
             resolve(undefined);
@@ -51,12 +53,12 @@ export default class DataSourceCatalog {
             resolve(data);
           }
         },
-        (error) => {
+        error => {
           reject(error);
         }
       );
     });
-    return promise.then((data) => {
+    return promise.then(data => {
       return data;
     });
   }
@@ -71,10 +73,10 @@ export default class DataSourceCatalog {
    * @param {String} param.password 密码
    */
   static getGDBData({ ip, port, gdbp, type, user, password }) {
-    const url = `http://${ip}:${port}/igs/rest/mrcs/datasource/${gdbp}/${type}?user=${user}&psw=${password}&containAll=false&f=json`;
+    const url = `${window.location.protocol}//${ip}:${port}/igs/rest/mrcs/datasource/${gdbp}/${type}?user=${user}&psw=${password}&containAll=false&f=json`;
     const promise = new Promise((resolve, reject) => {
       axios.get(url).then(
-        (res) => {
+        res => {
           const { data } = res;
           if (!data) {
             resolve(undefined);
@@ -82,12 +84,12 @@ export default class DataSourceCatalog {
             resolve(data);
           }
         },
-        (error) => {
+        error => {
           reject(error);
         }
       );
     });
-    return promise.then((data) => {
+    return promise.then(data => {
       return data;
     });
   }

@@ -2,7 +2,7 @@ import {
   getLayers,
   getFonts,
   getVectorTileSource,
-  getSpritePng,
+  getSpritePng
 } from "./vectortile/MapgisVectorTileLayer";
 import VectorTileProvider from "./vectortile/VectorTileProvider";
 import VectorTileStyle from "./vectortile/MapgisVectorTileStyle";
@@ -44,13 +44,7 @@ export class VectorTileRender {
 
     this.url = options.styleUrl;
     if (!this.url && options.ip) {
-      this.url =
-        "http://" +
-        options.ip +
-        ":" +
-        options.port +
-        "/igs/rest/mrcs/vtiles/0/" +
-        options.layerName;
+      this.url = `${window.location.protocol}//${options.ip}:${options.port}/igs/rest/mrcs/vtiles/0/${options.layerName}`;
     }
 
     this.options = options;
@@ -116,8 +110,8 @@ export class VectorTileRender {
     const vm = this;
     if (!this.vectortilejson) {
       fetch(this.url)
-        .then((res) => res.json())
-        .then((data) => {
+        .then(res => res.json())
+        .then(data => {
           vm.vectortilejson = data;
           vm.requestStyleData(vm.vectortilejson);
         });
@@ -143,10 +137,10 @@ export class VectorTileRender {
     var sources = getVectorTileSource(vectortilejson);
     var spritepng = getSpritePng(vectortilejson);
     fetch(vectortilejson.sprite + ".json")
-      .then((res) => {
+      .then(res => {
         res.json();
       })
-      .then((data) => {
+      .then(data => {
         let spritedata = data;
         vm.styleData = {
           vectortilejson: vectortilejson,
@@ -154,7 +148,7 @@ export class VectorTileRender {
           spritedata: spritedata,
           spritepng: spritepng,
           fonts: getFonts,
-          sources: sources,
+          sources: sources
         };
         vm.addLayer(vm.styleData);
       });
@@ -205,7 +199,7 @@ export class VectorTileRender {
         show: this.show,
         tilingScheme: this.tilingScheme,
         maximumLevel: this.maximumLevel,
-        minimumLevel: this.minimumLevel,
+        minimumLevel: this.minimumLevel
       });
       this.provider = this.viewer.imageryLayers.addImageryProvider(vectortile);
       this.provider.show = this.show;
@@ -238,7 +232,7 @@ export class VectorTileRender {
   setLayoutProperty(layerId, key, value) {
     if (!this.vectortilejson || !this.vectortilejson.layers) return;
     const { layers } = this.vectortilejson;
-    let finds = layers.filter((l) => {
+    let finds = layers.filter(l => {
       return l.id === layerId;
     });
     let layer = finds && finds.length > 0 ? finds[0] : undefined;
@@ -260,7 +254,7 @@ export class VectorTileRender {
   setPaintProperty(layerId, key, value) {
     if (!this.vectortilejson || !this.vectortilejson.layers) return;
     const { layers } = this.vectortilejson;
-    let finds = layers.filter((l) => {
+    let finds = layers.filter(l => {
       return l.id === layerId;
     });
     let layer = finds && finds.length > 0 ? finds[0] : undefined;
@@ -280,7 +274,7 @@ export class VectorTileRender {
   setFilter(layerId, rule) {
     if (!this.vectortilejson || !this.vectortilejson.layers) return;
     const { layers } = this.vectortilejson;
-    let finds = layers.filter((l) => {
+    let finds = layers.filter(l => {
       return l.id === layerId;
     });
     let layer = finds && finds.length > 0 ? finds[0] : undefined;

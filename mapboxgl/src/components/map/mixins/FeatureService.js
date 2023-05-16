@@ -91,10 +91,11 @@ export default {
     _initParam() {
       //取得ip，port，mapId（地图文档名称）
       this._url = this.url;
-      let urls = this._url.split("http://");
-      this._ip = urls[1].split(":")[0];
-      let arr = urls[1].split(":")[1].split("/");
-      this._port = arr[0];
+      let urls = new URL(this.url);
+      this._ip = urls.hostname;
+      this._port = urls.port;
+      this._domain = urls.origin;
+      let arr = this.url.split("/");
       this._mapId = arr[arr.length - 1];
     },
     //通过OID查询要素
@@ -258,7 +259,8 @@ export default {
           layers.join(","),
           {
             ip: vm._ip,
-            port: vm._port
+            port: vm._port,
+            domain: vm._domain
           }
         );
       } else if (
@@ -269,7 +271,8 @@ export default {
         //初始化要素服务
         queryService = new QueryLayerFeature(queryParam, {
           ip: vm._ip,
-          port: vm._port
+          port: vm._port,
+          domain: vm._domain
         });
       } else {
         throw new Error("请填写正确的图层Id或gdbp地址");
@@ -469,7 +472,8 @@ export default {
         //如过是1,2,3,...则用EditDocFeature
         service = new EditDocFeature(this._mapId, layer, {
           ip: this._ip,
-          port: this._port
+          port: this._port,
+          domain: this._domain
         });
       }
       return service;
@@ -533,10 +537,7 @@ export default {
      * */
     $_getLayerInfo(layer, callback) {
       this.get(
-        "http://" +
-          this._ip +
-          ":" +
-          this._port +
+        this._domain +
           "/igs/rest/mrcs/docs/" +
           this._mapId +
           "/0/" +
@@ -556,12 +557,7 @@ export default {
      * */
     $_getGDBPInfo(url, callback) {
       this.get(
-        "http://" +
-          this._ip +
-          ":" +
-          this._port +
-          "/igs/rest/mrcs/layerinfo?gdbpUrl=" +
-          url,
+        this._domain + "/igs/rest/mrcs/layerinfo?gdbpUrl=" + url,
         function(result) {
           result = JSON.parse(result);
           callback(result);
@@ -572,10 +568,7 @@ export default {
       docId = !docId ? "0" : docId;
       debugger;
       this.get(
-        "http://" +
-          this._ip +
-          ":" +
-          this._port +
+        this._domain +
           "/igs/rest/mrcs/docs/" +
           this._mapId +
           "/" +
