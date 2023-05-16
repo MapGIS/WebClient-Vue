@@ -45,13 +45,25 @@
               @click="editCurrentData($event, item, index)"
             />
           </mapgis-ui-tooltip>
-          <mapgis-ui-tooltip title="删除">
-            <mapgis-ui-ant-icon
-              type="delete"
-              @click="deleteCurrentData($event, item.id)"
-              s
-            /> </mapgis-ui-tooltip
-        ></template>
+          <mapgis-ui-popconfirm
+            placement="topRight"
+            ok-text="确认"
+            cancel-text="取消"
+            @confirm="deleteCurrentData($event, item.id)"
+          >
+            <template slot="title">
+              <p>是否要删除该数据？</p>
+            </template>
+            <mapgis-ui-tooltip title="删除">
+              <mapgis-ui-ant-icon
+                class="icon-style"
+                type="delete"
+                @click="$event => $event.stopPropagation()"
+              />
+            </mapgis-ui-tooltip>
+          </mapgis-ui-popconfirm>
+          ></template
+        >
         <mapgis-ui-tree
           v-if="item.data.length > 0"
           :key="item.id"
@@ -91,16 +103,26 @@
               <mapgis-ui-ant-icon
                 style="margin-right: 10px"
                 type="edit"
-                @click="editCurrentData($event, item, index)"
+                @click="editCurrentData($event, item)"
               />
             </mapgis-ui-tooltip>
-            <mapgis-ui-tooltip title="删除">
-              <mapgis-ui-ant-icon
-                type="delete"
-                @click="deleteCurrentData($event, item.id)"
-                s
-              />
-            </mapgis-ui-tooltip>
+            <mapgis-ui-popconfirm
+              placement="topRight"
+              ok-text="确认"
+              cancel-text="取消"
+              @confirm="deleteCurrentData($event, item.id)"
+            >
+              <template slot="title">
+                <p>是否要删除该数据？</p>
+              </template>
+              <mapgis-ui-tooltip title="删除">
+                <mapgis-ui-ant-icon
+                  class="icon-style"
+                  type="delete"
+                  @click="$event => $event.stopPropagation()"
+                />
+              </mapgis-ui-tooltip>
+            </mapgis-ui-popconfirm>
           </div>
         </div>
       </div>
@@ -216,10 +238,11 @@ export default {
       this.type = "edit";
       const deepCloneData = JSON.parse(JSON.stringify(data));
       this.bookMarkName = deepCloneData.name;
-      if (index === undefined) {
-        index = this.bookMarkList.findIndex(item => item.id === data.id);
+      let editIndex = index;
+      if (editIndex === undefined) {
+        editIndex = this.bookMarkList.findIndex(item => item.id === data.id);
       }
-      this.editIndex = index;
+      this.editIndex = editIndex;
     },
     onAddCancel() {
       this.showAddName = false;
@@ -429,7 +452,7 @@ export default {
     padding-top: 0;
   }
   .checked-node {
-    color: $primary-6;
+    color: var(--primary-6);
   }
 
   ::v-deep .mapgis-ui-collapse-header:after,
@@ -466,6 +489,9 @@ export default {
         }
       }
     }
+  }
+  .icon-style {
+    cursor: pointer;
   }
 }
 </style>
