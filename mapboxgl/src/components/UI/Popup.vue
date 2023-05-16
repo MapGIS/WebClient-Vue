@@ -221,6 +221,6 @@ export default {
 </script>
 <style lang="scss">
 .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
-  border-top-color: $popover-background !important;
+  border-top-color: var(--popover-background) !important;
 }
 </style>
