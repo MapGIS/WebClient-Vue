@@ -217,11 +217,19 @@ export default {
     this.init();
   },
   watch: {
-    initialDepthTest(e) {
-      this.basicSetting.depthTest = e;
+    initialDepthTest: {
+      handler(e) {
+        this.basicSetting.depthTest = e;
+      },
+      deep: true,
+      immediate: true
     },
-    initBasicSetting(e) {
-      this.init();
+    initBasicSetting: {
+      handler(e) {
+        this.init();
+      },
+      deep: true,
+      immediate: true
     }
   },
   methods: {
@@ -358,7 +366,7 @@ export default {
           vueKey,
           vueIndex
         );
-        if (manager.options && manager.options.timeline) {
+        if (manager && manager.options && manager.options.timeline) {
           manager.options.timeline.destroy();
           window.vueCesium["SettingToolManager"].changeOptions(
             vueKey,
@@ -461,10 +469,12 @@ export default {
       const vm = this;
       viewer.statebar = this.basicSetting.statebar;
       let statebars = document.getElementsByClassName("mapgis-3d-statebar");
-      if (viewer.statebar) {
-        statebars[0].style.display = "block";
-      } else {
-        statebars[0].style.display = "none";
+      if (statebars && statebars.length > 0) {
+        if (viewer.statebar) {
+          statebars[0].style.display = "block";
+        } else {
+          statebars[0].style.display = "none";
+        }
       }
 
       // 改变状态栏的上下位置

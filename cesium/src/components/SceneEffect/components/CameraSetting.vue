@@ -66,8 +66,12 @@ export default {
     };
   },
   watch: {
-    initCameraSetting(e) {
-      this.init();
+    initCameraSetting: {
+      handler(e) {
+        this.init();
+      },
+      deep: true,
+      immediate: true
     }
   },
   methods: {

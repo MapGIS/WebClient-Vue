@@ -95,8 +95,12 @@ export default {
     };
   },
   watch: {
-    initLightSetting(e) {
-      this.init();
+    initLightSetting: {
+      handler(e) {
+        this.init();
+      },
+      deep: true,
+      immediate: true
     }
   },
   methods: {

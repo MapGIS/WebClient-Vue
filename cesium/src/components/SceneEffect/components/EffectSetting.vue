@@ -86,8 +86,12 @@ export default {
     };
   },
   watch: {
-    initEffectSetting(e) {
-      this.init();
+    initEffectSetting: {
+      handler(e) {
+        this.init();
+      },
+      deep: true,
+      immediate: true
     }
   },
   methods: {

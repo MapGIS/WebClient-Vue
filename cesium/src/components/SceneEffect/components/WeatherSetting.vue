@@ -239,8 +239,12 @@ export default {
     };
   },
   watch: {
-    initWeatherSetting(e) {
-      this.init();
+    initWeatherSetting: {
+      handler(e) {
+        this.init();
+      },
+      deep: true,
+      immediate: true
     }
   },
   mounted() {
@@ -318,19 +322,23 @@ export default {
       viewer.scene.sun.show = this.weatherSetting.sun;
       if (this.weatherSetting.sun) {
         let sunPosition = viewer.scene.sun._boundingVolume.center;
-        viewer.camera.flyTo({
-          destination: new Cesium.Cartesian3(
-            -sunPosition.x / 1000,
-            -sunPosition.y / 1000,
-            -sunPosition.z / 2000
-          ),
-          orientation: {
-            heading: 0,
-            pitch: Cesium.Math.toRadians(-90),
-            roll: 0
-          },
-          duration: 0.5
-        });
+        if (sunPosition.x !== 0 && sunPosition.y !== 0 && sunPosition !== 0) {
+          viewer.camera.flyTo({
+            destination: new Cesium.Cartesian3(
+              -sunPosition.x / 1000,
+              -sunPosition.y / 1000,
+              -sunPosition.z / 2000
+            ),
+            orientation: {
+              heading: 0,
+              pitch: Cesium.Math.toRadians(-90),
+              roll: 0
+            },
+            duration: 0.5
+          });
+        } else {
+          viewer.camera.flyHome(0.5);
+        }
       } else {
         viewer.camera.flyHome(0.5);
       }
@@ -346,22 +354,30 @@ export default {
       if (this.weatherSetting.moon) {
         let moonPosition =
           viewer.scene.moon._ellipsoidPrimitive._boundingSphere.center;
-        viewer.camera.flyTo({
-          destination: new Cesium.Cartesian3(
-            moonPosition.x / 1.2,
-            moonPosition.y / 1.2,
-            moonPosition.z / 1.2
-          ),
-          orientation: {
-            heading: 0,
-            pitch: Cesium.Math.toRadians(90),
-            roll: 0
-          },
-          duration: 0.5
-        });
+        if (
+          moonPosition.x !== 0 &&
+          moonPosition.y !== 0 &&
+          moonPosition !== 0
+        ) {
+          viewer.camera.flyTo({
+            destination: new Cesium.Cartesian3(
+              moonPosition.x / 1.2,
+              moonPosition.y / 1.2,
+              moonPosition.z / 1.2
+            ),
+            orientation: {
+              heading: 0,
+              pitch: Cesium.Math.toRadians(90),
+              roll: 0
+            },
+            duration: 0.5
+          });
 
-        let hpRange = new Cesium.HeadingPitchRange(0, 90, 100000000);
-        viewer.camera.lookAt(moonPosition, hpRange);
+          let hpRange = new Cesium.HeadingPitchRange(0, 90, 100000000);
+          viewer.camera.lookAt(moonPosition, hpRange);
+        } else {
+          viewer.camera.flyHome(0.5);
+        }
       } else {
         viewer.camera.flyHome(0.5);
       }
@@ -405,7 +421,7 @@ export default {
         vueKey,
         vueIndex
       );
-      if (manager.options && manager.options.SkyBox) {
+      if (manager && manager.options && manager.options.SkyBox) {
         manager.options.SkyBox.removeSkyBox();
         window.vueCesium["SettingToolManager"].changeOptions(
           vueKey,
@@ -474,7 +490,7 @@ export default {
         vueKey,
         vueIndex
       );
-      if (manager.options && manager.options.GlobeCloud) {
+      if (manager && manager.options && manager.options.GlobeCloud) {
         manager.options.GlobeCloud.removeGlobeClouds();
         window.vueCesium["SettingToolManager"].changeOptions(
           vueKey,
