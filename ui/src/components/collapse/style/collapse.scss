@@ -5,8 +5,8 @@
   background-color: $collapse-header-bg;
 
   & > &-item > &-header {
-    border-left: none !important;
-    color: $heading-color !important;
+    border-left: none;
+    color: $collapse-card-header-bg;
   }
 
   @include e(content, "-") {

@@ -3,7 +3,8 @@
 
 @include b(card) {
   $card-prefix: &;
-  background-color: $card-body-background;
+  // background-color: $card-body-background;
+  background: transparent;
 
   @include e(body, "-") {
     // background-color: $body-background;
