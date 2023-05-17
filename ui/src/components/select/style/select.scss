@@ -6,7 +6,8 @@
   $prefix: &;
 
   @include e(selection, "-") {
-    background-color: $select-background;
+    // background-color: $select-background;
+    background-color: transparent;
     border: 1px solid $select-border-color;
     color: $text-color;
     $prefix-selection: &;

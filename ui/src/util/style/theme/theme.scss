@@ -168,7 +168,7 @@ $layout-background: var(--layout-background);
 $layout-shadow: var(--shadow);
 $layout-sider-background: var(--sider-background);
 $layout-body-background: #f0f2f5;
-// $layout-header-background: var(--header-background);
+$layout-header-color: var(--layout-heading-color);
 $layout-header-background: var(--layout-background);
 $layout-footer-background: var(--footer-background);
 $layout-header-height: 64px;
@@ -787,7 +787,7 @@ $text-color-second: $text-color-secondary;
 $layout-bg-color: $layout-body-background;
 $base-bg-color: $body-background;
 $hover-bg-color: rgba(0, 0, 0, 0.025);
-$border-color: $border-color-split;
+$border-color: $border-color-base;
 $shadow-color: $shadow-color;
 
 $text-color-inverse: $text-color-inverse;
