@@ -7,6 +7,7 @@ import * as Util from "./util/common";
 
 import { setLayout, setLayoutSettingVisible } from "./util/emit/layout";
 import { setTheme } from "./util/style/theme/set-theme";
+import { getTheme } from "./util/style/theme/get-theme";
 
 import { default as MapgisUiMessage } from "./components/message/Message.js";
 import { default as MapgisUiNotification } from "./components/notification/Notification.js";
@@ -64,6 +65,7 @@ export { MapgisUiMessage, MapgisUiNotification, ModalInstance, MapgisUiEmpty };
 export default {
   Util,
   setTheme,
+  getTheme,
   setLayout,
   setLayoutSettingVisible,
   install
@@ -73,3 +75,4 @@ export { groupArr } from "./components/plot/config/attributeConfig";
 
 window.MapgisUi = UIComponents;
 window.setTheme = setTheme;
+window.getTheme = getTheme;
