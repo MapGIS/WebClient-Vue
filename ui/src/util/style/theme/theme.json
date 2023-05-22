@@ -110,7 +110,7 @@
     "textColor": "rgba(225, 225, 225, 0.8)",
     "textColorSecondary": "rgba(255, 255, 255, 0.45)",
     "background": "rgba(44,44,44,1)",
-    "backgroundLight": "rgba(44,44,44,1)",
+    "backgroundLight": "rgba(60,56,56,1)",
     "backgroundBase": "rgba(0, 0, 0, 0.08)",
     "dataCardBackground": "rgba(44,44,44,1)",
     "selectedColor": "rgba(52,153,229,1)",
