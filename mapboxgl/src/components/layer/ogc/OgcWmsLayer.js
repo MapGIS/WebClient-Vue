@@ -83,9 +83,9 @@ export default {
       let _baseUrl = this.baseUrl;
       if (this.baseUrl) {
         if (this.baseUrl.indexOf("?") > -1) {
-          _baseUrl = this.baseUrl.split("?")[0];
+          _baseUrl = `${this.baseUrl}&`;
         } else {
-          _baseUrl = this.baseUrl;
+          _baseUrl = `${this.baseUrl}?`;
         }
       } else {
         let domain = this.domain;
@@ -99,9 +99,9 @@ export default {
           this.serverType +
           "/" +
           this.serverName +
-          "/WMSServer";
+          "/WMSServer?";
       }
-      _baseUrl += "?service=WMS&request=GetMap";
+      _baseUrl += "service=WMS&request=GetMap";
       const partUrl = this.$_initAllRequestParams().join("&");
       this._url = encodeURI(_baseUrl + "&" + partUrl) + "&bbox={bbox}";
       if (this._url.indexOf("reversebbox") < 0) {

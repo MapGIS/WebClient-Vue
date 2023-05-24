@@ -95,16 +95,16 @@ export default {
       let _baseUrl = this.baseUrl;
       if (this.baseUrl) {
         if (this.baseUrl.indexOf("?") > -1) {
-          _baseUrl = this.baseUrl.split("?")[0];
+          _baseUrl = `${this.baseUrl}&`;
         } else {
-          _baseUrl = this.baseUrl;
+          _baseUrl = `${this.baseUrl}?`;
         }
       }
       if (_baseUrl.toLowerCase().indexOf("ime-cloud") > -1) {
-        //吉威的数据
-        _baseUrl += "?service=WMTS&REQUEST=GetTile";
+        // 吉威的数据
+        _baseUrl += "service=WMTS&REQUEST=GetTile";
       } else {
-        _baseUrl += "?service=WMTS&request=GetTile";
+        _baseUrl += "service=WMTS&request=GetTile";
       }
       const partUrl = this.$_initAllRequestParams().join("&");
       this._url =
