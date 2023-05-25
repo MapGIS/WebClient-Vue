@@ -31,7 +31,7 @@
       :mode="mode"
     />
 
-    <div v-for="(item, index) in testGroup" :key="index">
+    <div v-for="(item, index) in items" :key="index">
       <mapgis-ui-collapse
         v-model="activeKey"
         accordion
@@ -74,7 +74,8 @@
                   <template
                     slot="header"
                     v-if="showEditChild || editChildIndex !== indexChild + 1"
-                    >{{ itemChild.name }}</template>
+                    >{{ itemChild.name }}</template
+                  >
                   <template slot="header" v-else>
                     <mapgis-ui-input
                       :style="{ width: '150px', height: '22px' }"
@@ -99,10 +100,7 @@
                   />
                   <div class="collapse-item-content">
                     <div class="collapse-item-left">
-                      <img
-                        :src="itemChild.image"
-                        alt=""
-                      />
+                      <img :src="getImage(itemChild.image)" alt="" />
                       <div
                         class="item-more-tool"
                         v-show="active >= 0"
@@ -170,13 +168,17 @@
         >添加视点组
       </mapgis-ui-button>
 
-      <mapgis-ui-button
+      <mapgis-ui-button class="save-btn" type="primary" @click="saveConfig"
+        >保存
+      </mapgis-ui-button>
+
+      <!-- <mapgis-ui-button
         type="default"
         :block="true"
         v-else
         @click="deleteViewpoint"
         >删除视点
-      </mapgis-ui-button>
+      </mapgis-ui-button> -->
     </div>
   </div>
 </template>
@@ -206,17 +208,27 @@ export default {
   mounted() {
     this.mount();
   },
-  watch: {
-    items: {
-      handler: function() {
-        this.$emit("change", this.items);
-      },
-      deep: true
+  computed: {
+    baseUrl() {
+      return window._CONFIG.domainURL;
     },
+    getImage() {
+      return image => {
+        return `${this.baseUrl}${image}`;
+      };
+    }
+  },
+  watch: {
+    // items: {
+    //   handler: function() {
+    //     this.$emit("change", this.items);
+    //   },
+    //   deep: true
+    // },
     viewpointConfig: {
       handler: function(e) {
         if (e !== undefined && e !== null) {
-          this.items = e;
+          this.items = JSON.parse(JSON.stringify(e));
         }
       },
       immediate: true,
@@ -309,53 +321,7 @@ export default {
       },
 
       /* 视点列表 */
-      items: [
-        {
-          name: "全球",
-          image: require("./ViewpointManager/upload/globe.jpg"),
-          destination: {
-            x: 104,
-            y: 28.011763478186143,
-            z: 10071759.273162084
-          },
-          orientation: {
-            heading: 360,
-            pitch: -90,
-            roll: 0
-          },
-          duration: 0.5
-        },
-        {
-          name: "中国",
-          image: require("./ViewpointManager/upload/china.jpg"),
-          destination: {
-            x: 108.91,
-            y: 32.52,
-            z: 5000000.0
-          },
-          orientation: {
-            heading: 360,
-            pitch: -90,
-            roll: 0
-          },
-          duration: 0.5
-        },
-        {
-          name: "武汉",
-          image: require("./ViewpointManager/upload/wuhan.jpg"),
-          destination: {
-            x: 114.21,
-            y: 30.42,
-            z: 150000.0
-          },
-          orientation: {
-            heading: 360,
-            pitch: -90,
-            roll: 0
-          },
-          duration: 0.5
-        }
-      ]
+      items: []
     };
   },
   destroyed() {
@@ -373,7 +339,7 @@ export default {
       const marksIndex = 2;
       const pitchValue = -20;
 
-      const marks = this.testGroup[index].viewGroupItems;
+      const marks = this.items[index].viewGroupItems;
 
       for (var i = 0; i < marks.length; i++) {
         (function(i, data) {
@@ -409,7 +375,7 @@ export default {
       this.$confirm({
         content: `确定删除'${item.viewGroupName}'?`,
         onOk() {
-          vm.testGroup.splice(index, 1);
+          vm.items.splice(index, 1);
         },
         okText: "确定",
         cancelText: "取消",
@@ -428,7 +394,7 @@ export default {
       this.$confirm({
         content: `确定删除'${item.name}'?`,
         onOk() {
-          vm.testGroup[index].viewGroupItems.splice(indexChild, 1);
+          vm.items[index].viewGroupItems.splice(indexChild, 1);
         },
         okText: "确定",
         cancelText: "取消",
@@ -500,7 +466,7 @@ export default {
     /* 添加视点组 */
 
     addViewpointGroup(content) {
-      this.testGroup.push({ viewGroupName: "飞行视点组", viewGroupItems: [] });
+      this.items.push({ viewGroupName: "飞行视点组", viewGroupItems: [] });
 
       console.log("content");
     },
@@ -537,7 +503,7 @@ export default {
       // 确定修改的父子节点关系
       this.editTuple = [index, indexChild];
       this.editItem = indexChild;
-      this.config = this.testGroup[index].viewGroupItems[indexChild];
+      this.config = this.items[index].viewGroupItems[indexChild];
       this.editor = true;
       this.mode = "edit";
     },
@@ -547,26 +513,23 @@ export default {
       const editTuple = event[1];
       const vm = this;
       // 传入当前视点参数
-      vm.config = val
+      vm.config = val;
       // 先判断新增或编辑视点的name是否为空
       if (vm.mode === "add") {
         if (val.name === "") {
           val.name =
-            "视点" +
-            "_" +
-            (vm.testGroup[editTuple[0]].viewGroupItems.length + 1);
+            "视点" + "_" + (vm.items[editTuple[0]].viewGroupItems.length + 1);
         }
         /* 增加视点 */
-        console.log(vm.testGroup);
-        vm.testGroup[editTuple[0]].viewGroupItems.push(val);
+        console.log(vm.items);
+        vm.items[editTuple[0]].viewGroupItems.push(val);
       } else if (vm.mode === "edit") {
         if (val.name === "") {
-          val.name =
-            "视点" + "_" + (vm.testGroup[editTuple[0]].viewGroupItems + 1);
+          val.name = "视点" + "_" + (vm.items[editTuple[0]].viewGroupItems + 1);
         }
         /* 编辑视点 */
-         vm.testGroup[editTuple[0]].viewGroupItems[editTuple[1]]=Object.assign(
-          vm.testGroup[editTuple[0]].viewGroupItems[editTuple[1]],
+        vm.items[editTuple[0]].viewGroupItems[editTuple[1]] = Object.assign(
+          vm.items[editTuple[0]].viewGroupItems[editTuple[1]],
           val
         );
       }
@@ -612,6 +575,9 @@ export default {
     /* 关闭视点编辑器 */
     closePanel() {
       this.manager = false;
+    },
+    saveConfig() {
+      this.$emit("change", this.items);
     }
   }
 };
@@ -697,6 +663,12 @@ export default {
   }
   .viewpoint-footer {
     border-top: 0px;
+    display: flex;
+    padding: 0;
+    margin: 5px 0;
+    .save-btn {
+      margin-left: 10px;
+    }
   }
 }
 </style>
