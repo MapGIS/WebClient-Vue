@@ -189,7 +189,9 @@
       style="top: 50%; left: 50%"
     />
     <template slot="footer">
-      <mapgis-ui-button type="primary" @click="getResultConfig">确定</mapgis-ui-button>
+      <mapgis-ui-button type="primary" @click="getResultConfig"
+        >确定</mapgis-ui-button
+      >
     </template>
   </mapgis-ui-modal>
 </template>
@@ -197,6 +199,7 @@
 <script>
 import ServiceLayer from "../../UI/Controls/ServiceLayer";
 import html2canvas from "html2canvas";
+import axios from "axios";
 
 export default {
   name: "viewpoint-editor",
@@ -261,6 +264,7 @@ export default {
       innerShow: this.show,
       name: "",
       image: require("./upload/wuhan.jpg"),
+      imageUrl: "",
       duration: 0.5,
       currentTime: undefined,
       longitude: undefined,
@@ -275,6 +279,14 @@ export default {
       labelCol: { span: 6 },
       wrapperCol: { span: 18 }
     };
+  },
+  computed: {
+    baseUrl() {
+      return window._CONFIG.domainURL;
+    },
+    imagesUploadApi() {
+      return `${this.baseUrl}/psmap/rest/services/system/ResourceServer/files/pictures`;
+    }
   },
   mounted() {
     this.mount();
@@ -292,7 +304,9 @@ export default {
     initConfig(val) {
       this.name = val.name;
 
-      this.image = val.image;
+      this.image =
+        this.mode === "add" ? val.image : `${this.baseUrl}${val.image}`;
+      this.imageUrl = val.image;
 
       this.longitude = val.destination.x;
       this.latitude = val.destination.y;
@@ -339,8 +353,20 @@ export default {
         let image = document.querySelector(".thumbnail");
         // document.body.appendChild(canvas);
         image.setAttribute("src", canvas.toDataURL());
-        vm.image = canvas.toDataURL();
-        vm.spinning = false;
+
+        const id = (Math.random() * 1000000).toFixed(0);
+        const imageObj = vm.base64ToFile(canvas.toDataURL(), id);
+        vm.uploadImage(imageObj)
+          .then(res => {
+            vm.image = `${vm.baseUrl}${res.data.url}`;
+            vm.imageUrl = res.data.url;
+            vm.spinning = false;
+          })
+          .catch(Error => {
+            vm.$message.error("图片上传失败！");
+            image.setAttribute("src", vm.image);
+            vm.spinning = false;
+          });
       });
     },
     /* 上传本地图片 */
@@ -370,6 +396,7 @@ export default {
           // console.log(this.result);//要的数据 这里的this指向FileReader（）对象的实例reader
           image.setAttribute("src", this.result);
           vm.image = this.result;
+          vm.imageUrl = this.result;
           vm.spinning = false;
         };
         reader.onabort = function() {
@@ -409,7 +436,7 @@ export default {
       const vm = this;
       this.resultConfig = {
         name: vm.name,
-        image: vm.image,
+        image: vm.imageUrl,
         destination: {
           x: vm.longitude,
           y: vm.latitude,
@@ -427,6 +454,37 @@ export default {
     },
     closePanel() {
       this.innerShow = false;
+    },
+    // 图片转文件对象
+    base64ToFile(urlData, id) {
+      const arr = urlData.split(",");
+      const mime = arr[0].match(/:(.*?);/)[1];
+      const bytes = window.atob(arr[1]);
+      let n = bytes.length;
+      const ia = new Uint8Array(n);
+      while (n--) {
+        ia[n] = bytes.charCodeAt(n);
+      }
+      return new File([ia], `${id}.jpeg`, { type: mime });
+    },
+    uploadImage(image) {
+      const file = new FormData();
+      file.append("file", image);
+      return new Promise((resolve, reject) => {
+        axios
+          .post(this.imagesUploadApi, file, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: JSON.parse(localStorage.getItem("access_token"))
+            }
+          })
+          .then(res => {
+            resolve(res);
+          })
+          .catch(Error => {
+            reject(Error);
+          });
+      });
     }
   },
   directives: {
