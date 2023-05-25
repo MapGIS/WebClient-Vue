@@ -112,7 +112,9 @@ export default {
       const { lightColor, lightingMode } = sunlightParams;
       this.enableSunlight(sunlight);
       if (sunlight) {
-        this.lightColorChange(lightColor);
+        const { Cesium, viewer } = this;
+        const color = Cesium.Color.fromCssColorString(lightColor);
+        viewer.scene.light.color = color;
         viewer.scene.globe.lightingMode = Cesium.LightingMode[lightingMode];
       }
       this.lightIntensityChange(lightIntensity);
