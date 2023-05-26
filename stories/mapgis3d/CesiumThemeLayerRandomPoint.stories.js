@@ -27,6 +27,7 @@ const Template = (args, {argTypes}) => ({
       // />
       <mapgis-3d-theme-layer-custom 
         v-bind="$props"
+        v-if="visible"
         @load="load"
         @unload="unload"
         @bbox="handlebbox"
