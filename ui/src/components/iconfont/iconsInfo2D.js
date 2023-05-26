@@ -30,6 +30,10 @@ let iconsInfo = [
   {
     type: "circle",
     title: "圆"
+  },
+  {
+    type: "marker",
+    title: "广告牌+文字"
   }
 ];
 
