@@ -532,7 +532,7 @@ export default {
     simulation() {
       const { Cesium, viewer } = this;
       const vm = this;
-      if (viewer.terrainProvider && viewer.terrainProvider.range3D) {
+      if (viewer.terrainProvider) {
         switch (vm.radioValue) {
           case 1:
             if (vm.lnglat) {

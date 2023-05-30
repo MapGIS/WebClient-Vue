@@ -327,51 +327,65 @@ export default {
         callback: result => {
           this.remove();
           this.positions = result.positions;
-          let cartP = [];
-          for (let i = 0; i < result.positions.length; i++) {
-            let cartPosition = Cesium.Cartographic.fromCartesian(
-              result.positions[i]
-            );
-            cartP.push([
-              Cesium.Math.toDegrees(cartPosition.longitude),
-              Cesium.Math.toDegrees(cartPosition.latitude)
-            ]);
-          }
-          let positions = getPolygonSamplePoints({
-            positions: cartP,
-            step: this.step
+          // let cartP = [];
+          // let max = 0;
+          // let min = 0;
+          // for (let i = 0; i < result.positions.length; i++) {
+          //   let cartPosition = Cesium.Cartographic.fromCartesian(
+          //     result.positions[i]
+          //   );
+          //   let lnglatTocartographic = Cesium.Cartographic.fromRadians(
+          //     cartPosition.longitude,
+          //     cartPosition.latitude
+          //   );
+          //   let height = this.viewer.scene.sampleHeight(lnglatTocartographic);
+          //   if (max < height) {
+          //     max = height;
+          //   }
+          //   if (min > height) {
+          //     min = height;
+          //   }
+          //   this.startHeightCopy = min;
+          // cartP.push([
+          //   Cesium.Math.toDegrees(cartPosition.longitude),
+          //   Cesium.Math.toDegrees(cartPosition.latitude)
+          // ]);
+          //}
+          // let positions = getPolygonSamplePoints({
+          //   positions: cartP,
+          //   step: this.step
+          // });
+          // let positionsC = [],
+          //   that = this;
+          // for (let i = 0; i < positions.length; i++) {
+          //   positionsC.push(
+          //     Cesium.Cartesian3.fromDegrees(positions[i][0], positions[i][1], 0)
+          //   );
+          // }
+          // let sampleElevationTool = new Cesium.SampleElevationTool(
+          //   viewer,
+          //   positionsC,
+          //   "terrain",
+          //   function(sampleResult) {
+          //     let max = sampleResult[0].height;
+          //     let min = sampleResult[0].height;
+          //     for (let i = 1; i < sampleResult.length; i++) {
+          //       if (max < sampleResult[i].height) {
+          //         max = sampleResult[i].height;
+          //       }
+          //       if (min > sampleResult[i].height) {
+          //         min = sampleResult[i].height;
+          //       }
+          //     }
+          this.$emit("showProgress", {
+            startHeightCopy: this.startHeightCopy,
+            maxHeightCopy: this.maxHeightCopy,
+            floodSpeedCopy: this.floodSpeedCopy
           });
-          let positionsC = [],
-            that = this;
-          for (let i = 0; i < positions.length; i++) {
-            positionsC.push(
-              Cesium.Cartesian3.fromDegrees(positions[i][0], positions[i][1], 0)
-            );
-          }
-          let sampleElevationTool = new Cesium.SampleElevationTool(
-            viewer,
-            positionsC,
-            "terrain",
-            function(sampleResult) {
-              let max = sampleResult[0].height;
-              let min = sampleResult[0].height;
-              for (let i = 1; i < sampleResult.length; i++) {
-                if (max < sampleResult[i].height) {
-                  max = sampleResult[i].height;
-                }
-                if (min > sampleResult[i].height) {
-                  min = sampleResult[i].height;
-                }
-              }
-              that.$emit("showProgress", {
-                startHeightCopy: that.startHeightCopy,
-                maxHeightCopy: that.maxHeightCopy,
-                floodSpeedCopy: that.floodSpeedCopy
-              });
-            },
-            { level: 12 }
-          );
-          sampleElevationTool.start();
+          //   },
+          //   { level: 12 }
+          // );
+          // sampleElevationTool.start();
         }
       });
     },
@@ -403,7 +417,7 @@ export default {
       floodAnalysis =
         floodAnalysis || new Cesium.FloodAnalysis(this.viewer, positions);
       //设置洪水淹没区域最低开始高度
-      floodAnalysis.minHeight = Number(minHeight);
+      floodAnalysis.minHeight = Number(startHeightCopy);
       //设置洪水淹没区域最高高度
       floodAnalysis.maxHeight = this.maxHeightCopy || Number(maxHeightCopy);
       // 设置洪水上涨速度
