@@ -89,40 +89,45 @@
         </mapgis-ui-tree>
       </mapgis-ui-collapse-panel>
     </mapgis-ui-collapse>
-    <div v-if="showType === 'image'" class="image-panel">
-      <div class="child-panel" v-for="item in bookMarkList" :key="item.id">
-        <img
-          :src="getImage(item.image)"
-          alt=""
-          @click="showCurrentData($event, item)"
-        />
-        <div class="child-panel-footer">
-          <span :title="item.name">{{ item.name }}</span>
-          <div class="footer-right">
-            <mapgis-ui-tooltip title="修改">
-              <mapgis-ui-ant-icon
-                style="margin-right: 10px"
-                type="edit"
-                @click="editCurrentData($event, item)"
-              />
-            </mapgis-ui-tooltip>
-            <mapgis-ui-popconfirm
-              placement="topRight"
-              ok-text="确认"
-              cancel-text="取消"
-              @confirm="deleteCurrentData($event, item.id)"
-            >
-              <template slot="title">
-                <p>是否要删除该数据？</p>
-              </template>
-              <mapgis-ui-tooltip title="删除">
+    <div
+      v-if="showType === 'image'"
+      class="result-content tree-container beauty-scroll"
+    >
+      <div class="image-panel">
+        <div class="child-panel" v-for="item in bookMarkList" :key="item.id">
+          <img
+            :src="getImage(item.image)"
+            alt=""
+            @click="showCurrentData($event, item)"
+          />
+          <div class="child-panel-footer">
+            <span :title="item.name">{{ item.name }}</span>
+            <div class="footer-right">
+              <mapgis-ui-tooltip title="修改">
                 <mapgis-ui-ant-icon
-                  class="icon-style"
-                  type="delete"
-                  @click="$event => $event.stopPropagation()"
+                  style="margin-right: 10px"
+                  type="edit"
+                  @click="editCurrentData($event, item)"
                 />
               </mapgis-ui-tooltip>
-            </mapgis-ui-popconfirm>
+              <mapgis-ui-popconfirm
+                placement="topRight"
+                ok-text="确认"
+                cancel-text="取消"
+                @confirm="deleteCurrentData($event, item.id)"
+              >
+                <template slot="title">
+                  <p>是否要删除该数据？</p>
+                </template>
+                <mapgis-ui-tooltip title="删除">
+                  <mapgis-ui-ant-icon
+                    class="icon-style"
+                    type="delete"
+                    @click="$event => $event.stopPropagation()"
+                  />
+                </mapgis-ui-tooltip>
+              </mapgis-ui-popconfirm>
+            </div>
           </div>
         </div>
       </div>
@@ -390,7 +395,7 @@ export default {
       if (!this.searchValue) {
         this.bookMarkList = JSON.parse(JSON.stringify(this.bookMarkListCopy));
       } else {
-        this.bookMarkList = this.bookMarkList.filter(
+        this.bookMarkList = this.bookMarkListCopy.filter(
           item => item.name.indexOf(this.searchValue) !== -1
         );
       }
@@ -430,6 +435,9 @@ export default {
 
 <style lang="scss" scoped>
 .book-mark-tab {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   .toolbar {
     display: flex;
     justify-content: center;
@@ -462,34 +470,39 @@ export default {
     clear: both;
   }
 
-  .image-panel {
-    display: flex;
-    justify-content: left;
-    align-items: center;
-    flex-wrap: wrap;
-    .child-panel {
-      > img {
-        width: 240px;
-        height: 140px;
-        cursor: pointer;
-      }
+  .result-content {
+    flex: 1;
+    overflow: auto;
+    .image-panel {
       display: flex;
-      flex-direction: column;
-      margin: 3px 3px;
-      .child-panel-footer {
-        display: flex;
-        > span {
-          flex: 1;
-          max-width: 202px;
-          overflow: hidden;
-          white-space: nowrap;
-          text-overflow: ellipsis;
+      justify-content: left;
+      align-items: center;
+      flex-wrap: wrap;
+      .child-panel {
+        > img {
+          width: 240px;
+          height: 140px;
+          cursor: pointer;
         }
-        .footer-right {
+        display: flex;
+        flex-direction: column;
+        margin: 3px 3px;
+        .child-panel-footer {
+          display: flex;
+          > span {
+            flex: 1;
+            max-width: 202px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+          .footer-right {
+          }
         }
       }
     }
   }
+
   .icon-style {
     cursor: pointer;
   }
