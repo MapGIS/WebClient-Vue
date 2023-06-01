@@ -7,10 +7,10 @@ let iconsInfo = [
     type: "label",
     title: "文字"
   },
-  {
-    type: "billboard",
-    title: "广告牌"
-  },
+  // {
+  //   type: "billboard",
+  //   title: "广告牌"
+  // },
   {
     type: "point",
     title: "点"
@@ -33,7 +33,7 @@ let iconsInfo = [
   },
   {
     type: "marker",
-    title: "广告牌+文字"
+    title: "标注"
   }
 ];
 

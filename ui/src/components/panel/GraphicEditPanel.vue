@@ -1155,35 +1155,35 @@ export default {
             editPanelValues.title = title;
           }
           break;
-        case "billboard":
-          editPanelValues.id = id;
-          editPanelValues.color =
-            "rgb(" +
-            color[0] * 255 +
-            "," +
-            color[1] * 255 +
-            "," +
-            color[2] * 255 +
-            ")";
-          editPanelValues.opacity = color[3] * 100;
-          editPanelValues.image = image;
-          editPanelValues.width = width;
-          editPanelValues.height = height;
-          editPanelValues.offsetHeight = offsetHeight;
-          editPanelValues.outlineWidth = outlineWidth;
-          editPanelValues.outlineOpacity = outlineColor[3] * 100;
-          editPanelValues.outlineColor =
-            "rgb(" +
-            outlineColor[0] * 255 +
-            "," +
-            outlineColor[1] * 255 +
-            "," +
-            outlineColor[2] * 255 +
-            ")";
-          if (title) {
-            editPanelValues.title = title;
-          }
-          break;
+        // case "billboard":
+        //   editPanelValues.id = id;
+        //   editPanelValues.color =
+        //     "rgb(" +
+        //     color[0] * 255 +
+        //     "," +
+        //     color[1] * 255 +
+        //     "," +
+        //     color[2] * 255 +
+        //     ")";
+        //   editPanelValues.opacity = color[3] * 100;
+        //   editPanelValues.image = image;
+        //   editPanelValues.width = width;
+        //   editPanelValues.height = height;
+        //   editPanelValues.offsetHeight = offsetHeight;
+        //   editPanelValues.outlineWidth = outlineWidth;
+        //   editPanelValues.outlineOpacity = outlineColor[3] * 100;
+        //   editPanelValues.outlineColor =
+        //     "rgb(" +
+        //     outlineColor[0] * 255 +
+        //     "," +
+        //     outlineColor[1] * 255 +
+        //     "," +
+        //     outlineColor[2] * 255 +
+        //     ")";
+        //   if (title) {
+        //     editPanelValues.title = title;
+        //   }
+        //   break;
         case "polyline":
           editPanelValues.id = id;
           editPanelValues.width = width;
@@ -1540,7 +1540,7 @@ export default {
     $_formatType(type) {
       let format = {
         label: "文字",
-        billboard: "广告牌",
+        // billboard: "广告牌",
         point: "点",
         polyline: "直线",
         curve: "曲线",
@@ -1557,7 +1557,7 @@ export default {
         corridor: "方管线",
         model: "模型",
         wall: "墙",
-        marker: "图片+文字",
+        marker: "标注",
         square: "正方体"
       };
 

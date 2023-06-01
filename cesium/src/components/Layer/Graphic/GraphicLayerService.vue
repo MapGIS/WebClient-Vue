@@ -13,7 +13,7 @@ export default {
       drawNum: {
         label: 0,
         box: 0,
-        billboard: 0,
+        // billboard: 0,
         polyline: 0,
         polygon: 0,
         polygonCube: 0,
@@ -496,7 +496,7 @@ export default {
     $_formatType(type) {
       let format = {
         label: "文字",
-        billboard: "广告牌",
+        // billboard: "广告牌",
         point: "点",
         line: "直线",
         curve: "曲线",
@@ -512,7 +512,7 @@ export default {
         polylineVolume: "圆管线",
         corridor: "方管线",
         model: "模型",
-        marker: "图文组合"
+        marker: "标注"
       };
 
       return format[type];
@@ -544,9 +544,9 @@ export default {
         case "box":
           title = "盒子";
           break;
-        case "billboard":
-          title = "广告牌";
-          break;
+        // case "billboard":
+        //   title = "广告牌";
+        //   break;
         case "polyline":
           title = "线";
           break;
@@ -584,7 +584,7 @@ export default {
           title = "墙";
           break;
         case "marker":
-          title = "图文组合";
+          title = "标注";
           break;
         case "model":
           title = "模型";
@@ -730,21 +730,21 @@ export default {
           };
           drawOptions.drawWithHeight = true;
           break;
-        case "billboard":
-          drawOptions.style = {
-            verticalOrigin: 1,
-            color: Cesium.Color.fromAlpha(
-              Cesium.Color.fromCssColorString(editPanelValues.color),
-              editPanelValues.opacity / 100
-            ),
-            image: editPanelValues.image,
-            width: editPanelValues.width,
-            height: editPanelValues.height,
-            offsetHeight: editPanelValues.offsetHeight,
-            outlineColor: Cesium.Color.RED,
-            outlineWidth: 10
-          };
-          break;
+        // case "billboard":
+        //   drawOptions.style = {
+        //     verticalOrigin: 1,
+        //     color: Cesium.Color.fromAlpha(
+        //       Cesium.Color.fromCssColorString(editPanelValues.color),
+        //       editPanelValues.opacity / 100
+        //     ),
+        //     image: editPanelValues.image,
+        //     width: editPanelValues.width,
+        //     height: editPanelValues.height,
+        //     offsetHeight: editPanelValues.offsetHeight,
+        //     outlineColor: Cesium.Color.RED,
+        //     outlineWidth: 10
+        //   };
+        //   break;
         case "polyline":
           style = {
             disableDepthTestDistance: Number.POSITIVE_INFINITY,
@@ -1039,7 +1039,6 @@ export default {
           drawOptions.drawWithHeight = true;
           break;
         case "marker":
-          debugger;
           let fonts;
           if (typeof editPanelValues.fontSize === "number") {
             fonts =
@@ -1070,7 +1069,12 @@ export default {
             // 图片宽度
             width: editPanelValues.width,
             // 图片高度
-            height: editPanelValues.height
+            height: editPanelValues.height,
+            // 图片透明度
+            color: Cesium.Color.fromAlpha(
+              Cesium.Color.fromCssColorString("#FFF"),
+              editPanelValues.opacity / 100
+            )
           };
           drawOptions.style = {
             // 文字样式

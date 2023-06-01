@@ -157,51 +157,51 @@ let editList = {
       ],
     },
   ],
-  billboard: [
-    {
-      type: "MapgisUiInput",
-      title: "标题",
-      key: "title",
-      value: "无标题",
-    },
-    {
-      type: "MapgisUiInput",
-      title: "图片",
-      key: "image",
-      value:
-        "data:image/png;base64,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",
-    },
-    {
-      type: "MapgisUiColorPicker",
-      title: "颜色",
-      key: "color",
-      value: "#FFFFFF",
-    },
-    {
-      type: "MapgisUiSlider",
-      title: "透明度",
-      key: "opacity",
-      value: 100,
-    },
-    {
-      type: "MapgisUiInputNumber",
-      title: "图片宽度",
-      key: "width",
-      value: 40,
-    },
-    {
-      type: "MapgisUiInputNumber",
-      title: "图片高度",
-      key: "height",
-      value: 40,
-    },
-    {
-      type: "MapgisUiInputNumber",
-      title: "离地高度",
-      key: "offsetHeight",
-      value: 0,
-    },
-  ],
+  // billboard: [
+  //   {
+  //     type: "MapgisUiInput",
+  //     title: "标题",
+  //     key: "title",
+  //     value: "无标题",
+  //   },
+  //   {
+  //     type: "MapgisUiInput",
+  //     title: "图片",
+  //     key: "image",
+  //     value:
+  //       "data:image/png;base64,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",
+  //   },
+  //   {
+  //     type: "MapgisUiColorPicker",
+  //     title: "颜色",
+  //     key: "color",
+  //     value: "#FFFFFF",
+  //   },
+  //   {
+  //     type: "MapgisUiSlider",
+  //     title: "透明度",
+  //     key: "opacity",
+  //     value: 100,
+  //   },
+  //   {
+  //     type: "MapgisUiInputNumber",
+  //     title: "图片宽度",
+  //     key: "width",
+  //     value: 40,
+  //   },
+  //   {
+  //     type: "MapgisUiInputNumber",
+  //     title: "图片高度",
+  //     key: "height",
+  //     value: 40,
+  //   },
+  //   {
+  //     type: "MapgisUiInputNumber",
+  //     title: "离地高度",
+  //     key: "offsetHeight",
+  //     value: 0,
+  //   },
+  // ],
   point: [
     {
       type: "MapgisUiInput",
@@ -1207,7 +1207,7 @@ let editList = {
       type: "MapgisUiInput",
       title: "文本",
       key: "text",
-      value: "无标题",
+      value: "",
     },
     {
       type: "MapgisUiSelect",
@@ -1335,11 +1335,11 @@ let editList = {
       type: "MapgisUiInputNumber",
       title: "离地高度",
       key: "offsetHeight",
-      value: 100,
+      value: 10,
     },
     {
       type: "MapgisUiSlider",
-      title: "文字透明度",
+      title: "透明度",
       key: "opacity",
       value: 100,
     },

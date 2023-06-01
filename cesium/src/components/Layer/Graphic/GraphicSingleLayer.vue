@@ -256,7 +256,7 @@ export default {
       this.drawNum = {
         label: 0,
         box: 0,
-        billboard: 0,
+        // billboard: 0,
         polyline: 0,
         polygon: 0,
         polygonCube: 0,
@@ -683,35 +683,35 @@ export default {
             editPanelValues.title = title;
           }
           break;
-        case "billboard":
-          editPanelValues.id = id;
-          editPanelValues.color =
-            "rgb(" +
-            color[0] * 255 +
-            "," +
-            color[1] * 255 +
-            "," +
-            color[2] * 255 +
-            ")";
-          editPanelValues.opacity = color[3] * 100;
-          editPanelValues.image = image;
-          editPanelValues.width = width;
-          editPanelValues.height = height;
-          editPanelValues.offsetHeight = offsetHeight;
-          editPanelValues.outlineWidth = outlineWidth;
-          editPanelValues.outlineOpacity = outlineColor[3] * 100;
-          editPanelValues.outlineColor =
-            "rgb(" +
-            outlineColor[0] * 255 +
-            "," +
-            outlineColor[1] * 255 +
-            "," +
-            outlineColor[2] * 255 +
-            ")";
-          if (title) {
-            editPanelValues.title = title;
-          }
-          break;
+        // case "billboard":
+        //   editPanelValues.id = id;
+        //   editPanelValues.color =
+        //     "rgb(" +
+        //     color[0] * 255 +
+        //     "," +
+        //     color[1] * 255 +
+        //     "," +
+        //     color[2] * 255 +
+        //     ")";
+        //   editPanelValues.opacity = color[3] * 100;
+        //   editPanelValues.image = image;
+        //   editPanelValues.width = width;
+        //   editPanelValues.height = height;
+        //   editPanelValues.offsetHeight = offsetHeight;
+        //   editPanelValues.outlineWidth = outlineWidth;
+        //   editPanelValues.outlineOpacity = outlineColor[3] * 100;
+        //   editPanelValues.outlineColor =
+        //     "rgb(" +
+        //     outlineColor[0] * 255 +
+        //     "," +
+        //     outlineColor[1] * 255 +
+        //     "," +
+        //     outlineColor[2] * 255 +
+        //     ")";
+        //   if (title) {
+        //     editPanelValues.title = title;
+        //   }
+        //   break;
         case "polyline":
           editPanelValues.id = id;
           editPanelValues.color =
@@ -1447,7 +1447,7 @@ export default {
         lla;
       switch (json.type) {
         case "label":
-        case "billboard":
+        // case "billboard":
         case "marker":
         case "point":
           //计算中心点
@@ -1625,7 +1625,7 @@ export default {
         case "point":
         case "text":
         case "marker":
-        case "billboard":
+          // case "billboard":
           //计算中心点
           position = json.centerPosition;
           lla = this.$_cartesian3ToLongLat(
