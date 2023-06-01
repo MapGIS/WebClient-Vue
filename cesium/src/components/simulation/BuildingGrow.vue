@@ -154,6 +154,13 @@ export default {
         this.unmount();
         this.mount();
       }
+    },
+    initIsHideNode: {
+      handler(next) {
+        this.initIsHideNode = next;
+        this.unmount();
+        this.mount();
+      }
     }
   },
   created() {},
@@ -221,8 +228,8 @@ export default {
             primitiveCollection: viewer.scene.primitives.add(collection)
           });
           // 1.通过构件树隐藏m3d模型
-          if (this.initIsHideNode) {
-            this.hideRootNode();
+          if (vm.initIsHideNode) {
+            vm.hideRootNode();
           }
           // 2.对获取的树数据中name:时间 进行升序排序
           this.sortDateTime();
