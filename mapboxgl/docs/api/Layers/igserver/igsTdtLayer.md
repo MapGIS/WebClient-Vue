@@ -36,7 +36,7 @@ All common [layers props](/api/Layers/README.md#props)
 ### `protocol`
 
 - **类型:** `String`
-- **默认值:** `location.protocol.split(":")[0] || "http"`
+- **默认值:** `location.protocol.split(":")[0] || window.location.protocol.split(':')[0]`
 - **非侦听属性**
 - **描述:** igs 服务网络协议。(domain 和（protocol，ip，port）二选一)
 

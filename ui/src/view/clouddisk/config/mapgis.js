@@ -1,7 +1,9 @@
 export const VERSION = "10.5.4";
 
 export function getMapGISUrl() {
-  const http = window.localStorage.getItem("mapgis_clouddisk_http") || "http";
+  const http =
+    window.localStorage.getItem("mapgis_clouddisk_http") ||
+    window.location.protocol.split(":")[0];
   const ip = window.localStorage.getItem("mapgis_clouddisk_ip");
   const socket = window.localStorage.getItem("mapgis_clouddisk_socket");
   let url = window.localStorage.getItem("mapgis_clouddisk_url");
@@ -19,9 +21,11 @@ export function getMapGISUrl() {
   return url;
 }
 
-export function getPortalUrl () {
-  const portalBaseurl = window.localStorage.getItem("mapgis-cloud-portal-baseurl") || "http://192.168.176.1:6160";
-  return portalBaseurl
+export function getPortalUrl() {
+  const portalBaseurl =
+    window.localStorage.getItem("mapgis-cloud-portal-baseurl") ||
+    "http://192.168.176.1:6160";
+  return portalBaseurl;
 }
 
 export function getWebSocketUrl(payload = {}) {
@@ -37,7 +41,9 @@ export function getWebSocketUrl(payload = {}) {
   // let pathname = window.location.pathname
   let port = window.location.port;
   client =
-    (client || "mapgis_ui_global_upload_websocket_id") + "_" + new Date().getTime();
+    (client || "mapgis_ui_global_upload_websocket_id") +
+    "_" +
+    new Date().getTime();
   // let protocol = window.location.protocol
   if (ip !== null && socket !== null) {
     url =
@@ -63,7 +69,9 @@ export function getWebSocketUrl(payload = {}) {
 
 export function getMapGISUploadUrl() {
   const upload = "/clouddisk/rest/file/uploader/chunk";
-  const http = window.localStorage.getItem("mapgis_clouddisk_http") || "http";
+  const http =
+    window.localStorage.getItem("mapgis_clouddisk_http") ||
+    window.location.protocol.split(":")[0];
   const ip = window.localStorage.getItem("mapgis_clouddisk_ip");
   const socket = window.localStorage.getItem("mapgis_clouddisk_socket");
   // const url = '' + http + '://' + ip + ':' + socket + upload
@@ -89,12 +97,12 @@ export function getMapgisToken(token) {
   }
 }
 
-export function getPortalToken (token) {
-  const storeToken = window.localStorage.getItem('mapgis_portal_token')
+export function getPortalToken(token) {
+  const storeToken = window.localStorage.getItem("mapgis_portal_token");
   if (token) {
-    return token
+    return token;
   } else {
-    return storeToken
+    return storeToken;
   }
 }
 
@@ -107,7 +115,7 @@ export function getMapUser() {
   return {
     name: name,
     key: key,
-    keep: keep
+    keep: keep,
   };
 }
 
@@ -120,9 +128,9 @@ export function getMapgisPath(path) {
   }
 }
 
-export function getMapgisGroupPath () {
-  const groupPath = window.localStorage.getItem('mapgis_clouddisk_group_path')
-  return groupPath
+export function getMapgisGroupPath() {
+  const groupPath = window.localStorage.getItem("mapgis_clouddisk_group_path");
+  return groupPath;
 }
 
 export function getMapgisEncryptPath(path) {

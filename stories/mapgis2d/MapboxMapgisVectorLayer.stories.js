@@ -56,7 +56,7 @@ export default {
         type:{
           summary: 'String',
         },
-        defaultValue: { summary: 'location.protocol.split(":")[0] || "http"' },
+        defaultValue: { summary: 'location.protocol.split(":")[0] || window.location.protocol.split(':')[0]' },
       },
       control:'text'
     },

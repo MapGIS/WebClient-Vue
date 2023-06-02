@@ -12,7 +12,7 @@ export default class DocumentCatalog {
     const url = `${window.location.protocol}//${ip}:${port}/igs/rest/mrcs/tiles?version=2&f=json`;
     const promise = new Promise((resolve, reject) => {
       axios.get(url).then(
-        (res) => {
+        res => {
           const { data } = res;
           if (!data) {
             resolve(undefined);
@@ -20,12 +20,12 @@ export default class DocumentCatalog {
             resolve(data);
           }
         },
-        (error) => {
+        error => {
           reject(error);
         }
       );
     });
-    return promise.then((data) => {
+    return promise.then(data => {
       return data;
     });
   }
@@ -39,7 +39,7 @@ export default class DocumentCatalog {
     const url = `${window.location.protocol}//${ip}:${port}/igs/rest/mrcs/docs?version=2&f=json`;
     const promise = new Promise((resolve, reject) => {
       axios.get(url).then(
-        (res) => {
+        res => {
           const { data } = res;
           if (!data) {
             resolve(undefined);
@@ -47,12 +47,12 @@ export default class DocumentCatalog {
             resolve(data);
           }
         },
-        (error) => {
+        error => {
           reject(error);
         }
       );
     });
-    return promise.then((data) => {
+    return promise.then(data => {
       return data;
     });
   }
@@ -65,20 +65,20 @@ export default class DocumentCatalog {
     }
     let domain = option.domain || null;
     if (!domain) {
-      const protocol = option.protocol || "http";
+      const protocol =
+        option.protocol || window.location.protocol.split(":")[0];
       const ip = option.ip;
       const port = option.port;
       domain = `${protocol}://${ip}:${port}`;
     }
     const url = `${domain}/igs/rest/mrcs/docs/${
       option.serverName
-    }?dataService=${option.serverName}&f=json&tree=true&guid=${
-      option.guid || "__readonly_user__"
-    }`;
+    }?dataService=${option.serverName}&f=json&tree=true&guid=${option.guid ||
+      "__readonly_user__"}`;
     const self = this;
     const promise = new Promise((resolve, reject) => {
       axios.get(url).then(
-        (res) => {
+        res => {
           const { data } = res;
           if (!data) {
             resolve(undefined);
@@ -86,20 +86,21 @@ export default class DocumentCatalog {
             for (let i = 0; i < data.MapInfos.length; i += 1) {
               const { CatalogLayer } = data.MapInfos[i];
               if (CatalogLayer) {
-                data.MapInfos[i].CatalogLayer =
-                  self.disposeDocInfo(CatalogLayer);
+                data.MapInfos[i].CatalogLayer = self.disposeDocInfo(
+                  CatalogLayer
+                );
               }
             }
             self.globalDocInfo[option.serverName] = data;
             resolve(data);
           }
         },
-        (error) => {
+        error => {
           reject(error);
         }
       );
     });
-    return promise.then((data) => {
+    return promise.then(data => {
       return data;
     });
   }
@@ -112,7 +113,8 @@ export default class DocumentCatalog {
     }
     let domain = option.domain || null;
     if (!domain) {
-      const protocol = option.protocol || "http";
+      const protocol =
+        option.protocol || window.location.protocol.split(":")[0];
       const ip = option.ip;
       const port = option.port;
       domain = `${protocol}://${ip}:${port}`;
@@ -121,7 +123,7 @@ export default class DocumentCatalog {
     const self = this;
     const promise = new Promise((resolve, reject) => {
       axios.get(url).then(
-        (res) => {
+        res => {
           const { data } = res;
           if (!data) {
             resolve(undefined);
@@ -130,12 +132,12 @@ export default class DocumentCatalog {
             resolve(data);
           }
         },
-        (error) => {
+        error => {
           reject(error);
         }
       );
     });
-    return promise.then((data) => {
+    return promise.then(data => {
       return data;
     });
   }
@@ -150,7 +152,7 @@ export default class DocumentCatalog {
     const url = `${window.location.protocol}//${ip}:${port}/igs/rest/mrms/info/${name}?guid=`;
     const promise = new Promise((resolve, reject) => {
       axios.get(url).then(
-        (res) => {
+        res => {
           const { data } = res;
           if (!data) {
             resolve(undefined);
@@ -158,12 +160,12 @@ export default class DocumentCatalog {
             resolve(data);
           }
         },
-        (error) => {
+        error => {
           reject(error);
         }
       );
     });
-    return promise.then((data) => {
+    return promise.then(data => {
       return data;
     });
   }
@@ -535,8 +537,8 @@ export default class DocumentCatalog {
     if (layerType === "layer") {
       const vectorLayer = new Zondy.MRCS.VectorLayer({ domain });
       const { gdbp } = queryParam;
-      promise = new Promise((resolve) => {
-        vectorLayer.getLayerInfo(gdbp, (res) => {
+      promise = new Promise(resolve => {
+        vectorLayer.getLayerInfo(gdbp, res => {
           if (!res || !res.Range) {
             resolve(null);
           } else {
@@ -544,7 +546,7 @@ export default class DocumentCatalog {
               layerType,
               proName: res.SrName,
               extent: res.Range,
-              FieldAtt: res.FieldAtt,
+              FieldAtt: res.FieldAtt
             };
             resolve(obj);
           }
@@ -554,10 +556,10 @@ export default class DocumentCatalog {
       const { serverName } = queryParam;
       const mapdoc = new Zondy.MRCS.MapDoc({
         domain,
-        docName: serverName,
+        docName: serverName
       });
-      promise = new Promise((resolve) => {
-        mapdoc.getMapInfo((res) => {
+      promise = new Promise(resolve => {
+        mapdoc.getMapInfo(res => {
           if (!res || !res.range) {
             resolve(null);
           } else {
@@ -566,12 +568,12 @@ export default class DocumentCatalog {
               xmin: Number(r[0]),
               ymin: Number(r[1]),
               xmax: Number(r[2]),
-              ymax: Number(r[3]),
+              ymax: Number(r[3])
             };
             const obj = {
               layerType,
               proName: res.projtransName,
-              extent,
+              extent
             };
             resolve(obj);
           }
@@ -581,10 +583,10 @@ export default class DocumentCatalog {
       const { serverName } = queryParam;
       const tileLayer = new Zondy.MRCS.TileLayer({
         domain,
-        tileName: serverName,
+        tileName: serverName
       });
-      promise = new Promise((resolve) => {
-        tileLayer.getTileInfo((res) => {
+      promise = new Promise(resolve => {
+        tileLayer.getTileInfo(res => {
           if (!res || !res.TileInfo2) {
             resolve(null);
           } else {
@@ -594,7 +596,7 @@ export default class DocumentCatalog {
                 xmin: fullExtent.xmin,
                 ymin: fullExtent.ymin,
                 xmax: fullExtent.xmax,
-                ymax: fullExtent.ymax,
+                ymax: fullExtent.ymax
               };
               const proName =
                 res.TileInfo2.tileInfo.spatialReference.tileSRefInfo.Name;
@@ -606,7 +608,7 @@ export default class DocumentCatalog {
                 proName,
                 extent,
                 tileSize,
-                origin,
+                origin
               };
               resolve(obj);
             }
@@ -615,7 +617,7 @@ export default class DocumentCatalog {
       });
     }
     if (promise) {
-      return promise.then((Range) => {
+      return promise.then(Range => {
         return Range;
       });
     }

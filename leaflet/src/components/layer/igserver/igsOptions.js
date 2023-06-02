@@ -9,7 +9,8 @@ export default {
   },
   protocol: {
     type: String,
-    default: location.protocol.split(":")[0] || "http",
+    default:
+      location.protocol.split(":")[0] || window.location.protocol.split(":")[0],
   },
   ip: {
     type: String,

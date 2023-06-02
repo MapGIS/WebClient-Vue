@@ -65,7 +65,8 @@ export default class DocumentCatalog {
     }
     let domain = option.domain || null;
     if (!domain) {
-      const protocol = option.protocol || "http";
+      const protocol =
+        option.protocol || window.location.protocol.split(":")[0];
       const ip = option.ip;
       const port = option.port;
       domain = `${protocol}://${ip}:${port}`;
@@ -112,7 +113,8 @@ export default class DocumentCatalog {
     }
     let domain = option.domain || null;
     if (!domain) {
-      const protocol = option.protocol || "http";
+      const protocol =
+        option.protocol || window.location.protocol.split(":")[0];
       const ip = option.ip;
       const port = option.port;
       domain = `${protocol}://${ip}:${port}`;
