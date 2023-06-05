@@ -109,10 +109,10 @@ export default {
       type: Number,
       default: 2
     },
-    // 开始点击单体生长时间轴前是否隐藏整个模型
+    // 开始点击单体生长时间轴前是否显示整个模型，默认不显示
     isVisibleBeforeGrowing: {
       type: Boolean,
-      default: true
+      default: false
     }
   },
   data() {
@@ -227,8 +227,9 @@ export default {
             collection: collection,
             primitiveCollection: viewer.scene.primitives.add(collection)
           });
+          debugger;
           // 1.通过构件树隐藏m3d模型
-          if (vm.isVisibleBeforeGrowing) {
+          if (!vm.isVisibleBeforeGrowing) {
             vm.hideRootNode();
           }
           // 2.对获取的树数据中name:时间 进行升序排序
@@ -515,7 +516,7 @@ export default {
 
     startGrow() {
       // 若初始不隐藏节点，则在开始生长后先将所有节点全部隐藏，再开始建筑生长
-      if (!this.isVisibleBeforeGrowing) {
+      if (this.isVisibleBeforeGrowing) {
         this.hideRootNode();
       }
       let vm = this;
