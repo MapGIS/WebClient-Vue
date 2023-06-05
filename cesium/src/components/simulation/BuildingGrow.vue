@@ -227,7 +227,7 @@ export default {
             collection: collection,
             primitiveCollection: viewer.scene.primitives.add(collection)
           });
-          debugger;
+
           // 1.通过构件树隐藏m3d模型
           if (!vm.isVisibleBeforeGrowing) {
             vm.hideRootNode();
