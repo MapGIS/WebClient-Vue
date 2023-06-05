@@ -157,7 +157,10 @@ export default {
       this.bbox = bbox(geojson);
       if (this.bbox && this.autoReset) {
         let [xMin, yMin, xMax, yMax] = this.bbox;
-        let center = new Cesium.Cartesian3.fromDegrees((xMin + xMax) / 2, (yMin + yMax) / 2);
+        let center = new Cesium.Cartesian3.fromDegrees(
+          (xMin + xMax) / 2,
+          (yMin + yMax) / 2
+        );
         let dr = new Cesium.Cartographic.fromDegrees(xMax, yMax);
         let ul = new Cesium.Cartographic.fromDegrees(xMin, yMin);
         let geodesic = new Cesium.EllipsoidGeodesic();
@@ -165,9 +168,12 @@ export default {
         let radius = geodesic.surfaceDistance;
         let boundingSphere = {
           center: center,
-          radius: radius
+          radius: radius,
         };
-        this.viewer.scene.camera.viewBoundingSphere(boundingSphere, new Cesium.HeadingPitchRange(0.0, -1.42, boundingSphere.radius));
+        this.viewer.scene.camera.viewBoundingSphere(
+          boundingSphere,
+          new Cesium.HeadingPitchRange(0.0, -1.42, boundingSphere.radius)
+        );
         this.viewer.scene.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
       }
       this.$emit("bbox", { bbox: this.bbox });
@@ -177,6 +183,7 @@ export default {
       const { vueKey, vueIndex, vueCesium } = this;
       let find = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
       const pickEntity = payload.entities[0].id;
+      if (!find) return;
       for (let i = 0; i < find.source.entities.values.length; i++) {
         let entity = find.source.entities.values[i];
         if (entity.id == pickEntity.id) {
@@ -190,6 +197,7 @@ export default {
       const { vueKey, vueIndex, vueCesium } = this;
       let find = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
       const pickEntity = payload.entities[0].id;
+      if (!find) return;
       for (let i = 0; i < find.source.entities.values.length; i++) {
         let entity = find.source.entities.values[i];
         if (entity.id == pickEntity.id) {

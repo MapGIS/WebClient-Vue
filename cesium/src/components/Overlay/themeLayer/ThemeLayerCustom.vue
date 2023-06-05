@@ -133,6 +133,7 @@ export default {
       this.$_drawTheme(this.tempHighlightEntities);
       this.$_drawFilterTheme(this.tempHighlightEntities);
       this.tempHighlightEntities = [];
+      if (!find) return;
       for (let i = 0; i < find.source.entities.values.length; i++) {
         let entity = find.source.entities.values[i];
         if (entity.id == pickEntity.id) {
