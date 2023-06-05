@@ -7,9 +7,13 @@ let iconsInfo = [
     type: "label",
     title: "文字"
   },
+  // {
+  //   type: "billboard",
+  //   title: "广告牌"
+  // },
   {
-    type: "billboard",
-    title: "广告牌"
+    type: "marker",
+    title: "标注"
   },
   {
     type: "point",

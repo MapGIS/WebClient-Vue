@@ -132,7 +132,11 @@
               type="Image"
               :uploadUrl="uploadUrl"
               v-model="editPanelValues[row.key]"
-              v-show="row.key === 'image' && currentEditType === 'billboard'"
+              v-show="
+                row.key === 'image' &&
+                  (currentEditType === 'billboard' ||
+                    currentEditType === 'marker')
+              "
             />
             <mapgis-ui-input-row-left
               v-if="row.type === 'MapgisUiInput'"
@@ -164,7 +168,8 @@
                   'stRotation',
                   'repeatX',
                   'repeatY',
-                  'offsetHeight'
+                  'offsetHeight',
+                  'labelPadding'
                 ].indexOf(row.key) < 0
               "
             />
@@ -306,6 +311,14 @@
                   editPanelValues.materialType === 'text'
               "
             />
+            <!-- 特殊：marker标注“文字相对图片位置”编辑栏 -->
+            <mapgis-ui-input-row-right
+              v-if="row.type === 'MapgisUiInputNumber'"
+              :title="row.title"
+              type="Number"
+              v-model="editPanelValues[row.key]"
+              v-show="row.key === 'labelPadding'"
+            />
             <mapgis-ui-slider-row-left
               v-if="row.type === 'MapgisUiSlider'"
               :title="row.title"
@@ -356,7 +369,11 @@
               :title="row.title"
               :dataSource="row.dataSource"
               v-model="editPanelValues[row.key]"
-              v-show="['direction', 'rtFontFamily'].indexOf(row.key) < 0"
+              v-show="
+                ['direction', 'rtFontFamily', 'labelPlaceType'].indexOf(
+                  row.key
+                ) < 0
+              "
             />
             <mapgis-ui-select-row-left
               v-if="row.type === 'MapgisUiSelect'"
@@ -377,6 +394,14 @@
                 row.key === 'rtFontFamily' &&
                   editPanelValues.materialType === 'text'
               "
+            />
+            <!-- 图片+文字标注中，文字相对图片位置专用，左侧字符较长，右侧选择列表要设置宽度 -->
+            <mapgis-ui-select-row-right
+              v-if="row.type === 'MapgisUiSelect'"
+              :title="row.title"
+              :dataSource="row.dataSource"
+              v-model="editPanelValues[row.key]"
+              v-show="row.key === 'labelPlaceType'"
             />
             <mapgis-ui-color-picker-left
               v-if="row.type === 'MapgisUiColorPicker'"
@@ -1003,7 +1028,12 @@ export default {
         isHermiteSpline,
         offsetHeight,
         loop,
-        elevationMode
+        elevationMode,
+        // marker style
+        abelStyle,
+        illboardStyle,
+        labelPlaceType,
+        labelPadding
       } = style;
 
       const { title, __flashStyle } = attributes;
@@ -1125,35 +1155,35 @@ export default {
             editPanelValues.title = title;
           }
           break;
-        case "billboard":
-          editPanelValues.id = id;
-          editPanelValues.color =
-            "rgb(" +
-            color[0] * 255 +
-            "," +
-            color[1] * 255 +
-            "," +
-            color[2] * 255 +
-            ")";
-          editPanelValues.opacity = color[3] * 100;
-          editPanelValues.image = image;
-          editPanelValues.width = width;
-          editPanelValues.height = height;
-          editPanelValues.offsetHeight = offsetHeight;
-          editPanelValues.outlineWidth = outlineWidth;
-          editPanelValues.outlineOpacity = outlineColor[3] * 100;
-          editPanelValues.outlineColor =
-            "rgb(" +
-            outlineColor[0] * 255 +
-            "," +
-            outlineColor[1] * 255 +
-            "," +
-            outlineColor[2] * 255 +
-            ")";
-          if (title) {
-            editPanelValues.title = title;
-          }
-          break;
+        // case "billboard":
+        //   editPanelValues.id = id;
+        //   editPanelValues.color =
+        //     "rgb(" +
+        //     color[0] * 255 +
+        //     "," +
+        //     color[1] * 255 +
+        //     "," +
+        //     color[2] * 255 +
+        //     ")";
+        //   editPanelValues.opacity = color[3] * 100;
+        //   editPanelValues.image = image;
+        //   editPanelValues.width = width;
+        //   editPanelValues.height = height;
+        //   editPanelValues.offsetHeight = offsetHeight;
+        //   editPanelValues.outlineWidth = outlineWidth;
+        //   editPanelValues.outlineOpacity = outlineColor[3] * 100;
+        //   editPanelValues.outlineColor =
+        //     "rgb(" +
+        //     outlineColor[0] * 255 +
+        //     "," +
+        //     outlineColor[1] * 255 +
+        //     "," +
+        //     outlineColor[2] * 255 +
+        //     ")";
+        //   if (title) {
+        //     editPanelValues.title = title;
+        //   }
+        //   break;
         case "polyline":
           editPanelValues.id = id;
           editPanelValues.width = width;
@@ -1458,6 +1488,36 @@ export default {
             editPanelValues.title = title;
           }
           break;
+        case "marker":
+          editPanelValues.id = id;
+          editPanelValues.image = illboardStyle.image;
+          editPanelValues.width = illboardStyle.width;
+          editPanelValues.height = illboardStyle.height;
+          editPanelValues.title = title;
+          editPanelValues.text = abelStyle.text;
+          let markerFont;
+          if (typeof abelStyle.font === "number") {
+            markerFont = [abelStyle.font, "sans-serif"];
+          } else if (abelStyle.font.indexOf(" ") > -1) {
+            markerFont = abelStyle.font.split(" ");
+          } else {
+            markerFont = [abelStyle.font, "sans-serif"];
+          }
+          editPanelValues.fontSize = markerFont[0];
+          editPanelValues.fontFamily = markerFont[1];
+          editPanelValues.fontColor =
+            "rgb(" +
+            abelStyle.fillColor.red * 255 +
+            "," +
+            abelStyle.fillColor.green * 255 +
+            "," +
+            abelStyle.fillColor.blue * 255 +
+            ")";
+          editPanelValues.opacity = abelStyle.fillColor.alpha * 100;
+          editPanelValues.offsetHeight = offsetHeight;
+          editPanelValues.labelPlaceType = labelPlaceType;
+          editPanelValues.labelPadding = labelPadding;
+          break;
         case "model":
           editPanelValues.id = id;
           editPanelValues.url = url;
@@ -1480,7 +1540,7 @@ export default {
     $_formatType(type) {
       let format = {
         label: "文字",
-        billboard: "广告牌",
+        // billboard: "广告牌",
         point: "点",
         polyline: "直线",
         curve: "曲线",
@@ -1497,6 +1557,7 @@ export default {
         corridor: "方管线",
         model: "模型",
         wall: "墙",
+        marker: "标注",
         square: "正方体"
       };
 

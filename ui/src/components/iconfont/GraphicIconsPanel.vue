@@ -235,7 +235,7 @@ export default {
     },
     //展开或收缩图标容器
     $_toggleIconsContainer(flag) {
-      let length = Math.ceil(this.iconsInfo.length / 5);
+      let length = Math.ceil(this.iconsInfo.length / 4);
       if (flag) {
         this.iconsContainerHeight = this.iconsContainerHeight * length;
       } else {

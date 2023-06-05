@@ -101,6 +101,7 @@ export { default as MapgisUiMonthPicker } from "./components/date-picker/MonthPi
 export { default as MapgisUiWeekPicker } from "./components/date-picker/WeekPicker.vue";
 export { default as MapgisUiInput } from "./components/input/Input.vue";
 export { default as MapgisUiInputRowLeft } from "./components/input/InputRowLeft";
+export { default as MapgisUiInputRowRight } from "./components/input/InputRowRight.vue";
 export { default as MapgisUiTextareaOutline } from "./components/input/TextareaOutline.vue";
 export { default as MapgisUiInputOutline } from "./components/input/InputOutline";
 export { default as MapgisUiInputBorder } from "./components/input/InputBorder";
@@ -306,6 +307,7 @@ export { default as MapgisUiSwitchRowLeft } from "./components/switch/SwitchRowL
 //select
 export { default as MapgisUiSelectRow } from "./components/select/SelectRow";
 export { default as MapgisUiSelectRowLeft } from "./components/select/SelectRowLeft";
+export { default as MapgisUiSelectRowRight } from "./components/select/SelectRowRight";
 
 export { default as MapgisUiTimelinePanel } from "./layout/panel/TimelinePanel.vue";
 

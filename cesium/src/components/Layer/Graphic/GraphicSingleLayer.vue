@@ -256,7 +256,7 @@ export default {
       this.drawNum = {
         label: 0,
         box: 0,
-        billboard: 0,
+        // billboard: 0,
         polyline: 0,
         polygon: 0,
         polygonCube: 0,
@@ -269,6 +269,7 @@ export default {
         wall: 0,
         rectangle: 0,
         ellipsoid: 0,
+        marker: 0,
         model: 0
       };
     },
@@ -378,14 +379,34 @@ export default {
       if (operate === "batchShow") {
         for (let i = 0; i < selectedIds.length; i++) {
           graphic = this.$_getGraphicByID(selectedIds[i]);
+          /**
+           * @修改说明 临时解决marker类型标注通过graphic.show无法控制显隐的问题
+           * @修改人 王涵
+           * @修改时间 2023/5/19
+           */
+          if (graphic.type === "marker") {
+            if (graphic.label && graphic.billboard) {
+              graphic.label.show = true;
+              graphic.billboard.show = true;
+            }
+          } else {
+            graphic.show = true;
+          }
           graphic.attributes.show = true;
-          graphic.show = true;
         }
       } else if (operate === "batchHide") {
         for (let i = 0; i < selectedIds.length; i++) {
           graphic = this.$_getGraphicByID(selectedIds[i]);
+
+          if (graphic.type === "marker") {
+            if (graphic.label && graphic.billboard) {
+              graphic.label.show = false;
+              graphic.billboard.show = false;
+            }
+          } else {
+            graphic.show = false;
+          }
           graphic.attributes.show = false;
-          graphic.show = false;
         }
       } else if (operate === "batchDelete") {
         // TODO 等组模型功能能用的时候，这里还要再优化一下组模型相关的内容
@@ -555,7 +576,12 @@ export default {
         loop,
         verticalOrigin,
         horizontalOrigin,
-        classificationType
+        classificationType,
+        // marker style
+        abelStyle,
+        illboardStyle,
+        labelPlaceType,
+        labelPadding
       } = style;
 
       const { title, __flashStyle } = attributes;
@@ -657,35 +683,35 @@ export default {
             editPanelValues.title = title;
           }
           break;
-        case "billboard":
-          editPanelValues.id = id;
-          editPanelValues.color =
-            "rgb(" +
-            color[0] * 255 +
-            "," +
-            color[1] * 255 +
-            "," +
-            color[2] * 255 +
-            ")";
-          editPanelValues.opacity = color[3] * 100;
-          editPanelValues.image = image;
-          editPanelValues.width = width;
-          editPanelValues.height = height;
-          editPanelValues.offsetHeight = offsetHeight;
-          editPanelValues.outlineWidth = outlineWidth;
-          editPanelValues.outlineOpacity = outlineColor[3] * 100;
-          editPanelValues.outlineColor =
-            "rgb(" +
-            outlineColor[0] * 255 +
-            "," +
-            outlineColor[1] * 255 +
-            "," +
-            outlineColor[2] * 255 +
-            ")";
-          if (title) {
-            editPanelValues.title = title;
-          }
-          break;
+        // case "billboard":
+        //   editPanelValues.id = id;
+        //   editPanelValues.color =
+        //     "rgb(" +
+        //     color[0] * 255 +
+        //     "," +
+        //     color[1] * 255 +
+        //     "," +
+        //     color[2] * 255 +
+        //     ")";
+        //   editPanelValues.opacity = color[3] * 100;
+        //   editPanelValues.image = image;
+        //   editPanelValues.width = width;
+        //   editPanelValues.height = height;
+        //   editPanelValues.offsetHeight = offsetHeight;
+        //   editPanelValues.outlineWidth = outlineWidth;
+        //   editPanelValues.outlineOpacity = outlineColor[3] * 100;
+        //   editPanelValues.outlineColor =
+        //     "rgb(" +
+        //     outlineColor[0] * 255 +
+        //     "," +
+        //     outlineColor[1] * 255 +
+        //     "," +
+        //     outlineColor[2] * 255 +
+        //     ")";
+        //   if (title) {
+        //     editPanelValues.title = title;
+        //   }
+        //   break;
         case "polyline":
           editPanelValues.id = id;
           editPanelValues.color =
@@ -984,6 +1010,36 @@ export default {
           if (title) {
             editPanelValues.title = title;
           }
+          break;
+        case "marker":
+          editPanelValues.id = id;
+          editPanelValues.image = illboardStyle.image;
+          editPanelValues.width = illboardStyle.width;
+          editPanelValues.height = illboardStyle.height;
+          editPanelValues.title = title;
+          editPanelValues.text = abelStyle.text;
+          let markerFont;
+          if (typeof abelStyle.font === "number") {
+            markerFont = [abelStyle.font, "sans-serif"];
+          } else if (abelStyle.font.indexOf(" ") > -1) {
+            markerFont = abelStyle.font.split(" ");
+          } else {
+            markerFont = [abelStyle.font, "sans-serif"];
+          }
+          editPanelValues.fontSize = markerFont[0];
+          editPanelValues.fontFamily = markerFont[1];
+          editPanelValues.fontColor =
+            "rgb(" +
+            abelStyle.fillColor.red * 255 +
+            "," +
+            abelStyle.fillColor.green * 255 +
+            "," +
+            abelStyle.fillColor.blue * 255 +
+            ")";
+          editPanelValues.opacity = abelStyle.fillColor.alpha * 100;
+          editPanelValues.offsetHeight = offsetHeight;
+          editPanelValues.labelPlaceType = labelPlaceType;
+          editPanelValues.labelPadding = labelPadding;
           break;
         case "model":
           editPanelValues.id = id;
@@ -1391,7 +1447,8 @@ export default {
         lla;
       switch (json.type) {
         case "label":
-        case "billboard":
+        // case "billboard":
+        case "marker":
         case "point":
           //计算中心点
           position = graphic.positions[0];
@@ -1567,7 +1624,8 @@ export default {
         case "label":
         case "point":
         case "text":
-        case "billboard":
+        case "marker":
+          // case "billboard":
           //计算中心点
           position = json.centerPosition;
           lla = this.$_cartesian3ToLongLat(

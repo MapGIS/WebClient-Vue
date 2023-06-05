@@ -13,7 +13,7 @@ export default {
       drawNum: {
         label: 0,
         box: 0,
-        billboard: 0,
+        // billboard: 0,
         polyline: 0,
         polygon: 0,
         polygonCube: 0,
@@ -26,6 +26,7 @@ export default {
         wall: 0,
         rectangle: 0,
         ellipsoid: 0,
+        marker: 0,
         model: 0
       }
     };
@@ -215,7 +216,13 @@ export default {
           primitive,
           function(primitive) {
             Object.keys(style).forEach(function(key) {
-              primitive.style[key] = style[key];
+              if (key === "labelStyle" || key === "billboardStyle") {
+                Object.keys(style[key]).forEach(function(keys) {
+                  primitive.style[key][keys] = style[key][keys];
+                });
+              } else {
+                primitive.style[key] = style[key];
+              }
             });
           },
           "标绘对象不存在"
@@ -489,7 +496,7 @@ export default {
     $_formatType(type) {
       let format = {
         label: "文字",
-        billboard: "广告牌",
+        // billboard: "广告牌",
         point: "点",
         line: "直线",
         curve: "曲线",
@@ -504,7 +511,8 @@ export default {
         ellipsoid: "球",
         polylineVolume: "圆管线",
         corridor: "方管线",
-        model: "模型"
+        model: "模型",
+        marker: "标注"
       };
 
       return format[type];
@@ -536,9 +544,9 @@ export default {
         case "box":
           title = "盒子";
           break;
-        case "billboard":
-          title = "广告牌";
-          break;
+        // case "billboard":
+        //   title = "广告牌";
+        //   break;
         case "polyline":
           title = "线";
           break;
@@ -574,6 +582,9 @@ export default {
           break;
         case "wall":
           title = "墙";
+          break;
+        case "marker":
+          title = "标注";
           break;
         case "model":
           title = "模型";
@@ -719,21 +730,21 @@ export default {
           };
           drawOptions.drawWithHeight = true;
           break;
-        case "billboard":
-          drawOptions.style = {
-            verticalOrigin: 1,
-            color: Cesium.Color.fromAlpha(
-              Cesium.Color.fromCssColorString(editPanelValues.color),
-              editPanelValues.opacity / 100
-            ),
-            image: editPanelValues.image,
-            width: editPanelValues.width,
-            height: editPanelValues.height,
-            offsetHeight: editPanelValues.offsetHeight,
-            outlineColor: Cesium.Color.RED,
-            outlineWidth: 10
-          };
-          break;
+        // case "billboard":
+        //   drawOptions.style = {
+        //     verticalOrigin: 1,
+        //     color: Cesium.Color.fromAlpha(
+        //       Cesium.Color.fromCssColorString(editPanelValues.color),
+        //       editPanelValues.opacity / 100
+        //     ),
+        //     image: editPanelValues.image,
+        //     width: editPanelValues.width,
+        //     height: editPanelValues.height,
+        //     offsetHeight: editPanelValues.offsetHeight,
+        //     outlineColor: Cesium.Color.RED,
+        //     outlineWidth: 10
+        //   };
+        //   break;
         case "polyline":
           style = {
             disableDepthTestDistance: Number.POSITIVE_INFINITY,
@@ -1026,6 +1037,61 @@ export default {
             offsetHeight: editPanelValues.offsetHeight
           };
           drawOptions.drawWithHeight = true;
+          break;
+        case "marker":
+          let fonts;
+          if (typeof editPanelValues.fontSize === "number") {
+            fonts =
+              editPanelValues.fontSize + "px " + editPanelValues.fontFamily;
+          } else if (editPanelValues.fontSize.indexOf("px") > -1) {
+            fonts = editPanelValues.fontSize + " " + editPanelValues.fontFamily;
+          } else {
+            fonts =
+              editPanelValues.fontSize + "px " + editPanelValues.fontFamily;
+          }
+          let labelStyle = {
+            // 文本
+            text: editPanelValues.text || "",
+            // 字体加字体大小
+            font: fonts,
+            // 文本颜色+透明度
+            fillColor: Cesium.Color.fromAlpha(
+              Cesium.Color.fromCssColorString(
+                editPanelValues.fontColor || "#000000"
+              ),
+              editPanelValues.opacity / 100
+            )
+            // pixelOffset: new Cesium.Cartesian2(0, 500)
+          };
+          let billboardStyle = {
+            // 图片url
+            image: editPanelValues.image,
+            // 图片宽度
+            width: editPanelValues.width,
+            // 图片高度
+            height: editPanelValues.height,
+            // 图片透明度
+            color: Cesium.Color.fromAlpha(
+              Cesium.Color.fromCssColorString("#FFF"),
+              editPanelValues.opacity / 100
+            )
+          };
+          drawOptions.style = {
+            // 文字样式
+            labelStyle: labelStyle,
+            // 图片样式
+            billboardStyle: billboardStyle,
+            //文字相对于图片方位
+            labelPlaceType: editPanelValues.labelPlaceType,
+            // //文字相对于图片间距
+            labelPadding: editPanelValues.labelPadding,
+            //离地高度
+            offsetHeight: editPanelValues.offsetHeight,
+            // 深度监听，禁用
+            disableDepthTestDistance: Number.POSITIVE_INFINITY,
+            // //marker的屏幕像素偏移
+            pixelOffset: new Cesium.Cartesian2(0, 0)
+          };
           break;
         case "model":
           drawOptions.style = {
