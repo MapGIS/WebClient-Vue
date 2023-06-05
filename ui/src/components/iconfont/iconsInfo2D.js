@@ -12,6 +12,10 @@ let iconsInfo = [
   //   title: "广告牌"
   // },
   {
+    type: "marker",
+    title: "标注"
+  },
+  {
     type: "point",
     title: "点"
   },
@@ -30,10 +34,6 @@ let iconsInfo = [
   {
     type: "circle",
     title: "圆"
-  },
-  {
-    type: "marker",
-    title: "标注"
   }
 ];
 
