@@ -1,6 +1,12 @@
 <template>
   <div class="mapgis-ui-switch-panel">
-    <mapgis-ui-group-tab v-if="showLabel" :title="label" :isTitleBold="isTitleBold" :hasTopMargin="hasTopMargin" :hasBottomMargin="hasBottomMargin">
+    <mapgis-ui-group-tab
+      v-if="showLabel"
+      :title="label"
+      :isTitleBold="isTitleBold"
+      :hasTopMargin="hasTopMargin"
+      :hasBottomMargin="hasBottomMargin"
+    >
       <mapgis-ui-switch
         slot="handle"
         class="mapgis-ui-switch-panel-switch"
@@ -21,7 +27,12 @@
       >
       </mapgis-ui-switch>
     </mapgis-ui-group-tab>
-    <mapgis-ui-group-tab  v-if="!showLabel" title="" :hasTopMargin="hasTopMargin" :hasBottomMargin="hasBottomMargin">
+    <mapgis-ui-group-tab
+      v-if="!showLabel"
+      title=""
+      :hasTopMargin="hasTopMargin"
+      :hasBottomMargin="hasBottomMargin"
+    >
       <mapgis-ui-switch
         slot="front"
         class="mapgis-ui-switch-panel-switch"
@@ -117,7 +128,7 @@ export default {
     hasBottomMargin: {
       type: Boolean,
       default: true
-    },
+    }
   },
   model: {
     prop: "checked",
@@ -130,8 +141,13 @@ export default {
     };
   },
   watch: {
-    checked(next) {
-      this.innerChecked = next;
+    checked: {
+      handler(next) {
+        this.innerChecked = next;
+        this.changeChecked(next);
+      },
+      deep: true,
+      immediate: true
     }
   },
   mounted() {
