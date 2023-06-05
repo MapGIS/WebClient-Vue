@@ -31,7 +31,7 @@
 
 - **类型:** `Boolean`
 - **非侦听属性**
-- **描述:** 是否开启以均匀步长进行生长播放，开启则根据参数steps(默认为2天)为步长，不开启则以建筑物数据中的建筑时间为节点进行生长播放
+- **描述:** 是否开启以均匀步长进行生长播放，开启则根据参数 steps(默认为 2 天)为步长，不开启则以建筑物数据中的建筑时间为节点进行生长播放
 - **默认值:** false
 
 ### `steps`
@@ -39,8 +39,16 @@
 - **类型:** `Number`
 - **可选**
 - **侦听属性**
-- **描述:** 播放步长，单位：天，仅当enableSteps为true时有效。
+- **描述:** 播放步长，单位：天，仅当 enableSteps 为 true 时有效。
 - **默认值:** 1
+
+### `isVisibleBeforeGrowing`
+
+- **类型:** `Boolean`
+- **可选**
+- **侦听属性**
+- **描述:** 开始点击单体生长时间轴前是否隐藏整个模型，即单体建筑生长组件加载成功后，是否隐藏 m3d 模型，默认为不隐藏。
+- **默认值:** false
 
 ## 方法
 
@@ -58,13 +66,11 @@
 
 - **Description:** 在 单体建筑生长 加载完毕后发送该事件
 - **Payload** { component }
--
-    1. component 组件的 this 环境，this 句柄
+- 1. component 组件的 this 环境，this 句柄
 
 ## 示例
 
 ```vue
-
 <mapgis-web-scene style="height:95vh">
 <mapgis-ui-button type="primary" @click="getTree" :style="{position: 'absolute', zIndex:3000,top:0px}">
   开启单体化生长播放条
@@ -84,14 +90,14 @@ export default {
   data() {
     return {
       loadedM3d: false,
-      steps:3,
-      m3d: 'http://192.168.88.204:8089/M3D/2.0/BIM%E6%A8%A1%E5%9E%8B%E7%94%9F%E9%95%BFtime/BIM%E6%A8%A1%E5%9E%8B%E7%94%9F%E9%95%BFtime.mcj'
-    }
+      steps: 3,
+      m3d: "http://192.168.88.204:8089/M3D/2.0/BIM%E6%A8%A1%E5%9E%8B%E7%94%9F%E9%95%BFtime/BIM%E6%A8%A1%E5%9E%8B%E7%94%9F%E9%95%BFtime.mcj",
+    };
   },
   methods: {
     getTree() {
       this.loadedM3d = true;
-    }
+    },
   },
 };
 </script>
