@@ -303,6 +303,12 @@
         <mapgis-ui-button type="primary" @click="run">分析</mapgis-ui-button>
         <mapgis-ui-button @click="cancel">重置</mapgis-ui-button>
       </mapgis-ui-setting-footer>
+      <mapgis-ui-mask
+        v-if="useMask"
+        :parentDivClass="'map-wrapper'"
+        :loading="maskShow"
+        :text="maskText"
+      ></mapgis-ui-mask>
     </slot>
   </div>
 </template>
@@ -369,6 +375,15 @@ export default {
       default: function() {
         return {};
       }
+    },
+    /**
+     * @type Boolean
+     * @default true
+     * @description 是否使用内置的遮罩层
+     */
+    useMask: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -410,7 +425,9 @@ export default {
       // 监听组件内部缓冲状态，结束this.$emit("listenFinish", finish)
       finish: false,
       bufferMethod: "client",
-      renderMethod: "client"
+      renderMethod: "client",
+      maskShow: false,
+      maskText: "正在分析中, 请稍等..."
     };
   },
   watch: {
@@ -483,6 +500,7 @@ export default {
       setDepthTestAgainstTerrainEnable(false, this.viewer);
     },
     unmount() {
+      this.maskShow = false;
       // this.destLayer = ''
     },
     sendBufferAdd() {
@@ -606,15 +624,22 @@ export default {
      * @param {Number} options.steps 缓冲步长 8
      */
     run() {
+      this.maskShow = true;
       this.$emit("listenBufferAdd", this.bufferAdd);
       if (this.srcType === "Layer") {
         var newLeftRad = this.convertRadUnit(this.leftRad, this.selectedUnit);
         var newRightRad = this.convertRadUnit(this.rightRad, this.selectedUnit);
         this.realLeftRad = newLeftRad;
         this.realRightRad = newRightRad;
+        var domain;
+        if (!!this.baseUrl && this.baseUrl.length > 0) {
+          var url = new URL(this.baseUrl);
+          domain = url.origin;
+        }
         var clsBufBySRt = new ClassBufferBySingleRing({
           ip: this.baseUrl.split("/")[2].split(":")[0],
           port: this.baseUrl.split("/")[2].split(":")[1],
+          domain,
           isByAtt: this.isByAtt,
           color: 6
         });
@@ -634,6 +659,7 @@ export default {
             false,
             "json",
             () => {
+              this.maskShow = false;
               console.log("缓冲区分析失败");
             }
           );
@@ -651,6 +677,7 @@ export default {
             outlineWidth: Number(this.colorLineWidth),
             opacity: Number(this.colorCopyOpacity)
           });
+          this.maskShow = false;
           this.$emit("listenFeature", buffered, this.destLayer, bufferStyle);
         } else if (this.bufferMethod === "server") {
           this.featureBuffBySingleRing();
@@ -676,10 +703,16 @@ export default {
       const newRightRad = this.convertRadUnit(this.rightRad, this.selectedUnit);
       this.realLeftRad = newLeftRad;
       this.realRightRad = newRightRad;
+      var domain;
+      if (!!this.baseUrl && this.baseUrl.length > 0) {
+        var url = new URL(this.baseUrl);
+        domain = url.origin;
+      }
       //实例化FeatureBuffBySingleRing类，设置要素缓冲分析必要参数，输出分析结果到缓冲分析结果图层
       const featureBufBySR = new Zondy.Service.FeatureBuffBySingleRing({
         ip: this.baseUrl.split("/")[2].split(":")[0],
         port: this.baseUrl.split("/")[2].split(":")[1],
+        domain,
         //设置要素缓冲分析左半径
         leftRad: this.realLeftRad,
         //设置要素缓冲分析右半径
@@ -700,10 +733,12 @@ export default {
       featureBufBySR.resultName = this.destLayer;
       //调用Zondy.Service.AnalysisBase基类的execute方法执行要素缓冲分析，AnalysisSuccess为回调函数。
       featureBufBySR.execute(this.AnalysisSuccess, "post", error => {
+        this.maskShow = false;
         console.log(error);
       });
     },
     AnalysisSuccess(data) {
+      this.maskShow = false;
       // this.$emit("listenLayer", this.destLayer);
       // 设置缓冲区样式
       const bufferStyle = new FillStyle({
@@ -721,6 +756,7 @@ export default {
       );
     },
     cancel() {
+      this.maskShow = false;
       Object.assign(this.$data, this.$options.data());
     },
     exportResult() {

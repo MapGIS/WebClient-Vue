@@ -98,6 +98,12 @@
         <mapgis-ui-button type="primary" @click="run">分析</mapgis-ui-button>
         <mapgis-ui-button @click="cancel">重置</mapgis-ui-button>
       </mapgis-ui-setting-footer>
+      <mapgis-ui-mask
+        v-if="useMask"
+        :parentDivClass="'map-wrapper'"
+        :loading="maskShow"
+        :text="maskText"
+      ></mapgis-ui-mask>
     </slot>
   </div>
 </template>
@@ -170,6 +176,15 @@ export default {
       default: function() {
         return {};
       }
+    },
+    /**
+     * @type Boolean
+     * @default true
+     * @description 是否使用内置的遮罩层
+     */
+    useMask: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -203,7 +218,9 @@ export default {
       attOptType: true, // 是否进行属性操作，0不允许 1允许，默认为1 Number
       isValidReg: false, // 检查区合法性，false true，默认为false
       destLayer: "",
-      overlayAdd: true // 结果添加到地图文档，默认为true
+      overlayAdd: true, // 结果添加到地图文档，默认为true
+      maskShow: false,
+      maskText: "正在分析中, 请稍等..."
     };
   },
   watch: {
@@ -223,7 +240,9 @@ export default {
     mount() {
       this.$emit("load", this);
     },
-    unmount() {},
+    unmount() {
+      this.maskShow = false;
+    },
     selectCurrentMethod(event) {
       this.selectedOverType = event;
     },
@@ -244,11 +263,18 @@ export default {
       return `overlay${hh}${mm}${ss}`;
     },
     run() {
+      this.maskShow = true;
       this.$emit("listenOverlayAdd", this.overlayAdd);
+      var domain;
+      if (!!this.baseUrl && this.baseUrl.length > 0) {
+        var url = new URL(this.baseUrl);
+        domain = url.origin;
+      }
       if (this.srcType == "Layer") {
         var overlayLayer = new OverlayByLayer({
           ip: this.baseUrl.split("/")[2].split(":")[0],
           port: this.baseUrl.split("/")[2].split(":")[1],
+          domain,
           overType: this.selectedOverType,
           radius: Number(this.radius),
           infoOptType: this.selectedInfoOptType,
@@ -264,6 +290,7 @@ export default {
           false,
           "json",
           () => {
+            this.maskShow = false;
             console.log("叠加分析失败!");
           }
         );
@@ -271,6 +298,7 @@ export default {
         var overlayFeature = new OverlayByPolygon({
           ip: this.baseUrl.split("/")[2].split(":")[0],
           port: this.baseUrl.split("/")[2].split(":")[1],
+          domain,
           overType: this.selectedOverType,
           radius: Number(this.radius),
           infoOptType: this.selectedInfoOptType,
@@ -289,6 +317,7 @@ export default {
           false,
           "json",
           () => {
+            this.maskShow = false;
             console.log("叠加分析失败!");
           }
         );
@@ -324,9 +353,11 @@ export default {
       return anyLineList;
     },
     cancel() {
+      this.maskShow = false;
       Object.assign(this.$data, this.$options.data());
     },
     AnalysisSuccess(data) {
+      this.maskShow = false;
       console.log("----------叠加分析成功--------------");
       this.$emit("listenLayer", this.destLayer);
     },
