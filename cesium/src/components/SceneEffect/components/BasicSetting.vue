@@ -210,10 +210,15 @@ export default {
   },
   mounted() {
     const { vueKey, vueIndex } = this;
-
-    window.vueCesium.SettingToolManager.addSource(vueKey, vueIndex, null, {
-      timeline: null
-    });
+    const manager = window.vueCesium["SettingToolManager"].findSource(
+      vueKey,
+      vueIndex
+    );
+    if (!manager) {
+      window.vueCesium.SettingToolManager.addSource(vueKey, vueIndex, null, {
+        timeline: null
+      });
+    }
     this.init();
   },
   watch: {
@@ -236,6 +241,16 @@ export default {
     init() {
       if (!this.basicSetting) {
         return;
+      }
+      const { vueKey, vueIndex } = this;
+      const manager = window.vueCesium["SettingToolManager"].findSource(
+        vueKey,
+        vueIndex
+      );
+      if (!manager) {
+        window.vueCesium.SettingToolManager.addSource(vueKey, vueIndex, null, {
+          timeline: null
+        });
       }
       const {
         earth,

@@ -115,11 +115,18 @@ export default {
       default: () => {
         return {};
       }
+    },
+    initFavoritesParams: {
+      type: Object,
+      default: () => {
+        return {};
+      }
     }
   },
   computed: {
     initBasicSetting() {
       return (
+        this.initFavoritesParams.basicSetting ||
         this.initParams.basicSetting || {
           earth: true,
           skyAtmosphere: true,
@@ -140,6 +147,7 @@ export default {
     },
     initCameraSetting() {
       return (
+        this.initFavoritesParams.cameraSetting ||
         this.initParams.cameraSetting || {
           undgrd: false,
           undgrdParams: {
@@ -151,6 +159,7 @@ export default {
     },
     initLightSetting() {
       return (
+        this.initFavoritesParams.lightSetting ||
         this.initParams.lightSetting || {
           sunlight: false,
           sunlightParams: {
@@ -163,6 +172,7 @@ export default {
     },
     initWeatherSetting() {
       return (
+        this.initFavoritesParams.weatherSetting ||
         this.initParams.weatherSetting || {
           sun: true,
           moon: true,
@@ -198,6 +208,7 @@ export default {
     },
     initEffectSetting() {
       return (
+        this.initFavoritesParams.effectSetting ||
         this.initParams.effectSetting || {
           blckWhite: false,
           ntVision: false,
