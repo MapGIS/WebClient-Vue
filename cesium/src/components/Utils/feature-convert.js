@@ -334,6 +334,25 @@ export function featureGeoJSONTofeatureIGSForBuffer(geojsonFeatures) {
       );
       lineGeo.setLine([gLine]);
       sfGeometry.push(lineGeo);
+    } else if (geometry.type === "MultiLineString") {
+      const gLine = [];
+      for (let j = 0; j < geometry.coordinates.length; j += 1) {
+        const dots = [];
+        for (let c = 0; c < geometry.coordinates[j].length; c++) {
+          dots.push({
+            x: geometry.coordinates[j][c][0],
+            y: geometry.coordinates[j][c][1],
+          });
+        }
+        gLine.push(
+          new Zondy.Object.GLine(
+            new Zondy.Object.AnyLine([new Zondy.Object.Arc(dots)])
+          )
+        );
+      }
+      const lineGeo = new Zondy.Object.FeatureGeometry();
+      lineGeo.setLine(gLine);
+      sfGeometry.push(lineGeo);
     } else if (geometry.type === "Polygon") {
       const dots = [];
       for (let j = 0; j < geometry.coordinates[0].length; j += 1) {
@@ -347,6 +366,24 @@ export function featureGeoJSONTofeatureIGSForBuffer(geojsonFeatures) {
       const gReg = new Zondy.Object.GRegion([
         new Zondy.Object.AnyLine([new Zondy.Object.Arc(dots)]),
       ]);
+      regGeo.setRegGeom([gReg]);
+      sfGeometry.push(regGeo);
+    } else if (geometry.type === "MultiPolygon") {
+      ftype = 3;
+      bound = GeometryExp.calculateBound(geometry.coordinates[0]);
+      const RegGeom = [];
+      for (let j = 0; j < geometry.coordinates.length; j += 1) {
+        const dots = [];
+        for (let c = 0; c < geometry.coordinates[j][0].length; c++) {
+          dots.push({
+            x: geometry.coordinates[j][0][c][0],
+            y: geometry.coordinates[j][0][c][1],
+          });
+        }
+        RegGeom.push(new Zondy.Object.AnyLine([new Zondy.Object.Arc(dots)]));
+      }
+      const regGeo = new Zondy.Object.FeatureGeometry();
+      const gReg = new Zondy.Object.GRegion(RegGeom);
       regGeo.setRegGeom([gReg]);
       sfGeometry.push(regGeo);
     }
