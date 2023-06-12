@@ -40,7 +40,7 @@ export default {
       // 测量结果
       result: undefined,
       // 测量对象
-      measure: undefined,
+      // measure: undefined,
       initial: false,
       measureStyles: {},
       waitManagerName: "GlobesManager"
