@@ -58,7 +58,8 @@ export default {
           lightIntensity: 10
         };
       }
-    }
+    },
+    initFavoritesLightSetting: { type: Object }
   },
   computed: {
     lightSetting: {
@@ -105,6 +106,7 @@ export default {
   },
   methods: {
     init() {
+      this.setFavoritesConfig();
       if (!this.lightSetting) {
         return;
       }
@@ -147,6 +149,17 @@ export default {
       const { viewer } = this;
       this.lightSetting.lightIntensity = e;
       viewer.scene.light.intensity = this.lightSetting.lightIntensity;
+    },
+    setFavoritesConfig() {
+      if (this.initFavoritesLightSetting) {
+        Object.keys(this.initFavoritesLightSetting).forEach(item => {
+          if (
+            this.initFavoritesLightSetting[item] !== this.lightSetting[item]
+          ) {
+            this.lightSetting[item] = this.initFavoritesLightSetting[item];
+          }
+        });
+      }
     }
   }
 };

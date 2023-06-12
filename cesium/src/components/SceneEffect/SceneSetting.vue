@@ -19,6 +19,7 @@
             ref="attr"
             @updateSpin="changeSpinning"
             :initBasicSetting.sync="initBasicSetting"
+            :initFavoritesBasicSetting="initFavoritesBasicSetting"
             :initialDepthTest="depthTest"
             :initial-scene-mode="sceneMode"
           ></basic-setting>
@@ -32,6 +33,7 @@
           <camera-setting
             ref="effect"
             :initCameraSetting.sync="initCameraSetting"
+            :initFavoritesCameraSetting="initFavoritesCameraSetting"
             @updateSpin="changeSpinning"
           ></camera-setting>
         </mapgis-ui-tab-pane>
@@ -44,6 +46,7 @@
           <light-setting
             ref="effect"
             :initLightSetting.sync="initLightSetting"
+            :initFavoritesLightSetting="initFavoritesLightSetting"
             @updateSpin="changeSpinning"
           ></light-setting>
         </mapgis-ui-tab-pane>
@@ -56,6 +59,7 @@
           <weather-setting
             ref="effect"
             :initWeatherSetting.sync="initWeatherSetting"
+            :initFavoritesWeatherSetting="initFavoritesWeatherSetting"
             @updateSpin="changeSpinning"
           ></weather-setting>
         </mapgis-ui-tab-pane>
@@ -68,6 +72,7 @@
           <effect-setting
             ref="effect"
             :initEffectSetting.sync="initEffectSetting"
+            :initFavoritesEffectSetting="initFavoritesEffectSetting"
             @updateSpin="changeSpinning"
           ></effect-setting>
         </mapgis-ui-tab-pane>
@@ -126,7 +131,6 @@ export default {
   computed: {
     initBasicSetting() {
       return (
-        this.initFavoritesParams.basicSetting ||
         this.initParams.basicSetting || {
           earth: true,
           skyAtmosphere: true,
@@ -145,9 +149,11 @@ export default {
         }
       );
     },
+    initFavoritesBasicSetting() {
+      return this.initFavoritesParams.basicSetting;
+    },
     initCameraSetting() {
       return (
-        this.initFavoritesParams.cameraSetting ||
         this.initParams.cameraSetting || {
           undgrd: false,
           undgrdParams: {
@@ -157,9 +163,11 @@ export default {
         }
       );
     },
+    initFavoritesCameraSetting() {
+      return this.initFavoritesParams.cameraSetting;
+    },
     initLightSetting() {
       return (
-        this.initFavoritesParams.lightSetting ||
         this.initParams.lightSetting || {
           sunlight: false,
           sunlightParams: {
@@ -170,9 +178,11 @@ export default {
         }
       );
     },
+    initFavoritesLightSetting() {
+      return this.initFavoritesParams.lightSetting;
+    },
     initWeatherSetting() {
       return (
-        this.initFavoritesParams.weatherSetting ||
         this.initParams.weatherSetting || {
           sun: true,
           moon: true,
@@ -206,9 +216,11 @@ export default {
         }
       );
     },
+    initFavoritesWeatherSetting() {
+      return this.initFavoritesParams.weatherSetting;
+    },
     initEffectSetting() {
       return (
-        this.initFavoritesParams.effectSetting ||
         this.initParams.effectSetting || {
           blckWhite: false,
           ntVision: false,
@@ -219,6 +231,9 @@ export default {
           }
         }
       );
+    },
+    initFavoritesEffectSetting() {
+      return this.initFavoritesParams.effectSetting;
     }
   },
   data() {

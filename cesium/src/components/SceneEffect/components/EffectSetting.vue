@@ -67,7 +67,8 @@ export default {
           }
         };
       }
-    }
+    },
+    initFavoritesEffectSetting: { type: Object }
   },
   computed: {
     effectSetting: {
@@ -96,6 +97,7 @@ export default {
   },
   methods: {
     init() {
+      this.setFavoritesConfig();
       if (!this.effectSetting) {
         return;
       }
@@ -176,6 +178,17 @@ export default {
 
       if (length > 0) {
         viewer.scene.postProcessStages.removeAll();
+      }
+    },
+    setFavoritesConfig() {
+      if (this.initFavoritesEffectSetting) {
+        Object.keys(this.initFavoritesEffectSetting).forEach(item => {
+          if (
+            this.initFavoritesEffectSetting[item] !== this.effectSetting[item]
+          ) {
+            this.effectSetting[item] = this.initFavoritesEffectSetting[item];
+          }
+        });
       }
     }
   }

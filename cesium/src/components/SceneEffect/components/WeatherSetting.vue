@@ -205,7 +205,8 @@ export default {
           }
         };
       }
-    }
+    },
+    initFavoritesWeatherSetting: { type: Object }
   },
   computed: {
     weatherSetting: {
@@ -264,6 +265,7 @@ export default {
   },
   methods: {
     init() {
+      this.setFavoritesConfig();
       const {
         sun,
         moon,
@@ -726,6 +728,17 @@ export default {
       viewer.scene.fog.density = this.weatherSetting.surfFogParams.surfFogDst;
       // viewer.scene.fog.minimumBrightness = this.surfFogMinBrt;
       viewer.scene.fog.enabled = this.weatherSetting.surficialFog;
+    },
+    setFavoritesConfig() {
+      if (this.initFavoritesWeatherSetting) {
+        Object.keys(this.initFavoritesWeatherSetting).forEach(item => {
+          if (
+            this.initFavoritesWeatherSetting[item] !== this.weatherSetting[item]
+          ) {
+            this.weatherSetting[item] = this.initFavoritesWeatherSetting[item];
+          }
+        });
+      }
     }
   }
 };
