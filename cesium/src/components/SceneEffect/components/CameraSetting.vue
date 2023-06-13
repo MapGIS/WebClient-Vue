@@ -104,22 +104,29 @@ export default {
         viewer.scene.screenSpaceCameraController.enableCollisionDetection = !vm
           .cameraSetting.undgrd;
         viewer.scene.globe.translucency.enabled = vm.cameraSetting.undgrd;
-        const { groundAlpha } = vm.cameraSetting.undgrdParams;
-        //设置地表透明度
-        viewer.scene.globe.translucency.backFaceAlpha = groundAlpha;
-        // 下面这一句会给所有二维图层都设置透明度
-        // viewer.scene.globe.translucency.frontFaceAlpha = groundAlpha;
-        // 只把Cesium自带的天地图底图设置透明，其他图层透明度保持不变
-        const defaultColor = Cesium.Color.clone(viewer.scene.globe.baseColor);
-        defaultColor.alpha = groundAlpha;
-        viewer.scene.globe.baseColor = defaultColor;
-        viewer.imageryLayers._layers[0].alpha = groundAlpha;
-
-        //最小缩放距离
-        //viewer.scene.screenSpaceCameraController.minimumZoomDistance = ;
-
+        if (vm.cameraSetting.undgrd) {
+          //设置地表透明度
+          vm.setGlobeBackFaceAlpha(vm.cameraSetting.undgrdParams.groundAlpha);
+        } else {
+          // 不开启地表透明度，地表透明度应该为1
+          vm.setGlobeBackFaceAlpha(1);
+        }
         vm.$emit("updateSpin", false);
       }, 300);
+    },
+    /**
+     * 设置地表透明度
+     */
+    setGlobeBackFaceAlpha(groundAlpha) {
+      const { viewer, Cesium } = this;
+      viewer.scene.globe.translucency.backFaceAlpha = groundAlpha;
+      // 下面这一句会给所有二维图层都设置透明度
+      // viewer.scene.globe.translucency.frontFaceAlpha = groundAlpha;
+      // 只把Cesium自带的天地图底图设置透明，其他图层透明度保持不变
+      const defaultColor = Cesium.Color.clone(viewer.scene.globe.baseColor);
+      defaultColor.alpha = groundAlpha;
+      viewer.scene.globe.baseColor = defaultColor;
+      viewer.imageryLayers._layers[0].alpha = groundAlpha;
     },
     /*
      * FOV设置
