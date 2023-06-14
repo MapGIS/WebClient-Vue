@@ -238,11 +238,17 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    initFavoritesBasicSetting: {
+      handler(e) {
+        this.setFavoritesConfig();
+      },
+      deep: true,
+      immediate: true
     }
   },
   methods: {
     init() {
-      this.setFavoritesConfig();
       if (!this.basicSetting) {
         return;
       }

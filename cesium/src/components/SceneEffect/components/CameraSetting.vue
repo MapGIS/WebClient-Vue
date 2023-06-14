@@ -75,11 +75,17 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    initFavoritesCameraSetting: {
+      handler(e) {
+        this.setFavoritesConfig();
+      },
+      deep: true,
+      immediate: true
     }
   },
   methods: {
     init() {
-      this.setFavoritesConfig();
       if (!this.cameraSetting) {
         return;
       }

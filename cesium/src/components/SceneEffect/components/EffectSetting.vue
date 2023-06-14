@@ -93,11 +93,17 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    initFavoritesEffectSetting: {
+      handler(e) {
+        this.setFavoritesConfig();
+      },
+      deep: true,
+      immediate: true
     }
   },
   methods: {
     init() {
-      this.setFavoritesConfig();
       if (!this.effectSetting) {
         return;
       }

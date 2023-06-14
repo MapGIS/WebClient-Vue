@@ -102,11 +102,17 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    initFavoritesLightSetting: {
+      handler(e) {
+        this.setFavoritesConfig();
+      },
+      deep: true,
+      immediate: true
     }
   },
   methods: {
     init() {
-      this.setFavoritesConfig();
       if (!this.lightSetting) {
         return;
       }
