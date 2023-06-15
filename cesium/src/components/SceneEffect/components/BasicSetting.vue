@@ -515,6 +515,13 @@ export default {
             stateContainer.style.bottom = "24px";
           }
         });
+      } else {
+        // 时间轴和状态栏都存在时关闭时间轴，状态栏复原到最下方
+        vm.$nextTick(function() {
+          let list = document.getElementsByClassName("mapgis-3d-statebar");
+          let stateContainer = list[0];
+          if (stateContainer) stateContainer.style.bottom = "0px";
+        });
       }
     },
     handleChangeSceneMode(next) {
