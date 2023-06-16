@@ -6,18 +6,30 @@
   #{$prefix}-prev-month-btn,
   #{$prefix}-next-month-btn,
   #{$prefix}-prev-year-btn,
-  #{$prefix}-next-year-btn {
+  #{$prefix}-next-year-btn,
+  #{$prefix}-month-select,
+  #{$prefix}-year-select,
+  #{$prefix}-day-select,
+  #{$prefix}-year-panel-decade-select {
     color: $text-color-secondary;
   }
 }
 
-@mixin disabled($color: $btn-disable-color, $background: $btn-disable-bg, $border: $btn-disable-border) {
+@mixin disabled(
+  $color: $btn-disable-color,
+  $background: $btn-disable-bg,
+  $border: $btn-disable-border
+) {
   color: $color;
   background-color: $background;
   border-color: $border;
 }
 
-@mixin button-disabled($color: $btn-disable-color, $background: $btn-disable-bg, $border: $btn-disable-border) {
+@mixin button-disabled(
+  $color: $btn-disable-color,
+  $background: $btn-disable-bg,
+  $border: $btn-disable-border
+) {
   &-disabled,
   &.disabled,
   &[disabled] {
@@ -36,6 +48,10 @@
 
   &-header {
     @include calendarPanelHeader($prefix-panel);
+  }
+
+  #{$prefix-panel}-#{$panel-name} {
+    color: $text-color;
   }
 
   &-selected-cell {

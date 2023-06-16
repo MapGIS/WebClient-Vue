@@ -1,8 +1,13 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
 @include b(slider) {
-    &-rail {
-        background-color: $slider-rail-background-color;
+  &-rail {
+    background-color: $slider-rail-background-color;
+  }
+  &-mark {
+    > span {
+      color: $text-color;
     }
+  }
 }

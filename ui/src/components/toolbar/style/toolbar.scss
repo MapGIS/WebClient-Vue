@@ -13,8 +13,8 @@
   align-items: center;
   height: 32px;
   &.bordered {
-    border-top: 1px solid $item-active-bg;
-    border-bottom: 1px solid $item-active-bg;
+    border-top: 1px solid $border-color-base;
+    border-bottom: 1px solid $border-color-base;
   }
   &.sm {
     height: 28px;

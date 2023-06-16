@@ -1,7 +1,7 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
-@import '../../button/style/mixin.scss';
-@import 'mixin.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+@import "../../button/style/mixin.scss";
+@import "mixin.scss";
 
 @include b(calendar-picker) {
   $calendar-picker-prefix: &;
@@ -11,7 +11,11 @@
     }
   }
 
-  @include e(clear, '-') {
+  @include e(container, "-") {
+    color: $text-color;
+  }
+
+  @include e(clear, "-") {
     &:hover {
       color: $text-color-secondary;
     }
@@ -28,18 +32,19 @@
   background-color: $select-dropdown-bg;
   border: none;
 
-  @include e(input, '-') {
+  @include e(input, "-") {
     background: $select-dropdown-bg;
   }
 
-  @include e(header, '-') {
+  @include e(header, "-") {
     @include calendarPanelHeader($prefix);
   }
 
-  @include e(date, '-') {
+  @include e(date, "-") {
+    color: $text-color;
     &:hover {
       background: $selected-color;
-      color: #fff;
+      color: $primary-color;
     }
     &:active {
       background: $click-color;
@@ -49,18 +54,18 @@
     }
   }
 
-  @include e(selected-day, '-') {
+  @include e(selected-day, "-") {
     #{$prefix}-date {
       background: $primary-color;
-      color: #fff;
+      color: $primary-color;
     }
   }
 
-  @include e(today, '-') {
+  @include e(today, "-") {
     @include today($prefix);
   }
 
-  @include e(disabled-cell, '-') {
+  @include e(disabled-cell, "-") {
     #{$prefix}-date {
       background: $disabled-bg;
       border-color: transparent;
@@ -79,7 +84,7 @@
     }
   }
 
-  @include e(footer, '-') {
+  @include e(footer, "-") {
     &-btn {
       text-align: right;
       padding-right: 10px;
@@ -111,7 +116,7 @@
     @include button-disabled();
   }
 
-  @include e(today-btn, '-') {
+  @include e(today-btn, "-") {
     &#{&}-disabled {
       &:hover,
       &:focus,
@@ -121,7 +126,7 @@
     }
   }
 
-  @include e(range, '-') {
+  @include e(range, "-") {
     &-picker-separator {
       color: $text-color-secondary;
     }
@@ -149,6 +154,7 @@
 
     #{$prefix}-input,
     #{$prefix}-time-picker-input {
+      color: $text-color;
       background: $select-dropdown-bg;
     }
 
@@ -165,7 +171,7 @@
     }
   }
 
-  @include e(time, '-') {
+  @include e(time, "-") {
     &-picker {
       background-color: $select-dropdown-bg;
 
@@ -179,15 +185,15 @@
         li {
           &:hover {
             background: $selected-color;
-            color: #fff;
+            color: $primary-color;
           }
           &:focus {
             background: $click-color;
-            color: #fff;
+            color: $primary-color;
           }
           &#{$prefix-time-picker-select}-option-selected {
             background: $primary-color;
-            color: #fff;
+            color: $primary-color;
           }
           &#{$prefix-time-picker-select}-option-disabled {
             @include disabled($background: transparent);
@@ -196,8 +202,8 @@
       }
     }
   }
-  
-  @include e(month-panel, '-') {
+
+  @include e(month-panel, "-") {
     $prefix-month-panel: &;
     @include panel-item(&, month);
 
@@ -221,15 +227,15 @@
     }
   }
 
-  @include e(year-panel, '-') {
+  @include e(year-panel, "-") {
     @include panel-item(&, year);
   }
 
-  @include e(decade-panel, '-') {
+  @include e(decade-panel, "-") {
     @include panel-item(&, decade);
   }
 
-  @include e(week-number, '-') {
+  @include e(week-number, "-") {
     #{$prefix}-body {
       tr {
         &:hover {
