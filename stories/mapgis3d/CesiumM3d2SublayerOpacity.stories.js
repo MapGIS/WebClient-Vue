@@ -29,9 +29,9 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-scene>`,
 });
 
-export const 子图层不透明度 = Template.bind({});
-子图层不透明度.args = {
-  url: `http://192.168.82.89:8089/igs/rest/services/Scene/分层分户/SceneServer`,
+export const 子图层透明度控制 = Template.bind({});
+子图层透明度控制.args = {
+  url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/Scene/分层分户/SceneServer`,
   show: true,
   opacity: 1.0,
   opacityLayersArray: ["0"],
