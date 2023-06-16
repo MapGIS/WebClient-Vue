@@ -309,9 +309,40 @@ export default {
       default: false
     },
     /**
-     * @param {String} [position.type]  输入区域类型,包含"polygon"、"rectangle"、"radius"
-     * @param {Array} [position.coordinates] 传入区域坐标，
-     * @param {Number} [position.radius] 半径, 可选，区域类型为"radius"时，参数生效
+     * @param {String} [pondingArea.type]  输入区域类型,包含"polygon"、"rectangle"、"radius"
+     * @param {Array} [pondingArea.coordinates] 输入类型为"polygon"、"rectangle"时传入区域坐标，需为经纬度坐标
+     * @param {Number} [pondingArea.radius] 半径, 可选，区域类型为"radius"时，参数生效，单位为m
+     * @param {Array} [pondingArea.circle] 圆心坐标，需为经纬度坐标, 可选，区域类型为"radius"时，参数生效，单位为m
+     * 举例：
+     * //多边形
+     * pondingArea: {
+     *    type: "polygon",
+     *    coordinates: [
+     *      [121.10911760510515,24.111592873583877,0],
+     *      [121.09912766988694,24.10699704552568,0],
+     *      [121.09331791337927,24.10068226891116,0],
+     *      [121.10225878938968,24.101212455382665,0],
+     *      [121.1080560600791,24.09941910580691,0],
+     *      [121.1176806697652,24.10933208003461,0],
+     *      [121.10911760510515,24.111592873583877,0]
+     *    ],
+     *  },
+     * //矩形，只用传入两个点，左上和右下
+     *pondingArea: {
+     *    type: "rectangle",
+     *    coordinates: [
+     *      [121.0936741922885, 24.109364989571024],
+     *      [121.11004105293685, 24.099987666838317],
+     *    ],
+     *  },
+     * //圆形
+     * pondingArea: {
+     *    type: "radius",
+     *    radius:700,//单位m
+     *    circle: [
+     *      [121.10698076743799,24.105556491755227]
+     *    ],
+     *  },
      */
     pondingArea: {
       type: Object
@@ -614,8 +645,8 @@ export default {
           } else if (vm.pondingArea.type == "radius") {
             // 根据用户输入的圆心和半径计算圆范围的坐标点
             let circle = [
-              vm.pondingArea.coordinates[0][0],
-              vm.pondingArea.coordinates[0][1]
+              vm.pondingArea.circle[0][0],
+              vm.pondingArea.circle[0][1]
             ];
             let lnglatArr = vm.getCircleDegrees(
               circle,
