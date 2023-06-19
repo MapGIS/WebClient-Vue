@@ -24,7 +24,12 @@
             />
           </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
-        <mapgis-ui-group-tab title="数据源" :hasTopMargin="false" :hasBottomMargin="false" :isTitleBold="false"/>
+        <mapgis-ui-group-tab
+          title="数据源"
+          :hasTopMargin="false"
+          :hasBottomMargin="false"
+          :isTitleBold="false"
+        />
         <div class="projector-style">
           <div v-show="showVideoDiv">
             <mapgis-ui-video
@@ -88,208 +93,228 @@
             </mapgis-ui-form-item>
           </div>
         </mapgis-ui-setting-form>
-        <mapgis-ui-group-tab>
-          <span slot="title">
-            摄像头参数
-            <mapgis-ui-tooltip slot="handle" placement="top">
-              <template slot="title">
-                <span>{{ info }}</span>
-              </template>
-              <mapgis-ui-iconfont type="mapgis-info"></mapgis-ui-iconfont>
-            </mapgis-ui-tooltip>
-          </span>
-        </mapgis-ui-group-tab>
-        <mapgis-ui-setting-form
-          :layout="layout"
-          size="default"
-          class="mapgis-ui-setting-form"
-        >
-          <mapgis-ui-form-item>
-            <mapgis-ui-group-tab title="位置" :isTitleBold="false" :hasTopMargin="false" :hasBottomMargin="false">
-              <mapgis-ui-tooltip slot="handle" title="定位">
-                <mapgis-ui-iconfont
-                  class="iconfont-btn"
-                  type="mapgis-target-lock"
-                  @click="_getCameraPosition"
-                />
+        <mapgis-ui-group-tab title="投放方式选择" />
+        <mapgis-ui-radio-group v-model="renderType" class="padding">
+          <mapgis-ui-radio :value="0">输入摄像头参数</mapgis-ui-radio>
+          <mapgis-ui-radio :value="1">绘制投放面</mapgis-ui-radio>
+        </mapgis-ui-radio-group>
+
+        <!-- 摄像头参数方式 -->
+        <div v-if="renderType === 0">
+          <mapgis-ui-group-tab>
+            <span slot="title">
+              摄像头参数
+              <mapgis-ui-tooltip slot="handle" placement="top">
+                <template slot="title">
+                  <span>{{ info }}</span>
+                </template>
+                <mapgis-ui-iconfont type="mapgis-info"></mapgis-ui-iconfont>
               </mapgis-ui-tooltip>
-            </mapgis-ui-group-tab>
-            <mapgis-ui-row :gutter="8">
-              <mapgis-ui-col :span="12">	
-                <mapgis-ui-input-number-addon
-                  :min="0"
-                  :step="0.0001"
-                  v-model.number="params.cameraPosition.x"
-                >
-                  <mapgis-ui-tooltip slot="addonBefore" title="X">
-                    <mapgis-ui-iconfont type="mapgis-xzhouyidong"/>
-                  </mapgis-ui-tooltip>
-                </mapgis-ui-input-number-addon>
-              </mapgis-ui-col>
-              <mapgis-ui-col :span="12">
-                <mapgis-ui-input-number-addon
-                  :min="0"
-                  :step="0.0001"
-                  v-model.number="params.cameraPosition.y"
-                >
-                  <mapgis-ui-tooltip slot="addonBefore" title="Y">
-                    <mapgis-ui-iconfont type="mapgis-yzhouyidong"/>
-                  </mapgis-ui-tooltip>
-                </mapgis-ui-input-number-addon>
-              </mapgis-ui-col>
-              <mapgis-ui-col :span="12" style="paddingTop:8px;">
-                <mapgis-ui-input-number-addon
-                  :min="0"
-                  :step="0.0001"
-                  v-model.number="params.cameraPosition.z"
-                >
-                  <mapgis-ui-tooltip slot="addonBefore" title="Z">
-                    <mapgis-ui-iconfont type="mapgis-Zzhouyidong"/>
-                  </mapgis-ui-tooltip>
-                </mapgis-ui-input-number-addon>
-              </mapgis-ui-col>
-            </mapgis-ui-row>
-          </mapgis-ui-form-item>
-          <mapgis-ui-form-item>
-            <mapgis-ui-group-tab title="朝向" :isTitleBold="false" :hasTopMargin="false" :hasBottomMargin="false">
-              <mapgis-ui-tooltip slot="handle" title="定位">
-                <mapgis-ui-iconfont
-                  class="iconfont-btn"
-                  type="mapgis-target-lock"
-                  @click="_getTargetPosition"
-                />
-              </mapgis-ui-tooltip>
-            </mapgis-ui-group-tab>
-            <mapgis-ui-row :gutter="8">
-              <mapgis-ui-col :span="12">
-                <mapgis-ui-input-number-addon
-                  :min="0"
-                  :max="360"
-                  :step="0.1"
-                  v-model.number="params.orientation.heading"
-                  @change="val => onChangeSetting(val, 'heading')"
-                >
-                  <mapgis-ui-tooltip slot="addonBefore" title="方位角">
-                    <mapgis-ui-iconfont type="mapgis-fangwei"/>
-                  </mapgis-ui-tooltip>
-                </mapgis-ui-input-number-addon>
-                <mapgis-ui-slider
-                  v-model="params.orientation.heading"
-                  :min="0"
-                  :max="360"
-                  size="small"
-                  :step="0.1"
-                  :tooltipVisible="false"
-                  @change="val => onChangeSetting(val, 'heading')"
-                />
-              </mapgis-ui-col>
-              <mapgis-ui-col :span="12">
-                <mapgis-ui-input-number-addon
-                  :min="-90"
-                  :max="90"
-                  :step="0.1"
-                  v-model.number="params.orientation.pitch"
-                  @change="val => onChangeSetting(val, 'pitch')"
-                >
-                  <mapgis-ui-tooltip slot="addonBefore" title="俯仰角">
-                    <mapgis-ui-iconfont type="mapgis-fushi"/>
-                  </mapgis-ui-tooltip>
-                </mapgis-ui-input-number-addon>
-                <mapgis-ui-slider
-                  v-model="params.orientation.pitch"
-                  :min="-90"
-                  :max="90"
-                  :step="0.1"
-                  size="small"
-                  :tooltipVisible="false"
-                  @change="val => onChangeSetting(val, 'pitch')"
-                />
-              </mapgis-ui-col>
-              <mapgis-ui-col :span="12" style="paddingTop:8px;">
-                <mapgis-ui-input-number-addon
-                  :min="0"
-                  :max="360"
-                  :step="0.1"
-                  v-model.number="params.orientation.roll"
-                  @change="val => onChangeSetting(val, 'roll')"
-                >
-                  <mapgis-ui-tooltip slot="addonBefore" title="翻滚角">
-                    <mapgis-ui-iconfont type="mapgis-Zzhouxuanzhuan"/>
-                  </mapgis-ui-tooltip>
-                </mapgis-ui-input-number-addon>
-                <mapgis-ui-slider
-                  v-model="params.orientation.roll"
-                  :min="0"
-                  :max="360"
-                  :step="0.1"
-                  size="small"
-                  :tooltipVisible="false"
-                  @change="val => onChangeSetting(val, 'roll')"
-                />
-              </mapgis-ui-col>
-            </mapgis-ui-row>
-          </mapgis-ui-form-item>
-          <mapgis-ui-form-item label="视角">
-            <mapgis-ui-row :gutter="8">
-              <mapgis-ui-col :span="12">
-                <mapgis-ui-input-number-addon
-                  :min="0"
-                  :max="180"
-                  :step="0.1"
-                  v-model.number="params.hFOV"
-                  @change="
-                    val => onChangeSetting(val, 'horizontAngle')
-                  "
-                >
-                  <mapgis-ui-tooltip slot="addonBefore" title="水平">
-                    <mapgis-ui-iconfont type="mapgis-shuiping"/>
-                  </mapgis-ui-tooltip>
-                </mapgis-ui-input-number-addon>
-                <mapgis-ui-slider
-                  v-model="params.hFOV"
-                  :min="0"
-                  :max="180"
-                  :step="0.1"
-                  :tooltipVisible="false"
-                  @change="val => onChangeSetting(val, 'horizontAngle')"
-                />
-              </mapgis-ui-col>
-              <mapgis-ui-col :span="12">
-                <mapgis-ui-input-number-addon
-                  :min="0"
-                  :max="180"
-                  :step="0.1"
-                  v-model.number="params.vFOV"
-                  @change="
-                    val => onChangeSetting(val, 'verticalAngle')
-                  "
-                >
-                  <mapgis-ui-tooltip slot="addonBefore" title="垂直">
-                    <mapgis-ui-iconfont type="mapgis-chuizhi"/>
-                  </mapgis-ui-tooltip>
-                </mapgis-ui-input-number-addon>
-                <mapgis-ui-slider
-                  v-model="params.vFOV"
-                  :min="0"
-                  :max="180"
-                  :step="0.1"
-                  size="small"
-                  :tooltipVisible="false"
-                  @change="val => onChangeSetting(val, 'verticalAngle')"
-                />
-              </mapgis-ui-col>
-            </mapgis-ui-row>
-          </mapgis-ui-form-item>
-        </mapgis-ui-setting-form>
-        <mapgis-ui-group-tab title="显示锥体线" :isTitleBold="true" :hasTopMargin="false" :hasBottomMargin="false" style="paddingBottom:8px;">
-          <mapgis-ui-switch
-            slot="handle"
-            size="small"
-            v-model="params.hintLineVisible"
-            @change="val => onChangeSetting(val, 'showLine')"
-          />
-        </mapgis-ui-group-tab>
-        <!-- <mapgis-ui-row>
+            </span>
+          </mapgis-ui-group-tab>
+          <mapgis-ui-setting-form
+            :layout="layout"
+            size="default"
+            class="mapgis-ui-setting-form"
+          >
+            <mapgis-ui-form-item>
+              <mapgis-ui-group-tab
+                title="位置"
+                :isTitleBold="false"
+                :hasTopMargin="false"
+                :hasBottomMargin="false"
+              >
+                <mapgis-ui-tooltip slot="handle" title="定位">
+                  <mapgis-ui-iconfont
+                    class="iconfont-btn"
+                    type="mapgis-target-lock"
+                    @click="_getCameraPosition"
+                  />
+                </mapgis-ui-tooltip>
+              </mapgis-ui-group-tab>
+              <mapgis-ui-row :gutter="8">
+                <mapgis-ui-col :span="12">
+                  <mapgis-ui-input-number-addon
+                    :min="0"
+                    :step="0.0001"
+                    v-model.number="params.cameraPosition.x"
+                  >
+                    <mapgis-ui-tooltip slot="addonBefore" title="X">
+                      <mapgis-ui-iconfont type="mapgis-xzhouyidong" />
+                    </mapgis-ui-tooltip>
+                  </mapgis-ui-input-number-addon>
+                </mapgis-ui-col>
+                <mapgis-ui-col :span="12">
+                  <mapgis-ui-input-number-addon
+                    :min="0"
+                    :step="0.0001"
+                    v-model.number="params.cameraPosition.y"
+                  >
+                    <mapgis-ui-tooltip slot="addonBefore" title="Y">
+                      <mapgis-ui-iconfont type="mapgis-yzhouyidong" />
+                    </mapgis-ui-tooltip>
+                  </mapgis-ui-input-number-addon>
+                </mapgis-ui-col>
+                <mapgis-ui-col :span="12" style="paddingTop:8px;">
+                  <mapgis-ui-input-number-addon
+                    :min="0"
+                    :step="0.0001"
+                    v-model.number="params.cameraPosition.z"
+                  >
+                    <mapgis-ui-tooltip slot="addonBefore" title="Z">
+                      <mapgis-ui-iconfont type="mapgis-Zzhouyidong" />
+                    </mapgis-ui-tooltip>
+                  </mapgis-ui-input-number-addon>
+                </mapgis-ui-col>
+              </mapgis-ui-row>
+            </mapgis-ui-form-item>
+            <mapgis-ui-form-item>
+              <mapgis-ui-group-tab
+                title="朝向"
+                :isTitleBold="false"
+                :hasTopMargin="false"
+                :hasBottomMargin="false"
+              >
+                <mapgis-ui-tooltip slot="handle" title="定位">
+                  <mapgis-ui-iconfont
+                    class="iconfont-btn"
+                    type="mapgis-target-lock"
+                    @click="_getTargetPosition"
+                  />
+                </mapgis-ui-tooltip>
+              </mapgis-ui-group-tab>
+              <mapgis-ui-row :gutter="8">
+                <mapgis-ui-col :span="12">
+                  <mapgis-ui-input-number-addon
+                    :min="0"
+                    :max="360"
+                    :step="0.1"
+                    v-model.number="params.orientation.heading"
+                    @change="val => onChangeSetting(val, 'heading')"
+                  >
+                    <mapgis-ui-tooltip slot="addonBefore" title="方位角">
+                      <mapgis-ui-iconfont type="mapgis-fangwei" />
+                    </mapgis-ui-tooltip>
+                  </mapgis-ui-input-number-addon>
+                  <mapgis-ui-slider
+                    v-model="params.orientation.heading"
+                    :min="0"
+                    :max="360"
+                    size="small"
+                    :step="0.1"
+                    :tooltipVisible="false"
+                    @change="val => onChangeSetting(val, 'heading')"
+                  />
+                </mapgis-ui-col>
+                <mapgis-ui-col :span="12">
+                  <mapgis-ui-input-number-addon
+                    :min="-90"
+                    :max="90"
+                    :step="0.1"
+                    v-model.number="params.orientation.pitch"
+                    @change="val => onChangeSetting(val, 'pitch')"
+                  >
+                    <mapgis-ui-tooltip slot="addonBefore" title="俯仰角">
+                      <mapgis-ui-iconfont type="mapgis-fushi" />
+                    </mapgis-ui-tooltip>
+                  </mapgis-ui-input-number-addon>
+                  <mapgis-ui-slider
+                    v-model="params.orientation.pitch"
+                    :min="-90"
+                    :max="90"
+                    :step="0.1"
+                    size="small"
+                    :tooltipVisible="false"
+                    @change="val => onChangeSetting(val, 'pitch')"
+                  />
+                </mapgis-ui-col>
+                <mapgis-ui-col :span="12" style="paddingTop:8px;">
+                  <mapgis-ui-input-number-addon
+                    :min="0"
+                    :max="360"
+                    :step="0.1"
+                    v-model.number="params.orientation.roll"
+                    @change="val => onChangeSetting(val, 'roll')"
+                  >
+                    <mapgis-ui-tooltip slot="addonBefore" title="翻滚角">
+                      <mapgis-ui-iconfont type="mapgis-Zzhouxuanzhuan" />
+                    </mapgis-ui-tooltip>
+                  </mapgis-ui-input-number-addon>
+                  <mapgis-ui-slider
+                    v-model="params.orientation.roll"
+                    :min="0"
+                    :max="360"
+                    :step="0.1"
+                    size="small"
+                    :tooltipVisible="false"
+                    @change="val => onChangeSetting(val, 'roll')"
+                  />
+                </mapgis-ui-col>
+              </mapgis-ui-row>
+            </mapgis-ui-form-item>
+            <mapgis-ui-form-item label="视角">
+              <mapgis-ui-row :gutter="8">
+                <mapgis-ui-col :span="12">
+                  <mapgis-ui-input-number-addon
+                    :min="0"
+                    :max="180"
+                    :step="0.1"
+                    v-model.number="params.hFOV"
+                    @change="val => onChangeSetting(val, 'horizontAngle')"
+                  >
+                    <mapgis-ui-tooltip slot="addonBefore" title="水平">
+                      <mapgis-ui-iconfont type="mapgis-shuiping" />
+                    </mapgis-ui-tooltip>
+                  </mapgis-ui-input-number-addon>
+                  <mapgis-ui-slider
+                    v-model="params.hFOV"
+                    :min="0"
+                    :max="180"
+                    :step="0.1"
+                    :tooltipVisible="false"
+                    @change="val => onChangeSetting(val, 'horizontAngle')"
+                  />
+                </mapgis-ui-col>
+                <mapgis-ui-col :span="12">
+                  <mapgis-ui-input-number-addon
+                    :min="0"
+                    :max="180"
+                    :step="0.1"
+                    v-model.number="params.vFOV"
+                    @change="val => onChangeSetting(val, 'verticalAngle')"
+                  >
+                    <mapgis-ui-tooltip slot="addonBefore" title="垂直">
+                      <mapgis-ui-iconfont type="mapgis-chuizhi" />
+                    </mapgis-ui-tooltip>
+                  </mapgis-ui-input-number-addon>
+                  <mapgis-ui-slider
+                    v-model="params.vFOV"
+                    :min="0"
+                    :max="180"
+                    :step="0.1"
+                    size="small"
+                    :tooltipVisible="false"
+                    @change="val => onChangeSetting(val, 'verticalAngle')"
+                  />
+                </mapgis-ui-col>
+              </mapgis-ui-row>
+            </mapgis-ui-form-item>
+          </mapgis-ui-setting-form>
+          <mapgis-ui-group-tab
+            title="显示锥体线"
+            :isTitleBold="true"
+            :hasTopMargin="false"
+            :hasBottomMargin="false"
+            style="paddingBottom:8px;"
+          >
+            <mapgis-ui-switch
+              slot="handle"
+              size="small"
+              v-model="params.hintLineVisible"
+              @change="val => onChangeSetting(val, 'showLine')"
+            />
+          </mapgis-ui-group-tab>
+          <!-- <mapgis-ui-row>
           <mapgis-ui-col :span="8">
             <p class="switch-label">显示锥体线</p>
           </mapgis-ui-col>
@@ -302,14 +327,71 @@
             />
           </mapgis-ui-col>
         </mapgis-ui-row> -->
+        </div>
 
+        <!-- 绘制投放面方式 -->
+        <!-- <mapgis-ui-group-tab title="绘制投放面" /> -->
+        <mapgis-3d-draw
+          @drawCreate="handleDrawCreate"
+          @load="handleDrawLoad"
+          :drawStyle="drawStyleCopy"
+          :enableControl="enableControl"
+        >
+          <div v-if="renderType === 1" style="margin-top: 7px;">
+            <mapgis-ui-group-tab title="绘制投影区域" style="display:inline" />
+            <div class="padding_draw">
+              <mapgis-ui-tooltip
+                v-for="(item, i) in draws"
+                :key="i"
+                placement="bottom"
+              >
+                <template slot="title">
+                  <span>{{ item.tip }}</span>
+                </template>
+                <mapgis-ui-button
+                  :ghost="true"
+                  type="link"
+                  @click="item.click"
+                  style="margin: 0 -5px "
+                >
+                  <mapgis-ui-iconfont :type="item.icon" theme="filled" />
+                </mapgis-ui-button>
+              </mapgis-ui-tooltip>
+            </div>
+
+            <mapgis-ui-setting-form
+              :layout="layout"
+              size="default"
+              class="mapgis-ui-setting-form"
+            >
+              <mapgis-ui-form-item label="高度设置">
+                <mapgis-ui-select
+                  v-model="heightReference"
+                  :options="heightReferenceTypes"
+                >
+                </mapgis-ui-select>
+              </mapgis-ui-form-item>
+              <mapgis-ui-form-item
+                label="离地高度"
+                v-if="heightReference === 1"
+              >
+                <mapgis-ui-input-number-addon
+                  v-model.number="offsetHeight"
+                  addon-after="米"
+                  :min="0"
+                  :step="0.1"
+                />
+              </mapgis-ui-form-item>
+            </mapgis-ui-setting-form>
+          </div>
+        </mapgis-3d-draw>
       </div>
-        <mapgis-ui-setting-footer>
-          <mapgis-ui-button type="primary" @click="_okClick"
-            >确定</mapgis-ui-button
-          >
-          <mapgis-ui-button @click="_cancelClick">取消</mapgis-ui-button>
-        </mapgis-ui-setting-footer>
+      <mapgis-ui-setting-footer>
+        <mapgis-ui-button type="primary" @click="_okClick"
+          >确定</mapgis-ui-button
+        >
+        <mapgis-ui-button @click="_cancelClick">取消</mapgis-ui-button>
+      </mapgis-ui-setting-footer>
     </slot>
   </div>
 </template>
@@ -347,7 +429,12 @@ export default {
             },
             hFOV: 15, // 水平视场角
             vFOV: 15, // 垂直视场角
-            hintLineVisible: true // 是否显示投放区域线
+            hintLineVisible: true, // 是否显示投放区域线
+            areaCoords: [], // 绘制投放区域方式下存储绘制点位坐标
+            renderType: 0,
+            heightReference: 2, //是否贴场景选择
+            offsetHeightOrNo: false, //是否设置离地高度
+            offsetHeight: 5 //离地高度
           },
           preHeading: 0,
           prePitch: 0
@@ -359,9 +446,13 @@ export default {
       default: false
     },
     layout: {
-			type: String,
-			default: "vertical" // 'horizontal' 'vertical' 'inline'
-		},
+      type: String,
+      default: "vertical" // 'horizontal' 'vertical' 'inline'
+    },
+    currentProjectorOverlayLayerId: {
+      type: String,
+      default: ""
+    }
   },
   watch: {
     settings: {
@@ -370,7 +461,7 @@ export default {
         this.scenePro = this.putProjector(this.settingsCopy);
         this._changeProjectorType();
       },
-      deep: true,
+      // deep: true,
       immediate: true
     },
     videoSource: {
@@ -389,11 +480,11 @@ export default {
     },
     projectorType: {
       handler() {
-        this.cancelPutProjector(this.id);
+        this.cancelPutProjector(this.settingsCopy);
         this.scenePro = undefined;
         this._changeProjector();
       },
-      deep: true,
+      // deep: true,
       immediate: false
     }
   },
@@ -445,6 +536,30 @@ export default {
         this.imgUrl &&
         this.imgUrl !== ""
       );
+    },
+    renderType: {
+      get: function() {
+        return this.settingsCopy.params.renderType;
+      },
+      set: function(params) {
+        this.settingsCopy.params.renderType = params;
+      }
+    },
+    heightReference: {
+      get: function() {
+        return this.settingsCopy.params.heightReference;
+      },
+      set: function(params) {
+        this.settingsCopy.params.heightReference = params;
+      }
+    },
+    offsetHeight: {
+      get: function() {
+        return this.settingsCopy.params.offsetHeight;
+      },
+      set: function(params) {
+        this.settingsCopy.params.offsetHeight = params;
+      }
     }
   },
   data() {
@@ -465,7 +580,37 @@ export default {
         height: "150px",
         margin: "0 auto"
       },
-      modelPrimitive: undefined
+      modelPrimitive: undefined,
+
+      enableControl: false,
+      // 绘制矩形颜色
+      drawStyleCopy: {
+        color: "#FF8C00",
+        opacity: 0.6
+      },
+      draws: [
+        {
+          icon: "mapgis-huizhijuxing",
+          tip: "绘制矩形",
+          click: this.drawRectangle
+        },
+        {
+          icon: "mapgis-draw-polygon",
+          tip: "绘制多边形",
+          click: this.drawPolygon
+        }
+      ],
+      // 离地高度设置
+      heightReferenceTypes: [
+        { value: 0, label: "使用边界点的高度" },
+        {
+          value: 1,
+          label: "忽略边界点的高度,使用指定的高度"
+        },
+        { value: 2, label: "贴场景" }
+      ],
+
+      graphic: undefined
     };
   },
   mounted() {
@@ -495,7 +640,7 @@ export default {
     unmount() {
       this.$emit("unload", this);
       if (!this.settings.isProjected) {
-        this.cancelPutProjector(this.id);
+        this.cancelPutProjector(this.settings);
         this.scenePro = undefined;
       }
     },
@@ -538,7 +683,7 @@ export default {
         case Cesium.SceneProjectorType.IMAGE:
           if (!this.imgUrl || this.imgUrl.length == 0) {
             // this.scenePro.textureSource = undefined;
-            this.cancelPutProjector(this.id);
+            this.cancelPutProjector(this.settingsCopy);
             this.scenePro = undefined;
           } else {
             if (!this.scenePro) {
@@ -553,7 +698,7 @@ export default {
           const { videoUrl } = this.videoSource;
           if (!videoUrl || videoUrl.length == 0) {
             // this.scenePro.textureSource = undefined;
-            this.cancelPutProjector(this.id);
+            this.cancelPutProjector(this.settingsCopy);
             this.scenePro = undefined;
           } else {
             if (!this.scenePro) {
@@ -787,15 +932,161 @@ export default {
         this.modelPrimitive.modelMatrix = modelMatrix;
       }
     },
+
+    //使用3d-draw组建的时候创建的drawer实例，3d-draw组件加载时绑定
+    handleDrawLoad(drawer) {
+      this.drawer = drawer;
+    },
+    // 绘制矩形投影面
+    drawRectangle() {
+      if (this.videoSource.videoUrl || this.imgUrl) {
+        // 调用draw组件中，绘制矩形
+        this.drawer && this.drawer.enableDrawRectangle();
+      } else {
+        this.$message.error("请先添加数据源");
+      }
+    },
+    // 绘制多边形投影面
+    drawPolygon() {
+      if (this.videoSource.videoUrl || this.imgUrl) {
+        this.drawer && this.drawer.enableDrawPolygon();
+      } else {
+        this.$message.error("请先添加数据源");
+      }
+    },
+
+    // draw组件的回调函数
+    handleDrawCreate(cartesian3, param2) {
+      // 绘制矩形只需要两个点
+      const { Cesium, viewer } = this;
+      const vm = this;
+      // 获取坐标系
+      const ellipsoid = viewer.scene.globe.ellipsoid;
+
+      const videoElement = document.getElementById("demovideo_html5_api");
+
+      // 矩形
+      if (param2.length === 2) {
+        // 获取矩形的位置坐标
+        let lnglatArr = vm.getRectDegrees(param2[0], param2[1]);
+        vm.params.areaCoords = lnglatArr;
+        let type = "rectangle";
+        let position = Cesium.Cartesian3.fromDegreesArray(lnglatArr, ellipsoid);
+        vm.createProject(type, position, videoElement);
+      } else {
+        // 多边形
+        let degreeArr = vm.getPolygonDegrees(param2);
+        vm.params.areaCoords = degreeArr;
+        let type = "polygon";
+        let position = cartesian3;
+        // 投影
+        vm.createProject(type, position, videoElement);
+      }
+      this.drawer.removeEntities();
+      if (window.drawElement) {
+        window.drawElement.stopDrawing();
+      }
+    },
+    // 将判断是image还是video的逻辑封装到一起，因为有大量重复的逻辑：矩形多边形关于image和video的逻辑是完全一致的，就是传入的参数不同
+    createProject(type, position, videoElement) {
+      const vm = this;
+      // 判断投影的是图片还是视频
+      // 把判断是图片还是视频的逻辑放在这里，理由：矩形和多边形都要支持添加 图片和视频(mp4)，视频和图片的区别在于，图片不需要创建video元素，视频要，二者都要创建graphic实例，但style中的image有区别
+      if (vm.projectorType === "image") {
+        vm.graphic = vm.createGraphic(type, position, vm.imgUrl);
+        window.graphicsLayer.addGraphic(vm.graphic);
+      } else if (
+        vm.projectorType === "video" &&
+        vm.videoSource.protocol === "mp4"
+      ) {
+        vm.graphic = vm.createGraphic(type, position, videoElement);
+        window.graphicsLayer.addGraphic(vm.graphic);
+      } else if (
+        vm.projectorType === "video" &&
+        vm.videoSource.protocol === "m3u8"
+      ) {
+        vm.graphic = vm.createGraphic(type, position, videoElement);
+        window.graphicsLayer.addGraphic(vm.graphic);
+      }
+    },
+
+    createGraphic(type, position, element) {
+      let typeGraphic = new Cesium.Graphic({
+        /**
+         * 修改说明：graphic指定id，如果直接使用this.settingsCopy.id会受到vue的影响，所以在id后方加一个"graphic"标识；
+         * 修改人：王涵
+         * 修改时间：2023/5/12
+         */
+        id: this.settingsCopy.id + "graphic",
+        //类型
+        type: type,
+        //几何点坐标
+        positions: JSON.parse(JSON.stringify(position)),
+        //样式
+        style: {
+          // 图片材质
+          material: Cesium.Material.fromType(Cesium.Material.ImageType, {
+            //图片url
+            image: element,
+            // x、y轴重复
+            repeat: new Cesium.Cartesian2(1.0, 1.0)
+          }),
+          // 固定高度
+          perPositionHeight: this.heightReference === 0,
+          // 离地高度
+          offsetHeight: this.offsetHeight,
+          // 是否贴地
+          classificationType:
+            this.heightReference === 2
+              ? Cesium.ClassificationType.BOTH
+              : undefined
+        }
+      });
+      return typeGraphic;
+    },
+    // 获取矩形经纬度坐标点（根据已知的两个点得到四个点）
+    getRectDegrees(lnglat1, lnglat2) {
+      let p1 = [],
+        p2 = [];
+      p1.push(lnglat1[0], lnglat1[1]);
+      p2.push(lnglat2[0], lnglat2[1]);
+      this.lnglat = [p1, p2];
+      let allPoint = [lnglat1[0], lnglat1[1], lnglat2[0], lnglat2[1]];
+      return allPoint;
+    },
+    // 获取多边形经纬度坐标点
+    getPolygonDegrees(degreeArr3) {
+      let degreeArr2 = [];
+      degreeArr3.forEach(degree => degreeArr2.push(degree[0], degree[1]));
+      this.lnglat = degreeArr2;
+      return degreeArr2;
+    },
+    // 移除绘制
+    removeDraw() {
+      const { Cesium, viewer } = this;
+      //   this.lnglat = undefined;
+      this.drawer && this.drawer.removeEntities();
+      //清空drawElement
+      if (window.drawElement) {
+        window.drawElement.stopDrawing();
+      }
+      // 清除graphic实例，这里可以再加一个容错，如果用户并没有绘制不想继续投影，点击取消，如果不加会报错
+      if (this.graphic) {
+        this.graphic.remove();
+      }
+    },
+
     /**
      * 确定按钮事件
      */
     _okClick() {
       // 退出配置前，先恢复投放状态
       if (!this.settings.isProjected) {
-        this.cancelPutProjector(this.id);
+        this.cancelPutProjector(this.settings);
         this.scenePro = undefined;
       }
+      window.graphicsLayer.getGraphicByID(this.id + "graphic").show = false;
+      this.graphic = undefined;
       this.$emit("update-settings", this.settingsCopy);
     },
     /**
@@ -803,7 +1094,7 @@ export default {
      */
     _cancelClick() {
       // 退出配置前，先恢复投放状态,先取消，再恢复投放状态，以确保投放参数是配置之前的参数
-      this.cancelPutProjector(this.id);
+      this.cancelPutProjector(this.settings);
       this.scenePro = undefined;
       if (this.settings.isProjected) {
         this.putProjector(this.settings);
@@ -817,7 +1108,7 @@ export default {
 .mapgis-widget-projector {
   max-height: calc(100% - 55px);
   overflow-y: auto;
-	overflow-x: hidden;
+  overflow-x: hidden;
 }
 .projector-style {
   text-align: center;
@@ -875,7 +1166,7 @@ export default {
   /* margin-top: 3px; */
   /* padding: 3px; */
   /* border: 1px solid var(--primary-5); */
-  font-size:16px;
+  font-size: 16px;
   color: var(--text-color);
   background-color: transparent;
   border-color: var(--button-border-default-color);
