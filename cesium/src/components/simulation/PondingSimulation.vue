@@ -253,6 +253,24 @@ export default {
         vm.rainOption = 3;
       }
     },
+    rainFallDaily: {
+      handler() {
+        this.rainFall = this.rainFallDaily;
+      },
+      immediate: true
+    },
+    drainageVolOfArea: {
+      handler() {
+        this.drainageVol = this.drainageVolOfArea;
+      },
+      immediate: true
+    },
+    rainAngle: {
+      handler() {
+        this.angle = this.rainAngle;
+      },
+      immediate: true
+    },
     costTime: {
       handler: function(e) {
         this.$emit("costTime", e);
@@ -279,6 +297,64 @@ export default {
     multiSpeed: {
       type: Number,
       default: 1
+    },
+    // 降雨量
+    rainFallDaily: {
+      type: Number,
+      default: 36
+    },
+    // 控制面板显隐,false为隐藏
+    pondingPanelShow: {
+      type: Boolean,
+      default: false
+    },
+    /**
+     * @param {String} [pondingArea.type]  输入区域类型,包含"polygon"、"rectangle"、"circle"
+     * @param {Array} [pondingArea.coordinates] 输入类型为"polygon"、"rectangle"时传入区域坐标，需为经纬度坐标
+     * @param {Number} [pondingArea.radius] 半径, 可选，区域类型为"circle"时，参数生效，单位为m
+     * @param {Array} [pondingArea.center] 圆心坐标，需为经纬度坐标, 可选，区域类型为"circle"时，参数生效
+     * 举例：
+     * //多边形
+     * pondingArea: {
+     *    type: "polygon",
+     *    coordinates: [
+     *      [121.10911760510515,24.111592873583877,0],
+     *      [121.09912766988694,24.10699704552568,0],
+     *      [121.09331791337927,24.10068226891116,0],
+     *      [121.10225878938968,24.101212455382665,0],
+     *      [121.1080560600791,24.09941910580691,0],
+     *      [121.1176806697652,24.10933208003461,0],
+     *      [121.10911760510515,24.111592873583877,0]
+     *    ],
+     *  },
+     * //矩形，只用传入两个点，左上和右下
+     *pondingArea: {
+     *    type: "rectangle",
+     *    coordinates: [
+     *      [121.0936741922885, 24.109364989571024],
+     *      [121.11004105293685, 24.099987666838317],
+     *    ],
+     *  },
+     * //圆形
+     * pondingArea: {
+     *    type: "circle",
+     *    radius:700,//单位m
+     *    center: [121.10698076743799,24.105556491755227],
+     *  },
+     */
+    pondingArea: {
+      type: Object
+    },
+    // 积水仿真组件排水体积(m³)，范围[0-100]
+    drainageVolOfArea: {
+      type: Number,
+      default: 0
+    },
+
+    // 积水仿真组件降雨角度，范围[-30-30]
+    rainAngle: {
+      type: Number,
+      default: 30
     }
   },
   data() {
@@ -523,64 +599,110 @@ export default {
     },
     getPolygonDegrees(degreeArr3) {
       let degreeArr2 = [];
+      let degreeArr1 = [];
       degreeArr3.forEach(function(degree) {
         degreeArr2.push([degree[0], degree[1]]);
+        degreeArr1.push(degree[0], degree[1]);
       });
       this.lnglat = degreeArr2;
+      return degreeArr1;
     },
     //开始模拟仿真计算
     simulation() {
       const { Cesium, viewer } = this;
       const vm = this;
       if (viewer.terrainProvider) {
-        switch (vm.radioValue) {
-          case 1:
-            if (vm.lnglat) {
-              vm.stopCaculate = false;
-              this.drawer && this.drawer.removeEntities(true);
+        if (!vm.pondingPanelShow) {
+          // pondingPanelShow为false，面板隐藏，模拟区域通过参数传入
+          vm.stopCaculate = false;
+          let ellipsoid = this.viewer.scene.globe.ellipsoid;
+          //先清除
+          vm.lnglat = undefined;
+          if (vm.pondingArea.type == "polygon") {
+            let lnglatArr = vm.getPolygonDegrees(vm.pondingArea.coordinates);
+            vm.positions = Cesium.Cartesian3.fromDegreesArray(
+              lnglatArr,
+              ellipsoid
+            );
 
-              vm.maskShow = true;
-              vm.computeRainfallVol();
-              vm.computeHeight();
-            } else {
-              this.$message.warning("请先绘制仿真区域");
-            }
-            break;
-          case 2:
-            if (
-              vm.circleCenter.longitude &&
-              vm.circleCenter.latitude &&
-              vm.radius
-            ) {
-              vm.stopCaculate = false;
-              //先清除
-              vm.lnglat = undefined;
+            vm.maskShow = true;
+            vm.computeRainfallVol();
+            vm.computeHeight();
+          } else if (vm.pondingArea.type == "rectangle") {
+            let lnglatArr = vm.getRectDegrees(
+              vm.pondingArea.coordinates[0],
+              vm.pondingArea.coordinates[1]
+            );
+            vm.positions = Cesium.Cartesian3.fromDegreesArray(
+              lnglatArr,
+              ellipsoid
+            );
+            vm.maskShow = true;
+            vm.computeRainfallVol();
+            vm.computeHeight();
+          } else if (vm.pondingArea.type == "circle") {
+            // 根据用户输入的圆心和半径计算圆范围的坐标点
+            let circle = [vm.pondingArea.center[0], vm.pondingArea.center[1]];
+            let lnglatArr = vm.getCircleDegrees(
+              circle,
+              vm.pondingArea.radius / 1000
+            ); //turf创建圆的半径单位为km,收到的半径是m
+            vm.positions = Cesium.Cartesian3.fromDegreesArray(
+              lnglatArr,
+              ellipsoid
+            );
 
-              let ellipsoid = this.viewer.scene.globe.ellipsoid;
+            vm.maskShow = true;
+            vm.computeRainfallVol();
+            vm.computeHeight();
+          } else {
+            this.$message.warning("请先输入仿真区域坐标");
+          }
+          return;
+        } else if (vm.radioValue === 1) {
+          // pondingPanelShow为true，面板显示，模拟区域通过面板获取
+          if (vm.lnglat) {
+            vm.stopCaculate = false;
+            this.drawer && this.drawer.removeEntities(true);
 
-              // 根据用户输入的圆心和半径计算圆范围的坐标点
-              let circle = [
-                vm.circleCenter.longitude,
-                vm.circleCenter.latitude
-              ];
-              let lnglatArr = vm.getCircleDegrees(circle, vm.radius / 1000); //turf创建圆的半径单位为km
-              vm.positions = Cesium.Cartesian3.fromDegreesArray(
-                lnglatArr,
-                ellipsoid
-              );
+            vm.maskShow = true;
+            vm.computeRainfallVol();
+            vm.computeHeight();
+          } else {
+            this.$message.warning("请先绘制仿真区域");
+          }
+        } else if (vm.radioValue === 2) {
+          if (
+            vm.circleCenter.longitude &&
+            vm.circleCenter.latitude &&
+            vm.radius
+          ) {
+            vm.stopCaculate = false;
+            //先清除
+            vm.lnglat = undefined;
 
-              vm.maskShow = true;
-              vm.computeRainfallVol();
-              vm.computeHeight();
-            } else {
-              this.$message.warning("请先输入仿真区域");
-            }
-            break;
+            let ellipsoid = this.viewer.scene.globe.ellipsoid;
+
+            // 根据用户输入的圆心和半径计算圆范围的坐标点
+            let circle = [vm.circleCenter.longitude, vm.circleCenter.latitude];
+            let lnglatArr = vm.getCircleDegrees(circle, vm.radius / 1000); //turf创建圆的半径单位为km
+            vm.positions = Cesium.Cartesian3.fromDegreesArray(
+              lnglatArr,
+              ellipsoid
+            );
+
+            vm.maskShow = true;
+            vm.computeRainfallVol();
+            vm.computeHeight();
+          } else {
+            this.$message.warning("请先输入仿真区域");
+          }
         }
       } else {
         this.$message.warning("请先加载地形");
         return;
       }
+      this.$emit("showPonding");
     },
     //根据降雨量计算绘制区域的降雨体积
     computeRainfallVol() {
@@ -774,6 +896,7 @@ export default {
         );
         // console.log("_doAnalysis",this.viewer.scene.logarithmicDepthBuffer)
         vm._doAnalysis();
+        this.$emit("replayPonding");
       } else {
         this.$message.warning("请先开始仿真！");
       }
@@ -838,6 +961,8 @@ export default {
       this._removeFlood();
       this.removeRain();
       this.removeDraw();
+      this.$emit("closePonding");
+
       this.isSimulation = false;
       this.costTime = 0;
       this.pond = false;
