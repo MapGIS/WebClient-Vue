@@ -309,10 +309,10 @@ export default {
       default: false
     },
     /**
-     * @param {String} [pondingArea.type]  输入区域类型,包含"polygon"、"rectangle"、"radius"
+     * @param {String} [pondingArea.type]  输入区域类型,包含"polygon"、"rectangle"、"circle"
      * @param {Array} [pondingArea.coordinates] 输入类型为"polygon"、"rectangle"时传入区域坐标，需为经纬度坐标
-     * @param {Number} [pondingArea.radius] 半径, 可选，区域类型为"radius"时，参数生效，单位为m
-     * @param {Array} [pondingArea.circle] 圆心坐标，需为经纬度坐标, 可选，区域类型为"radius"时，参数生效
+     * @param {Number} [pondingArea.radius] 半径, 可选，区域类型为"circle"时，参数生效，单位为m
+     * @param {Array} [pondingArea.circle] 圆心坐标，需为经纬度坐标, 可选，区域类型为"circle"时，参数生效
      * 举例：
      * //多边形
      * pondingArea: {
@@ -337,7 +337,7 @@ export default {
      *  },
      * //圆形
      * pondingArea: {
-     *    type: "radius",
+     *    type: "circle",
      *    radius:700,//单位m
      *    circle: [
      *      [121.10698076743799,24.105556491755227]
@@ -642,7 +642,7 @@ export default {
             vm.maskShow = true;
             vm.computeRainfallVol();
             vm.computeHeight();
-          } else if (vm.pondingArea.type == "radius") {
+          } else if (vm.pondingArea.type == "circle") {
             // 根据用户输入的圆心和半径计算圆范围的坐标点
             let circle = [
               vm.pondingArea.circle[0][0],
