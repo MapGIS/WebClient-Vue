@@ -355,6 +355,8 @@ export default {
     cancel() {
       this.maskShow = false;
       Object.assign(this.$data, this.$options.data());
+      // 重置结果输出路径
+      this.destLayer = this.srcALayer + this.currentTime();
     },
     AnalysisSuccess(data) {
       this.maskShow = false;
