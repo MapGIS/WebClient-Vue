@@ -62,9 +62,7 @@
   - pondingArea: {
   - type: "circle",
   - radius:700,
-  - circle: [
-  -      [121.10698076743799,24.105556491755227]
-  - ],
+  - center: [121.10698076743799,24.105556491755227],
   - },
 
 ### `drainageVolOfArea`
