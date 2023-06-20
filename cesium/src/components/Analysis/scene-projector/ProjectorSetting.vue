@@ -33,10 +33,14 @@
         <div class="projector-style">
           <div v-show="showVideoDiv">
             <mapgis-ui-video
+              id="demovideo"
               :width="300"
               :height="200"
               :videoUrl="videoSource.videoUrl"
               :protocol="videoSource.protocol"
+              autoplay=""
+              crossorigin=""
+              loop=""
               @onPlayerReady="_getPlayer"
             ></mapgis-ui-video>
           </div>
@@ -643,6 +647,10 @@ export default {
         this.cancelPutProjector(this.settings);
         this.scenePro = undefined;
       }
+      if (this.drawer) {
+        //绘制组件
+        this.drawer.unmount();
+      }
     },
     updateImgUrl(url) {
       this.imgUrl = url;
@@ -1085,7 +1093,9 @@ export default {
         this.cancelPutProjector(this.settings);
         this.scenePro = undefined;
       }
-      window.graphicsLayer.getGraphicByID(this.id + "graphic").show = false;
+      if (this.graphic) {
+        window.graphicsLayer.getGraphicByID(this.id + "graphic").show = false;
+      }
       this.graphic = undefined;
       this.$emit("update-settings", this.settingsCopy);
     },
@@ -1099,6 +1109,8 @@ export default {
       if (this.settings.isProjected) {
         this.putProjector(this.settings);
       }
+      // 取消时清除绘制的投影面，并让绘制矩形按钮恢复原始状态
+      this.removeDraw();
       this.$emit("cancel");
     }
   }
@@ -1117,6 +1129,24 @@ export default {
 
 .full-width {
   width: 100%;
+}
+/* 
+ */
+.padding {
+  /* padding: 10px 6px; */
+  line-height: 32px;
+  padding-bottom: 5px;
+  margin-top: 5px;
+}
+.padding_draw {
+  display: inline;
+  margin: 0 10px;
+}
+.padding_cla {
+  /* padding: 10px 6px; */
+  line-height: 32px;
+  padding-bottom: 5px;
+  margin-top: 5px;
 }
 
 .flex {
