@@ -15,6 +15,9 @@
   background: $body-background;
 
   span {
-    margin-left: 35%;
+    // margin-left: 35%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
