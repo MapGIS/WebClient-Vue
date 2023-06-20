@@ -98,7 +98,11 @@
           </div>
         </mapgis-ui-setting-form>
         <mapgis-ui-group-tab title="投放方式选择" />
-        <mapgis-ui-radio-group v-model="renderType" class="padding">
+        <mapgis-ui-radio-group
+          v-model="renderType"
+          class="padding"
+          @change="_changeRenderType"
+        >
           <mapgis-ui-radio :value="0">输入摄像头参数</mapgis-ui-radio>
           <mapgis-ui-radio :value="1">绘制投放面</mapgis-ui-radio>
         </mapgis-ui-radio-group>
@@ -318,23 +322,8 @@
               @change="val => onChangeSetting(val, 'showLine')"
             />
           </mapgis-ui-group-tab>
-          <!-- <mapgis-ui-row>
-          <mapgis-ui-col :span="8">
-            <p class="switch-label">显示锥体线</p>
-          </mapgis-ui-col>
-          <mapgis-ui-col :span="16">
-            <mapgis-ui-switch
-              class="switch"
-              size="small"
-              v-model="params.hintLineVisible"
-              @change="val => onChangeSetting(val, 'showLine')"
-            />
-          </mapgis-ui-col>
-        </mapgis-ui-row> -->
         </div>
 
-        <!-- 绘制投放面方式 -->
-        <!-- <mapgis-ui-group-tab title="绘制投放面" /> -->
         <mapgis-3d-draw
           @drawCreate="handleDrawCreate"
           @load="handleDrawLoad"
@@ -372,6 +361,7 @@
                 <mapgis-ui-select
                   v-model="heightReference"
                   :options="heightReferenceTypes"
+                  @change="_heightReferenceTypesChange"
                 >
                 </mapgis-ui-select>
               </mapgis-ui-form-item>
@@ -436,9 +426,7 @@ export default {
             hintLineVisible: true, // 是否显示投放区域线
             areaCoords: [], // 绘制投放区域方式下存储绘制点位坐标
             renderType: 0,
-            heightReference: 2, //是否贴场景选择
-            offsetHeightOrNo: false, //是否设置离地高度
-            offsetHeight: 5 //离地高度
+            heightReference: 2 //是否贴场景选择
           },
           preHeading: 0,
           prePitch: 0
@@ -463,6 +451,8 @@ export default {
       handler() {
         this.settingsCopy = JSON.parse(JSON.stringify(this.settings));
         this.scenePro = this.putProjector(this.settingsCopy);
+        this.renderType = this.settingsCopy.params.renderType || 0;
+        this.heightReference = this.settingsCopy.params.heightReference || 2;
         this._changeProjectorType();
       },
       // deep: true,
@@ -540,30 +530,6 @@ export default {
         this.imgUrl &&
         this.imgUrl !== ""
       );
-    },
-    renderType: {
-      get: function() {
-        return this.settingsCopy.params.renderType;
-      },
-      set: function(params) {
-        this.settingsCopy.params.renderType = params;
-      }
-    },
-    heightReference: {
-      get: function() {
-        return this.settingsCopy.params.heightReference;
-      },
-      set: function(params) {
-        this.settingsCopy.params.heightReference = params;
-      }
-    },
-    offsetHeight: {
-      get: function() {
-        return this.settingsCopy.params.offsetHeight;
-      },
-      set: function(params) {
-        this.settingsCopy.params.offsetHeight = params;
-      }
     }
   },
   data() {
@@ -613,8 +579,9 @@ export default {
         },
         { value: 2, label: "贴场景" }
       ],
-
-      graphic: undefined
+      graphic: undefined,
+      renderType: 0,
+      heightReference: 2
     };
   },
   mounted() {
@@ -654,6 +621,12 @@ export default {
     },
     updateImgUrl(url) {
       this.imgUrl = url;
+    },
+    _changeRenderType(e) {
+      this.params.renderType = e.target.value;
+    },
+    _heightReferenceTypesChange(e) {
+      this.params.heightReference = e;
     },
     /**
      * 修改投影类型
