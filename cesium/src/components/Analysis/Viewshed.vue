@@ -1,242 +1,242 @@
 <template>
   <div>
     <slot>
-  <div class="mapgis-widget-visual-analysis">
-    <mapgis-ui-setting-form
-      v-model="formData"
-      :layout="layout"
-      size="default"
-    >
-      <mapgis-ui-form-item label="视角">
-        <mapgis-ui-row :gutter="8">
-          <mapgis-ui-col :span="12">	
+      <div class="mapgis-widget-visual-analysis">
+        <mapgis-ui-setting-form
+          v-model="formData"
+          :layout="layout"
+          size="default"
+        >
+          <mapgis-ui-form-item label="视角">
+            <mapgis-ui-row :gutter="8">
+              <mapgis-ui-col :span="12">
+                <mapgis-ui-input-number-addon
+                  :min="0"
+                  :max="180"
+                  :step="0.1"
+                  v-model.number="formData.horizontAngle"
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="水平">
+                    <mapgis-ui-iconfont type="mapgis-shuiping" />
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input-number-addon>
+                <mapgis-ui-slider
+                  v-model="formData.horizontAngle"
+                  :min="0"
+                  :max="180"
+                  :tooltipVisible="false"
+                />
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="12">
+                <mapgis-ui-input-number-addon
+                  :min="0"
+                  :max="180"
+                  v-model.number="formData.verticalAngle"
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="垂直">
+                    <mapgis-ui-iconfont type="mapgis-chuizhi" />
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input-number-addon>
+                <mapgis-ui-slider
+                  v-model="formData.verticalAngle"
+                  :min="0"
+                  :max="180"
+                  :tooltipVisible="false"
+                />
+              </mapgis-ui-col>
+            </mapgis-ui-row>
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="朝向">
+            <mapgis-ui-row :gutter="8">
+              <mapgis-ui-col :span="12">
+                <mapgis-ui-input-number-addon
+                  :min="0"
+                  :max="360"
+                  v-model.number="angleSet.heading"
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="方向">
+                    <mapgis-ui-iconfont type="mapgis-fangwei" />
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input-number-addon>
+                <mapgis-ui-slider
+                  v-model="angleSet.heading"
+                  :min="0"
+                  :max="360"
+                  :tooltipVisible="false"
+                />
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="12">
+                <mapgis-ui-input-number-addon
+                  :min="0"
+                  :max="360"
+                  v-model.number="angleSet.pitch"
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="俯仰">
+                    <mapgis-ui-iconfont type="mapgis-fushi" />
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input-number-addon>
+                <mapgis-ui-slider
+                  v-model="angleSet.pitch"
+                  :min="0"
+                  :max="360"
+                  :tooltipVisible="false"
+                />
+              </mapgis-ui-col>
+            </mapgis-ui-row>
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="观察点坐标">
+            <mapgis-ui-row :gutter="8">
+              <mapgis-ui-col :span="12">
+                <mapgis-ui-input-number-addon
+                  v-model.number="posData.viewPositionX"
+                  :step="0.0001"
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="经度">
+                    <mapgis-ui-iconfont type="mapgis-xzhouyidong" />
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input-number-addon>
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="12">
+                <mapgis-ui-input-number-addon
+                  v-model.number="posData.viewPositionY"
+                  :step="0.0001"
+                  type="number"
+                  addon-before="纬度"
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="纬度">
+                    <mapgis-ui-iconfont type="mapgis-yzhouyidong" />
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input-number-addon>
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="12" style="paddingTop:8px;">
+                <mapgis-ui-input-number-addon
+                  v-model.number="posData.viewPositionZ"
+                  type="number"
+                  addon-before="高度"
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="高度">
+                    <mapgis-ui-iconfont type="mapgis-Zzhouyidong" />
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input-number-addon>
+              </mapgis-ui-col>
+            </mapgis-ui-row>
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="目标点坐标">
+            <mapgis-ui-row :gutter="8">
+              <mapgis-ui-col :span="12">
+                <mapgis-ui-input-number-addon
+                  v-model.number="posData.targetPositionX"
+                  :step="0.0001"
+                  type="number"
+                  addon-before="经度"
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="经度">
+                    <mapgis-ui-iconfont type="mapgis-xzhouyidong" />
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input-number-addon>
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="12">
+                <mapgis-ui-input-number-addon
+                  v-model.number="posData.targetPositionY"
+                  :step="0.0001"
+                  type="number"
+                  addon-before="纬度"
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="纬度">
+                    <mapgis-ui-iconfont type="mapgis-yzhouyidong" />
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input-number-addon>
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="12" style="paddingTop:8px;">
+                <mapgis-ui-input-number-addon
+                  v-model.number="posData.targetPositionZ"
+                  type="number"
+                  addon-before="高度"
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="高度">
+                    <mapgis-ui-iconfont type="mapgis-Zzhouyidong" />
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input-number-addon>
+              </mapgis-ui-col>
+            </mapgis-ui-row>
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="附加高度">
             <mapgis-ui-input-number-addon
+              v-model.number="formData.exHeight"
               :min="0"
-              :max="180"
               :step="0.1"
-              v-model.number="formData.horizontAngle"
-            >
-              <mapgis-ui-tooltip slot="addonBefore" title="水平">
-                <mapgis-ui-iconfont type="mapgis-shuiping"/>
-              </mapgis-ui-tooltip>
-            </mapgis-ui-input-number-addon>
-            <mapgis-ui-slider
-              v-model="formData.horizontAngle"
-              :min="0"
-              :max="180"
-              :tooltipVisible="false"
-            />	
-          </mapgis-ui-col>
-          <mapgis-ui-col :span="12">
-            <mapgis-ui-input-number-addon
-              :min="0"
-              :max="180"
-              v-model.number="formData.verticalAngle"
-            >
-              <mapgis-ui-tooltip slot="addonBefore" title="垂直">
-                <mapgis-ui-iconfont type="mapgis-chuizhi"/>
-              </mapgis-ui-tooltip>
-            </mapgis-ui-input-number-addon>
-            <mapgis-ui-slider
-              v-model="formData.verticalAngle"
-              :min="0"
-              :max="180"
-              :tooltipVisible="false"
+              addon-after="米"
             />
-          </mapgis-ui-col>
-        </mapgis-ui-row>
-      </mapgis-ui-form-item>
-      <mapgis-ui-form-item label="朝向">
-        <mapgis-ui-row :gutter="8">
-          <mapgis-ui-col :span="12">
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="可视距离">
             <mapgis-ui-input-number-addon
+              v-model.number="angleSet.viewRadius"
               :min="0"
-              :max="360"
-              v-model.number="angleSet.heading"
-            >
-              <mapgis-ui-tooltip slot="addonBefore" title="方向">
-                <mapgis-ui-iconfont type="mapgis-fangwei"/>
-              </mapgis-ui-tooltip>
-            </mapgis-ui-input-number-addon>
-            <mapgis-ui-slider
-              v-model="angleSet.heading"
-              :min="0"
-              :max="360"
-              :tooltipVisible="false"
+              addon-after="米"
             />
-          </mapgis-ui-col>
-          <mapgis-ui-col :span="12">
-            <mapgis-ui-input-number-addon
-              :min="0"
-              :max="360"
-              v-model.number="angleSet.pitch"
-            >
-              <mapgis-ui-tooltip slot="addonBefore" title="俯仰">
-                <mapgis-ui-iconfont type="mapgis-fushi"/>
-              </mapgis-ui-tooltip>
-            </mapgis-ui-input-number-addon>
-            <mapgis-ui-slider
-              v-model="angleSet.pitch"
-              :min="0"
-              :max="360"
-              :tooltipVisible="false"
-            />
-          </mapgis-ui-col>
-        </mapgis-ui-row>
-      </mapgis-ui-form-item>
-      <mapgis-ui-form-item label="观察点坐标">
-        <mapgis-ui-row :gutter="8">
-          <mapgis-ui-col :span="12">
-            <mapgis-ui-input-number-addon
-              v-model.number="posData.viewPositionX"
-              :step="0.0001"
-            >
-              <mapgis-ui-tooltip slot="addonBefore" title="经度">
-                <mapgis-ui-iconfont type="mapgis-xzhouyidong"/>
-              </mapgis-ui-tooltip>
-            </mapgis-ui-input-number-addon>
-          </mapgis-ui-col>
-          <mapgis-ui-col :span="12">
-            <mapgis-ui-input-number-addon
-              v-model.number="posData.viewPositionY"
-              :step="0.0001"
-              type="number"
-              addon-before="纬度"
-            >
-              <mapgis-ui-tooltip slot="addonBefore" title="纬度">
-                <mapgis-ui-iconfont type="mapgis-yzhouyidong"/>
-              </mapgis-ui-tooltip>
-            </mapgis-ui-input-number-addon>
-          </mapgis-ui-col>
-          <mapgis-ui-col :span="12" style="paddingTop:8px;">
-            <mapgis-ui-input-number-addon
-              v-model.number="posData.viewPositionZ"
-              type="number"
-              addon-before="高度"
-            >
-              <mapgis-ui-tooltip slot="addonBefore" title="高度">
-                <mapgis-ui-iconfont type="mapgis-Zzhouyidong"/>
-              </mapgis-ui-tooltip>
-            </mapgis-ui-input-number-addon>
-          </mapgis-ui-col>
-        </mapgis-ui-row>
-      </mapgis-ui-form-item>
-      <mapgis-ui-form-item label="目标点坐标">
-        <mapgis-ui-row :gutter="8">
-          <mapgis-ui-col :span="12">
-            <mapgis-ui-input-number-addon
-              v-model.number="posData.targetPositionX"
-              :step="0.0001"
-              type="number"
-              addon-before="经度"
-            >
-              <mapgis-ui-tooltip slot="addonBefore" title="经度">
-                <mapgis-ui-iconfont type="mapgis-xzhouyidong"/>
-              </mapgis-ui-tooltip>
-            </mapgis-ui-input-number-addon>
-          </mapgis-ui-col>
-          <mapgis-ui-col :span="12">
-            <mapgis-ui-input-number-addon
-              v-model.number="posData.targetPositionY"
-              :step="0.0001"
-              type="number"
-              addon-before="纬度"
-            >
-              <mapgis-ui-tooltip slot="addonBefore" title="纬度">
-                <mapgis-ui-iconfont type="mapgis-yzhouyidong"/>
-              </mapgis-ui-tooltip>
-            </mapgis-ui-input-number-addon>
-          </mapgis-ui-col>
-          <mapgis-ui-col :span="12" style="paddingTop:8px;">
-            <mapgis-ui-input-number-addon
-              v-model.number="posData.targetPositionZ"
-              type="number"
-              addon-before="高度"
-            >
-              <mapgis-ui-tooltip slot="addonBefore" title="高度">
-                <mapgis-ui-iconfont type="mapgis-Zzhouyidong"/>
-              </mapgis-ui-tooltip>
-            </mapgis-ui-input-number-addon>
-          </mapgis-ui-col>
-        </mapgis-ui-row>
-      </mapgis-ui-form-item>
-      <mapgis-ui-form-item label="附加高度">
-        <mapgis-ui-input-number-addon
-          v-model.number="formData.exHeight"
-          :min="0"
-          :step="0.1"
-          addon-after="米"
-        />
-      </mapgis-ui-form-item>
-      <mapgis-ui-form-item label="可视距离">
-        <mapgis-ui-input-number-addon
-          v-model.number="angleSet.viewRadius"
-          :min="0"
-          addon-after="米"
-        />
-      </mapgis-ui-form-item>
-      <mapgis-ui-form-item label="区域颜色">
-        <mapgis-ui-row :gutter="8">
-          <mapgis-ui-col :span="12">	
-            <mapgis-ui-sketch-color-picker
-              :disableAlpha="false"
-              :showColorText="false"
-              :color="formData.visibleColor"
-              @input="
-                val =>
-                  (formData.visibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
-              "
-            >
-              <mapgis-ui-tooltip slot="addonBefore" title="可视">
-                <mapgis-ui-iconfont type="mapgis-kejian"/>
-              </mapgis-ui-tooltip>
-            </mapgis-ui-sketch-color-picker>
-          </mapgis-ui-col>
-          <mapgis-ui-col :span="12">
-            <mapgis-ui-sketch-color-picker
-              :disableAlpha="false"
-              :showColorText="false"
-              :color="formData.unVisibleColor"
-              @input="
-                val =>
-                  (formData.unVisibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
-              "
-            >
-              <mapgis-ui-tooltip slot="addonBefore" title="不可视">
-                <mapgis-ui-iconfont type="mapgis-bukejian"/>
-              </mapgis-ui-tooltip>
-            </mapgis-ui-sketch-color-picker>
-          </mapgis-ui-col>
-        </mapgis-ui-row>
-      </mapgis-ui-form-item>
-      <mapgis-ui-form-item label="遮罩颜色">
-        <mapgis-ui-row :gutter="8">
-          <mapgis-ui-col :span="12">	
-            <mapgis-ui-sketch-color-picker
-              :disableAlpha="false"
-              :showColorText="false"
-              :color="formData.maskColor"
-              addon-before="可视"
-              @input="
-                val =>
-                  (formData.maskColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
-              "
-            >
-              <mapgis-ui-tooltip slot="addonBefore" title="可视">
-                <mapgis-ui-iconfont type="mapgis-kejian"/>
-              </mapgis-ui-tooltip>
-            </mapgis-ui-sketch-color-picker>
-          </mapgis-ui-col>
-        </mapgis-ui-row>
-      </mapgis-ui-form-item>
-    </mapgis-ui-setting-form>
-  </div>
-  <mapgis-ui-setting-footer>
-    <mapgis-ui-button type="primary" @click="onClickStart"
-      >分析
-    </mapgis-ui-button>
-    <mapgis-ui-button @click="onClickStop">清除</mapgis-ui-button>
-  </mapgis-ui-setting-footer>
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="区域颜色">
+            <mapgis-ui-row :gutter="8">
+              <mapgis-ui-col :span="12">
+                <mapgis-ui-sketch-color-picker
+                  :disableAlpha="false"
+                  :showColorText="false"
+                  :color="formData.visibleColor"
+                  @input="
+                    val =>
+                      (formData.visibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
+                  "
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="可视">
+                    <mapgis-ui-iconfont type="mapgis-kejian" />
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-sketch-color-picker>
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="12">
+                <mapgis-ui-sketch-color-picker
+                  :disableAlpha="false"
+                  :showColorText="false"
+                  :color="formData.unVisibleColor"
+                  @input="
+                    val =>
+                      (formData.unVisibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
+                  "
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="不可视">
+                    <mapgis-ui-iconfont type="mapgis-bukejian" />
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-sketch-color-picker>
+              </mapgis-ui-col>
+            </mapgis-ui-row>
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="遮罩颜色">
+            <mapgis-ui-row :gutter="8">
+              <mapgis-ui-col :span="12">
+                <mapgis-ui-sketch-color-picker
+                  :disableAlpha="false"
+                  :showColorText="false"
+                  :color="formData.maskColor"
+                  addon-before="可视"
+                  @input="
+                    val =>
+                      (formData.maskColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
+                  "
+                >
+                  <mapgis-ui-tooltip slot="addonBefore" title="可视">
+                    <mapgis-ui-iconfont type="mapgis-kejian" />
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-sketch-color-picker>
+              </mapgis-ui-col>
+            </mapgis-ui-row>
+          </mapgis-ui-form-item>
+        </mapgis-ui-setting-form>
+      </div>
+      <mapgis-ui-setting-footer>
+        <mapgis-ui-button type="primary" @click="onClickStart"
+          >分析
+        </mapgis-ui-button>
+        <mapgis-ui-button @click="onClickStop">清除</mapgis-ui-button>
+      </mapgis-ui-setting-footer>
     </slot>
   </div>
 </template>
@@ -245,7 +245,12 @@
 import VueOptions from "../Base/Vue/VueOptions";
 import {
   isDepthTestAgainstTerrainEnable,
-  setDepthTestAgainstTerrainEnable
+  setDepthTestAgainstTerrainEnable,
+  getFarToNearRatio,
+  setFarToNearRatio,
+  isLogarithmicDepthBufferSupport,
+  isLogarithmicDepthBufferEnable,
+  setLogarithmicDepthBufferEnable
 } from "../WebGlobe/util";
 
 export default {
@@ -362,7 +367,9 @@ export default {
 
       isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
 
-      handlerAction: undefined
+      handlerAction: undefined,
+      farToNearRatio: undefined, // 记录设置前的值
+      isLogarithmicDepthBufferEnable: undefined // 记录设置前的值
     };
   },
   watch: {
@@ -637,6 +644,12 @@ export default {
         // 如果深度检测没有开启，则开启
         setDepthTestAgainstTerrainEnable(true, this.viewer);
       }
+      this.farToNearRatio = getFarToNearRatio(this.viewer);
+      setFarToNearRatio(1000000, this.viewer);
+      this.logarithmicDepthBuffer = isLogarithmicDepthBufferEnable(this.viewer);
+      if (this.logarithmicDepthBuffer) {
+        setLogarithmicDepthBufferEnable(false, this.viewer);
+      }
 
       this.isAnalyze = true;
 
@@ -733,9 +746,9 @@ export default {
     },
 
     /**
-     * @description 恢复深度检测设置
+     * @description 恢复cesium设置
      */
-    _restoreDepthTestAgainstTerrain() {
+    _restoreCesiumSetting() {
       if (
         this.isDepthTestAgainstTerrainEnable !== undefined &&
         this.isDepthTestAgainstTerrainEnable !==
@@ -745,6 +758,22 @@ export default {
           this.isDepthTestAgainstTerrainEnable,
           this.viewer
         );
+      }
+      if (
+        this.isLogarithmicDepthBufferEnable !== undefined &&
+        this.isLogarithmicDepthBufferEnable !==
+          isLogarithmicDepthBufferEnable(this.viewer)
+      ) {
+        setLogarithmicDepthBufferEnable(
+          this.isLogarithmicDepthBufferEnable,
+          this.viewer
+        );
+      }
+      if (
+        this.farToNearRatio !== undefined &&
+        this.farToNearRatio !== getFarToNearRatio(this.viewer)
+      ) {
+        setFarToNearRatio(this.farToNearRatio, this.viewer);
       }
     },
 
@@ -773,8 +802,8 @@ export default {
       this.angleSet.pitch = 0;
       this.angleSet.viewRadius = 0;
 
-      //恢复深度检测的原始设置
-      this._restoreDepthTestAgainstTerrain();
+      //恢复Cesium原始设置
+      this._restoreCesiumSetting();
     },
     /**
      * 移除可视域分析结果
@@ -921,7 +950,7 @@ export default {
   /*max-width: calc(42vw);*/
   max-height: calc(50vh);
   overflow-y: auto;
-	overflow-x: hidden;
+  overflow-x: hidden;
 }
 
 .item-left {

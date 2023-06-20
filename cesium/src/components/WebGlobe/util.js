@@ -154,10 +154,13 @@ export function isLogarithmicDepthBufferEnable(viewer) {
  * @returns true:支持,false:不支持
  */
 export function isLogarithmicDepthBufferSupport() {
-  if(navigator.userAgent.indexOf("Linux") > 0 && navigator.userAgent.indexOf("Firefox") > 0){
-    return false
+  if (
+    navigator.userAgent.indexOf("Linux") > 0 &&
+    navigator.userAgent.indexOf("Firefox") > 0
+  ) {
+    return false;
   } else {
-    return true
+    return true;
   }
 }
 
@@ -284,4 +287,20 @@ export function setDynamicAtmosphereLightingFromSun(
  */
 export function getDynamicAtmosphereLightingFromSun(viewer) {
   return viewer.scene.globe.dynamicAtmosphereLightingFromSun;
+}
+
+/**
+ * 获取FarToNearRatio值,使用正常深度缓冲时,多视锥(multi-frustum)的远近比。 该值用于为多视锥的每个视锥创建近和远值
+ * @returns FarToNearRatio值
+ */
+export function getFarToNearRatio(viewer) {
+  return viewer.scene.farToNearRatio;
+}
+
+/**
+ * 设置FarToNearRatio值
+ * @param {Number} FarToNearRatio
+ */
+export function setFarToNearRatio(farToNearRatio, viewer) {
+  viewer.scene.farToNearRatio = farToNearRatio;
 }
