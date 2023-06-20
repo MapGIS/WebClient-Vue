@@ -9,6 +9,11 @@ export default {
       latitude: 30,
       height: 0,
     },
+    popupStyle: {
+      width: "500px",
+      height: "500px",
+      color: "#ff0000",
+    },
     visible: true,
   },
 };
@@ -47,4 +52,10 @@ export const 自定义槽 = Template.bind({});
     height: 0,
   },
   visible: true,
+  popupStyle: {
+    width: "300px",
+    height: "300px",
+    color: "#000000",
+    backgroundColor: "#FFFFFF",
+  },
 };

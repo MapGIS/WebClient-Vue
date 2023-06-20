@@ -60,13 +60,14 @@ let popupsIdIndex = 0;
       });
  */
 export default class PopupLayer {
-  constructor(map, position, options, container) {
+  constructor(map, position, options, container, popupStyle) {
     this.map = map;
     this.scene = map.scene;
 
     this.position = position;
     this.options = options;
     this.container = container;
+    this.popupStyle = popupStyle;
 
     this.popupId = options.popupId || "cesium-popup-id-" + popupsIdIndex++;
     this.popupClass = options.popupClass || "cesium-popup";
@@ -182,7 +183,14 @@ export default class PopupLayer {
       close.addEventListener("click", () => self.hide());
       close.innerText = "x";
       this.parent.appendChild(infoDiv);
-
+      let popupContentWrapperDiv = window.document.getElementsByClassName(
+        "cesium-popup-content-wrapper"
+      );
+      if (this.popupStyle) {
+        Object.keys(this.popupStyle).forEach((key) => {
+          popupContentWrapperDiv[0].style[key] = this.popupStyle[key];
+        });
+      }
       let separate = window.document.createElement("div");
       separate.className = "cesium-popup-separate-button";
       separate.addEventListener("click", () => self.separate());
@@ -252,6 +260,11 @@ export default class PopupLayer {
 
       let popupContentWrapperDiv = window.document.createElement("div");
       popupContentWrapperDiv.className = "cesium-popup-content-wrapper";
+      if (this.popupStyle) {
+        Object.keys(this.popupStyle).forEach((key) => {
+          popupContentWrapperDiv.style[key] = this.popupStyle[key];
+        });
+      }
       popupContentWrapperDiv.appendChild(popupHeader);
       popupContentWrapperDiv.appendChild(this.container);
       popupContentDiv.appendChild(popupContentWrapperDiv);
