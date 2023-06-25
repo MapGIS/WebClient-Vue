@@ -183,12 +183,30 @@ export default {
         this.map.setLayoutProperty(this.layerId, "visibility", "none");
       }
     },
+    layerId: {
+      handler() {
+        this.$_deferredMount();
+      },
+      immediate: true
+    },
+    layerStyle: {
+      handler() {
+        this.$_deferredMount();
+      },
+      deep: true
+    },
+    data: {
+      handler() {
+        this.$_deferredMount();
+      },
+      deep: true
+    }
   },
   created() {
     if (this.data) {
       this.$watch(
         () => this.data,
-        function (next) {
+        function(next) {
           if (this.initial) return;
           this.mapSource.setData(next);
         },
@@ -641,7 +659,7 @@ export default {
     $_bindHightLayerEvent() {
       const vm = this;
       let { map } = this;
-      map.on("click", this.layerId, function (e) {
+      map.on("click", this.layerId, function(e) {
         if (e.features.length > 0) {
           if (vm.hoveredStateId !== null) {
             map.setFeatureState(
@@ -680,7 +698,7 @@ export default {
             id: layerId + HighLightPrefix,
             type: "line",
             source: sourceId,
-            ...line.toMapboxStyle({ highlight: true }),
+            ...line.toMapboxStyle({ highlight: true })
           };
         } else if (type == "polygon" || polygon) {
           if (!polygon) return;
@@ -688,7 +706,7 @@ export default {
             id: layerId + HighLightPrefix,
             type: "fill",
             source: sourceId,
-            ...polygon.toMapboxStyle({ highlight: true }),
+            ...polygon.toMapboxStyle({ highlight: true })
           };
         } else if (type == "extrude" || extrude) {
           if (!extrude) return;
@@ -696,7 +714,7 @@ export default {
             id: layerId + HighLightPrefix,
             type: "fill-extrusion",
             source: sourceId,
-            ...extrude.toMapboxStyle({ highlight: true }),
+            ...extrude.toMapboxStyle({ highlight: true })
           };
         } else if (type == "text" || text) {
           if (!text) return;
@@ -704,7 +722,7 @@ export default {
             id: layerId + HighLightPrefix,
             type: "symbol",
             source: sourceId,
-            ...text.toMapboxStyle({ highlight: true }),
+            ...text.toMapboxStyle({ highlight: true })
           };
         } else if (type == "marker" || marker) {
           if (!marker) return;
@@ -712,7 +730,7 @@ export default {
             id: layerId + HighLightPrefix,
             type: "symbol",
             source: sourceId,
-            ...marker.toMapboxStyle({ highlight: true }),
+            ...marker.toMapboxStyle({ highlight: true })
           };
         }
         if (!map.getLayer(highlight.id)) map.addLayer(highlight);
@@ -723,7 +741,7 @@ export default {
             id: layerId + HighLightPrefix,
             type: "line",
             source: sourceId,
-            ...line.toMapboxStyle({ highlight: true }),
+            ...line.toMapboxStyle({ highlight: true })
           };
         } else if (this.layer.type === "fill-extrusion") {
           if (!extrude) return;
@@ -731,7 +749,7 @@ export default {
             id: layerId + HighLightPrefix,
             type: "fill-extrusion",
             source: sourceId,
-            ...extrude.toMapboxStyle({ highlight: true }),
+            ...extrude.toMapboxStyle({ highlight: true })
           };
         } else if (this.layer.type === "line") {
           if (!line) return;
@@ -739,7 +757,7 @@ export default {
             id: layerId + HighLightPrefix,
             type: "line",
             source: sourceId,
-            ...line.toMapboxStyle({ highlight: true }),
+            ...line.toMapboxStyle({ highlight: true })
           };
         } else if (this.layer.type === "circle") {
           if (!point) return;
@@ -747,7 +765,7 @@ export default {
             id: layerId + HighLightPrefix,
             type: "circle",
             source: sourceId,
-            ...point.toMapboxStyle({ highlight: true }),
+            ...point.toMapboxStyle({ highlight: true })
           };
         } else if (this.layer.type === "text") {
           if (!text) return;
@@ -755,7 +773,7 @@ export default {
             id: layerId + HighLightPrefix,
             type: "circle",
             source: sourceId,
-            ...text.toMapboxStyle({ highlight: true }),
+            ...text.toMapboxStyle({ highlight: true })
           };
         } else if (this.layer.type === "marker") {
           if (!marker) return;
@@ -763,11 +781,11 @@ export default {
             id: layerId + HighLightPrefix,
             type: "circle",
             source: sourceId,
-            ...marker.toMapboxStyle({ highlight: true }),
+            ...marker.toMapboxStyle({ highlight: true })
           };
         }
         if (highlight && !map.getLayer(highlight.id)) map.addLayer(highlight);
       }
-    },
-  },
+    }
+  }
 };
