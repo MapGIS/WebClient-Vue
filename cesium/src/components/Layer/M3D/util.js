@@ -5,12 +5,12 @@ const { G3DLayerType, M3DTileDataInfo } = G3D;
 
 export function loopM3ds(m3ds, callback) {
   const vm = this;
-  let dataCallback = (cbtype) => {
+  let dataCallback = cbtype => {
     if (loop) {
       window.clearInterval(loop);
       loop = undefined;
       let types = [];
-      m3ds.forEach((m3d) => {
+      m3ds.forEach(m3d => {
         let type = checkType(m3d);
         m3d.type = type || cbtype;
         types.push(m3d.type);
@@ -20,11 +20,12 @@ export function loopM3ds(m3ds, callback) {
       }
     }
   };
-  let loop = window.setInterval(() => {
-    m3ds.forEach((m3d) => {
-      checkType(m3d, dataCallback);
-    });
-  }, 100);
+  // 屏蔽，如果请求不到，会一直请求，导致页面卡死
+  // let loop = window.setInterval(() => {
+  m3ds.forEach(m3d => {
+    checkType(m3d, dataCallback);
+  });
+  // }, 100);
 }
 
 export function checkType(tileset, callback) {
@@ -37,13 +38,13 @@ export function checkType(tileset, callback) {
   if (version == "0.0" || version == "1.0") {
     // m3d 0.x  1.x版本逻辑判断 type =0是模型 =1是示例化数据 =2是点云
     if (!children || children.length <= 0) return m3dType;
-    children.forEach((child) => {
+    children.forEach(child => {
       let tempType = checkTypeNode(child, version, callback);
       m3dType = tempType || m3dType;
     });
   } else if (version == "2.0") {
     if (!children || children.length <= 0) return m3dType;
-    children.forEach((child) => {
+    children.forEach(child => {
       let tempType = checkTypeNode(child, version, callback);
       m3dType = tempType ? tempType : m3dType;
     });
