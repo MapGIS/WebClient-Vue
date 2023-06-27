@@ -160,7 +160,6 @@ export default {
       let layers = viewer.imageryLayers._layers;
       if (this.beforeLayers.length && this.afterLayers.length) {
         for (let i = 1; i < layers.length; i++) {
-          layers[i].show = true;
           if (this.beforeLayers.includes(layers[i].id)) {
             layers[i].swipeEnabled = true;
             layers[i].swipeInverse = -1;
@@ -168,8 +167,6 @@ export default {
             layers[i].swipeEnabled = true;
             // 设置后该图层的反转不受scene.swipeController的反转控制
             layers[i].swipeInverse = 1;
-          } else {
-            layers[i].show = false;
           }
         }
       } else {
@@ -283,7 +280,6 @@ export default {
       const { viewer } = this;
       let layers = viewer.imageryLayers._layers;
       layers.forEach(layer => {
-        layer.show = true;
         layer.swipeEnabled = false;
         layer.swipeInverse = 0;
       });

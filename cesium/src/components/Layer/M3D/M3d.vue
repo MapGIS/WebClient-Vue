@@ -591,11 +591,11 @@ export default {
           });
         }
       };
-      let loop = window.setInterval(() => {
+      // let loop = window.setInterval(() => {
         m3ds.forEach(m3d => {
           vm.checkType(m3d, dataCallback);
         });
-      }, 100);
+      // }, 100);
     },
     parseLayers(layerString) {
       layerString = layerString || this.layers;
