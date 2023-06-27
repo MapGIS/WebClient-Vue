@@ -367,8 +367,8 @@ a:hover {
   position: absolute;
   top: 14px;
   left: 14px;
-  width: 44px;
-  height: 44px;
+  width: 67px;
+  height: 67px;
   border-radius: 44px;
   border: 12px solid rgba(47, 53, 60, 0.8);
   box-sizing: content-box;
@@ -388,8 +388,8 @@ a:hover {
   position: absolute;
   top: 30px;
   left: 30px;
-  width: 33px;
-  height: 33px;
+  width: 35px;
+  height: 35px;
   border-radius: 33px;
   background-color: rgba(47, 53, 60, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.2);
