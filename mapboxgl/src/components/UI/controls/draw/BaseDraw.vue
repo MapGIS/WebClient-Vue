@@ -27,6 +27,27 @@
             />
           </mapgis-ui-button>
         </mapgis-ui-tooltip>
+        <mapgis-ui-tooltip
+          v-for="(item, i) in isContinueDraw ? deleteAll : deleteOne"
+          :key="i"
+          placement="bottom"
+        >
+          <template slot="title">
+            <span>{{ item.tip }}</span>
+          </template>
+          <mapgis-ui-button
+            shape="circle"
+            :type="item.type"
+            @click="item.click"
+            :class="item.className"
+          >
+            <mapgis-ui-iconfont
+              :type="item.icon"
+              :class="item.className"
+              theme="filled"
+            />
+          </mapgis-ui-button>
+        </mapgis-ui-tooltip>
       </mapgis-ui-space>
     </div>
     <mapgis-marker v-if="showMarkerCopy" :coordinates="markerCoordinate">
@@ -34,6 +55,13 @@
         <div class="radiusValue">{{ radius }}米</div>
       </div>
     </mapgis-marker>
+
+    <mapgis-geojson-layer
+      ref="geoJsonLayer"
+      :data="dataLayer"
+      :layerId="dataLayerId"
+      :layerStyle="dataLayerStyle"
+    />
   </div>
 </template>
 
@@ -64,6 +92,9 @@ modes.static = StaticMode;
 import drawMixin from "./drawMixin";
 import controlMixin from "../withControlEvents";
 import DefaultDrawStyle from "./DefaultDrawStyle";
+import MapgisGeojsonLayer from "../../../layer/GeojsonLayer";
+import { Style } from "@mapgis/webclient-es6-service";
+const { MarkerStyle, LineStyle, PointStyle, FillStyle } = Style;
 
 const drawEvents = {
   // es6
@@ -93,6 +124,7 @@ export default {
   mixins: [drawMixin, controlMixin],
   components: {
     /* MapgisUiIconfont */
+    MapgisGeojsonLayer
   },
   //@see https://cn.vuejs.org/v2/guide/components-edge-cases.html#%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5
   // inject: ["mapbox", "map"],
@@ -181,6 +213,11 @@ export default {
     showSize: {
       type: Boolean,
       default: false
+    },
+    // 是否保存上一次的绘制
+    isContinueDraw: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -232,14 +269,14 @@ export default {
           type: "primary",
           tip: "画半径",
           click: this.toggleRadius
-        },
-        {
+        }
+        /*{
           icon: "mapgis-shanchu_dianji",
           type: "primary",
           tip: "删除选中图元",
           click: this.toggleDelete
         }
-        /*{
+        {
           icon: "mapgis-shanchudangqianziceng",
           type: "primary",
           tip: "删除全部",
@@ -258,6 +295,22 @@ export default {
           click: this.toggleQueryByPolygon
         } */
       ],
+      deleteOne: [
+        {
+          icon: "mapgis-shanchu_dianji",
+          type: "primary",
+          tip: "删除选中图元",
+          click: this.toggleDelete
+        }
+      ],
+      deleteAll: [
+        {
+          icon: "mapgis-shanchu_dianji",
+          type: "primary",
+          tip: "删除全部",
+          click: this.toggleDeleteAll
+        }
+      ],
       markerCoordinate: [],
       centerCoordinate: [],
       radius: 0,
@@ -273,7 +326,11 @@ export default {
           type: "Feature"
         }
       ],
-      showSizeStyle: this.styles
+      showSizeStyle: this.styles,
+      dataLayer: undefined,
+      dataLayerId: "",
+      dataLayerStyle: {},
+      dataLayerIdArr: []
     };
   },
 
@@ -287,6 +344,9 @@ export default {
         this.oldStyles = this.combineStyle(news);
         this.showSizeStyle = news;
       }
+    },
+    isContinueDraw() {
+      this.toggleDeleteAll();
     }
   },
 
@@ -442,6 +502,41 @@ export default {
         window.setTimeout(() => {
           vm.drawer && vm.drawer.changeMode("simple_select");
         }, 100);
+      } else if (eventName == "drawCreate" && this.isContinueDraw) {
+        this.dataLayerId = eventData.features[0].id;
+        this.dataLayerIdArr.push(this.dataLayerId);
+        this.dataLayer = {
+          type: "FeatureCollection",
+          features: [
+            {
+              type: eventData.features[0].type,
+              geometry: eventData.features[0].geometry
+            }
+          ]
+        };
+        if (eventData.features[0].geometry.type == "Point") {
+          this.dataLayerStyle = new PointStyle({
+            radius: 6,
+            color: "#ffffff",
+            opacity: 0.8,
+            outlineWidth: 2,
+            outlineColor: "#52B883"
+          });
+        } else if (eventData.features[0].geometry.type == "LineString") {
+          this.dataLayerStyle = new LineStyle({
+            width: 6,
+            color: "#ffffff",
+            opacity: 0.8,
+            outlineWidth: 5,
+            outlineColor: "#52B883"
+          });
+        } else {
+          this.dataLayerStyle = new FillStyle({
+            color: "#ffffff",
+            opacity: 0.8,
+            outlineColor: "#52B883"
+          });
+        }
       }
       // if (eventName == "drawCreate" && mode == "direct_select" ) {
       //   this.drawer && this.drawer.changeMode("simple_select");
@@ -550,6 +645,13 @@ export default {
     toggleDeleteAll() {
       this.enableDrawer();
       this.drawer && this.drawer.deleteAll();
+      if (this.dataLayerIdArr.length > 0) {
+        for (let i = 0; i < this.dataLayerIdArr.length; i++) {
+          this.map.removeLayer(this.dataLayerIdArr[i]);
+          this.map.removeSource(this.dataLayerIdArr[i]);
+        }
+        this.dataLayerIdArr = [];
+      }
     },
     toggleQueryByRect() {},
     toggleQueryByPolygon() {},
