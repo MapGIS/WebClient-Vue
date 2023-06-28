@@ -11,7 +11,13 @@ export default {
   name: "mapgis-3d-popup",
   props: {
     ...PopupOptions,
-    popupStyle: {
+    popupWapperStyle: {
+      type: Object
+    },
+    popupHeaderStyle: {
+      type: Object
+    },
+    popupCloseBtnStyle: {
       type: Object
     }
   },
@@ -58,7 +64,21 @@ export default {
         this.update();
       }
     },
-    popupStyle: {
+    popupWapperStyle: {
+      deep: true,
+      handler() {
+        this.isPopupOptionsChange = true;
+        this.update();
+      }
+    },
+    popupHeaderStyle: {
+      deep: true,
+      handler() {
+        this.isPopupOptionsChange = true;
+        this.update();
+      }
+    },
+    popupCloseBtnStyle: {
       deep: true,
       handler() {
         this.isPopupOptionsChange = true;
@@ -96,7 +116,9 @@ export default {
         position,
         options,
         container,
-        popupStyle
+        popupWapperStyle,
+        popupCloseBtnStyle,
+        popupHeaderStyle
       } = this;
       vueCesium = vueCesium || window.vueCesium;
 
@@ -134,7 +156,15 @@ export default {
 
       let viewer = this.getViewer();
 
-      return new PopupLayer(viewer, position, options, container, popupStyle);
+      return new PopupLayer(
+        viewer,
+        position,
+        options,
+        container,
+        popupWapperStyle,
+        popupHeaderStyle,
+        popupCloseBtnStyle
+      );
     },
     mount() {
       let { viewer, vueKey, vueIndex, vueCesium } = this;

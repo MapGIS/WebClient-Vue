@@ -60,14 +60,25 @@ let popupsIdIndex = 0;
       });
  */
 export default class PopupLayer {
-  constructor(map, position, options, container, popupStyle) {
+  constructor(
+    map,
+    position,
+    options,
+    container,
+    popupWapperStyle,
+    popupHeaderStyle,
+    popupCloseBtnStyle
+  ) {
     this.map = map;
     this.scene = map.scene;
 
     this.position = position;
     this.options = options;
     this.container = container;
-    this.popupStyle = popupStyle;
+
+    this.popupWapperStyle = popupWapperStyle;
+    this.popupHeaderStyle = popupHeaderStyle;
+    this.popupCloseBtnStyle = popupCloseBtnStyle;
 
     this.popupId = options.popupId || "cesium-popup-id-" + popupsIdIndex++;
     this.popupClass = options.popupClass || "cesium-popup";
@@ -182,13 +193,18 @@ export default class PopupLayer {
       close.className = "cesium-popup-close-button";
       close.addEventListener("click", () => self.hide());
       close.innerText = "x";
+      if (this.popupCloseBtnStyle) {
+        Object.keys(this.popupCloseBtnStyle).forEach((key) => {
+          close.style[key] = this.popupCloseBtnStyle[key];
+        });
+      }
       this.parent.appendChild(infoDiv);
       let popupContentWrapperDiv = window.document.getElementsByClassName(
         "cesium-popup-content-wrapper"
       );
-      if (this.popupStyle) {
-        Object.keys(this.popupStyle).forEach((key) => {
-          popupContentWrapperDiv[0].style[key] = this.popupStyle[key];
+      if (this.popupWapperStyle) {
+        Object.keys(this.popupWapperStyle).forEach((key) => {
+          popupContentWrapperDiv[0].style[key] = this.popupWapperStyle[key];
         });
       }
       let separate = window.document.createElement("div");
@@ -223,6 +239,11 @@ export default class PopupLayer {
       let popupHeaderTitle = window.document.createElement("div");
       popupHeaderTitle.className = "cesium-popup-content-header-title";
       popupHeaderTitle.innerText = this.popupTitle || "";
+      if (this.popupHeaderStyle) {
+        Object.keys(this.popupHeaderStyle).forEach((key) => {
+          popupHeaderTitle.style[key] = this.popupHeaderStyle[key];
+        });
+      }
 
       let popupHeaderExtra = window.document.createElement("div");
       popupHeaderExtra.className = "cesium-popup-content-header-extra";
@@ -238,6 +259,11 @@ export default class PopupLayer {
         `<svg width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" class="">` +
         `<use xlink:href="#mapgis-close"></use></svg>`;
       close.innerHTML = closeicon;
+      if (this.popupCloseBtnStyle) {
+        Object.keys(this.popupCloseBtnStyle).forEach((key) => {
+          close.style[key] = this.popupCloseBtnStyle[key];
+        });
+      }
 
       let separate = window.document.createElement("div");
       separate.className = "cesium-popup-separate-button";
@@ -260,9 +286,9 @@ export default class PopupLayer {
 
       let popupContentWrapperDiv = window.document.createElement("div");
       popupContentWrapperDiv.className = "cesium-popup-content-wrapper";
-      if (this.popupStyle) {
-        Object.keys(this.popupStyle).forEach((key) => {
-          popupContentWrapperDiv.style[key] = this.popupStyle[key];
+      if (this.popupWapperStyle) {
+        Object.keys(this.popupWapperStyle).forEach((key) => {
+          popupContentWrapperDiv.style[key] = this.popupWapperStyle[key];
         });
       }
       popupContentWrapperDiv.appendChild(popupHeader);
