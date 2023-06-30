@@ -296,8 +296,8 @@ export default {
         drawStyleCopy.outlineColor
       ).withAlpha(drawStyleCopy.opacity);
       const color = new Cesium.Color.fromCssColorString(
-        drawStyleCopy.color
-      ).withAlpha(drawStyleCopy.opacity);
+        drawStyleCopy.point?.color || drawStyleCopy.color
+      ).withAlpha(drawStyleCopy.point?.alpha || drawStyleCopy.opacity);
       drawElement.startDrawingMarker({
         addDefaultMark: false,
         color: color,
@@ -313,7 +313,7 @@ export default {
             position: Cesium.Cartesian3.fromDegrees(lng, lat, height),
             point: {
               // 点
-              pixelSize: 10,
+              pixelSize: drawStyleCopy.point?.size || 10,
               color: color,
               outlineColor: outlineColor,
               outlineWidth: drawStyleCopy.outlineWidth
@@ -347,8 +347,8 @@ export default {
         drawElement.setGroundPrimitiveType("NONE");
       }
       const color = new Cesium.Color.fromCssColorString(
-        drawStyleCopy.color
-      ).withAlpha(drawStyleCopy.opacity);
+        drawStyleCopy.line?.color || drawStyleCopy.color
+      ).withAlpha(drawStyleCopy.line?.alpha || drawStyleCopy.opacity);
       drawElement.startDrawingPolyline({
         color: color,
         callback: function(result) {
@@ -365,7 +365,7 @@ export default {
             let polyline = new Cesium.DrawElement.PolylinePrimitive({
               id: "polyline",
               positions: positions,
-              width: drawStyleCopy.width,
+              width: drawStyleCopy.line?.size || drawStyleCopy.width,
               geodesic: true
             });
             let drawEntity = viewerDraw.scene.primitives.add(polyline);
@@ -400,8 +400,8 @@ export default {
         drawElement.setGroundPrimitiveType("NONE");
       }
       const colorStyle = new Cesium.Color.fromCssColorString(
-        drawStyleCopy.color
-      ).withAlpha(drawStyleCopy.opacity);
+        drawStyleCopy.polygon?.color || drawStyleCopy.color
+      ).withAlpha(drawStyleCopy.polygon?.alpha || drawStyleCopy.opacity);
       drawElement.startDrawingPolygon({
         color: colorStyle,
         callback: function(result) {
@@ -417,6 +417,7 @@ export default {
           if (!disableDraw || typeof disableDraw !== "boolean") {
             let polygon = new Cesium.DrawElement.PolygonPrimitive({
               positions: positions,
+              width: drawStyleCopy.polygon?.size || drawStyleCopy.width,
               material: Cesium.Material.fromType("Color", {
                 color: colorStyle
               })
@@ -453,8 +454,8 @@ export default {
         drawElement.setGroundPrimitiveType("NONE");
       }
       const colorStyle = new Cesium.Color.fromCssColorString(
-        drawStyleCopy.color
-      ).withAlpha(drawStyleCopy.opacity);
+        drawStyleCopy.polygon?.color || drawStyleCopy.color
+      ).withAlpha(drawStyleCopy.polygon?.alpha || drawStyleCopy.opacity);
 
       drawElement.startDrawingExtent({
         color: colorStyle,

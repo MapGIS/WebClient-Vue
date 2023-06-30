@@ -40,7 +40,9 @@
     <!-- 测量样式设置 -->
     <measure-3d-setting
       v-if="showSettingPanel"
+      :measureConfig="measureConfig"
       @measure-style-change="measureStyleChange"
+      @measure-style-resize="measureStyleResize"
     />
   </div>
 </template>
@@ -60,6 +62,10 @@ export default {
   props: {
     result: {
       type: [Number, Object]
+    },
+    measureConfig: {
+      type: Object,
+      defualt: () => {}
     }
   },
   data: vm => ({
@@ -189,7 +195,11 @@ export default {
      * 测量样式变化
      */
     measureStyleChange(style) {
+      this.$parent.measureConfig = style;
       this.$parent.initStyles(style);
+    },
+    measureStyleResize() {
+      this.$parent.resizeStyles();
     }
   }
 };

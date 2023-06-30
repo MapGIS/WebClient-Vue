@@ -4,7 +4,11 @@
     <!-- slot for measureTool -->
     <slot name="measureTool">
       <div v-show="enableControl">
-        <measure-tool :result="measureResult" v-if="isAdvanceControl" />
+        <measure-tool
+          :result="measureResult"
+          :featureConfig="featureConfig"
+          v-if="isAdvanceControl"
+        />
         <mapgis-ui-space v-if="!isAdvanceControl">
           <mapgis-ui-tooltip
             v-for="(item, i) in toolbarBtns"
@@ -103,6 +107,11 @@ export default {
     styles: {
       type: Array,
       default: () => defaultStyle
+    },
+    // 管理平台配置的绘制图形样式
+    featureConfig: {
+      type: Object,
+      defalut: () => {}
     }
   },
 
