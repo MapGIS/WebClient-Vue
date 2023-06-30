@@ -130,6 +130,7 @@
               :currentProjectorOverlayLayerId="currentProjectorOverlayLayer.id"
               :settings="currentEditProjector"
               :modelUrl="modelUrl"
+              :isEdit="isEdit"
               :modelOffset="modelOffset"
               :hideVPInvisible="hideVPInvisible"
               :disabled="disabledImageUrlInput"
@@ -354,8 +355,10 @@ export default {
         current: 1,
         size: "small",
         pageSize: 20
-      }
+      },
       // graphicsLayer: undefined,
+      // 是否进入设置状态
+      isEdit: false
     };
   },
   created() {},
@@ -564,6 +567,7 @@ export default {
           window.graphicsLayer
         );
       }
+      this.isEdit = false;
       this.putProjector(newProjector);
       this.currentEditProjector = newProjector;
       this.activeKey = "2";
@@ -663,6 +667,7 @@ export default {
      * 跳转到projector配置界面
      */
     _onGotoSetting(projector, index) {
+      this.isEdit = true;
       this.activeIndex = index;
       this.activeKey = "2";
       this.currentEditProjector = projector;

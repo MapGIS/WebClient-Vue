@@ -103,8 +103,12 @@
           class="padding"
           @change="_changeRenderType"
         >
-          <mapgis-ui-radio :value="0">输入摄像头参数</mapgis-ui-radio>
-          <mapgis-ui-radio :value="1">绘制投放面</mapgis-ui-radio>
+          <mapgis-ui-radio :value="0" :disabled="isEdit && renderType == 1"
+            >输入摄像头参数</mapgis-ui-radio
+          >
+          <mapgis-ui-radio :value="1" :disabled="isEdit && renderType == 0"
+            >绘制投放面</mapgis-ui-radio
+          >
         </mapgis-ui-radio-group>
 
         <!-- 摄像头参数方式 -->
@@ -343,9 +347,10 @@
                 </template>
                 <mapgis-ui-button
                   :ghost="true"
+                  :disabled="isEdit"
                   type="link"
                   @click="item.click"
-                  style="margin: 0 -5px "
+                  style="margin: 0 -5px;border:none;"
                 >
                   <mapgis-ui-iconfont :type="item.icon" theme="filled" />
                 </mapgis-ui-button>
@@ -374,6 +379,7 @@
                   addon-after="米"
                   :min="0"
                   :step="0.1"
+                  @change="_offsetHeightChange"
                 />
               </mapgis-ui-form-item>
             </mapgis-ui-setting-form>
@@ -426,7 +432,8 @@ export default {
             hintLineVisible: true, // 是否显示投放区域线
             areaCoords: [], // 绘制投放区域方式下存储绘制点位坐标
             renderType: 0,
-            heightReference: 2 //是否贴场景选择
+            heightReference: 2, //是否贴场景选择
+            offsetHeight: 5
           },
           preHeading: 0,
           prePitch: 0
@@ -444,6 +451,11 @@ export default {
     currentProjectorOverlayLayerId: {
       type: String,
       default: ""
+    },
+    // 是否是编辑状态进入面板
+    isEdit: {
+      type: Boolean,
+      default: false
     }
   },
   watch: {
@@ -453,6 +465,7 @@ export default {
         this.scenePro = this.putProjector(this.settingsCopy);
         this.renderType = this.settingsCopy.params.renderType || 0;
         this.heightReference = this.settingsCopy.params.heightReference || 2;
+        this.offsetHeight = this.settingsCopy.params.offsetHeight || 5;
         this._changeProjectorType();
       },
       // deep: true,
@@ -478,7 +491,7 @@ export default {
         this.scenePro = undefined;
         this._changeProjector();
       },
-      // deep: true,
+      deep: true,
       immediate: false
     }
   },
@@ -530,6 +543,22 @@ export default {
         this.imgUrl &&
         this.imgUrl !== ""
       );
+    },
+    heightReference: {
+      get: function() {
+        return this.settingsCopy.params.heightReference;
+      },
+      set: function(params) {
+        this.settingsCopy.params.heightReference = params;
+      }
+    },
+    offsetHeight: {
+      get: function() {
+        return this.settingsCopy.params.offsetHeight;
+      },
+      set: function(params) {
+        this.settingsCopy.params.offsetHeight = params;
+      }
     }
   },
   data() {
@@ -580,8 +609,9 @@ export default {
         { value: 2, label: "贴场景" }
       ],
       graphic: undefined,
-      renderType: 0,
-      heightReference: 2
+      renderType: 0
+      // heightReference: 2,
+      // offsetHeight: 5
     };
   },
   mounted() {
@@ -624,9 +654,52 @@ export default {
     },
     _changeRenderType(e) {
       this.params.renderType = e.target.value;
+      if (e.target.value == 0 && this.graphic) {
+        this.removeGraphic();
+      }
     },
     _heightReferenceTypesChange(e) {
       this.params.heightReference = e;
+      // 在绘制完后可以更改贴地模式，编辑状态也可以更改贴地模式
+      if (this.isEdit || this.graphic) {
+        let graphic = window.graphicsLayer.getGraphicByID(
+          this.settingsCopy.id + "graphic"
+        );
+        switch (e) {
+          case 0:
+            graphic.style.perPositionHeight = true;
+            break;
+          case 1:
+            graphic.style.perPositionHeight = false;
+            graphic.style.classificationType = undefined;
+            graphic.style.offsetHeight = this.offsetHeight;
+            break;
+          case 2:
+            graphic.style.classificationType = Cesium.ClassificationType.BOTH;
+            break;
+        }
+      }
+    },
+    _offsetHeightChange(e) {
+      this.params.offsetHeight = e;
+      if (this.isEdit || this.graphic) {
+        let graphic = window.graphicsLayer.getGraphicByID(
+          this.settingsCopy.id + "graphic"
+        );
+        graphic.style.offsetHeight = e;
+      }
+    },
+    _changeDrawProjectorType(element) {
+      let graphic = window.graphicsLayer.getGraphicByID(
+        this.settingsCopy.id + "graphic"
+      );
+      graphic.style.material = Cesium.Material.fromType(
+        Cesium.Material.ImageType,
+        {
+          image: element,
+          repeat: new Cesium.Cartesian2(1.0, 1.0)
+        }
+      );
     },
     /**
      * 修改投影类型
@@ -667,6 +740,12 @@ export default {
             this.cancelPutProjector(this.settingsCopy);
             this.scenePro = undefined;
           } else {
+            if (
+              (this.renderType == 1 && this.graphic) ||
+              (this.renderType == 1 && this.isEdit)
+            ) {
+              this._changeDrawProjectorType(this.imgUrl);
+            }
             if (!this.scenePro) {
               this.scenePro = this.putProjector(this.settingsCopy);
             } else {
@@ -682,6 +761,13 @@ export default {
             this.cancelPutProjector(this.settingsCopy);
             this.scenePro = undefined;
           } else {
+            if (
+              (this.renderType == 1 && this.graphic) ||
+              (this.renderType == 1 && this.isEdit)
+            ) {
+              let videoElement = document.getElementById("demovideo_html5_api");
+              this._changeDrawProjectorType(videoElement);
+            }
             if (!this.scenePro) {
               this.scenePro = this.putProjector(this.settingsCopy);
             } else {
@@ -920,6 +1006,9 @@ export default {
     },
     // 绘制矩形投影面
     drawRectangle() {
+      if (this.graphic) {
+        this.removeGraphic();
+      }
       if (this.videoSource.videoUrl || this.imgUrl) {
         // 调用draw组件中，绘制矩形
         this.drawer && this.drawer.enableDrawRectangle();
@@ -929,6 +1018,9 @@ export default {
     },
     // 绘制多边形投影面
     drawPolygon() {
+      if (this.graphic) {
+        this.removeGraphic();
+      }
       if (this.videoSource.videoUrl || this.imgUrl) {
         this.drawer && this.drawer.enableDrawPolygon();
       } else {
@@ -976,16 +1068,7 @@ export default {
       if (vm.projectorType === "image") {
         vm.graphic = vm.createGraphic(type, position, vm.imgUrl);
         window.graphicsLayer.addGraphic(vm.graphic);
-      } else if (
-        vm.projectorType === "video" &&
-        vm.videoSource.protocol === "mp4"
-      ) {
-        vm.graphic = vm.createGraphic(type, position, videoElement);
-        window.graphicsLayer.addGraphic(vm.graphic);
-      } else if (
-        vm.projectorType === "video" &&
-        vm.videoSource.protocol === "m3u8"
-      ) {
+      } else if (vm.projectorType === "video") {
         vm.graphic = vm.createGraphic(type, position, videoElement);
         window.graphicsLayer.addGraphic(vm.graphic);
       }
@@ -1051,12 +1134,43 @@ export default {
       if (window.drawElement) {
         window.drawElement.stopDrawing();
       }
-      // 清除graphic实例，这里可以再加一个容错，如果用户并没有绘制不想继续投影，点击取消，如果不加会报错
+      // 清除graphic实例
       if (this.graphic) {
-        this.graphic.remove();
+        this.removeGraphic();
       }
     },
+    removeGraphic() {
+      window.graphicsLayer.removeGraphicByID(this.settingsCopy.id + "graphic");
+      this.graphic = undefined;
+    },
+    // 取消时恢复原来的graphic
+    _restoreGraphic() {
+      const { params } = this.settings;
 
+      let graphic = window.graphicsLayer.getGraphicByID(
+        this.settingsCopy.id + "graphic"
+      );
+      let element;
+      if (params.projectorType == "image") {
+        element = params.imgUrl;
+      } else {
+        element = document.getElementById("demovideo_html5_api");
+      }
+
+      graphic.style.material = Cesium.Material.fromType(
+        Cesium.Material.ImageType,
+        {
+          image: element,
+          repeat: new Cesium.Cartesian2(1.0, 1.0)
+        }
+      );
+      graphic.style.perPositionHeight = params.heightReference === 0;
+      graphic.style.offsetHeight = params.offsetHeight;
+      graphic.style.classificationType =
+        params.heightReference === 2
+          ? Cesium.ClassificationType.BOTH
+          : undefined;
+    },
     /**
      * 确定按钮事件
      */
@@ -1082,6 +1196,11 @@ export default {
       if (this.settings.isProjected) {
         this.putProjector(this.settings);
       }
+      if (this.renderType == 1 && this.isEdit) {
+        this._restoreGraphic();
+      }
+      // 设置面板恢复之前的参数
+      this.settingsCopy = JSON.parse(JSON.stringify(this.settings));
       // 取消时清除绘制的投影面，并让绘制矩形按钮恢复原始状态
       this.removeDraw();
       this.$emit("cancel");
