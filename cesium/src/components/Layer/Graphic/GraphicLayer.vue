@@ -52,6 +52,7 @@
       :autoFlyToGraphic="autoFlyToGraphic"
       :groupGraphicIDs="groupGraphicIDs"
       :uploadUrl="uploadUrl"
+      :featureConfig="featureConfig"
       ref="graphicLayer"
       v-model="currentLayer"
       @saveCamera="$_saveCamera"
@@ -119,6 +120,11 @@ export default {
     uploadUrl: {
       type: String,
       default: ""
+    },
+    // 管理平台配置的绘制图形样式
+    featureConfig: {
+      type: Object,
+      defalut: () => {}
     }
   },
   watch: {

@@ -75,6 +75,11 @@ export default {
     mode: {
       type: String,
       default: measureModeMap.line
+    },
+    // 管理平台配置的绘制图形样式
+    featureConfig: {
+      type: Object,
+      defalut: () => {}
     }
   },
   data: vm => ({
@@ -94,6 +99,18 @@ export default {
       {
         label: "微软雅黑",
         value: "微软雅黑"
+      },
+      {
+        label: "华文行楷",
+        value: "华文行楷"
+      },
+      {
+        label: "黑体",
+        value: "黑体"
+      },
+      {
+        label: "新宋体",
+        value: "新宋体"
       }
     ]
   }),
@@ -106,6 +123,13 @@ export default {
     measureStyle: {
       handler(obj) {
         this.notifyUpdate(obj);
+      },
+      deep: true,
+      immediate: true
+    },
+    featureConfig: {
+      handler(val) {
+        val && this.setDrawConfigGraph();
       },
       deep: true,
       immediate: true
@@ -180,6 +204,44 @@ export default {
      */
     onColorChange({ hex }, type) {
       this.$set(this.measureStyle, type, hex);
+    },
+    /**
+     * 初始化配置管理平台配置颜色
+     */
+    setDrawConfigGraph() {
+      const labelConfig = this.featureConfig.label;
+      const featureConfig = this.featureConfig.feature;
+
+      const textConfig = labelConfig?.text;
+      if (textConfig) {
+        this.measureStyle.textColor =
+          textConfig.color || this.measureStyle.textColor;
+        this.measureStyle.textSize =
+          Number(textConfig.fontSize) || this.measureStyle.textSize;
+        this.measureStyle.textType =
+          textConfig.fontFamily || this.measureStyle.textType;
+      }
+
+      const lineConfig = featureConfig?.line;
+      if (lineConfig) {
+        this.measureStyle.lineColor =
+          lineConfig.color || this.measureStyle.lineColor;
+        this.measureStyle.lineWidth =
+          Number(lineConfig.size) || this.measureStyle.lineWidth;
+      }
+
+      const fillConfig = featureConfig?.reg;
+      if (fillConfig) {
+        this.measureStyle.fillColor =
+          fillConfig.color || this.measureStyle.fillColor;
+      }
+      this.$emit(
+        "measure-style-change",
+        this.integrateStyles(this.measureStyle)
+      );
+      dep.setInitConfig(this.measureStyle);
+      dep.setStyles(this.measureStyle);
+      dep.notify();
     }
   }
 };

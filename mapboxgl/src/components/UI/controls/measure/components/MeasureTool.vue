@@ -1,7 +1,7 @@
 <template>
   <div :class="prefixCls">
     <!-- 测量控制按钮 -->
-    <mapgis-ui-toolbar  :bordered="false">
+    <mapgis-ui-toolbar :bordered="false">
       <!-- 面积或长度设置按钮 -->
       <mapgis-ui-toolbar-command-group>
         <mapgis-ui-toolbar-command
@@ -41,8 +41,10 @@
     <!-- 设置面板 -->
     <measure-setting
       v-show="showSettingPanel"
+      ref="measureSetting"
       @measure-style-change="measureStyleChange"
       :mode="activeMode"
+      :featureConfig="featureConfig"
     />
   </div>
 </template>
@@ -60,6 +62,11 @@ export default {
   props: {
     result: {
       type: Object
+    },
+    // 管理平台配置的绘制图形样式
+    featureConfig: {
+      type: Object,
+      defalut: () => {}
     }
   },
   data: vm => ({
@@ -159,6 +166,12 @@ export default {
     measureStyleChange(style) {
       this.$parent.combineStyle(style);
     }
+    /**
+     * 初始化配置管理平台配置颜色
+     */
+    // setDrawConfigGraph() {
+    //   this.$refs.measureSetting.setDrawConfigGraph(this.featureConfig);
+    // }
   }
 };
 </script>

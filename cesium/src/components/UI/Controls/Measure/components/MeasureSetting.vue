@@ -12,7 +12,7 @@
       <mapgis-ui-form-item label="线颜色">
         <mapgis-ui-sketch-color-picker
           @input="onColorChange($event, 'lineColor')"
-          :color="measureStyle.lineColor"
+          :color="measureConfig.lineColor"
           :disable-alpha="false"
         />
       </mapgis-ui-form-item>
@@ -26,16 +26,31 @@ const initStyle = {
 
 export default {
   name: "measure-3d-setting",
-  props: {},
+  props: {
+    measureConfig: {
+      type: Object,
+      defualt: () => {}
+    }
+  },
   data: vm => ({
-    measureStyle: { ...initStyle }
+    // measureStyle: { ...initStyle }
   }),
-  watch: {
+  // watch: {
+  //   measureStyle: {
+  //     handler(nStyle) {
+  //       this.emitStyle(nStyle);
+  //     },
+  //     deep: true
+  //   }
+  // },
+  computed: {
     measureStyle: {
-      handler(nStyle) {
-        this.emitStyle(nStyle);
+      get() {
+        return this.measureConfig;
       },
-      deep: true
+      set(nStyle) {
+        this.$emit("measure-style-change", nStyle);
+      }
     }
   },
   methods: {
@@ -49,13 +64,17 @@ export default {
      * 重置样式
      */
     onReset() {
-      this.measureStyle = { ...initStyle };
+      this.$emit("measure-style-resize");
+      // this.measureStyle = { ...initStyle };
     },
     /**
      * 颜色选择变化
      */
     onColorChange({ hex }, type) {
-      this.$set(this.measureStyle, type, hex);
+      // this.$set(this.measureStyle, type, hex);
+      const measureStyle = JSON.parse(JSON.stringify(this.measureStyle));
+      measureStyle[type] = hex;
+      this.measureStyle = measureStyle;
     }
   }
 };
