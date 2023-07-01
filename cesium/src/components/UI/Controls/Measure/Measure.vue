@@ -2,7 +2,7 @@
   <div class="mapgis-3d-measure">
     <slot v-if="initial"></slot>
     <slot name="measureTool">
-      <measure-3d-tool :result="result" />
+      <measure-3d-tool :result="result" :measureConfig="measureConfig" />
     </slot>
   </div>
 </template>
@@ -24,7 +24,8 @@ export default {
       type: Object,
       default() {
         return {
-          lineColor: "#1890ff"
+          lineColor: "#1890ff",
+          fillColor: "#1890ff"
         };
       }
     },
@@ -33,6 +34,11 @@ export default {
       default() {
         return {};
       }
+    },
+    // 管理平台配置的绘制图形样式
+    featureConfig: {
+      type: Object,
+      defalut: () => {}
     }
   },
   data() {
@@ -43,7 +49,8 @@ export default {
       // measure: undefined,
       initial: false,
       measureStyles: {},
-      waitManagerName: "GlobesManager"
+      waitManagerName: "GlobesManager",
+      measureConfig: {}
     };
   },
   watch: {
@@ -58,6 +65,15 @@ export default {
         this.measureOptions = this.$_formatOptions(this.measureOptions);
       },
       deep: true
+    },
+    featureConfig: {
+      handler(val) {
+        if (val) {
+          this.measureConfig.lineColor = val?.feature?.line?.color || "#1890ff";
+        }
+      },
+      deep: true,
+      immediate: true
     }
   },
   mounted() {
@@ -113,12 +129,51 @@ export default {
       this.$_enableMeasure("MeasureSlopeTool");
     },
     async $_enableMeasure(MeasureName, MeasureType) {
+      const lineConfig = this.featureConfig.feature?.line;
+      const labelConfig = this.featureConfig.label?.text;
+      const areaConfig = this.featureConfig.feature?.reg;
+      if (this.measureConfig.lineColor) {
+        this.measureStyles.lineColor = Cesium.Color.fromCssColorString(
+          this.measureConfig.lineColor
+        );
+      }
+
       // 对应量算工具的参数设置对象
       let MeasureObject = {};
+      if (lineConfig && lineConfig.size && this.measureConfig.lineColor) {
+        const lineStyle = {
+          width: Number(lineConfig.size),
+          material: new Cesium.PolylineGlowMaterialProperty({
+            glowPower: 0.15,
+            color: Cesium.Color.fromCssColorString(this.measureConfig.lineColor)
+          }),
+          depthFailMaterial: new Cesium.PolylineGlowMaterialProperty({
+            glowPower: 0.15,
+            color: Cesium.Color.fromCssColorString(this.measureConfig.lineColor)
+          })
+        };
+        MeasureObject.lineStyle = lineStyle;
+      }
+
+      if (labelConfig) {
+        if (labelConfig.color) {
+          MeasureObject.fillColor = Cesium.Color.fromCssColorString(
+            labelConfig.color
+          );
+        }
+        if (labelConfig.fontSize && labelConfig.fontFamily) {
+          MeasureObject.font = `${labelConfig.fontSize}px ${labelConfig.fontFamily}`;
+        }
+      }
       if (MeasureName === "MeasureLengthTool") {
         MeasureObject.paneNum = 256;
       } else if (MeasureName === "MeasureAreaTool") {
         (MeasureObject.xPaneNum = 64), (MeasureObject.yPaneNum = 64);
+        if (areaConfig && areaConfig.color) {
+          MeasureObject.areaColor = Cesium.Color.fromCssColorString(
+            areaConfig.color
+          );
+        }
       }
       const { vueKey, vueIndex } = this;
       let viewer = this.$_getObject(this.waitManagerName, this.deleteMeasure);
@@ -174,6 +229,10 @@ export default {
     },
     remove() {
       this.deleteMeasure();
+    },
+    resizeStyles() {
+      this.measureConfig.lineColor =
+        this.featureConfig?.feature?.line?.color || "#1890ff";
     }
   }
 };

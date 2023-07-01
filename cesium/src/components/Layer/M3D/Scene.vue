@@ -222,6 +222,11 @@ export default {
     popupShowType: {
       type: String,
       default: "default"
+    },
+    // 高亮样式
+    highlightStyle: {
+      type: String,
+      default: "rgba(255,255,0,0.5)"
     }
   },
   mixins: [PopupMixin],
@@ -768,6 +773,13 @@ export default {
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       if (!g3dLayer) return;
       if (find && find.options.originStyles) {
+        // if (!find.options.originStyles) {
+        //   const lenght = g3dLayer.getAllLayers().length;
+        //   for (let i = 0; i <= lenght - 1; i++) {
+        //     const styles = { color: Cesium.Color.WHITE };
+        //     find.options.originStyles.push(styles);
+        //   }
+        // }
         find.options.originStyles.forEach((s, i) => {
           let m3dlayer = g3dLayer.getLayer(String(i));
           if (m3dlayer) {
@@ -975,7 +987,8 @@ export default {
           m3dlayer.style
         );
         m3dlayer.style = new Cesium.Cesium3DTileStyle({
-          color: `color('#FFFF00', 1)`
+          // color: `color('#FFFF00', 1)`
+          color: this.highlightStyle
         });
       }
     },
@@ -1134,7 +1147,7 @@ export default {
 
             tileset.pickedOid = oid;
             tileset.pickedColor = Cesium.Color.fromCssColorString(
-              "rgba(255,255,0,0.5)"
+              this.highlightStyle
             );
             if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
               let result = feature.content.getAttributeByOID(oid) || {};
