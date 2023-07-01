@@ -7,7 +7,7 @@ const initStyle = {
   lineOpacity: 1,
   lineWidth: 3,
   fillColor: "#1890ff",
-  fillOpacity: 0.4
+  fillOpacity: 0.4,
 };
 
 class Dep {
@@ -17,8 +17,10 @@ class Dep {
 
   styles = { ...initStyle };
 
+  initConfig = null;
+
   resetStyles() {
-    return this.setStyles(initStyle);
+    return this.setStyles(this.initConfig || initStyle);
   }
 
   getStyles() {
@@ -52,6 +54,14 @@ class Dep {
     for (let i = 0; i < this.subs.length; i++) {
       this.subs[i].update();
     }
+  }
+
+  getInitConfig() {
+    return this.initConfig;
+  }
+
+  setInitConfig(config) {
+    this.initConfig = config;
   }
 }
 

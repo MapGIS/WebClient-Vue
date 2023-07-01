@@ -69,6 +69,7 @@
 
 <script>
 import GraphicLayerService from "./GraphicLayerService";
+import managerConfig from "./mixins/managerConfig";
 import icons from "../Plotting/base64Source";
 import editList from "./editList";
 import { polygon } from "@turf/helpers";
@@ -79,7 +80,7 @@ import clonedeep from "lodash.clonedeep";
 
 export default {
   name: "mapgis-3d-graphic-single-layer",
-  mixins: [GraphicLayerService],
+  mixins: [GraphicLayerService, managerConfig],
   model: {
     prop: "dataSource",
     event: "change"
@@ -133,6 +134,11 @@ export default {
     uploadUrl: {
       type: String,
       default: ""
+    },
+    // 管理平台配置的绘制图形样式
+    featureConfig: {
+      type: Object,
+      defalut: () => {}
     }
   },
   data() {
@@ -216,6 +222,13 @@ export default {
     dataSourceCopy: {
       handler: function() {},
       deep: true
+    },
+    featureConfig: {
+      handler(val) {
+        val && this.setFeatureConfig();
+      },
+      deep: true,
+      immediate: true
     }
   },
   mounted() {},
