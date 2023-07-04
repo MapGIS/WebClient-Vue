@@ -231,6 +231,24 @@ export default {
       }
     }
   },
+  computed: {
+    formItemLayout({ layout }) {
+      return layout === "horizontal"
+        ? {
+            labelCol: { span: 6 },
+            wrapperCol: { span: 17 }
+          }
+        : {};
+    },
+    domain() {
+      var domain;
+      if (!!this.baseUrl && this.baseUrl.length > 0) {
+        var url = new URL(this.baseUrl);
+        domain = url.origin;
+      }
+      return domain;
+    }
+  },
   mounted() {
     this.mount();
   },
@@ -249,11 +267,6 @@ export default {
     },
     // 查询IGServer，实现获取gdbp图层中的属性字段名称与类型
     getAttribute() {
-      var domain;
-      if (!!this.baseUrl && this.baseUrl.length > 0) {
-        var url = new URL(this.baseUrl);
-        domain = url.origin;
-      }
       //创建查询结构对象
       var queryStruct = new Zondy.MRFS.QueryFeatureStruct();
       //是否包含几何图形信息
@@ -284,7 +297,7 @@ export default {
       queryParam.recordNumber = 1;
       //实例化地图文档查询服务对象
       var queryService = new Zondy.G3D.G3DMapDoc({
-        domain: "http://192.168.1.131:8089",
+        domain: this.domain,
         gdbp: this.srcLayer,
         ...queryParam
       });
@@ -410,7 +423,7 @@ export default {
         };
         paramArr.push(param);
       }
-      const url = `http://192.168.1.131:8089/igs/rest/mrfws/execute/600372?isAsy=false&f=json`;
+      const url = `${this.domain}/igs/rest/mrfws/execute/600372?isAsy=false&f=json`;
       const promise = new Promise((resolve, reject) => {
         axios.post(url, paramArr).then(res => {
           const { data } = res;
@@ -439,16 +452,6 @@ export default {
     },
     deleteResult() {
       this.$emit("deleteResult");
-    }
-  },
-  computed: {
-    formItemLayout({ layout }) {
-      return layout === "horizontal"
-        ? {
-            labelCol: { span: 6 },
-            wrapperCol: { span: 17 }
-          }
-        : {};
     }
   }
 };

@@ -190,6 +190,24 @@ export default {
       immediate: true
     }
   },
+  computed: {
+    formItemLayout({ layout }) {
+      return layout === "horizontal"
+        ? {
+            labelCol: { span: 6 },
+            wrapperCol: { span: 17 }
+          }
+        : {};
+    },
+    domain() {
+      var domain;
+      if (!!this.baseUrl && this.baseUrl.length > 0) {
+        var url = new URL(this.baseUrl);
+        domain = url.origin;
+      }
+      return domain;
+    }
+  },
   mounted() {
     this.mount();
   },
@@ -277,7 +295,7 @@ export default {
         };
         paramArr.push(param);
       }
-      const url = `http://192.168.1.131:8089/igs/rest/mrfws/execute/600371?isAsy=false&f=json`;
+      const url = `${this.domain}/igs/rest/mrfws/execute/600371?isAsy=false&f=json`;
       const promise = new Promise((resolve, reject) => {
         axios.post(url, paramArr).then(res => {
           const { data } = res;
@@ -337,16 +355,6 @@ export default {
     },
     deleteResult() {
       this.$emit("deleteResult");
-    }
-  },
-  computed: {
-    formItemLayout({ layout }) {
-      return layout === "horizontal"
-        ? {
-            labelCol: { span: 6 },
-            wrapperCol: { span: 17 }
-          }
-        : {};
     }
   }
 };
