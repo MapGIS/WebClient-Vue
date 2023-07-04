@@ -709,7 +709,7 @@ export default {
         domain = url.origin;
       }
       //实例化FeatureBuffBySingleRing类，设置要素缓冲分析必要参数，输出分析结果到缓冲分析结果图层
-      const featureBufBySR = new Zondy.Service.FeatureBuffBySingleRing({
+      const featureBufBySR = new window.Zondy.Service.FeatureBuffBySingleRing({
         ip: this.baseUrl.split("/")[2].split(":")[0],
         port: this.baseUrl.split("/")[2].split(":")[1],
         domain,
@@ -719,6 +719,7 @@ export default {
         rightRad: this.realRightRad,
         color: 6
       });
+
       /*设置缓冲分析参数*/
       //设置几何信息
       featureBufBySR.sfGeometryXML = JSON.stringify(sfGeometry);
