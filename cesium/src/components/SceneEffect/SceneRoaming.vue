@@ -213,7 +213,7 @@ export default {
   },
   data() {
     return {
-      draw: undefined,
+      // draw: undefined,
       interactiveAdding: false,
       roaming: false,
       roamingPath: null,
@@ -258,12 +258,12 @@ export default {
         }
       ],
       pathsCopy: [],
-      linePoints: [],
-      polyline: undefined,
+      // linePoints: [],
+      // polyline: undefined,
       emptyImage: MapgisUiEmpty.PRESENTED_IMAGE_SIMPLE,
       emptyDescription: "暂无数据",
-      lastClickLineId: undefined,
-      pointArr: [] // 存放新增路线时保存的点位信息
+      lastClickLineId: undefined
+      // pointArr: [] // 存放新增路线时保存的点位信息
     };
   },
   created() {},
@@ -288,6 +288,7 @@ export default {
       promise.then(function(dataSource) {
         vm.$emit("load", vm);
       });
+      this.pointArr = [];
     },
     unmount() {
       this.onGotoHome();

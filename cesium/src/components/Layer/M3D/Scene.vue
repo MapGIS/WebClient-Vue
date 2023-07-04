@@ -869,40 +869,43 @@ export default {
       }
     },
     pickFeature(payload) {
-      const { movement, pickedFeature } = payload;
-      const vm = this;
-      const { g3dLayerIndex } = this;
+      // 不设置setTimeout开启多个模型拾取页面会直接卡死
+      setTimeout(() => {
+        const { movement, pickedFeature } = payload;
+        const vm = this;
+        const { g3dLayerIndex } = this;
 
-      if (!pickedFeature) {
-        vm.iClickVisible = false;
-        return;
-      }
+        if (!pickedFeature) {
+          vm.iClickVisible = false;
+          return;
+        }
 
-      /* if (vm.featureclickenable) {
+        /* if (vm.featureclickenable) {
         vm.featurevisible = true;
       } */
 
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      if (!pickedFeature._content && pickedFeature.primitive) {
-        this.featurevisible = true;
-        // 右侧展示气泡框展示控制条件之一，关闭再打开会进入这里，showDetail一个控制条件不够
-        if (!this.isUnClosePopup) {
-          this.isUnClosePopup = !this.isUnClosePopup;
+        if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
+        let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+        if (!pickedFeature._content && pickedFeature.primitive) {
+          this.featurevisible = true;
+          // 右侧展示气泡框展示控制条件之一，关闭再打开会进入这里，showDetail一个控制条件不够
+          if (!this.isUnClosePopup) {
+            this.isUnClosePopup = !this.isUnClosePopup;
+          }
+          return;
         }
-        return;
-      }
-      let index = pickedFeature._content._tileset._layerIndex;
-      vm.selectLayerIndex = index;
-      vm.selectedKeys = [`${index}`];
-      let layerInfo = g3dLayer.getLayerInfo(index);
-      const { children } = layerInfo;
-      let enableDynamic = children && children.length > 0 ? true : false;
-      if (enableDynamic) {
-        this.queryDynamic(movement, index);
-      } else {
-        this.queryStatic(movement);
-      }
+        let index = pickedFeature._content._tileset._layerIndex;
+        vm.selectLayerIndex = index;
+        vm.selectedKeys = [`${index}`];
+        let layerInfo = g3dLayer.getLayerInfo(index);
+        const { children } = layerInfo;
+        let enableDynamic = children && children.length > 0 ? true : false;
+        if (enableDynamic) {
+          this.queryDynamic(movement, index);
+        } else {
+          this.queryStatic(movement);
+        }
+      }, 10);
     },
     cancelFeature() {
       this.cancelHighlight();
