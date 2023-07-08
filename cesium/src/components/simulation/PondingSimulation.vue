@@ -306,7 +306,7 @@ export default {
     // 控制面板显隐,false为隐藏
     pondingPanelShow: {
       type: Boolean,
-      default: false
+      default: true
     },
     /**
      * @param {String} [pondingArea.type]  输入区域类型,包含"polygon"、"rectangle"、"circle"
