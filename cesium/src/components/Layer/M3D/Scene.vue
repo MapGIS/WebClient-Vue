@@ -191,6 +191,7 @@ import G3DOptions from "./G3DOptions";
 import { checkTypeNode, loopM3ds, checkTypeIcon } from "./util";
 import M3dMenus from "./components/M3dMenus.vue";
 import PopupMixin from "../Mixin/PopupMixin";
+import * as Feature from "../../service/comprehensive-query/util/feature";
 
 const { G3DLayerType, M3DTileDataInfo } = G3D;
 
@@ -227,6 +228,11 @@ export default {
     highlightStyle: {
       type: String,
       default: "rgba(255,255,0,0.5)"
+    },
+    // 挂靠的查询参数，比如三维简单要素类，如果有挂靠的查询参数，则拾取的要素属性使用从三维简单要素类里的内容
+    searchParams: {
+      type: Object,
+      default: () => {}
     }
   },
   mixins: [PopupMixin],
@@ -1083,7 +1089,7 @@ export default {
         }
       }
     },
-    queryStatic(movement) {
+    async queryStatic(movement) {
       const vm = this;
       vm.featureproperties = undefined;
       vm.featurevisible = false;
@@ -1152,16 +1158,22 @@ export default {
             tileset.pickedColor = Cesium.Color.fromCssColorString(
               this.highlightStyle
             );
-            if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
-              let result = feature.content.getAttributeByOID(oid) || {};
-              vm.featureproperties = result;
-              vm.iClickFeatures = [{ properties: result }];
+            const properties = await this.getFeaturePorpertiesByOid(oid);
+            if (Object.keys(properties).length > 0) {
+              vm.featureproperties = properties;
+              vm.iClickFeatures = [{ properties }];
             } else {
-              tileset.queryAttributes(oid).then(function(result) {
-                result = result || {};
+              if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
+                let result = feature.content.getAttributeByOID(oid) || {};
                 vm.featureproperties = result;
                 vm.iClickFeatures = [{ properties: result }];
-              });
+              } else {
+                tileset.queryAttributes(oid).then(function(result) {
+                  result = result || {};
+                  vm.featureproperties = result;
+                  vm.iClickFeatures = [{ properties: result }];
+                });
+              }
             }
           }
           if (
@@ -1214,6 +1226,50 @@ export default {
     },
     projectScreen(file) {
       this.$emit("project-screen", file);
+    },
+    async getFeaturePorpertiesByOid(oid) {
+      const properties = {};
+      if (this.searchParams) {
+        const {
+          ip,
+          port,
+          domain,
+          serverName,
+          layerIndex,
+          gdbp
+        } = this.searchParams;
+        const featureSet = await Feature.FeatureQuery.query(
+          {
+            ip,
+            port: port.toString(),
+            domain,
+            f: "json",
+            IncludeAttribute: true,
+            IncludeGeometry: false,
+            IncludeWebGraphic: false,
+            where: null,
+            gdbp,
+            docName: serverName,
+            layerIdxs: layerIndex,
+            rtnLabel: false,
+            objectIds: oid,
+            requestType: "POST"
+          },
+          false,
+          true
+        );
+        if (featureSet && featureSet.SFEleArray) {
+          const { AttStruct, SFEleArray } = featureSet;
+          const { FldAlias, FldName } = AttStruct;
+          const { AttValue } = SFEleArray[0];
+
+          for (let i = 0; i < AttValue.length; i++) {
+            const tag = FldAlias[i] ? FldAlias[i] : FldName[i];
+            properties[tag] = AttValue[i];
+          }
+        }
+      }
+      return properties;
     }
   }
 };

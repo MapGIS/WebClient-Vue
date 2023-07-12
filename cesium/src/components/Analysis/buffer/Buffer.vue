@@ -320,8 +320,8 @@ const { ClassBufferBySingleRing, FeatureBuffBySingleRing } = Zondy.MRFWS;
 const { VectorLayer } = Zondy.MRCS;
 // 引入第三方turf->buffer
 import * as turf from "@turf/turf";
-import { setDepthTestAgainstTerrainEnable } from "../WebGlobe/util";
-import { featureGeoJSONTofeatureIGSForBuffer } from "../Utils/feature-convert";
+import { setDepthTestAgainstTerrainEnable } from "../../WebGlobe/util";
+import { featureGeoJSONTofeatureIGSForBuffer } from "../../Utils/feature-convert";
 import { Style } from "@mapgis/webclient-es6-service";
 const { FillStyle } = Style;
 
