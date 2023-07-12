@@ -10,7 +10,16 @@ import PopupLayer from "./PopupLayer";
 export default {
   name: "mapgis-3d-popup",
   props: {
-    ...PopupOptions
+    ...PopupOptions,
+    popupWapperStyle: {
+      type: Object
+    },
+    popupHeaderStyle: {
+      type: Object
+    },
+    popupCloseBtnStyle: {
+      type: Object
+    }
   },
   model: {
     prop: "visible",
@@ -54,6 +63,27 @@ export default {
         this.isPopupOptionsChange = true;
         this.update();
       }
+    },
+    popupWapperStyle: {
+      deep: true,
+      handler() {
+        this.isPopupOptionsChange = true;
+        this.update();
+      }
+    },
+    popupHeaderStyle: {
+      deep: true,
+      handler() {
+        this.isPopupOptionsChange = true;
+        this.update();
+      }
+    },
+    popupCloseBtnStyle: {
+      deep: true,
+      handler() {
+        this.isPopupOptionsChange = true;
+        this.update();
+      }
     }
   },
   updated() {
@@ -80,7 +110,16 @@ export default {
     },
     createCesiumObject() {
       const vm = this;
-      let { Cesium, vueCesium, position, options, container } = this;
+      let {
+        Cesium,
+        vueCesium,
+        position,
+        options,
+        container,
+        popupWapperStyle,
+        popupCloseBtnStyle,
+        popupHeaderStyle
+      } = this;
       vueCesium = vueCesium || window.vueCesium;
 
       if (this.$slots.default) {
@@ -117,7 +156,15 @@ export default {
 
       let viewer = this.getViewer();
 
-      return new PopupLayer(viewer, position, options, container);
+      return new PopupLayer(
+        viewer,
+        position,
+        options,
+        container,
+        popupWapperStyle,
+        popupHeaderStyle,
+        popupCloseBtnStyle
+      );
     },
     mount() {
       let { viewer, vueKey, vueIndex, vueCesium } = this;
