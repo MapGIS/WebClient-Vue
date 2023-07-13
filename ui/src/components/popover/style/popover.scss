@@ -15,7 +15,7 @@ $popup-width: 280px;
 .mapgis-feature-popup-container {
   padding: 0px 12px 10px 12px;
   overflow: hidden;
-  width: $popup-width;
+  // width: $popup-width;
 }
 
 .mapgis-2d-geojson-default-popup {
@@ -234,6 +234,7 @@ $popup-width: 280px;
 
 /*第五种popup样式*/
 .mapgis-popup-table-row {
+  color: $text-color;
   text-align: left;
   white-space: nowrap;
   padding: 0;

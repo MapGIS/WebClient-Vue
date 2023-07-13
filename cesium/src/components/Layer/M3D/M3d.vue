@@ -135,21 +135,18 @@ export default {
         return new Promise(
           resolve => {
             let layerIndex;
+            let options = this.getOptions();
+            options.loaded = vm.onSceneLoaded;
             // 判断服务类型，三维场景服务调用Cesium底层appendSceneLayer，本质是调用appendSceneServer方法
             if (url.indexOf("SceneServer") !== -1) {
-              let options = this.getOptions();
-              options.loaded = vm.onSceneLoaded;
               viewer.scene.layers.appendSceneLayer(url, options);
               layerIndex = viewer.scene.layers._index;
               // const sceneLayer = viewer.scene.layers.sceneLayerMap.get(layerIndex);
-              resolve({ layerIndex: layerIndex });
             } else {
               // M3D服务调用Cesium底层appendM3DLayer方法
-              let options = this.getOptions();
-              options.loaded = vm.onM3dLoaded;
               layerIndex = viewer.scene.layers.appendM3DLayer(url, options);
-              resolve({ layerIndex: layerIndex });
             }
+            resolve({ layerIndex: layerIndex });
           },
           reject => {}
         );
@@ -198,7 +195,21 @@ export default {
         vm.bindPopupEvent();
       }
     },
-    onM3dLoaded(e, n) {},
+    onM3dLoaded(tileset, n) {
+      const vm = this;
+      const { vueIndex, vueKey, vueCesium, url } = this;
+      if (tileset) {
+        let m3ds = [tileset];
+        vm.loopM3d(m3ds, "2.0");
+        vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, {
+          version: "2.0",
+          url: url
+        });
+        console.log("vueCesium.M3DIgsManager", vueCesium.M3DIgsManager);
+        vm.$emit("loaded", { tileset: tileset, m3ds: m3ds });
+        vm.bindPopupEvent();
+      }
+    },
     mount() {
       const vm = this;
       const { viewer, vueIndex, vueKey, vueCesium, $props } = this;
@@ -394,7 +405,7 @@ export default {
           vueKey,
           vueIndex,
           "pickStyle",
-          tileset.pickedColor
+          tileset.pickedColor || Cesium.Color.fromCssColorString(color)
         );
         tileset.pickedOid = oid;
         tileset.pickedColor = Cesium.Color.fromCssColorString(color);
@@ -592,9 +603,9 @@ export default {
         }
       };
       // let loop = window.setInterval(() => {
-        m3ds.forEach(m3d => {
-          vm.checkType(m3d, dataCallback);
-        });
+      m3ds.forEach(m3d => {
+        vm.checkType(m3d, dataCallback);
+      });
       // }, 100);
     },
     parseLayers(layerString) {
