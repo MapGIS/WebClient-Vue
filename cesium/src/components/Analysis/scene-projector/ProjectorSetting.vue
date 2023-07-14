@@ -464,7 +464,10 @@ export default {
         this.settingsCopy = JSON.parse(JSON.stringify(this.settings));
         this.scenePro = this.putProjector(this.settingsCopy);
         this.renderType = this.settingsCopy.params.renderType || 0;
-        this.heightReference = this.settingsCopy.params.heightReference || 2;
+        this.heightReference =
+          this.settingsCopy.params.heightReference != undefined
+            ? this.settingsCopy.params.heightReference
+            : 2;
         this.offsetHeight = this.settingsCopy.params.offsetHeight || 5;
         this._changeProjectorType();
       },
@@ -601,7 +604,7 @@ export default {
       ],
       // 离地高度设置
       heightReferenceTypes: [
-        { value: 0, label: "使用边界点的高度" },
+        { value: 0, label: "使用边界点的高度,仅在绘制区域选择为多边形时生效" },
         {
           value: 1,
           label: "忽略边界点的高度,使用指定的高度"
@@ -668,6 +671,7 @@ export default {
         switch (e) {
           case 0:
             graphic.style.perPositionHeight = true;
+            graphic.style.classificationType = undefined;
             break;
           case 1:
             graphic.style.perPositionHeight = false;
@@ -958,6 +962,11 @@ export default {
             }
             vm._updateOrientation(preHeading, prePitch);
           }
+        } else if (vm.renderType == 1) {
+          //绘制模式下监听右键点击获取多边形高度
+          const cartesian = viewer.scene.pickPosition(movement.position);
+          let cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+          vm.graphicHeight = cartographic.height;
         }
         vm.isGetTargetPosition = false;
       }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
@@ -1044,14 +1053,25 @@ export default {
         let lnglatArr = vm.getRectDegrees(param2[0], param2[1]);
         vm.params.areaCoords = lnglatArr;
         let type = "rectangle";
-        let position = Cesium.Cartesian3.fromDegreesArray(lnglatArr, ellipsoid);
+        let position = cartesian3;
         vm.createProject(type, position, videoElement);
       } else {
         // 多边形
         let degreeArr = vm.getPolygonDegrees(param2);
         vm.params.areaCoords = degreeArr;
         let type = "polygon";
-        let position = cartesian3;
+        let position = [];
+        for (let i = 0; i < param2.length; i++) {
+          param2[i][2] = vm.graphicHeight;
+          position.push(
+            Cesium.Cartesian3.fromDegrees(
+              param2[i][0],
+              param2[i][1],
+              param2[i][2],
+              ellipsoid
+            )
+          );
+        }
         // 投影
         vm.createProject(type, position, videoElement);
       }
