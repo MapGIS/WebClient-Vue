@@ -64,7 +64,8 @@ export default {
   computed: {
     checkLayers() {
       return (
-        this.layers.filter(item => [6, 5, 23, 11].includes(item.type)) || []
+        // this.layers.filter(item => [6, 5, 23, 11].includes(item.type)) || []
+        this.layers.filter(item => item.type)
       );
     }
   },

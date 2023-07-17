@@ -26,6 +26,10 @@ export default {
     enablePopup: {
       type: Boolean,
       default: true
+    },
+    componentWidth: {
+      type: [Number, String],
+      default: 280
     }
   },
   data() {

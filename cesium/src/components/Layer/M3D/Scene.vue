@@ -163,15 +163,25 @@
       v-if="featureposition"
       :position="featureposition"
       :popupOptions="popupOptions"
+      v-bind="popupConfig"
       v-model="featurevisible"
     >
-      <mapgis-3d-popup-iot
+      <!-- <mapgis-3d-popup-iot
         :properties="featureproperties"
         :dataStoreIp="dataStoreIp"
         :dataStorePort="dataStorePort"
         :dataStoreDataset="dataStoreDataset"
       >
-      </mapgis-3d-popup-iot>
+      </mapgis-3d-popup-iot> -->
+      <!-- <mapgis-3d-monitor-point-popup :properties="featureproperties" /> -->
+      <component
+        :is="popupComponent"
+        :properties="featureproperties"
+        :dataStoreIp="dataStoreIp"
+        :dataStorePort="dataStorePort"
+        :dataStoreDataset="dataStoreDataset"
+        v-bind="popupConfig"
+      />
     </mapgis-3d-feature-popup>
     <mapgis-3d-popup-feature-detail
       v-if="showDetail && isUnClosePopup"
@@ -227,6 +237,19 @@ export default {
     highlightStyle: {
       type: String,
       default: "rgba(255,255,0,0.5)"
+    },
+    // 气泡框配置
+    popupConfig: {
+      type: Object,
+      default: () => {
+        return {
+          component: "mapgis-3d-monitor-point-popup",
+          componentWidth: 580,
+          type: "data",
+          access_token: "U95_PewQPaUqOvqcCC6DtWGAn1sHZnc6rhTCrj7tzuU",
+          dataUrl: "https://szaqxsbg.szsti.org:8060/hotel/api/QueryJcjkHqjcXm"
+        };
+      }
     }
   },
   mixins: [PopupMixin],
@@ -301,6 +324,19 @@ export default {
         return self.m3ds;
       }
     };
+  },
+  computed: {
+    popupComponent() {
+      return this.popupConfig?.component || "mapgis-3d-popup-iot";
+    },
+    popupType() {
+      console.log("popupType", this.popupConfig?.type);
+      return this.popupConfig?.type;
+    },
+    popupWidth() {
+      console.log("popupWidth", this.popupConfig?.componentWidth);
+      return this.popupConfig?.componentWidth;
+    }
   },
   created() {},
   mounted() {

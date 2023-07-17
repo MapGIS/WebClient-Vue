@@ -1,0 +1,486 @@
+<template>
+  <div class="monitor-point-popup-wrapper">
+    <div class="data-point-content" v-if="type === 'data'">
+      <div class="monitor-left">
+        <span class="monitor-title">监测点信息</span>
+        <mapgis-ui-list
+          item-layout="horizontal"
+          :data-source="dataList"
+          size="small"
+          class="table-marker"
+          bordered
+        >
+          <mapgis-ui-list-item
+            slot="renderItem"
+            slot-scope="item"
+            class="table-marker-item"
+          >
+            <div :title="item">
+              {{ item }}
+            </div>
+            <div :title="infoData[item]">
+              {{ infoData[item] }}
+            </div>
+          </mapgis-ui-list-item>
+        </mapgis-ui-list>
+      </div>
+      <div class="monitor-right">
+        <span class="monitor-title">监测曲线</span>
+        <div class="monitor-search-time">
+          <a-range-picker
+            :locale="locale"
+            :show-time="{ format: 'HH:mm:ss' }"
+            :placeholder="['开始时间', '结束时间']"
+            v-model="timePick"
+            format="YYYY-MM-DD HH:mm:ss"
+            @change="onChange"
+            @openChange="openChange"
+          />
+          <mapgis-ui-select
+            default-value="最近一周"
+            style="width: 100px;margin-left: 5px"
+            @change="handleChange"
+          >
+            <mapgis-ui-select-option
+              v-for="(item, index) in selectTimeRange"
+              :value="item.label"
+              :key="index"
+            >
+              {{ item.label }}
+            </mapgis-ui-select-option>
+          </mapgis-ui-select>
+        </div>
+        <div :ref="id" class="monitor-echart" v-show="showEcharts" />
+        <span class="monitor-tips" v-show="!showEcharts">暂无数据</span>
+      </div>
+    </div>
+    <div class="monitor-point-content" v-if="type === 'video'">
+      <video
+        class="monitor-video"
+        controls="controls"
+        autoplay="autoplay"
+        src="https://www.w3school.com.cn/i/movie.ogg"
+      ></video>
+    </div>
+  </div>
+</template>
+
+<script>
+import axios from "axios";
+import * as echarts from "echarts";
+import moment from "moment";
+import locale from "ant-design-vue/es/date-picker/locale/zh_CN";
+export default {
+  name: "mapgis-3d-monitor-point-popup",
+  props: {
+    properties: {
+      type: Object,
+      default: () => {}
+    },
+    // 气泡框配置
+    componentWidth: {
+      type: [Number, String],
+      default: 980
+    },
+    type: {
+      type: String,
+      default: "data"
+    },
+    // token
+    access_token: {
+      type: String,
+      default: "U95_PewQPaUqOvqcCC6DtWGAn1sHZnc6rhTCrj7tzuU"
+    },
+    // 请求路径
+    dataUrl: {
+      type: String,
+      default: "https://szaqxsbg.szsti.org:8060"
+    },
+    // 接口返回数据对应关系
+    propertyRelation: {
+      type: Object,
+      default: () => {
+        return {
+          cd: "监测点编号",
+          jcdw: "监测单位",
+          jcdx: "监测对象",
+          ssyq: "所属测区",
+          lx: "监测类型",
+          jcxm: "监测项目",
+          fs: "监测方式",
+          mon_project_unit: "监测指标单位"
+        };
+      }
+    }
+  },
+  data() {
+    return {
+      id: Math.floor(Math.random() * 100000),
+      infoData: {},
+      showEcharts: true,
+      timePick: [moment().subtract(1, "weeks"), moment()],
+      timeRange: {
+        今天: [moment().startOf("day"), moment()],
+        昨天: [
+          moment()
+            .startOf("day")
+            .subtract(1, "days"),
+          moment()
+            .endOf("day")
+            .subtract(1, "days")
+        ],
+        最近一周: [moment().subtract(1, "weeks"), moment()],
+        最近一月: [moment().subtract(1, "months"), moment()],
+        最近一季: [moment().subtract(3, "months"), moment()],
+        最近一年: [moment().subtract(1, "years"), moment()],
+        全部: ["", moment()]
+      },
+      locale,
+      selectTimeRange: [
+        {
+          label: "今天"
+        },
+        {
+          label: "昨天"
+        },
+        {
+          label: "最近一周"
+        },
+        {
+          label: "最近一月"
+        },
+        {
+          label: "最近一季"
+        },
+        {
+          label: "最近一年"
+        },
+        {
+          label: "全部"
+        }
+      ],
+      hasChange: false
+    };
+  },
+  computed: {
+    dataList() {
+      return Object.keys(this.infoData);
+    }
+  },
+
+  async mounted() {
+    if (this.type === "data") {
+      await this.getMonitorData();
+      setTimeout(() => {
+        this.initEcharts();
+      }, 500);
+    }
+  },
+
+  methods: {
+    async initEcharts() {
+      const beginDate = this.timePick[0]
+        ? moment(this.timePick[0]).format("YYYY-MM-DD+HH:mm:ss")
+        : undefined;
+      const endDate = this.timePick[1]
+        ? moment(this.timePick[1]).format("YYYY-MM-DD+HH:mm:ss")
+        : undefined;
+      await this.getMonitorEchartsData(endDate, beginDate);
+    },
+    getMonitorData() {
+      axios
+        .get(
+          `${this.dataUrl}/hotel/api/QueryJcjkHqjcXm?access_token=${this.access_token}&mon_point_id=${this.properties.monPntID}`
+        )
+        .then(res => {
+          if (res.status === 200) {
+            const data = res.data;
+            if (data.records && data.records.length === 0) {
+              this.$message.info(
+                `监测点${this.properties.monPntID}未查询到信息!`
+              );
+              return;
+            }
+            const record = data.records[0];
+            const info = {};
+            Object.keys(this.propertyRelation).forEach(item => {
+              const key = this.propertyRelation[item];
+              info[key] = record[item];
+            });
+            this.infoData = {
+              监测点编号: record.cd,
+              监测单位: record.jcdw,
+              监测对象: record.jcdx,
+              所属测区: record.ssyq,
+              监测类型: record.lx,
+              监测项目: record.jcxm,
+              监测方式: record.fs,
+              监测指标单位: record.mon_project_unit
+            };
+          }
+        })
+        .catch(e => {
+          this.$message.error(e);
+        });
+    },
+    getMonitorEchartsData(endDate, beginDate) {
+      let url = `${this.dataUrl}/hotel/api/QueryJcjkHqjcSj?access_token=${this.access_token}&mon_point_id=${this.properties.monPntID}`;
+      if (endDate) {
+        url = url + `&endDate=${endDate}`;
+      }
+      if (beginDate) {
+        url = url + `&beginDate=${beginDate}`;
+      }
+      axios
+        .get(url)
+        .then(res => {
+          if (res.status === 200) {
+            const data = res.data;
+            if (data.records && data.records.length === 0) {
+              // this.$message.info(
+              //   `监测点${this.properties.monPntID}未查询到监测数据信息!`
+              // );
+              this.showEcharts = false;
+              return;
+            }
+            const timeerDate = res.data.records.reduce((arr, item) => {
+              const res = [item["mon_time_ts"], item["mon_acc_value"]];
+              arr.push(res);
+              return arr;
+            }, []);
+            this.showEcharts = true;
+            if (this.myCharts) {
+              this.$nextTick(() => {
+                this.resizeEcharts(timeerDate);
+              });
+            } else {
+              this.$nextTick(() => {
+                this.drawEcharts(timeerDate);
+              });
+            }
+          } else {
+            this.showEcharts = false;
+          }
+        })
+        .catch(e => {
+          this.showEcharts = false;
+          this.$message.error(e);
+        });
+    },
+    drawEcharts(data) {
+      const echartsDom = this.$refs[this.id];
+      if (!echartsDom) return;
+      this.myCharts = echarts.init(echartsDom, null, {
+        renderer: "canvas",
+        useDirtyRect: false,
+        width: echartsDom.clientWidth,
+        height: echartsDom.clientHeight
+      });
+      const option = {
+        tooltip: {
+          trigger: "axis"
+          // position: function(pt) {
+          //   return [pt[0], "10%"];
+          // }
+        },
+        legend: {
+          data: ["第三方监测数据"],
+          right: 30,
+          textStyle: {
+            color: "#fff"
+          }
+        },
+        grid: {
+          top: 30,
+          left: "8%",
+          right: 34
+        },
+        toolbox: {
+          iconStyle: {
+            color: "#111",
+            borderColor: "#fff"
+          },
+          top: -4,
+          feature: {
+            saveAsImage: {}
+          }
+        },
+        xAxis: {
+          type: "time",
+          boundaryGap: false,
+          interval: 24 * 1 * 60 * 60 * 1000,
+          axisLine: {
+            show: true
+          },
+          textStyle: {
+            color: "#fff"
+          },
+          axisLabel: {
+            color: "#fff"
+          }
+        },
+        yAxis: {
+          type: "value",
+          boundaryGap: [0, "100%"],
+          axisLine: {
+            show: true
+          },
+          textStyle: {
+            color: "#fff",
+            lineStyle: {
+              color: "#ccc"
+            }
+          },
+          axisLabel: {
+            color: "#fff"
+          },
+          splitLine: {
+            lineStyle: {
+              color: "#6a6969",
+              type: "dashed"
+            }
+          }
+        },
+        dataZoom: [
+          //1.横向使用滚动条
+          {
+            type: "slider", //有单独的滑动条，用户在滑动条上进行缩放或漫游。inside是直接可以是在内部拖动显示
+            show: true, //是否显示 组件。如果设置为 false，不会显示，但是数据过滤的功能还存在。
+            start: 80, //数据窗口范围的起始百分比0-100
+            end: 100, //数据窗口范围的结束百分比0-100
+            xAxisIndex: [0], // 此处表示控制第一个xAxis，设置 dataZoom-slider 组件控制的 x轴 可是已数组[0,2]表示控制第一，三个；xAxisIndex: 2 ，表示控制第二个。yAxisIndex属性同理
+            bottom: 10 //距离底部的距离
+          },
+          //2.在内部可以横向拖动
+          // {
+          //   type: "inside", // 内置于坐标系中
+          //   start: 0,
+          //   end: 30,
+          //   xAxisIndex: [0]
+          // },
+          //3.纵向使用滚动条
+          {
+            type: "slider",
+            show: true,
+            yAxisIndex: [0], //设置组件控制的y轴
+            left: "95%", //距离左侧的距离 可以使百分比，也可以是像素 left: '30'（30像素）
+            start: 0,
+            end: 100
+          }
+          //4.在内部可以纵向拖动
+          // {
+          //   type: "inside",
+          //   yAxisIndex: [0],
+          //   start: 29,
+          //   end: 36
+          // }
+        ],
+        series: [
+          {
+            name: "第三方监测数据",
+            type: "line",
+            smooth: true,
+            symbol: "none",
+            // areaStyle: {},
+            data: data
+          }
+        ]
+      };
+      this.myCharts.setOption(option);
+    },
+    resizeEcharts(data) {
+      const options = this.myCharts.getOption();
+      if (!options) {
+        this.drawEcharts(data);
+      } else {
+        options.series[0].data = data;
+        this.myCharts.setOption(options);
+        this.myCharts.resize();
+      }
+    },
+    onChange(val) {
+      this.hasChange = true;
+    },
+    openChange(status) {
+      if (!status && this.hasChange) {
+        this.hasChange = !this.hasChange;
+        this.initEcharts();
+      }
+    },
+    handleChange(val) {
+      const date = JSON.parse(JSON.stringify(this.timeRange[val]));
+      this.timePick = date;
+      this.initEcharts();
+    }
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+.monitor-point-popup-wrapper {
+  padding: 5px 0;
+  .data-point-content {
+    display: flex;
+    .monitor-title {
+      color: var(--text-color);
+    }
+    .monitor-left {
+      .mapgis-ui-divider-horizontal {
+        margin: 12px 0;
+      }
+      .table-marker {
+        max-width: 350px !important;
+        max-height: 300px !important;
+        line-height: 2;
+        margin-bottom: 10px;
+        .table-marker-item {
+          display: flex;
+          padding: 0;
+        }
+        .table-marker-item:nth-child(2n) {
+          background-color: var(--background-light);
+        }
+
+        .table-marker-item > div {
+          padding: 2px 2px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          padding: 3px 6px;
+        }
+
+        .table-marker-item > div:first-child {
+          width: 120px;
+          border-right: 1px solid var(--border-color-base);
+        }
+
+        .table-marker-item > div:last-child {
+          flex: 1 0 0%;
+        }
+      }
+    }
+    .monitor-right {
+      flex: 1;
+      margin-left: 12px;
+      display: flex;
+      flex-direction: column;
+      .monitor-echart {
+        flex: 1;
+      }
+      .monitor-tips {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--text-color);
+      }
+    }
+  }
+  .monitor-point-content {
+    margin-top: 15px;
+    .monitor-video {
+      width: 100%;
+    }
+  }
+}
+</style>
