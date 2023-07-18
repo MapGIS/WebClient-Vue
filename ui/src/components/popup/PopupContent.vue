@@ -1,5 +1,9 @@
 <template>
-  <div :id="id" class="mapgis-feature-popup-container">
+  <div
+    :id="id"
+    class="mapgis-feature-popup-container"
+    :style="{ width: `${width}px` }"
+  >
     <slot :popup="popupOptionsCopy">
       <div :class="popupOptionsCopy.class.containerClass">
         <mapgis-ui-carousel autoplay>
@@ -26,7 +30,7 @@
             overflowY:
               popupOptionsCopy.fields.length > popupOptionsCopy.scrollNum
                 ? 'scroll'
-                : 'none',
+                : 'none'
           }"
         >
           <div :key="index" v-for="(field, index) in popupOptionsCopy.fields">
@@ -72,14 +76,18 @@ export default {
       type: Object,
       default() {
         return {};
-      },
+      }
     },
     feature: {
       type: Object,
       default() {
         return {};
-      },
+      }
     },
+    width: {
+      type: Number,
+      default: 280
+    }
   },
   data() {
     return {
@@ -93,42 +101,42 @@ export default {
           titleClass: "mapgis-ui-popup-content-title",
           rowClass: "mapgis-ui-popup-content-row",
           fieldClass: "mapgis-ui-popup-content-field",
-          valueClass: "mapgis-ui-popup-content-value",
+          valueClass: "mapgis-ui-popup-content-value"
         },
         style: {
           containerStyle: {
-            width: "300px",
+            width: "300px"
           },
           titleStyle: {},
           rowStyle: {},
           fieldStyle: {},
-          valueStyle: {},
+          valueStyle: {}
         },
         fields: [],
         feature: {
           geometry: {},
-          properties: {},
+          properties: {}
         },
-        scrollNum: 4,
+        scrollNum: 4
       },
       rowHeight: 30,
       titleHeight: 30,
-      showCarousel: false,
+      showCarousel: false
     };
   },
   watch: {
     popupOptions: {
-      handler: function (next) {
+      handler: function(next) {
         this.$_init();
       },
-      deep: true,
+      deep: true
     },
     feature: {
-      handler: function (next) {
+      handler: function(next) {
         this.$_init();
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   computed: {
     defaultRowClass() {
@@ -138,7 +146,7 @@ export default {
           this.popupOptionsCopy.popupType === "card" ||
           this.popupOptionsCopy.popupType === "underline",
         "mapgis-popup-table-row": this.popupOptionsCopy.popupType === "table",
-        "mapgis-popup-point-row": this.popupOptionsCopy.popupType === "point",
+        "mapgis-popup-point-row": this.popupOptionsCopy.popupType === "point"
       };
     },
     defaultValueClass() {
@@ -151,7 +159,7 @@ export default {
         "mapgis-popup-item mapgis-popup-point-item mapgis-popup-value mapgis-popup-point-value":
           this.popupOptionsCopy.popupType === "point",
         "mapgis-popup-item mapgis-popup-underline-item mapgis-popup-value mapgis-popup-underline-value":
-          this.popupOptionsCopy.popupType === "underline",
+          this.popupOptionsCopy.popupType === "underline"
       };
     },
     defaultFieldClass() {
@@ -164,9 +172,9 @@ export default {
         "mapgis-popup-item mapgis-popup-point-item mapgis-popup-field mapgis-popup-point-value":
           this.popupOptionsCopy.popupType === "point",
         "mapgis-popup-item mapgis-popup-underline-item mapgis-popup-field":
-          this.popupOptionsCopy.popupType === "underline",
+          this.popupOptionsCopy.popupType === "underline"
       };
-    },
+    }
   },
   mounted() {
     this.$_init();
@@ -192,21 +200,25 @@ export default {
         this.popupOptionsCopy.fields = [];
       }
       //如果fields数量为0，则取得properties里的所有健名
-      if (this.popupOptionsCopy.fields.length === 0 && this.feature.properties) {
+      if (
+        this.popupOptionsCopy.fields.length === 0 &&
+        this.feature.properties
+      ) {
         this.popupOptionsCopy.fields = Object.keys(this.feature.properties);
       }
       if (this.popupOptionsCopy.popupType === "card") {
         if (this.feature.properties && this.feature.properties.images) {
           if (typeof this.feature.properties.images === "string") {
-            this.feature.properties.images =
-              this.feature.properties.images.split(";");
+            this.feature.properties.images = this.feature.properties.images.split(
+              ";"
+            );
             this.showCarousel = true;
           } else if (this.feature.properties.images instanceof Array) {
             this.showCarousel = true;
           }
         }
       }
-      this.$nextTick(function () {
+      this.$nextTick(function() {
         // let rows =  document.getElementsByClassName("mapgis-popup-row");
         // let title =  document.getElementsByClassName("mapgis-popup-title");
         // this.titleHeight = title[0] ? title[0].clientHeight + 2 : 34;
@@ -229,8 +241,8 @@ export default {
         value = properties[field];
       }
       return value;
-    },
-  },
+    }
+  }
 };
 </script>
 
