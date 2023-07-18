@@ -20,7 +20,14 @@ export default {
   },
   render(h) {
     // props
-    let { enablePopup, enableTips, enableIot, properties } = this;
+    let {
+      enablePopup,
+      enableTips,
+      enableIot,
+      properties,
+      custom,
+      componentWidth,
+    } = this;
     let { popupOptions, tipsOptions, iotOptions } = this;
     let { customPopup, customTips } = this;
 
@@ -131,6 +138,7 @@ export default {
               <mapgis-ui-popup-content
                 feature={feature}
                 popupOptions={popupOptions}
+                width={componentWidth}
               >
                 {defaultSlot}
               </mapgis-ui-popup-content>
