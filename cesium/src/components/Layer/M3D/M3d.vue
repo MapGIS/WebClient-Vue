@@ -10,7 +10,7 @@
       </modelSwitchPopup>
     </mapgis-ui-popup-content>
   </Popup>
-  <mapgis-3d-virtual-popup
+  <!-- <mapgis-3d-virtual-popup
     v-else-if="popupShowType === 'default'"
     :enablePopup="enablePopup"
     :enableTips="enableTips"
@@ -22,7 +22,20 @@
     :clickPosition="iClickPosition"
     :clickFeatures="iClickFeatures"
   >
-  </mapgis-3d-virtual-popup>
+  </mapgis-3d-virtual-popup> -->
+  <mapgis-3d-feature-popup
+    v-else-if="popupShowType === 'default' && featureposition"
+    :position="featureposition"
+    :popupOptions="popupOptions"
+  >
+    <mapgis-3d-popup-iot
+      :properties="featureproperties"
+      :dataStoreIp="dataStoreIp"
+      :dataStorePort="dataStorePort"
+      :dataStoreDataset="dataStoreDataset"
+    >
+    </mapgis-3d-popup-iot>
+  </mapgis-3d-feature-popup>
 </template>
 
 <script>
@@ -49,6 +62,25 @@ export default {
     popupOverlay: {
       type: Object,
       default: () => {}
+    },
+    dataStoreIp: {
+      type: String,
+      default: "192.168.96.101"
+    },
+    dataStorePort: {
+      type: String,
+      default: "9014"
+    },
+    // 查询知识图谱的数据集位置
+    dataStoreDataset: {
+      type: String,
+      default: "Graph3/GraphDataset1"
+    },
+    popupOptions: {
+      type: Object,
+      default: () => {
+        return { popupType: "card" };
+      }
     }
   },
   components: {
@@ -63,7 +95,9 @@ export default {
       modelSwitchVisible: false,
       tileIndex: undefined,
       tile: {},
-      iEnableIot: false
+      iEnableIot: false,
+      featureposition: undefined,
+      featureproperties: undefined
     };
   },
   created() {},
@@ -378,7 +412,7 @@ export default {
       const { movement } = payload;
 
       const { popupOptions, highlightStyle, vueKey, vueIndex } = this;
-      const { color = "rgba(255, 255, 0, 0.6)" } = highlightStyle;
+      // const { color = "rgba(255, 255, 0, 0.6)" } = highlightStyle;
       const { viewer } = this;
       const { version, layerIndex } = this;
 
@@ -395,6 +429,13 @@ export default {
         }
         let oid = viewer.scene.pickOid(movement.position);
         let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
+        if (feature.tileset !== tileset) {
+          tileset.pickedOid = oid;
+          tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
+          this.featureposition = undefined;
+          this.featureproperties = undefined;
+          return;
+        }
         vueCesium.M3DIgsManager.changeOptions(
           vueKey,
           vueIndex,
@@ -405,17 +446,18 @@ export default {
           vueKey,
           vueIndex,
           "pickStyle",
-          tileset.pickedColor || Cesium.Color.fromCssColorString(color)
+          tileset.pickedColor || Cesium.Color.fromCssColorString(highlightStyle)
         );
         tileset.pickedOid = oid;
-        tileset.pickedColor = Cesium.Color.fromCssColorString(color);
+        tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
         let titlefield = popupOptions ? popupOptions.title : undefined;
         if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
           let result = feature.content.getAttributeByOID(oid) || {};
           if (this.popupShowType === "default") {
-            vm.iClickFeatures = [
-              { properties: result, title: result[titlefield] }
-            ];
+            // vm.iClickFeatures = [
+            //   { properties: result, title: result[titlefield] }
+            // ];
+            vm.featureproperties = result;
           } else {
             // title放在最前面
             let popupContent = {};
@@ -428,9 +470,10 @@ export default {
           tileset.queryAttributes(oid).then(function(result) {
             result = result || {};
             if (this.popupShowType === "default") {
-              vm.iClickFeatures = [
-                { properties: result, title: result[titlefield] }
-              ];
+              // vm.iClickFeatures = [
+              //   { properties: result, title: result[titlefield] }
+              // ];
+              vm.featureproperties = result;
             } else {
               // title放在最前面
               let popupContent = {};
@@ -441,32 +484,32 @@ export default {
             }
           });
         }
-        if (
-          this.popupShowType === "default" &&
-          vm.iClickFeatures &&
-          vm.iClickFeatures.length > 0
-        ) {
-          let clickinfo = vm.iClickFeatures[0];
-          const { properties } = clickinfo;
-          if (properties) {
-            Object.keys(properties).forEach(k => {
-              if (k.toLowerCase() == "euid") vm.iEnableIot = true;
-            });
-          }
+        if (this.popupShowType === "default" && vm.iClickPosition) {
+          vm.featureposition = vm.iClickPosition;
+          // let clickinfo = vm.iClickFeatures[0];
+          // const { properties } = clickinfo;
+          // if (properties) {
+          //   Object.keys(properties).forEach(k => {
+          //     if (k.toLowerCase() == "euid") vm.iEnableIot = true;
+          //   });
+          // }
         }
       }
     },
     cancelFeature(payload) {
       const { movement } = payload;
       const { version, layerIndex } = this;
+      const { highlightStyle } = this;
       let oid = viewer.scene.pickOid(movement.position);
       if (version == "0.0" || version == "1.0") {
       } else if (version == "2.0") {
         let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
         tileset.pickedOid = oid;
-        tileset.pickedColor = Cesium.Color.fromCssColorString(
-          "rgba(255, 255, 0, 0.5)"
-        );
+        tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
+        if (!oid) {
+          this.featureposition = undefined;
+          this.featureproperties = undefined;
+        }
       }
       this.popupOverlay && this.popupOverlay.setContent(null);
     },

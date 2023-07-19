@@ -1,5 +1,5 @@
 <template>
-  <mapgis-3d-virtual-popup
+  <!-- <mapgis-3d-virtual-popup
     v-if="popupShowType === 'default'"
     :enablePopup="enablePopup"
     :enableTips="enableTips"
@@ -10,7 +10,20 @@
     :clickPosition="iClickPosition"
     :clickFeatures="iClickFeatures"
   >
-  </mapgis-3d-virtual-popup>
+  </mapgis-3d-virtual-popup> -->
+  <mapgis-3d-feature-popup
+    v-if="popupShowType === 'default' && featureposition"
+    :position="featureposition"
+    :popupOptions="popupOptions"
+  >
+    <mapgis-3d-popup-iot
+      :properties="featureproperties"
+      :dataStoreIp="dataStoreIp"
+      :dataStorePort="dataStorePort"
+      :dataStoreDataset="dataStoreDataset"
+    >
+    </mapgis-3d-popup-iot>
+  </mapgis-3d-feature-popup>
 </template>
 
 <script>
@@ -21,7 +34,9 @@ export default {
   mixins: [Tileset, PopupMixin],
   data() {
     return {
-      layerIndex: undefined
+      layerIndex: undefined,
+      featureposition: undefined,
+      featureproperties: undefined
     };
   },
   watch: {
@@ -111,9 +126,10 @@ export default {
       const { movement } = payload;
 
       const { popupOptions, highlightStyle, vueKey, vueIndex } = this;
-      const { color = "rgba(255, 255, 0, 0.6)" } = highlightStyle;
+      // const { color = "rgba(255, 255, 0, 0.6)" } = highlightStyle;
       const { viewer } = this;
       const { version, layerIndex } = this;
+
       const tileset = viewer.scene.layers.getCesium3DTilesetLayer(layerIndex);
 
       let feature = viewer.scene.pick(movement.position);
@@ -123,12 +139,14 @@ export default {
         vm.iClickFeatures = [];
         vm.iClickPosition = {};
         return;
+      } else {
+        vm.featureposition = vm.iClickPosition;
       }
       if (feature) {
         this.feature = feature;
       }
 
-      feature.color = Cesium.Color.fromCssColorString(color);
+      feature.color = Cesium.Color.fromCssColorString(highlightStyle);
 
       if (this.popupShowType === "default") {
         const propertyNames = feature.getPropertyNames();
@@ -137,9 +155,11 @@ export default {
           propertyNames.forEach(item => {
             properties[item] = feature.getProperty(item);
           });
-          vm.iClickFeatures = [{ properties: properties }];
+          vm.featureproperties = properties;
+          // vm.iClickFeatures = [{ properties: properties }];
         } else {
-          vm.iClickFeatures = [];
+          // vm.iClickFeatures = [];
+          vm.featureproperties = undefined;
         }
       }
     },
@@ -147,6 +167,8 @@ export default {
       if (this.feature) {
         this.feature.color = new Cesium.Color();
         this.feature = null;
+        this.featureposition = undefined;
+        this.featureproperties = undefined;
       }
     }
   }

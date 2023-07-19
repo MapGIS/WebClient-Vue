@@ -8,6 +8,25 @@ export default {
       type: String,
       default: "default",
     },
+    dataStoreIp: {
+      type: String,
+      default: "192.168.96.101",
+    },
+    dataStorePort: {
+      type: String,
+      default: "9014",
+    },
+    // 查询知识图谱的数据集位置
+    dataStoreDataset: {
+      type: String,
+      default: "Graph3/GraphDataset1",
+    },
+    popupOptions: {
+      type: Object,
+      default: () => {
+        return { popupType: "card" };
+      },
+    },
   },
   inject: ["Cesium", "viewer"],
   created() {},
