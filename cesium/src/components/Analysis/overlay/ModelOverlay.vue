@@ -50,9 +50,6 @@
             :hasTopMargin="false"
             :hasBottomMargin="false"
           >
-            <mapgis-ui-tooltip slot="handle" title="导出" @click="exportResult">
-              <mapgis-ui-iconfont class="iconfont-btn" type="mapgis-daochu" />
-            </mapgis-ui-tooltip>
             <mapgis-ui-tooltip slot="handle" title="删除" @click="deleteResult">
               <mapgis-ui-iconfont class="iconfont-btn" type="mapgis-shanchu" />
             </mapgis-ui-tooltip>
@@ -270,7 +267,7 @@ export default {
       const res = await this.modelOverlay(options);
       console.log(res);
       this.maskShow = false;
-      if (this.res) {
+      if (res) {
         this.AnalysisSuccess();
       }
     },
@@ -349,9 +346,6 @@ export default {
       this.maskShow = false;
       console.log("----------叠加分析成功--------------");
       this.$emit("listenLayer", this.destLayer);
-    },
-    exportResult() {
-      this.$emit("exportResult");
     },
     deleteResult() {
       this.$emit("deleteResult");
