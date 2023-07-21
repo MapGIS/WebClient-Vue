@@ -257,11 +257,11 @@
 ```vue
 <template>
   <mapgis-web-scene style="height: 95vh">
-    <mapgis-3d-m3d-layer
+    <mapgis-3d-scene-layer
       :autoReset="autoReset"
       :maximumScreenSpaceError="maximumScreenSpaceError"
       :url="m3dUrl"
-    ></mapgis-3d-m3d-layer>
+    ></mapgis-3d-scene-layer>
     <mapgis-ui-card class="storybook-ui-card">
       <mapgis-3d-projector-manager
         :projectorOverlayLayerList="projectorOverlayLayerList"

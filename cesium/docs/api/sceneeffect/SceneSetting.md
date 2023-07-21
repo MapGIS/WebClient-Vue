@@ -176,7 +176,7 @@
 ```vue
 <template>
   <mapgis-web-scene style="height:95vh">
-    <mapgis-3d-m3d-layer
+    <mapgis-3d-scene-layer
       :auto-reset="autoReset"
       :maximum-screen-space-error="maximumScreenSpaceError"
       :url="m3dUrl"
@@ -198,10 +198,10 @@ export default {
         top: "10px",
         left: "10px",
         width: "320px",
-        background: "#fff"
-      }
+        background: "#fff",
+      },
     };
-  }
+  },
 };
 </script>
 ```

@@ -42,7 +42,7 @@
       :tilingScheme="tilingScheme"
       :token="token"
     ></mapgis-3d-ogc-wmts-layer>
-    <mapgis-3d-m3d-layer :url="m3dUrl1" :autoReset="autoReset" />
+    <mapgis-3d-scene-layer :url="m3dUrl1" :autoReset="autoReset" />
     <mapgis-ui-card class="storybook-ui-card">
       <mapgis-3d-rotate @loaded="loaded"></mapgis-3d-rotate>
     </mapgis-ui-card>

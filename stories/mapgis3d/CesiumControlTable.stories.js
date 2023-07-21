@@ -1,15 +1,14 @@
 export default {
   title: "三维/其他",
-  argTypes: {
-  }
+  argTypes: {},
 };
 
 const Template = (args, { argTypes }) => ({
-  test:argTypes,
+  test: argTypes,
   props: Object.keys(argTypes),
   template: `
     <mapgis-web-scene style="height: 95vh">
-    <mapgis-3d-igs-m3d :url="url"> </mapgis-3d-igs-m3d>
+    <mapgis-3d-scene-layer :url="url"> </mapgis-3d-scene-layer>
     <mapgis-3d-table
         :dataSource="dataSource"
         :pagination="pagination"
@@ -26,39 +25,43 @@ const Template = (args, { argTypes }) => ({
     ></mapgis-3d-table>
     </mapgis-web-scene>
   `,
-  data(){
+  data() {
     return {
       url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/ModelM3D/SceneServer`,
       dataSource: undefined,
       // dataSource: '',
-      pagination:{
-        total:0,
-        pageSize:10
+      pagination: {
+        total: 0,
+        pageSize: 10,
       },
-      show: false
-    }
+    };
   },
   mounted() {
     this.getData();
   },
-  methods:{
-    getData(){
+  methods: {
+    getData() {
       let vm = this;
       let inter = setInterval(function () {
-        if(Zondy.Catalog){
+        if (Zondy.Catalog) {
           clearInterval(inter);
-          vm.query("0",20);
+          vm.query("0", 20);
         }
-      },20);
+      }, 20);
     },
-    query(page,pageCount,orderField,isAsc){
+    query(page, pageCount, orderField, isAsc) {
       let vm = this;
       //初始化参数对象
       let queryParam = new Zondy.Catalog.G3DMapDoc();
       //查询图层的URL路径
-      queryParam.gdbp = "gdbp://MapGisLocalPlus/示例数据/ds/三维示例/sfcls/景观_建筑模型";
+      queryParam.gdbp =
+        "gdbp://MapGisLocalPlus/示例数据/ds/三维示例/sfcls/景观_建筑模型";
       //设置查询结果结构
-      queryParam.structs = {'IncludeAttribute':true,'IncludeGeometry':false,'IncludeWebGraphic':false};
+      queryParam.structs = {
+        IncludeAttribute: true,
+        IncludeGeometry: false,
+        IncludeWebGraphic: false,
+      };
       //属性查询
       queryParam.where = "";
       //分页信息
@@ -72,59 +75,69 @@ const Template = (args, { argTypes }) => ({
       queryParam.orderField = orderField ? orderField : "";
       queryParam.isAsc = isAsc ? isAsc : false;
       //查询服务
-      queryParam.GetFeature(function(result) {
-        console.log("result",result)
-        vm.dataSource = result;
-        vm.pagination.total = result.TotalCount;
-      }, function(e) {
-        console.log("e",e)
-      });
+      queryParam.GetFeature(
+        function (result) {
+          console.log("result", result);
+          vm.dataSource = result;
+          vm.pagination.total = result.TotalCount;
+        },
+        function (e) {
+          console.log("e", e);
+        }
+      );
     },
-    pageChanged(pagination, sorter){
+    pageChanged(pagination, sorter) {
       //分页事件
-      console.log("pageChanged",pagination)
+      console.log("pageChanged", pagination);
       // this.query(pagination.current - 1,pagination.pageSize,sorter.orderField,sorter.isAsc);
     },
-    selectAll(selectData){
+    selectAll(selectData) {
       //全选事件
-      console.log("selectAll",selectData);
+      console.log("selectAll", selectData);
     },
-    selected(selectData,allDate){
+    selected(selectData, allDate) {
       //选择单个数据事件
-      console.log("selected",selectData);
-      console.log("allDate",allDate);
+      console.log("selected", selectData);
+      console.log("allDate", allDate);
     },
-    fullScreen(pagination, sorter){
-    },
-    exportData(allDate){
+    fullScreen(pagination, sorter) {},
+    exportData(allDate) {
       //导出数据
-      console.log("exportData",allDate);
+      console.log("exportData", allDate);
     },
-    originScreen(pagination, sorter){
+    originScreen(pagination, sorter) {
       //还原屏幕事件
       this.pagination.pageSize = pagination.pageSize;
-      this.query(pagination.current - 1,pagination.pageSize,sorter.orderField,sorter.isAsc);
+      this.query(
+        pagination.current - 1,
+        pagination.pageSize,
+        sorter.orderField,
+        sorter.isAsc
+      );
     },
-    edited(result){
+    edited(result) {
       //编辑完成事件
-      console.log("edited",result)
+      console.log("edited", result);
     },
-    click(result, key){
+    click(result, key) {
       //单击事件
-      console.log("click",result, key)
+      console.log("click", result, key);
     },
-    deleted(result){
+    deleted(result) {
       //删除事件
-      console.log("deleted",result)
+      console.log("deleted", result);
     },
-    sorted(sorter, pagination){
+    sorted(sorter, pagination) {
       //排序事件
-      this.query(pagination.current - 1,pagination.pageSize,sorter.orderField,sorter.isAsc);
-    }
-  }
+      this.query(
+        pagination.current - 1,
+        pagination.pageSize,
+        sorter.orderField,
+        sorter.isAsc
+      );
+    },
+  },
 });
 
 export const table = Template.bind({});
-table.args = {
-};
-
+table.args = {};

@@ -65,7 +65,7 @@ const Template = (args, { argTypes }) => ({
   },
   template: `
       <mapgis-web-scene style="height: 95vh">
-      <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"></mapgis-3d-m3d-layer>
+      <mapgis-3d-scene-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"></mapgis-3d-scene-layer>
       <mapgis-ui-card class="storybook-ui-card">
         <mapgis-3d-projector-manager :modelUrl="modelUrl" :modelOffset="modelOffset" :maxProjected="maxProjected" :hideVPInvisible="hideVPInvisible" :projectorOverlayLayerList="projectorOverlayLayerList">
         </mapgis-3d-projector-manager>
@@ -96,8 +96,7 @@ export const 投放管理 = Template.bind({});
             imgUrl: "",
             videoSource: {
               protocol: "m3u8",
-              videoUrl:
-                `http://${window.webclient.ip}:${window.webclient.port}/record/video1/20211221/out.m3u8`,
+              videoUrl: `http://${window.webclient.ip}:${window.webclient.port}/record/video1/20211221/out.m3u8`,
             },
             cameraPosition: {
               x: 114.401228136856,
@@ -124,8 +123,7 @@ export const 投放管理 = Template.bind({});
             imgUrl: "",
             videoSource: {
               protocol: "m3u8",
-              videoUrl:
-                `http://${window.webclient.ip}:${window.webclient.port}/record/video2/20211221/out.m3u8`,
+              videoUrl: `http://${window.webclient.ip}:${window.webclient.port}/record/video2/20211221/out.m3u8`,
             },
             cameraPosition: {
               x: 114.40088870656619,
@@ -152,8 +150,7 @@ export const 投放管理 = Template.bind({});
             imgUrl: "",
             videoSource: {
               protocol: "m3u8",
-              videoUrl:
-                `http://${window.webclient.ip}:${window.webclient.port}/record/video3/20211221/out.m3u8`,
+              videoUrl: `http://${window.webclient.ip}:${window.webclient.port}/record/video3/20211221/out.m3u8`,
             },
             cameraPosition: {
               x: 114.4006886798949,
@@ -186,8 +183,7 @@ export const 投放管理 = Template.bind({});
             imgUrl: "",
             videoSource: {
               protocol: "m3u8",
-              videoUrl:
-                `http://${window.webclient.ip}:${window.webclient.port}/record/video1/20211221/out.m3u8`,
+              videoUrl: `http://${window.webclient.ip}:${window.webclient.port}/record/video1/20211221/out.m3u8`,
             },
             cameraPosition: {
               x: 114.401228136856,
@@ -214,8 +210,7 @@ export const 投放管理 = Template.bind({});
             imgUrl: "",
             videoSource: {
               protocol: "m3u8",
-              videoUrl:
-                `http://${window.webclient.ip}:${window.webclient.port}/record/video2/20211221/out.m3u8`,
+              videoUrl: `http://${window.webclient.ip}:${window.webclient.port}/record/video2/20211221/out.m3u8`,
             },
             cameraPosition: {
               x: 114.40088870656619,

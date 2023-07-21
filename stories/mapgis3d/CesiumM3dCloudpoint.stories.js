@@ -6,9 +6,8 @@ export default {
   component: Mapgis3dM3dLayer,
   argTypes: {
     url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/Scene/zondyM3D_PointCloud/SceneServer`,
-    show: true,
     opacity: 1.0,
-    layers: '',
+    layers: "",
   },
 };
 
@@ -30,7 +29,7 @@ const Template = (args, { argTypes }) => ({
   },
   template: `<mapgis-web-scene @load="handleMapload" style="height:95vh">
     <mapgis-3d-raster-layer url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
-    <mapgis-3d-m3d-layer v-bind="$props" :opacity="opacity" />
+    <mapgis-3d-scene-layer v-bind="$props" :opacity="opacity" />
     <mapgis-3d-statebar />
   </mapgis-web-scene>`,
 });
@@ -38,5 +37,4 @@ const Template = (args, { argTypes }) => ({
 export const 点云 = Template.bind({});
 点云.args = {
   url: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/services/Scene/zondyM3D_PointCloud/SceneServer`,
-  show: true,
 };

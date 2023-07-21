@@ -14,18 +14,20 @@ const Template = (args, { argTypes }) => ({
       vueIndex: 100,
       M3DsArr: [],
       //不嵌入一张图时的ui处理，可忽略
-      noOneMapFlag: true
+      noOneMapFlag: true,
     };
   },
   mounted() {
-    this.M3DsArr = [{
-      key: this.vueIndex,
-      value: "中地大楼"
-    }];
+    this.M3DsArr = [
+      {
+        key: this.vueIndex,
+        value: "中地大楼",
+      },
+    ];
   },
   template: `
     <mapgis-web-scene style="height: 95vh">
-        <mapgis-3d-m3d-layer 
+        <mapgis-3d-scene-layer 
             :vueKey="vueKey" 
             :vueIndex="vueIndex" 
             :autoReset="autoReset" 
@@ -47,5 +49,5 @@ const Template = (args, { argTypes }) => ({
 
 export const 模型压平 = Template.bind({});
 模型压平.args = {
-  m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`
+  m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`,
 };
