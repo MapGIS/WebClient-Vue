@@ -163,6 +163,7 @@
       v-if="featureposition"
       :position="featureposition"
       :popupOptions="popupOptions"
+      :componentWidth="260"
       v-bind="popupConfig"
       v-model="featurevisible"
     >
