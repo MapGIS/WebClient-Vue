@@ -422,8 +422,8 @@ export default {
     checkType(tileset, callback) {
       const vm = this;
       let m3dType = M3dType.UnKnow;
+      if (!tileset._root) return m3dType;
       const { root } = tileset;
-      if (!root) return m3dType;
       const version = root.tileset._version;
       let { children } = root;
       if (version == "0.0" || version == "1.0") {
