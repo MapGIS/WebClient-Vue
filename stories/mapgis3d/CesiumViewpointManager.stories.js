@@ -22,7 +22,7 @@ const Template = (args, { argTypes }) => ({
     style="height:95vh"
   >
   <mapgis-3d-raster-layer url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}& tk=9c157e9585486c02edf817d2ecbc7752" />  
-  <mapgis-3d-m3d-layer
+  <mapgis-3d-scene-layer
       :autoReset="autoReset"
       :maximumScreenSpaceError="maximumScreenSpaceError"
       :url="$props.m3dUrl"
@@ -34,7 +34,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 视点管理 = Template.bind({});
 视点管理.args = {
-  m3dUrl: `http://${webclient.igsIp}:${webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`
+  m3dUrl: `http://${webclient.igsIp}:${webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`,
 };
 视点管理.parameters = {
   docs: {

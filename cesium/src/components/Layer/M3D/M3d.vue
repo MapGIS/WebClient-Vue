@@ -153,38 +153,18 @@ export default {
     },
     createCesiumObject() {
       const vm = this;
-      const { vueCesium, viewer, url, $props } = this;
-      let version = this.parseCesiumVersion(url);
-      if (version == "1.0") {
-        return new Promise(
-          resolve => {
-            let m3dLayer = new window.CesiumZondy.Layer.M3DLayer({
-              viewer: viewer
-            });
-            resolve({ layer: m3dLayer });
-          },
-          reject => {}
-        );
-      } else if (version == "2.0") {
-        return new Promise(
-          resolve => {
-            let layerIndex;
-            let options = this.getOptions();
-            options.loaded = vm.onSceneLoaded;
-            // 判断服务类型，三维场景服务调用Cesium底层appendSceneLayer，本质是调用appendSceneServer方法
-            if (url.indexOf("SceneServer") !== -1) {
-              viewer.scene.layers.appendSceneLayer(url, options);
-              layerIndex = viewer.scene.layers._index;
-              // const sceneLayer = viewer.scene.layers.sceneLayerMap.get(layerIndex);
-            } else {
-              // M3D服务调用Cesium底层appendM3DLayer方法
-              layerIndex = viewer.scene.layers.appendM3DLayer(url, options);
-            }
-            resolve({ layerIndex: layerIndex });
-          },
-          reject => {}
-        );
-      }
+      const { vueCesium, viewer, url } = this;
+      return new Promise(
+        resolve => {
+          // M3D服务调用Cesium底层appendM3DLayer方法
+          let options = this.getOptions();
+          options.loaded = function() {
+            resolve({ layerIndex: vm.layerIndex });
+          };
+          vm.layerIndex = viewer.scene.layers.appendM3DLayer(url, options);
+        },
+        reject => {}
+      );
 
       return m3dLayer;
     },
@@ -199,111 +179,18 @@ export default {
       });
       return options;
     },
-    parseCesiumVersion(url) {
-      let g3d = new RegExp("/igs/rest/g3d/");
-      let find = url.search(g3d);
-      if (find >= 0) {
-        // 0.0 1.0版本的m3d图层，等于2.0版本的g3d图层
-        this.version = "1.0";
-      } else {
-        // 2.0 版本
-        this.version = "2.0";
-      }
-      console.log("version", this.version);
-      return this.version;
-    },
     parseM3dVersion() {},
-    // Cesium底层回调，返回加载的tileset，并用vueCesium进行管理
-    onSceneLoaded(tileset) {
-      const vm = this;
-      const { vueIndex, vueKey, vueCesium, url } = this;
-      if (tileset) {
-        let m3ds = [tileset];
-        vm.loopM3d(m3ds, "2.0");
-        vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, {
-          version: "2.0",
-          url: url
-        });
-        console.log("vueCesium.M3DIgsManager", vueCesium.M3DIgsManager);
-        vm.$emit("loaded", { tileset: tileset, m3ds: m3ds });
-        vm.bindPopupEvent();
-      }
-    },
-    onM3dLoaded(tileset, n) {
-      const vm = this;
-      const { vueIndex, vueKey, vueCesium, url } = this;
-      if (tileset) {
-        let m3ds = [tileset];
-        vm.loopM3d(m3ds, "2.0");
-        vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, {
-          version: "2.0",
-          url: url
-        });
-        console.log("vueCesium.M3DIgsManager", vueCesium.M3DIgsManager);
-        vm.$emit("loaded", { tileset: tileset, m3ds: m3ds });
-        vm.bindPopupEvent();
-      }
-    },
     mount() {
       const vm = this;
       const { viewer, vueIndex, vueKey, vueCesium, $props } = this;
-      const { offset, scale, opacity, enablePopup, url } = this;
+      const { url } = this;
 
       if (viewer.isDestroyed()) return;
 
       let promise = this.createCesiumObject();
       promise.then(payload => {
-        const { layer, layerIndex } = payload;
-
-        if (layer) {
-          // 0.0 1.0版本的处理方式
-          let options = this.getOptions();
-          options.loaded = tileset => {
-            if (vueKey && vueIndex) {
-              vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, {
-                url: url
-              });
-              vm.bindPopupEvent();
-              if (!vm.show && m3ds) {
-                m3ds.forEach(m3d => {
-                  m3d.show = vm.show;
-                });
-              }
-            }
-            if (offset) {
-              let boundingSphere = tileset.boundingSphere;
-              let cartographic = Cesium.Cartographic.fromCartesian(
-                boundingSphere.center
-              );
-              let surface = Cesium.Cartesian3.fromRadians(
-                cartographic.longitude,
-                cartographic.latitude,
-                0.0
-              );
-              let { longitude = 0, latitude = 0, height = 0 } = offset;
-              let offsetParam = Cesium.Cartesian3.fromRadians(
-                cartographic.longitude + longitude,
-                cartographic.latitude + latitude,
-                height
-              );
-
-              let translation = Cesium.Cartesian3.subtract(
-                offsetParam,
-                surface,
-                new Cesium.Cartesian3()
-              );
-              tileset.modelMatrix = Cesium.Matrix4.fromTranslation(translation);
-            }
-            if (scale) {
-              tileset.setScale(
-                new Cesium.Cartesian3(scale.x, scale.y, scale.z)
-              );
-            }
-            vm.loopM3d(m3ds, "1.0");
-            vm.$emit("loaded", { tileset: tileset, m3ds: m3ds });
-          };
-          let m3ds = layer.append(`${url}`, options);
-        } else if (layerIndex >= 0) {
+        const { layerIndex } = payload;
+        if (layerIndex >= 0) {
           // 2.0版本的处理方式
           /**
            * @修改说明 临时解决m3dLayer获取失败问题
@@ -312,17 +199,15 @@ export default {
            */
           vm.layerIndex = layerIndex;
           let m3dLayer;
-          if (url.indexOf("SceneServer") == -1) {
-            m3dLayer = viewer.scene.layers.m3dLayersMap.get(layerIndex);
-            let m3ds = [m3dLayer];
-            vm.loopM3d(m3ds, "2.0");
-            vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, {
-              version: "2.0",
-              url: url
-            });
-            vm.$emit("loaded", { tileset: m3dLayer, m3ds: m3ds });
-            vm.bindPopupEvent();
-          }
+          m3dLayer = viewer.scene.layers.m3dLayersMap.get(layerIndex);
+          let m3ds = [m3dLayer];
+          vm.loopM3d(m3ds, "2.0");
+          vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, {
+            version: "2.0",
+            url: url
+          });
+          vm.$emit("loaded", { tileset: m3dLayer, m3ds: m3ds });
+          vm.bindPopupEvent();
         }
       });
     },
@@ -343,15 +228,8 @@ export default {
 
       const layer = viewer.scene.layers.getLayer(layerIndex);
       if (!layer) return;
-
-      if (url.indexOf("SceneServer") != -1) {
-        if (viewer.scene.layers.sceneLayerMap._length > 0) {
-          viewer.scene.layers.removeSceneLayerByID(layerIndex);
-        }
-      } else {
-        if (viewer.scene.layers.m3dLayersMap.length > 0) {
-          viewer.scene.layers.removeM3DLayerByID(layerIndex);
-        }
+      if (viewer.scene.layers.m3dLayersMap.length > 0) {
+        viewer.scene.layers.removeM3DLayerByID(layerIndex);
       }
     },
     unbindSource() {

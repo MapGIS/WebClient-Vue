@@ -56,7 +56,7 @@ const Template = (args, { argTypes }) => ({
   },
   template: `
       <mapgis-web-scene style="height: 95vh" v-on:load="handleLoad">
-      <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="$props.m3dUrl"></mapgis-3d-m3d-layer>
+      <mapgis-3d-scene-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="$props.m3dUrl"></mapgis-3d-scene-layer>
       <mapgis-ui-card v-if="isM3DLoaded" class="storybook-ui-card">
       <mapgis-3d-projector-setting style="height:70vh;" :settings="settings" :modelUrl="modelUrl" :modelOffset="modelOffset" :hideVPInvisible="hideVPInvisible"></mapgis-3d-projector-setting>
       </mapgis-ui-card>

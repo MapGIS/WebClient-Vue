@@ -14,12 +14,12 @@ const Template = (args, { argTypes }) => ({
       <mapgis-web-scene
           style="height:95vh"
       >
-      <mapgis-3d-m3d-layer
+      <mapgis-3d-scene-layer
           :auto-reset="autoReset"
           :maximum-screen-space-error="maximumScreenSpaceError"
           :url="m3dUrl"
       >
-      </mapgis-3d-m3d-layer>
+      </mapgis-3d-scene-layer>
       <mapgis-3d-scene-setting v-bind="$props"></mapgis-3d-scene-setting>
       </mapgis-web-scene>
     `,

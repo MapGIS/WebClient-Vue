@@ -2,67 +2,68 @@ import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/Viewshed.md";
 
 export default {
-    title: "三维/三维分析/综合分析",
-    argTypes:{
-        horizontAngle: {
-            description:'观察点的水平视角',
-            table:{
-                defaultValue: { summary: '60' },
-            },
-            control:'number'
-        },
-        verticalAngle: {
-            description:'观察点的垂直视角',
-            table:{
-                defaultValue: { summary: '60' },
-            },
-            control:'number'
-        },
-        exHeight: {
-            description:'观察点的附加高度，单位为米',
-            table:{
-                defaultValue: { summary: '1.85' },
-            },
-            control:'number'
-        },
-        maskColor: {
-            description:'可视遮罩颜色',
-            table:{
-                defaultValue: { summary: 'rgba(37, 218, 169, 0.2)' },
-            },
-            control:'color'
-        },
-        visibleColor: {
-            description:'可视区域颜色',
-            table:{
-                defaultValue: { summary: '#00ff00' },
-            },
-            control:'color'
-        },
-        unVisibleColor: {
-            description:'非可视区域颜色',
-            table:{
-                defaultValue: { summary: '#ff0000' },
-            },
-            control:'color'
-        },
-    }
-}
-
-const Template = (args, {argTypes}) => ({
-    props: Object.keys(argTypes),
-    data() {
-        return {
-            url: "http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752",
-            m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`,
-            autoReset: true,
-            maximumScreenSpaceError: 8
-        }
+  title: "三维/三维分析/综合分析",
+  argTypes: {
+    horizontAngle: {
+      description: "观察点的水平视角",
+      table: {
+        defaultValue: { summary: "60" },
+      },
+      control: "number",
     },
-    template: `
+    verticalAngle: {
+      description: "观察点的垂直视角",
+      table: {
+        defaultValue: { summary: "60" },
+      },
+      control: "number",
+    },
+    exHeight: {
+      description: "观察点的附加高度，单位为米",
+      table: {
+        defaultValue: { summary: "1.85" },
+      },
+      control: "number",
+    },
+    maskColor: {
+      description: "可视遮罩颜色",
+      table: {
+        defaultValue: { summary: "rgba(37, 218, 169, 0.2)" },
+      },
+      control: "color",
+    },
+    visibleColor: {
+      description: "可视区域颜色",
+      table: {
+        defaultValue: { summary: "#00ff00" },
+      },
+      control: "color",
+    },
+    unVisibleColor: {
+      description: "非可视区域颜色",
+      table: {
+        defaultValue: { summary: "#ff0000" },
+      },
+      control: "color",
+    },
+  },
+};
+
+const Template = (args, { argTypes }) => ({
+  props: Object.keys(argTypes),
+  data() {
+    return {
+      url:
+        "http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752",
+      m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`,
+      autoReset: true,
+      maximumScreenSpaceError: 8,
+    };
+  },
+  template: `
       <mapgis-web-scene style="height:95vh">
       <mapgis-3d-raster-layer :url="url"/>
-      <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"/>
+      <mapgis-3d-scene-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"/>
       <mapgis-ui-card class="storybook-ui-card">
         <mapgis-3d-viewshed 
             :horizontAngle="horizontAngle"
@@ -73,23 +74,23 @@ const Template = (args, {argTypes}) => ({
             :unVisibleColor="unVisibleColor"></mapgis-3d-viewshed>
       </mapgis-ui-card>
       </mapgis-web-scene>
-    `
+    `,
 });
 
 export const 可视域 = Template.bind({});
 可视域.args = {
-    horizontAngle: 70,
-    verticalAngle:60,
-    maskColor: 'rgba(37, 218, 169, 0.2)',
-    visibleColor:'#00ff00',
-    unVisibleColor:'#ff0000',
-    exHeight:1.85,
-    m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`
+  horizontAngle: 70,
+  verticalAngle: 60,
+  maskColor: "rgba(37, 218, 169, 0.2)",
+  visibleColor: "#00ff00",
+  unVisibleColor: "#ff0000",
+  exHeight: 1.85,
+  m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`,
 };
 可视域.parameters = {
-    docs: {
-        description: {
-            component: Markdown,
-        },
+  docs: {
+    description: {
+      component: Markdown,
     },
+  },
 };

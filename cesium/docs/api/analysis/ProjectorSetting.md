@@ -150,11 +150,11 @@ onChangeSetting(val, tag)
 ```vue
 <template>
   <mapgis-web-scene style="height: 95vh" v-on:load="handleLoad">
-    <mapgis-3d-m3d-layer
+    <mapgis-3d-scene-layer
       :autoReset="autoReset"
       :maximumScreenSpaceError="maximumScreenSpaceError"
       :url="m3dUrl"
-    ></mapgis-3d-m3d-layer>
+    ></mapgis-3d-scene-layer>
     <mapgis-ui-card
       v-if="isM3DLoaded"
       class="storybook-ui-card"
