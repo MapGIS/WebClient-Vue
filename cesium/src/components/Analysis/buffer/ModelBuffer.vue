@@ -84,9 +84,6 @@
             :hasTopMargin="false"
             :hasBottomMargin="false"
           >
-            <mapgis-ui-tooltip slot="handle" title="导出" @click="exportResult">
-              <mapgis-ui-iconfont class="iconfont-btn" type="mapgis-daochu" />
-            </mapgis-ui-tooltip>
             <mapgis-ui-tooltip slot="handle" title="删除" @click="deleteResult">
               <mapgis-ui-iconfont class="iconfont-btn" type="mapgis-shanchu" />
             </mapgis-ui-tooltip>
@@ -399,7 +396,7 @@ export default {
       const res = await this.modelBuffer(options);
       console.log(res);
       this.maskShow = false;
-      if (this.res) {
+      if (res) {
         this.AnalysisSuccess();
       }
     },
@@ -446,9 +443,6 @@ export default {
     cancel() {
       this.maskShow = false;
       Object.assign(this.$data, this.$options.data());
-    },
-    exportResult() {
-      this.$emit("exportResult");
     },
     deleteResult() {
       this.$emit("deleteResult");
