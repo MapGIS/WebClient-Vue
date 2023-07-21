@@ -15,6 +15,7 @@
     v-if="popupShowType === 'default' && featureposition"
     :position="featureposition"
     :popupOptions="popupOptions"
+    :componentWidth="260"
   >
     <mapgis-3d-popup-iot
       :properties="featureproperties"
