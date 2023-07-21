@@ -59,10 +59,16 @@ export default {
       return _url;
     },
     mount() {
-      if (this.baseUrl && this.baseUrl.indexOf("igs/rest/services") > -1) {
-        const { gdbps } = this;
-        const url = `${this.baseUrl}?gdbpUrl=${gdbps[0]}&geometry=&oids=&sRef=WGS1984_度&modelDataFormat=`;
-        this.fetchModel(url);
+      if (
+        this.baseUrl &&
+        this.baseUrl.indexOf("igs/rest/services") > -1 &&
+        this.baseUrl.indexOf("model")
+      ) {
+        if (this.layerStyle.visible && !this.model) {
+          const { gdbps } = this;
+          const url = `${this.baseUrl}?gdbpUrl=${gdbps[0]}&geometry=&oids=&sRef=WGS1984_度&modelDataFormat=`;
+          this.fetchModel(url);
+        }
       } else {
         //处理独有参数
         const baseUrl = this.initUrl("/igs/rest/mrms/layers");
@@ -74,8 +80,15 @@ export default {
       }
     },
     unmount() {
-      if (this.baseUrl && this.baseUrl.indexOf("igs/rest/services") > -1) {
-        this.primitives && this.viewer.scene.primitives.remove(this.primitives);
+      if (
+        this.baseUrl &&
+        this.baseUrl.indexOf("igs/rest/services") > -1 &&
+        this.baseUrl.indexOf("model")
+      ) {
+        if (!this.layerStyle.visible) {
+          this.model && viewer.scene.primitives.remove(this.model);
+          this.model = null;
+        }
       } else {
         this.$_unmount();
       }
@@ -111,13 +124,19 @@ export default {
       );
       const options = {
         modelMatrix: modelMatrix,
-        gltf: satelliteArrayBuffer
+        gltf: satelliteArrayBuffer,
+        id: this.gdbps[0]
       };
 
       const model = new Cesium.Model(options);
-      this.primitives = new Cesium.PrimitiveCollection();
-      this.primitives.add(model);
-      viewer.scene.primitives.add(this.primitives);
+
+      const index = viewer.scene.primitives._primitives.findIndex(
+        item => item.id === this.gdbps[0]
+      );
+      if (index === -1) {
+        this.model = model;
+        viewer.scene.primitives.add(this.model);
+      }
     }
   }
 };
