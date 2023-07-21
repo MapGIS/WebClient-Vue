@@ -430,10 +430,12 @@ export default {
         let oid = viewer.scene.pickOid(movement.position);
         let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
         if (feature.tileset !== tileset) {
-          tileset.pickedOid = oid;
-          tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
-          this.featureposition = undefined;
-          this.featureproperties = undefined;
+          // tileset.pickedOid = oid;
+          // tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
+          // this.featureposition = undefined;
+          // this.featureproperties = undefined;
+          // this.uniqueKey = undefined;
+          this.cancelFeature(payload);
           return;
         }
         vueCesium.M3DIgsManager.changeOptions(
@@ -506,10 +508,13 @@ export default {
         let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
         tileset.pickedOid = oid;
         tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
-        if (!oid) {
-          this.featureposition = undefined;
-          this.featureproperties = undefined;
-        }
+        this.featureposition = undefined;
+        this.featureproperties = undefined;
+        // if (!oid) {
+        //   this.featureposition = undefined;
+        //   this.featureproperties = undefined;
+        //   this.uniqueKey = undefined;
+        // }
       }
       this.popupOverlay && this.popupOverlay.setContent(null);
     },
