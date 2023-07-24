@@ -139,6 +139,7 @@ export default {
       }
       // 关闭右侧气泡框
       this.popupOverlay && this.popupOverlay.setContent(null);
+      this.cancelFeature();
     },
   },
   render(createElement) {
