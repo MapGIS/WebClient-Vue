@@ -273,7 +273,8 @@ export default {
       );
     },
     unbindPopupEvent() {
-      const { vueCesium, vueKey, vueIndex } = this;
+      const { Cesium, vueCesium, vueKey, vueIndex } = this;
+      const { highlightStyle, layerIndex } = this;
       let find = vueCesium.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find && find.options) {
         if (find.options.clickhandler) {
@@ -285,6 +286,12 @@ export default {
       }
       // 关闭右侧气泡框
       this.popupOverlay && this.popupOverlay.setContent(null);
+
+      let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
+      tileset.pickedOid = 0;
+      tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
+      this.featureposition = undefined;
+      this.featureproperties = undefined;
     },
     pickFeature(payload) {
       debugger;
