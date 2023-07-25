@@ -501,15 +501,22 @@ export default class FeatureQuery {
     queryParam.isAsc = option.isAsc !== undefined ? option.isAsc : false;
     queryParam.cursorType = option.cursorType || "forward";
     queryParam.guid = option.guid || "__readonly_user__";
+    let domain = option.domain || null;
+    if (!domain) {
+      const protocol =
+        option.protocol || window.location.protocol.split(":")[0];
+      const ip = option.ip;
+      const port = option.port;
+      domain = `${protocol}://${ip}:${port}`;
+    }
     let queryService;
     if (option.gdbp) {
       // 矢量图层
-      queryService = new Zondy.G3D.G3DMapDoc(
-        Object.assign(
-          { ip: option.ip, port: option.port, gdbp: option.gdbp },
-          queryParam
-        )
-      );
+      queryService = new Zondy.G3D.G3DMapDoc({
+        domain,
+        gdbp: option.gdbp,
+        ...queryParam
+      });
     } else {
       // 矢量文档
       if (!option.docName || !option.layerIdxs) {
@@ -520,13 +527,14 @@ export default class FeatureQuery {
       // 图层索引号
       const layerIdxs =
         option.layerIdxs || option.layerIdxs === "0" ? option.layerIdxs : "*";
-      queryService = new Zondy.G3D.G3DMapDoc(
-        Object.assign(
-          { ip: option.ip, port: option.port, docName, layerindex: layerIdxs },
-          queryParam
-        )
-      );
+      queryService = new Zondy.G3D.G3DMapDoc({
+        domain,
+        docName,
+        layerindex: layerIdxs,
+        ...queryParam
+      });
     }
+    debugger;
     const promise = new Promise(resolve => {
       queryService.GetFeature(res => {
         if (!res) {

@@ -1136,6 +1136,8 @@ export default {
 
       let tempRay = new Cesium.Ray();
       let tempPos = new Cesium.Cartesian3();
+      vm.restoreHighlight();
+      vm.restoreM3d();
       if (!movement) return;
       if (scene.mode !== Cesium.SceneMode.MORPHING) {
         let position = movement.position || movement.endPosition;
@@ -1144,17 +1146,13 @@ export default {
         let cartesian2 = scene.globe.pick(ray, scene, tempPos);
 
         let pickedFeature = viewer.scene.pick(movement.position);
+        window.prePickFeature = pickedFeature;
 
         if (!pickedFeature) {
           vm.clickvisible = false;
-          // 点击模型外去除高亮
-          vm.restoreHighlight();
-          vm.restoreM3d();
           return;
         }
 
-        vm.restoreHighlight();
-        vm.restoreM3d();
         let longitudeString2, latitudeString2, heightString2;
 
         if (Cesium.defined(cartesian2)) {
@@ -1165,52 +1163,52 @@ export default {
         }
 
         if (cartesian || cartesian2) {
-          let g3dLayer = viewer.scene.layers.getLayer(vm.g3dLayerIndex);
+          let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
           let index = pickedFeature._content._tileset._layerIndex;
           vm.selectLayerIndex = index;
           vm.selectedKeys = [`${index}`];
           if (version == "1.0" || version == "0.0") {
-            let layerInfo = g3dLayer.getLayerInfo(index);
-            const { layerName, gdbpUrl } = layerInfo;
-            vm.featureproperties = { layerName, gdbpUrl };
-            vm.iClickFeatures = [{ properties: { layerName, gdbpUrl } }];
-            vm.highlightM3d(index);
+            let properties = {};
+            let name = pickedFeature.getProperty("name"); // 获取要素名
+            if (name && name !== "") {
+              const nameStrs = name.split("_");
+              const featureId = nameStrs[nameStrs.length - 1];
+              properties = await this.getFeaturePorpertiesByOid(featureId);
+            }
+            if (Object.keys(properties).length > 0) {
+              vm.featureproperties = properties;
+              vm.iClickFeatures = [{ properties }];
+            } else {
+              let layerInfo = g3dLayer.getLayerInfo(index);
+              const { layerName, gdbpUrl } = layerInfo;
+              vm.featureproperties = { layerName, gdbpUrl };
+              vm.iClickFeatures = [{ properties: { layerName, gdbpUrl } }];
+            }
+            pickedFeature.color = Cesium.Color.fromCssColorString(
+              this.highlightStyle
+            );
+            // vm.highlightM3d(index);
           } else if (version == "2.0") {
             if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0)
               return;
-            let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
 
             let oid = viewer.scene.pickOid(movement.position);
-            let feature = viewer.scene.pick(movement.position);
-
-            let m3ds = g3dLayer.getM3DLayerIndexes();
             let tileset = g3dLayer.getLayer(`${index}`);
-
-            /* m3ds.forEach((index) => {
-              let m3d = g3dLayer.getLayer(index);
-              m3d && m3d.reset();
-            });*/
 
             tileset.pickedOid = oid;
             tileset.pickedColor = Cesium.Color.fromCssColorString(
               this.highlightStyle
             );
-            const properties = await this.getFeaturePorpertiesByOid(oid);
-            if (Object.keys(properties).length > 0) {
-              vm.featureproperties = properties;
-              vm.iClickFeatures = [{ properties }];
+            if (tileset._useRawSaveAtt && Cesium.defined(pickedFeature)) {
+              let result = feature.content.getAttributeByOID(oid) || {};
+              vm.featureproperties = result;
+              vm.iClickFeatures = [{ properties: result }];
             } else {
-              if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
-                let result = feature.content.getAttributeByOID(oid) || {};
+              tileset.queryAttributes(oid).then(function(result) {
+                result = result || {};
                 vm.featureproperties = result;
                 vm.iClickFeatures = [{ properties: result }];
-              } else {
-                tileset.queryAttributes(oid).then(function(result) {
-                  result = result || {};
-                  vm.featureproperties = result;
-                  vm.iClickFeatures = [{ properties: result }];
-                });
-              }
+              });
             }
           }
           if (
@@ -1239,6 +1237,10 @@ export default {
     },
     // 动态单体化下该方法执行后会导致模型大面积高亮，参考禅道bug2356
     restoreHighlight() {
+      if (window.prePickFeature) {
+        window.prePickFeature.color = Cesium.Color.WHITE;
+        window.prePickFeature = undefined;
+      }
       const { g3dLayerIndex, viewer } = this;
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
