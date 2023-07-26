@@ -10,6 +10,9 @@ export default {
     url: {
       type: String,
       default: null
+    },
+    token: {
+      type: Object
     }
   },
   computed: {
@@ -69,7 +72,10 @@ export default {
       if (!url || url.length == 0) {
         return;
       }
-      let { vueKey, vueIndex, Cesium, viewer } = this;
+      let { vueKey, vueIndex, Cesium, viewer, token } = this;
+      if (token && token.value) {
+        url += "?" + token.key + "=" + token.value;
+      }
       const kmlData = Cesium.KmlDataSource.load(url, {
         camera: viewer.scene.camera,
         canvas: viewer.scene.canvas,
