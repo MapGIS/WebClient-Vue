@@ -64,7 +64,7 @@ export default {
     createCesiumObject() {
       return new Promise(
         resolve => {
-          const { $props, url } = this;
+          const { $props, url, token } = this;
           const { headers } = $props;
           let layerIndex;
           const options = this.getOptions();
@@ -72,6 +72,8 @@ export default {
           let urlSource;
           if (headers) {
             urlSource = new Cesium.Resource({ url: url, headers: headers });
+          } else if (token && token.value) {
+            urlSource = url + "?" + token.key + "=" + token.value;
           } else {
             urlSource = url;
           }
