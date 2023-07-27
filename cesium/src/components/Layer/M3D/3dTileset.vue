@@ -139,8 +139,9 @@ export default {
 
       this.cancelFeature();
       if (feature.tileset !== tileset) {
-        vm.iClickFeatures = [];
-        vm.iClickPosition = {};
+        // 拾取非当前tileset时不进行关闭，让高亮和气泡框展示
+        // vm.iClickFeatures = [];
+        // vm.iClickPosition = {};
         return;
       } else {
         vm.featureposition = vm.iClickPosition;
