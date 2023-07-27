@@ -288,8 +288,10 @@ export default {
       this.popupOverlay && this.popupOverlay.setContent(null);
 
       let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
-      tileset.pickedOid = 0;
-      tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
+      if (tileset) {
+        tileset.pickedOid = 0;
+        tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
+      }
       this.featureposition = undefined;
       this.featureproperties = undefined;
     },
@@ -320,7 +322,9 @@ export default {
         // this.featureposition = undefined;
         // this.featureproperties = undefined;
         // this.uniqueKey = undefined;
-        this.cancelFeature(payload);
+
+        // 拾取非当前tileset时不进行关闭，让高亮和气泡框展示
+        // this.cancelFeature(payload);
         return;
       }
       vueCesium.M3DIgsManager.changeOptions(vueKey, vueIndex, "pick", tileset);
