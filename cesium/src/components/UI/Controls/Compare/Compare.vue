@@ -85,49 +85,63 @@ export default {
       });
     },
     $_getM3DSet(splitPosition) {
-      const beforeLayerId = this.beforeLayers[0];
-      const afterLayerId = this.afterLayers[0];
       const { Cesium, vueCesium, vueKey, vueIndex } = this;
-      let beforeM3DSet;
-      let afterM3DSet;
-      this.$_getAll3DTileSetArray(
-        function(m3d) {
-          beforeM3DSet = m3d;
-          for (let i = 0; i < beforeM3DSet.length; i++) {
-            beforeM3DSet[i].swipeEnabled = true;
-            beforeM3DSet[i].swipeInverse = -1;
-          }
-          vueCesium.CompareManager.changeOptions(
-            vueKey,
-            vueIndex,
-            "beforeM3DSet",
-            beforeM3DSet
-          );
-        },
-        vueKey,
-        beforeLayerId,
-        ["m3d", "g3d"]
-      );
-      this.$_getAll3DTileSetArray(
-        function(m3d) {
-          afterM3DSet = m3d;
-          for (let j = 0; j < afterM3DSet.length; j++) {
-            afterM3DSet[j].swipeEnabled = true;
-            afterM3DSet[j].swipeInverse = 1;
-          }
-          vueCesium.CompareManager.changeOptions(
-            vueKey,
-            vueIndex,
-            "afterM3DSet",
-            afterM3DSet
-          );
-        },
-        vueKey,
-        afterLayerId,
-        ["m3d", "g3d"]
-      );
+      const self = this;
+      let beforeM3DSet = [];
+      let afterM3DSet = [];
+      for (let before = 0; before < self.beforeLayers.length; before++) {
+        const beforeLayerId = self.beforeLayers[before];
+        self.$_getAll3DTileSetArray(
+          function(m3ds) {
+            if (m3ds && m3ds.length > 0) {
+              beforeM3DSet = beforeM3DSet.concat(m3ds);
+            }
+            for (let i = 0; i < m3ds.length; i++) {
+              m3ds[i].swipeEnabled = true;
+              m3ds[i].swipeInverse = -1;
+            }
+            if (before === self.beforeLayers.length - 1) {
+              vueCesium.CompareManager.changeOptions(
+                vueKey,
+                vueIndex,
+                "beforeM3DSet",
+                beforeM3DSet
+              );
+            }
+          },
+          vueKey,
+          beforeLayerId,
+          ["m3d", "g3d"]
+        );
+      }
+      for (let after = 0; after < self.afterLayers.length; after++) {
+        const afterLayerId = self.afterLayers[after];
+        self.$_getAll3DTileSetArray(
+          function(m3ds) {
+            if (m3ds && m3ds.length > 0) {
+              afterM3DSet = afterM3DSet.concat(m3ds);
+            }
+            for (let j = 0; j < m3ds.length; j++) {
+              m3ds[j].swipeEnabled = true;
+              m3ds[j].swipeInverse = 1;
+            }
+            if (after === self.afterLayers.length - 1) {
+              vueCesium.CompareManager.changeOptions(
+                vueKey,
+                vueIndex,
+                "afterM3DSet",
+                afterM3DSet
+              );
+            }
+          },
+          vueKey,
+          afterLayerId,
+          ["m3d", "g3d"]
+        );
+      }
     },
     compare() {
+      this.remove();
       const { viewer, Cesium } = this;
       let sliderClassName = "slider";
       let swiperClassName = "compare-swiper";
