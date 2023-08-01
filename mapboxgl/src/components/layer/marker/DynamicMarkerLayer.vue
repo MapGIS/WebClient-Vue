@@ -2,6 +2,7 @@
   <div>
     <mapgis-marker-set-pro
       :markers="markers"
+      :popupToggleType="popupToggleType"
       @mouseenter="mouseEnterEvent"
       @mouseleave="mouseLeaveEvent"
     >
@@ -96,6 +97,11 @@ export default {
       default: () => {
         return {};
       }
+    },
+    // pop框显示方式，‘click’，‘mouseenter’
+    popupToggleType: {
+      type: String,
+      default: () => "mouseenter"
     }
   },
   computed: {

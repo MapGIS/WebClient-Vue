@@ -10,6 +10,13 @@
         }"
         >{{ item.placeName }}</span
       >
+      <span
+        @click="selectAll"
+        :class="{
+          'place-name-active-text': isAllselected
+        }"
+        >全部</span
+      >
     </div>
     <div class="search-tab-container" v-if="showResult && !showResultSet">
       <div class="search-switch-container">
@@ -114,6 +121,9 @@ export default {
     },
     isDataStoreQuery() {
       return !!this.widgetInfo.dataStore;
+    },
+    isAllselected() {
+      return this.allItems.length === this.selected.length;
     }
   },
   watch: {
@@ -149,6 +159,18 @@ export default {
     }
   },
   methods: {
+    selectAll() {
+      if (this.isAllselected) {
+        this.selected = [];
+        this.selected.push(this.allItems[0].placeName);
+      } else {
+        this.allItems.forEach(item => {
+          if (this.selected.indexOf(item.placeName) < 0) {
+            this.selected.push(item.placeName);
+          }
+        });
+      }
+    },
     showTypeChange() {
       if (this.showType === "result") {
         this.showResultSet = true;

@@ -8,6 +8,7 @@
       :current-marker-id="currentMarkerId"
       :field-configs="fieldConfigs"
       :popupShowType="popupShowType"
+      :popupToggleType="popupToggleType"
       @marker-id="updateCurrentMarkerId"
       @mouseenter="mouseEnterEvent"
       @mouseleave="mouseLeaveEvent"
@@ -45,6 +46,10 @@ export default {
     popupShowType: {
       type: String,
       default: "default"
+    },
+    popupToggleType: {
+      type: String,
+      default: "mouseenter"
     }
   },
   data() {

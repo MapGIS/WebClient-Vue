@@ -30,6 +30,10 @@ export default {
       type: Array,
       required: false,
       default: () => []
+    },
+    popupToggleType: {
+      type: String,
+      default: () => "mouseenter"
     }
   },
   data() {
@@ -39,6 +43,7 @@ export default {
   },
   methods: {
     mouseEnterEvent(e, id) {
+      if (this.popupToggleType === "click") return;
       if (this.prePopup && this.prePopup.isOpen()) {
         this.prePopup.remove();
       }
