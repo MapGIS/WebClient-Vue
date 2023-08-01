@@ -55,8 +55,24 @@
 <script>
 import * as Feature from "../util/feature";
 import { point } from "@turf/helpers";
+import midpoint from "@turf/midpoint";
 import rhumbDistance from "@turf/rhumb-distance";
 import centerOfMass from "@turf/center-of-mass";
+
+const fieldConfigs = [
+  {
+    fieldName: "name",
+    showName: "名称"
+  },
+  {
+    fieldName: "formatAddress",
+    showName: "地址"
+  },
+  {
+    fieldName: "geometry",
+    showName: "地理经纬度"
+  }
+];
 
 export default {
   props: {
@@ -149,7 +165,11 @@ export default {
     let { showField } = this.selectedItem;
     if (showField.length <= 0) {
       showField = this.config.defaultShowField;
+      if (this.config.defaultShowField <= 0) {
+        showField = fieldConfigs;
+      }
     }
+
     const fields = [];
     const configs = [];
     for (let j = 0; j < showField.length; j += 1) {
@@ -204,17 +224,16 @@ export default {
       if (this.geoJSONExtent && JSON.stringify(this.geoJSONExtent) !== "{}") {
         const { geometry } = this.geoJSONExtent;
         const { coordinates } = geometry;
-        const from = point(coordinates[0][0]);
+        const from = centerOfMass(this.geoJSONExtent);
         const to = point(coordinates[0][3]);
         const options = { units: "kilometers" };
 
         const distance = rhumbDistance(from, to, options);
 
-        const center = centerOfMass(this.geoJSONExtent);
         return {
-          lon: center.geometry.coordinates[0],
-          lat: center.geometry.coordinates[1],
-          dis: distance / 2
+          lon: from.geometry.coordinates[0],
+          lat: from.geometry.coordinates[1],
+          dis: distance
         };
       }
       return {};
@@ -251,8 +270,10 @@ export default {
         lon,
         lat,
         dis,
-        isEsGeoCode: true
+        isEsGeoCode: true,
+        typeName: this.name
       };
+      this.spinning = true;
       try {
         const geoCode = await Feature.FeatureQuery.query(datastoreParams);
         if (geoCode) {
@@ -269,6 +290,7 @@ export default {
                   ...feature.areaAddr,
                   ...feature
                 };
+                allProperties.geometry = `(${feature.lon},${feature.lat})`;
                 const field = this.fields[f];
                 properties[field] = allProperties[field];
               }
@@ -291,6 +313,8 @@ export default {
         }
       } catch (error) {
         window.console.log(error);
+      } finally {
+        this.spinning = false;
       }
     },
     /**

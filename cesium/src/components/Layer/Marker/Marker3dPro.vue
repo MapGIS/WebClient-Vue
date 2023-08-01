@@ -7,6 +7,7 @@
     :fid="marker.fid"
     :changeEvent="changeEvent"
     :farDist="200000000"
+    @click="clickEvent"
     @mouseEnter="mouseOver"
     @mouseLeave="mouseOut"
   >
@@ -80,6 +81,10 @@ export default {
     popupShowType: {
       type: String,
       default: "default"
+    },
+    popupToggleType: {
+      type: String,
+      default: "mouseenter"
     }
   },
   data() {
@@ -176,7 +181,24 @@ export default {
     changeEvent(enable) {
       this.showPopup = enable;
     },
+    clickEvent(event) {
+      if (this.popupToggleType === "mouseenter") return;
+      const { changeEvent, fid } = event;
+      if (this.popupShowType === "default") {
+        if (changeEvent) {
+          changeEvent(true);
+        } else {
+          this.showPopup = true;
+        }
+      } else {
+        this.$emit("show-marker-detail", this.propertyKeys, fid);
+      }
+
+      this.$emit("marker-id", fid);
+      this.$emit("mouseenter", event, fid);
+    },
     mouseOver(event) {
+      if (this.popupToggleType === "click") return;
       const { changeEvent, fid } = event;
       if (this.popupShowType === "default") {
         if (changeEvent) {
@@ -192,6 +214,7 @@ export default {
       this.$emit("mouseenter", event, fid);
     },
     mouseOut(event) {
+      if (this.popupToggleType === "click") return;
       const { changeEvent, fid } = event;
       if (changeEvent) {
         changeEvent(false);

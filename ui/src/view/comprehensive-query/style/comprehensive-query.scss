@@ -1,5 +1,5 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
 .mp-widget-comprehensive-query {
   .search-box {
@@ -233,6 +233,7 @@
         }
         .content-place-name-panel {
           flex: 1;
+          font-size: 13px;
           p {
             margin-bottom: 3px !important;
             label {

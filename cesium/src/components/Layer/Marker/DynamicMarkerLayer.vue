@@ -5,6 +5,7 @@
       :vue-key="vueKey"
       :markers="markers"
       :popupShowType="popupShowType"
+      :popupToggleType="popupToggleType"
       @mouseenter="mouseEnterEvent"
       @mouseleave="mouseLeaveEvent"
       @popupload="popupLoad"
@@ -87,6 +88,10 @@ export default {
     popupShowType: {
       type: String,
       default: "default"
+    },
+    popupToggleType: {
+      type: String,
+      default: "mouseenter"
     }
   },
   data() {
