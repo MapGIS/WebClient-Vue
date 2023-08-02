@@ -62,8 +62,13 @@ export default {
       if (!global.Cesium /*  && !self.globalLoad */) {
         const $scriptMain = document.createElement("script");
         const $scriptPlugin = document.createElement("script");
-        global.document.body.appendChild($scriptMain);
-        global.document.body.appendChild($scriptPlugin);
+        if (window.__POWERED_BY_QIANKUN__) {
+          global.document.documentElement.appendChild($scriptMain);
+          global.document.documentElement.appendChild($scriptPlugin);
+        } else {
+          global.document.body.appendChild($scriptMain);
+          global.document.body.appendChild($scriptPlugin);
+        }
 
         $scriptMain.src =
           this.libPath ||
