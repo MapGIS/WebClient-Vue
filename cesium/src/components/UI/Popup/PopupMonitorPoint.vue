@@ -2,9 +2,10 @@
   <div class="monitor-point-popup-wrapper">
     <div class="data-point-content" v-if="type === 'data'">
       <div class="monitor-left">
-        <span class="monitor-title">监测点信息</span>
+        <span class="monitor-title">监测点信息- {{ monitorPointId }}</span>
         <mapgis-ui-list
           item-layout="horizontal"
+          :locale="emptyText"
           :data-source="dataList"
           size="small"
           class="table-marker"
@@ -27,7 +28,7 @@
       <div class="monitor-right">
         <span class="monitor-title">监测曲线</span>
         <div class="monitor-search-time">
-          <a-range-picker
+          <mapgis-ui-range-picker
             :locale="locale"
             :show-time="{ format: 'HH:mm:ss' }"
             :placeholder="['开始时间', '结束时间']"
@@ -55,12 +56,12 @@
       </div>
     </div>
     <div class="monitor-point-content" v-if="type === 'video'">
-      <video
+      <!-- <video
         class="monitor-video"
         controls="controls"
         autoplay="autoplay"
         src="https://www.w3school.com.cn/i/movie.ogg"
-      ></video>
+      ></video> -->
     </div>
   </div>
 </template>
@@ -70,6 +71,9 @@ import axios from "axios";
 import * as echarts from "echarts";
 import moment from "moment";
 import locale from "ant-design-vue/es/date-picker/locale/zh_CN";
+import "moment/dist/locale/zh-cn";
+import { Empty } from "ant-design-vue";
+
 export default {
   name: "mapgis-3d-monitor-point-popup",
   props: {
@@ -95,6 +99,11 @@ export default {
     dataUrl: {
       type: String,
       default: "https://szaqxsbg.szsti.org:8060"
+    },
+    // 监测点查询字段monPntID
+    monPntID: {
+      type: String,
+      default: "monPntID"
     },
     // 接口返回数据对应关系
     propertyRelation: {
@@ -165,6 +174,20 @@ export default {
   computed: {
     dataList() {
       return Object.keys(this.infoData);
+    },
+    monitorPointId() {
+      return this.properties[this.monPntID];
+    },
+    emptyText() {
+      const customEmptyText = "未查询到监测点信息";
+      return {
+        emptyText: (
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description={customEmptyText}
+          />
+        )
+      };
     }
   },
 
@@ -190,15 +213,13 @@ export default {
     getMonitorData() {
       axios
         .get(
-          `${this.dataUrl}/hotel/api/QueryJcjkHqjcXm?access_token=${this.access_token}&mon_point_id=${this.properties.monPntID}`
+          `${this.dataUrl}/hotel/api/QueryJcjkHqjcXm?access_token=${this.access_token}&mon_point_id=${this.monitorPointId}`
         )
         .then(res => {
           if (res.status === 200) {
             const data = res.data;
             if (data.records && data.records.length === 0) {
-              this.$message.info(
-                `监测点${this.properties.monPntID}未查询到信息!`
-              );
+              this.$message.info(`监测点${this.monitorPointId}未查询到信息!`);
               return;
             }
             const record = data.records[0];
@@ -220,11 +241,11 @@ export default {
           }
         })
         .catch(e => {
-          this.$message.error(e);
+          this.$message.error(`监测点${this.monitorPointId}信息查询异常!`);
         });
     },
     getMonitorEchartsData(endDate, beginDate) {
-      let url = `${this.dataUrl}/hotel/api/QueryJcjkHqjcSj?access_token=${this.access_token}&mon_point_id=${this.properties.monPntID}`;
+      let url = `${this.dataUrl}/hotel/api/QueryJcjkHqjcSj?access_token=${this.access_token}&mon_point_id=${this.monitorPointId}`;
       if (endDate) {
         url = url + `&endDate=${endDate}`;
       }
@@ -264,7 +285,7 @@ export default {
         })
         .catch(e => {
           this.showEcharts = false;
-          this.$message.error(e);
+          // this.$message.error(e);
         });
     },
     drawEcharts(data) {
@@ -430,6 +451,7 @@ export default {
       }
       .table-marker {
         max-width: 350px !important;
+        width: 350px;
         max-height: 300px !important;
         line-height: 2;
         margin-bottom: 10px;

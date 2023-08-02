@@ -348,7 +348,7 @@ export default {
       const keys = [];
       this.checkKeys.forEach(item => {
         const data = list.find(node => node.guid === item);
-        !data.children && keys.push(item);
+        !data?.children && keys.push(item);
       });
       return keys;
     },
