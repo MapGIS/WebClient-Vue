@@ -117,6 +117,12 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  .query-type-container {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    padding-bottom: 5px;
+  }
   .float-pop-container {
     span {
       padding: 3px 6px;
