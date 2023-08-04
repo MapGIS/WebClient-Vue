@@ -56,16 +56,18 @@
 import * as Feature from "../util/feature";
 import { point } from "@turf/helpers";
 import midpoint from "@turf/midpoint";
+import booleanEqual from "@turf/boolean-equal";
 import rhumbDistance from "@turf/rhumb-distance";
 import centerOfMass from "@turf/center-of-mass";
 
+// 默认展示字段，管理平台无配置时展示
 const fieldConfigs = [
   {
-    fieldName: "name",
+    fieldName: "zd_name",
     showName: "名称"
   },
   {
-    fieldName: "formatAddress",
+    fieldName: "zd_address",
     showName: "地址"
   },
   {
@@ -73,8 +75,26 @@ const fieldConfigs = [
     showName: "地理经纬度"
   }
 ];
-
+// 查询字段映射（管理平台与前台字段不一致）
+const fieldsMap = {
+  zd_marker: "marker",
+  zd_addr_code: "code",
+  zd_country: "country",
+  zd_street_no: "streetNo",
+  zd_city: "city",
+  zd_town: "town",
+  zd_name: "name",
+  zd_village: "village",
+  zd_street: "street",
+  zd_interest_point: "interestpoint",
+  zd_province: "province",
+  zd_nation: "nation",
+  geometry: "geometry",
+  zd_address: "formatAddress",
+  zd_idetifier: "identifier"
+};
 export default {
+  inject: ["Cesium", "viewer"],
   props: {
     widgetInfo: {
       type: Object,
@@ -118,6 +138,10 @@ export default {
     geoJSONExtent: {
       type: Object,
       default: () => ({})
+    },
+    decode: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -174,9 +198,9 @@ export default {
     const configs = [];
     for (let j = 0; j < showField.length; j += 1) {
       const filed = showField[j].fieldName;
-      fields.push(filed);
+      fields.push(fieldsMap[filed]);
       configs.push({
-        name: filed,
+        name: fieldsMap[filed],
         title: showField[j].showName
       });
     }
@@ -224,7 +248,14 @@ export default {
       if (this.geoJSONExtent && JSON.stringify(this.geoJSONExtent) !== "{}") {
         const { geometry } = this.geoJSONExtent;
         const { coordinates } = geometry;
-        const from = centerOfMass(this.geoJSONExtent);
+        let from = centerOfMass(this.geoJSONExtent);
+        /**  三维情况下、当视角缩放到可以看见球的边界时，获取到的geoJSONExtent查询范围是[-180,90],[180,90],[180,-90],[-180,-90],[-180,90]
+         此时使用centerOfMass计算出的中心点为[0，0],因此在datastore逆地址查询时会以[0,0]为经纬度加上计算出的半径进行查询，导致如果查询数据不在这个范围内就查询不到
+         这种情况下重新取视图的像素中心点再转换成经纬度中心点
+         */
+        if (booleanEqual(from, point([0, 0]))) {
+          from = point(this.get3DCenter());
+        }
         const to = point(coordinates[0][3]);
         const options = { units: "kilometers" };
 
@@ -237,6 +268,21 @@ export default {
         };
       }
       return {};
+    },
+    get3DCenter() {
+      const { viewer, Cesium } = this;
+      const centerResult = viewer.camera.pickEllipsoid(
+        new Cesium.Cartesian2(
+          viewer.canvas.clientWidth / 2,
+          viewer.canvas.clientHeight / 2
+        )
+      );
+      const curPosition = Cesium.Ellipsoid.WGS84.cartesianToCartographic(
+        centerResult
+      );
+      const lon = (curPosition.longitude * 180) / Math.PI;
+      const lat = (curPosition.latitude * 180) / Math.PI;
+      return [lon, lat];
     },
     /**
      * dataStore查询，根据this.widgetInfo.dataStore该字段判断
@@ -256,17 +302,17 @@ export default {
       const datastoreParams = {
         ip: this.config.ip,
         port: this.config.port,
-        pageCount: 10,
+        pageCount: this.cluster
+          ? this.widgetInfo.dataStore.clusterMaxCount
+          : 10,
         page: this.currentPageIndex,
         where,
         geometry:
-          this.geoJSONExtent &&
-          JSON.stringify(this.geoJSONExtent) !== "{}" &&
-          this.keyword
+          this.geoJSONExtent && JSON.stringify(this.geoJSONExtent) !== "{}"
             ? JSON.stringify(this.geoJSONExtent)
             : undefined,
         libName,
-        decode: !this.keyword,
+        decode: this.decode,
         lon,
         lat,
         dis,

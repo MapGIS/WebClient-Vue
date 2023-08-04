@@ -15,7 +15,7 @@
       <template v-else>
         <mapgis-ui-input
           class="search-input"
-          placeholder="请输入关键字"
+          :placeholder="placeholderItem"
           v-model="keyword"
           allow-clear
           @focus="onSearchFocus"
@@ -54,6 +54,8 @@
         :widgetInfo="widgetInfo"
         :geometry="geometry"
         :geoJSONExtent="geoJSONExtent"
+        :decode="decode"
+        @change-decode="decodeChange"
         @current-result="currentResult"
         @select-markers="selectMarkers"
         @click-item="clickItem"
@@ -112,10 +114,15 @@ export default {
 
       locationPanelExpand: false,
 
-      searchInputExapnd: false
+      searchInputExapnd: false,
+
+      decode: false // 是否开启逆地址解析
     };
   },
   computed: {
+    placeholderItem() {
+      return this.decode ? "关键字无效" : "请输入关键字";
+    },
     isDataStoreQuery() {
       return !!this.widgetInfo.dataStore;
     },
@@ -145,6 +152,9 @@ export default {
     window.removeEventListener("resize", this.setMaxHeight, false);
   },
   methods: {
+    decodeChange(e) {
+      this.decode = e;
+    },
     onLocate() {
       this.locationPanelExpand = !this.locationPanelExpand;
       this.searchPanelExpand = false;

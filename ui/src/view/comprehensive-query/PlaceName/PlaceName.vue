@@ -1,6 +1,25 @@
 <template>
   <div class="place-name-container">
+    <div class="query-type-container" v-if="widgetInfo.dataStore">
+      <mapgis-ui-switch
+        size="small"
+        :checked="decode"
+        @change="
+          e => {
+            $emit('change-decode', e);
+          }
+        "
+      />
+      <span>逆地址解析</span>
+    </div>
     <div class="float-pop-container" v-show="!showResult">
+      <span
+        @click="selectAll"
+        :class="{
+          'place-name-active-text': isAllselected
+        }"
+        >全部</span
+      >
       <span
         v-for="item in allItems"
         :key="`地名地址${item.placeName}`"
@@ -9,13 +28,6 @@
           'place-name-active-text': selected.indexOf(item.placeName) > -1
         }"
         >{{ item.placeName }}</span
-      >
-      <span
-        @click="selectAll"
-        :class="{
-          'place-name-active-text': isAllselected
-        }"
-        >全部</span
       >
     </div>
     <div class="search-tab-container" v-if="showResult && !showResultSet">
@@ -46,6 +58,7 @@
             :keyword="keyword"
             :activeTab="tab"
             :geometry="geometry"
+            :decode="decode"
             :geoJSONExtent="geoJSONExtent"
             @select-markers="selectMarkers"
             @click-item="clickItem"
@@ -90,6 +103,10 @@ export default {
     geoJSONExtent: {
       type: Object,
       default: () => ({})
+    },
+    decode: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
