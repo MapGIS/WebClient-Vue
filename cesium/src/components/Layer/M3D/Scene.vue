@@ -321,7 +321,8 @@ export default {
       featureclickenable: this.enablePopup,
       iEnableIot: false,
       showDetail: false,
-      isUnClosePopup: true
+      isUnClosePopup: true,
+      layerVisibleArr: [] //记录显示的图层，拾取时隐藏的图层直接忽略
     };
   },
   provide() {
@@ -337,11 +338,9 @@ export default {
       return this.popupConfig?.component || "mapgis-3d-popup-iot";
     },
     popupType() {
-      console.log("popupType", this.popupConfig?.type);
       return this.popupConfig?.type;
     },
     popupWidth() {
-      console.log("popupWidth", this.popupConfig?.componentWidth);
       return this.popupConfig?.componentWidth;
     }
   },
@@ -754,17 +753,25 @@ export default {
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let indexes = g3dLayer.getAllLayerIndexes();
+      this.layerVisibleArr = [];
       indexes.forEach(index => {
         let layer = g3dLayer.getLayer(index);
         if (layers.indexOf(`${index}`) >= 0) {
           if (layer) {
             layer.show = true;
             g3dLayer.showByLayerIndex(index, true);
+            this.layerVisibleArr.push(index);
           }
         } else {
           if (layer) {
             layer.show = false;
             g3dLayer.showByLayerIndex(index, false);
+            const featureIndex = this.prePickFeature?.index;
+            if (index === featureIndex) {
+              this.featureproperties = undefined;
+              this.featurevisible = false;
+              this.restoreHighlight();
+            }
           }
         }
       });
@@ -798,6 +805,7 @@ export default {
       let originStyles = [];
       layerIndexs.forEach(index => {
         let m3dlayer = g3dLayer.getLayer(index);
+        debugger;
         if (m3dlayer) {
           originStyles.push(m3dlayer.style);
         }
@@ -827,7 +835,8 @@ export default {
         find.options.originStyles.forEach((s, i) => {
           let m3dlayer = g3dLayer.getLayer(String(i));
           if (m3dlayer) {
-            m3dlayer.style = s;
+            // m3dlayer.style = s;
+            g3dLayer.translucencyByLayerIndex(i.toString(), this.opacity);
           }
         });
       }
@@ -913,11 +922,12 @@ export default {
       }
     },
     pickFeature(payload) {
+      console.log("进入pick---------------", performance.now());
       const { movement, pickedFeature } = payload;
       const vm = this;
       const { g3dLayerIndex } = this;
 
-      if (!pickedFeature) {
+      if (!pickedFeature || !movement) {
         vm.iClickVisible = false;
         return;
       }
@@ -928,6 +938,7 @@ export default {
 
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+
       if (!pickedFeature._content && pickedFeature.primitive) {
         this.featurevisible = true;
         // 右侧展示气泡框展示控制条件之一，关闭再打开会进入这里，showDetail一个控制条件不够
@@ -937,6 +948,13 @@ export default {
         return;
       }
       let index = pickedFeature._content._tileset._layerIndex;
+      let tileset = g3dLayer.getLayer(`${index}`);
+      if (
+        pickedFeature.tileset !== tileset ||
+        !this.layerVisibleArr.includes(index)
+      ) {
+        return;
+      }
       vm.selectLayerIndex = index;
       vm.selectedKeys = [`${index}`];
       let layerInfo = g3dLayer.getLayerInfo(index);
@@ -1126,16 +1144,13 @@ export default {
     },
     async queryStatic(movement) {
       const vm = this;
-      vm.featureproperties = undefined;
-      vm.featurevisible = false;
       const { Cesium, viewer, version, g3dLayerIndex, popupOptions } = this;
       const { vueKey, vueIndex, vueCesium } = this;
       const scene = viewer.scene;
 
       let tempRay = new Cesium.Ray();
       let tempPos = new Cesium.Cartesian3();
-      vm.restoreHighlight();
-      vm.restoreM3d();
+
       if (!movement) return;
       if (scene.mode !== Cesium.SceneMode.MORPHING) {
         let position = movement.position || movement.endPosition;
@@ -1144,8 +1159,6 @@ export default {
         let cartesian2 = scene.globe.pick(ray, scene, tempPos);
 
         let pickedFeature = viewer.scene.pick(movement.position);
-        window.prePickFeature = pickedFeature;
-
         if (!pickedFeature) {
           vm.clickvisible = false;
           return;
@@ -1163,6 +1176,19 @@ export default {
         if (cartesian || cartesian2) {
           let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
           let index = pickedFeature._content._tileset._layerIndex;
+          let tileset = g3dLayer.getLayer(`${index}`);
+          if (pickedFeature.tileset !== tileset) {
+            return;
+          }
+          vm.featureproperties = undefined;
+          vm.featurevisible = false;
+          vm.restoreHighlight();
+          this.prePickFeature = {
+            feature: pickedFeature,
+            color: pickedFeature.color,
+            index: pickedFeature._content._tileset._layerIndex
+          };
+          // vm.restoreM3d();
           vm.selectLayerIndex = index;
           vm.selectedKeys = [`${index}`];
           if (version == "1.0" || version == "0.0") {
@@ -1183,7 +1209,7 @@ export default {
               vm.iClickFeatures = [{ properties: { layerName, gdbpUrl } }];
             }
             pickedFeature.color = Cesium.Color.fromCssColorString(
-              this.highlightStyle
+              vm.highlightStyle
             );
             // vm.highlightM3d(index);
           } else if (version == "2.0") {
@@ -1191,7 +1217,7 @@ export default {
               return;
 
             let oid = viewer.scene.pickOid(movement.position);
-            let tileset = g3dLayer.getLayer(`${index}`);
+            // let tileset = g3dLayer.getLayer(`${index}`);
 
             tileset.pickedOid = oid;
             tileset.pickedColor = Cesium.Color.fromCssColorString(
@@ -1235,13 +1261,13 @@ export default {
     },
     // 动态单体化下该方法执行后会导致模型大面积高亮，参考禅道bug2356
     restoreHighlight() {
-      if (window.prePickFeature) {
-        window.prePickFeature.color = Cesium.Color.WHITE;
-        window.prePickFeature = undefined;
-      }
       const { g3dLayerIndex, viewer } = this;
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+      if (this.prePickFeature) {
+        this.prePickFeature.feature.color = this.prePickFeature.color;
+        this.prePickFeature = undefined;
+      }
       let m3ds = g3dLayer.getM3DLayerIndexes();
       m3ds.forEach(index => {
         let m3d = g3dLayer.getLayer(index);
@@ -1250,6 +1276,15 @@ export default {
           m3d.pickedOid = undefined;
         }
       });
+    },
+    restoreBeforeM3d() {
+      if (this.prePickFeature) {
+        let g3dLayer = viewer.scene.layers.getLayer(this.g3dLayerIndex);
+        g3dLayer.translucencyByLayerIndex(
+          this.prePickFeature.index,
+          this.opacity
+        );
+      }
     },
     handleDynamicQuery() {
       this.featurevisible = false;
