@@ -280,6 +280,10 @@ export default {
     doLookAroundAnalysis() {
       let vm = this;
       vm.viewPointPosition = "";
+
+      // 获取当前坐标系标准
+      const ellipsoid = this.viewer.scene.globe.ellipsoid;
+
       // this.startEventHandler();
       if (!this.isDepthTestAgainstTerrainEnable) {
         // 如果深度检测没有开启，则开启
@@ -308,8 +312,13 @@ export default {
           vm.toggleMask(true);
           vm.setViewPointPosition(result.center);
 
+          let cartographic = ellipsoid.cartesianToCartographic(result.center);
+          cartographic.height += vm.formData.exHeight;
+          let cartesian = vm.Cesium.Cartographic.toCartesian(cartographic);
+          vm.viewPosition = cartesian;
+
           visibility.lookAroundAnalysis({
-            viewPosition: result.center,
+            viewPosition: cartesian,
             radius: result.radius,
             percentCallback: vm.setPercent
           });
