@@ -60,39 +60,6 @@ import booleanEqual from "@turf/boolean-equal";
 import rhumbDistance from "@turf/rhumb-distance";
 import centerOfMass from "@turf/center-of-mass";
 
-// 默认展示字段，管理平台无配置时展示
-const fieldConfigs = [
-  {
-    fieldName: "zd_name",
-    showName: "名称"
-  },
-  {
-    fieldName: "zd_address",
-    showName: "地址"
-  },
-  {
-    fieldName: "geometry",
-    showName: "地理经纬度"
-  }
-];
-// 查询字段映射（管理平台与前台字段不一致）
-const fieldsMap = {
-  zd_marker: "marker",
-  zd_addr_code: "code",
-  zd_country: "country",
-  zd_street_no: "streetNo",
-  zd_city: "city",
-  zd_town: "town",
-  zd_name: "name",
-  zd_village: "village",
-  zd_street: "street",
-  zd_interest_point: "interestpoint",
-  zd_province: "province",
-  zd_nation: "nation",
-  geometry: "geometry",
-  zd_address: "formatAddress",
-  zd_idetifier: "identifier"
-};
 export default {
   inject: ["Cesium", "viewer"],
   props: {
@@ -142,6 +109,10 @@ export default {
     decode: {
       type: Boolean,
       default: false
+    },
+    selectShowProperty: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -186,22 +157,14 @@ export default {
   },
   beforeCreate() {},
   mounted() {
-    let { showField } = this.selectedItem;
-    if (showField.length <= 0) {
-      showField = this.config.defaultShowField;
-      if (this.config.defaultShowField <= 0) {
-        showField = fieldConfigs;
-      }
-    }
-
     const fields = [];
     const configs = [];
-    for (let j = 0; j < showField.length; j += 1) {
-      const filed = showField[j].fieldName;
-      fields.push(fieldsMap[filed]);
+    for (let j = 0; j < this.selectShowProperty.length; j += 1) {
+      const filed = this.selectShowProperty[j].fieldName;
+      fields.push(filed);
       configs.push({
-        name: fieldsMap[filed],
-        title: showField[j].showName
+        name: filed,
+        title: this.selectShowProperty[j].showName
       });
     }
     this.fieldConfigs = configs;

@@ -6,6 +6,7 @@
       :markers="markers"
       :popupShowType="popupShowType"
       :popupToggleType="popupToggleType"
+      :field-configs="fieldConfigs"
       @mouseenter="mouseEnterEvent"
       @mouseleave="mouseLeaveEvent"
       @popupload="popupLoad"
@@ -92,6 +93,11 @@ export default {
     popupToggleType: {
       type: String,
       default: "mouseenter"
+    },
+    fieldConfigs: {
+      type: Array,
+      required: false,
+      default: () => []
     }
   },
   data() {

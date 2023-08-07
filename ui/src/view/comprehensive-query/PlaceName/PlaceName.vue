@@ -60,6 +60,7 @@
             :geometry="geometry"
             :decode="decode"
             :geoJSONExtent="geoJSONExtent"
+            :selectShowProperty="selectShowProperty"
             @select-markers="selectMarkers"
             @click-item="clickItem"
             @update-geojson="currentResult"
@@ -107,6 +108,10 @@ export default {
     decode: {
       type: Boolean,
       default: false
+    },
+    selectShowProperty: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
