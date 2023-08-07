@@ -11,7 +11,7 @@
     @mouseEnter="mouseOver"
     @mouseLeave="mouseOut"
   >
-    <mapgis-3d-popup
+    <mapgis-3d-feature-popup
       :vue-key="vueKey"
       :position="{
         longitude: popupPosition.longitude,
@@ -20,8 +20,6 @@
       }"
       :visible="showPopup"
       @change="changePopup"
-      v-on:load="bindEvent"
-      :forceRender="true"
     >
       <div slot="default">
         <slot
@@ -30,28 +28,10 @@
           :field-configs="fieldConfigs"
           :property-keys="propertyKeys"
         >
-          <mapgis-ui-list
-            item-layout="horizontal"
-            :data-source="propertyKeys"
-            size="small"
-            class="table-marker"
-          >
-            <mapgis-ui-list-item
-              slot="renderItem"
-              slot-scope="item"
-              class="table-marker-item"
-            >
-              <div style="width: 130px" :title="propertyName(item)">
-                {{ propertyName(item) }}
-              </div>
-              <div style="width: 170px" :title="marker.properties[item]">
-                {{ marker.properties[item] }}
-              </div>
-            </mapgis-ui-list-item>
-          </mapgis-ui-list>
+          <mapgis-3d-popup-iot :properties="properties" />
         </slot>
       </div>
-    </mapgis-3d-popup>
+    </mapgis-3d-feature-popup>
   </mapgis-3d-marker>
 </template>
 
@@ -94,6 +74,15 @@ export default {
     };
   },
   computed: {
+    properties() {
+      const obj = {};
+      this.fieldConfigs.forEach(item => {
+        if (this.marker.properties[item.showName]) {
+          obj[item.showName] = this.marker.properties[item.showName];
+        }
+      });
+      return obj;
+    },
     img() {
       return this.marker.img;
     },

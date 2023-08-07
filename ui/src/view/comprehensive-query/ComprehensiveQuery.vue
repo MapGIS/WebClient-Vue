@@ -55,6 +55,7 @@
         :geometry="geometry"
         :geoJSONExtent="geoJSONExtent"
         :decode="decode"
+        :selectShowProperty="selectShowProperty"
         @change-decode="decodeChange"
         @current-result="currentResult"
         @select-markers="selectMarkers"
@@ -102,6 +103,10 @@ export default {
     widgetInfo: {
       type: Object,
       default: () => ({})
+    },
+    selectShowProperty: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
