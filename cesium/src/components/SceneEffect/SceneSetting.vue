@@ -34,6 +34,7 @@
             ref="effect"
             :initCameraSetting.sync="initCameraSetting"
             :initFavoritesCameraSetting="initFavoritesCameraSetting"
+            :boundingSphereRadius="boundingSphereRadius"
             @updateSpin="changeSpinning"
           ></camera-setting>
         </mapgis-ui-tab-pane>
@@ -126,6 +127,10 @@ export default {
       default: () => {
         return {};
       }
+    },
+    boundingSphereRadius: {
+      type: Number,
+      default: 0
     }
   },
   computed: {
@@ -155,9 +160,10 @@ export default {
     initCameraSetting() {
       return (
         this.initParams.cameraSetting || {
-          undgrd: false,
+          selfAdaption: false,
           undgrdParams: {
-            groundAlpha: 0.5
+            groundAlpha: 1,
+            maxHeigh: 400000
           },
           fov: 60
         }

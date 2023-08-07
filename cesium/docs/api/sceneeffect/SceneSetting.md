@@ -53,12 +53,14 @@
   },
   // 相机设置
   "cameraSetting": {
-    // 是否开启地下模式
-    "undgrd": false,
+    // 是否开启地表自适应透明模式
+    "selfAdaption": false,
     // 地下模式参数
     "undgrdParams": {
       // 地表透明度
-      "groundAlpha": 0.5
+      "groundAlpha": 0.5,
+      // 地表自适应透明高度阈值，如果传入的模型包围盒半径小于400Km，则使用传入的半径；反之则使用400Km
+      "maxHeigh": 400000
     },
     // FOV设置
     "fov": 60
@@ -150,8 +152,16 @@
     }
   }
 }
-
 ```
+
+### `boundingSphereRadius`
+
+- **类型:** `Number`
+- **可选**
+- **非侦听属性**
+- **默认值:** `0`
+- **描述:** 模型集最大包围盒半径。用于地表自适应透明度，当相机高度低于这个值，则设置地表透明度。
+- **示例**
 
 ## 方法
 
@@ -198,10 +208,10 @@ export default {
         top: "10px",
         left: "10px",
         width: "320px",
-        background: "#fff",
-      },
+        background: "#fff"
+      }
     };
-  },
+  }
 };
 </script>
 ```

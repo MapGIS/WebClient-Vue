@@ -2,21 +2,27 @@
   <div class="camera-setting">
     <mapgis-ui-switch-panel
       size="default"
-      label="地下模式"
-      :checked="cameraSetting.undgrd"
-      @changeChecked="enableUndgrd"
+      label="地表自适应透明"
+      :checked="cameraSetting.selfAdaption"
+      @changeChecked="enableSelfAdaption"
     >
       <mapgis-ui-input-number-panel
         size="large"
-        label="地表透明度"
-        :value="cameraSetting.undgrdParams.groundAlpha"
-        :range="range"
-        :step="0.1"
-        @change="enableUndgrd"
+        label="阈值"
+        :value="cameraSetting.undgrdParams.maxHeigh || 400000"
+        :range="[0, 1000000]"
+        :step="100"
       />
     </mapgis-ui-switch-panel>
-
-    <!-- <div class="dividerWrapper"><div class="divider" /></div> -->
+    <mapgis-ui-input-number-panel
+      size="large"
+      label="地表透明度"
+      :value="cameraSetting.undgrdParams.groundAlpha"
+      :range="range"
+      :step="0.1"
+      v-show="!cameraSetting.selfAdaption"
+      @change="enableSelfAdaption"
+    />
 
     <mapgis-ui-input-number-panel
       size="large"
@@ -40,9 +46,10 @@ export default {
       type: Object,
       default: () => {
         return {
-          undgrd: false,
+          selfAdaption: false,
           undgrdParams: {
-            groundAlpha: 0.5
+            groundAlpha: 1,
+            maxHeigh: 400000
           },
           fov: 60
         };
@@ -50,6 +57,10 @@ export default {
     },
     initFavoritesCameraSetting: {
       type: Object
+    },
+    boundingSphereRadius: {
+      type: Number,
+      default: 0
     }
   },
   computed: {
@@ -89,17 +100,18 @@ export default {
       if (!this.cameraSetting) {
         return;
       }
-      const { undgrd, fov } = this.cameraSetting;
-      this.enableUndgrd(undgrd);
+      const { selfAdaption, fov } = this.cameraSetting;
+      this.enableSelfAdaption(selfAdaption);
       this.fovChange(fov);
     },
     /*
-     * 地下模式
-     * */
-    enableUndgrd(e) {
+     * 地表自适应透明
+     *
+     */
+    enableSelfAdaption(e) {
       const { viewer, Cesium } = this;
       if (typeof e === "boolean") {
-        this.cameraSetting.undgrd = e;
+        this.cameraSetting.selfAdaption = e;
       } else {
         this.cameraSetting.undgrdParams.groundAlpha = e;
       }
@@ -107,24 +119,50 @@ export default {
       let vm = this;
 
       setTimeout(function() {
-        viewer.scene.screenSpaceCameraController.enableCollisionDetection = !vm
-          .cameraSetting.undgrd;
-        viewer.scene.globe.translucency.enabled = vm.cameraSetting.undgrd;
-        if (vm.cameraSetting.undgrd) {
-          //设置地表透明度
-          vm.setGlobeBackFaceAlpha(vm.cameraSetting.undgrdParams.groundAlpha);
+        if (vm.cameraSetting.selfAdaption) {
+          //设置地表自适应透明
+          viewer.camera.changed.addEventListener(() =>
+            vm._changeAlphaByCamera()
+          );
         } else {
-          // 不开启地表透明度，地表透明度应该为1
-          vm.setGlobeBackFaceAlpha(1);
+          viewer.camera.changed.removeEventListener(() =>
+            vm._changeAlphaByCamera()
+          );
+          // 不开启地表自适应透明，地表透明度应该为设置的值
+          vm.setGlobeBackFaceAlpha(vm.cameraSetting.undgrdParams.groundAlpha);
         }
         vm.$emit("updateSpin", false);
       }, 300);
+    },
+    _changeAlphaByCamera() {
+      let max = this.boundingSphereRadius;
+      if (max) {
+        // 当出现包围球大于400km的图层时，使用400km的阈值
+        max = Math.min(max, 400000);
+        let startDis = max * 5;
+        let stopDis = max;
+
+        // 当前高度
+        let height = this.viewer.camera.positionCartographic.height;
+        // 当进入图层高度调整视高阈值内
+        if (height < startDis) {
+          const imageryLayerAlpha =
+            height < stopDis ? 0 : 1 - (startDis - height) / startDis;
+          this.setGlobeBackFaceAlpha(imageryLayerAlpha);
+        }
+      }
     },
     /**
      * 设置地表透明度
      */
     setGlobeBackFaceAlpha(groundAlpha) {
       const { viewer, Cesium } = this;
+
+      // 当透明度为1时，关闭地表自适应透明
+      const enableTranslucency = groundAlpha !== 1;
+      viewer.scene.screenSpaceCameraController.enableCollisionDetection = !enableTranslucency;
+      viewer.scene.globe.translucency.enabled = enableTranslucency;
+
       viewer.scene.globe.translucency.backFaceAlpha = groundAlpha;
       // 下面这一句会给所有二维图层都设置透明度
       // viewer.scene.globe.translucency.frontFaceAlpha = groundAlpha;
