@@ -61,6 +61,10 @@ export default {
     boundingSphereRadius: {
       type: Number,
       default: 0
+    },
+    baseLayerIds: {
+      type: Array,
+      default: () => []
     }
   },
   computed: {
@@ -120,14 +124,15 @@ export default {
 
       setTimeout(function() {
         if (vm.cameraSetting.selfAdaption) {
+          vm._changeAlphaByCamera();
           //设置地表自适应透明
-          viewer.camera.changed.addEventListener(() =>
-            vm._changeAlphaByCamera()
-          );
+          viewer.camera.changed.addEventListener(() => {
+            if (vm.cameraSetting.selfAdaption) {
+              vm._changeAlphaByCamera();
+            }
+          });
         } else {
-          viewer.camera.changed.removeEventListener(() =>
-            vm._changeAlphaByCamera()
-          );
+          viewer.camera.changed.removeEventListener();
           // 不开启地表自适应透明，地表透明度应该为设置的值
           vm.setGlobeBackFaceAlpha(vm.cameraSetting.undgrdParams.groundAlpha);
         }
@@ -138,7 +143,8 @@ export default {
       let max = this.boundingSphereRadius;
       if (max) {
         // 当出现包围球大于400km的图层时，使用400km的阈值
-        max = Math.min(max, 400000);
+        const maxHeigh = this.cameraSetting.undgrdParams.maxHeigh || 400000;
+        max = Math.min(max, this.cameraSetting.undgrdParams.maxHeigh);
         let startDis = max * 5;
         let stopDis = max;
 
@@ -171,6 +177,12 @@ export default {
       defaultColor.alpha = groundAlpha;
       viewer.scene.globe.baseColor = defaultColor;
       viewer.imageryLayers._layers[0].alpha = groundAlpha;
+      const layers = viewer.imageryLayers._layers;
+      for (let i = 1; i < layers.length; i++) {
+        if (this.baseLayerIds.includes(layers[i].id)) {
+          layers[i].alpha = groundAlpha;
+        }
+      }
     },
     /*
      * FOV设置

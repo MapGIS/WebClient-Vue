@@ -35,6 +35,7 @@
             :initCameraSetting.sync="initCameraSetting"
             :initFavoritesCameraSetting="initFavoritesCameraSetting"
             :boundingSphereRadius="boundingSphereRadius"
+            :baseLayerIds="baseLayerIds"
             @updateSpin="changeSpinning"
           ></camera-setting>
         </mapgis-ui-tab-pane>
@@ -131,6 +132,10 @@ export default {
     boundingSphereRadius: {
       type: Number,
       default: 0
+    },
+    baseLayerIds: {
+      type: Array,
+      default: () => []
     }
   },
   computed: {
