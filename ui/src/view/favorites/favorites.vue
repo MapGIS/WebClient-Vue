@@ -233,13 +233,13 @@ export default {
     },
     openAddModel() {
       this.showAddName = true;
-      this.title = "新增数据";
+      this.title = "新增收藏";
       this.type = "add";
     },
     editCurrentData(e, data, index) {
       e.stopPropagation();
       this.showAddName = true;
-      this.title = "修改数据";
+      this.title = "修改收藏";
       this.type = "edit";
       const deepCloneData = JSON.parse(JSON.stringify(data));
       this.bookMarkName = deepCloneData.name;
