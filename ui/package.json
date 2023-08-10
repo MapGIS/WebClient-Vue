@@ -24,7 +24,7 @@
   "dependencies": {
     "@ant-design/icons": "2.1.1",
     "@mapgis/mapbox-gl": "^16.4.0",
-    "@mapgis/webclient-es6-service": "^16.4.0",
+    "@mapgis/webclient-es6-service": "~16.2.0",
     "@mapgis/webclient-store": "^10.5.5",
     "@vue/composition-api": "^1.0.0-rc.13",
     "@vuepress/plugin-active-header-links": "^1.8.2",

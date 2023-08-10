@@ -30,7 +30,7 @@
     "@mapgis/mapbox-gl-draw-static-mode": "^16.4.0",
     "@mapgis/mapbox-gl-compare": "^16.4.0",
     "@mapgis/mapbox-gl-inspect": "^16.4.0",
-    "@mapgis/webclient-es6-service": "^16.4.0",
+    "@mapgis/webclient-es6-service": "~16.2.0",
     "@mapgis/webclient-es6-mapboxgl": "^16.4.0",
     "@mapgis/webclient-store": "^10.5.5",
     "@mapgis/webclient-vue-ui": "~16.5.0",
