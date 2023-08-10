@@ -166,9 +166,12 @@ export default {
       return (
         this.initParams.cameraSetting || {
           selfAdaption: false,
-          undgrdParams: {
-            groundAlpha: 1,
+          selfAdaptionParams: {
             maxHeigh: 400000
+          },
+          undgrd: false,
+          undgrdParams: {
+            groundAlpha: 0.5
           },
           fov: 60
         }

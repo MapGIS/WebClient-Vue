@@ -9,20 +9,26 @@
       <mapgis-ui-input-number-panel
         size="large"
         label="阈值"
-        :value="cameraSetting.undgrdParams.maxHeigh || 400000"
+        :value="cameraSetting.selfAdaptionParams.maxHeigh"
         :range="[0, 1000000]"
         :step="100"
       />
     </mapgis-ui-switch-panel>
-    <mapgis-ui-input-number-panel
-      size="large"
-      label="地表透明度"
-      :value="cameraSetting.undgrdParams.groundAlpha"
-      :range="range"
-      :step="0.1"
-      v-show="!cameraSetting.selfAdaption"
-      @change="enableSelfAdaption"
-    />
+    <mapgis-ui-switch-panel
+      size="default"
+      label="地下模式"
+      :checked="cameraSetting.undgrd"
+      @changeChecked="enableUndgrd"
+    >
+      <mapgis-ui-input-number-panel
+        size="large"
+        label="地表透明度"
+        :value="cameraSetting.undgrdParams.groundAlpha"
+        :range="range"
+        :step="0.1"
+        @change="enableUndgrd"
+      />
+    </mapgis-ui-switch-panel>
 
     <mapgis-ui-input-number-panel
       size="large"
@@ -47,9 +53,12 @@ export default {
       default: () => {
         return {
           selfAdaption: false,
-          undgrdParams: {
-            groundAlpha: 1,
+          selfAdaptionParams: {
             maxHeigh: 400000
+          },
+          undgrd: false,
+          undgrdParams: {
+            groundAlpha: 0.5
           },
           fov: 60
         };
@@ -104,18 +113,28 @@ export default {
       if (!this.cameraSetting) {
         return;
       }
+      if (this.cameraSetting.selfAdaption == undefined) {
+        this.cameraSetting.selfAdaption = false;
+      }
+      if (
+        !this.cameraSetting.selfAdaptionParams ||
+        !this.cameraSetting.selfAdaptionParams.maxHeigh
+      ) {
+        this.cameraSetting.selfAdaptionParams = {
+          maxHeigh: 400000
+        };
+      }
       const { selfAdaption, fov } = this.cameraSetting;
       this.enableSelfAdaption(selfAdaption);
       this.fovChange(fov);
     },
     /*
-     * 地表自适应透明
-     *
-     */
-    enableSelfAdaption(e) {
+     * 地下模式
+     * */
+    enableUndgrd(e) {
       const { viewer, Cesium } = this;
       if (typeof e === "boolean") {
-        this.cameraSetting.selfAdaption = e;
+        this.cameraSetting.undgrd = e;
       } else {
         this.cameraSetting.undgrdParams.groundAlpha = e;
       }
@@ -123,28 +142,50 @@ export default {
       let vm = this;
 
       setTimeout(function() {
-        if (vm.cameraSetting.selfAdaption) {
-          vm._changeAlphaByCamera();
-          //设置地表自适应透明
-          viewer.camera.changed.addEventListener(() => {
-            if (vm.cameraSetting.selfAdaption) {
-              vm._changeAlphaByCamera();
-            }
-          });
+        viewer.scene.screenSpaceCameraController.enableCollisionDetection = !vm
+          .cameraSetting.undgrd;
+        viewer.scene.globe.translucency.enabled = vm.cameraSetting.undgrd;
+        if (vm.cameraSetting.undgrd) {
+          //设置地表透明度
+          vm.setGlobeBackFaceAlpha(
+            vm.cameraSetting.undgrdParams.groundAlpha,
+            false
+          );
         } else {
-          viewer.camera.changed.removeEventListener();
-          // 不开启地表自适应透明，地表透明度应该为设置的值
-          vm.setGlobeBackFaceAlpha(vm.cameraSetting.undgrdParams.groundAlpha);
+          // 不开启地表透明度，地表透明度应该为1
+          vm.setGlobeBackFaceAlpha(1, false);
         }
         vm.$emit("updateSpin", false);
       }, 300);
+    },
+    /*
+     * 地表自适应透明
+     *
+     */
+    enableSelfAdaption(e) {
+      let vm = this;
+      vm.cameraSetting.selfAdaption = e;
+      if (vm.cameraSetting.selfAdaption) {
+        vm._changeAlphaByCamera();
+        //设置地表自适应透明
+        viewer.camera.changed.addEventListener(() => {
+          if (vm.cameraSetting.selfAdaption) {
+            vm._changeAlphaByCamera();
+          }
+        });
+      } else {
+        viewer.camera.changed.removeEventListener();
+        // 不开启地表自适应透明，地表透明度应该为设置的值
+        vm.setGlobeBackFaceAlpha(1, true);
+      }
     },
     _changeAlphaByCamera() {
       let max = this.boundingSphereRadius;
       if (max) {
         // 当出现包围球大于400km的图层时，使用400km的阈值
-        const maxHeigh = this.cameraSetting.undgrdParams.maxHeigh || 400000;
-        max = Math.min(max, this.cameraSetting.undgrdParams.maxHeigh);
+        const maxHeigh =
+          this.cameraSetting.selfAdaptionParams.maxHeigh || 400000;
+        max = Math.min(max, this.cameraSetting.selfAdaptionParams.maxHeigh);
         let startDis = max * 5;
         let stopDis = max;
 
@@ -154,20 +195,30 @@ export default {
         if (height < startDis) {
           const imageryLayerAlpha =
             height < stopDis ? 0 : 1 - (startDis - height) / startDis;
-          this.setGlobeBackFaceAlpha(imageryLayerAlpha);
+          this.setGlobeBackFaceAlpha(imageryLayerAlpha, true);
+        } else {
+          this.setGlobeBackFaceAlpha(1, true);
         }
       }
     },
     /**
      * 设置地表透明度
      */
-    setGlobeBackFaceAlpha(groundAlpha) {
+    setGlobeBackFaceAlpha(groundAlpha, isSelfAdaption) {
       const { viewer, Cesium } = this;
 
-      // 当透明度为1时，关闭地表自适应透明
-      const enableTranslucency = groundAlpha !== 1;
-      viewer.scene.screenSpaceCameraController.enableCollisionDetection = !enableTranslucency;
-      viewer.scene.globe.translucency.enabled = enableTranslucency;
+      if (isSelfAdaption) {
+        // 当透明度为1时，关闭地表自适应透明
+        const enableTranslucency = groundAlpha !== 1;
+        viewer.scene.screenSpaceCameraController.enableCollisionDetection = !enableTranslucency;
+        viewer.scene.globe.translucency.enabled = enableTranslucency;
+        const layers = viewer.imageryLayers._layers;
+        for (let i = 1; i < layers.length; i++) {
+          if (this.baseLayerIds.includes(layers[i].id)) {
+            layers[i].alpha = groundAlpha;
+          }
+        }
+      }
 
       viewer.scene.globe.translucency.backFaceAlpha = groundAlpha;
       // 下面这一句会给所有二维图层都设置透明度
@@ -177,12 +228,6 @@ export default {
       defaultColor.alpha = groundAlpha;
       viewer.scene.globe.baseColor = defaultColor;
       viewer.imageryLayers._layers[0].alpha = groundAlpha;
-      const layers = viewer.imageryLayers._layers;
-      for (let i = 1; i < layers.length; i++) {
-        if (this.baseLayerIds.includes(layers[i].id)) {
-          layers[i].alpha = groundAlpha;
-        }
-      }
     },
     /*
      * FOV设置
