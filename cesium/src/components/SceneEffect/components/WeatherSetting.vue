@@ -205,8 +205,7 @@ export default {
           }
         };
       }
-    },
-    initFavoritesWeatherSetting: { type: Object }
+    }
   },
   computed: {
     weatherSetting: {
@@ -265,7 +264,6 @@ export default {
   },
   methods: {
     init() {
-      this.setFavoritesConfig();
       const {
         sun,
         moon,
@@ -321,6 +319,9 @@ export default {
     enableSun(e) {
       const { viewer } = this;
       this.weatherSetting.sun = e;
+      if (viewer.scene.sun.show === this.weatherSetting.sun) {
+        return;
+      }
       viewer.scene.sun.show = this.weatherSetting.sun;
       if (this.weatherSetting.sun) {
         let sunPosition = viewer.scene.sun._boundingVolume.center;
@@ -351,6 +352,9 @@ export default {
     enableMoon(e) {
       const { viewer } = this;
       this.weatherSetting.moon = e;
+      if (viewer.scene.moon.show === this.weatherSetting.moon) {
+        return;
+      }
       viewer.scene.moon.show = this.weatherSetting.moon;
 
       if (this.weatherSetting.moon) {
@@ -728,17 +732,6 @@ export default {
       viewer.scene.fog.density = this.weatherSetting.surfFogParams.surfFogDst;
       // viewer.scene.fog.minimumBrightness = this.surfFogMinBrt;
       viewer.scene.fog.enabled = this.weatherSetting.surficialFog;
-    },
-    setFavoritesConfig() {
-      if (this.initFavoritesWeatherSetting) {
-        Object.keys(this.initFavoritesWeatherSetting).forEach(item => {
-          if (
-            this.initFavoritesWeatherSetting[item] !== this.weatherSetting[item]
-          ) {
-            this.weatherSetting[item] = this.initFavoritesWeatherSetting[item];
-          }
-        });
-      }
     }
   }
 };

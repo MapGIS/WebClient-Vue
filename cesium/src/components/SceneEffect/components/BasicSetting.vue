@@ -190,9 +190,6 @@ export default {
           layersaturation: 1.0
         };
       }
-    },
-    initFavoritesBasicSetting: {
-      type: Object
     }
   },
   computed: {
@@ -235,13 +232,6 @@ export default {
     initBasicSetting: {
       handler(e) {
         this.init();
-      },
-      deep: true,
-      immediate: true
-    },
-    initFavoritesBasicSetting: {
-      handler(e) {
-        this.setFavoritesConfig();
       },
       deep: true,
       immediate: true
@@ -547,17 +537,6 @@ export default {
             destination: Cesium.Cartesian3.fromDegrees(lon, lat, height)
           });
         }
-      }
-    },
-    setFavoritesConfig() {
-      if (this.initFavoritesBasicSetting) {
-        Object.keys(this.initFavoritesBasicSetting).forEach(item => {
-          if (
-            this.initFavoritesBasicSetting[item] !== this.basicSetting[item]
-          ) {
-            this.basicSetting[item] = this.initFavoritesBasicSetting[item];
-          }
-        });
       }
     }
   }

@@ -64,9 +64,6 @@ export default {
         };
       }
     },
-    initFavoritesCameraSetting: {
-      type: Object
-    },
     boundingSphereRadius: {
       type: Number,
       default: 0
@@ -96,13 +93,6 @@ export default {
     initCameraSetting: {
       handler(e) {
         this.init();
-      },
-      deep: true,
-      immediate: true
-    },
-    initFavoritesCameraSetting: {
-      handler(e) {
-        this.setFavoritesConfig();
       },
       deep: true,
       immediate: true
@@ -239,17 +229,6 @@ export default {
       viewer.scene.camera.frustum.fov = Cesium.Math.toRadians(
         this.cameraSetting.fov
       );
-    },
-    setFavoritesConfig() {
-      if (this.initFavoritesCameraSetting) {
-        Object.keys(this.initFavoritesCameraSetting).forEach(item => {
-          if (
-            this.initFavoritesCameraSetting[item] !== this.cameraSetting[item]
-          ) {
-            this.cameraSetting[item] = this.initFavoritesCameraSetting[item];
-          }
-        });
-      }
     }
   }
 };

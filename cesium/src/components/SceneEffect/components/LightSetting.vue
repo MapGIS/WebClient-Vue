@@ -58,8 +58,7 @@ export default {
           lightIntensity: 10
         };
       }
-    },
-    initFavoritesLightSetting: { type: Object }
+    }
   },
   computed: {
     lightSetting: {
@@ -99,13 +98,6 @@ export default {
     initLightSetting: {
       handler(e) {
         this.init();
-      },
-      deep: true,
-      immediate: true
-    },
-    initFavoritesLightSetting: {
-      handler(e) {
-        this.setFavoritesConfig();
       },
       deep: true,
       immediate: true
@@ -155,17 +147,6 @@ export default {
       const { viewer } = this;
       this.lightSetting.lightIntensity = e;
       viewer.scene.light.intensity = this.lightSetting.lightIntensity;
-    },
-    setFavoritesConfig() {
-      if (this.initFavoritesLightSetting) {
-        Object.keys(this.initFavoritesLightSetting).forEach(item => {
-          if (
-            this.initFavoritesLightSetting[item] !== this.lightSetting[item]
-          ) {
-            this.lightSetting[item] = this.initFavoritesLightSetting[item];
-          }
-        });
-      }
     }
   }
 };
