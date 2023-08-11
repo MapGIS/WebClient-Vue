@@ -75,7 +75,7 @@ export default {
     $_init() {
       let { url, domain, baseUrl, protocol, ip, port } = this;
       let { serverName, tileSize, dynamicTile } = this;
-      let fixBaseUrl, docParam, suffixParams;
+      let fixBaseUrl, docParam;
       if (url) {
         let url = this.url;
         if (url.indexOf("?") === -1) {
@@ -88,11 +88,7 @@ export default {
         return;
       } else if (baseUrl) {
         if (baseUrl.indexOf("?") > -1) {
-          const arr = this.baseUrl.split("?");
-          fixBaseUrl = arr[0];
-          if (arr && arr.length > 1) {
-            suffixParams = arr[1];
-          }
+          fixBaseUrl = this.baseUrl.split("?")[0];
         } else {
           fixBaseUrl = this.baseUrl;
         }
@@ -110,11 +106,11 @@ export default {
           this._url = `${domain}/igs/rest/mrms/tile/${serverName}/{z}/{y}/{x}?size=${tileSize}`;
         }
       } else {
-        docParam = this.$_initAllRequestParams(suffixParams).join("&");
+        docParam = this.$_initAllRequestParams().join("&");
         this._url = encodeURI(fixBaseUrl + "?" + docParam) + "&bbox={bbox}";
       }
     },
-    $_initAllRequestParams(suffixParams) {
+    $_initAllRequestParams() {
       let params = [];
 
       params.push("f=" + this.f);
@@ -152,9 +148,6 @@ export default {
       }
       if (this.token) {
         params.push(this.token.key + "=" + this.token.value);
-      }
-      if (suffixParams) {
-        params.push(suffixParams);
       }
       return params;
     },
