@@ -19,7 +19,6 @@
             ref="attr"
             @updateSpin="changeSpinning"
             :initBasicSetting.sync="initBasicSetting"
-            :initFavoritesBasicSetting="initFavoritesBasicSetting"
             :initialDepthTest="depthTest"
             :initial-scene-mode="sceneMode"
           ></basic-setting>
@@ -33,7 +32,6 @@
           <camera-setting
             ref="effect"
             :initCameraSetting.sync="initCameraSetting"
-            :initFavoritesCameraSetting="initFavoritesCameraSetting"
             :boundingSphereRadius="boundingSphereRadius"
             :baseLayerIds="baseLayerIds"
             @updateSpin="changeSpinning"
@@ -48,7 +46,6 @@
           <light-setting
             ref="effect"
             :initLightSetting.sync="initLightSetting"
-            :initFavoritesLightSetting="initFavoritesLightSetting"
             @updateSpin="changeSpinning"
           ></light-setting>
         </mapgis-ui-tab-pane>
@@ -61,7 +58,6 @@
           <weather-setting
             ref="effect"
             :initWeatherSetting.sync="initWeatherSetting"
-            :initFavoritesWeatherSetting="initFavoritesWeatherSetting"
             @updateSpin="changeSpinning"
           ></weather-setting>
         </mapgis-ui-tab-pane>
@@ -74,7 +70,6 @@
           <effect-setting
             ref="effect"
             :initEffectSetting.sync="initEffectSetting"
-            :initFavoritesEffectSetting="initFavoritesEffectSetting"
             @updateSpin="changeSpinning"
           ></effect-setting>
         </mapgis-ui-tab-pane>
@@ -163,88 +158,104 @@ export default {
       return this.initFavoritesParams.basicSetting;
     },
     initCameraSetting() {
-      return (
-        this.initParams.cameraSetting || {
-          selfAdaption: false,
-          selfAdaptionParams: {
-            maxHeigh: 400000
-          },
-          undgrd: false,
-          undgrdParams: {
-            groundAlpha: 0.5
-          },
-          fov: 60
-        }
-      );
+      if (this.initFavoritesCameraSetting) {
+        return this.initFavoritesCameraSetting;
+      } else {
+        return (
+          this.initParams.cameraSetting || {
+            selfAdaption: false,
+            selfAdaptionParams: {
+              maxHeigh: 400000
+            },
+            undgrd: false,
+            undgrdParams: {
+              groundAlpha: 0.5
+            },
+            fov: 60
+          }
+        );
+      }
     },
     initFavoritesCameraSetting() {
       return this.initFavoritesParams.cameraSetting;
     },
     initLightSetting() {
-      return (
-        this.initParams.lightSetting || {
-          sunlight: false,
-          sunlightParams: {
-            lightingMode: "DAYNIGHT_SHADING",
-            lightColor: "rgba(255,255,255,255)"
-          },
-          lightIntensity: 10
-        }
-      );
+      if (this.initFavoritesLightSetting) {
+        return this.initFavoritesLightSetting;
+      } else {
+        return (
+          this.initParams.lightSetting || {
+            sunlight: false,
+            sunlightParams: {
+              lightingMode: "DAYNIGHT_SHADING",
+              lightColor: "rgba(255,255,255,255)"
+            },
+            lightIntensity: 10
+          }
+        );
+      }
     },
     initFavoritesLightSetting() {
       return this.initFavoritesParams.lightSetting;
     },
     initWeatherSetting() {
-      return (
-        this.initParams.weatherSetting || {
-          sun: true,
-          moon: true,
-          sceneSkybox: true,
-          skybox: false,
-          clouds: false,
-          cloudsParams: {
-            cloudsduration: 5
-          },
-          rain: false,
-          rainParams: {
-            speed: 18,
-            rainOpacity: 0.6,
-            angle: -30,
-            length: 1
-          },
-          snow: false,
-          snowParams: {
-            size: 5,
-            density: 5
-          },
-          fog: false,
-          fogParams: {
-            fogOpacity: 0.5,
-            color: "#FFFFFF"
-          },
-          surficialFog: true,
-          surfFogParams: {
-            surfFogDst: 0.0002
+      if (this.initFavoritesWeatherSetting) {
+        return this.initFavoritesWeatherSetting;
+      } else {
+        return (
+          this.initParams.weatherSetting || {
+            sun: true,
+            moon: true,
+            sceneSkybox: true,
+            skybox: false,
+            clouds: false,
+            cloudsParams: {
+              cloudsduration: 5
+            },
+            rain: false,
+            rainParams: {
+              speed: 18,
+              rainOpacity: 0.6,
+              angle: -30,
+              length: 1
+            },
+            snow: false,
+            snowParams: {
+              size: 5,
+              density: 5
+            },
+            fog: false,
+            fogParams: {
+              fogOpacity: 0.5,
+              color: "#FFFFFF"
+            },
+            surficialFog: true,
+            surfFogParams: {
+              surfFogDst: 0.0002
+            }
           }
-        }
-      );
+        );
+      }
     },
     initFavoritesWeatherSetting() {
       return this.initFavoritesParams.weatherSetting;
     },
     initEffectSetting() {
-      return (
-        this.initParams.effectSetting || {
-          blckWhite: false,
-          ntVision: false,
-          bloom: false,
-          bloomParams: {
-            bloomBrt: -0.3,
-            bloomCtrst: 128
+      if (this.initFavoritesEffectSetting) {
+        return this.initFavoritesEffectSetting;
+      } else {
+        return (
+          this.initParams.effectSetting || {
+            blckWhite: false,
+            ntVision: false,
+            bloom: false,
+            bloomParams: {
+              bloomBrt: -0.3,
+              bloomCtrst: 128
+            }
           }
-        }
-      );
+        );
+      }
     },
     initFavoritesEffectSetting() {
       return this.initFavoritesParams.effectSetting;
