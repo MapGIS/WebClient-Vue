@@ -86,7 +86,9 @@ export default {
   data() {
     return {
       range: [0, 1],
-      fovRange: [0, 180]
+      fovRange: [0, 180],
+      beforeGroundAlpha: undefined,
+      beforeUndgrd: undefined
     };
   },
   watch: {
@@ -114,9 +116,11 @@ export default {
           maxHeigh: 400000
         };
       }
-      const { selfAdaption, fov } = this.cameraSetting;
+      const { selfAdaption, fov, undgrdParams, undgrd } = this.cameraSetting;
       this.enableSelfAdaption(selfAdaption);
       this.fovChange(fov);
+      this.enableUndgrd(undgrd);
+      this.enableUndgrd(undgrdParams.groundAlpha);
     },
     /*
      * 地下模式
@@ -124,9 +128,17 @@ export default {
     enableUndgrd(e) {
       const { viewer, Cesium } = this;
       if (typeof e === "boolean") {
+        if (this.beforeUndgrd && this.beforeUndgrd === e) {
+          return;
+        }
         this.cameraSetting.undgrd = e;
+        this.beforeUndgrd = e;
       } else {
+        if (this.beforeGroundAlpha && this.beforeGroundAlpha === e) {
+          return;
+        }
         this.cameraSetting.undgrdParams.groundAlpha = e;
+        this.beforeGroundAlpha = e;
       }
       this.$emit("updateSpin", true);
       let vm = this;
