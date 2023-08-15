@@ -12,14 +12,14 @@ export default {
    */
   vueIndex: {
     type: [String, Number],
-    default: () => (Math.random() * 100000000).toFixed(0)
+    default: () => (Math.random() * 100000000).toFixed(0),
   },
 
   /**
    * @description 图层过滤功能:'show:0,1'表示显示第0，1个图层，'hide:0，2'表示隐藏第0，2个图层
    */
   layerId: {
-    type: String
+    type: String,
   },
 
   /**
@@ -39,10 +39,17 @@ export default {
     type: Array,
     default() {
       return [];
-    } 
+    },
   },
 
   autoReset: { type: Boolean, default: true },
+
+  // 剖切封边
+  fillClip: { type: Boolean, default: false },
+
+  // 是否会存在剖面几何,用于折线剖面
+  hasSectionGeometry: { type: Boolean, default: false },
+
   /**
    * @description 是否异步请求
    */
@@ -107,8 +114,8 @@ export default {
         height: "450px",
         width: "270px",
         top: "0px",
-        left: "0px"
+        left: "0px",
       };
-    }
-  }
+    },
+  },
 };

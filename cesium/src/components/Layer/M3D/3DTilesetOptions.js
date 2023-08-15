@@ -48,8 +48,12 @@ export default {
   opacity: { type: Number, default: 1 },
   autoReset: { type: Boolean, default: true },
   duration: { type: Number, default: 1 },
+
   // 剖切封边
   fillClip: { type: Boolean, default: false },
+
+  // 是否会存在剖面几何,用于折线剖面
+  hasSectionGeometry: { type: Boolean, default: false },
   /**
    * @type Object
    * @description 模型的偏移方向，主要用来抬高/降低模型

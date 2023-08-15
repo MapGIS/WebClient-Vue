@@ -24,6 +24,8 @@
 | enablePopup             | Boolean | false                                                                                            | 是否激活查询弹窗                                                                                                                                                                                                              | 否       |
 | enableControl           | Boolean | false                                                                                            | 是否激活默认 UI                                                                                                                                                                                                               | 否       |
 | outStyle                | Object  | { position: "absolute", zIndex: 1000, height: "450px", width: "270px", top: "0px", left: "0px" } | 当上面的 enableControl=true 时，可以自定义对应的包裹样式                                                                                                                                                                      | 否       |
+| fillClip                | Boolean | false                                                                                            | 是否支持剖切封边                                                                                                                                                                                                              | 否       |
+| hasSectionGeometry      | Boolean | false                                                                                            | 是否会存在剖面几何,用于折线剖面                                                                                                                                                                                               | 否       |
 
 ## 事件
 
@@ -79,6 +81,7 @@ export default {
 ![添加的矢量图层](./image/scene_layer_5.png)
 
 4. 点击三维模型右键菜单-设置单体化属性关联字段。<br/>
+
    > 注意上一步添加矢量图层时要点击三维模型右键添加矢量图层，不要点击新场景的右键菜单添加矢量图层，否则此步骤会出现`该图层没有可以关联的三维矢量图层`的错误提示。<br/>
 
 ![右击三维模型-设置单体化属性关联字段](./image/scene_layer_6.png)

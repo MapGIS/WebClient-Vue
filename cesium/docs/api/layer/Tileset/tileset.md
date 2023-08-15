@@ -95,6 +95,20 @@
 - **默认值** `512`
 - **描述** 最大内存使用
 
+### `fillClip`
+
+- **类型**: `Boolean`
+- **非侦听属性** 非-watch 属性
+- **默认值** `false`
+- **描述** 是否支持剖切封边
+
+### `hasSectionGeometry`
+
+- **类型**: `Boolean`
+- **非侦听属性** 非-watch 属性
+- **默认值** `false`
+- **描述** 是否会存在剖面几何,用于折线剖面
+
 ### 其他 3d-tileset 通用属性
 
 | 名称                                      | 类型    | 默认值  |
@@ -132,16 +146,17 @@
 | debugShowGeometricError                   | Boolean | false   |
 | debugShowRenderingStatistics              | Boolean | false   |
 | debugShowMemoryUsage                      | Boolean | false   |
-| debugShowUrl                     
+
+| debugShowUrl
 
 ### `@load`
 
 - **描述** 在 3D Tile 加载后发送该事件
-- **Payload** 组件对象this
+- **Payload** 组件对象 this
 
 ### `@loaded`
 
-- **描述** 在 3D Tile的 readyPromise加载完毕后发送该事件
+- **描述** 在 3D Tile 的 readyPromise 加载完毕后发送该事件
 - **Payload** `{ tileset }`
 - - `tileset` 瓦片数据集本身
 
