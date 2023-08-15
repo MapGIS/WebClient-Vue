@@ -188,7 +188,7 @@
           <mapgis-ui-form-model-item label="选择字段" v-show="isByAtt">
             <mapgis-ui-select
               v-model="selectedFldName"
-              :placeholder="fldName[0].FldName"
+              :placeholder="fldName[0] ? fldName[0].FldName : ''"
               @change="selectAtt($event)"
             >
               <mapgis-ui-select-option
@@ -554,11 +554,13 @@ export default {
     },
     onSuccess(data) {
       var tempFldName = [];
-      for (var i = 0; i < data.FieldAtt.FldName.length; i++) {
-        var obj = {};
-        obj.FldName = data.FieldAtt.FldName[i];
-        obj.FldType = data.FieldAtt.FldType[i];
-        tempFldName.push(obj);
+      if (data && data.FieldAtt && data.FieldAtt.FldName) {
+        for (var i = 0; i < data.FieldAtt.FldName.length; i++) {
+          var obj = {};
+          obj.FldName = data.FieldAtt.FldName[i];
+          obj.FldType = data.FieldAtt.FldType[i];
+          tempFldName.push(obj);
+        }
       }
       this.fldName = tempFldName;
     },
