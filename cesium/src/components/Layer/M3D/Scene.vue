@@ -805,7 +805,6 @@ export default {
       let originStyles = [];
       layerIndexs.forEach(index => {
         let m3dlayer = g3dLayer.getLayer(index);
-        debugger;
         if (m3dlayer) {
           originStyles.push(m3dlayer.style);
         }
@@ -999,7 +998,9 @@ export default {
       if (enablePopup) {
         clickhandler = this.$_bindClickEvent(
           this.pickFeature,
-          this.cancelFeature
+          this.cancelFeature,
+          true,
+          false
         );
       }
 

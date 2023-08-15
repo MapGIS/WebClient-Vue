@@ -174,9 +174,7 @@ export default {
       const { $props } = this;
       let options = {};
       Object.keys($props).forEach(function(key) {
-        if ($props[key]) {
-          options[key] = $props[key];
-        }
+        options[key] = $props[key];
       });
       return options;
     },
@@ -253,7 +251,9 @@ export default {
       if (enablePopup || enableModelSwitch) {
         clickhandler = this.$_bindClickEvent(
           this.pickFeature,
-          this.cancelFeature
+          this.cancelFeature,
+          true,
+          false
         );
       }
       if (enableTips) {

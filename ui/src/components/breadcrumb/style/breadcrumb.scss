@@ -9,4 +9,7 @@
   @include e(separator, "-") {
     color: $breadcrumb-separator-color;
   }
+  @include e(link, "-") {
+    color: $breadcrumb-link-color;
+  }
 }
