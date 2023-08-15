@@ -128,7 +128,7 @@ export default {
     },
   },
   methods: {
-    $_pickEvent(movement, mode, onSuccess, onFail) {
+    $_pickEvent(movement, mode, onSuccess, onFail, isPick, drillPick) {
       const vm = this;
       const { Cesium, viewer, popupOptions } = this;
       const { iClickMode, iHoverMode } = this;
@@ -144,21 +144,26 @@ export default {
         let cartesian = viewer.getCartesian3Position(position);
         let ray = scene.camera.getPickRay(position, tempRay);
         let cartesian2 = scene.globe.pick(ray, scene, tempPos);
-        let pickedFeature = viewer.scene.pick(position);
+        let pickedFeature;
+        if (isPick) {
+          pickedFeature = viewer.scene.pick(position);
+        }
         // console.log('cartesian-7',cartesian, cartesian2 );
-
         // 多选模式
-        let entities = scene.drillPick(position);
-        // console.log('entities-8',entities);
-        if (entities.length <= 0) {
-          if (mode == iClickMode) {
-            vm.iClickVisible = false;
-          } else {
-            vm.iHoverVisible = false;
+        let entities;
+        if (drillPick) {
+          entities = scene.drillPick(position);
+          // console.log('entities-8',entities);
+          if (entities.length <= 0) {
+            if (mode == iClickMode) {
+              vm.iClickVisible = false;
+            } else {
+              vm.iHoverVisible = false;
+            }
+            // console.log('onfail--1');
+            onFail && onFail({ movement });
+            return;
           }
-          // console.log('onfail--1');
-          onFail && onFail({ movement });
-          return;
         }
 
         let longitudeString2, latitudeString2, heightString2;
@@ -187,39 +192,42 @@ export default {
               height: heightString2,
             };
           }
-          let iClickFeatures = entities.map((e) => {
-            let info = {
-              layer: { id: e.id ? e.id.id : "未知数据" },
-              properties: {},
-            };
-            vm.activeId = e.id ? e.id.id : undefined;
-            if (e.id && e.id.properties) {
-              Object.keys(e.id.properties)
-                .filter((p) => {
-                  let inner =
-                    p.indexOf("Subscription") <= 0 &&
-                    !["_propertyNames", "_definitionChanged"].find(
-                      (n) => n == p
-                    );
-                  return inner;
-                })
-                .forEach((p) => {
-                  let name = p.substr(1);
-                  info.properties[name] = e.id.properties[p]._value;
-                });
-              info.layer.id =
-                vm.layerId ||
-                info.properties["name"] ||
-                info.properties["title"];
-              let titlefield = popupOptions ? popupOptions.title : undefined;
-              if (titlefield) {
-                info.title = info.properties[titlefield];
+          let iClickFeatures;
+          if (drillPick) {
+            iClickFeatures = entities.map((e) => {
+              let info = {
+                layer: { id: e.id ? e.id.id : "未知数据" },
+                properties: {},
+              };
+              vm.activeId = e.id ? e.id.id : undefined;
+              if (e.id && e.id.properties) {
+                Object.keys(e.id.properties)
+                  .filter((p) => {
+                    let inner =
+                      p.indexOf("Subscription") <= 0 &&
+                      !["_propertyNames", "_definitionChanged"].find(
+                        (n) => n == p
+                      );
+                    return inner;
+                  })
+                  .forEach((p) => {
+                    let name = p.substr(1);
+                    info.properties[name] = e.id.properties[p]._value;
+                  });
+                info.layer.id =
+                  vm.layerId ||
+                  info.properties["name"] ||
+                  info.properties["title"];
+                let titlefield = popupOptions ? popupOptions.title : undefined;
+                if (titlefield) {
+                  info.title = info.properties[titlefield];
+                }
               }
-            }
-            return info;
-          });
-          vm.iClickFeatures = iClickFeatures;
-          // console.log('iClickFeatures-10',vm.iClickFeatures);
+              return info;
+            });
+            vm.iClickFeatures = iClickFeatures;
+          }
+
           onSuccess &&
             onSuccess({ entities, movement, iClickFeatures, pickedFeature });
         } else {
@@ -233,13 +241,20 @@ export default {
         }
       }
     },
-    $_bindClickEvent(onSuccess, onFail) {
+    $_bindClickEvent(onSuccess, onFail, isPick = true, drillPick = true) {
       const vm = this;
       const { Cesium, viewer } = this;
       const { iClickMode } = this;
       let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
       handler.setInputAction(function (movement) {
-        vm.$_pickEvent(movement, iClickMode, onSuccess, onFail);
+        vm.$_pickEvent(
+          movement,
+          iClickMode,
+          onSuccess,
+          onFail,
+          isPick,
+          drillPick
+        );
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
       return handler;
     },
