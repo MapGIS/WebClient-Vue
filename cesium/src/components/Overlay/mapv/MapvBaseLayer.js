@@ -272,7 +272,7 @@ export class MapvBaseLayer extends BaseLayer {
     let size = null;
     if (this.pointCountMax === this.pointCountMin) {
       color = this.options.fillStyle;
-      size = this.options.minSize || 8;
+      size = this.options.maxSize || 30;
     } else {
       intensity = new Intensity({
         min: this.pointCountMin,
