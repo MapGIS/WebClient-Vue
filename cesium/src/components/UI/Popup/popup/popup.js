@@ -83,10 +83,11 @@ export function updataPopupPosition(
     ) {
       res = false;
     }
-  } 
+  }
 
   // 近距离下全部显示，不考虑椭球的避让
-  if (scene.globe.ellipsoid.cartesianToCartographic(i).height < 1000) {
+  // if (scene.globe.ellipsoid.cartesianToCartographic(i).height < 1000) {
+  if (scene.globe.ellipsoid.cartesianToCartographic(i).height) {
     res = true;
   }
 
