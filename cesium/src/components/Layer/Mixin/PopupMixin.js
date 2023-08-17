@@ -147,6 +147,10 @@ export default {
         let pickedFeature;
         if (isPick) {
           pickedFeature = viewer.scene.pick(position);
+          if (!pickedFeature) {
+            onFail && onFail({ movement });
+            return;
+          }
         }
         // console.log('cartesian-7',cartesian, cartesian2 );
         // 多选模式
