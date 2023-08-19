@@ -1,5 +1,8 @@
 <template>
-  <div class="mp-widget-comprehensive-query">
+  <div
+    class="mp-widget-comprehensive-query"
+    :style="{ width: decode ? '400px' : '300px' }"
+  >
     <div class="search-box query-section">
       <div class="comprehensive-query-logo" @click="onLocate">
         <mapgis-ui-icon :icon="logo" />
@@ -15,12 +18,33 @@
       <template v-else>
         <mapgis-ui-input
           class="search-input"
-          :placeholder="placeholderItem"
+          placeholder="请输入关键字"
           v-model="keyword"
           allow-clear
           @focus="onSearchFocus"
           @pressEnter="onSearch"
+          v-if="!decode"
         />
+        <div v-else style="display:flex;max-width:233px">
+          <mapgis-ui-input
+            placeholder="经度"
+            allow-clear
+            v-model="lon"
+            @focus="onSearchFocus"
+          ></mapgis-ui-input>
+          <mapgis-ui-input
+            placeholder="纬度"
+            allow-clear
+            v-model="lat"
+            @focus="onSearchFocus"
+          ></mapgis-ui-input>
+          <mapgis-ui-input
+            placeholder="半径"
+            allow-clear
+            v-model="dis"
+            @focus="onSearchFocus"
+          ></mapgis-ui-input>
+        </div>
         <mapgis-ui-divider type="vertical" />
         <mapgis-ui-button class="close-button" icon="close" @click="onClose" />
         <mapgis-ui-button
@@ -55,6 +79,11 @@
         :geometry="geometry"
         :geoJSONExtent="geoJSONExtent"
         :decode="decode"
+        :lon="lon"
+        :lat="lat"
+        :dis="dis"
+        :is2DMapMode="is2DMapMode"
+        :searchPanelExpand="searchPanelExpand"
         :selectShowProperty="selectShowProperty"
         @change-decode="decodeChange"
         @current-result="currentResult"
@@ -65,6 +94,7 @@
         @color-cluster="colorCluster"
         @remove-attribute-table="removeAttributeTable"
         @select-item="selectItem"
+        @picked-coordinate="onPickedCoordinate"
       ></place-name>
     </div>
   </div>
@@ -73,12 +103,17 @@
 <script>
 import * as Feature from "./util/feature";
 import PlaceName from "./PlaceName/PlaceName.vue";
+import { Style } from "@mapgis/webclient-es6-service";
+import circleTurf from "@turf/circle";
+
+const { LineStyle, PointStyle, FillStyle } = Style;
 
 export default {
   name: "mapgis-ui-comprehensive-query",
   components: {
     PlaceName
   },
+  inject: ["Cesium", "viewer", "map"],
   props: {
     logo: {
       type: String,
@@ -107,6 +142,14 @@ export default {
     selectShowProperty: {
       type: Array,
       default: () => []
+    },
+    highlightStyle: {
+      type: Object,
+      default: () => ({})
+    },
+    is2DMapMode: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -121,13 +164,32 @@ export default {
 
       searchInputExapnd: false,
 
-      decode: false // 是否开启逆地址解析
+      decode: false, // 是否开启逆地址解析
+
+      lon: "", //逆地址解析的经度
+
+      lat: "", // 逆地址解析的纬度
+
+      dis: "" // 逆地址解析的半径
     };
   },
-  computed: {
-    placeholderItem() {
-      return this.decode ? "关键字无效" : "请输入关键字";
+  watch: {
+    lon() {
+      this.featureChange();
     },
+    lat() {
+      this.featureChange();
+    },
+    dis() {
+      this.featureChange();
+    },
+    is2DMapMode() {
+      this.lon = "";
+      this.lat = "";
+      this.dis = "";
+    }
+  },
+  computed: {
     isDataStoreQuery() {
       return !!this.widgetInfo.dataStore;
     },
@@ -157,8 +219,102 @@ export default {
     window.removeEventListener("resize", this.setMaxHeight, false);
   },
   methods: {
+    // 清除绘制的圆形区域
+    clearFeature() {
+      if (this.is2DMapMode) {
+        if (this.map.getLayer("comprehensiveQueryCircle_Layer")) {
+          this.map.removeLayer("comprehensiveQueryCircle_Layer");
+        }
+        if (this.map.getSource("comprehensiveQueryCircle")) {
+          this.map.removeSource("comprehensiveQueryCircle");
+        }
+      } else {
+        this.circle && this.viewer.entities.remove(this.circle);
+      }
+    },
+    // 绘制圆形
+    featureChange() {
+      if (this.lon && this.lat && this.dis) {
+        if (this.is2DMapMode) {
+          this.featureChange2D();
+        } else {
+          this.featureChange3D();
+        }
+      } else {
+        this.clearFeature();
+      }
+    },
+    // 绘制二维圆形
+    featureChange2D() {
+      // 先清除再绘制
+      if (this.map.getLayer("comprehensiveQueryCircle_Layer")) {
+        this.map.removeLayer("comprehensiveQueryCircle_Layer");
+      }
+      if (this.map.getSource("comprehensiveQueryCircle")) {
+        this.map.removeSource("comprehensiveQueryCircle");
+      }
+      const center = [this.lon, this.lat];
+      const radius = this.dis;
+      const options = {
+        steps: 64,
+        units: "kilometers",
+        properties: { foo: "bar" }
+      };
+      const circle = circleTurf(center, radius, options);
+      const fillStyle = new FillStyle({
+        color: this.highlightStyle.feature.reg.color,
+        outlineColor: this.highlightStyle.feature.line.color
+      });
+      this.map.addSource("comprehensiveQueryCircle", {
+        type: "geojson",
+        data: circle
+      });
+      this.map.addLayer({
+        id: "comprehensiveQueryCircle_Layer",
+        type: "fill",
+        source: "comprehensiveQueryCircle",
+        ...fillStyle.toMapboxStyle()
+      });
+    },
+    // 绘制三维圆形
+    featureChange3D() {
+      this.circle && this.viewer.entities.remove(this.circle);
+      const fillColor = new this.Cesium.Color.fromCssColorString(
+        this.highlightStyle.feature.reg.color
+      ).withAlpha(0.5);
+      const outlineColor = new this.Cesium.Color.fromCssColorString(
+        this.highlightStyle.feature.line.color
+      );
+      const outlineWidth = Number(this.highlightStyle.feature.line.size);
+      this.circle = this.viewer.entities.add({
+        id: "comprehensiveQueryCircle",
+        position: Cesium.Cartesian3.fromDegrees(
+          Number(this.lon),
+          Number(this.lat),
+          0
+        ),
+        ellipse: {
+          semiMinorAxis: Number(this.dis) * 1000, // 半短轴
+          semiMajorAxis: Number(this.dis) * 1000, // 半长轴
+          height: 0,
+          material: fillColor,
+          outline: true, // 高度必须设置轮廓显示
+          outlineColor,
+          outlineWidth,
+          heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+        }
+      });
+    },
+
+    onPickedCoordinate(lon, lat) {
+      this.lon = lon;
+      this.lat = lat;
+    },
     decodeChange(e) {
       this.decode = e;
+      if (!e) {
+        this.clearFeature();
+      }
     },
     onLocate() {
       this.locationPanelExpand = !this.locationPanelExpand;
@@ -170,6 +326,7 @@ export default {
         this.$emit("close-popup");
         return;
       }
+      this.clearFeature();
 
       this.locationPanelExpand = false;
       this.searchPanelExpand = false;
