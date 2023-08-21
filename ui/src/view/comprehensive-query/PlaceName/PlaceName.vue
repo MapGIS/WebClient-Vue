@@ -1,16 +1,21 @@
 <template>
   <div class="place-name-container">
-    <div class="query-type-container" v-if="widgetInfo.dataStore">
-      <mapgis-ui-switch
-        size="small"
-        :checked="decode"
-        @change="
-          e => {
-            $emit('change-decode', e);
-          }
-        "
-      />
-      <span>逆地址解析</span>
+    <div
+      class="query-type-container"
+      v-if="widgetInfo.dataStore"
+      :class="{ query_type_container: decode }"
+    >
+      <span v-show="decode" style="padding-left:6px">
+        西经(-)/南纬(-)/半径:(km)
+      </span>
+      <span
+        ><mapgis-ui-switch
+          size="small"
+          :checked="decode"
+          @change="changeDecode"
+        />
+        <span>逆地址解析</span></span
+      >
     </div>
     <div class="float-pop-container" v-show="!showResult">
       <span
@@ -59,6 +64,9 @@
             :activeTab="tab"
             :geometry="geometry"
             :decode="decode"
+            :lon="lon"
+            :lat="lat"
+            :dis="dis"
             :geoJSONExtent="geoJSONExtent"
             :selectShowProperty="selectShowProperty"
             @select-markers="selectMarkers"
@@ -81,6 +89,7 @@ export default {
   components: {
     PlaceNamePanel
   },
+  inject: ["Cesium", "viewer", "map"],
   props: {
     defaultMarkerIcon: {
       type: String,
@@ -112,6 +121,29 @@ export default {
     selectShowProperty: {
       type: Array,
       default: () => []
+    },
+    // 逆地址解析的经度
+    lon: {
+      type: [Number, String],
+      default: ""
+    },
+    // 逆地址解析的纬度
+    lat: {
+      type: [Number, String],
+      default: ""
+    },
+    // 逆地址解析的半径
+    dis: {
+      type: [Number, String],
+      default: ""
+    },
+    is2DMapMode: {
+      type: Boolean,
+      default: false
+    },
+    searchPanelExpand: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -167,6 +199,13 @@ export default {
       handler(val) {
         this.$emit("select-item", val);
       }
+    },
+    is2DMapMode() {
+      // 关闭某一模式下的拾取，打开另一模式下的拾取
+      this.pickCoordinate2D();
+    },
+    searchPanelExpand() {
+      this.pickCoordinate2D();
     }
   },
   mounted() {
@@ -181,6 +220,56 @@ export default {
     }
   },
   methods: {
+    changeDecode(e) {
+      this.$emit("change-decode", e);
+      if (this.is2DMapMode) {
+        this.pickCoordinate2D();
+      } else {
+        this.pickCoordinate3D();
+      }
+    },
+    onClick({ lngLat: { lng, lat } }) {
+      this.$emit("picked-coordinate", lng, lat);
+    },
+    pickCoordinate2D() {
+      const canvas = this.map.getCanvasContainer();
+      this.$nextTick(() => {
+        if (this.decode && this.is2DMapMode && this.searchPanelExpand) {
+          this.map.on("click", this.onClick);
+          canvas.style.cursor = "default";
+        } else {
+          this.map.off("click", this.onClick);
+          canvas.style.cursor = "";
+        }
+      });
+    },
+    pickCoordinate3D() {
+      // 开启或者关闭鼠标拾取
+      // 定义当前场景的画布元素的事件处理
+      const handler = new this.Cesium.ScreenSpaceEventHandler(
+        this.viewer.scene._canvas
+      );
+      // 设置鼠标移动事件的处理函数，这里负责监听x,y坐标值变化
+      handler.setInputAction(movement => {
+        if (!this.searchPanelExpand) return;
+        if (!this.decode) return;
+        if (this.is2DMapMode) return;
+        // 通过指定的椭球或者地图对应的坐标系，将鼠标的二维坐标转换为对应椭球体三维坐标
+        const { ellipsoid } = this.viewer.scene.globe;
+        const cartesian = this.viewer.camera.pickEllipsoid(
+          movement.position,
+          ellipsoid
+        );
+        if (cartesian) {
+          // 将笛卡尔坐标转换为地理坐标
+          const cartographic = ellipsoid.cartesianToCartographic(cartesian);
+          // 将弧度转为度的十进制度表示
+          const lng = this.Cesium.Math.toDegrees(cartographic.longitude); // 转换后的经度
+          const lat = this.Cesium.Math.toDegrees(cartographic.latitude); // 转换后的纬度
+          this.$emit("picked-coordinate", lng, lat);
+        }
+      }, this.Cesium.ScreenSpaceEventType.LEFT_CLICK);
+    },
     selectAll() {
       if (this.isAllselected) {
         this.selected = [];
@@ -254,7 +343,8 @@ export default {
         this.showResult = false;
         this.$nextTick(() => {
           this.showResult = true;
-          this.tab = this.selected[0];
+          // 已经有tab时直接查询tab的数据，否则查询第一个
+          this.tab = this.tab ? this.tab : this.selected[0];
         });
       }
     },

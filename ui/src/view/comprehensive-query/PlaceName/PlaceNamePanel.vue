@@ -113,6 +113,21 @@ export default {
     selectShowProperty: {
       type: Array,
       default: () => []
+    },
+    // 逆地址解析的经度
+    lon: {
+      type: [Number, String],
+      default: ""
+    },
+    // 逆地址解析的纬度
+    lat: {
+      type: [Number, String],
+      default: ""
+    },
+    // 逆地址解析的半径
+    dis: {
+      type: [Number, String],
+      default: ""
     }
   },
   data() {
@@ -205,49 +220,6 @@ export default {
       }
     },
     /**
-     * 当为dataStore查询时并且keyword为空，采用逆地理编码查询，获取中心点与查询范围
-     */
-    getLonLatDis() {
-      if (this.geoJSONExtent && JSON.stringify(this.geoJSONExtent) !== "{}") {
-        const { geometry } = this.geoJSONExtent;
-        const { coordinates } = geometry;
-        let from = centerOfMass(this.geoJSONExtent);
-        /**  三维情况下、当视角缩放到可以看见球的边界时，获取到的geoJSONExtent查询范围是[-180,90],[180,90],[180,-90],[-180,-90],[-180,90]
-         此时使用centerOfMass计算出的中心点为[0，0],因此在datastore逆地址查询时会以[0,0]为经纬度加上计算出的半径进行查询，导致如果查询数据不在这个范围内就查询不到
-         这种情况下重新取视图的像素中心点再转换成经纬度中心点
-         */
-        if (booleanEqual(from, point([0, 0]))) {
-          from = point(this.get3DCenter());
-        }
-        const to = point(coordinates[0][3]);
-        const options = { units: "kilometers" };
-
-        const distance = rhumbDistance(from, to, options);
-
-        return {
-          lon: from.geometry.coordinates[0],
-          lat: from.geometry.coordinates[1],
-          dis: distance
-        };
-      }
-      return {};
-    },
-    get3DCenter() {
-      const { viewer, Cesium } = this;
-      const centerResult = viewer.camera.pickEllipsoid(
-        new Cesium.Cartesian2(
-          viewer.canvas.clientWidth / 2,
-          viewer.canvas.clientHeight / 2
-        )
-      );
-      const curPosition = Cesium.Ellipsoid.WGS84.cartesianToCartographic(
-        centerResult
-      );
-      const lon = (curPosition.longitude * 180) / Math.PI;
-      const lat = (curPosition.latitude * 180) / Math.PI;
-      return [lon, lat];
-    },
-    /**
      * dataStore查询，根据this.widgetInfo.dataStore该字段判断
      */
     async dsQuery(where) {
@@ -256,11 +228,11 @@ export default {
       let lon;
       let lat;
       let dis;
-      if (this.isDataStoreQuery && !this.keyword) {
-        const lonLatDis = this.getLonLatDis();
-        lon = lonLatDis.lon;
-        lat = lonLatDis.lat;
-        dis = lonLatDis.dis;
+      // 逆地址查询获取经纬度及半径的逻辑修改为由用户交互产生
+      if (this.decode) {
+        lon = this.lon;
+        lat = this.lat;
+        dis = this.dis;
       }
       const datastoreParams = {
         ip: this.config.ip,
