@@ -51,6 +51,7 @@
     "simple-uploader.js": "^0.5.6",
     "spark-md5": "^3.0.1",
     "tinycolor2": "^1.4.2",
+    "v-viewer": "1.5.1",
     "vcolorpicker": "^1.1.0",
     "video.js": "^7.17.0",
     "videojs-contrib-hls": "^5.15.0",
