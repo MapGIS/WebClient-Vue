@@ -9,6 +9,7 @@
       :field-configs="fieldConfigs"
       :popupShowType="popupShowType"
       :popupToggleType="popupToggleType"
+      :popupAnchor="popupAnchor"
       @marker-id="updateCurrentMarkerId"
       @mouseenter="mouseEnterEvent"
       @mouseleave="mouseLeaveEvent"
@@ -50,6 +51,13 @@ export default {
     popupToggleType: {
       type: String,
       default: "mouseenter"
+    },
+    // 以图标左上角为原点，增量方式与mapboxgl弹框的offset保持一致，x往右递增，y往下递增
+    popupAnchor: {
+      type: Object,
+      default: () => {
+        return { x: 0.5, y: 0 };
+      }
     }
   },
   data() {

@@ -230,6 +230,7 @@ export default {
         }
       } else {
         this.circle && this.viewer.entities.remove(this.circle);
+        this.circleLine && this.viewer.entities.remove(this.circleLine);
       }
     },
     // 绘制圆形
@@ -278,6 +279,7 @@ export default {
     },
     // 绘制三维圆形
     featureChange3D() {
+      this.circleLine && this.viewer.entities.remove(this.circleLine);
       this.circle && this.viewer.entities.remove(this.circle);
       const fillColor = new this.Cesium.Color.fromCssColorString(
         this.highlightStyle.feature.reg.color
@@ -296,12 +298,30 @@ export default {
         ellipse: {
           semiMinorAxis: Number(this.dis) * 1000, // 半短轴
           semiMajorAxis: Number(this.dis) * 1000, // 半长轴
-          height: 0,
           material: fillColor,
-          outline: true, // 高度必须设置轮廓显示
-          outlineColor,
-          outlineWidth,
-          heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+          clampToGround: true
+        }
+      });
+      const center = [this.lon, this.lat];
+      const radius = this.dis;
+      const options = {
+        steps: 64,
+        units: "kilometers",
+        properties: { foo: "bar" }
+      };
+      const circle = circleTurf(center, radius, options);
+      this.circleLine = this.viewer.entities.add({
+        id: "comprehensiveQueryCircleLine",
+        polyline: {
+          positions: new this.Cesium.Cartesian3.fromDegreesArray(
+            circle.geometry.coordinates[0]
+              .join(",")
+              .split(",")
+              .map(Number)
+          ),
+          width: outlineWidth,
+          material: outlineColor,
+          clampToGround: true
         }
       });
     },
@@ -327,6 +347,9 @@ export default {
         return;
       }
       this.clearFeature();
+      this.lon = "";
+      this.lat = "";
+      this.dis = "";
 
       this.locationPanelExpand = false;
       this.searchPanelExpand = false;
