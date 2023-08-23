@@ -163,7 +163,7 @@
       v-if="featureposition"
       :position="featureposition"
       :popupOptions="popupOptions"
-      :componentWidth="260"
+      :componentWidth="popupWidth"
       v-bind="popupConfig"
       v-model="featurevisible"
     >
@@ -239,19 +239,6 @@ export default {
     highlightStyle: {
       type: String,
       default: "rgba(255,255,0,0.5)"
-    },
-    // 气泡框配置
-    popupConfig: {
-      type: Object,
-      default: () => {
-        return {
-          component: "mapgis-3d-monitor-point-popup",
-          componentWidth: 580,
-          type: "data",
-          access_token: "U95_PewQPaUqOvqcCC6DtWGAn1sHZnc6rhTCrj7tzuU",
-          dataUrl: "https://szaqxsbg.szsti.org:8060/hotel/api/QueryJcjkHqjcXm"
-        };
-      }
     },
     // 挂靠的查询参数，比如三维简单要素类，如果有挂靠的查询参数，则拾取的要素属性使用从三维简单要素类里的内容
     searchParams: {
@@ -332,17 +319,6 @@ export default {
         return self.m3ds;
       }
     };
-  },
-  computed: {
-    popupComponent() {
-      return this.popupConfig?.component || "mapgis-3d-popup-iot";
-    },
-    popupType() {
-      return this.popupConfig?.type;
-    },
-    popupWidth() {
-      return this.popupConfig?.componentWidth;
-    }
   },
   created() {},
   mounted() {

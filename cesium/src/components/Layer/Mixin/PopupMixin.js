@@ -6,26 +6,26 @@ export default {
   props: {
     ...VueOptions,
     properties: {
-      type: Object,
+      type: Object
       /* default: () => {
         return { };
       } */
     },
     enablePopup: {
       type: Boolean,
-      default: false,
+      default: false
     },
     enableModelSwitch: {
       type: Boolean,
-      default: false,
+      default: false
     },
     enableTips: {
       type: Boolean,
-      default: false,
+      default: false
     },
     enableIot: {
       type: Boolean,
-      default: false,
+      default: false
     },
     popupOptions: {
       type: Object,
@@ -34,23 +34,23 @@ export default {
           type: "default",
           title: "name",
           popupType: "table",
-          fullHeight: 900,
+          fullHeight: 900
         };
-      },
+      }
     },
     tipsOptions: {
       type: Object,
       default: () => {
         return { type: "default", title: "name" };
-      },
+      }
     },
     iotOptions: {
       type: Object,
       default: () => {
         return {
-          field: "Euid",
+          field: "Euid"
         };
-      },
+      }
     },
     /**
      *  自定义Popup界面,JSX语法Function(features) { return <div>自定义元素 {features[0]}</div>}
@@ -66,24 +66,37 @@ export default {
       type: Object,
       default: () => {
         return { longitude: 0, latitude: 0, height: 0 };
-      },
+      }
     },
     hoverPosition: {
       type: Object,
       default: () => {
         return { longitude: 0, latitude: 0, height: 0 };
-      },
+      }
     },
     clickFeatures: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     hoverFeatures: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     clickMode: { type: String, default: "click" },
     hoverMode: { type: String, default: "hover" },
+    // 气泡框配置
+    popupConfig: {
+      type: Object,
+      default: () => {
+        return {
+          // component: "mapgis-3d-monitor-point-popup",
+          // componentWidth: 580,
+          // type: "data",
+          // access_token: "U95_PewQPaUqOvqcCC6DtWGAn1sHZnc6rhTCrj7tzuU",
+          // dataUrl: "https://szaqxsbg.szsti.org:8060/hotel/api/QueryJcjkHqjcXm"
+        };
+      }
+    }
   },
   data() {
     return {
@@ -93,18 +106,18 @@ export default {
       iClickPosition: {
         longitude: 110,
         latitude: 30,
-        height: 0,
+        height: 0
       },
       iHoverVisible: false,
       iHoverPosition: {
         longitude: 110,
         latitude: 30,
-        height: 0,
+        height: 0
       },
       iClickFeatures: [],
       iHoverFeatures: [],
       iClickMode: "click",
-      iHoverMode: "hover",
+      iHoverMode: "hover"
     };
   },
   watch: {
@@ -125,7 +138,15 @@ export default {
     },
     hoverFeatures(next) {
       this.iHoverFeatures = next;
+    }
+  },
+  computed: {
+    popupComponent() {
+      return this.popupConfig?.component || "mapgis-3d-popup-iot";
     },
+    popupWidth() {
+      return this.popupConfig?.componentWidth || 260;
+    }
   },
   methods: {
     $_pickEvent(movement, mode, onSuccess, onFail, isPick, drillPick) {
@@ -185,7 +206,7 @@ export default {
             vm.iClickPosition = {
               longitude: longitudeString2,
               latitude: latitudeString2,
-              height: heightString2,
+              height: heightString2
             };
             // console.log('iClickPosition-9', vm.iClickPosition.longitude, vm.iClickPosition.latitude, vm.iClickPosition.height);
           } else {
@@ -193,28 +214,28 @@ export default {
             vm.iHoverPosition = {
               longitude: longitudeString2,
               latitude: latitudeString2,
-              height: heightString2,
+              height: heightString2
             };
           }
           let iClickFeatures;
           if (drillPick) {
-            iClickFeatures = entities.map((e) => {
+            iClickFeatures = entities.map(e => {
               let info = {
                 layer: { id: e.id ? e.id.id : "未知数据" },
-                properties: {},
+                properties: {}
               };
               vm.activeId = e.id ? e.id.id : undefined;
               if (e.id && e.id.properties) {
                 Object.keys(e.id.properties)
-                  .filter((p) => {
+                  .filter(p => {
                     let inner =
                       p.indexOf("Subscription") <= 0 &&
                       !["_propertyNames", "_definitionChanged"].find(
-                        (n) => n == p
+                        n => n == p
                       );
                     return inner;
                   })
-                  .forEach((p) => {
+                  .forEach(p => {
                     let name = p.substr(1);
                     info.properties[name] = e.id.properties[p]._value;
                   });
@@ -250,7 +271,7 @@ export default {
       const { Cesium, viewer } = this;
       const { iClickMode } = this;
       let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-      handler.setInputAction(function (movement) {
+      handler.setInputAction(function(movement) {
         vm.$_pickEvent(
           movement,
           iClickMode,
@@ -268,7 +289,7 @@ export default {
       const { iHoverMode } = this;
 
       let hoverEvent = debounce(
-        (movement) => {
+        movement => {
           vm.$_pickEvent(movement, iHoverMode, onSuccess, onFail);
         },
         100,
@@ -294,6 +315,6 @@ export default {
     },
     $_onFlyTo() {},
     $_getProjectorStatus() {},
-    $_handleProjectScreen() {},
-  },
+    $_handleProjectScreen() {}
+  }
 };
