@@ -27,15 +27,17 @@
     v-else-if="popupShowType === 'default' && featureposition"
     :position="featureposition"
     :popupOptions="popupOptions"
-    :componentWidth="260"
+    :componentWidth="popupWidth"
+    v-bind="popupConfig"
   >
-    <mapgis-3d-popup-iot
+    <component
+      :is="popupComponent"
       :properties="featureproperties"
       :dataStoreIp="dataStoreIp"
       :dataStorePort="dataStorePort"
       :dataStoreDataset="dataStoreDataset"
-    >
-    </mapgis-3d-popup-iot>
+      v-bind="popupConfig"
+    />
   </mapgis-3d-feature-popup>
 </template>
 
