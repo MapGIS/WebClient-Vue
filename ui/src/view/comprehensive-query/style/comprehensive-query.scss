@@ -122,6 +122,9 @@
     justify-content: end;
     align-items: center;
     padding-bottom: 5px;
+    .info-container {
+      color: var(--primary-3);
+    }
   }
   .query_type_container {
     justify-content: space-between;

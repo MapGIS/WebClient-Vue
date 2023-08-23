@@ -5,8 +5,9 @@
       v-if="widgetInfo.dataStore"
       :class="{ query_type_container: decode }"
     >
-      <span v-show="decode" style="padding-left:6px">
-        西经(-)/南纬(-)/半径:(km)
+      <span v-show="decode" style="padding-left:6px" class="info-container">
+        <mapgis-ui-ant-icon type="info-circle"></mapgis-ui-ant-icon>
+        西经(-)/南纬(-)/半径(km)
       </span>
       <span
         ><mapgis-ui-switch

@@ -6,6 +6,7 @@
       :markers="markers"
       :popupShowType="popupShowType"
       :popupToggleType="popupToggleType"
+      :popupAnchor="popupAnchor"
       :field-configs="fieldConfigs"
       @mouseenter="mouseEnterEvent"
       @mouseleave="mouseLeaveEvent"
@@ -98,6 +99,13 @@ export default {
       type: Array,
       required: false,
       default: () => []
+    },
+    // 以图标左上角为原点，增量方式与mapboxgl弹框的offset保持一致，x往右递增，y往下递增
+    popupAnchor: {
+      type: Object,
+      default: () => {
+        return { x: 0.5, y: 0 };
+      }
     }
   },
   data() {
