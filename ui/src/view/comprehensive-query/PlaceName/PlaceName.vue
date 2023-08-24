@@ -229,7 +229,9 @@ export default {
         this.pickCoordinate3D();
       }
     },
-    onClick({ lngLat: { lng, lat } }) {
+    onClick({ lngLat: { lng, lat }, originalEvent: { srcElement } }) {
+      const { className } = srcElement;
+      if (className.indexOf("mapboxgl-marker") > -1) return;
       this.$emit("picked-coordinate", lng, lat);
     },
     pickCoordinate2D() {
