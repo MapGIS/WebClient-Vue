@@ -25,7 +25,7 @@
           @pressEnter="onSearch"
           v-if="!decode"
         />
-        <div v-else style="display:flex;max-width:233px">
+        <div v-else style="display:flex;max-width:276px">
           <mapgis-ui-input
             placeholder="经度"
             allow-clear
@@ -221,17 +221,14 @@ export default {
   methods: {
     // 清除绘制的圆形区域
     clearFeature() {
-      if (this.is2DMapMode) {
-        if (this.map.getLayer("comprehensiveQueryCircle_Layer")) {
-          this.map.removeLayer("comprehensiveQueryCircle_Layer");
-        }
-        if (this.map.getSource("comprehensiveQueryCircle")) {
-          this.map.removeSource("comprehensiveQueryCircle");
-        }
-      } else {
-        this.circle && this.viewer.entities.remove(this.circle);
-        this.circleLine && this.viewer.entities.remove(this.circleLine);
+      if (this.map.getLayer("comprehensiveQueryCircle_Layer")) {
+        this.map.removeLayer("comprehensiveQueryCircle_Layer");
       }
+      if (this.map.getSource("comprehensiveQueryCircle")) {
+        this.map.removeSource("comprehensiveQueryCircle");
+      }
+      this.circle && this.viewer.entities.remove(this.circle);
+      this.circleLine && this.viewer.entities.remove(this.circleLine);
     },
     // 绘制圆形
     featureChange() {
