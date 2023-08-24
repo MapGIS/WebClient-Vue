@@ -533,7 +533,8 @@ export default {
           }
           if (!hasPopup) {
             let popup = vm.$_cartesian3ToLongLat(
-              pickedFeature.primitive.position
+              pickedFeature.primitive.position ||
+                pickedFeature.primitive.id.position
             );
             popup.height = 50;
             popup.keys = pickedFeature.id.keys;

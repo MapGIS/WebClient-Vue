@@ -44,6 +44,9 @@
     color: $text-color;
   }
   @include e(button-wrapper, "-") {
+    background: var(--component-background);
+    border: 1px solid var(--border-color-base);
+    color: $text-color;
     $prefix-button-wrapper: &;
     &:hover {
       color: $radio-dot-color;
@@ -51,13 +54,20 @@
     &:focus-within {
       outline: none;
     }
+    &:first-child {
+      border-left: 1px solid $border-color-base;
+    }
+    &:not(:first-child)::before {
+      background-color: $border-color-base;
+    }
     &-checked:not(&-disabled) {
       color: $radio-dot-color;
+      background: var(--component-background);
       border-color: $radio-dot-color;
       box-shadow: -1px 0 0 0 $radio-dot-color;
 
       &::before {
-        background-color: $radio-dot-color !important;
+        background-color: $radio-dot-color;
       }
       &:first-child {
         border-color: $radio-dot-color;
@@ -97,9 +107,9 @@
     $prefix-button-wrapper: #{$prefix}-button-wrapper;
     &-solid {
       #{$prefix-button-wrapper}-checked:not(#{$prefix-button-wrapper}-disabled) {
-        color: #fff;
-        background: $radio-dot-color;
-        border-color: $radio-dot-color;
+        color: $radio-button-active-color;
+        background: $component-background;
+        border: 1px solid $border-color-base;
         &:hover {
           color: #fff;
         }
