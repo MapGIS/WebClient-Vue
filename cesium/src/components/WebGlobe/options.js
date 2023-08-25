@@ -12,69 +12,77 @@ export default {
    */
   vueIndex: {
     typs: [String, Number],
-    default: () => (Math.random() * 1000000).toFixed(0),
+    default: () => (Math.random() * 1000000).toFixed(0)
   },
   container: {
     type: [String, HTMLElement],
     default() {
       return `cesium-${("" + Math.random()).split(".")[1]}`;
-    },
+    }
+  },
+
+  /**
+   * @description 是否自动播放动画
+   */
+  shouldAnimate: {
+    type: Boolean,
+    default: true
   },
   /**
    * @description 默认主页按钮不显示
    */
   homeButton: {
     type: Boolean,
-    default: false,
+    default: false
   },
   /**
    * @description 默认导航按钮不显示
    */
   navigationHelpButton: {
     type: Boolean,
-    default: false,
+    default: false
   },
   /**
    * @description 默认模型切换按钮不显示
    */
   sceneModePicker: {
     type: Boolean,
-    default: false,
+    default: false
   },
   /**
    * @description 默认动画控制不显示
    */
   animation: {
     type: Boolean,
-    default: false,
+    default: false
   },
   /**
    * @description 默认图层选择器不显示
    */
   baseLayerPicker: {
     type: Boolean,
-    default: false,
+    default: false
   },
   /**
    * @description 默认全屏控件不显示
    */
   fullscreenButton: {
     type: Boolean,
-    default: false,
+    default: false
   },
   /**
    * @description 默认VR控件不显示
    */
   vrButton: {
     type: Boolean,
-    default: false,
+    default: false
   },
   /**
    * @description 默认地理编码控件不显示
    */
   geocoder: {
     type: Boolean,
-    default: false,
+    default: false
   },
 
   /**
@@ -83,7 +91,7 @@ export default {
    * COLUMBUS_VIEW: 1 SCENE2D: 2 SCENE3D: 3
    */
   sceneMode: {
-    type: Number,
+    type: Number
   },
 
   /**
@@ -91,23 +99,23 @@ export default {
    */
   timeline: {
     type: Boolean,
-    default: false,
+    default: false
   },
 
   contextOptions: {
     type: Object,
-    default: function () {
+    default: function() {
       return {
         webgl: {
-          preserveDrawingBuffer: true,
-        },
+          preserveDrawingBuffer: true
+        }
       };
-    },
+    }
   },
 
   cameraView: {
     type: Object,
-    default: function () {
+    default: function() {
       return {
         /* destination: {
           x: -5087907.392038159,
@@ -120,6 +128,6 @@ export default {
           roll: 0.0003114284469649675
         } */
       };
-    },
-  },
+    }
+  }
 };
