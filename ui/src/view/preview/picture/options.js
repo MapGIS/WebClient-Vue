@@ -37,5 +37,5 @@ export default {
 
   maxZoomRatio: 100, // 最大缩放比例，默认100
 
-  // url: "data-source" // 设置大图片的 url
+  url: "src", // 设置大图片的 url
 };

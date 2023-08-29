@@ -1,5 +1,5 @@
 <template>
-  <span/>
+  <span />
 </template>
 
 <script>
@@ -7,13 +7,13 @@ import ServiceLayer from "../ServiceLayer";
 export default {
   name: "mapgis-3d-ogc-wmts-layer",
   inject: ["Cesium", "viewer"],
-  mixins:[ServiceLayer],
+  mixins: [ServiceLayer],
   props: {
-    wmtsLayer: {type: String, required: true},
-    tileMatrixSet: {type: String, required: true},
-    wmtsStyle: {type: String, default: "default"},
-    tilingScheme: {type: String, required: true},
-    format: {type: String, default: 'image/png'},
+    wmtsLayer: { type: String, required: true },
+    tileMatrixSet: { type: String, required: true },
+    wmtsStyle: { type: String, default: "default" },
+    tilingScheme: { type: String, required: true },
+    format: { type: String, default: "image/png" }
   },
   data() {
     return {
@@ -37,10 +37,10 @@ export default {
         subdomains: "string|array",
         startLevel: "number",
         vueKey: "string",
-        vueIndex: "number",
+        vueIndex: "number"
       },
       managerName: "OGCWMTSManager",
-      providerName: "WebMapTileServiceImageryProvider",
+      providerName: "WebMapTileServiceImageryProvider"
     };
   },
   mounted() {
@@ -51,25 +51,25 @@ export default {
   },
   watch: {
     wmtsLayer: {
-      handler: function () {
+      handler: function() {
         this.unmount();
         this.mount();
       }
     },
     tileMatrixSet: {
-      handler: function () {
+      handler: function() {
         this.unmount();
         this.mount();
       }
     },
     tilingScheme: {
-      handler: function () {
+      handler: function() {
         this.unmount();
         this.mount();
       }
     },
     wmtsStyle: {
-      handler: function () {
+      handler: function() {
         this.unmount();
         this.mount();
       }
@@ -89,10 +89,38 @@ export default {
       }
 
       //处理天地图的wmts
-      let checkTileMatrixLabels = this.$_checkValue(this.options, "tileMatrixLabels", "");
-      if (checkTileMatrixLabels === "null" && this.tilingScheme === "EPSG:4326") {
-        if(this.baseUrl.indexOf("tianditu") > -1){
-          options.tileMatrixLabels = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"];
+      let checkTileMatrixLabels = this.$_checkValue(
+        this.options,
+        "tileMatrixLabels",
+        ""
+      );
+      if (
+        checkTileMatrixLabels === "null" &&
+        this.tilingScheme === "EPSG:4326"
+      ) {
+        if (this.baseUrl.indexOf("tianditu") > -1) {
+          options.tileMatrixLabels = [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20"
+          ];
         }
       }
 
@@ -106,7 +134,7 @@ export default {
     },
     unmount() {
       this.$_unmount();
-    },
-  },
+    }
+  }
 };
 </script>

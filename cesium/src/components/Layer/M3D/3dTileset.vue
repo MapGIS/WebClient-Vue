@@ -75,7 +75,9 @@ export default {
           if (headers) {
             urlSource = new Cesium.Resource({ url: url, headers: headers });
           } else if (token && token.value) {
-            urlSource = url + "?" + token.key + "=" + token.value;
+            // token等信息已拼接在url中，不需要再次处理
+            // urlSource = url + "?" + token.key + "=" + token.value;
+            urlSource = url;
           } else {
             urlSource = url;
           }
