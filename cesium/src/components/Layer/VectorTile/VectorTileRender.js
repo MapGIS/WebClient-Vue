@@ -191,8 +191,8 @@ export class VectorTileRender {
     if (styleData.sources.length > 0) {
       var source = styleData.sources[0];
       let vectortile = VectorTileProvider(Cesium, {
-        key: this.token,
-        url: source.tiles[0],
+        key: this.token.value,
+        url: this.getUrl(source.tiles[0]),
         style: vectortileStyle,
         opacity: this.opacity,
         threadId: this.threadId,
@@ -330,6 +330,18 @@ export class VectorTileRender {
                 self.provider.show = false;
             }
         }, 1000); */
+  }
+
+  getUrl(urlStr) {
+    const { token } = this;
+    const url = new URL(urlStr);
+    const search = url.search;
+    if (token.key && token.value) {
+      return search
+        ? urlStr + `&${token.key}=${token.value}`
+        : urlStr + `?${token.key}=${token.value}`;
+    }
+    return urlStr;
   }
 }
 

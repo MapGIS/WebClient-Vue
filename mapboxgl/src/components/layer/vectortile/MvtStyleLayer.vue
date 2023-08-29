@@ -38,7 +38,8 @@ export default {
     maximumLevel: {
       type: Number,
       default: 22
-    }
+    },
+    token: { Object }
   },
 
   data() {
@@ -209,7 +210,10 @@ export default {
         version: oldStyle.version || newStyle.version,
         sprite: oldStyle.sprite || newStyle.sprite,
         glyphs: oldStyle.glyphs || newStyle.glyphs,
-        sources: { ...oldStyle.sources, ...newStyle.sources },
+        sources: {
+          ...oldStyle.sources,
+          ...this.getNewLayerSources(newStyle.sources)
+        },
         layers: layers
       };
       this.$emit("change-style", style);
@@ -467,7 +471,38 @@ export default {
 
     $_handleMapAddLayer(payload) {},
 
-    $_handleMapRemoveLayer(payload) {}
+    $_handleMapRemoveLayer(payload) {},
+
+    getNewLayerSources(sources) {
+      const newSources = { ...sources };
+      if (Object.keys(newSources).length > 0) {
+        Object.keys(newSources).forEach(item => {
+          const source = newSources[item];
+          if (source.tiles) {
+            source.tiles = this.setToken(source.tiles);
+          }
+        });
+      }
+      return newSources;
+    },
+    setToken(tiles) {
+      const { token } = this;
+      const newTiles = [];
+      tiles.forEach(item => {
+        const url = new URL(item);
+        const { search } = url;
+        if (token.value) {
+          newTiles.push(
+            search
+              ? item + `&${token.key}=${token.value}`
+              : item + `?${token.key}=${token.value}`
+          );
+        } else {
+          newTiles.push(item);
+        }
+      });
+      return newTiles;
+    }
   }
 };
 </script>

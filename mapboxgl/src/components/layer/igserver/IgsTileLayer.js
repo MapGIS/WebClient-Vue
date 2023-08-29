@@ -27,7 +27,7 @@ export default {
     $_init() {
       let { url, domain, baseUrl, protocol, ip, port } = this;
       let { serverName, zoomOffset = 0 } = this;
-      let fixBaseUrl;
+      let fixBaseUrl, suffixParams;
       if (url) {
         this._url = this.url;
         if (this.url.indexOf("{z}") < 0) {
@@ -44,7 +44,11 @@ export default {
         return;
       } else if (baseUrl) {
         if (baseUrl.indexOf("?") > -1) {
-          fixBaseUrl = this.baseUrl.split("?")[0];
+          const arr = this.baseUrl.split("?");
+          fixBaseUrl = arr[0];
+          if (arr && arr.length > 1) {
+            suffixParams = arr[1];
+          }
         } else {
           fixBaseUrl = this.baseUrl;
         }
@@ -55,7 +59,9 @@ export default {
         fixBaseUrl = `${domain}/igs/rest/mrms/tile/${serverName}`;
       }
 
-      this._url = encodeURI(fixBaseUrl) + "/{z}/{y}/{x}";
+      this._url = suffixParams
+        ? encodeURI(fixBaseUrl) + "/{z}/{y}/{x}" + encodeURI(`?${suffixParams}`)
+        : encodeURI(fixBaseUrl) + "/{z}/{y}/{x}";
       this._zoomOffset = this.zoomOffset;
 
       if (this.map.getCRS().epsgCode.includes("4326")) {

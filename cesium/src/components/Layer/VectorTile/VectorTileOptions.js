@@ -62,10 +62,10 @@ export default {
   /**
    * @description 第三方需要的token，比如mapbox
    */
-  token: { type: String },
+  token: { type: Object },
 
   /**
    * @description 是否可见
    */
-  show: { type: Boolean, default: true },
+  show: { type: Boolean, default: true }
 };
