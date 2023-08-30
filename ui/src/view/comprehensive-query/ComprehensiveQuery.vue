@@ -170,7 +170,7 @@ export default {
 
       lat: "", // 逆地址解析的纬度
 
-      dis: "" // 逆地址解析的半径
+      dis: 10 // 逆地址解析的半径
     };
   },
   watch: {
@@ -186,7 +186,10 @@ export default {
     is2DMapMode() {
       this.lon = "";
       this.lat = "";
-      this.dis = "";
+      // 默认的半径为数字10，如果是默认半径则不清除，修改半径以后dis类型会变成string，则清除
+      if (typeof this.dis !== "number") {
+        this.dis = "";
+      }
     }
   },
   computed: {
@@ -329,8 +332,11 @@ export default {
     },
     decodeChange(e) {
       this.decode = e;
-      if (!e) {
+      if (e) {
+        this.$message.info("点击地图可进行鼠标拾取");
+      } else {
         this.clearFeature();
+        this.$message.info("鼠标拾取已关闭");
       }
     },
     onLocate() {
