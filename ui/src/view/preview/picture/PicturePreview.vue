@@ -8,8 +8,8 @@
   >
     <template slot-scope="scope">
       <div class="screenshot-body" v-show="showScreenshot">
-        <div class="screenshot-content" v-for="src in scope.images">
-          <img class="screenshot" :src="src" :key="src" />
+        <div class="screenshot-content" v-for="src in scope.images" :key="src">
+          <img class="screenshot" :src="src" />
         </div>
       </div>
     </template>

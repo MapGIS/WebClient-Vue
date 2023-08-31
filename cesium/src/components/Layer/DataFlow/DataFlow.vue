@@ -577,6 +577,7 @@ export default {
       this.websocket.onmessage = function(evt) {
         vm.$_webSocketCallBack(evt, vm);
       };
+      vm.$emit("updated", vm.features);
       this.$_setUpdatedEvent();
     },
     featureInCurrentLayer(feature) {
