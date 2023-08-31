@@ -28,6 +28,18 @@ $table-selection-column-width: 60px;
 
   &-body {
     transition: opacity 0.3s;
+    &::-webkit-scrollbar {
+      overflow: auto;
+    }
+    &::-webkit-scrollbar-thumb {
+      border-radius: 5px;
+      background: #939392;
+    }
+    &::-webkit-scrollbar-track {
+      -webkit-box-shadow: 0;
+      border-radius: 0;
+      background: transparent;
+    }
   }
 
   &-empty &-body {
