@@ -393,7 +393,11 @@ export default {
       let scene = viewer.scene;
       if (scene.mode !== Cesium.SceneMode.MORPHING) {
         let pickedObject = scene.pick(ev.position);
-        if (Cesium.defined(pickedObject) && pickedObject.hasOwnProperty("id")) {
+        if (
+          Cesium.defined(pickedObject) &&
+          pickedObject.hasOwnProperty("id") &&
+          pickedObject.id
+        ) {
           // console.log('clickedObject',pickedObject);
           if (
             !this.usePrimitive &&
@@ -427,7 +431,11 @@ export default {
       if (scene.mode !== Cesium.SceneMode.MORPHING) {
         let pickedObject = scene.pick(movement.endPosition);
         // let pickedObject = scene.pick(movement.position);
-        if (Cesium.defined(pickedObject) && pickedObject.hasOwnProperty("id")) {
+        if (
+          Cesium.defined(pickedObject) &&
+          pickedObject.hasOwnProperty("id") &&
+          pickedObject.id
+        ) {
           // console.log('pickedObject',pickedObject);
 
           if (
