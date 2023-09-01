@@ -901,8 +901,12 @@ export default {
       const { movement, pickedFeature } = payload;
       const vm = this;
       const { g3dLayerIndex } = this;
-
-      if (!pickedFeature || !movement) {
+      if (
+        !pickedFeature ||
+        !movement ||
+        (pickedFeature &&
+          pickedFeature.constructor.name !== "Cesium3DTileFeature")
+      ) {
         vm.iClickVisible = false;
         return;
       }

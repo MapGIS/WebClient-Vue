@@ -258,20 +258,25 @@ export default {
         if (!this.decode) return;
         if (this.is2DMapMode) return;
         const pickedFeature = this.viewer.scene.pick(movement.position);
-        if (pickedFeature && pickedFeature.id.markLabel) return; // 判断是否点击到标注点
-        // 通过指定的椭球或者地图对应的坐标系，将鼠标的二维坐标转换为对应椭球体三维坐标
-        const { ellipsoid } = this.viewer.scene.globe;
-        const cartesian = this.viewer.camera.pickEllipsoid(
-          movement.position,
-          ellipsoid
-        );
-        if (cartesian) {
-          // 将笛卡尔坐标转换为地理坐标
-          const cartographic = ellipsoid.cartesianToCartographic(cartesian);
-          // 将弧度转为度的十进制度表示
-          const lng = this.Cesium.Math.toDegrees(cartographic.longitude); // 转换后的经度
-          const lat = this.Cesium.Math.toDegrees(cartographic.latitude); // 转换后的纬度
-          this.$emit("picked-coordinate", lng, lat);
+        if (
+          !pickedFeature ||
+          (pickedFeature &&
+            pickedFeature.id?._id === "comprehensiveQueryCircle")
+        ) {
+          // 通过指定的椭球或者地图对应的坐标系，将鼠标的二维坐标转换为对应椭球体三维坐标
+          const { ellipsoid } = this.viewer.scene.globe;
+          const cartesian = this.viewer.camera.pickEllipsoid(
+            movement.position,
+            ellipsoid
+          );
+          if (cartesian) {
+            // 将笛卡尔坐标转换为地理坐标
+            const cartographic = ellipsoid.cartesianToCartographic(cartesian);
+            // 将弧度转为度的十进制度表示
+            const lng = this.Cesium.Math.toDegrees(cartographic.longitude); // 转换后的经度
+            const lat = this.Cesium.Math.toDegrees(cartographic.latitude); // 转换后的纬度
+            this.$emit("picked-coordinate", lng, lat);
+          }
         }
       }, this.Cesium.ScreenSpaceEventType.LEFT_CLICK);
     },

@@ -177,6 +177,13 @@ export default {
       const popupTipContainer = popupDiv.getElementsByClassName(
         "cesium-popup-tip-container"
       );
+      // 调整内容显示到中间位置
+      const featurePopupContainer = popupDiv.getElementsByClassName(
+        "mapgis-feature-popup-container"
+      );
+      for (let i = 0; i < featurePopupContainer.length; i++) {
+        featurePopupContainer[i].style.paddingLeft = "20px";
+      }
       // 暂时只针对一张图默认的标注图标做了调整
       // 图标上方位置 水平padding-left范围【2px,22px】，padding-to范围【0px,35px】,暂时只能从中间设置到顶点之间
       // margin-top范围【-45px,-10px】
