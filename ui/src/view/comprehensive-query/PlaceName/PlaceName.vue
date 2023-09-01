@@ -260,8 +260,9 @@ export default {
         const pickedFeature = this.viewer.scene.pick(movement.position);
         if (
           !pickedFeature ||
-          (pickedFeature &&
-            pickedFeature.id?._id === "comprehensiveQueryCircle")
+          !pickedFeature.id ||
+          !pickedFeature.id._id ||
+          pickedFeature.id._id === "comprehensiveQueryCircle"
         ) {
           // 通过指定的椭球或者地图对应的坐标系，将鼠标的二维坐标转换为对应椭球体三维坐标
           const { ellipsoid } = this.viewer.scene.globe;
