@@ -124,10 +124,16 @@
       <mapgis-3d-feature-popup
         v-if="featureposition"
         :position="featureposition"
-        :properties="featureproperties"
         :popupOptions="popupOptions"
+        :componentWidth="popupWidth"
+        v-bind="popupConfig"
         v-model="featurevisible"
       >
+        <component
+          :is="popupComponent"
+          :properties="featureproperties"
+          v-bind="popupConfig"
+        />
       </mapgis-3d-feature-popup>
     </mapgis-ui-collapse-card>
   </div>
@@ -176,7 +182,17 @@ export default {
     },
     enableCollapse: { type: Boolean, default: true },
     enableBim: { type: Boolean, default: false },
-    enableDynamicQuery: { type: Boolean, default: false }
+    enableDynamicQuery: { type: Boolean, default: false },
+    // 气泡框配置
+    popupConfig: {
+      type: Object,
+      default: () => {}
+    },
+    // 高亮样式
+    highlightStyle: {
+      type: String,
+      default: "rgba(255,255,0,0.5)"
+    }
   },
   data() {
     return {
@@ -255,6 +271,14 @@ export default {
   },
   destroyed() {
     this.unmount();
+  },
+  computed: {
+    popupComponent() {
+      return this.popupConfig?.component || "mapgis-3d-popup-iot";
+    },
+    popupWidth() {
+      return this.popupConfig?.componentWidth || 260;
+    }
   },
   watch: {
     enablePopup(next) {
@@ -841,7 +865,9 @@ export default {
         let { tree } = find.options;
         let mapgism3dNode = tree.getM3DByName(index);
         if (mapgism3dNode) {
-          mapgism3dNode.setNodeColor(new Cesium.Color(0, 1, 0, 0.9));
+          mapgism3dNode.setNodeColor(
+            Cesium.Color.fromCssColorString(this.highlightStyle)
+          );
         }
       }
     },
@@ -890,10 +916,10 @@ export default {
 
         if (feature) {
           // 等修复好卡顿后再放开
-          /*m3d.pickedOid = oid;
-           m3d.pickedColor = Cesium.Color.fromCssColorString(
-            "rgba(255, 255, 0, 0.75)"
-          ); */
+          // m3d.pickedOid = oid;
+          // m3d.pickedColor = Cesium.Color.fromCssColorString(
+          //   "rgba(255, 255, 0, 0.75)"
+          // );
 
           let paths = [];
           let find = vm.findOid(root, oid);
@@ -946,6 +972,7 @@ export default {
           .get(url + "/nodes/root", { params })
           .then(res => {
             this.parseTree(res.data);
+            resolve();
           })
           .catch(Error => {
             this.$message.error("BIM构建树节点信息获取失败！");
