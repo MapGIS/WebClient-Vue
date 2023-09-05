@@ -123,7 +123,7 @@ export default {
         filter: ["has", "point_count"],
         layout: {
           "text-field": "{point_count_abbreviated}",
-          "text-font": ["微软雅黑", "微软雅黑"],
+          "text-font": ["微软雅黑"],
           "text-size": 16
         },
         paint: {
