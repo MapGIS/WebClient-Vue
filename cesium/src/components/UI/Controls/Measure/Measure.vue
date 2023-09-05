@@ -129,9 +129,18 @@ export default {
       this.$_enableMeasure("MeasureSlopeTool");
     },
     async $_enableMeasure(MeasureName, MeasureType) {
-      const lineConfig = this.featureConfig.feature?.line;
-      const labelConfig = this.featureConfig.label?.text;
-      const areaConfig = this.featureConfig.feature?.reg;
+      const lineConfig = this.featureConfig?.feature?.line || {
+        color: "rgba(255,0,0,1)",
+        size: "3"
+      };
+      const labelConfig = this.featureConfig?.label?.text || {
+        color: "rgba(255,0,102,1)",
+        fontSize: "14",
+        fontFamily: "华文行楷"
+      };
+      const areaConfig = this.featureConfig?.feature?.reg || {
+        color: "rgba(255,255,0,0.5)"
+      };
       if (this.measureConfig.lineColor) {
         this.measureStyles.lineColor = Cesium.Color.fromCssColorString(
           this.measureConfig.lineColor
