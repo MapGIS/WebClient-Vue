@@ -887,17 +887,15 @@ export default {
       vm.featureproperties = undefined;
       const { Cesium, viewer } = this;
       const { vueKey, innerVueIndex, vueCesium } = this;
-      const { highlightStyle } = this;
       const scene = viewer.scene;
       let root = this.findRoot();
       let tempRay = new Cesium.Ray();
       let tempPos = new Cesium.Cartesian3();
-      let bimInfo = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
+      let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
       let m3d;
-      if (bimInfo && bimInfo.source) {
-        m3d = bimInfo.source;
+      if (find && find.source) {
+        m3d = find.source;
       }
-
       if (!movement) return;
       if (scene.mode !== Cesium.SceneMode.MORPHING) {
         let position = movement.position || movement.endPosition;
@@ -917,6 +915,12 @@ export default {
         }
 
         if (feature) {
+          // 等修复好卡顿后再放开
+          // m3d.pickedOid = oid;
+          // m3d.pickedColor = Cesium.Color.fromCssColorString(
+          //   "rgba(255, 255, 0, 0.75)"
+          // );
+
           let paths = [];
           let find = vm.findOid(root, oid);
 
@@ -948,37 +952,6 @@ export default {
               height: heightString2
             };
           }
-
-          if (m3d) {
-            const renderer_unique = {
-              field: "OID",
-              type: "unique-value",
-              uniqueValueInfos: [
-                {
-                  // 单值过滤条件
-                  value: oid,
-                  // 渲染符号
-                  symbol: {
-                    // 渲染类型为M3D
-                    type: "mesh-3d",
-                    // 覆盖物图层
-                    symbolLayers: [
-                      {
-                        // 图层类型-颜色填充
-                        type: "fill",
-                        // 图层材质
-                        material: {
-                          // 填充颜色
-                          color: Cesium.Color.fromCssColorString(highlightStyle)
-                        }
-                      }
-                    ]
-                  }
-                }
-              ]
-            };
-            m3d.renderer = renderer_unique;
-          }
         } else {
           vm.featureposition = undefined;
           vm.featurevisible = false;
@@ -1002,7 +975,7 @@ export default {
             resolve();
           })
           .catch(Error => {
-            this.$message.error("BIM构件树节点信息获取失败！");
+            this.$message.error("BIM构建树节点信息获取失败！");
             reject(Error);
           });
       });
