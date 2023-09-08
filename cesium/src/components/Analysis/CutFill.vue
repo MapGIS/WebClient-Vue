@@ -107,7 +107,9 @@ import VueOptions from "../Base/Vue/VueOptions";
 import {
   colorToCesiumColor,
   isDepthTestAgainstTerrainEnable,
-  setDepthTestAgainstTerrainEnable
+  setDepthTestAgainstTerrainEnable,
+  isEnabledTranslucency,
+  setEnabledTranslucency
 } from "../WebGlobe/util";
 
 export default {
@@ -207,6 +209,7 @@ export default {
       terrainLine: null,
       terrainPolygon: null,
       isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
+      isEnabledTranslucency: undefined, // 地下模式是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
       maskShow: false,
       maskText: "正在分析中, 请稍等..."
     };
@@ -318,6 +321,20 @@ export default {
      */
     analysis() {
       let { vueCesium, vueKey, vueIndex, Cesium, viewer } = this;
+
+      this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
+        this.viewer
+      );
+      if (!this.isDepthTestAgainstTerrainEnable) {
+        // 如果深度检测没有开启，则开启
+        setDepthTestAgainstTerrainEnable(true, this.viewer);
+      }
+      this.isEnabledTranslucency = isEnabledTranslucency(this.viewer);
+      if (this.isEnabledTranslucency) {
+        // 采样计算不能开启地下模式
+        setEnabledTranslucency(false, this.viewer);
+      }
+
       const options = this._getSourceOptions();
       let { cutFillAnalysis, drawElement } = options;
       // 初始化交互式绘制控件
@@ -372,13 +389,6 @@ export default {
       this._reset();
       const { xPaneNumCopy, yPaneNumCopy, heightCopy } = this;
 
-      this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
-        this.viewer
-      );
-      if (!this.isDepthTestAgainstTerrainEnable) {
-        // 如果深度检测没有开启，则开启
-        setDepthTestAgainstTerrainEnable(true, this.viewer);
-      }
       // 创建填挖方实例
       const cutFill = new Cesium.CutFillAnalysis(this.viewer, {
         callBack: this._analysisSuccess
@@ -458,6 +468,7 @@ export default {
      * @param {Array} positions 填挖区域多边形的顶点数组
      */
     startCutFill(cutFill, positions) {
+      debugger;
       const cutfillObject = cutFill;
       cutfillObject._pointsPolygon = positions;
       const minMax = cutfillObject.getMinAndMaxCartesian();
@@ -482,9 +493,9 @@ export default {
       };
     },
     /**
-     * @description 恢复深度检测设置
+     * @description 恢复Cesium设置
      */
-    _restoreDepthTestAgainstTerrain() {
+    _restoreCesiumSetting() {
       if (
         this.isDepthTestAgainstTerrainEnable !== undefined &&
         this.isDepthTestAgainstTerrainEnable !==
@@ -494,6 +505,12 @@ export default {
           this.isDepthTestAgainstTerrainEnable,
           this.viewer
         );
+      }
+      if (
+        this.isEnabledTranslucency !== undefined &&
+        this.isEnabledTranslucency !== isEnabledTranslucency(this.viewer)
+      ) {
+        setEnabledTranslucency(this.isEnabledTranslucency, this.viewer);
       }
     },
     /**
@@ -530,7 +547,7 @@ export default {
       this.maskShow = false;
       this._reset();
 
-      this._restoreDepthTestAgainstTerrain();
+      this._restoreCesiumSetting();
       if (this.cutVolume) {
         this.viewer.scene.primitives.remove(this.cutVolume);
         this.viewer.entities.remove(this.fillEntity);

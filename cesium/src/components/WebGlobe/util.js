@@ -304,3 +304,20 @@ export function getFarToNearRatio(viewer) {
 export function setFarToNearRatio(farToNearRatio, viewer) {
   viewer.scene.farToNearRatio = farToNearRatio;
 }
+
+/**
+ * 是否已开启地下模式
+ * @returns true|false
+ */
+export function isEnabledTranslucency(viewer) {
+  return viewer.scene.globe.translucency.enabled;
+}
+
+/**
+ * 设置是否开启地下模式
+ * @param {Boolean} isEnabled
+ */
+export function setEnabledTranslucency(isEnabled, viewer) {
+  viewer.scene.screenSpaceCameraController.enableCollisionDetection = !isEnabled;
+  viewer.scene.globe.translucency.enabled = isEnabled;
+}
