@@ -460,11 +460,14 @@ export default {
         this.destLayer = this.srcLayer + this.currentTime();
       }
     },
-    srcLayer(val, oldval) {
-      if (val != oldval) {
-        this.destLayer = val + this.currentTime();
-        this.getAttribute();
-      }
+    srcLayer: {
+      handler(val, oldval) {
+        if (val != oldval) {
+          this.destLayer = val + this.currentTime();
+          this.getAttribute();
+        }
+      },
+      immediate: true
     },
     isByAtt(val, oldval) {
       if (val == true) {

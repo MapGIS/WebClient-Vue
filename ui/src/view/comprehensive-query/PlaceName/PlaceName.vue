@@ -202,11 +202,18 @@ export default {
       }
     },
     is2DMapMode() {
-      // 关闭某一模式下的拾取，打开另一模式下的拾取
-      this.pickCoordinate2D();
+      if (this.is2DMapMode) {
+        this.pickCoordinate2D();
+      } else {
+        this.pickCoordinate3D();
+      }
     },
     searchPanelExpand() {
-      this.pickCoordinate2D();
+      if (this.is2DMapMode) {
+        this.pickCoordinate2D();
+      } else {
+        this.pickCoordinate3D();
+      }
     }
   },
   mounted() {
@@ -249,37 +256,45 @@ export default {
     pickCoordinate3D() {
       // 开启或者关闭鼠标拾取
       // 定义当前场景的画布元素的事件处理
-      const handler = new this.Cesium.ScreenSpaceEventHandler(
-        this.viewer.scene._canvas
-      );
-      // 设置鼠标移动事件的处理函数，这里负责监听x,y坐标值变化
-      handler.setInputAction(movement => {
-        if (!this.searchPanelExpand) return;
-        if (!this.decode) return;
-        if (this.is2DMapMode) return;
-        const pickedFeature = this.viewer.scene.pick(movement.position);
-        if (
-          !pickedFeature ||
-          !pickedFeature.id ||
-          !pickedFeature.id._id ||
-          pickedFeature.id._id === "comprehensiveQueryCircle"
-        ) {
-          // 通过指定的椭球或者地图对应的坐标系，将鼠标的二维坐标转换为对应椭球体三维坐标
-          const { ellipsoid } = this.viewer.scene.globe;
-          const cartesian = this.viewer.camera.pickEllipsoid(
-            movement.position,
-            ellipsoid
+      this.handler = this.handler
+        ? this.handler
+        : new this.Cesium.ScreenSpaceEventHandler(this.viewer.scene._canvas);
+      this.$nextTick(() => {
+        if (this.searchPanelExpand && this.decode && !this.is2DMapMode) {
+          // 设置鼠标移动事件的处理函数，这里负责监听x,y坐标值变化
+          this.handler.setInputAction(movement => {
+            const pickedFeature = this.viewer.scene.pick(movement.position);
+            if (
+              !pickedFeature ||
+              !pickedFeature.id ||
+              !pickedFeature.id._id ||
+              pickedFeature.id._id === "comprehensiveQueryCircle"
+            ) {
+              // 通过指定的椭球或者地图对应的坐标系，将鼠标的二维坐标转换为对应椭球体三维坐标
+              const { ellipsoid } = this.viewer.scene.globe;
+              const cartesian = this.viewer.camera.pickEllipsoid(
+                movement.position,
+                ellipsoid
+              );
+              if (cartesian) {
+                // 将笛卡尔坐标转换为地理坐标
+                const cartographic = ellipsoid.cartesianToCartographic(
+                  cartesian
+                );
+                // 将弧度转为度的十进制度表示
+                const lng = this.Cesium.Math.toDegrees(cartographic.longitude); // 转换后的经度
+                const lat = this.Cesium.Math.toDegrees(cartographic.latitude); // 转换后的纬度
+                this.$emit("picked-coordinate", lng, lat);
+              }
+            }
+          }, this.Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        } else {
+          // 移除鼠标点击事件
+          this.handler.removeInputAction(
+            this.Cesium.ScreenSpaceEventType.LEFT_CLICK
           );
-          if (cartesian) {
-            // 将笛卡尔坐标转换为地理坐标
-            const cartographic = ellipsoid.cartesianToCartographic(cartesian);
-            // 将弧度转为度的十进制度表示
-            const lng = this.Cesium.Math.toDegrees(cartographic.longitude); // 转换后的经度
-            const lat = this.Cesium.Math.toDegrees(cartographic.latitude); // 转换后的纬度
-            this.$emit("picked-coordinate", lng, lat);
-          }
         }
-      }, this.Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      });
     },
     selectAll() {
       if (this.isAllselected) {
