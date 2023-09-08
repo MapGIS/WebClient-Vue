@@ -72,11 +72,22 @@
               v-model="bufferQuality"
             ></mapgis-ui-input-number>
           </mapgis-ui-form-model-item>
-          <mapgis-ui-form-model-item label="截面圆边数">
+          <mapgis-ui-form-model-item label="线化简容差">
             <mapgis-ui-input-number
               autoWidth
               v-model="simplifyTolerance"
             ></mapgis-ui-input-number>
+          </mapgis-ui-form-model-item>
+          <mapgis-ui-form-model-item label="缓冲区颜色">
+            <mapgis-ui-select v-model="fillColor">
+              <mapgis-ui-select-option
+                v-for="(item, index) in colorArr"
+                :key="index"
+                :value="item.value"
+              >
+                {{ item.label }}
+              </mapgis-ui-select-option>
+            </mapgis-ui-select>
           </mapgis-ui-form-model-item>
           <mapgis-ui-group-tab
             title="输出结果"
@@ -194,8 +205,8 @@ export default {
       ],
       selectedUnit: "meters",
       jointStyle: 0,
-      bufferQuality: 100,
-      simplifyTolerance: 100,
+      bufferQuality: 60,
+      simplifyTolerance: 0.0001,
       fldName: [{ FldName: "", FldType: "" }],
       selectedFldName: "Oid",
       destLayer: "",
@@ -203,7 +214,12 @@ export default {
       // 监听组件内部缓冲状态，结束this.$emit("listenFinish", finish)
       finish: false,
       maskShow: false,
-      maskText: "正在分析中, 请稍等..."
+      maskText: "正在分析中, 请稍等...",
+      colorArr: [
+        { label: "黄色", value: 4 },
+        { label: "蓝色", value: 2 }
+      ],
+      fillColor: 2
     };
   },
   watch: {
@@ -391,13 +407,17 @@ export default {
         bufferQuality,
         simplifyTolerance,
         srcOidList: srcOidList.length > 0 ? srcOidList.join(",") : undefined,
-        fieldName: this.isByAtt ? this.selectedFldName : undefined
+        fieldName: this.isByAtt ? this.selectedFldName : undefined,
+        fillColor: this.fillColor
       };
       const res = await this.modelBuffer(options);
       console.log(res);
+
       this.maskShow = false;
-      if (res) {
+      if (res.results && res.results[0].Value === "1") {
         this.AnalysisSuccess();
+      } else {
+        this.$message.error(res);
       }
     },
     modelBuffer(options) {
@@ -422,18 +442,27 @@ export default {
       }
       const url = `${this.domain}/igs/rest/mrfws/execute/600372?isAsy=false&f=json`;
       const promise = new Promise((resolve, reject) => {
-        axios.post(url, paramArr).then(res => {
-          const { data } = res;
-          if (!data) {
-            resolve(undefined);
-          } else {
-            resolve(data);
-          }
+        axios
+          .post(url, paramArr)
+          .then(res => {
+            const { data } = res;
+            if (!data) {
+              resolve(undefined);
+            } else {
+              resolve(data);
+            }
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
+      return promise
+        .then(data => {
+          return data;
+        })
+        .catch(() => {
+          return "分析失败";
         });
-      });
-      return promise.then(data => {
-        return data;
-      });
     },
     AnalysisSuccess(data) {
       this.maskShow = false;
