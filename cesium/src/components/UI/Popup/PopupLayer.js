@@ -194,7 +194,7 @@ export default class PopupLayer {
       close.addEventListener("click", () => self.hide());
       close.innerText = "x";
       if (this.popupCloseBtnStyle) {
-        Object.keys(this.popupCloseBtnStyle).forEach((key) => {
+        Object.keys(this.popupCloseBtnStyle).forEach(key => {
           close.style[key] = this.popupCloseBtnStyle[key];
         });
       }
@@ -203,7 +203,7 @@ export default class PopupLayer {
         "cesium-popup-content-wrapper"
       );
       if (this.popupWapperStyle) {
-        Object.keys(this.popupWapperStyle).forEach((key) => {
+        Object.keys(this.popupWapperStyle).forEach(key => {
           popupContentWrapperDiv[0].style[key] = this.popupWapperStyle[key];
         });
       }
@@ -240,7 +240,7 @@ export default class PopupLayer {
       popupHeaderTitle.className = "cesium-popup-content-header-title";
       popupHeaderTitle.innerText = this.popupTitle || "";
       if (this.popupHeaderStyle) {
-        Object.keys(this.popupHeaderStyle).forEach((key) => {
+        Object.keys(this.popupHeaderStyle).forEach(key => {
           popupHeaderTitle.style[key] = this.popupHeaderStyle[key];
         });
       }
@@ -260,7 +260,7 @@ export default class PopupLayer {
         `<use xlink:href="#mapgis-close"></use></svg>`;
       close.innerHTML = closeicon;
       if (this.popupCloseBtnStyle) {
-        Object.keys(this.popupCloseBtnStyle).forEach((key) => {
+        Object.keys(this.popupCloseBtnStyle).forEach(key => {
           close.style[key] = this.popupCloseBtnStyle[key];
         });
       }
@@ -287,7 +287,7 @@ export default class PopupLayer {
       let popupContentWrapperDiv = window.document.createElement("div");
       popupContentWrapperDiv.className = "cesium-popup-content-wrapper";
       if (this.popupWapperStyle) {
-        Object.keys(this.popupWapperStyle).forEach((key) => {
+        Object.keys(this.popupWapperStyle).forEach(key => {
           popupContentWrapperDiv.style[key] = this.popupWapperStyle[key];
         });
       }
@@ -342,6 +342,7 @@ export default class PopupLayer {
 
     if (this.options.postRender) {
       this.map.scene.postRender.removeEventListener(self.updateEvent);
+      this.handler.destroy();
     } else {
       this.map.camera.changed.removeEventListener(self.updateEvent);
       this.map.scene.camera.moveEnd.removeEventListener(self.updateEvent);
