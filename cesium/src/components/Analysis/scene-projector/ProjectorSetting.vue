@@ -32,7 +32,9 @@
         />
         <div class="projector-style">
           <div v-show="showVideoDiv">
-            <mapgis-ui-video
+            <div id="projectorVideoContainer" :width="300" :height="200"></div>
+            <!-- <mapgis-ui-video
+              v-else
               id="demovideo"
               :width="300"
               :height="200"
@@ -42,7 +44,7 @@
               crossorigin=""
               loop=""
               @onPlayerReady="_getPlayer"
-            ></mapgis-ui-video>
+            ></mapgis-ui-video> -->
           </div>
           <img v-show="showImgDiv" :src="imgUrl" :width="300" :height="200" />
           <mapgis-ui-empty
@@ -347,7 +349,6 @@
                 </template>
                 <mapgis-ui-button
                   :ghost="true"
-                  :disabled="isEdit"
                   type="link"
                   @click="item.click"
                   style="margin: 0 -5px;border:none;"
@@ -574,7 +575,7 @@ export default {
         { value: "video", label: "视频" },
         { value: "image", label: "图片" }
       ],
-      scenePro: undefined, //投放对象
+      // scenePro: undefined, //投放对象
       isGetCameraPosition: false, //是否获取相机位置
       isGetTargetPosition: false, //是否获取视点位置
       emptyImage: undefined,
@@ -582,7 +583,7 @@ export default {
         height: "150px",
         margin: "0 auto"
       },
-      modelPrimitive: undefined,
+      // modelPrimitive: undefined,
 
       enableControl: false,
       // 绘制矩形颜色
@@ -611,7 +612,7 @@ export default {
         },
         { value: 2, label: "贴场景" }
       ],
-      graphic: undefined,
+      // graphic: undefined,
       renderType: 0
       // heightReference: 2,
       // offsetHeight: 5
@@ -620,6 +621,7 @@ export default {
   mounted() {
     this.mount();
     this.emptyImage = emptyImage();
+    this.videoDom = null;
   },
   destroyed() {
     this.unmount();
@@ -652,19 +654,51 @@ export default {
         this.drawer.unmount();
       }
     },
+    _hasGraphic() {
+      return (
+        !!window.graphicsLayer &&
+        !!window.graphicsLayer.getGraphicByID(this.settingsCopy.id + "graphic")
+      );
+    },
+    _getVideoDom() {
+      let tempVideoDom;
+      if (window.projectorVideoDomMap && window.projectorVideoDomMap[this.id]) {
+        const { videoDom, hlsPlayer } = window.projectorVideoDomMap[this.id];
+        tempVideoDom = videoDom;
+      } else {
+        const { protocol, videoUrl } = this.videoSource;
+        if (!videoUrl) {
+          return null;
+        }
+        // 创建video元素
+        tempVideoDom = this.createVideoElement(protocol, videoUrl, this.id);
+      }
+      this.videoDom = tempVideoDom;
+
+      this.$nextTick(function() {
+        const projectorVideoContainer = document.getElementById(
+          "projectorVideoContainer"
+        );
+        projectorVideoContainer.innerHTML = "";
+        tempVideoDom.width = 300;
+        tempVideoDom.height = 200;
+        tempVideoDom.controls = true;
+        projectorVideoContainer.appendChild(tempVideoDom);
+      });
+    },
     updateImgUrl(url) {
       this.imgUrl = url;
     },
     _changeRenderType(e) {
       this.params.renderType = e.target.value;
-      if (e.target.value == 0 && this.graphic) {
+      if (e.target.value == 0) {
         this.removeGraphic();
       }
     },
     _heightReferenceTypesChange(e) {
       this.params.heightReference = e;
       // 在绘制完后可以更改贴地模式，编辑状态也可以更改贴地模式
-      if (this.isEdit || this.graphic) {
+      if (this._hasGraphic()) {
         let graphic = window.graphicsLayer.getGraphicByID(
           this.settingsCopy.id + "graphic"
         );
@@ -686,24 +720,32 @@ export default {
     },
     _offsetHeightChange(e) {
       this.params.offsetHeight = e;
-      if (this.isEdit || this.graphic) {
+      if (this._hasGraphic()) {
         let graphic = window.graphicsLayer.getGraphicByID(
           this.settingsCopy.id + "graphic"
         );
         graphic.style.offsetHeight = e;
       }
     },
-    _changeDrawProjectorType(element) {
-      let graphic = window.graphicsLayer.getGraphicByID(
-        this.settingsCopy.id + "graphic"
-      );
-      graphic.style.material = Cesium.Material.fromType(
-        Cesium.Material.ImageType,
-        {
-          image: element,
-          repeat: new Cesium.Cartesian2(1.0, 1.0)
+    _changeDrawProjectorType() {
+      if (this._hasGraphic()) {
+        let element;
+        if (this.projectorType === "image") {
+          element = this.imgUrl;
+        } else if (this.projectorType === "video") {
+          element = this.videoDom;
         }
-      );
+        const graphic = window.graphicsLayer.getGraphicByID(
+          this.settingsCopy.id + "graphic"
+        );
+        graphic.style.material = Cesium.Material.fromType(
+          Cesium.Material.ImageType,
+          {
+            image: element,
+            repeat: new Cesium.Cartesian2(1.0, 1.0)
+          }
+        );
+      }
     },
     /**
      * 修改投影类型
@@ -714,6 +756,7 @@ export default {
         this.proType = this.Cesium.SceneProjectorType.IMAGE;
       } else if (projectorType === "video") {
         this._changeProtocol();
+        this._getVideoDom();
       }
     },
     /**
@@ -736,24 +779,22 @@ export default {
      */
     _changeProjector() {
       this._changeProjectorType();
-      // cesium内核目前修改projectorType和textureSource(除设置undefined会生效)，不生效，只能重新投放
+      // cesium内核目前修改projectorType和projectionSource(除设置undefined会生效)，不生效，只能重新投放
       switch (this.proType) {
         case Cesium.SceneProjectorType.IMAGE:
           if (!this.imgUrl || this.imgUrl.length == 0) {
-            // this.scenePro.textureSource = undefined;
+            // this.scenePro.projectionSource = undefined;
             this.cancelPutProjector(this.settingsCopy);
             this.scenePro = undefined;
           } else {
-            if (
-              (this.renderType == 1 && this.graphic) ||
-              (this.renderType == 1 && this.isEdit)
-            ) {
-              this._changeDrawProjectorType(this.imgUrl);
-            }
-            if (!this.scenePro) {
-              this.scenePro = this.putProjector(this.settingsCopy);
+            if (this.renderType == 1 && this._hasGraphic()) {
+              this._changeDrawProjectorType();
             } else {
-              this.scenePro.textureSource = this.imgUrl;
+              if (!this.scenePro) {
+                this.scenePro = this.putProjector(this.settingsCopy);
+              } else {
+                this.scenePro.projectionSource = this.imgUrl;
+              }
             }
           }
           break;
@@ -761,21 +802,25 @@ export default {
         case Cesium.SceneProjectorType.HLS:
           const { videoUrl } = this.videoSource;
           if (!videoUrl || videoUrl.length == 0) {
-            // this.scenePro.textureSource = undefined;
+            // this.scenePro.projectionSource = undefined;
             this.cancelPutProjector(this.settingsCopy);
             this.scenePro = undefined;
           } else {
-            if (
-              (this.renderType == 1 && this.graphic) ||
-              (this.renderType == 1 && this.isEdit)
-            ) {
-              let videoElement = document.getElementById("demovideo_html5_api");
-              this._changeDrawProjectorType(videoElement);
-            }
-            if (!this.scenePro) {
-              this.scenePro = this.putProjector(this.settingsCopy);
+            if (this.renderType == 1 && this._hasGraphic()) {
+              // let videoElement = document.getElementById("demovideo_html5_api");
+              this._changeDrawProjectorType();
             } else {
-              this.scenePro.textureSource = this.videoSource.videoUrl;
+              if (!this.scenePro) {
+                this.scenePro = this.putProjector(this.settingsCopy);
+              } else {
+                const { protocol, videoUrl } = this.videoSource;
+                const element = this.createVideoElement(
+                  protocol,
+                  videoUrl,
+                  this.id
+                );
+                this.scenePro.projectionSource = videoUrl;
+              }
             }
           }
           break;
@@ -783,7 +828,7 @@ export default {
           if (!this.scenePro) {
             this.scenePro = this.putProjector(this.settingsCopy);
           }
-          this.scenePro.textureSource = new this.Cesium.Color(1, 0, 0, 1);
+          this.scenePro.projectionSource = new this.Cesium.Color(1, 0, 0, 1);
           break;
         default:
           break;
@@ -868,8 +913,14 @@ export default {
               { heading: heading, pitch: pitch }
             );
             if (targetPosition) {
-              if (!vm.scenePro.textureSource) {
-                vm.scenePro.textureSource = vm.videoSource.videoUrl;
+              if (!vm.scenePro.projectionSource) {
+                const { protocol, videoUrl } = vm.videoSource;
+                const element = vm.createVideoElement(
+                  protocol,
+                  videoUrl,
+                  vm.id
+                );
+                vm.scenePro.projectionSource = videoUrl;
               }
               vm.scenePro.targetPosition = targetPosition;
             }
@@ -889,8 +940,10 @@ export default {
             { heading: heading, pitch: pitch }
           );
           if (targetPosition) {
-            if (!vm.scenePro.textureSource) {
-              vm.scenePro.textureSource = vm.videoSource.videoUrl;
+            if (!vm.scenePro.projectionSource) {
+              const { protocol, videoUrl } = vm.videoSource;
+              const element = vm.createVideoElement(protocol, videoUrl, vm.id);
+              vm.scenePro.projectionSource = videoUrl;
             }
             vm.scenePro.targetPosition = targetPosition;
           }
@@ -921,8 +974,14 @@ export default {
               { heading: heading, pitch: pitch }
             );
             if (targetPosition) {
-              if (!vm.scenePro.textureSource) {
-                vm.scenePro.textureSource = vm.videoSource.videoUrl;
+              if (!vm.scenePro.projectionSource) {
+                const { protocol, videoUrl } = vm.videoSource;
+                const element = vm.createVideoElement(
+                  protocol,
+                  videoUrl,
+                  vm.id
+                );
+                vm.scenePro.projectionSource = videoUrl;
               }
               vm.scenePro.targetPosition = targetPosition;
             }
@@ -1015,9 +1074,7 @@ export default {
     },
     // 绘制矩形投影面
     drawRectangle() {
-      if (this.graphic) {
-        this.removeGraphic();
-      }
+      this.removeGraphic();
       if (this.videoSource.videoUrl || this.imgUrl) {
         // 调用draw组件中，绘制矩形
         this.drawer && this.drawer.enableDrawRectangle();
@@ -1027,9 +1084,7 @@ export default {
     },
     // 绘制多边形投影面
     drawPolygon() {
-      if (this.graphic) {
-        this.removeGraphic();
-      }
+      this.removeGraphic();
       if (this.videoSource.videoUrl || this.imgUrl) {
         this.drawer && this.drawer.enableDrawPolygon();
       } else {
@@ -1045,24 +1100,32 @@ export default {
       // 获取坐标系
       const ellipsoid = viewer.scene.globe.ellipsoid;
 
-      const videoElement = document.getElementById("demovideo_html5_api");
+      // const videoElement = document.getElementById("demovideo_html5_api");
 
       // 矩形
       if (param2.length === 2) {
         // 获取矩形的位置坐标
-        let lnglatArr = vm.getRectDegrees(param2[0], param2[1]);
-        vm.params.areaCoords = lnglatArr;
+        // let lnglatArr = vm.getRectDegrees(param2[0], param2[1]);
+        // 这里需要将笛卡尔坐标转换为经纬度坐标
+        let lnglatArr1 = vm.cartesian3ToLngLat(cartesian3[0]);
+        let lnglatArr2 = vm.cartesian3ToLngLat(cartesian3[1]);
+        vm.params.areaCoords = [lnglatArr1, lnglatArr2];
         let type = "rectangle";
+        vm.params.areaType = type;
         let position = cartesian3;
-        vm.createProject(type, position, videoElement);
+        vm.graphic = vm.createGraphic(type, position, this.settingsCopy);
+        window.graphicsLayer.addGraphic(vm.graphic);
       } else {
         // 多边形
-        let degreeArr = vm.getPolygonDegrees(param2);
-        vm.params.areaCoords = degreeArr;
+        // let degreeArr = vm.getPolygonDegrees(param2);
+        // vm.params.areaCoords = param2;
+        const areaCoords = [];
         let type = "polygon";
+        vm.params.areaType = type;
         let position = [];
         for (let i = 0; i < param2.length; i++) {
           param2[i][2] = vm.graphicHeight;
+          areaCoords.push(param2[i]);
           position.push(
             Cesium.Cartesian3.fromDegrees(
               param2[i][0],
@@ -1072,78 +1135,15 @@ export default {
             )
           );
         }
+        vm.params.areaCoords = areaCoords;
         // 投影
-        vm.createProject(type, position, videoElement);
+        vm.graphic = vm.createGraphic(type, position, this.settingsCopy);
+        window.graphicsLayer.addGraphic(vm.graphic);
       }
       this.drawer.removeEntities();
       if (window.drawElement) {
         window.drawElement.stopDrawing();
       }
-    },
-    // 将判断是image还是video的逻辑封装到一起，因为有大量重复的逻辑：矩形多边形关于image和video的逻辑是完全一致的，就是传入的参数不同
-    createProject(type, position, videoElement) {
-      const vm = this;
-      // 判断投影的是图片还是视频
-      // 把判断是图片还是视频的逻辑放在这里，理由：矩形和多边形都要支持添加 图片和视频(mp4)，视频和图片的区别在于，图片不需要创建video元素，视频要，二者都要创建graphic实例，但style中的image有区别
-      if (vm.projectorType === "image") {
-        vm.graphic = vm.createGraphic(type, position, vm.imgUrl);
-        window.graphicsLayer.addGraphic(vm.graphic);
-      } else if (vm.projectorType === "video") {
-        vm.graphic = vm.createGraphic(type, position, videoElement);
-        window.graphicsLayer.addGraphic(vm.graphic);
-      }
-    },
-
-    createGraphic(type, position, element) {
-      let typeGraphic = new Cesium.Graphic({
-        /**
-         * 修改说明：graphic指定id，如果直接使用this.settingsCopy.id会受到vue的影响，所以在id后方加一个"graphic"标识；
-         * 修改人：王涵
-         * 修改时间：2023/5/12
-         */
-        id: this.settingsCopy.id + "graphic",
-        //类型
-        type: type,
-        //几何点坐标
-        positions: JSON.parse(JSON.stringify(position)),
-        //样式
-        style: {
-          // 图片材质
-          material: Cesium.Material.fromType(Cesium.Material.ImageType, {
-            //图片url
-            image: element,
-            // x、y轴重复
-            repeat: new Cesium.Cartesian2(1.0, 1.0)
-          }),
-          // 固定高度
-          perPositionHeight: this.heightReference === 0,
-          // 离地高度
-          offsetHeight: this.offsetHeight,
-          // 是否贴地
-          classificationType:
-            this.heightReference === 2
-              ? Cesium.ClassificationType.BOTH
-              : undefined
-        }
-      });
-      return typeGraphic;
-    },
-    // 获取矩形经纬度坐标点（根据已知的两个点得到四个点）
-    getRectDegrees(lnglat1, lnglat2) {
-      let p1 = [],
-        p2 = [];
-      p1.push(lnglat1[0], lnglat1[1]);
-      p2.push(lnglat2[0], lnglat2[1]);
-      this.lnglat = [p1, p2];
-      let allPoint = [lnglat1[0], lnglat1[1], lnglat2[0], lnglat2[1]];
-      return allPoint;
-    },
-    // 获取多边形经纬度坐标点
-    getPolygonDegrees(degreeArr3) {
-      let degreeArr2 = [];
-      degreeArr3.forEach(degree => degreeArr2.push(degree[0], degree[1]));
-      this.lnglat = degreeArr2;
-      return degreeArr2;
     },
     // 移除绘制
     removeDraw() {
@@ -1155,13 +1155,14 @@ export default {
         window.drawElement.stopDrawing();
       }
       // 清除graphic实例
-      if (this.graphic) {
-        this.removeGraphic();
-      }
+      this.removeGraphic();
     },
     removeGraphic() {
-      window.graphicsLayer.removeGraphicByID(this.settingsCopy.id + "graphic");
-      this.graphic = undefined;
+      if (this._hasGraphic()) {
+        window.graphicsLayer.removeGraphicByID(
+          this.settingsCopy.id + "graphic"
+        );
+      }
     },
     // 取消时恢复原来的graphic
     _restoreGraphic() {
@@ -1170,11 +1171,18 @@ export default {
       let graphic = window.graphicsLayer.getGraphicByID(
         this.settingsCopy.id + "graphic"
       );
+      // let element;
+      // if (params.projectorType == "image") {
+      //   element = params.imgUrl;
+      // } else {
+      // element = document.getElementById("demovideo_html5_api");
+      // }
+
       let element;
-      if (params.projectorType == "image") {
+      if (params.projectorType === "image") {
         element = params.imgUrl;
-      } else {
-        element = document.getElementById("demovideo_html5_api");
+      } else if (params.projectorType === "video") {
+        element = this.videoDom;
       }
 
       graphic.style.material = Cesium.Material.fromType(
@@ -1197,13 +1205,9 @@ export default {
     _okClick() {
       // 退出配置前，先恢复投放状态
       if (!this.settings.isProjected) {
-        this.cancelPutProjector(this.settings);
+        this.cancelPutProjector(this.settingsCopy);
         this.scenePro = undefined;
       }
-      if (this.graphic) {
-        window.graphicsLayer.getGraphicByID(this.id + "graphic").show = false;
-      }
-      this.graphic = undefined;
       this.$emit("update-settings", this.settingsCopy);
     },
     /**
@@ -1211,16 +1215,13 @@ export default {
      */
     _cancelClick() {
       // 退出配置前，先恢复投放状态,先取消，再恢复投放状态，以确保投放参数是配置之前的参数
-      this.cancelPutProjector(this.settings);
+      this.cancelPutProjector(this.settingsCopy);
       this.scenePro = undefined;
       if (this.settings.isProjected) {
         this.putProjector(this.settings);
       }
-      if (this.renderType == 1 && this.isEdit) {
-        this._restoreGraphic();
-      }
       // 设置面板恢复之前的参数
-      this.settingsCopy = JSON.parse(JSON.stringify(this.settings));
+      // this.settingsCopy = JSON.parse(JSON.stringify(this.settings));
       // 取消时清除绘制的投影面，并让绘制矩形按钮恢复原始状态
       this.removeDraw();
       this.$emit("cancel");

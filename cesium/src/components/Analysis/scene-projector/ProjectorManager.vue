@@ -156,12 +156,22 @@
 </template>
 
 <script>
+import videojs from "video.js";
+import "videojs-contrib-hls";
+import "video.js/dist/video-js.css";
 import { emptyImage } from "../../UI/Base64Image/base64Image";
 import { newGuid } from "../../Utils/util";
 import VueOptions from "./components/OperationsItem.vue";
 import OperationsItem from "./components/OperationsItem.vue";
 import ProjectorLayerSelect from "./components/ProjectorLayerSelect.vue";
 import projectorMixins from "./mixins/projector-mixins";
+import {
+  isLogarithmicDepthBufferEnable,
+  setLogarithmicDepthBufferEnable
+} from "../../WebGlobe/util";
+
+window.projectorVideoDomMap = {};
+
 export default {
   name: "mapgis-3d-projector-manager",
   inject: ["Cesium", "vueCesium", "viewer"],
@@ -358,7 +368,9 @@ export default {
       },
       // graphicsLayer: undefined,
       // 是否进入设置状态
-      isEdit: false
+      isEdit: false,
+      //是否开启缓存区
+      isLogarithmicDepthBufferEnable: false
     };
   },
   created() {},
@@ -384,9 +396,25 @@ export default {
       promise.then(function(dataSource) {
         vm.$emit("load", vm);
       });
+      const { viewer } = this;
+      //缓存区设置
+      this.isLogarithmicDepthBufferEnable = isLogarithmicDepthBufferEnable(
+        viewer
+      );
+      setLogarithmicDepthBufferEnable(false, viewer);
     },
     unmount() {
       this.$emit("unload", this);
+      //缓存区设置
+      if (
+        this.isLogarithmicDepthBufferEnable !==
+        isLogarithmicDepthBufferEnable(this.viewer)
+      ) {
+        setLogarithmicDepthBufferEnable(
+          this.isLogarithmicDepthBufferEnable,
+          this.viewer
+        );
+      }
     },
     _initPutProjectors() {
       this.viewer.scene.visualAnalysisManager.removeAll();
@@ -467,15 +495,20 @@ export default {
      * 更改tab标签
      */
     _tabChange(e) {
-      this.activeKey = e;
       if (
-        this.currentEditProjector &&
-        Object.keys(this.currentEditProjector).length > 0
+        this.activeIndex !== undefined &&
+        !!this.projectorList[this.activeIndex]
       ) {
         if (e === "2") {
           // 切换到配置界面，直接投放已选中的视频
-          this.putProjector(this.currentEditProjector);
+          this.currentEditProjector = null;
+          this.isEdit = true;
+          setTimeout(() => {
+            this.activeKey = e;
+            this.currentEditProjector = this.projectorList[this.activeIndex];
+          }, 50);
         } else if (e === "1") {
+          this.activeKey = e;
           // 切换到列表界面，恢复投放状态，先取消投放
           // 如果在进入配置界面之前已投放，则重新投放（以确保投放参数与之前投放的参数保持一致）
           this.cancelPutProjector(this.currentEditProjector);
@@ -522,7 +555,6 @@ export default {
         return;
       }
       this.activeIndex = index;
-      this.currentEditProjector = item;
     },
     /**
      * 新建projector
@@ -667,10 +699,13 @@ export default {
      * 跳转到projector配置界面
      */
     _onGotoSetting(projector, index) {
+      this.currentEditProjector = null;
       this.isEdit = true;
-      this.activeIndex = index;
-      this.activeKey = "2";
-      this.currentEditProjector = projector;
+      setTimeout(() => {
+        this.activeIndex = index;
+        this.activeKey = "2";
+        this.currentEditProjector = projector;
+      }, 50);
     },
     /**
      * 更新projector参数
@@ -775,10 +810,16 @@ export default {
      * 定位到摄像机位置
      */
     _onLocate(item) {
-      const { cameraPosition, orientation, areaCoords } = item.params;
+      const {
+        cameraPosition,
+        orientation,
+        areaCoords,
+        areaType,
+        renderType
+      } = item.params;
       const { Cesium, viewer } = this;
       // 摄像头参数投放方式下，projectAreaCoords为undefined
-      if (!areaCoords) {
+      if (renderType === 0) {
         const destination = Cesium.Cartesian3.fromDegrees(
           cameraPosition.x,
           cameraPosition.y,
@@ -793,11 +834,45 @@ export default {
           }
         });
       } else {
+        let xmin, ymin, xmax, ymax;
+        if (areaType === "rectangle") {
+          xmin = Math.min(areaCoords[0][0], areaCoords[1][0]);
+          ymin = Math.min(areaCoords[0][1], areaCoords[1][1]);
+          xmax = Math.max(areaCoords[0][0], areaCoords[1][0]);
+          ymax = Math.max(areaCoords[0][1], areaCoords[1][1]);
+        } else if (areaType === "polygon") {
+          for (let i = 0; i < areaCoords.length; i++) {
+            if (xmin === undefined) {
+              xmin = areaCoords[i][0];
+            } else {
+              xmin = Math.min(xmin, areaCoords[i][0]);
+            }
+            if (ymin === undefined) {
+              ymin = areaCoords[i][1];
+            } else {
+              ymin = Math.min(ymin, areaCoords[i][1]);
+            }
+            if (xmax === undefined) {
+              xmax = areaCoords[i][0];
+            } else {
+              xmax = Math.max(xmax, areaCoords[i][0]);
+            }
+            if (ymax === undefined) {
+              ymax = areaCoords[i][1];
+            } else {
+              ymax = Math.max(ymax, areaCoords[i][1]);
+            }
+          }
+        }
+        const rectangle = new Cesium.Rectangle.fromDegrees(
+          xmin,
+          ymin,
+          xmax,
+          ymax
+        );
         // 绘制投放方式下
         viewer.camera.flyTo({
-          destination: Cesium.Rectangle.fromCartesianArray(
-            Cesium.Cartesian3.fromDegreesArray(areaCoords)
-          )
+          destination: rectangle
         });
       }
     }
