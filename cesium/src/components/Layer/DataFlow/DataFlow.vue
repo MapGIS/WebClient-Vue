@@ -10,6 +10,7 @@
           height: popup.alt
         }"
         :forceRender="true"
+        isDataFlow
         v-model="popup.show"
         @change="$_toggle"
         :vueIndex="popup.vueIndex"
@@ -107,10 +108,12 @@ export default {
   watch: {
     layerStyle: {
       handler: function() {
-        this.layerStyleCopy = Object.assign(
-          this.layerStyleCopy,
-          this.layerStyle
-        );
+        this.layerStyleCopy = {
+          type: this.layerStyle.type,
+          fixNum: 10,
+          ...this.layerStyle[this.layerStyle.type],
+          ...this.layerStyle.layerStyle
+        };
         let source = window.vueCesium.DataFlowManager.findSource(
           this.vueKey,
           this.vueIndex
@@ -119,6 +122,7 @@ export default {
           return;
         }
         let points = source.source;
+        let styleOptions;
         let point,
           vm = this,
           newPoints = [];
@@ -129,7 +133,8 @@ export default {
             this.viewer.entities.remove(points[i]);
             switch (this.layerStyleCopy.type) {
               case "point":
-                let pStyle = new PointStyle(this.layerStyleCopy);
+                styleOptions = this.getOptions("point");
+                let pStyle = new PointStyle(styleOptions);
                 point = this.viewer.entities.add({
                   id: this.features[i].properties[this.UUID],
                   position: Cesium.Cartesian3.fromDegrees(
@@ -143,7 +148,8 @@ export default {
                 });
                 break;
               case "model":
-                let mStyle = new ModelStyle(this.layerStyleCopy);
+                styleOptions = this.getOptions("model");
+                let mStyle = new ModelStyle(styleOptions);
                 point = this.viewer.entities.add({
                   id: this.features[i].properties[this.UUID],
                   position: Cesium.Cartesian3.fromDegrees(
@@ -157,9 +163,10 @@ export default {
                 });
                 break;
               case "marker":
-                let markerStyle = new MarkerStyle();
+                styleOptions = this.getOptions("marker");
+                let markerStyle = new Style.MarkerStyle();
                 markerStyle = markerStyle.toCesiumStyle(
-                  this.layerStyleCopy,
+                  styleOptions,
                   this.features[i],
                   Cesium
                 );
@@ -199,8 +206,9 @@ export default {
         } else {
           switch (this.layerStyleCopy.type) {
             case "point":
+              styleOptions = this.getOptions("point");
               for (let i = 0; i < points.length; i++) {
-                let pointStyle = new Style.PointStyle(this.layerStyleCopy);
+                let pointStyle = new Style.PointStyle(styleOptions);
                 points[i]["point"] = points[i]["point"] || {};
                 points[i]["point"] = Object.assign(
                   points[i][this.layerStyleCopy.type],
@@ -209,10 +217,11 @@ export default {
               }
               break;
             case "marker":
+              styleOptions = this.getOptions("marker");
               for (let i = 0; i < points.length; i++) {
                 let markerStyle = new Style.MarkerStyle();
                 markerStyle = markerStyle.toCesiumStyle(
-                  this.layerStyleCopy,
+                  styleOptions,
                   {},
                   Cesium
                 );
@@ -230,11 +239,12 @@ export default {
               }
               break;
             case "model":
+              styleOptions = this.getOptions("model");
               for (let i = 0; i < points.length; i++) {
-                let modelStyle = new Style.ModelStyle(this.layerStyleCopy);
+                let modelStyle = new Style.ModelStyle(styleOptions);
                 points[i]["model"] = points[i]["model"] || {};
                 points[i]["model"] = Object.assign(
-                  points[i][this.layerStyleCopy.type],
+                  points[i][styleOptions.type],
                   modelStyle.toCesiumStyle(Cesium)
                 );
               }
@@ -256,11 +266,54 @@ export default {
       interval: undefined,
       layerStyleCopy: {
         fixNum: 10
+      },
+      popupOption: {
+        postRender: false
+      },
+      defaultStyle: {
+        type: "point",
+        marker: {
+          yOffset: 0,
+          xOffset: 0,
+          markerUrl:
+            "/api/file/data/2023/09/22/测试图片_20230922092705A003.png",
+          rotation: 0,
+          width: 20,
+          imageScale: 1,
+          height: 20
+        },
+        model: { modelUrl: "/CesiumModels/Cesium_Man.glb", scale: 1000 },
+        point: {
+          radius: 10,
+          color: "rgb(255,255,102)",
+          outlineColor: "rgb(255,255,102)",
+          outlineWidth: 8,
+          outlineOpacity: 1
+        }
       }
     };
   },
   mounted() {
-    this.layerStyleCopy = Object.assign(this.layerStyleCopy, this.layerStyle);
+    // this.layerStyleCopy = Object.assign(this.defaultStyle, this.layerStyle);
+    // 设置默认样式
+    const options = this.layerStyle[this.layerStyle.type];
+    if (this.layerStyle.type && Object.keys(options).length > 0) {
+      this.layerStyleCopy = {
+        type: this.layerStyle.type,
+        fixNum: 10,
+        ...this.layerStyle[this.layerStyle.type],
+        ...this.layerStyle.layerStyle
+      };
+    } else {
+      const optionType = this.layerStyle.type || this.defaultStyle.type;
+      this.layerStyleCopy = {
+        type: optionType,
+        fixNum: 10,
+        ...this.defaultStyle[optionType],
+        ...this.layerStyle.layerStyle
+      };
+    }
+
     this.$_addEntityLayer();
   },
   destroyed() {
@@ -288,6 +341,7 @@ export default {
         this.popups[i].vueIndex
       );
     }
+    this.popups = [];
     vueCesium.DataFlowManager.deleteSource(vueKey, vueIndex);
   },
   methods: {
@@ -371,6 +425,7 @@ export default {
           points = [];
           window.vueCesium.DataFlowManager.addSource(vueKey, vueIndex, points);
         }
+        let styleOptions;
         let point;
         let keys = Object.keys(data.properties);
         vm.features.push({
@@ -380,7 +435,8 @@ export default {
         });
         switch (vm.layerStyleCopy.type) {
           case "point":
-            let pStyle = new PointStyle(vm.layerStyleCopy);
+            styleOptions = this.getOptions("point");
+            let pStyle = new PointStyle(styleOptions);
             point = vm.viewer.entities.add({
               id: data.properties[vm.UUID],
               position: Cesium.Cartesian3.fromDegrees(
@@ -394,7 +450,8 @@ export default {
             });
             break;
           case "model":
-            let mStyle = new ModelStyle(vm.layerStyleCopy);
+            styleOptions = this.getOptions("model");
+            let mStyle = new ModelStyle(styleOptions);
             let hpr = new Cesium.HeadingPitchRoll(0, 0, 0);
             //必须用一个当前的魔性的经纬度新生成一个笛卡尔坐标，不能用自带的position，否则地图会卡主
             let orientation = Cesium.Transforms.headingPitchRollQuaternion(
@@ -418,12 +475,9 @@ export default {
             });
             break;
           case "marker":
+            styleOptions = this.getOptions("marker");
             let markerStyle = new MarkerStyle();
-            markerStyle = markerStyle.toCesiumStyle(
-              vm.layerStyleCopy,
-              data,
-              Cesium
-            );
+            markerStyle = markerStyle.toCesiumStyle(styleOptions, data, Cesium);
             if (
               vm.layerStyleCopy &&
               vm.layerStyleCopy.fixNum &&
@@ -592,6 +646,47 @@ export default {
         return source.find(item => item.id === id);
       }
       return false;
+    },
+    getOptions(type) {
+      let styleOptions;
+      switch (type) {
+        case "point":
+          styleOptions = {
+            ...this.layerStyleCopy
+          };
+          break;
+        case "marker":
+          styleOptions = {
+            ...this.layerStyleCopy
+          };
+          try {
+            const url = new URL(styleOptions.markerUrl);
+            styleOptions.url = styleOptions.markerUrl;
+          } catch (error) {
+            styleOptions.url =
+              window.location.origin +
+              process.env.VUE_APP_API_BASE_URL +
+              styleOptions.markerUrl;
+          }
+          delete styleOptions.markerUrl;
+          break;
+        case "model":
+          styleOptions = {
+            ...this.layerStyleCopy
+          };
+          try {
+            const url = new URL(styleOptions.modelUrl);
+            styleOptions.url = styleOptions.modelUrl;
+          } catch (error) {
+            styleOptions.url =
+              window.location.origin +
+              process.env.VUE_APP_CONTEXT_PATH +
+              styleOptions.modelUrl;
+          }
+          delete styleOptions.modelUrl;
+          break;
+      }
+      return styleOptions;
     }
   }
 };

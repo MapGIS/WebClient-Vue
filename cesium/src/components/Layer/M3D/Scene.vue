@@ -1205,7 +1205,7 @@ export default {
               this.highlightStyle
             );
             if (tileset._useRawSaveAtt && Cesium.defined(pickedFeature)) {
-              let result = feature.content.getAttributeByOID(oid) || {};
+              let result = pickedFeature.content.getAttributeByOID(oid) || {};
               vm.featureproperties = result;
               vm.iClickFeatures = [{ properties: result }];
             } else {
