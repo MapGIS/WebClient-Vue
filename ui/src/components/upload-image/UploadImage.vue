@@ -35,6 +35,10 @@ export default {
       type: Boolean,
       require: false,
       default: true
+    },
+    baseUrl: {
+      type: String,
+      default: "/api"
     }
   },
   methods: {
@@ -48,14 +52,14 @@ export default {
       }
       if (info.file.status === "done") {
         const url = info.file.response.url;
-        let baseUrl;
-        if (this.uploadUrl.indexOf("://") > -1) {
-          const strs = this.uploadUrl.split("://");
-          baseUrl = `${strs[0]}://${strs[1].split("/")[0]}`;
-        } else {
-          // 有可能传入的是一个相对路径
-          baseUrl = window.location.origin;
-        }
+        const { baseUrl } = this;
+        // if (this.uploadUrl.indexOf("://") > -1) {
+        //   const strs = this.uploadUrl.split("://");
+        //   baseUrl = `${strs[0]}://${strs[1].split("/")[0]}`;
+        // } else {
+        //   // 有可能传入的是一个相对路径
+        //   baseUrl = window.location.origin;
+        // }
         if (this.click) {
           this.click(`${baseUrl}${url}`);
         }
