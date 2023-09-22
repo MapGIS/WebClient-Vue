@@ -39,6 +39,10 @@ export default {
     baseUrl: {
       type: String,
       default: "/api"
+    },
+    hasPrefix: {
+      type: Boolean,
+      default: true
     }
   },
   methods: {
@@ -63,7 +67,10 @@ export default {
         if (this.click) {
           this.click(`${baseUrl}${url}`);
         }
-        this.$emit("image-url", `${baseUrl}${url}`);
+
+        this.hasPrefix
+          ? this.$emit("image-url", `${baseUrl}${url}`)
+          : this.$emit("image-url", url);
       }
     }
   }
