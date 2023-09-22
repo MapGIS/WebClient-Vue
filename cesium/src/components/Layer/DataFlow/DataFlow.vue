@@ -663,7 +663,10 @@ export default {
             const url = new URL(styleOptions.markerUrl);
             styleOptions.url = styleOptions.markerUrl;
           } catch (error) {
-            styleOptions.url = window.location.origin + styleOptions.markerUrl;
+            styleOptions.url =
+              window.location.origin +
+              process.env.VUE_APP_API_BASE_URL +
+              styleOptions.markerUrl;
           }
           delete styleOptions.markerUrl;
           break;
