@@ -667,6 +667,12 @@ export default {
               window.location.origin +
               process.env.VUE_APP_API_BASE_URL +
               styleOptions.markerUrl;
+            console.log(
+              "marker组装地址",
+              styleOptions.url,
+              window.location.origin,
+              process.env.VUE_APP_API_BASE_URL
+            );
           }
           delete styleOptions.markerUrl;
           break;
@@ -682,6 +688,12 @@ export default {
               window.location.origin +
               process.env.VUE_APP_CONTEXT_PATH +
               styleOptions.modelUrl;
+            console.log(
+              "model组装地址",
+              styleOptions.url,
+              window.location.origin,
+              process.env.VUE_APP_CONTEXT_PATH
+            );
           }
           delete styleOptions.modelUrl;
           break;
