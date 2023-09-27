@@ -120,6 +120,28 @@
               </mapgis-ui-col></mapgis-ui-row
             >
           </mapgis-ui-form-item>
+          <mapgis-ui-form-item v-if="modelUrl" label="模型缩放比例">
+            <mapgis-ui-row>
+              <mapgis-ui-col :span="24">
+                <mapgis-ui-input-number-addon
+                  v-model.number="settingCopy.modelScale"
+                  :min="0"
+                  :step="0.1"
+                  :disabled="isStart ? true : false"
+                />
+              </mapgis-ui-col>
+            </mapgis-ui-row>
+          </mapgis-ui-form-item>
+
+          <mapgis-ui-form-item v-if="modelUrl">
+            <mapgis-ui-input-number-panel
+              size="large"
+              label="模型方位角"
+              :range="[-180, 180]"
+              v-model="settingCopy.modelHeading"
+              @change="val => modelHeadingChange(val)"
+            />
+          </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
         <div>
           <mapgis-ui-checkbox
@@ -188,7 +210,9 @@ export default {
           isLoop: true,
           showPath: true,
           showInfo: true,
-          modelUrl: ""
+          modelUrl: "",
+          modelScale: 1,
+          modelHeading: 0
         };
       }
     },
@@ -238,6 +262,13 @@ export default {
         if (!this.settingCopy.elevationType) {
           this.settingCopy.elevationType = "addition";
         }
+        // 如果模型缩放比例为空默认设置为1
+        if (typeof this.settingCopy.modelScale !== "number") {
+          this.$set(this.settingCopy, "modelScale", 1);
+        }
+        if (typeof this.settingCopy.modelHeading !== "number") {
+          this.$set(this.settingCopy, "modelHeading", 0);
+        }
       },
       immediate: true
     }
@@ -254,7 +285,8 @@ export default {
         interpolationAlgorithm: "LagrangePolynomialApproximation",
         isLoop: true,
         showPath: true,
-        showInfo: true
+        showInfo: true,
+        modelScale: 1
       },
       isStart: false,
       isPause: false,
@@ -314,7 +346,15 @@ export default {
       window.SceneWanderManager.animation = new this.Cesium.AnimationTool(
         this.viewer,
         {
-          modelUrl: this.modelUrl
+          modelUrl: this.modelUrl,
+          model: {
+            scale: this.settingCopy.modelScale
+          },
+          //是否执行回调函数
+          onPositionTag: true,
+          //不让无人机模型的姿态按照矢量速度方向变化
+          isSetModelPosture: true,
+          callback: function(result) {}
         }
       );
       const vm = this;
@@ -390,7 +430,9 @@ export default {
         interpolationAlgorithm,
         isLoop,
         showPath,
-        showInfo
+        showInfo,
+        modelScale,
+        modelHeading
       } = this.settingCopy;
 
       // 默认速度的单位为m/s，这里将公里每小时转换为m/s
@@ -404,6 +446,10 @@ export default {
       window.SceneWanderManager.animation.isLoop = isLoop;
       window.SceneWanderManager.animation.isShowPath = showPath;
       window.SceneWanderManager.animation.showInfo = showInfo;
+      window.SceneWanderManager.animation.modelHeading = modelHeading;
+      if (this.modelUrl) {
+        window.SceneWanderManager.animation._model.scale = modelScale;
+      }
 
       switch (interpolationAlgorithm) {
         case "LagrangePolynomialApproximation":
@@ -422,6 +468,8 @@ export default {
       // 若是上帝视角，设置动画的视角高度为200
       if (window.SceneWanderManager.animation.animationType === 3) {
         this.settingCopy.range = 200;
+      } else if (window.SceneWanderManager.animation.animationType === 2) {
+        this.settingCopy.range = 10;
       } else {
         this.settingCopy.range = 1;
       }
@@ -454,6 +502,8 @@ export default {
       // 若是上帝视角，设置动画的视角高度为200
       if (window.SceneWanderManager.animation.animationType === 3) {
         this.settingCopy.range = 200;
+      } else if (window.SceneWanderManager.animation.animationType === 2) {
+        this.settingCopy.range = 10;
       } else {
         this.settingCopy.range = 1;
       }
@@ -462,6 +512,10 @@ export default {
     onModelChange(value) {
       window.SceneWanderManager.animation._modelUrl = value;
       this.settingCopy.modelUrl = value;
+    },
+    modelHeadingChange(value) {
+      window.SceneWanderManager.animation.modelHeading = value;
+      this.settingCopy.modelHeading = value;
     },
     // 绝对高程下z轴直接设置为高程值
     getAbsolutePositions() {
