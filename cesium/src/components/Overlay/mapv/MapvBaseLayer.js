@@ -1,7 +1,7 @@
 import {
   baiduMapLayer,
   DataSet,
-  utilDataRangeIntensity as Intensity,
+  utilDataRangeIntensity as Intensity
 } from "mapv";
 
 import Supercluster from "./SuperCluster";
@@ -36,6 +36,11 @@ export class MapvBaseLayer extends BaseLayer {
 
     self.init(options);
     self.argCheck(options);
+    // 是否显示不聚合的点，默认显示
+    this.showUnCluster =
+      options.showUnCluster === undefined ? true : options.showUnCluster;
+
+    this.getUnClusterData = options.getUnClusterData;
 
     this.initDevicePixelRatio();
 
@@ -175,7 +180,7 @@ export class MapvBaseLayer extends BaseLayer {
     if (!dataSet) {
       dataSet = this.dataSet;
     }
-    let lnglat2Mkt = (poi) => {
+    let lnglat2Mkt = poi => {
       let mercator = {};
       let earthRad = 6378137.0;
       mercator.x = ((poi.lng * Math.PI) / 180) * earthRad;
@@ -190,7 +195,7 @@ export class MapvBaseLayer extends BaseLayer {
       let data = dataSet.get();
       data = dataSet.transferCoordinate(
         data,
-        function (coordinates) {
+        function(coordinates) {
           if (
             coordinates[0] < -180 ||
             coordinates[0] > 180 ||
@@ -201,7 +206,7 @@ export class MapvBaseLayer extends BaseLayer {
           } else {
             let pixel = lnglat2Mkt({
               lng: coordinates[0],
-              lat: coordinates[1],
+              lat: coordinates[1]
             });
             return [pixel.x, pixel.y];
           }
@@ -216,16 +221,15 @@ export class MapvBaseLayer extends BaseLayer {
   dataOptions() {
     const self = this;
     return {
-      transferCoordinate: function (coordinate) {
+      transferCoordinate: function(coordinate) {
         let pointSphere = Cesium.Cartesian3.fromDegrees(
           coordinate[0],
           coordinate[1]
         );
         let position = self.map.camera.position;
-        let cameraHeight =
-          self.map.scene.globe.ellipsoid.cartesianToCartographic(
-            position
-          ).height;
+        let cameraHeight = self.map.scene.globe.ellipsoid.cartesianToCartographic(
+          position
+        ).height;
         cameraHeight += self.map.scene.globe.ellipsoid.maximumRadius * 1.2;
         let distance = Cesium.Cartesian3.distance(position, pointSphere);
         if (distance > cameraHeight) {
@@ -243,11 +247,11 @@ export class MapvBaseLayer extends BaseLayer {
         if (self.options.draw === "cluster") {
           return [
             point.x * self.devicePixelRatio,
-            point.y * self.devicePixelRatio,
+            point.y * self.devicePixelRatio
           ];
         }
         return [point.x, point.y];
-      },
+      }
     };
   }
 
@@ -279,9 +283,11 @@ export class MapvBaseLayer extends BaseLayer {
         max: this.pointCountMax,
         minSize: this.options.minSize || 8,
         maxSize: this.options.maxSize || 30,
-        gradient: this.options.gradient,
+        gradient: this.options.gradient
       });
     }
+    const unClusterData = [];
+    const tempClusterData = [];
     for (let i = 0; i < clusterData.length; i++) {
       let item = clusterData[i];
       if (item.properties && item.properties.cluster_id) {
@@ -289,11 +295,18 @@ export class MapvBaseLayer extends BaseLayer {
           size || intensity.getSize(item.properties.point_count);
         clusterData[i].fillStyle =
           color || intensity.getColor(item.properties.point_count);
+        tempClusterData.push(clusterData[i]);
       } else {
+        if (this.showUnCluster) {
+          // 如果设置了不显示不聚合的点，则不显示
+          tempClusterData.push(clusterData[i]);
+        }
         clusterData[i].size = self.options.size;
+        unClusterData.push(clusterData[i]);
       }
     }
-    this.clusterDataSet.set(clusterData);
+    this.getUnClusterData(unClusterData);
+    this.clusterDataSet.set(tempClusterData);
     this.transferToMercator(self.clusterDataSet);
     let data = self.clusterDataSet.get(dataGetOptions);
     return data;
@@ -305,15 +318,15 @@ export class MapvBaseLayer extends BaseLayer {
       maxZoom: options.maxZoom || 19,
       radius: options.clusterRadius || 100,
       minPoints: options.minPoints || 2,
-      extent: options.extent || 512,
+      extent: options.extent || 512
     });
 
     this.supercluster.load(this.dataSet.get());
     // 拿到每个级别下的最大值最小值
-    this.supercluster.trees.forEach((item) => {
+    this.supercluster.trees.forEach(item => {
       let max = 0;
       let min = Infinity;
-      item.points.forEach((point) => {
+      item.points.forEach(point => {
         max = Math.max(point.numPoints || 0, max);
         min = Math.min(point.numPoints || Infinity, min);
       });
@@ -369,7 +382,7 @@ export class MapvBaseLayer extends BaseLayer {
     let dataGetOptions = this.dataOptions();
 
     if (time !== undefined) {
-      dataGetOptions.filter = function (item) {
+      dataGetOptions.filter = function(item) {
         let trails = animationOptions.trails || 10;
         if (time && item.time > time - trails && item.time < time) {
           return true;
@@ -430,7 +443,7 @@ export class MapvBaseLayer extends BaseLayer {
     }
 
     super.update({
-      options: options,
+      options: options
     });
   }
 
@@ -441,7 +454,7 @@ export class MapvBaseLayer extends BaseLayer {
     }
     this.dataSet.add(_data);
     this.update({
-      options: options,
+      options: options
     });
   }
 
@@ -454,11 +467,11 @@ export class MapvBaseLayer extends BaseLayer {
       return;
     }
     let newData = this.dataSet.get({
-      filter: function (data) {
+      filter: function(data) {
         return filter != null && typeof filter === "function"
           ? !filter(data)
           : true;
-      },
+      }
     });
     this.dataSet.set(newData);
     this.stopAniamation = true;

@@ -264,18 +264,18 @@ export default {
             const feature = features[j];
             const coordinates = [feature.lon, feature.lat];
             const properties = {};
-            if (!this.cluster) {
-              for (let f = 0; f < this.fields.length; f += 1) {
-                const allProperties = {
-                  ...feature.detail,
-                  ...feature.areaAddr,
-                  ...feature
-                };
-                allProperties.geometry = `(${feature.lon},${feature.lat})`;
-                const field = this.fields[f];
-                properties[field] = allProperties[field];
-              }
+            // if (!this.cluster) {
+            for (let f = 0; f < this.fields.length; f += 1) {
+              const allProperties = {
+                ...feature.detail,
+                ...feature.areaAddr,
+                ...feature
+              };
+              allProperties.geometry = `(${feature.lon},${feature.lat})`;
+              const field = this.fields[f];
+              properties[field] = allProperties[field];
             }
+            // }
             properties.markerId = `place-name-${j}`;
             markerCoords.push({
               type: "Feature",

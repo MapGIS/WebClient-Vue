@@ -76,6 +76,7 @@ export default {
           postRenderFrame: 0
         };
       }
+      this.options.getUnClusterData = this.getUnClusterData;
       return new MapvLayer(viewer, this.dataset, this.options);
     },
     initData(geojson) {
@@ -95,63 +96,59 @@ export default {
         const fType = feature.geometry.type;
         const coordinates = feature.geometry.coordinates;
         let countValue = feature.properties[this.countField];
-        if (countValue){
-          countValue = vm.isNumber(countValue) ? countValue : Number(countValue);
+        if (countValue) {
+          countValue = vm.isNumber(countValue)
+            ? countValue
+            : Number(countValue);
         } else {
-          countValue = 30 * Math.random()
+          countValue = 30 * Math.random();
         }
         let timeValue = feature.properties.time;
-        if (timeValue){
+        if (timeValue) {
           timeValue = vm.isNumber(timeValue) ? timeValue : Number(timeValue);
         } else {
-          timeValue = 100 * Math.random()
+          timeValue = 100 * Math.random();
         }
         if (fType === "Point") {
-          let obj = Object.assign(
-            {
-              geometry: {
-                type: "Point",
-                coordinates: coordinates
-              },
-              count: countValue,
-              time: timeValue
+          let obj = {
+            geometry: {
+              type: "Point",
+              coordinates: coordinates
             },
-            feature.properties
-          );
+            count: countValue,
+            time: timeValue,
+            properties: feature.properties
+          };
           data.push(obj);
         } else if (fType === "LineString") {
-          let obj = Object.assign(
-            {
-              geometry: {
-                type: "LineString",
-                coordinates: coordinates
-              },
-              count: countValue,
-              time: timeValue
+          let obj = {
+            geometry: {
+              type: "LineString",
+              coordinates: coordinates
             },
-            feature.properties
-          );
+            count: countValue,
+            time: timeValue,
+            properties: feature.properties
+          };
           data.push(obj);
         } else if (fType === "Polygon") {
-          let obj = Object.assign(
-            {
-              geometry: {
-                type: "Polygon",
-                coordinates: coordinates
-              },
-              count: countValue,
-              time: timeValue
+          let obj = {
+            geometry: {
+              type: "Polygon",
+              coordinates: coordinates
             },
-            feature.properties
-          );
+            count: countValue,
+            time: timeValue,
+            properties: feature.properties
+          };
           data.push(obj);
         }
       }
       var dataSet = new DataSet(data);
       return dataSet;
     },
-    isNumber(obj){
-      typeof obj === "number" && !isNaN(obj)
+    isNumber(obj) {
+      typeof obj === "number" && !isNaN(obj);
     },
     $_convertData(geojson) {
       let data = VFeature.resultToGeojson(geojson);
@@ -163,6 +160,11 @@ export default {
     unmount() {
       const { viewer, mapvLayer } = this;
       return !viewer.isDestroyed() && mapvLayer.destroy();
+    },
+    getUnClusterData(val) {
+      if (val && val.length > 0) {
+        this.$emit("unClusterData", val);
+      }
     }
   },
   beforeDestroy() {
