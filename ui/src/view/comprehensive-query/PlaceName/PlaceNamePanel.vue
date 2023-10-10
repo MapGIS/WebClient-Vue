@@ -211,8 +211,7 @@ export default {
           this.keyword && this.keyword !== ""
             ? `${this.selectedItem.searchField ||
                 this.config.allSearchName} LIKE '%${this.keyword}%'`
-            : `${this.selectedItem.searchField ||
-                this.config.allSearchName} LIKE '%'`;
+            : null;
         await this.igsQuery(where);
       } else {
         const where = this.keyword;
@@ -313,38 +312,49 @@ export default {
         where,
         geometry: this.geometry
       };
-      const { queryWay } = this.config;
-      if (queryWay === "doc") {
-        // 地图文档
-        igsParams.docName = this.config.docName;
-        igsParams.layerName = this.selectedItem.LayerName;
-        igsParams.layerIdxs = "";
-      } else if (queryWay === "gdbp") {
-        igsParams.gdbp = this.selectedItem.gdbp;
-        igsParams.srsIds = "WGS1984_度";
-      }
       const combine = JSON.parse(this.config.combine);
       this.spinning = true;
       try {
-        const igsRes = await Feature.FeatureQuery.query(igsParams, combine);
-        let data = igsRes;
-        if (combine) {
-          data = igsRes[0];
+        const { queryWay } = this.config;
+        let geoJSONData;
+        if (queryWay === "doc") {
+          // 地图文档
+          igsParams.docName = this.config.docName;
+          igsParams.layerName = this.selectedItem.LayerName;
+          igsParams.layerIdxs = "";
+          const igsRes = await Feature.FeatureQuery.query(igsParams, combine);
+          let data = igsRes;
+          if (combine) {
+            data = igsRes[0];
+          }
+          if (!data || !data.SFEleArray) {
+            return;
+          }
+          geoJSONData = Feature.FeatureConvert.featureIGSToFeatureGeoJSON(data);
+        } else if (queryWay === "gdbp") {
+          // igsParams.gdbp = this.selectedItem.gdbp;
+          // igsParams.srsIds = "WGS1984_度";
+          igsParams.url = this.selectedItem.gdbp;
+          igsParams.outFields = this.fields.toString();
+          geoJSONData = await Feature.FeatureQuery.igsQueryResourceServer(
+            igsParams
+          );
+          const json = await Feature.FeatureQuery.igsQueryResourceServer({
+            returnCountOnly: true,
+            ...igsParams
+          });
+          const { count } = json;
+          geoJSONData.dataCount = count;
         }
-        if (!data || !data.SFEleArray) {
-          return;
-        }
-        const geoJSONData = Feature.FeatureConvert.featureIGSToFeatureGeoJSON(
-          data
-        );
         const { features } = geoJSONData;
         const markerCoords = [];
         if (!this.cluster) {
           for (let j = 0; j < features.length; j += 1) {
             const feature = features[j];
+            const featureProperties = feature.properties || feature.attributes;
             const properties = {};
             for (let f = 0; f < this.fields.length; f += 1) {
-              properties[this.fields[f]] = feature.properties[this.fields[f]];
+              properties[this.fields[f]] = featureProperties[this.fields[f]];
             }
             properties.markerId = `place-name-${j}`;
             feature.properties = properties;

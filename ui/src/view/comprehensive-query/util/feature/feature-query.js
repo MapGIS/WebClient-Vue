@@ -540,6 +540,103 @@ export default class FeatureQuery {
       return res;
     });
   }
+
+  /**
+   * @param {object} option
+   * @param {string}[option.url=null] 图层资源的路径，可能是gdbp、filePath
+   * @param {object}[option.mapResource=null] 地图文档的资源，与urls二选一，mapResource优先，示例："{"url": "/root/wuhan.mapx","mapIndex ": 0,"layerId": "string"}"
+   * @param {string}[option.where=null] 属性条件,类SQL语句,Example: where=name='中国'
+   * @param {string}[option.outFields=null] 输出属性字段，可为*表示所有，多个用英文逗号分隔
+   * @param {string}[option.objectIds=null] 过滤id，多个用英文逗号分隔
+   * @param {string}[option.geometry=null] 空间几何条件,根据geometryType参数类型确定其格式，参考示例stringExamples:
+                                           geometry=xmin,ymin,xmax,ymax - rect
+                                           geometry=x0,y0,x1,y1,x2,y2,x0,y0 - polygon
+                                           geometry=x0,y0,x1,y1 - line
+                                           geometry=x,y,radius - circle
+                                           geometry=x,y - point
+   * @param {string}[option.geometryType=null] 几何类型,点查询:point,线查询:line,圆查询:circle,矩形查询:rect,多边形查询:polygon.Enum: "point" "line" "circle" "rect" "polygon"
+   * @param {string}[option.distance=null] 几何缓冲的距离，geometry为point、line时有效
+   * @param {string}[option.geometryPrecision=null] 返回要素几何信息中坐标xy的精度
+   * @param {string}[option.spatialRel=null] 几何条件的空间判定规则，Intersects(相交)、EnvelopeIntersects(外包矩形相交)、Contains(包含)、Disjoint(相离).Enum: "Intersects" "EnvelopeIntersects" "Contains" "Disjoint"
+   * @param {string}[option.returnGeometry=false] 是否返回几何，默认为true.Enum: "true" "false"
+   * @param {string}[option.returnAttribute=true] 返回属性，默认为true.Enum: "true" "false"
+   * @param {string}[option.returnStyle=false] 返回图形参数信息，默认为false.Enum: "true" "false"
+   * @param {string}[option.returnIdsOnly=false] 只返回id，默认为false.Enum: "true" "false"
+   * @param {string}[option.returnCountOnly=false] 只返回条数，默认为false.Enum: "true" "false"
+   * @param {string}[option.returnExtentOnly=false] 只返回范围，默认为false.Enum: "true" "false"
+   * @param {string}[option.orderByFields=null] 排序字段,格式: fieldName [ASC|DESC],可不填[ASC|DESC]，默认升序.Example: orderByFields=fieldName DESC
+   * @param {Object}[option.outStatistics=null] 计算一个或多个基于字段的统计信息结构(注记类图层不支持该参数),统计类型包括:FUNCTION_MAX/FUNCTION_MIN/FUNCTION_SUM/FUNCTION_AVG/FUNCTION_COUNT/FUNCTION_MAX_OID，示例："[{"statisticType": "FUNCTION_SUM","onStatisticField": "field1","outStatisticFieldName":"fieldName1"}]"
+   * @param {string}[option.groupByFieldsForStatistics=null] 分组统计的字段信息,格式为field1,field2
+   * @param {Number}[option.page=0] 返回的要素分页的页数，默认返回第0页
+   * @param {Number}[option.pageCount=10] 要素结果集每页的记录数量，默认为20条/页
+   * @param {string}[option.returnZ=false] 是否返回Z轴，默认为false.Enum: "true" "false"
+   * @param {string}[option.is6xAcls=null] 图层资源的路径是filePath且后缀是.wt时，需要指定图层资源是否是6x注记，默认为6x点.Enum: "true" "false"
+   * @param {string}[option.inSrs='WGS1984 度'] 输入几何的坐标系，示例:EPSG:4326或者WGS1984 度"
+   * @param {string}[option.outSrs='WGS1984 度'] 输出几何的坐标系，示例:EPSG:4326或者WGS1984 度"
+   */
+  static igsQueryResourceServer(option) {
+    const queryParam = {};
+    queryParam.f = option.f || "json";
+    if (option.geometry) {
+      queryParam.geometryType =
+        option.geometryType && option.geometryType !== ""
+          ? option.geometryType
+          : option.geometry.getGeometryType();
+      queryParam.geometry = option.geometry.toString();
+    }
+    queryParam.where = option.where || null;
+    queryParam.returnGeometry = option.returnGeometry || true;
+    queryParam.returnAttribute = option.returnAttribute || true;
+    queryParam.returnStyle = option.returnStyle || false;
+    queryParam.returnIdsOnly = option.returnIdsOnly || false;
+    queryParam.returnCountOnly = option.returnCountOnly || false;
+    queryParam.returnExtentOnly = option.returnExtentOnly || false;
+
+    queryParam.objectIds = option.objectIds || null;
+    queryParam.outFields = option.outFields || null;
+    queryParam.url = option.url || null;
+    queryParam.mapResource = option.mapResource || null;
+    queryParam.distance = option.distance || null;
+    queryParam.geometryPrecision = option.geometryPrecision || null;
+    queryParam.spatialRel = option.spatialRel || null;
+    queryParam.orderByFields = option.orderByFields || null;
+    queryParam.outStatistics = option.outStatistics || null;
+    queryParam.groupByFieldsForStatistics =
+      option.groupByFieldsForStatistics || null;
+    const resultRecordCount = option.pageSize || 10;
+    let resultOffset = 0;
+    if (option.page > 1) {
+      resultOffset = (option.page - 1) * resultRecordCount;
+    }
+    queryParam.resultRecordCount = resultRecordCount;
+    queryParam.resultOffset = resultOffset;
+    queryParam.returnZ = option.returnZ || false;
+    queryParam.is6xAcls = option.is6xAcls || null;
+    queryParam.inSrs = option.inSrs || "WGS1984_度";
+    queryParam.outSrs = option.outSrs || "WGS1984_度";
+    let domain = option.domain || null;
+    if (!domain) {
+      const protocol =
+        option.protocol || window.location.protocol.split(":")[0];
+      const ip = option.ip;
+      const port = option.port;
+      domain = `${protocol}://${ip}:${port}`;
+    }
+    const url = `${domain}/igs/rest/services/system/ResourceServer/tempData/features/query`;
+    const promise = new Promise(resolve => {
+      axios.get(url, { params: { ...queryParam } }).then(res => {
+        if (!res || !res.data) {
+          resolve(undefined);
+        } else {
+          resolve(res.data);
+        }
+      });
+    });
+    return promise.then(res => {
+      return res;
+    });
+  }
+
   /**
    * dataStore要素查询
    * @param option 详见dataStorePgQueryFeature的option

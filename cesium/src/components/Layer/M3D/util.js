@@ -20,12 +20,12 @@ export function loopM3ds(m3ds, callback) {
       }
     }
   };
-  // 屏蔽，如果请求不到，会一直请求，导致页面卡死
-  // let loop = window.setInterval(() => {
-  m3ds.forEach(m3d => {
-    checkType(m3d, dataCallback);
-  });
-  // }, 100);
+
+  let loop = window.setInterval(() => {
+    m3ds.forEach(m3d => {
+      checkType(m3d, dataCallback);
+    });
+  }, 100);
 }
 
 export function checkType(tileset, callback) {
