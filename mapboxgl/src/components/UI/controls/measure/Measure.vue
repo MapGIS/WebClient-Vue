@@ -139,7 +139,7 @@ export default {
           icon: "mapgis-shanchu_dianji",
           type: "primary",
           tip: "清空图元",
-          click: this.remove
+          click: this.deleteMeasure
         }
       ],
       showTip: true
@@ -378,8 +378,14 @@ export default {
         },
         styles: this.measureStyle
       };
-      this.measure = new MapboxDraw(draweroptions);
-      // this.$_bindSelfEvents(Object.keys(measureEvents));
+
+      this.measure = {
+        ...this.map._controls.find(item => item instanceof MapboxDraw)
+      };
+      this.measure.options = { ...draweroptions };
+      this.$_changeMapStyle();
+      this.$_emitEvent("added", { measure: this.measure });
+      // 是否是第一次加载
       this.initial = false;
     },
     /**
@@ -403,6 +409,7 @@ export default {
       this.measureStyle = this.measureStyle
         .filter(l => !newStyles.find(f => f.id === l.id))
         .concat(newStyles);
+      this.changeMapStyle(this.measureStyle);
     },
 
     /**
@@ -411,20 +418,23 @@ export default {
     changeMapStyle(styles) {
       const { map } = this;
       styles.forEach(layer => {
-        if (map.getLayer(layer)) {
-          const { id, filter, paint, layout } = layer;
-          if (filter) {
-            map.setFilter(id, filter);
-          }
-          if (paint) {
-            Object.entries(paint).forEach(([key, value]) => {
-              map.setPaintProperty(id, key, value);
-            });
-          }
-          if (layout) {
-            Object.entries(layout).forEach(([key, value]) => {
-              map.setLayoutProperty(id, key, value);
-            });
+        let layerIds = [];
+        layerIds.push(`${layer.id}.cold`, `${layer.id}.hot`);
+        for (let i = 0; i < layerIds.length; i++) {
+          if (map.getLayer(layerIds[i])) {
+            if (layer.filter) {
+              map.setFilter(layerIds[i], layer.filter);
+            }
+            if (layer.paint) {
+              Object.keys(layer.paint).forEach(key => {
+                map.setPaintProperty(layerIds[i], key, layer.paint[key]);
+              });
+            }
+            if (layer.layout) {
+              Object.keys(layer.layout).forEach(key => {
+                map.setLayoutProperty(layerIds[i], key, layer.layout[key]);
+              });
+            }
           }
         }
       });
@@ -446,24 +456,40 @@ export default {
      * 启用测量工具
      */
     enableMeasure() {
-      this.$_initMeasure();
+      this.$_moveLayer();
       this.$_changeMapStyle();
-      this.$_unbindDrawEvents();
       this.$_unbindEditEvents();
-      this.$_addMeasureControl(this.measure);
-      this.$_emitEvent("added", { measure: this.measure });
+      this.$_unbindDrawEvents();
       this.$_unbindMeasureEvents();
       this.$_bindSelfEvents(Object.keys(measureEvents));
       this.showTip = true;
     },
     /**
+     * 移动图层，这里是为了让新添加的地图不要覆盖到绘制图层上方，所以将新加的图层顺序调换到绘制图层之前，防止覆盖
+     * 一张图因为调用机制的问题，组件初始化时并不能监测到后续添加的地图，因此在测量绘制前调整顺序
+     */
+    $_moveLayer() {
+      let layersId = [];
+      this.map.getStyle().layers.forEach(layer => {
+        layersId.push(layer.id);
+      });
+      for (
+        let i = layersId.indexOf("gl-draw-point-static.hot") + 1;
+        i < layersId.length;
+        i++
+      ) {
+        if (this.map.getLayer("gl-draw-polygon-fill-inactive.cold")) {
+          this.map.moveLayer(layersId[i], "gl-draw-polygon-fill-inactive.cold");
+        }
+      }
+    },
+    /**
      * 移除测量组件和事件解绑
      */
     remove() {
-      this.measureResult = null;
       this.changeMode();
+      this.deleteMeasure();
       this.$_unbindMeasureEvents();
-      this.$_removeMeasureControl();
       this.$_emitEvent("removed");
     },
     /**
@@ -505,12 +531,14 @@ export default {
     //   this.toolbarVisible = !this.toolbarVisible;
     // },
     enableLengthMeasure() {
-      this.remove();
       this.startMeasure("draw_line_string");
     },
     enableAreaMeasure() {
-      this.remove();
       this.startMeasure("draw_polygon");
+    },
+    deleteMeasure() {
+      this.measureResult = null;
+      this.measure && this.measure.deleteAll();
     }
   }
 };

@@ -16,27 +16,7 @@
           </template>
           <mapgis-ui-button
             shape="circle"
-            :type="item.type"
-            @click="item.click"
-            :class="item.className"
-          >
-            <mapgis-ui-iconfont
-              :type="item.icon"
-              :class="item.className"
-              theme="filled"
-            />
-          </mapgis-ui-button>
-        </mapgis-ui-tooltip>
-        <mapgis-ui-tooltip
-          v-for="(item, i) in isContinueDraw ? deleteAll : deleteOne"
-          :key="i"
-          placement="bottom"
-        >
-          <template slot="title">
-            <span>{{ item.tip }}</span>
-          </template>
-          <mapgis-ui-button
-            shape="circle"
+            :disabled="btnabled"
             :type="item.type"
             @click="item.click"
             :class="item.className"
@@ -55,13 +35,6 @@
         <div class="radiusValue">{{ radius }}米</div>
       </div>
     </mapgis-marker>
-
-    <mapgis-geojson-layer
-      ref="geoJsonLayer"
-      :data="dataLayer"
-      :layerId="dataLayerId"
-      :layerStyle="dataLayerStyle"
-    />
   </div>
 </template>
 
@@ -92,7 +65,6 @@ modes.static = StaticMode;
 import drawMixin from "./drawMixin";
 import controlMixin from "../withControlEvents";
 import DefaultDrawStyle from "./DefaultDrawStyle";
-import MapgisGeojsonLayer from "../../../layer/GeojsonLayer";
 import { Style } from "@mapgis/webclient-es6-service";
 const { MarkerStyle, LineStyle, PointStyle, FillStyle } = Style;
 
@@ -124,8 +96,8 @@ export default {
   mixins: [drawMixin, controlMixin],
   components: {
     /* MapgisUiIconfont */
-    MapgisGeojsonLayer
   },
+
   //@see https://cn.vuejs.org/v2/guide/components-edge-cases.html#%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5
   // inject: ["mapbox", "map"],
 
@@ -213,11 +185,6 @@ export default {
     showSize: {
       type: Boolean,
       default: false
-    },
-    // 是否保存上一次的绘制
-    isContinueDraw: {
-      type: Boolean,
-      default: false
     }
   },
 
@@ -269,41 +236,13 @@ export default {
           type: "primary",
           tip: "画半径",
           click: this.toggleRadius
-        }
-        /*{
-          icon: "mapgis-shanchu_dianji",
-          type: "primary",
-          tip: "删除选中图元",
-          click: this.toggleDelete
-        }
-        {
-          icon: "mapgis-shanchudangqianziceng",
-          type: "primary",
-          tip: "删除全部",
-          click: this.toggleDeleteAll
         },
-         {
-          icon: "mapgis-juxing1",
-          type: "default",
-          tip: "矩形查询",
-          click: this.toggleQueryByRect
-        },
-        {
-          icon: "mapgis-pinghangsibianxing1",
-          type: "default",
-          tip: "多边形查询",
-          click: this.toggleQueryByPolygon
-        } */
-      ],
-      deleteOne: [
         {
           icon: "mapgis-shanchu_dianji",
           type: "primary",
           tip: "删除选中图元",
           click: this.toggleDelete
-        }
-      ],
-      deleteAll: [
+        },
         {
           icon: "mapgis-shanchu_dianji",
           type: "primary",
@@ -315,6 +254,7 @@ export default {
       centerCoordinate: [],
       radius: 0,
       pushRadius: "mapgis-lashen",
+      // 控制 固定半径的圆 的半径maker的显隐
       showMarkerCopy: false,
       oldFeature: [
         {
@@ -327,10 +267,8 @@ export default {
         }
       ],
       showSizeStyle: this.styles,
-      dataLayer: undefined,
-      dataLayerId: "",
-      dataLayerStyle: {},
-      dataLayerIdArr: []
+      // 控制按钮是否可用(在瓦片未加载成功时不可用)
+      btnabled: false
     };
   },
 
@@ -344,13 +282,25 @@ export default {
         this.oldStyles = this.combineStyle(news);
         this.showSizeStyle = news;
       }
-    },
-    isContinueDraw() {
-      this.toggleDeleteAll();
     }
   },
 
   mounted() {
+    // let layersId = [];
+    //   this.map.getStyle().layers.forEach(layer => {
+    //     layersId.push(layer.id);
+    //   });
+    // this.map.on("sourcedata", e => {
+    //   // 首先判断监听的是不是地图，因为有可能也会监听到绘制的geojson图层
+    //   if (layersId.indexOf(e.sourceId) > -1) {
+    //     // 其次判断是否视图范围内加载完成
+    //     if (this.map.areTilesLoaded()) {
+    //       // 如果加载完成，能绘制
+    //       this.btnabled = false;
+    //     }
+    //   }
+    // });
+
     this.$_initDraw();
     if (this.enableControl) {
       let position = this.position;
@@ -373,25 +323,11 @@ export default {
 
   methods: {
     enableDrawer() {
-      if (this.map.getLayer("extent")) {
-        this.map.removeLayer("extent");
-        this.map.removeSource("extent");
-      }
-      if (this.map.getLayer("centerPoint")) {
-        this.map.removeLayer("centerPoint");
-        this.map.removeSource("centerPoint");
-      }
-      if (this.showMarkerCopy) {
-        this.showMarkerCopy = false;
-        this.markerCoordinate = [];
-      }
       this.drawRadius = false;
+      this.$_moveLayer();
       this.$_compareStyle();
-      this.$_initDraw();
       this.$_unbindEditEvents();
       this.$_unbindMeasureEvents();
-      this.$_addDrawControl(this.drawer);
-      this.$_emitEvent("added", { drawer: this.drawer });
       this.$_unbindDrawEvents();
       this.$_bindSelfEvents(Object.keys(drawEvents));
     },
@@ -401,10 +337,35 @@ export default {
         ...this.$props,
         styles: this.oldStyles
       };
-      this.drawer = new MapboxDraw(draweroptions);
-
       this.initial = false;
+
+      // draw在初始化map的时候已经作为control添加到map上了
+      this.drawer = {
+        ...this.map._controls.find(item => item instanceof MapboxDraw)
+      };
+      this.drawer.options = { ...draweroptions };
+      this.$_compareStyle();
+      this.$_emitEvent("added", { drawer: this.drawer });
       return this.drawer;
+    },
+    /**
+     * 移动图层，这里是为了让新添加的地图不要覆盖到绘制图层上方，所以将新加的图层顺序调换到绘制图层之前，防止覆盖
+     * 一张图因为调用机制的问题，组件初始化时并不能监测到后续添加的地图，因此在测量绘制前调整顺序
+     */
+    $_moveLayer() {
+      let layersId = [];
+      this.map.getStyle().layers.forEach(layer => {
+        layersId.push(layer.id);
+      });
+      for (
+        let i = layersId.indexOf("gl-draw-point-static.hot") + 1;
+        i < layersId.length;
+        i++
+      ) {
+        if (this.map.getLayer("gl-draw-polygon-fill-inactive.cold")) {
+          this.map.moveLayer(layersId[i], "gl-draw-polygon-fill-inactive.cold");
+        }
+      }
     },
 
     $_bindSelfEvents(events) {
@@ -502,41 +463,6 @@ export default {
         window.setTimeout(() => {
           vm.drawer && vm.drawer.changeMode("simple_select");
         }, 100);
-      } else if (eventName == "drawCreate" && this.isContinueDraw) {
-        this.dataLayerId = eventData.features[0].id;
-        this.dataLayerIdArr.push(this.dataLayerId);
-        this.dataLayer = {
-          type: "FeatureCollection",
-          features: [
-            {
-              type: eventData.features[0].type,
-              geometry: eventData.features[0].geometry
-            }
-          ]
-        };
-        if (eventData.features[0].geometry.type == "Point") {
-          this.dataLayerStyle = new PointStyle({
-            radius: 6,
-            color: "#ffffff",
-            opacity: 0.8,
-            outlineWidth: 2,
-            outlineColor: "#52B883"
-          });
-        } else if (eventData.features[0].geometry.type == "LineString") {
-          this.dataLayerStyle = new LineStyle({
-            width: 6,
-            color: "#ffffff",
-            opacity: 0.8,
-            outlineWidth: 5,
-            outlineColor: "#52B883"
-          });
-        } else {
-          this.dataLayerStyle = new FillStyle({
-            color: "#ffffff",
-            opacity: 0.8,
-            outlineColor: "#52B883"
-          });
-        }
       }
       // if (eventName == "drawCreate" && mode == "direct_select" ) {
       //   this.drawer && this.drawer.changeMode("simple_select");
@@ -563,28 +489,51 @@ export default {
     changeMapStyle(layers) {
       let { map } = this;
       layers.forEach(layer => {
-        if (map.getLayer(layer)) {
-          if (layer.filter) {
-            map.setFilter(layer.id, layer.filter);
-          }
-          if (layer.paint) {
-            Object.keys(layer.paint).forEach(key => {
-              map.setPaintProperty(layer.id, key, layer.paint[key]);
-            });
-          }
-          if (layer.layout) {
-            Object.keys(layer.layout).forEach(key => {
-              map.setLayoutProperty(layer.id, key, layer.layout[key]);
-            });
+        // 两种类型，一种cold，一种hot,要在layer.id后面加.cold或者.hot，这才是在map中的layer名
+        let layerIds = [];
+        layerIds.push(`${layer.id}.cold`, `${layer.id}.hot`);
+
+        for (let i = 0; i < layerIds.length; i++) {
+          if (map.getLayer(layerIds[i])) {
+            if (layer.filter) {
+              map.setFilter(layerIds[i], layer.filter);
+            }
+            if (layer.paint) {
+              Object.keys(layer.paint).forEach(key => {
+                map.setPaintProperty(layerIds[i], key, layer.paint[key]);
+              });
+            }
+            if (layer.layout) {
+              Object.keys(layer.layout).forEach(key => {
+                map.setLayoutProperty(layerIds[i], key, layer.layout[key]);
+              });
+            }
           }
         }
       });
     },
 
-    remove() {
-      this.$_unbindDrawEvents();
-      this.$_removeDrawControl();
+    // 这里主要是因为绘制指定半径的圆时,圆的圆心和半径和圆不是一个feature,分别存在与另外的图层,因此要单独删除
+    removeRadius() {
+      if (this.map.getLayer("extent")) {
+        this.map.removeLayer("extent");
+        this.map.removeSource("extent");
+      }
+      if (this.map.getLayer("centerPoint")) {
+        this.map.removeLayer("centerPoint");
+        this.map.removeSource("centerPoint");
+      }
+      if (this.showMarkerCopy) {
+        this.showMarkerCopy = false;
+        this.markerCoordinate = [];
+      }
+    },
 
+    remove() {
+      // draw挂在map上以后不需要removeControl了，只需要将绘制内容清除、解绑事件即可
+
+      this.toggleDeleteAll();
+      this.$_unbindDrawEvents();
       this.$_emitEvent("removed");
     },
 
@@ -634,8 +583,8 @@ export default {
       this.drawer && this.drawer.changeMode("draw_radius");
     },
     toggleDelete() {
-      this.enableDrawer();
-      this.drawer && this.drawer.deleteAll();
+      this.removeRadius();
+      this.drawer && this.drawer.delete(this.drawer.getSelectedIds());
       this.drawRadius = false;
       if (this.showMarkerCopy) {
         this.showMarkerCopy = false;
@@ -643,20 +592,19 @@ export default {
       }
     },
     toggleDeleteAll() {
-      this.enableDrawer();
+      this.removeRadius();
       this.drawer && this.drawer.deleteAll();
-      if (this.dataLayerIdArr.length > 0) {
-        for (let i = 0; i < this.dataLayerIdArr.length; i++) {
-          this.map.removeLayer(this.dataLayerIdArr[i]);
-          this.map.removeSource(this.dataLayerIdArr[i]);
-        }
-        this.dataLayerIdArr = [];
+      this.drawRadius = false;
+      if (this.showMarkerCopy) {
+        this.showMarkerCopy = false;
+        this.markerCoordinate = [];
       }
     },
     toggleQueryByRect() {},
     toggleQueryByPolygon() {},
     addMarkerAndLine(eventData) {
       const vm = this;
+      if (!eventData.features[0].properties.center) return;
       let feature = eventData.features[0];
       let center = feature.properties.center;
       let onePoint = turf.point(feature.geometry.coordinates[0][0]);
@@ -749,7 +697,7 @@ export default {
 
 <style>
 .mapgis-draw-control > .mapgis-ui-space {
-  width: 280px !important;
+  width: 320px !important;
   overflow: hidden;
   /*transition: width 0.5s;*/
 }

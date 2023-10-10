@@ -185,12 +185,9 @@ export default {
       }
     },
     enableEditor() {
-      this.$_initEdit();
-      this.$_compareStyle();
+      this.$_moveLayer();
       this.$_unbindDrawEvents();
       this.$_unbindMeasureEvents();
-      this.$_addEditControl(this.editor);
-      this.$_emitEvent("added", { editor: this.editor });
       this.$_unbindEditEvents();
       this.$_bindSelfEvents(Object.keys(editEvents));
     },
@@ -200,10 +197,34 @@ export default {
         ...this.$props,
         styles: this.oldStyles
       };
-      this.editor = new MapboxDraw(editoroptions);
-
+      this.editor = {
+        ...this.map._controls.find(item => item instanceof MapboxDraw)
+      };
+      this.editor.options = { ...editoroptions };
+      this.$_compareStyle();
+      this.$_emitEvent("added", { editor: this.editor });
       this.initial = false;
       return this.editor;
+    },
+
+    /**
+     * 移动图层，这里是为了让新添加的地图不要覆盖到绘制图层上方，所以将新加的图层顺序调换到绘制图层之前，防止覆盖
+     * 一张图因为调用机制的问题，组件初始化时并不能监测到后续添加的地图，因此在测量绘制前调整顺序
+     */
+    $_moveLayer() {
+      let layersId = [];
+      this.map.getStyle().layers.forEach(layer => {
+        layersId.push(layer.id);
+      });
+      for (
+        let i = layersId.indexOf("gl-draw-point-static.hot") + 1;
+        i < layersId.length;
+        i++
+      ) {
+        if (this.map.getLayer("gl-draw-polygon-fill-inactive.cold")) {
+          this.map.moveLayer(layersId[i], "gl-draw-polygon-fill-inactive.cold");
+        }
+      }
     },
 
     $_bindSelfEvents(events) {
@@ -283,8 +304,8 @@ export default {
     },
 
     remove() {
+      this.toggleDelete();
       this.$_unbindDrawEvents();
-      this.$_removeDrawControl();
 
       this.$_emitEvent("removed");
     },
@@ -312,7 +333,7 @@ export default {
       this.editor.changeMode("direct_select", {
         featureId: this.guid
       });
-      if (this.closeEdit){
+      if (this.closeEdit) {
         this.editor && this.editor.changeMode("static");
       }
     },

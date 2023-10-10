@@ -2,7 +2,7 @@ import MapgisEventBusMapMixin from "../../../lib/eventbus/EventBusMapMixin";
 
 const DrawSources = {
   HOT: "mapbox-gl-draw-hot",
-  COLD: "mapbox-gl-draw-cold",
+  COLD: "mapbox-gl-draw-cold"
 };
 export default {
   mixins: [MapgisEventBusMapMixin],
@@ -17,7 +17,7 @@ export default {
   methods: {
     $_initMapboxDom() {
       window.mapboxDom = {};
-      window.mapboxDom.draw =  {};
+      window.mapboxDom.draw = {};
       window.mapboxDom.measure = {};
       window.mapboxDom.edit = {};
       window.mapboxDom.measureCom = {};
@@ -39,8 +39,8 @@ export default {
 
         if (layers) {
           layers
-            .filter((layer) => layer.source === source)
-            .forEach((layer) => this.map.removeLayer(layer.id));
+            .filter(layer => layer.source === source)
+            .forEach(layer => this.map.removeLayer(layer.id));
         }
         this.map.removeSource(source);
       }
@@ -73,17 +73,27 @@ export default {
       if (!this.map) return;
       this.drawEvents.push({
         name: eventName,
-        callback: eventCallback,
+        callback: eventCallback
       });
       this.map.on(eventName, eventCallback);
+      // 当测量组价和draw混用的时候，this.drawEvents为空，不能解绑事件，导致混乱
+      window.mapboxEvent.draw = [...this.drawEvents];
     },
 
     $_unbindDrawEvents() {
       if (!this.map) return;
-      if (this.drawEvents.length <= 0) return;
-      this.drawEvents.forEach((e) => {
-        this.map && this.map.off(e.name, e.callback);
-      });
+      if (this.drawEvents.length <= 0 && window.mapboxEvent.draw.length <= 0)
+        return;
+      if (this.drawEvents.length > 0) {
+        this.drawEvents.forEach(e => {
+          this.map && this.map.off(e.name, e.callback);
+        });
+      } else {
+        window.mapboxEvent.draw.forEach(e => {
+          this.map && this.map.off(e.name, e.callback);
+        });
+      }
+      window.mapboxEvent.draw = [];
       this.drawEvents.length = 0;
       this.emitMapDrawRemove();
     },
@@ -119,17 +129,29 @@ export default {
       if (!this.map) return;
       this.measureEvents.push({
         name: eventName,
-        callback: eventCallback,
+        callback: eventCallback
       });
       this.map.on(eventName, eventCallback);
+      window.mapboxEvent.measure = [...this.measureEvents];
     },
 
     $_unbindMeasureEvents() {
       if (!this.map) return;
-      if (this.measureEvents.length <= 0) return;
-      this.measureEvents.forEach((e) => {
-        this.map && this.map.off(e.name, e.callback);
-      });
+      if (
+        this.measureEvents.length <= 0 &&
+        window.mapboxEvent.measure.length <= 0
+      )
+        return;
+      if (this.measureEvents.length > 0) {
+        this.measureEvents.forEach(e => {
+          this.map && this.map.off(e.name, e.callback);
+        });
+      } else {
+        window.mapboxEvent.measure.forEach(e => {
+          this.map && this.map.off(e.name, e.callback);
+        });
+      }
+      window.mapboxEvent.measure = [];
       this.measureEvents.length = 0;
       if (window.mapboxDom.measureCom) {
         window.mapboxDom.measureCom.coordinates = [];
@@ -164,19 +186,28 @@ export default {
       if (!this.map) return;
       this.editEvents.push({
         name: eventName,
-        callback: eventCallback,
+        callback: eventCallback
       });
       this.map.on(eventName, eventCallback);
+      window.mapboxEvent.edit = [...this.editEvents];
     },
 
     $_unbindEditEvents() {
       if (!this.map) return;
-      if (this.editEvents.length <= 0) return;
-      this.editEvents.forEach((e) => {
-        this.map && this.map.off(e.name, e.callback);
-      });
+      if (this.editEvents.length <= 0 && window.mapboxEvent.edit.length <= 0)
+        return;
+      if (this.editEvents.length > 0) {
+        this.editEvents.forEach(e => {
+          this.map && this.map.off(e.name, e.callback);
+        });
+      } else {
+        window.mapboxEvent.edit.forEach(e => {
+          this.map && this.map.off(e.name, e.callback);
+        });
+      }
+      window.mapboxEvent.edit = [];
       this.editEvents.length = 0;
       this.emitMapEditRemove();
-    },
-  },
+    }
+  }
 };

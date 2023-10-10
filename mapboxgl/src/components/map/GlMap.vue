@@ -7,6 +7,8 @@
 <script>
 import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
 import "@mapgis/mapbox-gl-compare/mapbox-gl-compare.css";
+import * as MapboxDrawCom from "@mapgis/mapbox-gl-draw";
+import DefaultDrawStyle from "./DefaultDrawStyle";
 
 import withEvents from "../../lib/withEvents";
 import mapEvents from "./events";
@@ -24,6 +26,7 @@ const {
   PlotLayer2DGroup = Zondy.Plot.PlotLayer2DGroup,
   FabricLayer = Zondy.Plot.FabricLayer
 } = plot;
+const MapboxDraw = MapboxDrawCom.default;
 
 export default {
   name: "mapgis-web-map",
@@ -144,8 +147,36 @@ export default {
         this.$_registerAsyncActions(map);
         this.$_bindPropsUpdateEvents();
         this.initialized = true;
-        let Plot = {PlotLayer2DGroup : PlotLayer2DGroup, FabricLayer: FabricLayer};
+
+        let Plot = {
+          PlotLayer2DGroup: PlotLayer2DGroup,
+          FabricLayer: FabricLayer
+        };
+        /*
+         * @date 2023-8-30
+         * @author 王涵
+         * @description 为了解决二维绘制在瓦片未加载成功就无法绘制问题，在初始化地图时实例化draw并将其添加到地图中，同时还可以解决绘制组件和测量组件同时使用冲突问题；
+         * */
+        let draweroptions = {
+          displayControlsDefault: true,
+          defaultMode: "simple_select",
+          touchEnabled: false,
+          boxSelect: false,
+          controls: {
+            point: false,
+            line_string: false,
+            polygon: false,
+            trash: false,
+            combine_features: false,
+            uncombine_features: false
+          },
+          styles: DefaultDrawStyle
+        };
+        this.drawer = new MapboxDraw(draweroptions);
+        this.map.addControl(this.drawer);
+
         this.$emit("load", { map, component: this, actions, mapbox, Plot });
+
         this.bindSize();
       })
       .catch(function onRejected(error) {
