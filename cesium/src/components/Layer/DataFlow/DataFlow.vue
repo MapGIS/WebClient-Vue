@@ -103,15 +103,26 @@ export default {
     enableDirect: {
       type: Boolean,
       default: true
+    },
+    publicPath: {
+      type: String,
+      default: "/"
     }
   },
   watch: {
     layerStyle: {
       handler: function() {
+        let styleOption;
+        const layerType = this.layerStyle.type || this.defaultStyle.type;
+        if (this.layerStyle[layerType] && this.layerStyle[layerType] !== "{}") {
+          styleOption = this.layerStyle[layerType];
+        } else {
+          styleOption = this.defaultStyle[layerType];
+        }
         this.layerStyleCopy = {
-          type: this.layerStyle.type,
+          type: layerType,
           fixNum: 10,
-          ...this.layerStyle[this.layerStyle.type],
+          ...styleOption,
           ...this.layerStyle.layerStyle
         };
         let source = window.vueCesium.DataFlowManager.findSource(
@@ -293,8 +304,7 @@ export default {
       }
     };
   },
-  mounted() {
-    // this.layerStyleCopy = Object.assign(this.defaultStyle, this.layerStyle);
+  created() {
     // 设置默认样式
     const options = this.layerStyle[this.layerStyle.type];
     if (this.layerStyle.type && Object.keys(options).length > 0) {
@@ -313,7 +323,10 @@ export default {
         ...this.layerStyle.layerStyle
       };
     }
+  },
 
+  mounted() {
+    // this.layerStyleCopy = Object.assign(this.defaultStyle, this.layerStyle);
     this.$_addEntityLayer();
   },
   destroyed() {
@@ -663,15 +676,12 @@ export default {
             const url = new URL(styleOptions.markerUrl);
             styleOptions.url = styleOptions.markerUrl;
           } catch (error) {
-            styleOptions.url =
-              window.location.origin +
-              process.env.VUE_APP_API_BASE_URL +
-              styleOptions.markerUrl;
+            styleOptions.url = this.publicPath + styleOptions.markerUrl;
             console.log(
               "marker组装地址",
               styleOptions.url,
               window.location.origin,
-              process.env.VUE_APP_API_BASE_URL
+              this.publicPath
             );
           }
           delete styleOptions.markerUrl;
@@ -684,15 +694,12 @@ export default {
             const url = new URL(styleOptions.modelUrl);
             styleOptions.url = styleOptions.modelUrl;
           } catch (error) {
-            styleOptions.url =
-              window.location.origin +
-              process.env.VUE_APP_CONTEXT_PATH +
-              styleOptions.modelUrl;
+            styleOptions.url = this.publicPath + styleOptions.modelUrl;
             console.log(
               "model组装地址",
               styleOptions.url,
               window.location.origin,
-              process.env.VUE_APP_CONTEXT_PATH
+              this.publicPath
             );
           }
           delete styleOptions.modelUrl;
