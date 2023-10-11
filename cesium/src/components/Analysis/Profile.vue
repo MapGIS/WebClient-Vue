@@ -409,6 +409,12 @@ export default {
      * @description 开始分析
      */
     analysis() {
+      // 分析前先清空之前的分析结果
+      let profileAnalysis = this._getProfileAnalysis();
+      if (profileAnalysis) {
+        this.remove();
+      }
+
       this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
         this.viewer
       );
@@ -416,6 +422,7 @@ export default {
         // 如果深度检测没有开启，则开启
         setDepthTestAgainstTerrainEnable(true, this.viewer);
       }
+
       const {
         polygonColorCopy,
         polygonHeightCopy,
@@ -431,7 +438,7 @@ export default {
       const lColor = this._getColor(polyLineColorCopy);
       const pgColor = this._getColor(polylineGroundColorCopy);
       const { profileType } = this;
-      let profileAnalysis = null;
+      profileAnalysis = null;
       this.profileeChart.setOption(echartsOptions);
       if (!this.Cesium.defined(profileAnalysis)) {
         profileAnalysis = new this.Cesium.TerrainProfile(this.viewer, {
