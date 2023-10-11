@@ -603,11 +603,9 @@ export default class FeatureQuery {
     queryParam.outStatistics = option.outStatistics || null;
     queryParam.groupByFieldsForStatistics =
       option.groupByFieldsForStatistics || null;
-    const resultRecordCount = option.pageSize || 10;
-    let resultOffset = 0;
-    if (option.page > 1) {
-      resultOffset = (option.page - 1) * resultRecordCount;
-    }
+    const resultRecordCount = option.pageCount || 10;
+    const page = option.page || 0;
+    const resultOffset = page * resultRecordCount;
     queryParam.resultRecordCount = resultRecordCount;
     queryParam.resultOffset = resultOffset;
     queryParam.returnZ = option.returnZ || false;
