@@ -73,6 +73,17 @@
             @updateSpin="changeSpinning"
           ></effect-setting>
         </mapgis-ui-tab-pane>
+        <mapgis-ui-tab-pane
+          key="6"
+          force-render
+          tab="漫游操控"
+          class="control-content"
+        >
+          <autonomous-roaming-setting
+            :publicPath="publicPath"
+            :isWidgetOpen="isWidgetOpen"
+          />
+        </mapgis-ui-tab-pane>
       </mapgis-ui-tabs>
     </div>
     <!-- <mapgis-ui-button class="openButton" shape="circle" type="primary" @click="togglePanel">
@@ -93,6 +104,7 @@ import CameraSetting from "./components/CameraSetting";
 import LightSetting from "./components/LightSetting";
 import WeatherSetting from "./components/WeatherSetting";
 import EffectSetting from "./components/EffectSetting";
+import AutonomousRoamingSetting from "./AutonomousRoaming/AutonomousRoamingSetting.vue";
 import { isDepthTestAgainstTerrainEnable } from "../WebGlobe/util";
 
 export default {
@@ -102,7 +114,8 @@ export default {
     CameraSetting,
     LightSetting,
     WeatherSetting,
-    EffectSetting
+    EffectSetting,
+    AutonomousRoamingSetting
   },
   mixins: [ServiceLayer],
   props: {
@@ -131,6 +144,14 @@ export default {
     baseLayerIds: {
       type: Array,
       default: () => []
+    },
+    publicPath: {
+      type: String,
+      default: "/"
+    },
+    isWidgetOpen: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {

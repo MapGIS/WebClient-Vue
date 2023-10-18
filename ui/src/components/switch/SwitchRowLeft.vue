@@ -2,8 +2,13 @@
   <mapgis-ui-row class="mapgis-ui-switch-row-left">
     <div class="mapgis-ui-switch-row-left-title">{{ title }}</div>
     <div class="mapgis-ui-switch-row-left-switch">
-      <mapgis-ui-switch @change="$_change" :checked-children="checkTitle" :un-checked-children="unCheckTitle"
-                        v-model="valueCopy"/>
+      <mapgis-ui-switch
+        @change="$_change"
+        :checked-children="checkTitle"
+        :un-checked-children="unCheckTitle"
+        :disabled="disabled"
+        v-model="valueCopy"
+      />
     </div>
   </mapgis-ui-row>
 </template>
@@ -33,16 +38,20 @@ export default {
     unCheckTitle: {
       type: String,
       default: "否"
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       valueCopy: undefined
-    }
+    };
   },
   watch: {
     value: {
-      handler: function () {
+      handler: function() {
         this.valueCopy = this.value;
       },
       deep: true
@@ -56,7 +65,7 @@ export default {
   mounted() {
     this.valueCopy = this.value;
   }
-}
+};
 </script>
 
 <style scoped>
@@ -66,7 +75,8 @@ export default {
   line-height: 32px;
 }
 
-.mapgis-ui-switch-row-left-title, .mapgis-ui-switch-row-left-switch {
+.mapgis-ui-switch-row-left-title,
+.mapgis-ui-switch-row-left-switch {
   display: inline-block;
   height: inherit;
   vertical-align: top;
@@ -78,7 +88,7 @@ export default {
   padding-left: 10px;
   font-size: 14px;
   /* font-weight: bolder; */
-  color: var(--heading-color)
+  color: var(--heading-color);
 }
 
 .mapgis-ui-switch-row-left-switch {
