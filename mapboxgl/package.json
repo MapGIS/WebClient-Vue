@@ -31,7 +31,7 @@
     "@mapgis/mapbox-gl-compare": "~16.6.0",
     "@mapgis/mapbox-gl-inspect": "~16.6.0",
     "@mapgis/webclient-es6-service": "~16.2.0",
-    "@mapgis/webclient-es6-mapboxgl": "~16.4.0",
+    "@mapgis/webclient-es6-mapboxgl": "~16.2.0",
     "@mapgis/webclient-store": "^10.5.5",
     "@mapgis/webclient-vue-ui": "~16.6.0",
     "@mapgis/webclient-plot": "~16.6.0",
