@@ -14,7 +14,7 @@
           'overflow-y': dataSourceCopy.length >= scrollNum ? 'scroll' : 'hidden'
         }"
         class="mapgis-ui-graphic-edit-list"
-        v-show="noTitleKey === 'list'"
+        v-if="noTitleKey === 'list'"
       >
         <div :key="index" v-for="(row, index) in dataSourceCopy">
           <mapgis-ui-icon-row
@@ -34,7 +34,7 @@
               v-if="row.type !== 'group'"
             >
               <mapgis-ui-checkbox
-                v-show="isBatch"
+                v-if="isBatch"
                 :checked="selectedIds.includes(row.id)"
                 @change="$_changeItemChecked(row.id, $event)"
               >
@@ -44,17 +44,17 @@
           <mapgis-ui-input
             @change="$_changeTitle"
             class="mapgis-ui-graphic-edit-list-input"
-            v-show="editTitleGraphicId === row.id"
+            v-if="editTitleGraphicId === row.id"
             v-model="row.attributes.title"
           />
           <mapgis-ui-button
-            v-show="editTitleGraphicId === row.id"
+            v-if="editTitleGraphicId === row.id"
             @click="$_finishEditTitle(row.attributes.title)"
             style="height: 30px;"
             type="primary"
             >完成修改
           </mapgis-ui-button>
-          <div v-if="row.type === 'group'" v-show="openGroup === row.id">
+          <div v-if="row.type === 'group' && openGroup === row.id">
             <mapgis-ui-icon-row
               :key="gIndex"
               v-for="(graphic, gIndex) in graphicGroups"
@@ -68,7 +68,7 @@
             >
               <div slot="checkbox" class="item-checkbox">
                 <mapgis-ui-checkbox
-                  v-show="isBatch"
+                  v-if="isBatch"
                   :checked="selectedIds.includes(graphic.id)"
                   @change="$_changeItemChecked(graphic.id, $event)"
                 >
@@ -79,7 +79,7 @@
         </div>
         <!-- 批量操作 -->
         <mapgis-ui-setting-footer>
-          <div v-show="isBatch" class="footer-div">
+          <div v-if="isBatch" class="footer-div">
             <mapgis-ui-button @click="$_batchShow" class="footer-btn"
               >显示</mapgis-ui-button
             >
@@ -94,11 +94,11 @@
       </div>
       <!--设置面板-->
       <div
-        v-show="noTitleKey === 'edit'"
+        v-if="noTitleKey === 'edit'"
         style="min-height: 200px;max-height: 430px;overflow:auto;"
       >
         <div
-          v-show="editPanelValues && editType === 'edit'"
+          v-if="editPanelValues && editType === 'edit'"
           style="margin-bottom: 12px;"
         >
           <mapgis-ui-title-row-left
@@ -107,367 +107,389 @@
           />
           <div :key="index" v-for="(row, index) in editList[currentEditType]">
             <mapgis-ui-input-row-left
-              v-if="row.type === 'MapgisUiInput'"
+              v-if="
+                row.type === 'MapgisUiInput' &&
+                  ['image', 'rectangleText'].indexOf(row.key) < 0
+              "
               :title="row.title"
               v-model="editPanelValues[row.key]"
-              v-show="['image', 'rectangleText'].indexOf(row.key) < 0"
             />
             <mapgis-ui-input-row-left
-              v-if="row.type === 'MapgisUiInput'"
-              :title="row.title"
-              type="Image"
-              :uploadUrl="uploadUrl"
-              v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'image' &&
+              v-if="
+                row.type === 'MapgisUiInput' &&
+                  row.key === 'image' &&
                   ['PolylineTrailLink', 'Image'].indexOf(
                     editPanelValues.materialType
                   ) > -1
               "
-            >
-            </mapgis-ui-input-row-left>
-            <mapgis-ui-input-row-left
-              v-if="row.type === 'MapgisUiInput'"
               :title="row.title"
               type="Image"
               :uploadUrl="uploadUrl"
               v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'image' &&
+            >
+            </mapgis-ui-input-row-left>
+            <mapgis-ui-input-row-left
+              v-if="
+                row.type === 'MapgisUiInput' &&
+                  row.key === 'image' &&
                   (currentEditType === 'billboard' ||
                     currentEditType === 'marker')
               "
+              :title="row.title"
+              type="Image"
+              :uploadUrl="uploadUrl"
+              v-model="editPanelValues[row.key]"
             />
             <mapgis-ui-input-row-left
-              v-if="row.type === 'MapgisUiInput'"
-              :title="row.title"
-              v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'rectangleText' &&
+              v-if="
+                row.type === 'MapgisUiInput' &&
+                  row.key === 'rectangleText' &&
                   editPanelValues.materialType === 'text'
               "
+              :title="row.title"
+              v-model="editPanelValues[row.key]"
             />
             <mapgis-ui-input-row-left
-              v-if="row.type === 'MapgisUiInputNumber'"
+              v-if="
+                row.type === 'MapgisUiInputNumber' &&
+                  [
+                    'rtFontSize',
+                    'flashTime',
+                    'alphaSpace',
+                    'flashAlpha',
+                    'outlineWidth',
+                    'backgroundPadding',
+                    'speed',
+                    'duration',
+                    'gradient',
+                    'count',
+                    'direction',
+                    'stRotation',
+                    'repeatX',
+                    'repeatY',
+                    'offsetHeight',
+                    'labelPadding'
+                  ].indexOf(row.key) < 0
+              "
               :title="row.title"
               type="Number"
               v-model="editPanelValues[row.key]"
-              v-show="
-                [
-                  'rtFontSize',
-                  'flashTime',
-                  'alphaSpace',
-                  'flashAlpha',
-                  'outlineWidth',
-                  'backgroundPadding',
-                  'speed',
-                  'duration',
-                  'gradient',
-                  'count',
-                  'direction',
-                  'stRotation',
-                  'repeatX',
-                  'repeatY',
-                  'offsetHeight',
-                  'labelPadding'
-                ].indexOf(row.key) < 0
-              "
             />
             <!-- elevationMode的值2，1，0，-1 -->
             <mapgis-ui-input-row-left
-              v-if="row.type === 'MapgisUiInputNumber'"
-              :title="row.title"
-              type="Number"
-              v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'offsetHeight' &&
+              v-if="
+                row.type === 'MapgisUiInputNumber' &&
+                  row.key === 'offsetHeight' &&
                   (editPanelValues.elevationMode === undefined ||
                     editPanelValues.elevationMode === -1)
               "
-            />
-            <mapgis-ui-input-row-left
-              v-if="row.type === 'MapgisUiInputNumber'"
               :title="row.title"
               type="Number"
               v-model="editPanelValues[row.key]"
-              v-show="row.key === 'outlineWidth' && showOutline"
             />
             <mapgis-ui-input-row-left
-              v-if="row.type === 'MapgisUiInputNumber'"
+              v-if="
+                row.type === 'MapgisUiInputNumber' &&
+                  row.key === 'outlineWidth' &&
+                  showOutline
+              "
               :title="row.title"
               type="Number"
               v-model="editPanelValues[row.key]"
-              v-show="row.key === 'backgroundPadding' && showBackground"
             />
             <mapgis-ui-input-row-left
-              v-if="row.type === 'MapgisUiInputNumber'"
+              v-if="
+                row.type === 'MapgisUiInputNumber' &&
+                  row.key === 'backgroundPadding' &&
+                  showBackground
+              "
               :title="row.title"
               type="Number"
               v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'speed' &&
+            />
+            <mapgis-ui-input-row-left
+              v-if="
+                row.type === 'MapgisUiInputNumber' &&
+                  row.key === 'speed' &&
                   editPanelValues.materialType === 'RadarMaterial'
               "
-            />
-            <mapgis-ui-input-row-left
-              v-if="row.type === 'MapgisUiInputNumber'"
               :title="row.title"
               type="Number"
               v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'duration' &&
+            />
+            <mapgis-ui-input-row-left
+              v-if="
+                row.type === 'MapgisUiInputNumber' &&
+                  row.key === 'duration' &&
                   ['PolylineTrailLink', 'CircleWaveMaterial'].indexOf(
                     editPanelValues.materialType
                   ) > -1
               "
-            />
-            <mapgis-ui-input-row-left
-              v-if="row.type === 'MapgisUiInputNumber'"
               :title="row.title"
               type="Number"
               v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'gradient' &&
+            />
+            <mapgis-ui-input-row-left
+              v-if="
+                row.type === 'MapgisUiInputNumber' &&
+                  row.key === 'gradient' &&
                   editPanelValues.materialType === 'CircleWaveMaterial'
               "
-            />
-            <mapgis-ui-input-row-left
-              v-if="row.type === 'MapgisUiInputNumber'"
               :title="row.title"
               type="Number"
               v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'count' &&
+            />
+            <mapgis-ui-input-row-left
+              v-if="
+                row.type === 'MapgisUiInputNumber' &&
+                  row.key === 'count' &&
                   editPanelValues.materialType === 'CircleWaveMaterial'
               "
-            />
-            <mapgis-ui-input-row-left
-              v-if="row.type === 'MapgisUiInputNumber'"
               :title="row.title"
               type="Number"
               v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'stRotation' &&
+            />
+            <mapgis-ui-input-row-left
+              v-if="
+                row.type === 'MapgisUiInputNumber' &&
+                  row.key === 'stRotation' &&
                   editPanelValues.materialType === 'Image'
               "
-            />
-            <mapgis-ui-input-row-left
-              v-if="row.type === 'MapgisUiInputNumber'"
               :title="row.title"
               type="Number"
               v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'repeatX' &&
+            />
+            <mapgis-ui-input-row-left
+              v-if="
+                row.type === 'MapgisUiInputNumber' &&
+                  row.key === 'repeatX' &&
                   editPanelValues.materialType === 'Image'
               "
-            />
-            <mapgis-ui-input-row-left
-              v-if="row.type === 'MapgisUiInputNumber'"
               :title="row.title"
               type="Number"
               v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'repeatY' &&
+            />
+            <mapgis-ui-input-row-left
+              v-if="
+                row.type === 'MapgisUiInputNumber' &&
+                  row.key === 'repeatY' &&
                   editPanelValues.materialType === 'Image'
               "
-            />
-            <mapgis-ui-input-row-left
-              v-if="row.type === 'MapgisUiInputNumber'"
               :title="row.title"
               type="Number"
               v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'flashAlpha' &&
+            />
+            <mapgis-ui-input-row-left
+              v-if="
+                row.type === 'MapgisUiInputNumber' &&
+                  row.key === 'flashAlpha' &&
                   editPanelValues.materialType === 'flash'
               "
-            />
-            <mapgis-ui-input-row-left
-              v-if="row.type === 'MapgisUiInputNumber'"
               :title="row.title"
               type="Number"
               v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'alphaSpace' &&
+            />
+            <mapgis-ui-input-row-left
+              v-if="
+                row.type === 'MapgisUiInputNumber' &&
+                  row.key === 'alphaSpace' &&
                   editPanelValues.materialType === 'flash'
               "
-            />
-            <mapgis-ui-input-row-left
-              v-if="row.type === 'MapgisUiInputNumber'"
               :title="row.title"
               type="Number"
               v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'flashTime' &&
+            />
+            <mapgis-ui-input-row-left
+              v-if="
+                row.type === 'MapgisUiInputNumber' &&
+                  row.key === 'flashTime' &&
                   editPanelValues.materialType === 'flash'
               "
-            />
-            <mapgis-ui-input-row-left
-              v-if="row.type === 'MapgisUiInputNumber'"
               :title="row.title"
               type="Number"
               v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'rtFontSize' &&
+            />
+            <mapgis-ui-input-row-left
+              v-if="
+                row.type === 'MapgisUiInputNumber' &&
+                  row.key === 'rtFontSize' &&
                   editPanelValues.materialType === 'text'
               "
+              :title="row.title"
+              type="Number"
+              v-model="editPanelValues[row.key]"
             />
             <!-- 特殊：marker标注“文字相对图片位置”编辑栏 -->
             <mapgis-ui-input-row-right
-              v-if="row.type === 'MapgisUiInputNumber'"
+              v-if="
+                row.type === 'MapgisUiInputNumber' && row.key === 'labelPadding'
+              "
               :title="row.title"
               type="Number"
               v-model="editPanelValues[row.key]"
-              v-show="row.key === 'labelPadding'"
             />
             <mapgis-ui-slider-row-left
-              v-if="row.type === 'MapgisUiSlider'"
-              :title="row.title"
-              v-model="editPanelValues[row.key]"
-              v-show="
-                [
-                  'outlineOpacity',
-                  'backgroundOpacity',
-                  'materialOpacity',
-                  'rtBackgroundOpacity'
-                ].indexOf(row.key) < 0
+              v-if="
+                row.type === 'MapgisUiSlider' &&
+                  [
+                    'outlineOpacity',
+                    'backgroundOpacity',
+                    'materialOpacity',
+                    'rtBackgroundOpacity'
+                  ].indexOf(row.key) < 0
               "
-            />
-            <mapgis-ui-slider-row-left
-              v-if="row.type === 'MapgisUiSlider'"
               :title="row.title"
               v-model="editPanelValues[row.key]"
-              v-show="row.key === 'outlineOpacity' && showOutline"
             />
             <mapgis-ui-slider-row-left
-              v-if="row.type === 'MapgisUiSlider'"
+              v-if="
+                row.type === 'MapgisUiSlider' &&
+                  row.key === 'outlineOpacity' &&
+                  showOutline
+              "
               :title="row.title"
               v-model="editPanelValues[row.key]"
-              v-show="row.key === 'backgroundOpacity' && showBackground"
             />
             <mapgis-ui-slider-row-left
-              v-if="row.type === 'MapgisUiSlider'"
+              v-if="
+                row.type === 'MapgisUiSlider' &&
+                  row.key === 'backgroundOpacity' &&
+                  showBackground
+              "
               :title="row.title"
               v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'materialOpacity' &&
+            />
+            <mapgis-ui-slider-row-left
+              v-if="
+                row.type === 'MapgisUiSlider' &&
+                  row.key === 'materialOpacity' &&
                   ['Color', 'PolylineTrailLink'].indexOf(
                     editPanelValues.materialType
                   ) > -1
               "
+              :title="row.title"
+              v-model="editPanelValues[row.key]"
             />
             <mapgis-ui-slider-row-left
-              v-if="row.type === 'MapgisUiSlider'"
-              :title="row.title"
-              v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'rtBackgroundOpacity' &&
+              v-if="
+                row.type === 'MapgisUiSlider' &&
+                  row.key === 'rtBackgroundOpacity' &&
                   editPanelValues.materialType === 'text'
               "
+              :title="row.title"
+              v-model="editPanelValues[row.key]"
             />
             <mapgis-ui-select-row-left
-              v-if="row.type === 'MapgisUiSelect'"
-              :title="row.title"
-              :dataSource="row.dataSource"
-              v-model="editPanelValues[row.key]"
-              v-show="
-                ['direction', 'rtFontFamily', 'labelPlaceType'].indexOf(
-                  row.key
-                ) < 0
+              v-if="
+                row.type === 'MapgisUiSelect' &&
+                  ['direction', 'rtFontFamily', 'labelPlaceType'].indexOf(
+                    row.key
+                  ) < 0
               "
-            />
-            <mapgis-ui-select-row-left
-              v-if="row.type === 'MapgisUiSelect'"
               :title="row.title"
               :dataSource="row.dataSource"
               v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'direction' &&
+            />
+            <mapgis-ui-select-row-left
+              v-if="
+                row.type === 'MapgisUiSelect' &&
+                  row.key === 'direction' &&
                   editPanelValues.materialType === 'PolylineTrailLink'
               "
-            />
-            <mapgis-ui-select-row-left
-              v-if="row.type === 'MapgisUiSelect'"
               :title="row.title"
               :dataSource="row.dataSource"
               v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'rtFontFamily' &&
+            />
+            <mapgis-ui-select-row-left
+              v-if="
+                row.type === 'MapgisUiSelect' &&
+                  row.key === 'rtFontFamily' &&
                   editPanelValues.materialType === 'text'
               "
+              :title="row.title"
+              :dataSource="row.dataSource"
+              v-model="editPanelValues[row.key]"
             />
             <!-- 图片+文字标注中，文字相对图片位置专用，左侧字符较长，右侧选择列表要设置宽度 -->
             <mapgis-ui-select-row-right
-              v-if="row.type === 'MapgisUiSelect'"
+              v-if="
+                row.type === 'MapgisUiSelect' && row.key === 'labelPlaceType'
+              "
               :title="row.title"
               :dataSource="row.dataSource"
               v-model="editPanelValues[row.key]"
-              v-show="row.key === 'labelPlaceType'"
             />
             <mapgis-ui-color-picker-left
-              v-if="row.type === 'MapgisUiColorPicker'"
-              :title="row.title"
-              v-model="editPanelValues[row.key]"
-              v-show="
-                [
-                  'outlineColor',
-                  'backgroundColor',
-                  'materialColor',
-                  'pureColor',
-                  'linkColor',
-                  'rtBackgroundColor'
-                ].indexOf(row.key) < 0
+              v-if="
+                row.type === 'MapgisUiColorPicker' &&
+                  [
+                    'outlineColor',
+                    'backgroundColor',
+                    'materialColor',
+                    'pureColor',
+                    'linkColor',
+                    'rtBackgroundColor'
+                  ].indexOf(row.key) < 0
               "
-            />
-            <mapgis-ui-color-picker-left
-              v-if="row.type === 'MapgisUiColorPicker'"
               :title="row.title"
               v-model="editPanelValues[row.key]"
-              v-show="row.key === 'outlineColor' && showOutline"
             />
             <mapgis-ui-color-picker-left
-              v-if="row.type === 'MapgisUiColorPicker'"
+              v-if="
+                row.type === 'MapgisUiColorPicker' &&
+                  row.key === 'outlineColor' &&
+                  showOutline
+              "
               :title="row.title"
               v-model="editPanelValues[row.key]"
-              v-show="row.key === 'backgroundColor' && showBackground"
             />
             <mapgis-ui-color-picker-left
-              v-if="row.type === 'MapgisUiColorPicker'"
+              v-if="
+                row.type === 'MapgisUiColorPicker' &&
+                  row.key === 'backgroundColor' &&
+                  showBackground
+              "
               :title="row.title"
               v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'materialColor' &&
+            />
+            <mapgis-ui-color-picker-left
+              v-if="
+                row.type === 'MapgisUiColorPicker' &&
+                  row.key === 'materialColor' &&
                   ['Color', 'RadarMaterial', 'CircleWaveMaterial'].indexOf(
                     editPanelValues.materialType
                   ) > -1
               "
-            />
-            <mapgis-ui-color-picker-left
-              v-if="row.type === 'MapgisUiColorPicker'"
               :title="row.title"
               v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'linkColor' &&
+            />
+            <mapgis-ui-color-picker-left
+              v-if="
+                row.type === 'MapgisUiColorPicker' &&
+                  row.key === 'linkColor' &&
                   ['PolylineTrailLink'].indexOf(editPanelValues.materialType) >
                     -1
               "
-            />
-            <mapgis-ui-color-picker-left
-              v-if="row.type === 'MapgisUiColorPicker'"
               :title="row.title"
               v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'pureColor' &&
+            />
+            <mapgis-ui-color-picker-left
+              v-if="
+                row.type === 'MapgisUiColorPicker' &&
+                  row.key === 'pureColor' &&
                   editPanelValues.materialType === 'Color'
               "
-            />
-            <mapgis-ui-color-picker-left
-              v-if="row.type === 'MapgisUiColorPicker'"
               :title="row.title"
               v-model="editPanelValues[row.key]"
-              v-show="
-                row.key === 'rtBackgroundColor' &&
+            />
+            <mapgis-ui-color-picker-left
+              v-if="
+                row.type === 'MapgisUiColorPicker' &&
+                  row.key === 'rtBackgroundColor' &&
                   editPanelValues.materialType === 'text'
               "
+              :title="row.title"
+              v-model="editPanelValues[row.key]"
             />
             <mapgis-ui-choose-picture-right
               v-if="row.type === 'MapgisUiPicture'"
@@ -487,11 +509,12 @@
               v-model="showOutline"
             />
             <mapgis-ui-switch-row-left
-              v-if="row.type === 'MapgisUiSwitch'"
+              v-if="
+                row.type === 'MapgisUiSwitch' && row.key === 'isHermiteSpline'
+              "
               :title="row.title"
               @change="$_isHermiteSpline"
               v-model="row.value"
-              v-show="row.key === 'isHermiteSpline'"
             />
             <mapgis-ui-switch-row-left
               v-if="row.type === 'MapgisUiShowBackground'"
@@ -523,7 +546,7 @@
             @resetOrientation="$_resetOrientation"
           ></mapgis-ui-graphic-model-edit-panel>
         </div>
-        <div v-show="editType === 'popup'">
+        <div v-if="editType === 'popup'">
           <div :key="index" v-for="(value, index) in attributeKeyArray">
             <mapgis-ui-input-row-left
               v-if="value === 'title'"
