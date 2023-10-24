@@ -136,7 +136,8 @@ export default {
               forms[rects[i].id] = this.$_formatExplosionUnique({
                 checkBoxArr: listProps.checkBoxArr,
                 directions: listProps.directions,
-                dataSource: listProps.dataSource
+                dataSource: listProps.dataSource,
+                ids: listProps.ids
               });
               break;
           }
@@ -148,18 +149,21 @@ export default {
       let dataSource = data.dataSource;
       let checkBoxArr = data.checkBoxArr;
       let directions = data.directions;
+      let ids = data.ids;
       let newData = [];
       if (dataSource && dataSource.length > 0) {
         if (checkBoxArr && checkBoxArr.length > 0) {
           newData.push({
             value: dataSource[0],
             direction: directions[0],
+            id: ids[0],
             checkBox: checkBoxArr[0]
           });
           for (let i = 0; i < dataSource.length; i++) {
             newData.push({
               value: dataSource[i],
               direction: directions[i],
+              id: ids[i],
               checkBox: checkBoxArr[i]
             });
           }
@@ -174,12 +178,14 @@ export default {
           */
           newData.push({
             value: dataSource[0],
-            direction: directions[0]
+            direction: directions[0],
+            id: ids[0]
           });
           for (let i = 1; i < dataSource.length; i++) {
             newData.push({
               value: dataSource[i],
-              direction: directions[i]
+              direction: directions[i],
+              id: ids[i]
             });
           }
         }
