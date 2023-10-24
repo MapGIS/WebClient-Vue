@@ -335,7 +335,7 @@ export default {
 }
 
 .mapgis-ui-graphic-icons-container {
-  width: 100%;
+  width: 101%;
   height: 62px;
   overflow: hidden;
   text-align: left;
