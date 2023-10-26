@@ -534,8 +534,8 @@ export default {
         drawElement.setGroundPrimitiveType("NONE");
       }
       const colorStyle = new Cesium.Color.fromCssColorString(
-        drawStyleCopy.color
-      ).withAlpha(drawStyleCopy.opacity);
+        drawStyleCopy.polygon?.color || drawStyleCopy.color
+      ).withAlpha(drawStyleCopy.polygon?.alpha || drawStyleCopy.opacity);
       drawElement.startDrawingCircle({
         color: colorStyle,
         callback: function(result) {
