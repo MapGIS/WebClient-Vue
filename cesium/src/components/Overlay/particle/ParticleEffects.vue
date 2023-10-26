@@ -359,9 +359,9 @@ export default {
       currentEffectType: "火焰", //当前预设特效类型
       currentEffectName: "火焰1", //当前预设特效名称
       emitterOptions: ["盒状放射", "圆形放射", "锥形放射", "球形放射"], // 发射类型下拉项
-      particleArr: [], // 粒子特效集
+      // particleArr: [], // 粒子特效集
       isLogarithmicDepthBufferEnable: undefined, // 记录对数深度缓冲区状态
-      handlerAction: undefined,
+      // handlerAction: undefined,
       tabIcons: [
         {
           title: "火焰",
@@ -450,6 +450,7 @@ export default {
   mounted() {
     this.mount();
     this.emptyImage = emptyImage();
+    this.particleArr = [];
   },
   destroyed() {
     this.removeAllParticle();
