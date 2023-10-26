@@ -17,10 +17,11 @@
           <mapgis-ui-tab-pane
             key="1"
             tab="粒子列表"
-            class="mapgis-3d-particle-effects-control-content list-pane"
+            class="control-content list-pane"
           >
             <mapgis-ui-list
               item-layout="horizontal"
+              size="small"
               :data-source="particleListCopy"
               :pagination="pagination"
               :split="false"
@@ -30,17 +31,14 @@
                 :image-style="imageStyle"
                 v-if="particleListCopy.length === 0"
               >
-                <span
-                  slot="description"
-                  class="mapgis-3d-particle-effects-empty-style"
-                >
+                <span slot="description" class="empty-style">
                   选择上方粒子类型 <br />在地图上点击添加粒子
                 </span>
               </mapgis-ui-empty>
               <mapgis-ui-list-item
+                class="list-item"
                 :class="{
-                  'mapgis-3d-particle-effects-list-active':
-                    activeIndex === index
+                  'list-active': activeIndex === index
                 }"
                 slot="renderItem"
                 slot-scope="item, index"
@@ -53,8 +51,7 @@
                     <div v-if="tab.type === 'icon'">
                       <mapgis-ui-iconfont
                         :class="{
-                          'mapgis-3d-particle-effects-item-active':
-                            particleListCopy[index].isShow === true
+                          'item-active': particleListCopy[index].isShow === true
                         }"
                         :type="tab.icon"
                         style="font-size: 16px;padding-right: 4px"
@@ -68,8 +65,7 @@
                         style="width: 24px;padding-right: 4px"
                         alt=""
                         :class="{
-                          'mapgis-3d-particle-effects-item-active':
-                            particleListCopy[index].isShow === true
+                          'item-active': particleListCopy[index].isShow === true
                         }"
                         @click="showOrHide(index)"
                       />
@@ -78,28 +74,28 @@
                   </div>
                 </template>
                 <div
-                  :class="[
-                    'mapgis-3d-particle-effects-opearation',
-                    { 'mapgis-3d-particle-effects-isBatch': isBatch === true }
-                  ]"
-                  v-if="enterIndex === index || activeIndex === index"
+                  :class="['opearation', { 'list-isBatch': isBatch === true }]"
                 >
-                  <mapgis-ui-tooltip title="配置">
+                  <mapgis-ui-tooltip
+                    title="配置"
+                    v-show="enterIndex === index || activeIndex === index"
+                  >
                     <mapgis-ui-iconfont
                       type="mapgis-shezhiditu"
                       style="font-size:16px;width:27px;margin:0 4px;"
                       @click.capture.stop="setParticleParameter(index)"
                     ></mapgis-ui-iconfont>
                   </mapgis-ui-tooltip>
-                  <mapgis-ui-tooltip title="删除">
+                  <mapgis-ui-tooltip
+                    title="删除"
+                    v-show="enterIndex === index || activeIndex === index"
+                  >
                     <mapgis-ui-iconfont
                       type="mapgis-shanchu"
                       style="font-size:16px;width:27px;margin:0 4px;"
                       @click.capture.stop="onClearParticle(index)"
                     ></mapgis-ui-iconfont>
                   </mapgis-ui-tooltip>
-                </div>
-                <div @click.stop>
                   <mapgis-ui-checkbox
                     class="item-checkbox"
                     v-show="isBatch"
@@ -123,7 +119,9 @@
               <!-- 批量操作 -->
               <mapgis-ui-setting-footer v-show="isBatch">
                 <mapgis-ui-button @click="allVisible">可见</mapgis-ui-button>
-                <mapgis-ui-button @click="allInvisible">不可见</mapgis-ui-button>
+                <mapgis-ui-button @click="allInvisible"
+                  >不可见</mapgis-ui-button
+                >
                 <mapgis-ui-button @click="allDelete">删除</mapgis-ui-button>
               </mapgis-ui-setting-footer>
             </div>
@@ -131,7 +129,7 @@
           <mapgis-ui-tab-pane
             key="2"
             tab="设置面板"
-            class="mapgis-3d-particle-effects-control-content"
+            class="control-content"
             id="parameter-formList"
           >
             <mapgis-ui-select-panel
@@ -1045,6 +1043,40 @@ export default {
   position: relative;
 }
 
+.list-item {
+  justify-content: flex-start;
+  padding: 4px 8px;
+  cursor: pointer;
+  width: 100%;
+  align-items: center;
+}
+
+.list-active {
+  background: var(--primary-2);
+}
+.item-active {
+  color: var(--primary-6);
+}
+.empty-style {
+  font-size: 14px;
+  font-family: Microsoft YaHei;
+  font-weight: 400;
+}
+.control-content {
+  max-height: 395px;
+  overflow: hidden;
+  overflow-y: auto;
+  padding-top: 10px;
+  height: 395px;
+}
+.opearation {
+  position: absolute;
+  right: 4px;
+}
+.list-isBatch {
+  position: absolute;
+}
+
 .pagination-div {
   bottom: 0;
   position: absolute;
@@ -1056,24 +1088,6 @@ export default {
   width: 100%;
   display: flex;
   justify-content: flex-end;
-}
-
-.buttons {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-top: 6px;
-  width: 100%;
-  border-top: 1px solid var(--border-color-split);
-}
-
-.full-width {
-  width: 100%;
-}
-
-.control-button {
-  width: calc(32% - 2.5px);
-  margin: 0 1px;
 }
 
 ::v-deep .mapgis-ui-list-pagination {
