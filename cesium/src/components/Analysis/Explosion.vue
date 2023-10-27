@@ -18,7 +18,11 @@
       </mapgis-ui-select>
 
       <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
-      <mapgis-ui-setting-form :layout="layout" size="default">
+      <mapgis-ui-setting-form
+        :layout="layout"
+        size="default"
+        v-if="explosionFields && explosionFields.length > 0"
+      >
         <mapgis-ui-form-item label="分组字段">
           <mapgis-ui-row>
             <mapgis-ui-col :span="24">
@@ -331,77 +335,83 @@ export default {
             "m3dSet",
             m3dSetArray
           );
-          const boundingSphere = Cesium.AlgorithmLib.mergeLayersBoundingSphere(
-            m3dSetArray
-          );
-          const range = this._getM3DSetRange(m3dSetArray[0], boundingSphere);
-          const { zmin, zmax } = range;
+          const m3dSet = m3dSetArray[0];
+          const zmin = m3dSet._root.boundingVolume.minimumHeight;
+          const zmax = m3dSet._root.boundingVolume.maximumHeight;
           this.settingCopy.distance = Math.ceil((zmax - zmin) / 2);
+          // 如果没有挂searchName，则需要从M3DSet中去拿对应的属性信息，没有属性信息，就直接使用FID
+          if (!searchParams || !searchParams.searchName) {
+            const features = this.getM3DFeatures(m3dSet._root.children);
+            // console.log(features);
+            features.sort(function(a, b) {
+              return a.id - b.id;
+            });
+            let firstFeatureCenterHeight = 0; //第一个要素中心点高度
+            const tempFeatures = [];
+            for (let i = 0; i < features.length; i++) {
+              const feature = features[i];
+              let direction;
+              if (i === 0) {
+                firstFeatureCenterHeight = feature.centerHeight;
+                direction = "0, 0, 0";
+                const { properties } = feature;
+                const keys = Object.keys(properties);
+                const fields = [];
+                for (let k = 0; k < keys.length; k++) {
+                  const field = {
+                    type: typeof properties[keys[k]],
+                    name: keys[k]
+                  };
+                  fields.push(field);
+                }
+                this.explosionFields = fields;
+                this.settingCopy.explosionField = fields[0].name;
+                this.onExplosionFieldChange(fields[0].name);
+              } else {
+                direction = `0,0,${(feature.centerHeight -
+                  firstFeatureCenterHeight) *
+                  this.settingCopy.distance}`;
+              }
+              tempFeatures.push({
+                type: feature.type,
+                properties: feature.properties,
+                direction,
+                id: feature.id
+              });
+            }
+            this.dataSource = {
+              type: "FeatureCollection",
+              dataCount: tempFeatures.length,
+              features: tempFeatures
+            };
+          }
         }
       });
     },
-    /**
-     * 获取一个m3d的包围盒范围(以最大包围盒中心点为原点)
-     */
-    _getM3DSetRange(m3dSet, boundingSphere) {
-      const layersBoundingSphereCenter = boundingSphere.center;
-      const layersBoundingSphereRadius = boundingSphere.radius;
-      const transform = m3dSet._root.computedTransform;
-      let xmin, ymin, xmax, ymax, zmin, zmax;
-      if (!transform) {
-        return null;
+    getM3DFeatures(childrenArray) {
+      let features = [];
+      for (let i = 0; i < childrenArray.length; i++) {
+        const m3dObj = childrenArray[i];
+        if (m3dObj.children && m3dObj.children.length > 0) {
+          const tempFeatures = this.getM3DFeatures(m3dObj.children);
+          features = [...features, ...tempFeatures];
+        } else {
+          const obj = m3dObj.content._attMap._obj;
+          const zmin = m3dObj._boundingVolume.minimumHeight;
+          const zmax = m3dObj._boundingVolume.maximumHeight;
+          const keys = Object.keys(obj);
+          for (let j = 0; j < keys.length; j++) {
+            const feature = {
+              type: "Feature",
+              id: keys[j],
+              centerHeight: (zmin + zmax) / 2,
+              properties: obj[keys[j]]
+            };
+            features.push(feature);
+          }
+        }
       }
-      const inverseMatrix = Cesium.Matrix4.inverse(
-        transform,
-        new Cesium.Matrix4()
-      );
-
-      if (m3dSet.constructor.name == "Cesium3DTileset") {
-        let range = { xmin, ymin, xmax, ymax, zmin, zmax };
-        Object.keys(range).forEach(item => {
-          if (item == "xmin" || item == "ymin")
-            range[item] = -layersBoundingSphereRadius;
-          if (item == "xmax" || item == "ymax")
-            range[item] = layersBoundingSphereRadius;
-          if (item == "zmin") range[item] = -layersBoundingSphereRadius / 2;
-          if (item == "zmax") range[item] = layersBoundingSphereRadius / 2;
-        });
-        return range;
-      }
-
-      // 东北角
-      const northeastCornerCartesian =
-        m3dSet._root.boundingVolume.northeastCornerCartesian;
-      // 东北角本地坐标
-      const northeastCornerLocal = Cesium.Matrix4.multiplyByPoint(
-        inverseMatrix,
-        northeastCornerCartesian,
-        new Cesium.Cartesian3()
-      );
-      // 西南角
-      const southwestCornerCartesian =
-        m3dSet._root.boundingVolume.southwestCornerCartesian;
-      // 西南角本地坐标
-      const southwestCornerLocal = Cesium.Matrix4.multiplyByPoint(
-        inverseMatrix,
-        southwestCornerCartesian,
-        new Cesium.Cartesian3()
-      );
-      zmin = m3dSet._root.boundingVolume.minimumHeight;
-      zmax = m3dSet._root.boundingVolume.maximumHeight;
-
-      // 多个模型合并包围盒中心点本地坐标
-      const layersBoundingSphereCenterLocal = Cesium.Matrix4.multiplyByPoint(
-        inverseMatrix,
-        layersBoundingSphereCenter,
-        new Cesium.Cartesian3()
-      );
-
-      xmin = southwestCornerLocal.x - layersBoundingSphereCenterLocal.x;
-      ymin = southwestCornerLocal.y - layersBoundingSphereCenterLocal.y;
-      xmax = northeastCornerLocal.x - layersBoundingSphereCenterLocal.x;
-      ymax = northeastCornerLocal.y - layersBoundingSphereCenterLocal.y;
-      return { xmin, ymin, xmax, ymax, zmin, zmax };
+      return features;
     },
     async getFields(params) {
       // 先支持简单要素类的查询，调用igs的资源接口
@@ -434,6 +444,11 @@ export default {
       const { features } = this.geoJSONData;
       let tempFeatures = [];
       let firstFeatureCenterHeight = 0; //第一个要素中心点高度
+      if (features[0].attributes && features[0].attributes.FID) {
+        features.sort(function(a, b) {
+          return a.attributes.FID - b.attributes.FID;
+        });
+      }
       for (let i = 0; i < features.length; i++) {
         const feature = features[i];
         const { attributes, bound } = feature;
@@ -451,7 +466,8 @@ export default {
           type: "Feature",
           properties: attributes,
           bound,
-          direction
+          direction,
+          id: attributes.FID !== undefined ? attributes.FID : i
         });
       }
       this.dataSource = {
@@ -507,10 +523,7 @@ export default {
             const obj = {};
             obj[key] = features[i].properties[key];
             obj.direction = features[i].direction;
-            obj.id =
-              features[i].properties.FID !== undefined
-                ? features[i].properties.FID
-                : i;
+            obj.id = features[i].id;
             tempDataSourceCopy.push(obj);
           }
         }
