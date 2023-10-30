@@ -81,8 +81,8 @@ export default {
      * @description 表单布局
      */
     layout: {
-    type: String,
-    default: "vertical" // 'horizontal' 'vertical' 'inline'
+      type: String,
+      default: "vertical" // 'horizontal' 'vertical' 'inline'
     },
     /**
      * @type Number
@@ -129,10 +129,10 @@ export default {
       viewPointPosition: "",
 
       // 观察点
-      viewPoint: undefined,
+      // viewPoint: undefined,
 
       // 目标点
-      targetPoint: undefined,
+      // targetPoint: undefined,
 
       // 观察点坐标
       viewPosition: undefined,
@@ -146,7 +146,7 @@ export default {
 
       percent: 0,
       maskShow: false,
-      maskText: '正在分析中, 请稍等...0%',
+      maskText: "正在分析中, 请稍等...0%"
     };
   },
   computed: {
@@ -156,31 +156,31 @@ export default {
   },
   watch: {
     exHeight: {
-      handler: function (newVal, oldVal) {
+      handler: function(newVal, oldVal) {
         this.formData.exHeight = newVal;
       },
       immediate: true
     },
     visibleColor: {
-      handler: function (newVal, oldVal) {
+      handler: function(newVal, oldVal) {
         this.formData.visibleColor = newVal;
       },
       immediate: true
     },
     unVisibleColor: {
-      handler: function (newVal, oldVal) {
+      handler: function(newVal, oldVal) {
         this.formData.unVisibleColor = newVal;
       },
       immediate: true
     },
     formDataNew: {
       deep: true,
-      handler: function (newVal, oldVal) {
+      handler: function(newVal, oldVal) {
         const unVisibleColor = new this.Cesium.Color.fromCssColorString(
-            newVal.unVisibleColor
+          newVal.unVisibleColor
         );
         const visibleColor = new this.Cesium.Color.fromCssColorString(
-            newVal.visibleColor
+          newVal.visibleColor
         );
         let find = this.findSource();
         if (this.visibilityArr.length > 0) {
@@ -194,7 +194,7 @@ export default {
               if (newVal.exHeight !== oldVal.exHeight) {
                 // 改变通视分析工具的附加高度(分析工具的观察点坐标也会同时更新)
                 visiblityAnalysis.exHeight = newVal.exHeight - oldVal.exHeight;
-                if(this.viewPoint){
+                if (this.viewPoint) {
                   // 改变观察点坐标
                   this.viewPoint.position._value = item.viewPosition;
                   // 记录新的观察点坐标
@@ -268,7 +268,7 @@ export default {
       this.onClickStop();
       //深度检测开启
       this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
-          this.viewer
+        this.viewer
       );
       if (!this.isDepthTestAgainstTerrainEnable) {
         // 如果深度检测没有开启，则开启
@@ -328,14 +328,16 @@ export default {
     setPercent(result) {
       let vm = this;
       vm.percent = result;
-      vm.maskText = `正在分析中, 请稍等...${Number((result * 100).toFixed(2))}%`;
+      vm.maskText = `正在分析中, 请稍等...${Number(
+        (result * 100).toFixed(2)
+      )}%`;
       const timer = setInterval(() => {
         if (vm.percent === 1) {
           vm.toggleMask(false);
           vm.$emit("success");
         }
         clearInterval(timer);
-      }, 100)
+      }, 100);
     },
 
     toggleMask(status) {
@@ -343,20 +345,22 @@ export default {
     },
 
     startEventHandler() {
-      this.handlerAction = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
+      this.handlerAction = new Cesium.ScreenSpaceEventHandler(
+        this.viewer.scene.canvas
+      );
     },
     // 创建通视分析工具
     createVisibility() {
-      let {viewer} = this;
+      let { viewer } = this;
       const unVisibleColor = new this.Cesium.Color.fromCssColorString(
-          this.formData.unVisibleColor
+        this.formData.unVisibleColor
       );
       const visibleColor = new this.Cesium.Color.fromCssColorString(
-          this.formData.visibleColor
+        this.formData.visibleColor
       );
 
       // 初始化通视分析类
-      const visibility = new Cesium.VisiblityAnalysis({scene: viewer.scene});
+      const visibility = new Cesium.VisiblityAnalysis({ scene: viewer.scene });
       visibility.unvisibleColor = unVisibleColor;
       visibility.visibleColor = visibleColor;
       // 添加通视分析结果显示
@@ -369,13 +373,13 @@ export default {
      */
     _restoreDepthTestAgainstTerrain() {
       if (
-          this.isDepthTestAgainstTerrainEnable !== undefined &&
-          this.isDepthTestAgainstTerrainEnable !==
+        this.isDepthTestAgainstTerrainEnable !== undefined &&
+        this.isDepthTestAgainstTerrainEnable !==
           isDepthTestAgainstTerrainEnable(this.viewer)
       ) {
         setDepthTestAgainstTerrainEnable(
-            this.isDepthTestAgainstTerrainEnable,
-            this.viewer
+          this.isDepthTestAgainstTerrainEnable,
+          this.viewer
         );
       }
     },
@@ -383,10 +387,16 @@ export default {
     // 点击“结束分析”按钮回调
     onClickStop() {
       // 注销鼠标的各项监听事件
-      if (this.handlerAction){
-        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
-        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
-        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+      if (this.handlerAction) {
+        this.handlerAction.removeInputAction(
+          Cesium.ScreenSpaceEventType.LEFT_CLICK
+        );
+        this.handlerAction.removeInputAction(
+          Cesium.ScreenSpaceEventType.RIGHT_CLICK
+        );
+        this.handlerAction.removeInputAction(
+          Cesium.ScreenSpaceEventType.MOUSE_MOVE
+        );
       }
       this.viewer.entities.removeAll();
 
@@ -421,7 +431,7 @@ export default {
         }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
 
         this.handlerAction.setInputAction(event => {
-          this.registerMouseMoveEvent(event,visibility);
+          this.registerMouseMoveEvent(event, visibility);
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
         this.isAddEventListener = true;
@@ -429,11 +439,9 @@ export default {
     },
 
     // 注册通视分析鼠标左键点击事件
-    registerMouseLClickEvent(event,visibility) {
-      let {vueKey, vueIndex,vueCesium} = this;
-      let cartesian = this.viewer.getCartesian3Position(
-          event.position
-      );
+    registerMouseLClickEvent(event, visibility) {
+      let { vueKey, vueIndex, vueCesium } = this;
+      let cartesian = this.viewer.getCartesian3Position(event.position);
       if (!this.hasViewPosition && cartesian !== undefined) {
         // 若还未选择观察点,则记录下观察点坐标
 
@@ -468,10 +476,10 @@ export default {
 
         //修改manager的options
         vueCesium.VisiblityAnalysisManager.changeOptions(
-            vueKey,
-            vueIndex,
-            "visiblityAnalysis",
-            visibility
+          vueKey,
+          vueIndex,
+          "visiblityAnalysis",
+          visibility
         );
 
         // 添加目标点到地图
@@ -552,8 +560,7 @@ export default {
 
     // 从地图上移除目标点
     removeTargetPoint() {
-      if (this.targetPoint)
-        this.viewer.entities.remove(this.targetPoint);
+      if (this.targetPoint) this.viewer.entities.remove(this.targetPoint);
     }
   },
   mounted() {
