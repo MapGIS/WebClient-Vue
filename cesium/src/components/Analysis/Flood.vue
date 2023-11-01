@@ -16,14 +16,12 @@
           <mapgis-ui-form-item label="淹没最低高度">
             <mapgis-ui-input-number-addon
               v-model.number="startHeightCopy"
-              :max="maxHeightCopy"
               addon-after="米"
             />
           </mapgis-ui-form-item>
           <mapgis-ui-form-item label="淹没最高高度">
             <mapgis-ui-input-number-addon
               v-model.number="maxHeightCopy"
-              :min="startHeightCopy"
               addon-after="米"
             />
           </mapgis-ui-form-item>
@@ -40,6 +38,10 @@
               :disableAlpha="false"
             ></mapgis-ui-sketch-color-picker>
           </mapgis-ui-form-item>
+          <mapgis-ui-switch-row-left
+            title="开启水面倒影"
+            v-model="isWaterReflectionMode"
+          ></mapgis-ui-switch-row-left>
         </mapgis-ui-setting-form>
         <mapgis-ui-setting-footer>
           <mapgis-ui-button type="primary" @click="analysis"
@@ -178,7 +180,8 @@ export default {
       mHeight: 2000, // 淹没最高高度变化前的值
       timer: null,
       changeMaxHeight: false,
-      changeStartHeight: false
+      changeStartHeight: false,
+      isWaterReflectionMode: false
     };
   },
   created() {},
@@ -265,6 +268,9 @@ export default {
           }, 1000);
         }
       }
+    },
+    isWaterReflectionMode() {
+      this.remove();
     }
   },
   methods: {
@@ -284,7 +290,9 @@ export default {
         vm.$emit("load", vm);
         vueCesium.FloodAnalysisManager.addSource(vueKey, vueIndex, dataSource, {
           drawElement: null,
-          floodAnalysis: null
+          floodAnalysis: null,
+          floodAnalysisReflection: null,
+          waterReflection: null
         });
       });
     },
@@ -393,6 +401,7 @@ export default {
      * @description 进行洪水淹没分析
      */
     _doAnalysis() {
+      this._removeFlood();
       const { positions } = this;
       if (!positions) {
         this.$message.warning("请绘制分析区域");
@@ -400,57 +409,102 @@ export default {
       }
       const { vueCesium, vueKey, vueIndex } = this;
       const options = this._getSourceOptions();
-      let { floodAnalysis } = options;
-      const {
-        startHeightCopy,
-        minHeight,
-        maxHeightCopy,
-        floodColorCopy,
-        floodSpeedCopy,
-        specularIntensity,
-        amplitude,
-        animationSpeed,
-        frequency
-      } = this;
+      let { floodAnalysis, floodAnalysisReflection, waterReflection } = options;
+      if (this.isWaterReflectionMode) {
+        const positionsArr = [];
+        for (let position of positions) {
+          positionsArr.push(Cesium.Cartographic.fromCartesian(position));
+        }
+        const {
+          minHeight,
+          maxHeightCopy,
+          floodSpeedCopy,
+          floodColorCopy
+        } = this;
+        const waterColor = this._getColor(floodColorCopy);
+        waterReflection =
+          waterReflection ||
+          new Cesium.WaterReflection({
+            viewer: this.viewer,
+            positions: positionsArr,
+            distortionScale: 2.0,
+            waterColor
+          });
+        vueCesium.FloodAnalysisManager.changeOptions(
+          vueKey,
+          vueIndex,
+          "waterReflection",
+          waterReflection
+        );
+        floodAnalysisReflection =
+          floodAnalysisReflection ||
+          new Cesium.FloodAnalysisReflection({
+            viewer: this.viewer,
+            water: waterReflection,
+            minHeight,
+            maxHeight: maxHeightCopy,
+            floodSpeed: Number(floodSpeedCopy) / 60,
+            closeBorder: true
+          });
+        floodAnalysisReflection.start();
+        vueCesium.FloodAnalysisManager.changeOptions(
+          vueKey,
+          vueIndex,
+          "floodAnalysisReflection",
+          floodAnalysisReflection
+        );
+      } else {
+        const {
+          startHeightCopy,
+          minHeight,
+          maxHeightCopy,
+          floodColorCopy,
+          floodSpeedCopy,
+          specularIntensity,
+          amplitude,
+          animationSpeed,
+          frequency
+        } = this;
 
-      // 初始化洪水淹没分析类
-      floodAnalysis =
-        floodAnalysis || new Cesium.FloodAnalysis(this.viewer, positions);
-      //设置洪水淹没区域最低开始高度
-      floodAnalysis.minHeight = Number(startHeightCopy);
-      //设置洪水淹没区域最高高度
-      floodAnalysis.maxHeight = this.maxHeightCopy || Number(maxHeightCopy);
-      // 设置洪水上涨速度
-      floodAnalysis.floodSpeed = Number(floodSpeedCopy);
-      // 洪水淹没区域最低高度
-      floodAnalysis.startHeight = Number(startHeightCopy);
-      // 洪水颜色
-      floodAnalysis.floodColor = this._getColor(floodColorCopy);
-      // 水纹频率 指波浪的个数
-      floodAnalysis.frequency = Number(frequency);
-      // 水纹速度
-      floodAnalysis.animationSpeed = Number(animationSpeed);
-      // 水波的高度
-      floodAnalysis.amplitude = Number(amplitude);
-      // 指定光线强度
-      floodAnalysis.specularIntensity = Number(specularIntensity);
+        // 初始化洪水淹没分析类
+        floodAnalysis =
+          floodAnalysis || new Cesium.FloodAnalysis(this.viewer, positions);
+        //设置洪水淹没区域最低开始高度
+        floodAnalysis.minHeight = Number(startHeightCopy);
+        //设置洪水淹没区域最高高度
+        floodAnalysis.maxHeight = this.maxHeightCopy || Number(maxHeightCopy);
+        // 设置洪水上涨速度
+        floodAnalysis.floodSpeed = Number(floodSpeedCopy);
+        // 洪水淹没区域最低高度
+        floodAnalysis.startHeight = Number(startHeightCopy);
+        // 洪水颜色
+        floodAnalysis.floodColor = this._getColor(floodColorCopy);
+        // 水纹频率 指波浪的个数
+        floodAnalysis.frequency = Number(frequency);
+        // 水纹速度
+        floodAnalysis.animationSpeed = Number(animationSpeed);
+        // 水波的高度
+        floodAnalysis.amplitude = Number(amplitude);
+        // 指定光线强度
+        floodAnalysis.specularIntensity = Number(specularIntensity);
 
-      this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
-        this.viewer
-      );
-      if (!this.isDepthTestAgainstTerrainEnable) {
-        // 如果深度检测没有开启，则开启
-        setDepthTestAgainstTerrainEnable(true, this.viewer);
+        this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
+          this.viewer
+        );
+        if (!this.isDepthTestAgainstTerrainEnable) {
+          // 如果深度检测没有开启，则开启
+          setDepthTestAgainstTerrainEnable(true, this.viewer);
+        }
+        // 添加洪水淹没结果显示
+        this.viewer.scene.visualAnalysisManager.add(floodAnalysis);
+        this.mHeight = maxHeightCopy;
+        vueCesium.FloodAnalysisManager.changeOptions(
+          vueKey,
+          vueIndex,
+          "floodAnalysis",
+          floodAnalysis
+        );
       }
-      // 添加洪水淹没结果显示
-      this.viewer.scene.visualAnalysisManager.add(floodAnalysis);
-      this.mHeight = maxHeightCopy;
-      vueCesium.FloodAnalysisManager.changeOptions(
-        vueKey,
-        vueIndex,
-        "floodAnalysis",
-        floodAnalysis
-      );
     },
     /**
      * @description 获取SourceOptions,以方便获取洪水淹没分析对象和绘制对象
@@ -491,7 +545,11 @@ export default {
     _removeFlood() {
       const { vueCesium, vueKey, vueIndex } = this;
       const options = this._getSourceOptions();
-      const { floodAnalysis } = options;
+      const {
+        floodAnalysis,
+        floodAnalysisReflection,
+        waterReflection
+      } = options;
 
       // 判断是否已有洪水淹没分析结果
       if (floodAnalysis) {
@@ -501,6 +559,25 @@ export default {
           vueKey,
           vueIndex,
           "floodAnalysis",
+          null
+        );
+      }
+      if (floodAnalysisReflection) {
+        floodAnalysisReflection.destroy();
+        floodAnalysisReflection.destroyWaterCloseBorder();
+        vueCesium.FloodAnalysisManager.changeOptions(
+          vueKey,
+          vueIndex,
+          "floodAnalysisReflection",
+          null
+        );
+      }
+      if (waterReflection) {
+        waterReflection.destroy();
+        vueCesium.FloodAnalysisManager.changeOptions(
+          vueKey,
+          vueIndex,
+          "waterReflection",
           null
         );
       }
@@ -537,6 +614,10 @@ export default {
 .mapgis-widget-flood-analysis {
   max-height: calc(50vh);
   overflow-y: auto;
+}
+
+::v-deep .mapgis-ui-switch-row-left-title {
+  padding-left: 0px;
 }
 
 ::v-deep .mapgis-ui-form-item {
