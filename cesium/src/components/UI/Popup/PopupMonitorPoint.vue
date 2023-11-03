@@ -1,32 +1,42 @@
 <template>
   <div class="monitor-point-popup-wrapper">
-    <div class="data-point-content" v-if="type === 'data'">
+    <div class="data-point-content">
       <div class="monitor-left">
-        <span class="monitor-title">监测点信息- {{ monitorPointId }}</span>
-        <mapgis-ui-list
-          item-layout="horizontal"
-          :locale="emptyText"
-          :data-source="dataList"
-          size="small"
-          class="table-marker"
-          bordered
+        <span class="monitor-title" v-show="listPanelVisible"
+          >监测点信息- {{ monitorPointId }}</span
         >
-          <mapgis-ui-list-item
-            slot="renderItem"
-            slot-scope="item"
-            class="table-marker-item"
+        <div class="monitor-table">
+          <mapgis-ui-list
+            item-layout="horizontal"
+            :locale="emptyText"
+            :data-source="dataList"
+            size="small"
+            class="table-marker"
+            bordered
+            :style="{ width: listPanelVisible ? '350px' : 0 }"
           >
-            <div :title="item">
-              {{ item }}
-            </div>
-            <div :title="infoData[item]">
-              {{ infoData[item] }}
-            </div>
-          </mapgis-ui-list-item>
-        </mapgis-ui-list>
+            <mapgis-ui-list-item
+              slot="renderItem"
+              slot-scope="item"
+              class="table-marker-item"
+            >
+              <div :title="item">
+                {{ item }}
+              </div>
+              <div :title="infoData[item]">
+                {{ infoData[item] }}
+              </div>
+            </mapgis-ui-list-item>
+          </mapgis-ui-list>
+          <div class="monitor-handle" @click="onTogglelistPanel">
+            <mapgis-ui-iconfont
+              :type="listPanelVisible ? 'mapgis-left' : 'mapgis-right'"
+            ></mapgis-ui-iconfont>
+          </div>
+        </div>
       </div>
-      <div class="monitor-right">
-        <span class="monitor-title">监测曲线</span>
+      <div class="monitor-right" v-if="type === 'data'">
+        <span class="monitor-title">监测曲线- {{ monitorPointId }}</span>
         <div class="monitor-search-time">
           <mapgis-ui-range-picker
             :locale="locale"
@@ -51,17 +61,21 @@
             </mapgis-ui-select-option>
           </mapgis-ui-select>
         </div>
+
         <div :ref="id" class="monitor-echart" v-show="showEcharts" />
         <span class="monitor-tips" v-show="!showEcharts">暂无数据</span>
       </div>
-    </div>
-    <div class="monitor-point-content" v-if="type === 'video'">
-      <!-- <video
-        class="monitor-video"
-        controls="controls"
-        autoplay="autoplay"
-        src="https://www.w3school.com.cn/i/movie.ogg"
-      ></video> -->
+      <div class="monitor-point-content" v-if="type === 'video'">
+        <div class="monitor-title">视频- {{ monitorPointId }}</div>
+        <div class="monitor-video">
+          <video
+            controls="controls"
+            autoplay="autoplay"
+            class="video"
+            :src="videoUrl"
+          ></video>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -120,6 +134,21 @@ export default {
           mon_project_unit: "监测指标单位"
         };
       }
+    },
+    // 视频地址
+    videoUrl: {
+      type: String,
+      default: ""
+    },
+    // x轴显示字段
+    xAxis: {
+      type: String,
+      default: "mon_time_ts"
+    },
+    // y轴显示字段
+    yAxis: {
+      type: String,
+      default: "mon_acc_value"
     }
   },
   data() {
@@ -168,7 +197,8 @@ export default {
           label: "全部"
         }
       ],
-      hasChange: false
+      hasChange: false,
+      listPanelVisible: false
     };
   },
   computed: {
@@ -190,6 +220,26 @@ export default {
       };
     }
   },
+  watch: {
+    listPanelVisible: {
+      handler() {
+        if (this.type === "video") {
+          const dom = document.querySelectorAll(
+            ".mapgis-feature-popup-container"
+          );
+
+          dom &&
+            dom.forEach(item => {
+              if (this.listPanelVisible) {
+                item.style.width = `${this.componentWidth}px`;
+              } else {
+                item.style.width = "550px";
+              }
+            });
+        }
+      }
+    }
+  },
 
   async mounted() {
     if (this.type === "data") {
@@ -197,10 +247,18 @@ export default {
       setTimeout(() => {
         this.initEcharts();
       }, 500);
+    } else {
+      this.getMonitorData();
     }
   },
 
   methods: {
+    onTogglelistPanel() {
+      this.listPanelVisible = !this.listPanelVisible;
+      if (this.type === "data") {
+        this.initEcharts();
+      }
+    },
     async initEcharts() {
       const beginDate = this.timePick[0]
         ? moment(this.timePick[0]).format("YYYY-MM-DD+HH:mm:ss")
@@ -228,16 +286,8 @@ export default {
               const key = this.propertyRelation[item];
               info[key] = record[item];
             });
-            this.infoData = {
-              监测点编号: record.cd,
-              监测单位: record.jcdw,
-              监测对象: record.jcdx,
-              所属测区: record.ssyq,
-              监测类型: record.lx,
-              监测项目: record.jcxm,
-              监测方式: record.fs,
-              监测指标单位: record.mon_project_unit
-            };
+            this.infoData = info;
+            this.listPanelVisible = true;
           }
         })
         .catch(e => {
@@ -265,7 +315,7 @@ export default {
               return;
             }
             const timeerDate = res.data.records.reduce((arr, item) => {
-              const res = [item["mon_time_ts"], item["mon_acc_value"]];
+              const res = [item[this.xAxis], item[this.yAxis]];
               arr.push(res);
               return arr;
             }, []);
@@ -293,9 +343,9 @@ export default {
       if (!echartsDom) return;
       this.myCharts = echarts.init(echartsDom, null, {
         renderer: "canvas",
-        useDirtyRect: false,
-        width: echartsDom.clientWidth,
-        height: echartsDom.clientHeight
+        useDirtyRect: false
+        // width: echartsDom.clientWidth,
+        // height: echartsDom.clientHeight
       });
       const option = {
         tooltip: {
@@ -480,10 +530,32 @@ export default {
           flex: 1 0 0%;
         }
       }
+      .monitor-table {
+        position: relative;
+        .monitor-handle {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border: 1px solid var(--border-color-base);
+          border-left: none;
+          color: var(--text-color);
+          border-radius: 0 4px 4px 0;
+          width: 16px;
+          height: 64px;
+          position: absolute;
+          top: 100px;
+          right: -15px;
+          cursor: pointer;
+          &:hover {
+            color: white;
+            background: $primary-color;
+          }
+        }
+      }
     }
     .monitor-right {
       flex: 1;
-      margin-left: 12px;
+      margin-left: 16px;
       display: flex;
       flex-direction: column;
       .monitor-echart {
@@ -497,11 +569,18 @@ export default {
         color: var(--text-color);
       }
     }
-  }
-  .monitor-point-content {
-    margin-top: 15px;
-    .monitor-video {
-      width: 100%;
+    .monitor-point-content {
+      flex: 1;
+      margin-left: 30px;
+      .monitor-video {
+        height: 250px;
+        max-height: 250px;
+        text-align: center;
+        margin-top: 20px;
+        .video {
+          height: 100%;
+        }
+      }
     }
   }
 }
