@@ -48,6 +48,7 @@ import { M3dType, M3dType_0_0 } from "./M3dType";
 import PopupMixin from "../Mixin/PopupMixin";
 import modelSwitchPopup from "./components/M3dModelSwitch";
 import Popup from "../../UI/Popup/Popup.vue";
+import * as Feature from "../../service/comprehensive-query/util/feature";
 
 const { M3DTileDataInfo } = G3D;
 
@@ -84,6 +85,11 @@ export default {
       default: () => {
         return { popupType: "card" };
       }
+    },
+    // 挂靠的查询参数，比如三维简单要素类，如果有挂靠的查询参数，则拾取的要素属性使用从三维简单要素类里的内容
+    searchParams: {
+      type: Object,
+      default: () => {}
     }
   },
   components: {
@@ -297,8 +303,7 @@ export default {
       this.featureposition = undefined;
       this.featureproperties = undefined;
     },
-    pickFeature(payload) {
-      debugger;
+    async pickFeature(payload) {
       const vm = this;
       const { movement } = payload;
 
@@ -339,24 +344,21 @@ export default {
       tileset.pickedOid = oid;
       tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
       let titlefield = popupOptions ? popupOptions.title : undefined;
-      if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
-        let result = feature.content.getAttributeByOID(oid) || {};
+      const properties = await this.getFeaturePorpertiesByOid(oid);
+      if (Object.keys(properties).length > 0) {
         if (this.popupShowType === "default") {
-          // vm.iClickFeatures = [
-          //   { properties: result, title: result[titlefield] }
-          // ];
-          vm.featureproperties = result;
+          vm.featureproperties = properties;
         } else {
           // title放在最前面
           let popupContent = {};
-          popupContent = result[titlefield]
-            ? { title: result[titlefield], ...result }
-            : { ...result };
+          popupContent = properties[titlefield]
+            ? { title: properties[titlefield], ...properties }
+            : { ...properties };
           vm.popupOverlay && vm.popupOverlay.setContent(popupContent);
         }
       } else {
-        tileset.queryAttributes(oid).then(function(result) {
-          result = result || {};
+        if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
+          let result = feature.content.getAttributeByOID(oid) || {};
           if (this.popupShowType === "default") {
             // vm.iClickFeatures = [
             //   { properties: result, title: result[titlefield] }
@@ -370,7 +372,24 @@ export default {
               : { ...result };
             vm.popupOverlay && vm.popupOverlay.setContent(popupContent);
           }
-        });
+        } else {
+          tileset.queryAttributes(oid).then(function(result) {
+            result = result || {};
+            if (this.popupShowType === "default") {
+              // vm.iClickFeatures = [
+              //   { properties: result, title: result[titlefield] }
+              // ];
+              vm.featureproperties = result;
+            } else {
+              // title放在最前面
+              let popupContent = {};
+              popupContent = result[titlefield]
+                ? { title: result[titlefield], ...result }
+                : { ...result };
+              vm.popupOverlay && vm.popupOverlay.setContent(popupContent);
+            }
+          });
+        }
       }
       if (this.popupShowType === "default" && vm.iClickPosition) {
         vm.featureposition = vm.iClickPosition;
@@ -662,6 +681,41 @@ export default {
           }
         });
       }
+    },
+    async getFeaturePorpertiesByOid(oid) {
+      const properties = {};
+      if (this.searchParams) {
+        const { domain, serverName, layerIndex, gdbp } = this.searchParams;
+        const featureSet = await Feature.FeatureQuery.query(
+          {
+            domain,
+            f: "json",
+            IncludeAttribute: true,
+            IncludeGeometry: false,
+            IncludeWebGraphic: false,
+            where: null,
+            gdbp,
+            docName: serverName,
+            layerIdxs: layerIndex,
+            rtnLabel: false,
+            objectIds: oid,
+            requestType: "POST"
+          },
+          false,
+          true
+        );
+        if (featureSet && featureSet.SFEleArray) {
+          const { AttStruct, SFEleArray } = featureSet;
+          const { FldAlias, FldName } = AttStruct;
+          const { AttValue } = SFEleArray[0];
+
+          for (let i = 0; i < AttValue.length; i++) {
+            const tag = FldAlias[i] ? FldAlias[i] : FldName[i];
+            properties[tag] = AttValue[i];
+          }
+        }
+      }
+      return properties;
     }
   }
 };

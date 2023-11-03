@@ -1137,6 +1137,7 @@ export default {
         let position = movement.position || movement.endPosition;
         let cartesian = viewer.getCartesian3Position(position);
         let ray = scene.camera.getPickRay(position, tempRay);
+        // 拾取球上地形的点，先屏蔽
         let cartesian2 = scene.globe.pick(ray, scene, tempPos);
 
         let pickedFeature = viewer.scene.pick(movement.position);
@@ -1147,12 +1148,12 @@ export default {
 
         let longitudeString2, latitudeString2, heightString2;
 
-        if (Cesium.defined(cartesian2)) {
-          let cartographic2 = Cesium.Cartographic.fromCartesian(cartesian);
-          longitudeString2 = Cesium.Math.toDegrees(cartographic2.longitude);
-          latitudeString2 = Cesium.Math.toDegrees(cartographic2.latitude);
-          heightString2 = cartographic2.height;
-        }
+        // if (Cesium.defined(cartesian2)) {
+        let cartographic2 = Cesium.Cartographic.fromCartesian(cartesian);
+        longitudeString2 = Cesium.Math.toDegrees(cartographic2.longitude);
+        latitudeString2 = Cesium.Math.toDegrees(cartographic2.latitude);
+        heightString2 = cartographic2.height;
+        // }
 
         if (cartesian || cartesian2) {
           let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
@@ -1204,16 +1205,22 @@ export default {
             tileset.pickedColor = Cesium.Color.fromCssColorString(
               this.highlightStyle
             );
-            if (tileset._useRawSaveAtt && Cesium.defined(pickedFeature)) {
-              let result = pickedFeature.content.getAttributeByOID(oid) || {};
-              vm.featureproperties = result;
-              vm.iClickFeatures = [{ properties: result }];
+            const properties20 = await this.getFeaturePorpertiesByOid(oid);
+            if (Object.keys(properties20).length > 0) {
+              vm.featureproperties = properties20;
+              vm.iClickFeatures = [{ properties20 }];
             } else {
-              tileset.queryAttributes(oid).then(function(result) {
-                result = result || {};
+              if (tileset._useRawSaveAtt && Cesium.defined(pickedFeature)) {
+                let result = pickedFeature.content.getAttributeByOID(oid) || {};
                 vm.featureproperties = result;
                 vm.iClickFeatures = [{ properties: result }];
-              });
+              } else {
+                tileset.queryAttributes(oid).then(function(result) {
+                  result = result || {};
+                  vm.featureproperties = result;
+                  vm.iClickFeatures = [{ properties: result }];
+                });
+              }
             }
           }
           if (
@@ -1283,18 +1290,9 @@ export default {
     async getFeaturePorpertiesByOid(oid) {
       const properties = {};
       if (this.searchParams) {
-        const {
-          ip,
-          port,
-          domain,
-          serverName,
-          layerIndex,
-          gdbp
-        } = this.searchParams;
+        const { domain, serverName, layerIndex, gdbp } = this.searchParams;
         const featureSet = await Feature.FeatureQuery.query(
           {
-            ip,
-            port: port.toString(),
             domain,
             f: "json",
             IncludeAttribute: true,
