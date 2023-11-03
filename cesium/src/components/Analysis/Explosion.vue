@@ -366,7 +366,6 @@ export default {
                 }
                 this.explosionFields = fields;
                 this.settingCopy.explosionField = fields[0].name;
-                this.onExplosionFieldChange(fields[0].name);
               } else {
                 direction = `0,0,${(feature.centerHeight -
                   firstFeatureCenterHeight) *
@@ -384,6 +383,7 @@ export default {
               dataCount: tempFeatures.length,
               features: tempFeatures
             };
+            this.onExplosionFieldChange(this.explosionFields[0].name);
           }
         }
       });
@@ -459,8 +459,13 @@ export default {
           firstFeatureCenterHeight = centerHeight;
           direction = "0, 0, 0";
         } else {
-          direction = `0,0,${(centerHeight - firstFeatureCenterHeight) *
-            this.settingCopy.distance}`;
+          let distance = Number(
+            (centerHeight - firstFeatureCenterHeight).toFixed(2)
+          );
+          if (distance === 0) {
+            distance = 0.1;
+          }
+          direction = `0,0,${distance * this.settingCopy.distance}`;
         }
         tempFeatures.push({
           type: "Feature",
