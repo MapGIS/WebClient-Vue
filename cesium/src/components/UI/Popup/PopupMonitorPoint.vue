@@ -548,7 +548,7 @@ export default {
           cursor: pointer;
           &:hover {
             color: white;
-            background: $primary-color;
+            background: var(--primary-color);
           }
         }
       }
