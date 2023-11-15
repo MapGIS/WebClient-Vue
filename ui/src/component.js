@@ -259,6 +259,9 @@ export { default as MapgisUiLayerCheckList } from "./view/layer-list/LayerCheckL
 // favorites
 export { default as mapgisUiFavorites } from "./view/favorites/favorites.vue";
 
+// feature-edit
+export { default as mapgisUiFeatureEdit } from "./view/feature-edit/FeatureEdit.vue";
+
 // select-list
 export { default as MapgisUiLayerSelectList } from "./view/layer-list/LayerSelectList.vue";
 
