@@ -1,5 +1,5 @@
 <template>
-  <span/>
+  <span />
 </template>
 <script>
 import ServiceLayer from "../ServiceLayer";
@@ -19,60 +19,55 @@ export default {
   },
   watch: {
     layers: {
-      handler: function () {
+      handler: function() {
         this.unmount();
         this.mount();
       }
     }
   },
-  data(){
+  data() {
     return {
       managerName: "IgsDocLayerManager",
       providerName: "MapGISMapServerImageryProvider",
-      checkType:{
-        tileWidth:"number",
-        tileHeight:"number",
-        minimumLevel:"number",
-        maximumLevel:"number"
+      checkType: {
+        tileWidth: "number",
+        tileHeight: "number",
+        minimumLevel: "number",
+        maximumLevel: "number"
       }
-    }
+    };
   },
   mounted() {
     this.mount();
   },
   methods: {
-    mount(){
+    mount() {
       //处理独有参数
-      let tilingScheme = this.$_setTilingScheme(this.srs),extensions = [];
+      let tilingScheme = this.$_setTilingScheme(this.srs),
+        extensions = [];
       if (
-          this.srs === "EPSG:4326" ||
-          this.srs === "EPSG:4490" ||
-          this.srs === "EPSG:4610" ||
-          this.srs === "EPSG:4214"
+        this.srs === "EPSG:4326" ||
+        this.srs === "EPSG:4490" ||
+        this.srs === "EPSG:4610" ||
+        this.srs === "EPSG:4214"
       ) {
-        extensions = [
-          { key: 'proj', value: 'WGS1984_度' }
-        ]
+        extensions = [{ key: "proj", value: "WGS1984_度" }];
       } else if (this.srs === "EPSG:3857") {
-        extensions = [
-          { key: 'proj', value: 'Web墨卡托_WGS1984' }
-        ]
+        extensions = [{ key: "proj", value: "Web墨卡托_WGS1984" }];
       }
       const baseUrl = this.$_initUrl("/igs/rest/mrms/docs/");
       this.$_mount({
-        baseUrl:baseUrl,
+        baseUrl: baseUrl,
         tilingScheme: tilingScheme,
         extensions: extensions
       });
     },
-    unmount(){
+    unmount() {
       this.$_unmount();
     }
   },
   destroyed() {
     this.unmount();
   }
-
 };
 </script>
-

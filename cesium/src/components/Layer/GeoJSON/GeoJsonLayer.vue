@@ -9,7 +9,9 @@
         <mapgis-ui-popup-content
           :feature="gemotryAttribute[0]"
           :popupOptions="popupOptions"
+          :width="260"
         >
+          <mapgis-3d-popup-iot :properties="gemotryAttribute[0]" />
         </mapgis-ui-popup-content>
       </Popup>
     </div>
@@ -20,11 +22,12 @@
 import clonedeep from "lodash.clonedeep";
 import PopupMixin from "../Mixin/PopupVirtual";
 import BaseLayer from "./BaseLayer";
+import CommonLayer from "../CommonLayer";
 
 export default {
   name: "mapgis-3d-geojson-layer",
   inject: ["Cesium", "vueCesium", "viewer"],
-  mixins: [BaseLayer, PopupMixin],
+  mixins: [BaseLayer, PopupMixin, CommonLayer],
   props: {
     renderer: {
       type: Object,
@@ -36,13 +39,15 @@ export default {
     clampToGround: {
       type: Boolean,
       default: false
+    },
+    layerStyle: {
+      type: Object
     }
   },
   data() {
     return {
       layerType: "geojson",
       layerIndex: undefined,
-      layer: undefined,
       layerRange: [],
       clickhandler: undefined,
       hoverhandler: undefined,
@@ -56,32 +61,18 @@ export default {
   destroyed() {
     this.unmount();
   },
-  watch: {
-    data: {
-      handler: function() {
-        this.unmount();
-        this.mount();
-      }
-    },
-    autoReset: {
-      handler(value) {
-        this.unmount();
-        this.mount();
-      },
-      deep: true
-    },
-    renderer: {
-      handler(value) {
-        this.unmount();
-        this.mount();
-      },
-      deep: true
-    }
-  },
+  watch: {},
   methods: {
     async createCesiumObject() {
       let { viewer, vueCesium } = this;
-      let { data, gdbps, autoReset, renderer, clampToGround } = this;
+      let {
+        data,
+        gdbps,
+        autoReset,
+        renderer,
+        clampToGround,
+        layerStyle
+      } = this;
       let vm = this;
       let options = {
         autoReset,
@@ -92,41 +83,64 @@ export default {
         },
         clampToGround
       };
-      let transformRenderer = undefined;
-      if (JSON.stringify(renderer) !== "{}") {
-        transformRenderer = JSON.parse(JSON.stringify(renderer));
-        this.transformObject(transformRenderer);
+      let transformRenderer;
+      if (layerStyle) {
+        const { type } = layerStyle;
+        switch (type) {
+          case "point":
+            transformRenderer = this.getSimplePointRenderer(layerStyle);
+            break;
+          case "line":
+            transformRenderer = this.getSimpleLineRenderer(layerStyle);
+            break;
+          case "fill":
+            transformRenderer = this.getSimplePolygonRenderer(layerStyle);
+            break;
+          default:
+            break;
+        }
       }
-      options.renderer = transformRenderer;
+      // 若未配置样式则使用layerStyle的样式
+      const applyRenderer =
+        JSON.stringify(renderer) === "{}" ? transformRenderer : renderer;
 
-      return new Promise(
-        resolve => {
-          const dataCopy = JSON.parse(JSON.stringify(data));
-          let layerIndex = viewer.scene.layers.appendGeojsonLayer(dataCopy, {
-            ...options,
-            loaded: vm.onGeojsonLoaded
-          });
-          resolve({ layerIndex: layerIndex });
-        },
-        reject => {}
-      );
+      const { features } = data;
+      const featureSet = this.constructFeatureSet(features);
+      this.addLayer(viewer, applyRenderer, featureSet);
+      this.onGeojsonLoaded(this.innerLayer);
+      // return new Promise(
+      //   resolve => {
+      //     const dataCopy = JSON.parse(JSON.stringify(data));
+      //     let layerIndex = viewer.scene.layers.appendGeojsonLayer(dataCopy, {
+      //       ...options,
+      //       loaded: vm.onGeojsonLoaded
+      //     });
+      //     resolve({ layerIndex: layerIndex });
+      //   },
+      //   reject => {}
+      // );
     },
     onGeojsonLoaded(layer) {
       const vm = this;
       const { vueIndex, vueKey, vueCesium, data } = this;
       if (layer) {
         vm.layer = layer;
-        let source = layer;
+        let source = [layer];
         vueCesium.GeojsonManager.addSource(vueKey, vueIndex, source, {
           data: data,
-          layerIndex: vm.layerIndex,
+          layerIndex: vueIndex,
           clickhandler: vm.clickhandler,
           hoverhandler: vm.hoverhandler
         });
-        vm.layerRange = vm.layer._layerRange;
-        vm.parseBBox(vm.layerRange);
+        // vm.layerRange = vm.layer._layerRange;
+        // vm.parseBBox(vm.layerRange);
         vm.$emit("load", { data: vm });
       }
+    },
+    changeVisible() {
+      let { viewer, visible, layerIndex } = this;
+      const layer = viewer.scene.layers.getLayer(layerIndex);
+      layer.show = visible;
     },
     mount() {
       let { viewer, vueCesium, vueKey, vueIndex } = this;
@@ -140,7 +154,7 @@ export default {
       // 是否开启抗锯齿
       viewer.scene.fxaa = true;
       viewer.scene.postProcessStages.fxaa.enabled = true;
-      this.checkType();
+      // this.checkType();
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
         // vm.layer = viewer.scene.layers.getGeojsonLayer(dataSource.layerIndex);
@@ -183,7 +197,8 @@ export default {
       const { vueKey, vueIndex, layerIndex } = this;
       let find = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
       if (find && find.source) {
-        viewer.scene.layers.removeGeojsonLayerByID(layerIndex);
+        // viewer.scene.layers.removeGeojsonLayerByID(layerIndex);
+        this.innerLayer.destroy();
       }
       if (find && find.clickhandler) {
         find.clickhandler.destroy();
