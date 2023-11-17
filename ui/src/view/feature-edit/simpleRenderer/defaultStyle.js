@@ -1,4 +1,4 @@
-// simpleMarkerSymbol
+// simple-marker
 export const defaultSimpleMarkerStyle = {
   color: "rgba(255, 255, 255, 1)",
   size: 20,
@@ -16,7 +16,7 @@ export const defaultSimpleMarkerStyle = {
   },
 };
 
-// textSymbol
+// text
 export const defaultTextStyle = {
   color: "rgba(0, 0, 0, 1)",
   font: "宋体",
@@ -28,7 +28,7 @@ export const defaultTextStyle = {
   text: "",
 };
 
-// pictureMarkerSymbol
+// picture-marker
 export const defaultPictureMarkerStyle = {
   color: "rgba(255, 255, 255, 1)",
   width: 20,

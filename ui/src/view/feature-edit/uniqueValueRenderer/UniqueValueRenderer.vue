@@ -42,9 +42,17 @@
           ref="table"
         >
           <template slot="sample" slot-scope="text, record">
+            <img
+              :src="getUrl(record.sample.url)"
+              alt=""
+              class="img"
+              v-if="featureStyleCopy == 'picture-marker'"
+            />
+
             <span
-              :class="`${record.sample.style}-${featureType}`"
+              :class="getClass(record.sample.style, featureType)"
               :style="getSampleColor(record.sample)"
+              v-else
             ></span>
           </template>
           <template slot="class" slot-scope="text">
@@ -71,24 +79,22 @@
         </mapgis-ui-table>
       </mapgis-ui-form-item>
     </mapgis-ui-setting-form>
-    <mp-window-wrapper>
-      <mp-window
-        :title="title"
-        :visible.sync="isEdit"
-        :width="350"
-        :horizontalOffset="350"
-        :verticalOffset="50"
-      >
-        <mapgis-ui-feature-edit-form
-          :featureItem.sync="featureItem"
-          :featureType="featureType"
-          :featureStyle="featureStyleCopy"
-          :fieldInfo="fieldInfo"
-          :showSeletion="false"
-          parentClass="uniqueValue"
-        ></mapgis-ui-feature-edit-form>
-      </mp-window>
-    </mp-window-wrapper>
+    <mapgis-ui-modal
+      :visible="isEdit"
+      :mask="false"
+      :title="title"
+      :footer="null"
+      @cancel="modalCancel"
+    >
+      <mapgis-ui-feature-edit-form
+        :featureItem.sync="featureItem"
+        :featureType="featureType"
+        :featureStyle="featureStyleCopy"
+        :fieldInfo="fieldInfo"
+        :showSeletion="false"
+        parentClass="uniqueValue"
+      ></mapgis-ui-feature-edit-form>
+    </mapgis-ui-modal>
   </div>
 </template>
 
@@ -123,6 +129,9 @@ export default {
     },
     featureStyle: {
       type: String
+    },
+    featureItemArr: {
+      type: [Object, Array]
     }
   },
   data() {
@@ -132,15 +141,29 @@ export default {
       statisticsField: undefined,
       isEdit: false,
       pointFeatureStyleList: [
-        { name: "常规点图形", value: "simpleMarkerSymbol" },
-        { name: "简单图文标注", value: "textSymbol" },
-        { name: "简单图片标签", value: "pictureMarkerSymbol" }
+        { name: "常规点图形", value: "simple-marker" },
+        { name: "简单图文标注", value: "text" },
+        { name: "简单图片标签", value: "picture-marker" }
       ],
       tableData: [],
       featureItem: {}
     };
   },
-  mounted() {},
+  watch: {
+    featureItemArr: {
+      immediate: true,
+      handler() {
+        if (
+          Object.prototype.toString.call(this.featureItemArr) ==
+          "[object Object]"
+        ) {
+          this.tableData = [];
+        } else {
+          this.tableData = this.featureItemArr;
+        }
+      }
+    }
+  },
   computed: {
     title() {
       const map = {
@@ -151,14 +174,14 @@ export default {
       return `${map[this.featureType]}样式`;
     },
     tableColumns() {
-      if (this.featureType == "Pnt" && this.featureStyleCopy == "textSymbol") {
+      if (this.featureType == "Pnt" && this.featureStyleCopy == "text") {
         return [
           {
             title: "分类",
             dataIndex: "class",
             align: "center",
-            scopedSlots: { customRender: "class" },
-            width: 150
+            scopedSlots: { customRender: "class" }
+            // width: 150
           },
           {
             title: "操作",
@@ -172,15 +195,15 @@ export default {
             title: "图例",
             dataIndex: "sample",
             align: "center",
-            scopedSlots: { customRender: "sample" },
-            width: 50
+            scopedSlots: { customRender: "sample" }
+            // width: 50
           },
           {
             title: "分类",
             dataIndex: "class",
             align: "center",
-            scopedSlots: { customRender: "class" },
-            width: 150
+            scopedSlots: { customRender: "class" }
+            // width: 150
           },
           {
             title: "操作",
@@ -192,6 +215,12 @@ export default {
     }
   },
   methods: {
+    modalCancel() {
+      this.isEdit = false;
+    },
+    getUrl(url) {
+      return `${window.origin}${window._CONFIG.domainURL}${url}`;
+    },
     handleChange() {
       let check;
       switch (this.featureType) {
@@ -234,11 +263,11 @@ export default {
       let deafultStyle;
       switch (this.featureType) {
         case "Pnt": {
-          if (this.featureStyleCopy == "simpleMarkerSymbol") {
+          if (this.featureStyleCopy == "simple-marker") {
             deafultStyle = defaultSimpleMarkerStyle;
-          } else if (this.featureStyleCopy == "textSymbol") {
+          } else if (this.featureStyleCopy == "text") {
             deafultStyle = defaultTextStyle;
-          } else if (this.featureStyleCopy == "pictureMarkerSymbol") {
+          } else if (this.featureStyleCopy == "picture-marker") {
             deafultStyle = defaultPictureMarkerStyle;
           }
           break;
@@ -337,22 +366,24 @@ export default {
           let symbol;
           switch (this.featureType) {
             case "Pnt": {
-              if (this.featureStyleCopy == "simpleMarkerSymbol") {
+              if (this.featureStyleCopy == "simple-marker") {
                 symbol = this.getSimpleMarkerSymbol(item.sample);
-              } else if (this.featureStyleCopy == "textSymbol") {
+              } else if (this.featureStyleCopy == "text") {
                 item.sample.text = item.class;
                 symbol = this.getTextSymbol(item.sample);
-              } else if (this.featureStyleCopy == "pictureMarkerSymbol") {
+              } else if (this.featureStyleCopy == "picture-marker") {
                 symbol = this.getPictureMarkerSymbol(item.sample);
               }
               break;
             }
             case "Lin": {
               symbol = this.getSimpleLineSymbol(item.sample);
+              this.featureStyleCopy = "simple-line";
               break;
             }
             case "Reg": {
               symbol = this.getSimpleFillSymbol(item.sample);
+              this.featureStyleCopy = "simple-fill";
               break;
             }
             default: {
@@ -371,7 +402,7 @@ export default {
           defaultSymbol: undefined
         });
         const uniqueRenderJSON = uniqueRender.toJSON();
-        this.$emit("get-renderer", uniqueRenderJSON);
+        this.$emit("get-renderer", uniqueRenderJSON, this.featureStyleCopy);
       }
     }
   }
@@ -468,5 +499,8 @@ export default {
 .max {
   display: flex;
   justify-content: space-between;
+}
+.img {
+  width: 20px;
 }
 </style>

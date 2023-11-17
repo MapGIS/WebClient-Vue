@@ -1,6 +1,6 @@
 <template>
   <div>
-    <template v-if="featureStyleCopy === 'simpleMarkerSymbol'">
+    <template v-if="featureStyleCopy === 'simple-marker'">
       <mapgis-ui-form-item label="填充颜色">
         <mapgis-ui-sketch-color-picker
           :color.sync="pointStyleCopy.color"
@@ -42,7 +42,7 @@
         </mapgis-ui-collapse-panel>
       </mapgis-ui-collapse>
     </template>
-    <template v-if="featureStyleCopy === 'textSymbol'">
+    <template v-if="featureStyleCopy === 'text'">
       <mapgis-ui-form-item label="填充颜色">
         <mapgis-ui-sketch-color-picker
           :color.sync="pointStyleCopy.color"
@@ -95,7 +95,7 @@
         </mapgis-ui-select>
       </mapgis-ui-form-item>
     </template>
-    <template v-if="featureStyleCopy === 'pictureMarkerSymbol'">
+    <template v-if="featureStyleCopy === 'picture-marker'">
       <mapgis-ui-form-item label="填充颜色">
         <mapgis-ui-sketch-color-picker
           :color.sync="pointStyleCopy.color"
@@ -115,7 +115,19 @@
         <mapgis-ui-input v-model="pointStyleCopy.height"></mapgis-ui-input>
       </mapgis-ui-form-item>
       <mapgis-ui-form-item label="图片地址">
-        <mapgis-ui-input v-model="pointStyleCopy.url"></mapgis-ui-input>
+        <mapgis-ui-input
+          v-model="pointStyleCopy.url"
+          @change="handleUrlChange"
+        ></mapgis-ui-input>
+        <mapgis-ui-upload-image
+          :uploadUrl="
+            `${prefixUrl}/psmap/rest/services/system/ResourceServer/files/pictures`
+          "
+          :showUploadList="false"
+          :baseUrl="prefixUrl"
+          :hasPrefix="false"
+          @image-url="val => updateImgUrl(val)"
+        ></mapgis-ui-upload-image>
       </mapgis-ui-form-item>
       <mapgis-ui-form-item label="旋转角度">
         <mapgis-ui-input v-model="pointStyleCopy.angle"></mapgis-ui-input>
@@ -161,7 +173,8 @@ export default {
         { name: "顶部对齐", value: "top" },
         { name: "居中对齐", value: "middle" },
         { name: "底部对齐", value: "bottom" }
-      ]
+      ],
+      timer: undefined
     };
   },
   computed: {
@@ -172,6 +185,22 @@ export default {
       set(val) {
         this.$emit("update:featureItemCopy", val);
       }
+    },
+    prefixUrl() {
+      return window._CONFIG.domainURL;
+    }
+  },
+  methods: {
+    handleUrlChange() {
+      if (this.timer) {
+        clearTimeout(this.timer);
+      }
+      this.timer = setTimeout(() => {
+        console.log("xxxx");
+      }, 1000);
+    },
+    updateImgUrl(val) {
+      this.pointStyleCopy.url = val;
     }
   }
 };

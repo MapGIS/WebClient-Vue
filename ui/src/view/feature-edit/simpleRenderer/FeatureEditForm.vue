@@ -1,5 +1,9 @@
 <template>
-  <mapgis-ui-setting-form layout="vertical" size="default">
+  <mapgis-ui-setting-form
+    layout="vertical"
+    size="default"
+    style="max-height:400px;overflow-y:auto"
+  >
     <mapgis-ui-form-item
       label="要素样式"
       v-if="featureType == 'Pnt' && showSeletion"
@@ -79,21 +83,13 @@ export default {
   },
   data() {
     return {
-      featureStyleCopy: undefined,
       featureCopy: undefined,
       pointFeatureStyleList: [
-        { name: "常规点图形", value: "simpleMarkerSymbol" },
-        { name: "简单图文标注", value: "textSymbol" },
-        { name: "简单图片标签", value: "pictureMarkerSymbol" }
+        { name: "常规点图形", value: "simple-marker" },
+        { name: "简单图文标注", value: "text" },
+        { name: "简单图片标签", value: "picture-marker" }
       ]
     };
-  },
-  watch: {
-    featureStyle() {
-      if (this.featureStyle) {
-        this.featureStyleCopy = this.featureStyle;
-      }
-    }
   },
   computed: {
     featureItemCopy: {
@@ -103,18 +99,27 @@ export default {
       set(val) {
         this.$emit("update:featureItem", val);
       }
+    },
+
+    featureStyleCopy: {
+      get() {
+        return this.featureStyle;
+      },
+      set(val) {
+        this.$emit("update:featureStyle", val);
+      }
     }
   },
   methods: {
-    handleChange() {
-      switch (this.featureStyleCopy) {
-        case "simpleMarkerSymbol":
+    handleChange(activeKey) {
+      switch (activeKey) {
+        case "simple-marker":
           this.$emit("update:featureItem", defaultSimpleMarkerStyle);
           break;
-        case "textSymbol":
+        case "text":
           this.$emit("update:featureItem", defaultTextStyle);
           break;
-        case "pictureMarkerSymbol":
+        case "picture-marker":
           this.$emit("update:featureItem", defaultPictureMarkerStyle);
           break;
         default:
@@ -123,30 +128,24 @@ export default {
     },
     formatRender() {
       let symbol;
-      switch (this.featureStyleCopy) {
-        case "simpleMarkerSymbol": {
-          symbol = this.getSimpleMarkerSymbol(this.featureItemCopy);
-
+      switch (this.featureType) {
+        case "Pnt":
+          if (this.featureStyleCopy == "simple-marker") {
+            symbol = this.getSimpleMarkerSymbol(this.featureItemCopy);
+          } else if (this.featureStyleCopy == "text") {
+            symbol = this.getTextSymbol(this.featureItemCopy);
+          } else if (this.featureStyleCopy == "picture-marker") {
+            symbol = this.getPictureMarkerSymbol(this.featureItemCopy);
+          }
+          break;
+        case "Lin": {
+          symbol = this.getSimpleLineSymbol(this.featureItemCopy);
+          this.featureStyleCopy = "simple-line";
           break;
         }
-        case "textSymbol": {
-          symbol = this.getTextSymbol(this.featureItemCopy);
-          break;
-        }
-        case "pictureMarkerSymbol": {
-          symbol = this.getPictureMarkerSymbol(this.featureItemCopy);
-          break;
-        }
-        case "simpleLineSymbol": {
-          const simpleLineSymbol = this.getSimpleLineSymbol(
-            this.featureItemCopy
-          );
-          break;
-        }
-        case "simpleFillSymbol": {
-          const simpleFillSymbol = this.getSimpleFillSymbol(
-            this.featureItemCopy
-          );
+        case "Reg": {
+          symbol = this.getSimpleFillSymbol(this.featureItemCopy);
+          this.featureStyleCopy = "simple-fill";
           break;
         }
         default:
@@ -156,7 +155,7 @@ export default {
         symbol
       });
       const simpleRendererJson = simpleRenderer.toJSON();
-      this.$emit("get-renderer", simpleRendererJson);
+      this.$emit("get-renderer", simpleRendererJson, this.featureStyleCopy);
     }
   }
 };

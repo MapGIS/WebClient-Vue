@@ -24,6 +24,18 @@ export default {
         Number(colorArr[3])
       );
     },
+    formatSimpleLine(layerFeatureItem) {
+      const { color, width, cap, join, miterLimit, style } = layerFeatureItem;
+      const feature = {
+        color: `rgba(${color.red},${color.green},${color.blue},${color.alpha})`,
+        width,
+        cap,
+        join,
+        miterLimit,
+        style,
+      };
+      return feature;
+    },
 
     getSimpleLineSymbol(lineStyle) {
       const width = Number(lineStyle.width) || 1;
@@ -41,6 +53,21 @@ export default {
         miterLimit,
         style,
       });
+    },
+
+    formatSimpleMarker(layerFeatureItem) {
+      const { color, size, style, xoffset, yoffset, angle, outline } =
+        layerFeatureItem;
+      const feature = {
+        color: `rgba(${color.red},${color.green},${color.blue},${color.alpha})`,
+        size,
+        style,
+        xoffset,
+        yoffset,
+        angle,
+        simpleLineStyle: this.formatSimpleLine(outline),
+      };
+      return feature;
     },
 
     getSimpleMarkerSymbol(simpleMarkerStyle) {
@@ -63,6 +90,29 @@ export default {
         angle,
         outline,
       });
+    },
+
+    formatText(layerFeatureItem) {
+      const {
+        color,
+        font,
+        xoffset,
+        yoffset,
+        horizontalAlignment,
+        verticalAlignment,
+        lineHeight,
+        text,
+      } = layerFeatureItem;
+      return {
+        color: `rgba(${color.red},${color.green},${color.blue},${color.alpha})`,
+        font: font.family,
+        xoffset,
+        yoffset,
+        horizontalAlignment,
+        verticalAlignment,
+        lineHeight,
+        text,
+      };
     },
 
     getTextSymbol(textStyle) {
@@ -91,6 +141,20 @@ export default {
       });
     },
 
+    formatPictureMarker(layerFeatureItem) {
+      const { angle, color, height, url, width, xoffset, yoffset } =
+        layerFeatureItem;
+      return {
+        color: `rgba(${color.red},${color.green},${color.blue},${color.alpha})`,
+        width,
+        height,
+        url,
+        xoffset,
+        yoffset,
+        angle,
+      };
+    },
+
     getPictureMarkerSymbol(pictureMarkerStyle) {
       const color =
         this.getColor(pictureMarkerStyle.color) || new Color(255, 255, 255, 1);
@@ -111,6 +175,16 @@ export default {
       });
     },
 
+    formatSimpleFill(layerFeatureItem) {
+      const { style, color, outline } = layerFeatureItem;
+      const feature = {
+        color: `rgba(${color.red},${color.green},${color.blue},${color.alpha})`,
+        style,
+        simpleLineStyle: this.formatSimpleLine(outline),
+      };
+      return feature;
+    },
+
     getSimpleFillSymbol(simpleFillStyle) {
       const color =
         this.getColor(simpleFillStyle.color) || new Color(255, 255, 255, 0.25);
@@ -121,6 +195,16 @@ export default {
         style,
         outline,
       });
+    },
+
+    getClass(style, featureType) {
+      if (featureType == "Reg") {
+        return "solid-Reg";
+      } else if (featureType == "Lin") {
+        return "solid-Lin";
+      } else {
+        return `${style}-${featureType}`;
+      }
     },
   },
 };
