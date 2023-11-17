@@ -19,12 +19,21 @@
     /> -->
     <mapgis-ui-row>
       <mapgis-ui-col :span="12">
-        <mapgis-ui-progress class="upload-progress" type="circle" :percent="importProgress" :status="progressStatus" />
+        <mapgis-ui-progress
+          class="upload-progress"
+          type="circle"
+          :percent="importProgress"
+          :status="progressStatus"
+        />
       </mapgis-ui-col>
       <mapgis-ui-col :span="12">
         <mapgis-ui-timeline class="upload-info">
-          <mapgis-ui-timeline-item v-for="(item, index) in uploadInfos" :key="index" :color="item.state < 1 ? 'red' : 'green'">
-            {{item.info}}
+          <mapgis-ui-timeline-item
+            v-for="(item, index) in uploadInfos"
+            :key="index"
+            :color="item.state < 1 ? 'red' : 'green'"
+          >
+            {{ item.info }}
           </mapgis-ui-timeline-item>
         </mapgis-ui-timeline>
       </mapgis-ui-col>
@@ -39,8 +48,7 @@ import UploadMixin from "../../../../mixin/UploaderMixin";
 export default {
   name: "importProgress",
   mixins: [UploadMixin],
-  props: {
-  },
+  props: {},
   data() {
     return {
       importStatus: "导入中...",
@@ -52,39 +60,46 @@ export default {
       uploadInfos: []
     };
   },
-  created () {
-    this.uploadInfos = []
+  created() {
+    this.uploadInfos = [];
   },
   watch: {
     WebsocketContent: {
       handler: function() {
-        let vm = this
-        if (this.WebsocketMessageId === this.webSocketTaskId && this.WebsocketAction === 'refresh') { // 比较msgid与本次导入的taskid是否一致，若不一致则不需要进行任何操作
-          let msgResponse = this.WebsocketContent[0]
-          let { errorCode, msg, subjectType } = msgResponse
-          if (subjectType === 'geotools:import') {
+        let vm = this;
+        if (
+          this.WebsocketMessageId === this.webSocketTaskId &&
+          this.WebsocketAction === "refresh"
+        ) {
+          // 比较msgid与本次导入的taskid是否一致，若不一致则不需要进行任何操作
+          let msgResponse = this.WebsocketContent[0];
+          let { errorCode, msg, subjectType } = msgResponse;
+          if (subjectType === "geotools:import") {
             if (errorCode < 0) {
-              this.importStatus = '导入失败'
-              this.tipText = msg
-              this.progressState = false // 进度条样式改为叉号
-              this.$emit('handleUploadComplete', true) // 放开“继续上传”按钮
+              this.importStatus = "导入失败";
+              this.tipText = msg;
+              this.progressState = false; // 进度条样式改为叉号
+              this.$emit("handleUploadComplete", true); // 放开“继续上传”按钮
             } else {
-              this.importStatus = '导入成功'
-              this.importComplete = true
-              this.tipText = '导入完成'
-              this.$emit('handleUploadComplete', true) // 放开“继续上传”按钮
+              this.importStatus = "导入成功";
+              this.importComplete = true;
+              this.tipText = "导入完成";
+              this.$emit("handleUploadComplete", true); // 放开“继续上传”按钮
               // this.$emit('closeImport') // 关闭导入文件对话框
             }
           }
-        } else if (this.WebsocketMessageId === this.webSocketTaskId && this.WebsocketAction === 'info') {
-          let msgResponse = this.WebsocketContent[0]
-          let { errorCode, msg, subject, subjectType } = msgResponse
-          if (subjectType === 'geotools:import') {
+        } else if (
+          this.WebsocketMessageId === this.webSocketTaskId &&
+          this.WebsocketAction === "info"
+        ) {
+          let msgResponse = this.WebsocketContent[0];
+          let { errorCode, msg, subject, subjectType } = msgResponse;
+          if (subjectType === "geotools:import") {
             let uploadInfo = {
               info: subject,
               state: errorCode
-            }
-            vm.uploadInfos.push(uploadInfo)
+            };
+            vm.uploadInfos.push(uploadInfo);
           }
         }
       },
@@ -99,7 +114,7 @@ export default {
         this.importProgress = uploadProgress;
       }
     },
-    importComplete (next) {
+    importComplete(next) {
       if (next === true) {
         this.importProgress = 100;
       }
@@ -109,19 +124,21 @@ export default {
     }
   },
   computed: {
-    
     // handleWsRefresh() {
     //   return this.$store.state.websocket.msgid;
     // },
     progressStatus() {
       if (this.uploadError === true) {
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
         this.importStatus = "导入失败";
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
         this.tipText = this.uploadErrorMsg;
         this.$emit("handleUploadComplete", true);
         return "exception";
       } else if (this.progressState === false) {
-        this.progressState = true // 进度条样式改为叉号
-        return 'exception'
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.progressState = true; // 进度条样式改为叉号
+        return "exception";
       } else {
         return null;
       }

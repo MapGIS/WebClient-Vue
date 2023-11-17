@@ -83,6 +83,7 @@ export default {
   name: "mapgis-layercontent-studio",
   components: {
     ContextmenuItem,
+    // eslint-disable-next-line vue/no-unused-components
     ContextmenuGroup,
     ContextmenuSubmenu
   },
