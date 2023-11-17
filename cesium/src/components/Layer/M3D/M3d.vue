@@ -528,13 +528,14 @@ export default {
         let m3ds = find.source;
         if (!m3ds) return;
         m3ds.forEach(m3d => {
-          let type = vm.checkType(m3d);
-          type = type == M3dType.UnKnow ? m3d.type : type;
-          if (type == M3dType.Model || type == M3dType.Instance) {
-            m3d.style = new Cesium.Cesium3DTileStyle({
-              color: `color('#FFFFFF', ${opacity})`
-            });
-          }
+          // 新的Cesium这里不需要再做判断，直接设置即可，2023-11-17，龚跃健
+          // let type = vm.checkType(m3d);
+          // type = type == M3dType.UnKnow ? m3d.type : type;
+          // if (type == M3dType.Model || type == M3dType.Instance) {
+          m3d.style = new Cesium.Cesium3DTileStyle({
+            color: `color('#FFFFFF', ${opacity})`
+          });
+          // }
         });
       }
     },
