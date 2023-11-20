@@ -1173,20 +1173,23 @@ export default {
           // vm.restoreM3d();
           vm.selectLayerIndex = index;
           vm.selectedKeys = [`${index}`];
+          let layerInfo = g3dLayer.getLayerInfo(index);
+          const { layerName, gdbpUrl } = layerInfo;
           if (version == "1.0" || version == "0.0") {
             let properties = {};
             let name = pickedFeature.getProperty("name"); // 获取要素名
             if (name && name !== "") {
               const nameStrs = name.split("_");
               const featureId = nameStrs[nameStrs.length - 1];
-              properties = await this.getFeaturePorpertiesByOid(featureId);
+              properties = await this.getFeaturePorpertiesByOid(
+                featureId,
+                layerName
+              );
             }
             if (Object.keys(properties).length > 0) {
               vm.featureproperties = properties;
               vm.iClickFeatures = [{ properties }];
             } else {
-              let layerInfo = g3dLayer.getLayerInfo(index);
-              const { layerName, gdbpUrl } = layerInfo;
               vm.featureproperties = { layerName, gdbpUrl };
               vm.iClickFeatures = [{ properties: { layerName, gdbpUrl } }];
             }
@@ -1205,7 +1208,10 @@ export default {
             tileset.pickedColor = Cesium.Color.fromCssColorString(
               this.highlightStyle
             );
-            const properties20 = await this.getFeaturePorpertiesByOid(oid);
+            const properties20 = await this.getFeaturePorpertiesByOid(
+              oid,
+              layerName
+            );
             if (Object.keys(properties20).length > 0) {
               vm.featureproperties = properties20;
               vm.iClickFeatures = [{ properties20 }];
@@ -1287,10 +1293,28 @@ export default {
     projectScreen(file) {
       this.$emit("project-screen", file);
     },
-    async getFeaturePorpertiesByOid(oid) {
+    async getFeaturePorpertiesByOid(oid, layerName) {
       const properties = {};
       if (this.searchParams) {
-        const { domain, serverName, layerIndex, gdbp } = this.searchParams;
+        const {
+          domain,
+          serverName,
+          layerIndex,
+          serverType,
+          mapList
+        } = this.searchParams;
+        let { gdbp } = this.searchParams;
+        if (serverType === "IGSMapImage" && layerName) {
+          // 关联的地图文档
+          if (mapList && mapList.length > 0) {
+            for (let i = 0; i < mapList.length; i++) {
+              const item = mapList[i];
+              if (layerName.includes(item.LayerName)) {
+                gdbp = item.URL;
+              }
+            }
+          }
+        }
         const featureSet = await Feature.FeatureQuery.query(
           {
             domain,
