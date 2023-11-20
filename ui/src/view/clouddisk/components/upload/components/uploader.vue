@@ -13,33 +13,33 @@
 </template>
 
 <script>
-import Uploader from 'simple-uploader.js'
+import Uploader from "simple-uploader.js";
 // import Uploader from '../uploader/uploader';
-import { kebabCase } from '../common/utils'
-import UploaderBtn from './btn.vue'
-import UploaderDrop from './drop.vue'
-import UploaderUnsupport from './unsupport.vue'
-import UploaderList from './list.vue'
-import UploaderFiles from './files.vue'
-import UploaderFile from './file.vue'
+import { kebabCase } from "../common/utils";
+import UploaderBtn from "./btn.vue";
+import UploaderDrop from "./drop.vue";
+import UploaderUnsupport from "./unsupport.vue";
+import UploaderList from "./list.vue";
+import UploaderFiles from "./files.vue";
+import UploaderFile from "./file.vue";
 
-const COMPONENT_NAME = 'uploader'
-const FILE_ADDED_EVENT = 'fileAdded'
-const FILES_ADDED_EVENT = 'filesAdded'
-const UPLOAD_START_EVENT = 'uploadStart'
+const COMPONENT_NAME = "uploader";
+const FILE_ADDED_EVENT = "fileAdded";
+const FILES_ADDED_EVENT = "filesAdded";
+const UPLOAD_START_EVENT = "uploadStart";
 
 export default {
   name: COMPONENT_NAME,
-  provide () {
+  provide() {
     return {
       uploader: this
-    }
+    };
   },
   props: {
     options: {
       type: Object,
-      default () {
-        return {}
+      default() {
+        return {};
       }
     },
     autoStart: {
@@ -48,103 +48,105 @@ export default {
     },
     fileStatusText: {
       type: [Object, Function],
-      default () {
+      default() {
         return {
-          importsuccess: 'importsuccess',
-          importerror: 'importerror',
-          importing: 'importing',
-          success: 'success',
-          error: 'error',
-          uploading: 'uploading',
-          paused: 'paused',
-          waiting: 'waiting'
-        }
+          importsuccess: "importsuccess",
+          importerror: "importerror",
+          importing: "importing",
+          success: "success",
+          error: "error",
+          uploading: "uploading",
+          paused: "paused",
+          waiting: "waiting"
+        };
       }
     }
   },
-  data () {
+  data() {
     return {
       started: false,
       files: [],
       fileList: []
-    }
+    };
   },
   methods: {
-    uploadStart () {
-      this.started = true
+    uploadStart() {
+      this.started = true;
     },
-    fileAdded (file, folder) {
-      this.$emit(kebabCase(FILE_ADDED_EVENT), file)
+    fileAdded(file, folder) {
+      this.$emit(kebabCase(FILE_ADDED_EVENT), file);
       if (file.ignored) {
         // is ignored, filter it
-        return false
+        return false;
       }
     },
-    filesAdded (files, fileList) {
-      this.$emit(kebabCase(FILES_ADDED_EVENT), files, fileList)
+    filesAdded(files, fileList) {
+      this.$emit(kebabCase(FILES_ADDED_EVENT), files, fileList);
       if (files.ignored || fileList.ignored) {
         // is ignored, filter it
-        return false
+        return false;
       }
     },
-    fileRemoved (file) {
-      this.files = this.uploader.files
-      this.fileList = this.uploader.fileList
+    fileRemoved(file) {
+      this.files = this.uploader.files;
+      this.fileList = this.uploader.fileList;
     },
-    filesSubmitted (files, fileList) {
-      this.files = this.uploader.files
-      this.fileList = this.uploader.fileList
+    filesSubmitted(files, fileList) {
+      this.files = this.uploader.files;
+      this.fileList = this.uploader.fileList;
       if (this.autoStart) {
-        this.uploader.upload()
+        this.uploader.upload();
       }
     },
-    allEvent (...args) {
-      const name = args[0]
+    allEvent(...args) {
+      const name = args[0];
       const EVENTSMAP = {
         [FILE_ADDED_EVENT]: true,
         [FILES_ADDED_EVENT]: true,
-        [UPLOAD_START_EVENT]: 'uploadStart'
-      }
-      const handler = EVENTSMAP[name]
+        [UPLOAD_START_EVENT]: "uploadStart"
+      };
+      const handler = EVENTSMAP[name];
       if (handler) {
         if (handler === true) {
-          return
+          return;
         }
-        this[handler].apply(this, args.slice(1))
+        this[handler].apply(this, args.slice(1));
       }
-      args[0] = kebabCase(name)
-      this.$emit.apply(this, args)
+      args[0] = kebabCase(name);
+      this.$emit.apply(this, args);
     }
   },
-  created () {
-    this.options.initialPaused = !this.autoStart
-    const uploader = new Uploader(this.options)
-    this.uploader = uploader
-    this.uploader.fileStatusText = this.fileStatusText
-    uploader.on('catchAll', this.allEvent)
-    uploader.on(FILE_ADDED_EVENT, this.fileAdded)
-    uploader.on(FILES_ADDED_EVENT, this.filesAdded)
-    uploader.on('fileRemoved', this.fileRemoved)
-    uploader.on('filesSubmitted', this.filesSubmitted)
+  created() {
+    this.options.initialPaused = !this.autoStart;
+    const uploader = new Uploader(this.options);
+    this.uploader = uploader;
+    this.uploader.fileStatusText = this.fileStatusText;
+    uploader.on("catchAll", this.allEvent);
+    uploader.on(FILE_ADDED_EVENT, this.fileAdded);
+    uploader.on(FILES_ADDED_EVENT, this.filesAdded);
+    uploader.on("fileRemoved", this.fileRemoved);
+    uploader.on("filesSubmitted", this.filesSubmitted);
   },
-  destroyed () {
-    const uploader = this.uploader
-    uploader.off('catchAll', this.allEvent)
-    uploader.off(FILE_ADDED_EVENT, this.fileAdded)
-    uploader.off(FILES_ADDED_EVENT, this.filesAdded)
-    uploader.off('fileRemoved', this.fileRemoved)
-    uploader.off('filesSubmitted', this.filesSubmitted)
-    this.uploader = null
+  destroyed() {
+    const uploader = this.uploader;
+    uploader.off("catchAll", this.allEvent);
+    uploader.off(FILE_ADDED_EVENT, this.fileAdded);
+    uploader.off(FILES_ADDED_EVENT, this.filesAdded);
+    uploader.off("fileRemoved", this.fileRemoved);
+    uploader.off("filesSubmitted", this.filesSubmitted);
+    this.uploader = null;
   },
   components: {
     UploaderBtn,
     UploaderDrop,
     UploaderUnsupport,
     UploaderList,
+    // eslint-disable-next-line vue/no-unused-components
     UploaderFiles,
+    // eslint-disable-next-line vue/no-unused-components
     UploaderFile
   }
-}
+};
 </script>
 
 <style>
