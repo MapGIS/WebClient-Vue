@@ -195,18 +195,22 @@ export default {
           const attributes = feature.attributes || {};
           deepCloneRenderer.symbol.text = attributes[field];
           feature.symbol = deepCloneRenderer.symbol;
-          featureSet.push(feature);
+          featureSet.push(Feature.fromJSON(feature));
         });
       } else {
         featureArr.forEach((feature) => {
-          feature.symbol = renderer.symbol;
-          featureSet.push(feature);
+          featureSet.push(Feature.fromJSON(feature));
         });
+        this.featureSetApplyRenderer(
+          featureSet,
+          BaseRenderer.fromJSON(renderer)
+        );
       }
+
       featureSet.forEach((feature) => {
         isTextRenderer
-          ? this.innerLayer.add(Feature.fromJSON(feature))
-          : this.innerLayer.update(Feature.fromJSON(feature));
+          ? this.innerLayer.add(feature)
+          : this.innerLayer.update(feature);
       });
       // 设置透明度
       this.innerLayer.setOpacity(opacity);

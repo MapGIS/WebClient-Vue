@@ -7,7 +7,7 @@ import {
   Font,
   PictureMarkerSymbol,
   SimpleFillSymbol,
-  ClassBreakRenderer,
+  ClassBreakRenderer
 } from "@mapgis/webclient-common";
 
 export default {
@@ -32,7 +32,7 @@ export default {
         cap,
         join,
         miterLimit,
-        style,
+        style
       };
       return feature;
     },
@@ -51,13 +51,20 @@ export default {
         cap,
         join,
         miterLimit,
-        style,
+        style
       });
     },
 
     formatSimpleMarker(layerFeatureItem) {
-      const { color, size, style, xoffset, yoffset, angle, outline } =
-        layerFeatureItem;
+      const {
+        color,
+        size,
+        style,
+        xoffset,
+        yoffset,
+        angle,
+        outline
+      } = layerFeatureItem;
       const feature = {
         color: `rgba(${color.red},${color.green},${color.blue},${color.alpha})`,
         size,
@@ -65,7 +72,7 @@ export default {
         xoffset,
         yoffset,
         angle,
-        simpleLineStyle: this.formatSimpleLine(outline),
+        simpleLineStyle: this.formatSimpleLine(outline)
       };
       return feature;
     },
@@ -88,7 +95,7 @@ export default {
         xoffset,
         yoffset,
         angle,
-        outline,
+        outline
       });
     },
 
@@ -101,7 +108,7 @@ export default {
         horizontalAlignment,
         verticalAlignment,
         lineHeight,
-        text,
+        text
       } = layerFeatureItem;
       return {
         color: `rgba(${color.red},${color.green},${color.blue},${color.alpha})`,
@@ -111,7 +118,7 @@ export default {
         horizontalAlignment,
         verticalAlignment,
         lineHeight,
-        text,
+        text
       };
     },
 
@@ -119,9 +126,9 @@ export default {
       const color = this.getColor(textStyle.color) || new Color(0, 0, 0, 1);
       const font = new Font({
         family: textStyle.font || "宋体",
-        size: 9,
+        size: 24,
         style: "normal",
-        weight: "normal",
+        weight: "normal"
       });
       const horizontalAlignment = textStyle.horizontalAlignment || "center";
       const lineHeight = textStyle.lineHeight || 1;
@@ -137,13 +144,20 @@ export default {
         text,
         verticalAlignment,
         xoffset,
-        yoffset,
+        yoffset
       });
     },
 
     formatPictureMarker(layerFeatureItem) {
-      const { angle, color, height, url, width, xoffset, yoffset } =
-        layerFeatureItem;
+      const {
+        angle,
+        color,
+        height,
+        url,
+        width,
+        xoffset,
+        yoffset
+      } = layerFeatureItem;
       return {
         color: `rgba(${color.red},${color.green},${color.blue},${color.alpha})`,
         width,
@@ -151,7 +165,7 @@ export default {
         url,
         xoffset,
         yoffset,
-        angle,
+        angle
       };
     },
 
@@ -171,7 +185,7 @@ export default {
         url,
         xoffset,
         yoffset,
-        angle,
+        angle
       });
     },
 
@@ -180,7 +194,7 @@ export default {
       const feature = {
         color: `rgba(${color.red},${color.green},${color.blue},${color.alpha})`,
         style,
-        simpleLineStyle: this.formatSimpleLine(outline),
+        simpleLineStyle: this.formatSimpleLine(outline)
       };
       return feature;
     },
@@ -193,7 +207,7 @@ export default {
       return new SimpleFillSymbol({
         color,
         style,
-        outline,
+        outline
       });
     },
 
@@ -205,6 +219,6 @@ export default {
       } else {
         return `${style}-${featureType}`;
       }
-    },
-  },
+    }
+  }
 };
