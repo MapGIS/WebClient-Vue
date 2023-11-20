@@ -60,20 +60,26 @@ export default {
     data: {
       handler: function() {
         this.unmount();
-        this.mount();
+        if (this.visible) {
+          this.mount();
+        }
       }
     },
     autoReset: {
       handler(value) {
         this.unmount();
-        this.mount();
+        if (this.visible) {
+          this.mount();
+        }
       },
       deep: true
     },
     renderer: {
       handler(value) {
         this.unmount();
-        this.mount();
+        if (this.visible) {
+          this.mount();
+        }
       },
       deep: true
     }
