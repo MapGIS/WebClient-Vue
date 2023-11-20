@@ -59,7 +59,6 @@ export default {
     },
     visible: {
       handler: function() {
-        debugger;
         this.removeKML();
         if (this.visible === undefined || this.visible) {
           this.appendKml(this.url, false);
