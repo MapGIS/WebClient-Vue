@@ -193,9 +193,7 @@ export default {
       // 如果样式文件中，paint为null，则mapboxgl会报错，这里给个默认值
       const layers = newLayer.map(item => {
         if (!item.paint) {
-          item.paint = {
-            "text-color": "rgba(0,0,0,1)"
-          };
+          item.paint = {};
         }
         if (item.minzoom !== undefined && item.minzoom < self.minimumLevel) {
           item.minzoom = self.minimumLevel;
