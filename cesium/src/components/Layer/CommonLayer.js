@@ -2,7 +2,7 @@ import { CesiumInnerGraphicsLayer } from "@mapgis/webclient-cesium-plugin";
 import {
   Zondy,
   FeatureServer,
-  applyRenderer,
+  RendererUtil,
   BaseRenderer,
   Feature,
   FeatureSet,
@@ -65,7 +65,7 @@ export default {
     },
     // 对fetureSet设置renderer
     featureSetApplyRenderer(features, renderer) {
-      applyRenderer(features, renderer);
+      RendererUtil.updateRenderer(features, renderer);
     },
     // 将renderer格式的json对象转换为真正的renderer对象
     transfromRenderer(renderer) {
@@ -100,11 +100,15 @@ export default {
     constructFeatureSet(features) {
       const featureArr = [];
       features.forEach((item) => {
-        const feature = new Feature({
-          attributes: item.properties,
-          geometry: Geometry.fromJSON(item.geometry),
-        });
-        featureArr.push(feature);
+        try {
+          const feature = new Feature({
+            attributes: item.properties,
+            geometry: Geometry.fromJSON(item.geometry),
+          });
+          featureArr.push(feature);
+        } catch (error) {
+          console.log(item);
+        }
       });
       const featureSet = new FeatureSet({ features: featureArr });
       this.featureSet = featureSet.toJSON();
@@ -153,7 +157,6 @@ export default {
           // id: vueIndex,
           viewer: viewer,
         });
-        window.innerLayer = this.innerLayer;
       }
       // 统一专题图的文本类型需要处理
       if (this.isTextSymbol(renderer)) {
