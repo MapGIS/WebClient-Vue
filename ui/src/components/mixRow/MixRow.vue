@@ -1260,8 +1260,14 @@ export default {
           if (this.type === "MapgisUiExplosionRange") {
             // 模型爆炸默认初始分段为5，后面看数据长度，如果数据长度小于5，则以数据长度为准
             rangeLevel = this.listProps.segments || 5;
+            this.listProps.dataSource = this.$_getExplosionDataByGeoJson(
+              this.listProps.dataSource,
+              this.listProps.field,
+              type,
+              rangeLevel
+            );
           }
-          this.listProps.dataSource = this.$_getExplosionDataByGeoJson(
+          this.listProps.dataSource = this.$_getDataByGeoJson(
             this.listProps.dataSource,
             this.listProps.field,
             type,
