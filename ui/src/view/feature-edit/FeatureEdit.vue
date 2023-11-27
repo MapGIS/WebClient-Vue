@@ -38,10 +38,19 @@
         />
       </mapgis-ui-tab-pane>
     </mapgis-ui-tabs>
-    <mapgis-ui-row type="flex" justify="end">
-      <mapgis-ui-button @click="handleReset">重置</mapgis-ui-button>
-      <mapgis-ui-button type="primary" @click="handleOk">确认</mapgis-ui-button>
-    </mapgis-ui-row>
+    <slot name="footer" :handleOk="handleOk" :handleReset="handleReset">
+      <mapgis-ui-row type="flex" justify="space-between">
+        <mapgis-ui-col>
+          <mapgis-ui-checkbox v-model="isSave">保存到服务器</mapgis-ui-checkbox>
+        </mapgis-ui-col>
+        <mapgis-ui-col>
+          <mapgis-ui-button @click="handleReset">重置</mapgis-ui-button>
+          <mapgis-ui-button type="primary" @click="handleOk"
+            >确认</mapgis-ui-button
+          >
+        </mapgis-ui-col>
+      </mapgis-ui-row>
+    </slot>
   </div>
 </template>
 
@@ -95,7 +104,8 @@ export default {
       // 深拷贝一份然后传下去
       featureItem: {},
       activeKey: this.rendererType,
-      featureStyleCopy: ""
+      featureStyleCopy: "",
+      isSave: false
     };
   },
   watch: {
@@ -123,6 +133,9 @@ export default {
     }
   },
   methods: {
+    /**
+     * 切换tab时需保存样式用于回显
+     */
     activeKeyChange() {
       if (
         JSON.stringify(this.layerFeatureStyle) !== "{}" &&
@@ -146,6 +159,9 @@ export default {
         this.featureStyleCopy = "";
       }
     },
+    /**
+     * 将render对象当中的要素样式转成组件需要的格式
+     */
     formatFeature(layerFeatureItem) {
       if (
         Object.prototype.toString.call(layerFeatureItem) == "[object Object]"
@@ -238,7 +254,7 @@ export default {
       this.getRenderer({}, "");
     },
     getRenderer(renderer, symbolType) {
-      this.$emit("get-renderer", renderer, symbolType);
+      this.$emit("get-renderer", renderer, symbolType, this.isSave);
     }
   }
 };

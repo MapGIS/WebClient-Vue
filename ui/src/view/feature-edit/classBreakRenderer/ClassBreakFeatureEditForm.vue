@@ -31,7 +31,15 @@
           >
         </mapgis-ui-select>
       </mapgis-ui-form-item>
-      <mapgis-ui-form-item label="表格">
+      <mapgis-ui-form-item>
+        <template v-slot:label>
+          <mapgis-ui-row type="flex" justify="space-between">
+            <mapgis-ui-col style="width:40px">表格</mapgis-ui-col>
+            <mapgis-ui-col style="flex:1"
+              ><mapgis-ui-slider-color-picker :color.sync="color"
+            /></mapgis-ui-col>
+          </mapgis-ui-row>
+        </template>
         <mapgis-ui-table
           :columns="tableColumns"
           :data-source="tableData"
@@ -103,47 +111,23 @@
 </template>
 
 <script>
-import { uuid } from "../../../util/common/util";
 import { ClassBreakRenderer } from "@mapgis/webclient-common";
-import MapgisUiFeatureEditForm from "../simpleRenderer/FeatureEditForm.vue";
+import getSymbolMixin from "../mixin/GetSymbol.js";
+import featureEdit from "../mixin/featureEdit";
 import {
   defaultSimpleMarkerStyle,
   defaultTextStyle,
   defaultPictureMarkerStyle,
   defaultSimpleLineStyle,
   defaultSimpleFillStyle
-} from "../simpleRenderer/defaultStyle.js";
-import getSymbolMixin from "../mixin/GetSymbol.js";
+} from "../simpleRenderer/defaultStyle";
+import { uuid } from "../../../util/common/util";
 
 export default {
   name: "mapgis-ui-feature-edit-class-break-form",
-  mixins: [getSymbolMixin],
-  components: {
-    MapgisUiFeatureEditForm
-  },
-  props: {
-    // 属性值数组
-    fieldInfo: {
-      type: Array,
-      default: () => []
-    },
-    // 要素类型
-    featureType: {
-      type: String
-    },
-    featureStyle: {
-      type: String
-    },
-    featureItemArr: {
-      type: [Object, Array]
-    }
-  },
+  mixins: [getSymbolMixin, featureEdit],
   data() {
     return {
-      featureStyleCopy: this.featureStyle,
-      groupField: undefined,
-      statisticsField: undefined,
-      isEdit: false,
       tableColumns: [
         {
           title: "图例",
@@ -171,80 +155,16 @@ export default {
         // { name: "简单图文标注", value: "text" },
         { name: "简单图片标签", value: "picture-marker" }
       ],
-      tableData: [],
-      featureItem: {}
+      type: "classBreak"
     };
-  },
-  watch: {
-    featureItemArr: {
-      immediate: true,
-      handler() {
-        if (
-          Object.prototype.toString.call(this.featureItemArr) ==
-          "[object Object]"
-        ) {
-          this.tableData = [];
-        } else {
-          this.tableData = this.featureItemArr;
-        }
-      }
-    }
   },
   computed: {
     // 剔除掉属性值数组当中类型为string的项
     fieldInfoMap() {
       return this.fieldInfo.filter(item => item.type !== "string");
-    },
-    title() {
-      const map = {
-        Pnt: "点",
-        Lin: "线",
-        Reg: "区"
-      };
-      return `${map[this.featureType]}样式`;
     }
   },
   methods: {
-    modalCancel() {
-      this.isEdit = false;
-    },
-    handleChange() {
-      let check;
-      switch (this.featureType) {
-        case "Pnt":
-          check =
-            this.groupField && this.statisticsField && this.featureStyleCopy;
-          break;
-        case "Lin":
-        case "Reg":
-          check = this.groupField && this.statisticsField;
-          break;
-        default:
-          break;
-      }
-      if (check) {
-        const statisticsField = {
-          type: this.fieldInfo.filter(
-            item => item.name == this.statisticsField
-          )[0].type,
-          label: this.statisticsField,
-          value: this.statisticsField
-        };
-        const groupField = {
-          type: this.fieldInfoMap.filter(
-            item => item.name == this.groupField
-          )[0].type,
-          label: this.groupField,
-          value: this.groupField
-        };
-        this.$emit(
-          "feature-edit-change",
-          "classBreak",
-          { statisticsField: [statisticsField], groupField },
-          this.init
-        );
-      }
-    },
     // 根据不同图层类型点、线、区组装不同tableData
     init(val) {
       this.tableData = [];
@@ -274,42 +194,23 @@ export default {
           break;
         }
       }
+      const deafultStyle1 = JSON.parse(JSON.stringify(deafultStyle));
+      const deafultStyle2 = JSON.parse(JSON.stringify(deafultStyle));
+      deafultStyle1.color = `rgba(${this.colorRgb[0]},${this.colorRgb[1]},${this.colorRgb[2]},1)`;
+      deafultStyle2.color = `rgba(${this.colorRgb[0]},${this.colorRgb[1]},${this.colorRgb[2]},0.5)`;
       const node1 = {
-        sample: JSON.parse(JSON.stringify(deafultStyle)),
+        sample: deafultStyle1,
         key: uuid(),
         min: this.min,
         max: (this.max + this.min) / 2
       };
       const node2 = {
-        sample: JSON.parse(JSON.stringify(deafultStyle)),
+        sample: deafultStyle2,
         key: uuid(),
         min: (this.max + this.min) / 2,
         max: this.max
       };
       this.tableData.push(node1, node2);
-    },
-    getSampleColor({ style, border, color }) {
-      const formatStyle = {
-        "--color": color
-      };
-      switch (style) {
-        case "diamond": {
-        }
-        case "circle": {
-        }
-        case "square": {
-        }
-        case "cross": {
-        }
-        case "x": {
-        }
-        case "triangle": {
-        }
-        default:
-          break;
-      }
-
-      return formatStyle;
     },
     /**
      * 获取每行的可输入最大值（就是后一行的最大值）
@@ -395,6 +296,9 @@ export default {
       this.isEdit = true;
       this.featureItem = this.tableData[index].sample;
     },
+    /**
+     * 标准化render并传出
+     */
     formatRender() {
       if (this.tableData.length > 0) {
         const classBreakInfos = [];
