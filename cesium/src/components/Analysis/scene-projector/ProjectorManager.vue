@@ -819,7 +819,8 @@ export default {
       } = item.params;
       const { Cesium, viewer } = this;
       // 摄像头参数投放方式下，projectAreaCoords为undefined
-      if (renderType === 0) {
+      if (!renderType) {
+        // renderType为undefined和0的时候，都是摄像头参数投放方式
         const destination = Cesium.Cartesian3.fromDegrees(
           cameraPosition.x,
           cameraPosition.y,
