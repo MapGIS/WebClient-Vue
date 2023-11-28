@@ -65,7 +65,7 @@ export default {
     dataSource: {
       handler: async function(json) {
         if (!json) return;
-        if (typeof json === "object") {
+        if (json.indexOf("DOCTYPE html") > -1) {
           window.vueCesium.PlotLayerData.addSource(
             this.vueKey,
             this.vueIndex,
