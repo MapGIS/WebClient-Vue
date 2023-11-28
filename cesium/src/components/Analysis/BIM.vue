@@ -1010,3 +1010,12 @@ export default {
   }
 };
 </script>
+<style lang="scss">
+.mapgis-3d-bim-component {
+  .mapgis-ui-collapse-card {
+    &::-webkit-scrollbar-thumb {
+      background: #939392;
+    }
+  }
+}
+</style>
