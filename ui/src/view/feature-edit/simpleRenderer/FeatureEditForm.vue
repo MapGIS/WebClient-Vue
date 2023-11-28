@@ -151,6 +151,7 @@ export default {
         default:
           break;
       }
+      if (!symbol) return;
       const simpleRenderer = new SimpleRenderer({
         symbol
       });

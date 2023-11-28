@@ -31,7 +31,15 @@
           >
         </mapgis-ui-select>
       </mapgis-ui-form-item>
-      <mapgis-ui-form-item label="表格">
+      <mapgis-ui-form-item>
+        <template v-slot:label>
+          <mapgis-ui-row type="flex" justify="space-between">
+            <mapgis-ui-col style="width:40px">表格</mapgis-ui-col>
+            <mapgis-ui-col style="flex:1"
+              ><mapgis-ui-slider-color-picker :color.sync="color"
+            /></mapgis-ui-col>
+          </mapgis-ui-row>
+        </template>
         <mapgis-ui-table
           :columns="tableColumns"
           :data-source="tableData"
@@ -99,80 +107,27 @@
 </template>
 
 <script>
-import { uuid } from "../../../util/common/util";
 import { UniqueValueRenderer } from "@mapgis/webclient-common";
-import MapgisUiFeatureEditForm from "../simpleRenderer/FeatureEditForm.vue";
+import getSymbolMixin from "../mixin/GetSymbol.js";
+import featureEdit from "../mixin/featureEdit";
 import {
   defaultSimpleMarkerStyle,
   defaultTextStyle,
   defaultPictureMarkerStyle,
   defaultSimpleLineStyle,
   defaultSimpleFillStyle
-} from "../simpleRenderer/defaultStyle.js";
-import getSymbolMixin from "../mixin/GetSymbol.js";
+} from "../simpleRenderer/defaultStyle";
+import { uuid } from "../../../util/common/util";
 
 export default {
   name: "mapgis-ui-feature-edit-unique-value-form",
-  mixins: [getSymbolMixin],
-  components: {
-    MapgisUiFeatureEditForm
-  },
-  props: {
-    // 属性值数组
-    fieldInfo: {
-      type: Array,
-      default: () => []
-    },
-    // 要素类型
-    featureType: {
-      type: String
-    },
-    featureStyle: {
-      type: String
-    },
-    featureItemArr: {
-      type: [Object, Array]
-    }
-  },
+  mixins: [getSymbolMixin, featureEdit],
   data() {
     return {
-      featureStyleCopy: this.featureStyle,
-      groupField: undefined,
-      statisticsField: undefined,
-      isEdit: false,
-      pointFeatureStyleList: [
-        { name: "常规点图形", value: "simple-marker" },
-        { name: "简单图文标注", value: "text" },
-        { name: "简单图片标签", value: "picture-marker" }
-      ],
-      tableData: [],
-      featureItem: {}
+      type: "uniqueValue"
     };
   },
-  watch: {
-    featureItemArr: {
-      immediate: true,
-      handler() {
-        if (
-          Object.prototype.toString.call(this.featureItemArr) ==
-          "[object Object]"
-        ) {
-          this.tableData = [];
-        } else {
-          this.tableData = this.featureItemArr;
-        }
-      }
-    }
-  },
   computed: {
-    title() {
-      const map = {
-        Pnt: "点",
-        Lin: "线",
-        Reg: "区"
-      };
-      return `${map[this.featureType]}样式`;
-    },
     tableColumns() {
       if (this.featureType == "Pnt" && this.featureStyleCopy == "text") {
         return [
@@ -215,48 +170,10 @@ export default {
     }
   },
   methods: {
-    modalCancel() {
-      this.isEdit = false;
-    },
     getUrl(url) {
       return `${window.origin}${window._CONFIG.domainURL}${url}`;
     },
-    handleChange() {
-      let check;
-      switch (this.featureType) {
-        case "Pnt":
-          check =
-            this.groupField && this.statisticsField && this.featureStyleCopy;
-          break;
-        case "Lin":
-        case "Reg":
-          check = this.groupField && this.statisticsField;
-          break;
-        default:
-          break;
-      }
-      if (check) {
-        const statisticsField = {
-          type: this.fieldInfo.filter(
-            item => item.name == this.statisticsField
-          )[0].type,
-          label: this.statisticsField,
-          value: this.statisticsField
-        };
-        const groupField = {
-          type: this.fieldInfo.filter(item => item.name == this.groupField)[0]
-            .type,
-          label: this.groupField,
-          value: this.groupField
-        };
-        this.$emit(
-          "feature-edit-change",
-          "uniqueValue",
-          { statisticsField: [statisticsField], groupField },
-          this.init
-        );
-      }
-    },
+
     // 根据不同图层类型点、线、区组装不同tableData
     init(val) {
       this.tableData = [];
@@ -284,81 +201,36 @@ export default {
           break;
         }
       }
-      val.forEach(item => {
+      const dataLength = val.length;
+      const step = 1 / dataLength;
+      for (let i = 0; i < dataLength; i++) {
+        deafultStyle.color = `rgba(${this.colorRgb[0]},${this.colorRgb[1]},${
+          this.colorRgb[2]
+        },${1 - step * i})`;
         const node = {
           sample: JSON.parse(JSON.stringify(deafultStyle)),
           key: uuid(),
-          class: item
+          class: val[i]
         };
         this.tableData.push(node);
-      });
-    },
-    getSampleColor({ style, border, color }) {
-      const formatStyle = {
-        "--color": color
-      };
-      switch (style) {
-        case "diamond": {
-        }
-        case "circle": {
-        }
-        case "square": {
-        }
-        case "cross": {
-        }
-        case "x": {
-        }
-        case "triangle": {
-        }
-        default:
-          break;
-      }
-
-      return formatStyle;
-    },
-    /**
-     * 获取每行的可输入最大值（就是后一行的最大值）
-     */
-    getMax(index) {
-      return index < this.tableData.length - 1
-        ? this.tableData[index + 1].max
-        : this.tableData[this.tableData.length - 1].max;
-    },
-    /**
-     * 修改选中行的最大值，后面一行的最小值同步变化
-     */
-    changeMax(record, index) {
-      if (record.max > this.tableData[index + 1].max) {
-        record.max = this.tableData[index + 1].max;
-      }
-      if (index < this.tableData.length - 1) {
-        this.tableData[index + 1].min = record.max;
       }
     },
     /**
      * 删除，删除后，前一行和后一行要衔接上
      */
     remove(index) {
-      const length = this.tableData.length;
-      // 传入的值只有颜色没有最大最小值时，如['rgba(222,222,222,0.2)]
-      if (this.value instanceof Array && typeof this.value[0] === "string") {
-        this.tableData.splice(index, 1);
-        return;
-      }
-      if (index === 0) {
-        this.tableData[index + 1].min = this.tableData[index].min;
-      } else if (index < length - 1) {
-        this.tableData[index + 1].min = this.tableData[index].min;
-        this.tableData[index - 1].max = this.tableData[index + 1].min;
-      } else {
-        this.tableData[index - 1].max = this.tableData[index].min;
-      }
       this.tableData.splice(index, 1);
     },
+    /**
+     * 编辑当前项
+     */
     edit(index) {
       this.isEdit = true;
       this.featureItem = this.tableData[index].sample;
     },
+    /**
+     * 标准化render并传出
+     */
     formatRender() {
       if (this.tableData.length > 0) {
         const uniqueValueInfos = [];

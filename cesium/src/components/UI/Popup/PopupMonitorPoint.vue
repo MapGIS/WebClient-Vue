@@ -92,10 +92,15 @@
               </mapgis-ui-select-option>
             </mapgis-ui-select>
           </div>
-          <div id="projectorVideoContainer" :width="300" :height="200"></div>
-          <!-- <video controls="controls" autoplay="autoplay" class="video">
-            <source :src="videoUrl" :type="videoTypeCom(videoType)" />
-          </video> -->
+          <div class="monitor-video-content">
+            <div
+              id="projectorVideoContainer"
+              :width="300"
+              :height="200"
+              v-if="videoUrl"
+            ></div>
+            <mapgis-ui-empty v-else class="empty"></mapgis-ui-empty>
+          </div>
         </div>
       </div>
     </div>
@@ -233,7 +238,8 @@ export default {
         }
       ],
       hasChange: false,
-      listPanelVisible: false
+      listPanelVisible: false,
+      videoUrl: ""
     };
   },
   computed: {
@@ -287,11 +293,15 @@ export default {
           ) {
             this._getVideoDom();
           } else {
-            const layerName = this.exhibition.options[
-              this.exhibition.activeOptionId
-            ].name;
+            const layerName = this.exhibition.options
+              ? this.exhibition.options[this.exhibition.activeOptionId].name
+              : this.exhibition.option.name;
             const videoName = this.properties[this.monPntID];
             const path = await this.getPath(videoName, layerName);
+            if (path.indexOf("undefined") > -1) {
+              this.videoUrl = "";
+              return this.$message.info("获取视频流失败");
+            }
             const baseUrl = this.dataUrl.replace(
               "/catalog/hdfs/services",
               "/services/file/hdfs"
@@ -765,8 +775,14 @@ export default {
         max-height: 250px;
         text-align: center;
         margin-top: 20px;
-        .video {
+        .monitor-video-content {
           height: 100%;
+          .empty {
+            line-height: 200px;
+          }
+          .video {
+            height: 100%;
+          }
         }
       }
     }
