@@ -21,6 +21,7 @@
             :initBasicSetting.sync="initBasicSetting"
             :initialDepthTest="depthTest"
             :initial-scene-mode="sceneMode"
+            :stuffWidth="stuffWidth"
           ></basic-setting>
         </mapgis-ui-tab-pane>
         <mapgis-ui-tab-pane
@@ -152,6 +153,10 @@ export default {
     isWidgetOpen: {
       type: Boolean,
       default: false
+    },
+    // 左侧板宽度
+    stuffWidth: {
+      type: Number
     }
   },
   computed: {
