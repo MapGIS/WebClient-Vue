@@ -190,6 +190,10 @@ export default {
           layersaturation: 1.0
         };
       }
+    },
+    // 左侧板宽度
+    stuffWidth: {
+      type: Number
     }
   },
   computed: {
@@ -436,6 +440,12 @@ export default {
       options.enableCompass = this.basicSetting.compass;
       options.enableZoomControls = this.basicSetting.zoom || false;
       viewer.createNavigationTool(options);
+      this.$nextTick(() => {
+        const compassDiv = document.querySelector(".compass");
+        if (compassDiv) {
+          compassDiv.style.left = `${this.stuffWidth}px`;
+        }
+      });
       // this.changeNavPos();
     },
     /*
