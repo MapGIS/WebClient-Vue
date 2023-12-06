@@ -7,9 +7,11 @@
             <mapgis-ui-group-tab :title="pathTotal">
               <mapgis-ui-toolbar slot="handle" :bordered="false">
                 <mapgis-ui-toolbar-command
-                  icon="mapgis-save"
-                  title="保存"
-                  @click="_savePaths"
+                  v-for="(item, index) in toolbarList"
+                  :key="index"
+                  :icon="item.icon"
+                  :title="item.title"
+                  @click="item.click"
                 ></mapgis-ui-toolbar-command>
               </mapgis-ui-toolbar>
             </mapgis-ui-group-tab>
@@ -138,6 +140,14 @@
           ></path-roaming>
         </div>
       </div>
+      <path-import
+        v-if="pathImportModalVisible"
+        :visible="pathImportModalVisible"
+        :importModalType="importModalType"
+        @close-path-import-modal="closePathImportModal"
+        @update-paths="updatePaths"
+        @update-wl="updateWl"
+      />
     </slot>
   </div>
 </template>
@@ -147,10 +157,12 @@ import PathItem from "./PathRoaming/PathItem.vue";
 import PathRoaming from "./PathRoaming/PathRoaming.vue";
 import VueOptions from "../Base/Vue/VueOptions";
 import { MapgisUiEmpty } from "@mapgis/webclient-vue-ui";
+import { saveAs } from "file-saver";
+import PathImport from "./PathRoaming/components/PathImport.vue";
 export default {
   name: "mapgis-3d-scene-roaming",
   inject: ["Cesium", "vueCesium", "viewer"],
-  components: { PathItem, PathRoaming },
+  components: { PathItem, PathRoaming, PathImport },
   props: {
     ...VueOptions,
     layout: {
@@ -262,8 +274,32 @@ export default {
       // polyline: undefined,
       emptyImage: MapgisUiEmpty.PRESENTED_IMAGE_SIMPLE,
       emptyDescription: "暂无数据",
-      lastClickLineId: undefined
+      lastClickLineId: undefined,
       // pointArr: [] // 存放新增路线时保存的点位信息
+      toolbarList: [
+        {
+          icon: "mapgis-upload",
+          title: "上传wl文件",
+          click: this._uploadPaths
+        },
+        {
+          icon: "mapgis-Import",
+          title: "导入",
+          click: this._importPaths
+        },
+        {
+          icon: "mapgis-export",
+          title: "导出",
+          click: this._exportPaths
+        },
+        {
+          icon: "mapgis-save",
+          title: "保存",
+          click: this._savePaths
+        }
+      ],
+      pathImportModalVisible: false,
+      importModalType: ""
     };
   },
   created() {},
@@ -551,6 +587,85 @@ export default {
     },
     _savePaths() {
       this.$emit("save-paths", this.pathsCopy);
+    },
+    // 导入漫游路径的json文件
+    _importPaths() {
+      this.importModalType = "json";
+      this.pathImportModalVisible = !this.pathImportModalVisible;
+    },
+    // 上传漫游路径的wl文件
+    _uploadPaths() {
+      this.importModalType = "wl";
+      this.pathImportModalVisible = !this.pathImportModalVisible;
+    },
+    // 导出漫游路径的json文件
+    _exportPaths() {
+      if (this.pathsCopy && this.pathsCopy.length > 0) {
+        const exportPaths = {
+          pathData: this.pathsCopy,
+          version: 1.0 // 添加版本1.0标识
+        };
+        const pathJson = JSON.stringify(exportPaths);
+        const datetime = Date.now();
+        const blob = new Blob([pathJson], {
+          type: "application/json;charset=utf-8"
+        });
+        saveAs(blob, `pathJson_${datetime}.json`);
+        this.$message.success("导出成功");
+      }
+    },
+    // 关闭漫游路径导入modal框
+    closePathImportModal(val) {
+      this.pathImportModalVisible = false;
+    },
+    // 上传wl更新漫游路径
+    updateWl({ path, name }) {
+      const pathId = this.getPathId();
+      const {
+        speed,
+        elevationType,
+        exHeight,
+        heading,
+        pitch,
+        range,
+        animationType,
+        interpolationAlgorithm,
+        isLoop,
+        showPath,
+        showInfo
+      } = this.setting;
+      const node = {
+        name: `${name}${pathId}`,
+        id: pathId,
+        path,
+        para: {
+          speed,
+          elevationType,
+          exHeight,
+          heading,
+          pitch,
+          range,
+          animationType,
+          interpolationAlgorithm,
+          isLoop,
+          showPath,
+          showInfo,
+          modelUrl: ""
+        }
+      };
+      this.pathsCopy.push(node);
+    },
+    // 导入json更新漫游路径
+    updatePaths(data) {
+      if (!data) return this.$message.error("导入失败，未获取到漫游路径");
+      data.pathData.forEach(path => {
+        const index = this.pathsCopy.findIndex(item => item.id === path.id);
+        if (index > -1) {
+          this.pathsCopy.splice(index, 1, path);
+        } else {
+          this.pathsCopy.push(path);
+        }
+      });
     },
     savePosition(index) {
       const newData = [...this.positions];
