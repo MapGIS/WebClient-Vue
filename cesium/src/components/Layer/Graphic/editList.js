@@ -1262,6 +1262,30 @@ let editList = {
       value: "#F04155"
     },
     {
+      type: "MapgisUiShowOutline",
+      title: "边线设置",
+      key: "showOutline",
+      value: false
+    },
+    {
+      type: "MapgisUiInputNumber",
+      title: "边线宽度",
+      key: "outlineWidth",
+      value: 0
+    },
+    {
+      type: "MapgisUiColorPicker",
+      title: "边线颜色",
+      value: "#F04155",
+      key: "outlineColor"
+    },
+    {
+      type: "MapgisUiSlider",
+      title: "边线透明度",
+      key: "outlineOpacity",
+      value: 100
+    },
+    {
       type: "MapgisUiSelect",
       title: "文字相对图片位置",
       key: "labelPlaceType",
