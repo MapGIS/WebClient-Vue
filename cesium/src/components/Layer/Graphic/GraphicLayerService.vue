@@ -1060,7 +1060,15 @@ export default {
                 editPanelValues.fontColor || "#000000"
               ),
               editPanelValues.opacity / 100
-            )
+            ),
+            outlineColor: Cesium.Color.fromAlpha(
+              Cesium.Color.fromCssColorString(
+                editPanelValues.outlineColor || "#000000"
+              ),
+              editPanelValues.outlineOpacity / 100
+            ),
+            outlineWidth: editPanelValues.outlineWidth,
+            style: Cesium.LabelStyle.FILL_AND_OUTLINE
             // pixelOffset: new Cesium.Cartesian2(0, 500)
           };
           let billboardStyle = {
