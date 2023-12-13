@@ -80,13 +80,13 @@ const Template = (args, { argTypes }) => ({
         background: isAdvanceControl ? "#fff" : "transparent",
       };
     },
-    showSize(){
+    showSize() {
       return {
-        marginBottom:"calc(6vh)",
-        padding:"5px",
-        borderRadius:"5px",
-        backgroundColor:"cornsilk"
-      }
+        marginBottom: "calc(6vh)",
+        padding: "5px",
+        borderRadius: "5px",
+        backgroundColor: "cornsilk",
+      };
     },
     toolbarStyle({ toolbarVisible }) {
       return {
@@ -112,7 +112,7 @@ const Template = (args, { argTypes }) => ({
   methods: {
     clearMeasure() {
       this.measureResult = null;
-      this.measureRef.remove();
+      this.measureRef.deleteMeasure();
     },
     startMeasure(mode) {
       this.measureRef.enableMeasure();
@@ -122,11 +122,9 @@ const Template = (args, { argTypes }) => ({
       this.toolbarVisible = !this.toolbarVisible;
     },
     enableLengthMeasure() {
-      this.clearMeasure();
       this.startMeasure("draw_line_string");
     },
     enableAreaMeasure() {
-      this.clearMeasure();
       this.startMeasure("draw_polygon");
     },
   },

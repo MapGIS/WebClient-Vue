@@ -158,7 +158,7 @@ export default {
      * 清除测量
      */
     clearMeasure() {
-      this.$parent.remove();
+      this.$parent.deleteMeasure();
     },
     /**
      * 样式设置变化
