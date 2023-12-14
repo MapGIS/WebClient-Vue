@@ -10,33 +10,49 @@
   <div>
     <slot>
       <div>
-        <mapgis-ui-setting-form
-          :layout="layout"
-          size="default"
-        >
+        <mapgis-ui-setting-form :layout="layout" size="default">
           <mapgis-ui-form-item label="M3D模型">
-            <mapgis-ui-select v-model="selectDefaultValue"  @change="$_chooseM3D">
-              <mapgis-ui-select-option :key="index" v-for="(data,index) in dataSource" :value="data.key">
+            <mapgis-ui-select
+              v-model="selectDefaultValue"
+              @change="$_chooseM3D"
+            >
+              <mapgis-ui-select-option
+                :key="index"
+                v-for="(data, index) in dataSource"
+                :value="data.key"
+              >
                 {{ data.value }}
               </mapgis-ui-select-option>
             </mapgis-ui-select>
           </mapgis-ui-form-item>
           <mapgis-ui-form-item label="是否贴模型">
-            <mapgis-ui-select v-model="mode"  @change="$_chooseMode">
-              <mapgis-ui-select-option :key="index" v-for="(data,index) in classify" :value="data.key">
+            <mapgis-ui-select v-model="mode" @change="$_chooseMode">
+              <mapgis-ui-select-option
+                :key="index"
+                v-for="(data, index) in classify"
+                :value="data.key"
+              >
                 {{ data.value }}
               </mapgis-ui-select-option>
             </mapgis-ui-select>
           </mapgis-ui-form-item>
           <mapgis-ui-form-item label="压平高度">
-            <mapgis-ui-input-number autoWidth v-model="flattenHeight" @change="$_change"/>
+            <mapgis-ui-input-number
+              autoWidth
+              v-model="flattenHeight"
+              @change="$_change"
+            />
           </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
         <mapgis-ui-setting-footer>
-          <mapgis-ui-button type="primary" @click="clearModelFlatten(true)">还原</mapgis-ui-button>
-          <mapgis-ui-button type="primary" @click="startModelFlatten">开始</mapgis-ui-button>
+          <mapgis-ui-button type="primary" @click="clearModelFlatten(true)"
+            >还原</mapgis-ui-button
+          >
+          <mapgis-ui-button type="primary" @click="startModelFlatten"
+            >开始</mapgis-ui-button
+          >
         </mapgis-ui-setting-footer>
-      <!-- <mapgis-ui-select-row-left
+        <!-- <mapgis-ui-select-row-left
           title="M3D模型"
           :dataSource="dataSource"
           :value="selectDefaultValue"
@@ -154,7 +170,7 @@ export default {
   },
   watch: {
     M3Ds: {
-      handler: function () {
+      handler: function() {
         this.dataSource = this.M3Ds;
         if (this.dataSource.length > 0) {
           this.selectDefaultValue = this.dataSource[0].key;
@@ -169,13 +185,14 @@ export default {
     if (this.dataSource.length > 0) {
       this.selectDefaultValue = this.dataSource[0].key;
       this.m3dVueIndex = this.dataSource[0].key;
-      console.log("this.selectDefaultValue", this.selectDefaultValue)
+      console.log("this.selectDefaultValue", this.selectDefaultValue);
     }
     this.$_newGraphicLayer({
       vueIndex: this.vueIndex,
       vueKey: this.vueKey,
       getGraphic: this.getDrawResult
     });
+    this.flattenTool = new Cesium.FlattenTool(this.viewer.scene);
   },
   destroyed() {
     this.clearModelFlatten();
@@ -186,7 +203,7 @@ export default {
     window.__graphicsLayer__.destroy();
     window.__graphicsLayer__ = undefined;
     delete window.__graphicsLayer__;
-    this.$_deleteManager(Managger);
+    // this.$_deleteManager(Managger);
   },
   methods: {
     $_change() {
@@ -248,14 +265,14 @@ export default {
       return m3d;
     },
     startModelFlatten() {
-      const {vueKey, vueIndex} = this;
+      const { vueKey, vueIndex } = this;
       this.isStartDrawing = true;
       let options = {
         type: "polygon",
         style: {
           color: Cesium.Color.fromAlpha(
-              Cesium.Color.fromCssColorString("#F04155"),
-              0.8
+            Cesium.Color.fromCssColorString("#F04155"),
+            0.8
           ),
           height: 0,
           isPlanePolygon: false,
@@ -269,66 +286,76 @@ export default {
         });
       }
       window.__graphicsLayer__.startDrawing(options);
-      let m3d = this.$_getM3D(this.vueKey, this.m3dVueIndex);
-      if (m3d) {
-        const {_arrayLength, _height, _isFlatten, _positionArray} = m3d;
-        window.vueCesium[Managger].addSource(
-            vueKey,
-            vueIndex,
-            {},
-            {
-              m3d: m3d,
-              origin: {
-                _arrayLength,
-                _height,
-                _isFlatten,
-                _positionArray
-              }
-            }
-        );
-      }
+      // let m3d = this.$_getM3D(this.vueKey, this.m3dVueIndex);
+      // if (m3d) {
+      //   const { _arrayLength, _height, _isFlatten, _positionArray } = m3d;
+      //   window.vueCesium[Managger].addSource(
+      //     vueKey,
+      //     vueIndex,
+      //     {},
+      //     {
+      //       m3d: m3d,
+      //       origin: {
+      //         _arrayLength,
+      //         _height,
+      //         _isFlatten,
+      //         _positionArray
+      //       }
+      //     }
+      //   );
+      // }
     },
     clearModelFlatten(clearPosition) {
-      const {viewer} = this;
-      let find = this.findSource();
-      if (clearPosition) {
-        window._result_ = undefined;
-      }
-      if (find && find.source) {
-        let m3d = this.$_getM3D(
-            this.vueKey,
-            this.m3dVueIndex
-        );
-        if(m3d){
-          let origin = find.options.origin;
-          m3d._height = origin._height;
-          m3d._isFlatten = origin._isFlatten;
-          m3d._arrayLength = origin._arrayLength;
-          m3d._positionArray = origin._positionArray;
-          viewer.scene.requestRender();
-        }
-      }
+      const { viewer } = this;
+      // let find = this.findSource();
+      // if (clearPosition) {
+      //   window._result_ = undefined;
+      // }
+      // if (find && find.source) {
+      //   let m3d = this.$_getM3D(this.vueKey, this.m3dVueIndex);
+      //   if (m3d) {
+      //     let origin = find.options.origin;
+      //     m3d._height = origin._height;
+      //     m3d._isFlatten = origin._isFlatten;
+      //     m3d._arrayLength = origin._arrayLength;
+      //     m3d._positionArray = origin._positionArray;
+      //     viewer.scene.requestRender();
+      //   }
+      // }
+      this.flattenTool && this.flattenTool.removeModelFlatten();
     },
     getDrawResult(result) {
-      const {vueCesium} = this;
-      let m3d = this.$_getM3D(this.vueKey, this.m3dVueIndex);
-
-      if(m3d){
-        //模型压平
-        if (
-            result.positions[0] != result.positions[result.positions.length - 1]
-        ) {
-          result.positions.push(result.positions[0]);
-        }
-        m3d.modelFlatten(
-            result.positions,
-            this.flattenHeight + this.heightOffset
-        );
-        window.__graphicsLayer__.removeAllGraphic();
-        window.__graphicsLayer__.stopDrawing();
-        window._result_ = result;
-        this.isStartDrawing = false;
+      const { viewer } = this;
+      if (!this.flattenTool) {
+        this.flattenTool = new Cesium.FlattenTool(this.viewer.scene);
       }
+      this.flattenTool.modelFlatten(
+        result.positions,
+        this.flattenHeight + this.heightOffset
+      );
+      window.__graphicsLayer__.removeAllGraphic();
+      window.__graphicsLayer__.stopDrawing();
+      window._result_ = result;
+      this.isStartDrawing = false;
+      // const { vueCesium } = this;
+      // let m3d = this.$_getM3D(this.vueKey, this.m3dVueIndex);
+
+      // if (m3d) {
+      //   //模型压平
+      //   if (
+      //     result.positions[0] != result.positions[result.positions.length - 1]
+      //   ) {
+      //     result.positions.push(result.positions[0]);
+      //   }
+      //   m3d.modelFlatten(
+      //     result.positions,
+      //     this.flattenHeight + this.heightOffset
+      //   );
+      //   window.__graphicsLayer__.removeAllGraphic();
+      //   window.__graphicsLayer__.stopDrawing();
+      //   window._result_ = result;
+      //   this.isStartDrawing = false;
+      // }
     }
   }
 };
