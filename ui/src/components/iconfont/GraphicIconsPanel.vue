@@ -45,7 +45,6 @@
           }"
         >
           <img
-            @click="$_startDraw(icon.type)"
             class="mapgis-ui-graphic-icon"
             :src="icons[icon.type + 'Image']"
             :title="icon.title"
