@@ -8,17 +8,16 @@
         分级别配置
       </mapgis-ui-radio-button>
     </mapgis-ui-radio-group> -->
-    <mapgis-ui-tabs v-model="action">
+    <!-- <mapgis-ui-tabs v-model="action">
       <mapgis-ui-tab-pane key="single" tab="单级别配置">
-        <single-action
-          :layerid="layerid"
-          @edit-change="onEditChange"
-        />
+        <single-action :layerid="layerid" @edit-change="onEditChange" />
       </mapgis-ui-tab-pane>
       <mapgis-ui-tab-pane disabled key="multi" tab="分级别配置">
         <multi-action :layerid="layerid" />
       </mapgis-ui-tab-pane>
-    </mapgis-ui-tabs>
+    </mapgis-ui-tabs> -->
+    <!-- 暂时不支持分级别配置 -->
+    <single-action :layerid="layerid" @edit-change="onEditChange" />
   </div>
 </template>
 
@@ -26,29 +25,30 @@
 import EditMixin from "./EditMixin";
 
 import SingleAction from "./action/SingleAction.vue";
-import MultiAction from "./action/MultiAction.vue";
+// import MultiAction from "./action/MultiAction.vue";
 
 export default {
   name: "mapgis-mvt-editor",
-  components: { SingleAction, MultiAction },
+  // components: { SingleAction, MultiAction },
+  components: { SingleAction },
   inject: ["map", "mapbox"],
   mixins: [EditMixin],
   props: {
     layerid: {
-      type: String,
-    },
+      type: String
+    }
   },
   data() {
     return {
       action: "single",
-      show: true,
+      show: true
     };
   },
   methods: {
     onEditChange(event) {
       this.$_emitEvent(event);
-    },
-  },
+    }
+  }
 };
 </script>
 
