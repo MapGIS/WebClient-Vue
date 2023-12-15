@@ -27,19 +27,15 @@
       />
     </div> -->
 
-    <mapgis-ui-switch-panel
-      size="small"
-      label="过滤显示"
-      v-model="enable"
-    >
+    <mapgis-ui-switch-panel size="small" label="过滤显示" v-model="enable">
       <div>
         <mapgis-ui-radio-group v-model="type">
           <mapgis-ui-radio value="properties">
             按属性过滤
           </mapgis-ui-radio>
-          <mapgis-ui-radio value="geometry" disabled>
+          <!-- <mapgis-ui-radio value="geometry" disabled>
             按范围过滤
-          </mapgis-ui-radio>
+          </mapgis-ui-radio> -->
         </mapgis-ui-radio-group>
 
         <v-jsoneditor
