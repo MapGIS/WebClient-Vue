@@ -745,6 +745,9 @@ export default {
     },
     AnalysisSuccess(data) {
       this.maskShow = false;
+      if (data.results[0].Value === null) {
+        return this.$message.error("分析失败");
+      }
       // this.$emit("listenLayer", this.destLayer);
       // 设置缓冲区样式
       const bufferStyle = new FillStyle({
