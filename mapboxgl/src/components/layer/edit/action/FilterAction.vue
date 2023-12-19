@@ -66,8 +66,10 @@ export default {
       type: "properties",
       json: this.getValue(),
       options: {
+        mode: "code",
         search: false,
-        mode: "code"
+        enableSort: false,
+        enableTransform: false
       }
     };
   },
