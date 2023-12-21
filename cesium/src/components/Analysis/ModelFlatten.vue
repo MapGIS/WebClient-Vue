@@ -329,9 +329,11 @@ export default {
       if (!this.flattenTool) {
         this.flattenTool = new Cesium.FlattenTool(this.viewer.scene);
       }
+      const m3d = this.$_getM3D(this.vueKey, this.m3dVueIndex);
       this.flattenTool.modelFlatten(
         result.positions,
-        this.flattenHeight + this.heightOffset
+        this.flattenHeight + this.heightOffset,
+        m3d ? [m3d] : undefined
       );
       window.__graphicsLayer__.removeAllGraphic();
       window.__graphicsLayer__.stopDrawing();
