@@ -18,11 +18,7 @@
       </mapgis-ui-select>
 
       <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
-      <mapgis-ui-setting-form
-        :layout="layout"
-        size="default"
-        v-if="explosionFields && explosionFields.length > 0"
-      >
+      <mapgis-ui-setting-form :layout="layout" size="default">
         <mapgis-ui-form-item label="分组字段">
           <mapgis-ui-row>
             <mapgis-ui-col :span="24">
