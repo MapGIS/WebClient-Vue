@@ -1,6 +1,6 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
-@import '../../../components/input/style/mixin.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+@import "../../../components/input/style/mixin.scss";
 
 $cascader-prefix-cls: $ant-prefix + "-cascader";
 
@@ -19,10 +19,10 @@ $cascader-prefix-cls: $ant-prefix + "-cascader";
   }
 }
 
-.#{cascader-prefix-cls} {
+.#{$cascader-prefix-cls} {
   // .reset-component;
 
-  &-input.#{ant-prefix}-input {
+  &-input.#{$ant-prefix}-input {
     // Keep it static for https://github.com/ant-design/ant-design/issues/16738
     position: static;
     width: 100%;
@@ -34,7 +34,7 @@ $cascader-prefix-cls: $ant-prefix + "-cascader";
     cursor: pointer;
   }
 
-  &-picker-show-search &-input.#{ant-prefix}-input {
+  &-picker-show-search &-input.#{$ant-prefix}-input {
     position: relative;
   }
 
@@ -57,7 +57,7 @@ $cascader-prefix-cls: $ant-prefix + "-cascader";
       color: $disabled-color;
       background: $input-disabled-bg;
       cursor: not-allowed;
-      .#{cascader-prefix-cls}-input {
+      .#{$cascader-prefix-cls}-input {
         cursor: not-allowed;
       }
     }
@@ -117,7 +117,7 @@ $cascader-prefix-cls: $ant-prefix + "-cascader";
       width: 12px;
       height: 12px;
       margin-top: -6px;
-      color: $disabled-color;
+      color: $text-color;
       font-size: 12px;
       line-height: 12px;
       transition: transform 0.2s;
@@ -142,7 +142,7 @@ $cascader-prefix-cls: $ant-prefix + "-cascader";
     z-index: $zindex-dropdown;
     font-size: $cascader-dropdown-font-size;
     white-space: nowrap;
-    background: $component-background;
+    background: $component-background-without-opacity;
     border-radius: $border-radius-base;
     box-shadow: $box-shadow-base;
 
@@ -233,7 +233,7 @@ $cascader-prefix-cls: $ant-prefix + "-cascader";
       position: absolute;
       right: $control-padding-horizontal;
       color: $text-color-secondary;
-      .#{cascader-prefix-cls}-menu-item-disabled & {
+      .#{$cascader-prefix-cls}-menu-item-disabled & {
         color: $disabled-color;
       }
     }

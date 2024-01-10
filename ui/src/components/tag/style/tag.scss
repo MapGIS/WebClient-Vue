@@ -54,7 +54,7 @@ $tag-prefix-cls: $ant-prefix + "-tag";
     transition: all 0.3s $ease-in-out-circ;
 
     &:hover {
-      color: $heading-color;
+      color: $icon-color-hover;
     }
   }
 

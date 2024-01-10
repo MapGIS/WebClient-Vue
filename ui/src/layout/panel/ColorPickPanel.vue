@@ -16,7 +16,11 @@
           'mapgis-ui-color-pick-panel-label-lg': size == 'large'
         }"
       >
-        <label>{{ label }}</label>
+        <slot name="label">
+          <mapgis-ui-tooltip :title="label">
+            <label>{{ label }}</label>
+          </mapgis-ui-tooltip>
+        </slot>
       </mapgis-ui-col>
       <mapgis-ui-col :span="wrapperCol">
         <mapgis-ui-sketch-color-picker
@@ -73,8 +77,8 @@ export default {
     }
   },
   model: {
-    prop: 'color',
-    event: 'change'
+    prop: "color",
+    event: "change"
   },
   methods: {
     inputChange(e) {

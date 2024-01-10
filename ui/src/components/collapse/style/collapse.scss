@@ -1,17 +1,25 @@
 @import "../../../util/style/mixins/mixins.scss";
 @import "../../../util/style/theme/theme.scss";
 
+$collapse-prefix-cls: $ant-prefix + "-collapse";
+
 @include b(collapse) {
   background-color: $collapse-header-bg;
+  border: 1px solid $border-color-base;
 
-  & > &-item > &-header {
-    border-left: none;
-    color: $collapse-card-header-bg;
+  & > &-item {
+    border-bottom: 1px solid $border-color-base;
+    > .#{$collapse-prefix-cls}-header {
+      border-left: none;
+      color: $collapse-card-header-bg;
+      background-color: transparent;
+    }
   }
 
   @include e(content, "-") {
     color: $text-color;
-    background-color: $collapse-content-bg;
+    background-color: transparent;
+    border-top: 1px solid $border-color-base;
   }
 
   @include e(borderless, "-") {

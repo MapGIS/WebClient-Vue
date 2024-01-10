@@ -1,6 +1,6 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
-@import '../../input/style/mixin.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+@import "../../input/style/mixin.scss";
 
 $timepicker-prefix-cls: $ant-prefix + "-time-picker";
 $timepicker-item-height: 32px;
@@ -10,19 +10,19 @@ $timepicker-item-height: 32px;
     background: var(--background-light);
   }
   &-inner {
-    background-color: var(--background-light);
+    background-color: $layout-background;
   }
 }
 
 @include b(time-picker) {
-  @include e(input, '-') {
+  @include e(input, "-") {
     & {
       border: 1px solid $time-picke-input-border-color;
       background-color: $time-picke-input-bg;
       color: $text-color;
     }
   }
-  @include e(clear, '-') {
+  @include e(clear, "-") {
     &:hover {
       color: $text-color-secondary;
     }
@@ -32,7 +32,7 @@ $timepicker-item-height: 32px;
   }
 }
 
-.#{timepicker-prefix-cls}-panel {
+.#{$timepicker-prefix-cls}-panel {
   // .reset-component;
 
   position: absolute;
@@ -54,7 +54,8 @@ $timepicker-item-height: 32px;
 
   &-input {
     width: 100%;
-    max-width: $time-picker-panel-column-width * 3 - $control-padding-horizontal - 2px;
+    max-width: $time-picker-panel-column-width * 3 - $control-padding-horizontal -
+      2px;
     margin: 0;
     padding: 0;
     line-height: normal;
@@ -192,7 +193,7 @@ $timepicker-item-height: 32px;
   }
 }
 
-.#{timepicker-prefix-cls} {
+.#{$timepicker-prefix-cls} {
   // .reset-component;
 
   position: relative;
@@ -222,13 +223,13 @@ $timepicker-item-height: 32px;
     width: 14px;
     height: 14px;
     margin-top: -7px;
-    color: $disabled-color;
+    color: $text-color;
     line-height: 14px;
     transition: all 0.3s $ease-in-out;
     user-select: none;
-    .#{timepicker-prefix-cls}-clock-icon {
+    .#{$timepicker-prefix-cls}-clock-icon {
       display: block;
-      color: $disabled-color;
+      color: $text-color;
       line-height: 1;
     }
   }
