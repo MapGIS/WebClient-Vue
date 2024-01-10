@@ -10,6 +10,12 @@
       opacity: 0;
     }
   }
+  &-icon {
+    display: inline-block;
+    color: $text-color;
+    font-size: $font-size-base;
+    line-height: 1;
+  }
 
   @include e(container, "-") {
     color: $text-color;
@@ -43,7 +49,7 @@
   @include e(date, "-") {
     color: $text-color;
     &:hover {
-      background: $selected-color;
+      background: $hover-color;
       color: $primary-color;
     }
     &:active {
@@ -56,7 +62,7 @@
 
   @include e(selected-day, "-") {
     #{$prefix}-date {
-      background: $primary-color;
+      background: $selected-color;
       color: $primary-color;
     }
   }

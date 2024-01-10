@@ -80,11 +80,11 @@ $list-prefix-cls: $ant-prefix + "-list";
       }
       &-title {
         margin-bottom: 4px;
-        color: $text-color;
+        color: $heading-color;
         font-size: $font-size-base;
         line-height: 22px;
         > a {
-          color: $text-color;
+          color: $heading-color;
           transition: all 0.3s;
           &:hover {
             color: $primary-color;

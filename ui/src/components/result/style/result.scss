@@ -1,5 +1,5 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
 $result-prefix-cls: $ant-prefix + "-result";
 
@@ -9,7 +9,7 @@ $result-prefix-cls: $ant-prefix + "-result";
   }
 }
 
-.#{result-prefix-cls} {
+.#{$result-prefix-cls} {
   padding: 48px 32px;
   // status color
   &-success &-icon > .anticon {

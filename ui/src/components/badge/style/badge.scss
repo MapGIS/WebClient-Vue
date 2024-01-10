@@ -1,10 +1,10 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
 $badge-prefix-cls: $ant-prefix + "-badge";
 $number-prefix-cls: $ant-prefix + "-scroll-number";
 
-.#{badge-prefix-cls} {
+.#{$badge-prefix-cls} {
   // .reset-component;
 
   position: relative;
@@ -45,7 +45,7 @@ $number-prefix-cls: $ant-prefix + "-scroll-number";
 
   &-count,
   &-dot,
-  .#{number-prefix-cls}-custom-component {
+  .#{$number-prefix-cls}-custom-component {
     position: absolute;
     top: 0;
     right: 0;
@@ -82,7 +82,7 @@ $number-prefix-cls: $ant-prefix + "-scroll-number";
         border: 1px solid $processing-color;
         border-radius: 50%;
         animation: antStatusProcessing 1.2s infinite ease-in-out;
-        content: '';
+        content: "";
       }
     }
     &-default {
@@ -125,17 +125,17 @@ $number-prefix-cls: $ant-prefix + "-scroll-number";
   }
 
   &-not-a-wrapper {
-    &:not(.#{badge-prefix-cls}-status) {
+    &:not(.#{$badge-prefix-cls}-status) {
       vertical-align: middle;
     }
 
-    .#{ant-prefix}-scroll-number {
+    .#{$ant-prefix}-scroll-number {
       position: relative;
       top: auto;
       display: block;
     }
 
-    .#{badge-prefix-cls}-count {
+    .#{$badge-prefix-cls}-count {
       transform: none;
     }
   }
@@ -152,7 +152,7 @@ $number-prefix-cls: $ant-prefix + "-scroll-number";
   }
 }
 
-.#{number-prefix-cls} {
+.#{$number-prefix-cls} {
   overflow: hidden;
   &-only {
     display: inline-block;
