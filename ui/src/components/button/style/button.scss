@@ -3,9 +3,9 @@
 @import "mixin.scss";
 
 .mapgis-ui-btn-primary[disabled] {
-  color: $text-color;
+  color: $btn-disable-color;
   &:hover {
-    color: $text-color;
+    color: $btn-disable-color;
   }
 }
 
@@ -14,10 +14,10 @@
   @include button-color($text-color, $btn-default-bg, $btn-default-border);
   @include button-variant-other($btn-theme-bg);
 
-  @include e([disabled], '-') {
-    color: $text-color;
+  @include e([disabled], "-") {
+    color: $btn-disable-color;
     &:hover {
-      color: $text-color;
+      color: $btn-disable-color;
     }
   }
 

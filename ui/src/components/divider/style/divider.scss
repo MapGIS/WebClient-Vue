@@ -1,8 +1,7 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
-@include b (divider) {
-  background: $border-color-base !important;
+@include b(divider) {
   &-inner-text {
     color: $heading-color;
   }
@@ -10,7 +9,7 @@
 
 $divider-prefix-cls: $ant-prefix + "-divider";
 
-.#{divider-prefix-cls} {
+.#{$divider-prefix-cls} {
   // .reset-component;
 
   &,  /* for compatiable */
@@ -52,13 +51,13 @@ $divider-prefix-cls: $ant-prefix + "-divider";
       width: 50%;
       border-top: 1px solid $border-color-split;
       transform: translateY(50%);
-      content: '';
+      content: "";
     }
   }
 
   &-horizontal &-with-text-left,
   &-horizontal &-with-text-right {
-    .#{divider-prefix-cls}-inner-text {
+    .#{$divider-prefix-cls}-inner-text {
       display: inline-block;
       padding: 0 10px;
     }

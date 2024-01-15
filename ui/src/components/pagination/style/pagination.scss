@@ -1,6 +1,8 @@
 @import "../../../util/style/mixins/mixins.scss";
 @import "../../../util/style/theme/theme.scss";
 
+$pagination-prefix-cls: $ant-prefix + "-pagination";
+
 @include b(pagination) {
   color: $text-color;
   ul,
@@ -88,10 +90,10 @@
   &-jump-prev,
   &-jump-next {
     outline: 0;
-    .#{pagination-prefix-cls}-item-container {
+    .#{$pagination-prefix-cls}-item-container {
       position: relative;
 
-      .#{pagination-prefix-cls}-item-link-icon {
+      .#{$pagination-prefix-cls}-item-link-icon {
         // .iconfont-size-under-12px(12px);
 
         color: $primary-color;
@@ -107,7 +109,7 @@
         }
       }
 
-      .#{pagination-prefix-cls}-item-ellipsis {
+      .#{$pagination-prefix-cls}-item-ellipsis {
         position: absolute;
         top: 0;
         right: 0;
@@ -126,10 +128,10 @@
 
     &:focus,
     &:hover {
-      .#{pagination-prefix-cls}-item-link-icon {
+      .#{$pagination-prefix-cls}-item-link-icon {
         opacity: 1;
       }
-      .#{pagination-prefix-cls}-item-ellipsis {
+      .#{$pagination-prefix-cls}-item-ellipsis {
         opacity: 0;
       }
     }
@@ -171,7 +173,7 @@
       border-color: $primary-5;
     }
 
-    .#{pagination-prefix-cls}-item-link {
+    .#{$pagination-prefix-cls}-item-link {
       display: block;
       height: 100%;
       font-size: 12px;
@@ -183,8 +185,8 @@
       transition: all 0.3s;
     }
 
-    &:focus .#{pagination-prefix-cls}-item-link,
-    &:hover .#{pagination-prefix-cls}-item-link {
+    &:focus .#{$pagination-prefix-cls}-item-link,
+    &:hover .#{$pagination-prefix-cls}-item-link {
       color: $primary-color;
       border-color: $primary-color;
     }
@@ -196,7 +198,7 @@
     &:focus {
       cursor: not-allowed;
       a,
-      .#{pagination-prefix-cls}-item-link {
+      .#{$pagination-prefix-cls}-item-link {
         color: $disabled-color;
         border-color: $border-color-base;
         cursor: not-allowed;
@@ -244,7 +246,7 @@
     height: $pagination-item-size-sm;
     line-height: $pagination-item-size-sm;
     vertical-align: top;
-    .#{pagination-prefix-cls}-item-link {
+    .#{$pagination-prefix-cls}-item-link {
       height: $pagination-item-size-sm;
       border: 0;
       &::after {
@@ -333,60 +335,60 @@
       }
     }
   }
+}
 
-  // ============================ Disabled ============================
-  & &-disabled {
+// ============================ Disabled ============================
+.#{$pagination-prefix-cls}.#{$pagination-prefix-cls}-disabled {
+  cursor: not-allowed;
+
+  .#{$pagination-prefix-cls}-item {
+    background: $disabled-bg;
+    border-color: $border-color-base;
     cursor: not-allowed;
 
-    .#{pagination-prefix-cls}-item {
+    a {
+      color: $disabled-color;
+      background: transparent;
+      border: none;
+      cursor: not-allowed;
+    }
+
+    &-active {
+      // background: darken($disabled-bg, 10%);
+      border-color: transparent;
+      a {
+        color: $disabled-color;
+      }
+    }
+  }
+
+  .#{$pagination-prefix-cls}-item-link {
+    &,
+    &:hover,
+    &:focus {
+      color: $text-color-secondary;
       background: $disabled-bg;
       border-color: $border-color-base;
       cursor: not-allowed;
-
-      a {
-        color: $disabled-color;
-        background: transparent;
-        border: none;
-        cursor: not-allowed;
-      }
-
-      &-active {
-        // background: darken($disabled-bg, 10%);
-        border-color: transparent;
-        a {
-          color: #fff;
-        }
-      }
     }
+  }
 
-    .#{pagination-prefix-cls}-item-link {
-      &,
-      &:hover,
-      &:focus {
-        color: $text-color-secondary;
-        background: $disabled-bg;
-        border-color: $border-color-base;
-        cursor: not-allowed;
+  .#{$pagination-prefix-cls}-jump-prev,
+  .#{$pagination-prefix-cls}-jump-next {
+    &:focus,
+    &:hover {
+      .#{$pagination-prefix-cls}-item-link-icon {
+        opacity: 0;
       }
-    }
-
-    .#{pagination-prefix-cls}-jump-prev,
-    .#{pagination-prefix-cls}-jump-next {
-      &:focus,
-      &:hover {
-        .#{pagination-prefix-cls}-item-link-icon {
-          opacity: 0;
-        }
-        .#{pagination-prefix-cls}-item-ellipsis {
-          opacity: 1;
-        }
+      .#{$pagination-prefix-cls}-item-ellipsis {
+        opacity: 1;
       }
     }
   }
 }
 
 @media only screen and (max-width: $screen-lg) {
-  .#{pagination-prefix-cls}-item {
+  .#{$pagination-prefix-cls}-item {
     &-after-jump-prev,
     &-before-jump-next {
       display: none;
@@ -395,7 +397,7 @@
 }
 
 @media only screen and (max-width: $screen-sm) {
-  .#{pagination-prefix-cls}-options {
+  .#{$pagination-prefix-cls}-options {
     display: none;
   }
 }

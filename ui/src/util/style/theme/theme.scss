@@ -25,6 +25,14 @@ $black: #000;
 $shadow: var(--shadow);
 $deep-shadow: var(--deep-shadow);
 $div-shadow: var(--div-shadow);
+$success-bg-color: var(--success-bg-color);
+$success-border-color: var(--success-border-color);
+$info-bg-color: var(--info-bg-color);
+$info-border-color: var(--info-border-color);
+$warning-bg-color: var(--warning-bg-color);
+$warning-border-color: var(--warning-border-color);
+$error-bg-color: var(--error-bg-color);
+$error-border-color: var(--error-border-color);
 
 // Color used by default to control hover and active backgrounds
 $selected-color: var(--selected-color); // equal rgba($primary-color, 0.15)
@@ -141,9 +149,7 @@ $body-background-without-opacity: var(--background-without-opacity);
 
 // Base background/text color for most components
 $component-background: var(--component-background);
-$component-background-without-opacity: var(
-  --component-background-without-opacity
-);
+$component-background-without-opacity: var(--layout-background);
 $font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
   "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial,
   sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
@@ -450,8 +456,8 @@ $menu-collapsed-width: 80px;
 $menu-bg: $component-background;
 $menu-popup-bg: $component-background;
 $menu-item-color: $text-color;
-$menu-highlight-color: $hover-color;
-$menu-item-active-bg: $select-item-hover-bg;
+$menu-highlight-color: $primary-color;
+$menu-item-active-bg: $selected-color;
 $menu-item-active-border-width: 3px;
 $menu-item-group-title-color: $text-color-secondary;
 $menu-icon-size: $font-size-base;
@@ -463,7 +469,7 @@ $menu-item-boundary-margin: 8px;
 
 // dark theme
 $menu-dark-color: $text-color-secondary-dark;
-$menu-dark-bg: $layout-header-background;
+$menu-dark-bg: #000c17;
 $menu-dark-arrow-color: #fff;
 $menu-dark-submenu-bg: #000c17;
 $menu-dark-highlight-color: #fff;
@@ -630,17 +636,17 @@ $message-background: var(--message-background);
 // Notification
 
 // Alert
-$alert-success-border-color: $success-3;
-$alert-success-bg-color: $success-1;
+$alert-success-border-color: $success-border-color;
+$alert-success-bg-color: $success-bg-color;
 $alert-success-icon-color: $success-color;
-$alert-info-border-color: $info-3;
-$alert-info-bg-color: $info-1;
+$alert-info-border-color: $info-border-color;
+$alert-info-bg-color: $info-bg-color;
 $alert-info-icon-color: $info-color;
-$alert-warning-border-color: $warning-3;
-$alert-warning-bg-color: $warning-1;
+$alert-warning-border-color: $warning-border-color;
+$alert-warning-bg-color: $warning-bg-color;
 $alert-warning-icon-color: $warning-color;
-$alert-error-border-color: $danger-3;
-$alert-error-bg-color: $danger-1;
+$alert-error-border-color: $error-border-color;
+$alert-error-bg-color: $error-bg-color;
 $alert-error-icon-color: $error-color;
 
 // List

@@ -1,9 +1,9 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
 $timeline-prefix-cls: $ant-prefix + "-timeline";
 
-.#{timeline-prefix-cls} {
+.#{$timeline-prefix-cls} {
   // .reset-component;
 
   margin: 0;
@@ -86,18 +86,18 @@ $timeline-prefix-cls: $ant-prefix + "-timeline";
     }
 
     &-last {
-      > .#{timeline-prefix-cls}-item-tail {
+      > .#{$timeline-prefix-cls}-item-tail {
         display: none;
       }
-      > .#{timeline-prefix-cls}-item-content {
+      > .#{$timeline-prefix-cls}-item-content {
         min-height: 48px;
       }
     }
   }
 
-  &.#{timeline-prefix-cls}-alternate,
-  &.#{timeline-prefix-cls}-right {
-    .#{timeline-prefix-cls}-item {
+  &.#{$timeline-prefix-cls}-alternate,
+  &.#{$timeline-prefix-cls}-right {
+    .#{$timeline-prefix-cls}-item {
       &-tail,
       &-head,
       &-head-custom {
@@ -112,7 +112,7 @@ $timeline-prefix-cls: $ant-prefix + "-timeline";
       }
 
       &-left {
-        .#{timeline-prefix-cls}-item-content {
+        .#{$timeline-prefix-cls}-item-content {
           left: calc(50% - 4px);
           width: calc(50% - 14px);
           text-align: left;
@@ -120,7 +120,7 @@ $timeline-prefix-cls: $ant-prefix + "-timeline";
       }
 
       &-right {
-        .#{timeline-prefix-cls}-item-content {
+        .#{$timeline-prefix-cls}-item-content {
           width: calc(50% - 12px);
           margin: 0;
           text-align: right;
@@ -129,15 +129,15 @@ $timeline-prefix-cls: $ant-prefix + "-timeline";
     }
   }
 
-  &.#{timeline-prefix-cls}-right {
-    .#{timeline-prefix-cls}-item-right {
-      .#{timeline-prefix-cls}-item-tail,
-      .#{timeline-prefix-cls}-item-head,
-      .#{timeline-prefix-cls}-item-head-custom {
+  &.#{$timeline-prefix-cls}-right {
+    .#{$timeline-prefix-cls}-item-right {
+      .#{$timeline-prefix-cls}-item-tail,
+      .#{$timeline-prefix-cls}-item-head,
+      .#{$timeline-prefix-cls}-item-head-custom {
         // stylelint-disable-next-line function-calc-no-invalid
         left: calc(100% - 4px - 2px);
       }
-      .#{timeline-prefix-cls}-item-content {
+      .#{$timeline-prefix-cls}-item-content {
         width: calc(100% - 18px);
       }
     }
@@ -154,13 +154,13 @@ $timeline-prefix-cls: $ant-prefix + "-timeline";
   }
 
   & &-reverse &-item-pending {
-    .#{timeline-prefix-cls}-item-tail {
+    .#{$timeline-prefix-cls}-item-tail {
       top: 15px;
       display: block;
       height: calc(100% - 15px);
       border-left: 2px dotted $timeline-color;
     }
-    .#{timeline-prefix-cls}-item-content {
+    .#{$timeline-prefix-cls}-item-content {
       min-height: 48px;
     }
   }

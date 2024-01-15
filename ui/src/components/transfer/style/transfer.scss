@@ -1,13 +1,16 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
-@include b (transfer) {
+@include b(transfer) {
   $prefix: &;
 
-  @include e(list, '-') {
+  @include e(list, "-") {
     &-search-action {
       .#{$iconfont-css-prefix}:hover {
         color: $text-color-secondary;
+      }
+      .#{$iconfont-css-prefix} {
+        color: $text-color;
       }
     }
 
@@ -30,12 +33,16 @@
     }
   }
 
-  @include e(customize-list, '-') {
+  @include e(customize-list, "-") {
     $table-prefix-cls: #{$ant-prefix}-table;
     .#{$table-prefix-cls}-wrapper {
       .#{$table-prefix-cls}-small {
         > .#{$table-prefix-cls}-content {
-          > .#{$table-prefix-cls}-body > table > .#{$table-prefix-cls}-thead > tr > th {
+          > .#{$table-prefix-cls}-body
+            > table
+            > .#{$table-prefix-cls}-thead
+            > tr
+            > th {
             background: $table-header-bg;
           }
           .#{$table-prefix-cls}-row:last-child td {

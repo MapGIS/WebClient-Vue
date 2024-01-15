@@ -735,7 +735,7 @@ $table-selection-column-width: 60px;
     transition: box-shadow 0.3s ease;
     table {
       width: auto;
-      background: $component-background;
+      background: $select-dropdown-bg; // 使用下拉框背景色（此背景色默认情况下透明度为1，不会产生存在透明度时不同层级的内容叠在一起的bug）
     }
   }
 

@@ -9,7 +9,7 @@ $menu-prefix-cls: $ant-prefix + "-menu";
   color: $menu-item-color;
   line-height: 0; // Fix display inline-block gap
   list-style: none;
-  background: transparent !important; // 侧边菜单的样式
+  background: transparent; // 侧边菜单的样式
   outline: none;
   box-shadow: $box-shadow-base;
   transition: $menu-bg 0.3s, width 0.3s cubic-bezier(0.2, 0, 0, 1) 0s;
@@ -31,6 +31,10 @@ $menu-prefix-cls: $ant-prefix + "-menu";
     font-size: $font-size-base;
     line-height: $line-height-base;
     transition: all 0.3s;
+  }
+
+  &-submenu > & {
+    background-color: $select-dropdown-bg; // 使用下拉框背景色（此背景色默认情况下透明度为1，不会产生存在透明度时不同层级的内容叠在一起的bug）
   }
 
   &-submenu,
@@ -297,11 +301,11 @@ $menu-prefix-cls: $ant-prefix + "-menu";
       > .#{$menu-prefix-cls}-item-group-list
       > .#{$menu-prefix-cls}-submenu
       > .#{$menu-prefix-cls}-submenu-title,
-    > .#{$menu-prefix-cls}-submenu > .#{menu-prefix-cls}-submenu-title {
+    > .#{$menu-prefix-cls}-submenu > .#{$menu-prefix-cls}-submenu-title {
       left: 0;
       padding: 0 ($menu-collapsed-width - $menu-icon-size-lg) / 2 !important;
       text-overflow: clip;
-      .#{menu-prefix-cls}-submenu-arrow {
+      .#{$menu-prefix-cls}-submenu-arrow {
         display: none;
       }
       .#{iconfont-css-prefix} {
@@ -325,7 +329,7 @@ $menu-prefix-cls: $ant-prefix + "-menu";
       }
     }
 
-    .#{menu-prefix-cls}-item-group-title {
+    .#{$menu-prefix-cls}-item-group-title {
       padding-right: 4px;
       padding-left: 4px;
       overflow: hidden;
@@ -355,15 +359,15 @@ $menu-prefix-cls: $ant-prefix + "-menu";
     border: 0;
     border-radius: 0;
     box-shadow: none;
-    & > .#{menu-prefix-cls}-item,
-    & > .#{menu-prefix-cls}-submenu > .#{menu-prefix-cls}-submenu-title {
+    & > .#{$menu-prefix-cls}-item,
+    & > .#{$menu-prefix-cls}-submenu > .#{$menu-prefix-cls}-submenu-title {
       height: $menu-item-height;
       line-height: $menu-item-height;
       list-style-position: inside;
       list-style-type: disc;
     }
 
-    & .#{menu-prefix-cls}-item-group-title {
+    & .#{$menu-prefix-cls}-item-group-title {
       padding-left: 32px;
     }
   }
@@ -379,10 +383,10 @@ $menu-prefix-cls: $ant-prefix + "-menu";
       color: $disabled-color !important;
       pointer-events: none;
     }
-    > .#{menu-prefix-cls}-submenu-title {
+    > .#{$menu-prefix-cls}-submenu-title {
       color: $disabled-color !important;
       cursor: not-allowed;
-      > .#{menu-prefix-cls}-submenu-arrow {
+      > .#{$menu-prefix-cls}-submenu-arrow {
         &::before,
         &::after {
           background: $disabled-color !important;
