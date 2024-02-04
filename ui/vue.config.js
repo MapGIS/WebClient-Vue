@@ -88,6 +88,7 @@ module.exports = {
       "less-loader": "less-loader",
       "node-sass": "node-sass",
       "sass-loader": "sass-loader",
+      "@turf/turf": "@turf/turf",
     },
   },
 };
