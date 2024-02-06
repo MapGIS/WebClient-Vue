@@ -140,16 +140,6 @@ export default {
       innerChecked: this.checked
     };
   },
-  watch: {
-    checked: {
-      handler(next) {
-        this.innerChecked = next;
-        this.changeChecked(next);
-      },
-      deep: true,
-      immediate: true
-    }
-  },
   mounted() {
     const { height = "fit-content" } = this;
     if (this.checked) {
