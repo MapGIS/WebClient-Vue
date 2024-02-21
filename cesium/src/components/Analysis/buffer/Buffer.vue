@@ -500,7 +500,7 @@ export default {
     mount() {
       this.$emit("load", this);
       // 进行缓冲区分析前，优先关闭深度检测
-      setDepthTestAgainstTerrainEnable(false, this.viewer);
+      this.viewer && setDepthTestAgainstTerrainEnable(false, this.viewer);
     },
     unmount() {
       this.maskShow = false;

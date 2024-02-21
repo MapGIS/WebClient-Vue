@@ -24,6 +24,7 @@ $collapse-prefix-cls: $ant-prefix + "-collapse";
 
   @include e(borderless, "-") {
     background-color: $collapse-header-bg;
+    border: 0;
   }
 }
 
