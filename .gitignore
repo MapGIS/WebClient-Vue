@@ -38,13 +38,13 @@ pnpm-debug.log*
 *.sw?
 
 # 推到gitee和github上时，放开以下内容
-# cesium/src/components/simulation
-# cesium/src/components/Layer/3DPlot
-# cesium/src/components/Layer/MapStory
-# cesium/src/components/Analysis/DynamicSection.vue
-# cesium/src/components/Analysis/Explosion.vue
-# cesium/src/components/Analysis/HeightLimited.vue
-# cesium/src/components/Analysis/ModelFlatten.vue
-# cesium/src/components/Analysis/BIM.vue
-# cesium/src/components/Analysis/StratifiedHousehold.vue
-# mapboxgl/src/components/layer/edit/Edit.vue";
+cesium/src/components/simulation
+cesium/src/components/Layer/3DPlot
+cesium/src/components/Layer/MapStory
+cesium/src/components/Analysis/DynamicSection.vue
+cesium/src/components/Analysis/Explosion.vue
+cesium/src/components/Analysis/HeightLimited.vue
+cesium/src/components/Analysis/ModelFlatten.vue
+cesium/src/components/Analysis/BIM.vue
+cesium/src/components/Analysis/StratifiedHousehold.vue
+mapboxgl/src/components/layer/edit/Edit.vue";

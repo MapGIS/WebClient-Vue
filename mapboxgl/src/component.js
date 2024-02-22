@@ -87,4 +87,4 @@ export { default as Mapgis2DPlotAnimation } from "./components/layer/2DPlot/plot
 
 // 推到gitee和github上时，屏蔽以下内容
 
-export { default as MapgisMvtEditor } from "./components/layer/edit/Edit";
+// export { default as MapgisMvtEditor } from "./components/layer/edit/Edit";
