@@ -1,6 +1,6 @@
 {
   "name": "@mapgis/webclient-vue-mapboxgl",
-  "version": "16.8.0",
+  "version": "16.8.1",
   "description": "中地数码webclient-vue-mapboxgl",
   "main": "dist-libs/webclient-vue-mapboxgl.umd.min.js",
   "module1": "src/main.js",
@@ -33,7 +33,7 @@
     "@mapgis/webclient-es6-service": "~16.2.0",
     "@mapgis/webclient-es6-mapboxgl": "~16.2.0",
     "@mapgis/webclient-store": "^10.5.5",
-    "@mapgis/webclient-vue-ui": "^16.6.0",
+    "@mapgis/webclient-vue-ui": "~16.8.0",
     "@mapgis/webclient-plot": "^16.6.0",
     "@turf/turf": "^6.5.0",
     "echarts": "^5.3.0",
