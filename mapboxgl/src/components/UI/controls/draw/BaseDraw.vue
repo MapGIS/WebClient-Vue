@@ -377,12 +377,14 @@ export default {
       // if (this.editable) {
       //   listeners = ["drawUpdate"].concat(Object.keys(this.$listeners));
       // } else {
-      listeners = [
-        "drawUpdate",
-        "drawCreate",
-        "drawRender",
-        "drawActionable"
-      ].concat(Object.keys(this.$listeners));
+      // 数组去重避免重复添加事件监听
+      listeners = Array.from(
+        new Set(
+          ["drawUpdate", "drawCreate", "drawRender", "drawActionable"].concat(
+            Object.keys(this.$listeners)
+          )
+        )
+      );
       // }
 
       // 使用vue的this.$listeners方式来订阅用户指定的事件
