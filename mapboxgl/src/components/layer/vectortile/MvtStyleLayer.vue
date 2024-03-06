@@ -45,7 +45,8 @@ export default {
   data() {
     return {
       lastStyle: undefined,
-      themeRules: []
+      themeRules: [],
+      preBefore: undefined
     };
   },
 
@@ -71,6 +72,13 @@ export default {
           this.remove(deleteStyle);
           this.$_initStyle(this.mode, next);
           this.lastStyle = next;
+        } else {
+          // 防止被底图覆盖
+          if (this.before && this.preBefore !== this.before) {
+            this.remove(deleteStyle);
+            this.$_initStyle(this.mode, this.lastStyle);
+            this.preBefore = this.before;
+          }
         }
       },
       deep: true
@@ -78,6 +86,7 @@ export default {
   },
 
   created() {
+    console.log("created");
     this.$_deferredMount();
   },
 
@@ -256,6 +265,8 @@ export default {
           return total.concat(layer);
         }
       }, []);
+      console.log("mergeLayers");
+      debugger;
 
       // 将未直接合并覆盖的图层重新根据原来的顺序进行插入
       let befores = news.map((u, i) => {
