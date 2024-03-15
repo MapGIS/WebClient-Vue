@@ -73,6 +73,9 @@ export { default as Mapgis3dM3dSubsectionLayer } from "./components/Overlay/them
 export { default as Mapgis3dIgsTerrain } from "./components/Provider/TerrainProvider/IgsTerrainProvider.vue";
 export { default as Mapgis3dTerrainProvider } from "./components/Provider/TerrainProvider/TerrainProvider.vue";
 
+// 栅格体元模型
+export { default as Mapgis3dVoxelLayer } from "./components/Layer/M3D/Voxel.vue";
+
 // 数据源
 export { default as Mapgis3dGeojsonDatasource } from "./components/DataSource/Geojson/GeoJsonDataSource.vue";
 export { default as Mapgis3dCzmlDatasource } from "./components/DataSource/Czml/CzmlDataSource";

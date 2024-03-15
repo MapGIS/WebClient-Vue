@@ -11,11 +11,15 @@
       <template slot="color" slot-scope="text, record">
         <mapgis-ui-sketch-color-picker
           :color.sync="record.color"
-          :disableAlpha="false"
+          :disableAlpha="disableAlpha"
           :showColorText="false"
         ></mapgis-ui-sketch-color-picker>
       </template>
-      <template slot="max" slot-scope="text, record, index" v-if="showNumber">
+      <template
+        slot="max"
+        slot-scope="text, record, index"
+        v-if="showNumber && rangeFieldMode === 'range'"
+      >
         <mapgis-ui-input-number-addon
           v-model="record.max"
           size="small"
@@ -34,15 +38,43 @@
           @change="changeMax(record, index)"
         />
       </template>
+      <template
+        slot="num"
+        slot-scope="text, record, index"
+        v-if="showNumber && rangeFieldMode === 'single'"
+      >
+        <span v-if="!record.edit" @click="showNumChange(record, index, true)">{{
+          record.num
+        }}</span>
+        <mapgis-ui-input-number
+          v-else
+          :value="record.num"
+          autoFocus
+          @blur="showNumChange(record, index, false)"
+          @change="
+            val => {
+              onNumberChange(val, record, index);
+            }
+          "
+        ></mapgis-ui-input-number>
+      </template>
       <template slot="operation" slot-scope="text, record, index">
-        <mapgis-ui-tooltip placement="top" title="删除">
+        <mapgis-ui-tooltip
+          placement="top"
+          title="删除"
+          v-if="showRemoveBtn(index)"
+        >
           <mapgis-ui-iconfont
             class="mapgis-ui-iconfont"
             type="mapgis-delete"
             @click="remove(index)"
           ></mapgis-ui-iconfont>
         </mapgis-ui-tooltip>
-        <mapgis-ui-tooltip placement="top" title="向下插入一行">
+        <mapgis-ui-tooltip
+          placement="top"
+          title="向下插入一行"
+          v-if="showAddBtn(index)"
+        >
           <mapgis-ui-iconfont
             type="mapgis-plus"
             @click="add(index)"
@@ -64,7 +96,23 @@ export default {
     value: { type: Array },
     rangeField: { type: String, default: "角度范围" },
     singleNumber: { type: Boolean, defalut: false },
-    showNumber: { type: Boolean, default: true }
+    showNumber: { type: Boolean, default: true },
+    disableAlpha: { type: Boolean, default: false },
+    // 表格的数值栏取范围还是取单值  range/single
+    rangeFieldMode: {
+      type: String,
+      default: "range"
+    },
+    // 属性最大值
+    maxValue: {
+      type: Number,
+      default: 1000
+    },
+    // 属性最小值
+    minValue: {
+      type: Number,
+      default: 1
+    }
   },
   model: {
     props: "value",
@@ -72,7 +120,7 @@ export default {
   },
   data() {
     return {
-      defaultColor: "rgb(64,169,255,0.5)",
+      defaultColor: "rgb(64,169,255,1)",
       dropdownVisible: false,
       tableColumns: [
         {
@@ -94,8 +142,30 @@ export default {
         }
       ],
       tableData: [],
-      emitValue: []
+      emitValue: [],
+      countMin: 0,
+      countMax: 100
     };
+  },
+  computed: {
+    showAddBtn: ({ rangeFieldMode, tableData }) => {
+      return index => {
+        if (rangeFieldMode === "single") {
+          return index !== tableData.length - 1;
+        } else {
+          return true;
+        }
+      };
+    },
+    showRemoveBtn: ({ rangeFieldMode, tableData }) => {
+      return index => {
+        if (rangeFieldMode === "single") {
+          return index !== 0 && index !== tableData.length - 1;
+        } else {
+          return true;
+        }
+      };
+    }
   },
   watch: {
     value: {
@@ -111,18 +181,29 @@ export default {
     tableData: {
       handler: function() {
         const vm = this;
-        this.emitValue = this.tableData.map(({ min, max, color }) => ({
-          min,
-          max,
-          color
-        }));
-        if (this.value instanceof Array && typeof this.value[0] === "string") {
-          this.emitValue = [];
-          this.tableData.forEach(item => {
-            let hex = rgbaToHex(item.color, false);
-            vm.emitValue.push(hex);
-          });
+        if (this.rangeFieldMode === "single") {
+          this.emitValue = this.tableData.map(({ num, color }) => ({
+            num,
+            color
+          }));
+        } else {
+          this.emitValue = this.tableData.map(({ min, max, color }) => ({
+            min,
+            max,
+            color
+          }));
+          if (
+            this.value instanceof Array &&
+            typeof this.value[0] === "string"
+          ) {
+            this.emitValue = [];
+            this.tableData.forEach(item => {
+              let hex = rgbaToHex(item.color, false);
+              vm.emitValue.push(hex);
+            });
+          }
         }
+
         this.$emit("change", this.emitValue);
         this.$emit("input", this.emitValue);
       },
@@ -144,9 +225,49 @@ export default {
         }
       },
       immediate: true
+    },
+    rangeFieldMode: {
+      handler() {
+        if (this.rangeFieldMode === "single") {
+          this.tableColumns.splice(1, 1, {
+            title: this.rangeField,
+            dataIndex: "num",
+            align: "center",
+            scopedSlots: { customRender: "num" }
+          });
+        }
+      },
+      immediate: true
     }
   },
   methods: {
+    // 改变输入框时对输入值进行限制
+    onNumberChange(val, record, index) {
+      if (val >= this.countMax) {
+        const length = this.tableData.length;
+        record.num = index === length - 1 ? this.maxValue : this.countMax - 1;
+      } else if (val <= this.countMin) {
+        record.num = index === 0 ? this.minValue : this.countMin + 1;
+      } else {
+        record.num = val;
+      }
+    },
+    // 控制输入框是否显示，同时点击的时候确定输入框的最大最小值
+    showNumChange(record, index, val) {
+      record.edit = val;
+      if (record.edit === true) {
+        if (index === 0) {
+          this.countMax = this.tableData[index + 1].num;
+          this.countMin = this.tableData[index].num;
+        } else if (index === this.tableData.length - 1) {
+          this.countMax = this.tableData[index].num;
+          this.countMin = this.tableData[index - 1].num;
+        } else {
+          this.countMin = this.tableData[index - 1].num;
+          this.countMax = this.tableData[index + 1].num;
+        }
+      }
+    },
     /**
      * 修改选中行的最大值，后面一行的最小值同步变化
      */
@@ -176,20 +297,29 @@ export default {
       if (!this.value || this.value.length === 0) {
         return;
       }
-      this.tableData = this.value.map(({ min, max, color }) => ({
-        key: uuid(),
-        min,
-        max,
-        color
-      }));
-      if (this.value instanceof Array && typeof this.value[0] === "string") {
-        this.tableData = [];
-        this.value.forEach(color => {
-          vm.tableData.push({
-            key: uuid(),
-            color: color
+      if (this.rangeFieldMode === "single") {
+        this.tableData = this.value.map(({ color, num }) => ({
+          key: uuid(),
+          color,
+          num,
+          edit: false
+        }));
+      } else {
+        this.tableData = this.value.map(({ min, max, color }) => ({
+          key: uuid(),
+          min,
+          max,
+          color
+        }));
+        if (this.value instanceof Array && typeof this.value[0] === "string") {
+          this.tableData = [];
+          this.value.forEach(color => {
+            vm.tableData.push({
+              key: uuid(),
+              color: color
+            });
           });
-        });
+        }
       }
     },
 
@@ -203,14 +333,18 @@ export default {
         this.tableData.splice(index, 1);
         return;
       }
-      if (index === 0) {
-        this.tableData[index + 1].min = this.tableData[index].min;
-      } else if (index < length - 1) {
-        this.tableData[index + 1].min = this.tableData[index].min;
-        this.tableData[index - 1].max = this.tableData[index + 1].min;
+      if (this.rangeFieldMode === "single") {
       } else {
-        this.tableData[index - 1].max = this.tableData[index].min;
+        if (index === 0) {
+          this.tableData[index + 1].min = this.tableData[index].min;
+        } else if (index < length - 1) {
+          this.tableData[index + 1].min = this.tableData[index].min;
+          this.tableData[index - 1].max = this.tableData[index + 1].min;
+        } else {
+          this.tableData[index - 1].max = this.tableData[index].min;
+        }
       }
+
       this.tableData.splice(index, 1);
     },
 
@@ -218,17 +352,30 @@ export default {
      * 添加，向下插入一行，把该行的最大最小值的间隔一分为二
      */
     add(index) {
-      const length = this.tableData.length;
-      const { min, max } = this.tableData[index];
-      const num = Math.ceil((max + min) / 2);
-      this.tableData[index].max = num;
-      const node = {
-        key: uuid(),
-        color: this.defaultColor,
-        min: num,
-        max
-      };
-      this.tableData.splice(index + 1, 0, node);
+      if (this.rangeFieldMode === "single") {
+        const min = this.tableData[index].num;
+        const max = this.tableData[index + 1].num;
+        const num = Math.ceil((max + min) / 2);
+        const node = {
+          key: uuid(),
+          color: this.defaultColor,
+          num,
+          edit: false
+        };
+        this.tableData.splice(index + 1, 0, node);
+      } else {
+        const length = this.tableData.length;
+        const { min, max } = this.tableData[index];
+        const num = Math.ceil((max + min) / 2);
+        this.tableData[index].max = num;
+        const node = {
+          key: uuid(),
+          color: this.defaultColor,
+          min: num,
+          max
+        };
+        this.tableData.splice(index + 1, 0, node);
+      }
     }
   }
 };

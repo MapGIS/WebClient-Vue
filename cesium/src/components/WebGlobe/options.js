@@ -106,9 +106,7 @@ export default {
     type: Object,
     default: function() {
       return {
-        webgl: {
-          preserveDrawingBuffer: true
-        }
+        requestWebgl2: true
       };
     }
   },
