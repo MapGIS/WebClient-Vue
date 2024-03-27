@@ -44,6 +44,36 @@ export default {
       this.changeShow();
     }
   },
+  computed: {
+    timeScale() {
+      switch (this.unit) {
+        case "years": {
+          return 31536000000;
+        }
+        case "months": {
+          return 259200000;
+        }
+        case "weeks": {
+          return 604800000;
+        }
+        case "days": {
+          return 86400000;
+        }
+        case "hours": {
+          return 3600000;
+        }
+        case "minutes": {
+          return 60000;
+        }
+        case "seconds": {
+          return 1000;
+        }
+        default: {
+          return 1;
+        }
+      }
+    }
+  },
   mounted() {
     this.mount();
   },
@@ -56,17 +86,18 @@ export default {
       const { url } = this;
       const requestUrl = `${url}/nodes/0?f=json`;
       // 创建栅格体元图元
-      this.voxel = new Cesium.VolumePixelPrimitive(requestUrl, {
+      this.voxel = new Cesium.VoxelPrimitive(requestUrl, {
         axisScale: new Cesium.Cartesian3(100, 100, 500),
         position: Cesium.Cartesian3.fromDegrees(114.4016, 30.467, 10),
         loaded: res => {
-          viewer.camera.flyTo({
-            destination: Cesium.Cartesian3.fromDegrees(114.4016, 30.2, 20000),
-            orientation: {
-              pitch: Cesium.Math.toRadians(-30)
-            },
-            duration: 1
-          });
+          const {
+            variables: {
+              time: { units }
+            }
+          } = res;
+          const unitsArr = units.split(" since ");
+          this.baseDate = new Date(unitsArr[1]).getTime(); // 获取基准时间
+          this.unit = unitsArr[0]; // 获取时间单位
           this.$emit("loaded", { metaData: res, voxel: this.voxel });
           this.initQuery();
         }
@@ -74,19 +105,53 @@ export default {
       viewer.scene.primitives.add(this.voxel);
     },
     unmount() {
-      const { viewer, Cesium } = this;
+      const { viewer } = this;
       viewer.scene.primitives.remove(this.voxel);
       this.stopQuery();
       this.$emit("unloaded");
     },
-    formatter(value) {
-      const date = new Date(value);
+    formatter(time) {
+      const date = new Date(time);
       const year = date.getFullYear();
       const month = date.getMonth() + 1;
       const day = date.getDate();
-      return `${year}-${month < 10 ? `0${month}` : month}-${
-        day < 10 ? `0${day}` : day
-      }`;
+      const hour = date.getHours();
+      const min = date.getMinutes();
+      const second = date.getSeconds();
+      switch (this.unit) {
+        case "years": {
+          return `${year}`;
+        }
+        case "month": {
+          return `${year}-${month < 10 ? `0${month}` : month}`;
+        }
+        case "weeks":
+        case "days": {
+          return `${year}-${month < 10 ? `0${month}` : month}-${
+            day < 10 ? `0${day}` : day
+          }`;
+        }
+        case "hours": {
+          return `${year}-${month < 10 ? `0${month}` : month}-${
+            day < 10 ? `0${day}` : day
+          }  ${hour < 10 ? `0${hour}` : hour}`;
+        }
+        case "minutes": {
+          return `${year}-${month < 10 ? `0${month}` : month}-${
+            day < 10 ? `0${day}` : day
+          }  ${hour < 10 ? `0${hour}` : hour}:${min < 10 ? `0${min}` : min}`;
+        }
+        case "seconds": {
+          return `${year}-${month < 10 ? `0${month}` : month}-${
+            day < 10 ? `0${day}` : day
+          }  ${hour < 10 ? `0${hour}` : hour}:${min < 10 ? `0${min}` : min}:${
+            second < 10 ? `0${second}` : second
+          }`;
+        }
+        default: {
+          break;
+        }
+      }
     },
     initQuery() {
       const { viewer, Cesium } = this;
@@ -100,7 +165,7 @@ export default {
             cartesian: viewer.scene.pickPosition(movement.position)
           };
           featureproperties.time = this.formatter(
-            featureproperties.time * 3600000 + this.baseDate
+            featureproperties.time * this.timeScale + this.baseDate
           );
           this.featureproperties = featureproperties;
         } else {
