@@ -958,7 +958,6 @@ export default {
             `${window.location.protocol}//${this.info.dataStoreIp}:${this.info.dataStorePort}/datastore/rest/services/dataset/nebula/${this.info.dataStoreDataset}/knowledgeGraph/graph/query?type=graphRelationType`,
             {
               id: this.info.floor,
-              pageOffset: 0,
               step: this.info.dataStoreStep || 2,
               relationshipTypes: ["*"],
               direction: "Both",
