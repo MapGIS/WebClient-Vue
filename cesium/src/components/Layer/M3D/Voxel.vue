@@ -87,8 +87,7 @@ export default {
       const requestUrl = `${url}/nodes/0?f=json`;
       // 创建栅格体元图元
       this.voxel = new Cesium.VoxelPrimitive(requestUrl, {
-        axisScale: new Cesium.Cartesian3(100, 100, 500),
-        position: Cesium.Cartesian3.fromDegrees(114.4016, 30.467, 10),
+        heightScale: 100,
         loaded: res => {
           const {
             variables: {
