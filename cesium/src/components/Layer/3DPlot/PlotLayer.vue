@@ -8,7 +8,7 @@ import plot from "@mapgis/webclient-plot";
 const {
   SymbolManager = window.Zondy.Plot.SymbolManager,
   PlotLayer3DGroup = window.Zondy.Plot.PlotLayer3DGroup,
-  PlotLayer3D = window.Zondy.Plot.PlotLayer3D
+  PlotLayer3D = window.Zondy.Plot.PlotLayer3D,
 } = plot;
 
 export default {
@@ -17,17 +17,17 @@ export default {
   props: {
     vueKey: {
       type: String,
-      default: "default"
+      default: "default",
     },
     vueIndex: {
       type: [Number, String],
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
-      }
+      },
     },
     //点击回调事件
     pickPlot: {
-      type: Function
+      type: Function,
     },
     // 点击事件
     pickEventType: {
@@ -35,49 +35,49 @@ export default {
       default() {
         const { Cesium } = this;
         return Cesium.ScreenSpaceEventType.LEFT_CLICK;
-      }
+      },
     },
     // 标绘图层json对象
     dataSource: {
-      type: [String, Object]
+      type: [String, Object],
     },
     // 标绘图层的可见性
     show: {
       type: Boolean,
-      default: true
+      default: true,
     },
     // 标绘图层的可编辑性
     editable: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // 三维贴地,0：贴地，1：贴模型，2：都贴，3： 都不贴
     classificationType: {
       type: Number,
-      default: 3
+      default: 3,
     },
     isSetPick: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   watch: {
     dataSource: {
-      handler: async function(json) {
+      handler: async function (json) {
         if (!json) return;
-        if (json.indexOf("DOCTYPE html") > -1) {
-          window.vueCesium.PlotLayerData.addSource(
-            this.vueKey,
-            this.vueIndex,
-            json
-          );
-        }
+        // if (json.indexOf("DOCTYPE html") > -1) {
+        window.vueCesium.PlotLayerData.addSource(
+          this.vueKey,
+          this.vueIndex,
+          json
+        );
+        // }
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     pickPlot: {
-      handler: function(func) {
+      handler: function (func) {
         if (!this.isSetPick) {
           return;
         }
@@ -86,42 +86,42 @@ export default {
         layer.pickPlot = func;
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     pickEventType: {
-      handler: function(type) {
+      handler: function (type) {
         let layer = this.getLayer();
         if (!type || !layer) return;
         layer.pickEventType = type;
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     show: {
-      handler: function(val) {
+      handler: function (val) {
         let layer = this.getLayer();
         layer && layer.setVisible(val);
         // console.log("showww-3d", val);
       },
-      immediate: true
+      immediate: true,
     },
     classificationType: {
-      handler: function(val) {
+      handler: function (val) {
         let layer = this.getLayer();
         if (layer) {
           layer.classificationType = this.classificationType;
         }
       },
-      immediate: true
+      immediate: true,
     },
     editable: {
-      handler: function(val) {
+      handler: function (val) {
         let layer = this.getLayer();
         if (!layer) return;
         layer.editable = val;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   mounted() {
     this.mount();
@@ -158,12 +158,12 @@ export default {
         this.$message.warning("符号库未加载完成！");
         return;
       }
-      manager.getSymbols().then(function() {
+      manager.getSymbols().then(function () {
         viewer.scene.globe.depthTestAgainstTerrain = false;
         let layer = vm.getLayer();
         if (!layer) {
           layer = new PlotLayer3D(Cesium, viewer, {
-            classificationType: vm.classificationType
+            classificationType: vm.classificationType,
           });
           window.vueCesium.PlotLayerManager.addSource(
             vm.vueKey,
@@ -189,8 +189,8 @@ export default {
             method: "get",
             url: vm.dataSource,
             dataType: "text",
-            timeout: 2000
-          }).then(res => {
+            timeout: 2000,
+          }).then((res) => {
             window.vueCesium.PlotLayerData.addSource(
               vm.vueKey,
               vm.vueIndex,
@@ -201,7 +201,7 @@ export default {
             vm.$emit("loaded", {
               vueKey: vm.vueKey,
               vueIndex: vm.vueIndex,
-              vm: vm
+              vm: vm,
             });
           });
         } else {
@@ -209,7 +209,7 @@ export default {
           vm.$emit("loaded", {
             vueKey: vm.vueKey,
             vueIndex: vm.vueIndex,
-            vm: vm
+            vm: vm,
           });
         }
       });
@@ -226,10 +226,11 @@ export default {
       return layerManager && layerManager.source;
     },
     getLayers() {
-      let PlotLayerGroupManager = window.vueCesium.PlotLayerGroupManager.findSource(
-        this.vueKey,
-        this.vueIndex
-      );
+      let PlotLayerGroupManager =
+        window.vueCesium.PlotLayerGroupManager.findSource(
+          this.vueKey,
+          this.vueIndex
+        );
       return PlotLayerGroupManager && PlotLayerGroupManager.source;
     },
     getLayerData() {
@@ -297,7 +298,7 @@ export default {
     getPlotByID(uid) {
       let layer = this.getLayer();
       return layer && layer.getPlotByID(uid);
-    }
-  }
+    },
+  },
 };
 </script>

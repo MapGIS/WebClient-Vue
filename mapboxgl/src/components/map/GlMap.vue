@@ -24,7 +24,7 @@ import debounce from "lodash/debounce";
 import plot from "@mapgis/webclient-plot";
 const {
   PlotLayer2DGroup = Zondy.Plot.PlotLayer2DGroup,
-  FabricLayer = Zondy.Plot.FabricLayer
+  FabricLayer = Zondy.Plot.FabricLayer,
 } = plot;
 const MapboxDraw = MapboxDrawCom.default;
 
@@ -36,13 +36,13 @@ export default {
   props: {
     mapboxGl: {
       type: Object,
-      default: null
+      default: null,
     },
     splitScreen: {
       type: Boolean,
-      default: false
+      default: false,
     },
-    ...options
+    ...options,
   },
 
   provide() {
@@ -68,14 +68,14 @@ export default {
       },
       get vueMap() {
         return self.vueMap;
-      }
+      },
     };
   },
 
   data() {
     return {
       initialized: false,
-      resizeEvent: undefined
+      resizeEvent: undefined,
     };
   },
 
@@ -103,7 +103,7 @@ export default {
     },
     images() {
       return this.map ? this.map.listImages() : null;
-    }
+    },
   },
 
   created() {
@@ -125,7 +125,7 @@ export default {
 
   mounted() {
     this.$_loadMap()
-      .then(map => {
+      .then((map) => {
         const { actions, mapbox } = this;
         this.map = map;
         this.map.vueKey = this.vueKey;
@@ -150,7 +150,7 @@ export default {
 
         let Plot = {
           PlotLayer2DGroup: PlotLayer2DGroup,
-          FabricLayer: FabricLayer
+          FabricLayer: FabricLayer,
         };
         /*
          * @date 2023-8-30
@@ -159,7 +159,7 @@ export default {
          * */
         let draweroptions = {
           displayControlsDefault: true,
-          defaultMode: "simple_select",
+          defaultMode: "static",
           touchEnabled: false,
           boxSelect: false,
           controls: {
@@ -168,9 +168,9 @@ export default {
             polygon: false,
             trash: false,
             combine_features: false,
-            uncombine_features: false
+            uncombine_features: false,
           },
-          styles: DefaultDrawStyle
+          styles: DefaultDrawStyle,
         };
         this.drawer = new MapboxDraw(draweroptions);
         this.map.addControl(this.drawer);
@@ -215,8 +215,8 @@ export default {
       if (autoResize && map) {
         map.resize();
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
