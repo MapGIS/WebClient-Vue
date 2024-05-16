@@ -27,7 +27,7 @@ export default {
     },
     layerStyle: {
       type: Object,
-      default: function() {
+      default: function () {
         return {
           visible: true,
           opacity: 1
@@ -91,7 +91,7 @@ export default {
   },
   watch: {
     layerStyle: {
-      handler: function() {
+      handler: function () {
         let { vueKey, vueIndex } = this;
         let layer = window.vueCesium[this.managerName].findSource(
           vueKey,
@@ -114,7 +114,7 @@ export default {
       deep: true
     },
     options: {
-      handler: function() {
+      handler: function () {
         let vm = this;
         let isEqual = this.$_isEqual(vm.options, vm.optionsBack);
         if (!isEqual) {
@@ -126,7 +126,7 @@ export default {
       deep: true
     },
     id: {
-      handler: function() {
+      handler: function () {
         const { vueIndex, vueKey } = this;
         let layer = window.vueCesium[this.managerName].findSource(
           vueKey,
@@ -180,7 +180,7 @@ export default {
 
       //取得除options、layerStyle和id之外的必要参数
       const { $props, vueIndex, vueKey } = this;
-      Object.keys($props).forEach(function(key) {
+      Object.keys($props).forEach(function (key) {
         if (key !== "options" && key !== "layerStyle" && key !== "id") {
           opt[key] = $props[key];
         }
@@ -371,7 +371,7 @@ export default {
         vm = this;
 
       //遍历window.vueCesium下所有的Manager
-      Object.keys(window.vueCesium).forEach(function(key) {
+      Object.keys(window.vueCesium).forEach(function (key) {
         if (key.indexOf("Manager") > -1 && key !== "GlobesManager") {
           //取出含有与webScene组件相同vueKey的Manager对象
           if (window.vueCesium[key].hasOwnProperty("vueKey")) {
@@ -395,7 +395,7 @@ export default {
       });
 
       //对数组进行排序
-      Layers.sort(function(a, b) {
+      Layers.sort(function (a, b) {
         if (a.options && b.options) {
           return a.options.zIndex - b.options.zIndex;
         }
@@ -637,7 +637,7 @@ export default {
     $_checkProps(checkObj, checkType) {
       let vm = this;
       if (checkObj && checkType) {
-        Object.keys(checkObj).forEach(function(key) {
+        Object.keys(checkObj).forEach(function (key) {
           let result;
           if (checkType.hasOwnProperty(key) && typeof key === "string") {
             result = vm.$_checkValue(checkObj, key, checkType[key]);
@@ -702,6 +702,14 @@ export default {
         tilingScheme = new Cesium.GeographicTilingScheme();
       } else if (tileMatrixSetName === "EPSG:3857") {
         tilingScheme = new Cesium.WebMercatorTilingScheme();
+      } else if (
+        ["bd09", "bd09ll", "bd09mc", "gcj02", "gcj02ll", "gcj02mc"].indexOf(
+          tileMatrixSetName
+        ) > -1
+      ) {
+        tilingScheme = new Cesium.CustomTilingScheme({
+          wkid: tileMatrixSetName
+        });
       } else {
         tilingScheme = new Cesium.GeographicTilingScheme();
       }
