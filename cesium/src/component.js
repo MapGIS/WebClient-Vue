@@ -34,6 +34,7 @@ export { default as Mapgis3dArcgisMapLayer } from "./components/Layer/ArcGISServ
 export { default as Mapgis3dGraphicSingleLayer } from "./components/Layer/Graphic/GraphicSingleLayer.vue";
 export { default as Mapgis3dGraphicLayer } from "./components/Layer/Graphic/GraphicLayer.vue";
 export { default as Mapgis3dGraphicLayerService } from "./components/Layer/Graphic/GraphicLayerService.vue";
+export { default as Mapgis3dWebTileLayer } from "./components/Layer/WebTile/WebTileLayer";
 
 // 要素图层
 export { default as Mapgis3dGeojsonLayer } from "./components/Layer/GeoJSON/GeoJsonLayer";
