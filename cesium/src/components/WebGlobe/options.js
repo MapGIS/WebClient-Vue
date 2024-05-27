@@ -131,5 +131,13 @@ export default {
         } */
       };
     }
+  },
+  minZoom: {
+    type: Number,
+    default: undefined
+  },
+  maxZoom: {
+    type: Number,
+    default: undefined
   }
 };
