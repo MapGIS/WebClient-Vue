@@ -121,7 +121,7 @@
         ></mapgis-ui-input>
         <mapgis-ui-upload-image
           :uploadUrl="
-            `${prefixUrl}/psmap/rest/services/system/ResourceServer/files/pictures`
+            `${prefixUrl}/${appProductName}/rest/services/system/ResourceServer/files/pictures`
           "
           :showUploadList="false"
           :baseUrl="prefixUrl"
@@ -188,6 +188,9 @@ export default {
     },
     prefixUrl() {
       return window._CONFIG.domainURL;
+    },
+    appProductName() {
+      return window._CONFIG.productName || "psmap";
     }
   },
   methods: {
