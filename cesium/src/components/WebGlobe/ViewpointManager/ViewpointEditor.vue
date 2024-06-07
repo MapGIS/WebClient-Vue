@@ -284,8 +284,11 @@ export default {
     baseUrl() {
       return window._CONFIG.domainURL;
     },
+    appProductName() {
+      return window._CONFIG.productName || "psmap";
+    },
     imagesUploadApi() {
-      return `${this.baseUrl}/psmap/rest/services/system/ResourceServer/files/pictures`;
+      return `${this.baseUrl}/${this.appProductName}/rest/services/system/ResourceServer/files/pictures`;
     }
   },
   mounted() {
