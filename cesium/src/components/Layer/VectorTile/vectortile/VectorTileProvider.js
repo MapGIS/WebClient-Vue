@@ -10,18 +10,32 @@ import { TileQueue } from "./MapgisVectorTileQueue";
 // http://a.tiles.mapbox.com/v4/mapbox.mapbox-streets-v6.json
 
 const MapGisCesiumResolution = [
-  78271.51696402048, 39135.75848201024, 19567.87924100512, 9783.93962050256,
-  4891.96981025128, 2445.98490512564, 1222.99245256282, 611.49622628141,
-  305.748113140705, 152.8740565703525, 76.43702828517625, 38.21851414258813,
-  19.109257071294063, 9.554628535647032, 4.777314267823516, 2.388657133911758,
-  1.194328566955879, 0.5971642834779395, 0.29858214173896974,
-  0.14929107086948487, 0.07464553543474244,
+  78271.51696402048,
+  39135.75848201024,
+  19567.87924100512,
+  9783.93962050256,
+  4891.96981025128,
+  2445.98490512564,
+  1222.99245256282,
+  611.49622628141,
+  305.748113140705,
+  152.8740565703525,
+  76.43702828517625,
+  38.21851414258813,
+  19.109257071294063,
+  9.554628535647032,
+  4.777314267823516,
+  2.388657133911758,
+  1.194328566955879,
+  0.5971642834779395,
+  0.29858214173896974,
+  0.14929107086948487,
+  0.07464553543474244
 ];
 
 export default function VectorTileProvider(Cesium, options) {
   function MVTProvider(options) {
     options = Cesium.defaultValue(options, Cesium.defaultValue.EMPTY_OBJECT);
-    self = this;
     this.show = Cesium.defined(options.show) ? options.show : true;
     this._tilingScheme = Cesium.defined(options.tilingScheme)
       ? options.tilingScheme
@@ -62,84 +76,84 @@ export default function VectorTileProvider(Cesium, options) {
 
   Object.defineProperties(MVTProvider.prototype, {
     proxy: {
-      get: function () {
+      get: function() {
         return undefined;
-      },
+      }
     },
 
     tileWidth: {
-      get: function () {
+      get: function() {
         return this._tileWidth;
-      },
+      }
     },
 
     tileHeight: {
-      get: function () {
+      get: function() {
         return this._tileHeight;
-      },
+      }
     },
 
     maximumLevel: {
-      get: function () {
+      get: function() {
         return this._maximumLevel;
-      },
+      }
     },
     minimumLevel: {
-      get: function () {
+      get: function() {
         return this._minimumLevel;
-      },
+      }
     },
 
     tilingScheme: {
-      get: function () {
+      get: function() {
         return this._tilingScheme;
-      },
+      }
     },
 
     rectangle: {
-      get: function () {
+      get: function() {
         return this._tilingScheme.rectangle;
-      },
+      }
     },
 
     tileDiscardPolicy: {
-      get: function () {
+      get: function() {
         return undefined;
-      },
+      }
     },
 
     errorEvent: {
-      get: function () {
+      get: function() {
         return this._errorEvent;
-      },
+      }
     },
 
     ready: {
-      get: function () {
+      get: function() {
         return true;
-      },
+      }
     },
 
     readyPromise: {
-      get: function () {
+      get: function() {
         return this._readyPromise;
-      },
+      }
     },
 
     credit: {
-      get: function () {
+      get: function() {
         return undefined;
-      },
+      }
     },
 
     hasAlphaChannel: {
-      get: function () {
+      get: function() {
         return true;
-      },
-    },
+      }
+    }
   });
 
-  MVTProvider.prototype.getTileCredits = function (x, y, level) {
+  MVTProvider.prototype.getTileCredits = function(x, y, level) {
     return undefined;
   };
 
@@ -193,7 +207,7 @@ export default function VectorTileProvider(Cesium, options) {
     }
   }
 
-  MVTProvider.prototype.requestImage = function (x, y, level, request) {
+  MVTProvider.prototype.requestImage = function(x, y, level, request) {
     if (this._tilingScheme._rectangleSouthwestInMeters == undefined) {
       level = level + 1;
     }
@@ -203,7 +217,7 @@ export default function VectorTileProvider(Cesium, options) {
       x: x,
       y: y,
       z: level,
-      id: this.options.threadId,
+      id: this.options.threadId
     });
     this._tileSends.push({ x: x, y: y, z: level, id: this.options.threadId });
     var cacheTile;
@@ -225,7 +239,7 @@ export default function VectorTileProvider(Cesium, options) {
         return null;
       }
 
-      var tilerequest = (function (x, y, z) {
+      var tilerequest = (function(x, y, z) {
         var resource = Cesium.Resource.createIfNeeded(url);
         if (z < 12) {
           /* var canvas = document.createElement('canvas');
@@ -233,7 +247,7 @@ export default function VectorTileProvider(Cesium, options) {
         }
         return resource
           .fetchArrayBuffer()
-          .then(function (arrayBuffer) {
+          .then(function(arrayBuffer) {
             var canvas = document.createElement("canvas");
             canvas.width = 512;
             canvas.height = 512;
@@ -280,14 +294,14 @@ export default function VectorTileProvider(Cesium, options) {
 
             return canvas;
           })
-          .otherwise(function (error) {
+          .otherwise(function(error) {
             return null;
           });
       })(x, y, level);
     }
   };
 
-  MVTProvider.prototype.pickFeatures = function (
+  MVTProvider.prototype.pickFeatures = function(
     x,
     y,
     level,

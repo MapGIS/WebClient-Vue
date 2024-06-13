@@ -88,7 +88,9 @@ const drawEvents = {
   drawselectionchange: "draw.selectionchange",
   drawmodechange: "draw.modechange",
   drawrender: "draw.render",
-  drawactionable: "draw.actionable"
+  drawactionable: "draw.actionable",
+  mousedown: "mousedown",
+  mouseup: "mouseup"
 };
 
 export default {
@@ -377,12 +379,19 @@ export default {
       // if (this.editable) {
       //   listeners = ["drawUpdate"].concat(Object.keys(this.$listeners));
       // } else {
-      listeners = [
-        "drawUpdate",
-        "drawCreate",
-        "drawRender",
-        "drawActionable"
-      ].concat(Object.keys(this.$listeners));
+      // 数组去重避免重复添加事件监听
+      listeners = Array.from(
+        new Set(
+          [
+            "drawUpdate",
+            "drawCreate",
+            "drawRender",
+            "drawActionable",
+            "mousedown",
+            "mouseup"
+          ].concat(Object.keys(this.$listeners))
+        )
+      );
       // }
 
       // 使用vue的this.$listeners方式来订阅用户指定的事件
@@ -399,8 +408,27 @@ export default {
 
     // 按照@mapgis/webclient-vue-mapboxgl的规范 发送事件 ，其实就是用{type：eventName}包装事件名
     $_emitDrawEvent(eventName, eventData, payload) {
-      const vm = this;
       let mode = this.drawer.getMode();
+      if (mode === "draw_point") {
+        // 解决点查询时，点击标注再次触发绘制的bug
+        // mousedown事件中移除绘制状态
+        if (eventName === "mousedown") {
+          if (eventData.originalEvent.target.nodeName === "IMG") {
+            this.drawer.changeMode("static");
+            return;
+          }
+        }
+        // mouseup事件中恢复绘制状态
+        if (eventName === "mouseup") {
+          if (eventData.originalEvent.target.nodeName === "IMG") {
+            this.drawer.changeMode(mode);
+            return;
+          }
+        }
+      }
+
+      const vm = this;
+
       if (vm.drawRadius && eventName === "drawActionable") {
         if (!eventData.actions.trash) {
           let style = vm.oldStyles.filter(
