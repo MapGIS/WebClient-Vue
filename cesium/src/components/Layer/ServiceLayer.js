@@ -3,40 +3,40 @@ export default {
   props: {
     baseUrl: {
       type: String,
-      default: null,
+      default: null
     },
     domain: {
       type: String,
-      default: null,
+      default: null
     },
     protocol: {
       type: String,
-      default: "http://",
+      default: "http://"
     },
     ip: {
       type: String,
-      default: null,
+      default: null
     },
     port: {
       type: String,
-      default: null,
+      default: null
     },
     serverName: {
       type: String,
-      default: null,
+      default: null
     },
     layerStyle: {
       type: Object,
       default: function () {
         return {
           visible: true,
-          opacity: 1,
+          opacity: 1
         };
-      },
+      }
     },
     id: { type: String, default: "" },
     token: {
-      type: Object,
+      type: Object
     },
     options: {
       type: Object,
@@ -51,20 +51,20 @@ export default {
           enablePickFeatures: false,
           minimumLevel: 0,
           maximumLevel: 20,
-          credit: undefined,
+          credit: undefined
         };
-      },
+      }
     },
     vueKey: {
       type: String,
-      default: "default",
+      default: "default"
     },
     vueIndex: {
       type: Number,
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
-      },
-    },
+      }
+    }
   },
   data() {
     return {
@@ -86,7 +86,7 @@ export default {
       **/
       checkType: undefined,
       layerId: undefined,
-      optionsBack: undefined,
+      optionsBack: undefined
     };
   },
   watch: {
@@ -111,7 +111,7 @@ export default {
         }
         this.layerStyleCopy = { ...this.layerStyle };
       },
-      deep: true,
+      deep: true
     },
     options: {
       handler: function () {
@@ -123,7 +123,7 @@ export default {
           this.optionsBack = this.options;
         }
       },
-      deep: true,
+      deep: true
     },
     id: {
       handler: function () {
@@ -133,8 +133,8 @@ export default {
           vueIndex
         );
         layer.source.id = this.id;
-      },
-    },
+      }
+    }
   },
   mounted() {
     this.optionsBack = this.options;
@@ -197,11 +197,11 @@ export default {
           ) {
             options.extensions.push({
               key: this.token.key,
-              value: this.token.value,
+              value: this.token.value
             });
           } else {
             options.extensions = [
-              { key: this.token.key, value: this.token.value },
+              { key: this.token.key, value: this.token.value }
             ];
           }
         } else if (this.token.value) {
@@ -282,7 +282,7 @@ export default {
 
       let manageOptions = {
         zIndex: providerZIndex,
-        id: imageryLayer.id,
+        id: imageryLayer.id
       };
 
       //如果providerZIndex为0，表示初始化地图时，没有设置zIndex，因此会按照初始化的顺序向上叠放
@@ -363,7 +363,7 @@ export default {
       }
       return {
         currentLayer: currentLayer,
-        index: index,
+        index: index
       };
     },
     $_getLayers() {
@@ -712,7 +712,7 @@ export default {
         let customWKID;
         let axisDirection = {
           x: 1,
-          y: 1,
+          y: 1
         };
         let rectangleSouthwest;
         let rectangleNortheast;
@@ -720,7 +720,7 @@ export default {
           customWKID = 20020902;
           axisDirection = {
             x: 1,
-            y: -1,
+            y: -1
           };
           rectangleSouthwest = new Cesium.Cartesian2(
             -20037726.37,
@@ -742,7 +742,7 @@ export default {
           axisDirection: axisDirection,
           rectangleSouthwest: rectangleSouthwest,
           rectangleNortheast: rectangleNortheast,
-          tileInfo: tileInfo,
+          tileInfo: tileInfo
         });
       } else {
         tilingScheme = new Cesium.GeographicTilingScheme();
@@ -770,9 +770,9 @@ export default {
           size: tileSize, // 瓦片宽高的像素大小
           origin: {
             coordinates: [0, 0], // 裁图原点
-            type: "Point", // 裁图原点类型
+            type: "Point" // 裁图原点类型
           },
-          lods: lods,
+          lods: lods
         };
       } else if (wkid === 20010202) {
         // 构建自定义Wkid 国测局02墨卡托的默认TileInfo
@@ -792,12 +792,12 @@ export default {
           size: tileSize, // 瓦片宽高的像素大小
           origin: {
             coordinates: [-maxLength, maxLength], // 裁图原点
-            type: "Point", // 裁图原点类型
+            type: "Point" // 裁图原点类型
           },
-          lods: lods,
+          lods: lods
         };
       }
       return tileInfo;
-    },
-  },
+    }
+  }
 };
