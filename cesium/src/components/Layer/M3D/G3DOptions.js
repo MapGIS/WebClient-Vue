@@ -63,6 +63,10 @@ export default {
    */
   maximumScreenSpaceError: { type: Number, default: 16 },
   /**
+   * @description 模型最大内存使用量
+   */
+  maximumMemoryUsage: { type: Number, default: 512 },
+  /**
    * @description 图层过滤功能
    */
   layers: { type: String, default: undefined },
