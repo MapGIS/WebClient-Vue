@@ -48,22 +48,39 @@
               v-model="item.viewGroupName"
             ></mapgis-ui-input>
           </template>
-          <mapgis-ui-iconfont
+          <mapgis-ui-tooltip
+            placement="top"
+            title="飞行"
             slot="extra"
-            type="mapgis-play-circle"
-            @click.stop="clickFlyPano(index)"
-          />
-          <mapgis-ui-iconfont
+            class="iconTool"
+          >
+            <mapgis-ui-iconfont
+              type="mapgis-play-circle"
+              @click.stop="clickFlyPano(index)"
+            />
+          </mapgis-ui-tooltip>
+          <mapgis-ui-tooltip
+            placement="top"
+            title="编辑"
             slot="extra"
-            type="mapgis-edit"
-            class="edit"
-            @click.stop="clickEdit(index)"
-          />
-          <mapgis-ui-iconfont
+            class="iconTool"
+          >
+            <mapgis-ui-iconfont
+              type="mapgis-edit"
+              @click.stop="clickEdit(index)"
+            />
+          </mapgis-ui-tooltip>
+          <mapgis-ui-tooltip
+            placement="top"
+            title="删除"
             slot="extra"
-            type="mapgis-delete"
-            @click.stop="clickDelete(index, item)"
-          />
+            class="iconTool"
+          >
+            <mapgis-ui-iconfont
+              type="mapgis-delete"
+              @click.stop="clickDelete(index, item)"
+            />
+          </mapgis-ui-tooltip>
           <div class="collapse-item-div">
             <div class="content" v-if="item.viewGroupItems.length > 0">
               <mapgis-ui-collapse
@@ -82,22 +99,46 @@
                       v-model="itemChild.name"
                     ></mapgis-ui-input>
                   </template>
-                  <mapgis-ui-iconfont
+                  <mapgis-ui-tooltip
+                    placement="top"
+                    title="飞行"
                     slot="extra"
-                    type="mapgis-play-circle"
-                    @click.stop="flyTo(itemChild, indexChild)"
-                  />
-                  <mapgis-ui-iconfont
+                    class="iconTool"
+                  >
+                    <mapgis-ui-iconfont
+                      type="mapgis-play-circle"
+                      @click.stop="flyTo(itemChild, indexChild)"
+                    />
+                  </mapgis-ui-tooltip>
+                  <mapgis-ui-tooltip
+                    placement="top"
+                    title="编辑"
                     slot="extra"
-                    type="mapgis-edit"
-                    class="edit"
-                    @click.stop="clickEditChild(index, indexChild)"
-                  />
-                  <mapgis-ui-iconfont
+                    class="iconTool"
+                  >
+                    <mapgis-ui-iconfont
+                      type="mapgis-edit"
+                      @click.stop="clickEditChild(index, indexChild)"
+                    />
+                  </mapgis-ui-tooltip>
+                  <mapgis-ui-tooltip
+                    placement="top"
+                    title="删除"
                     slot="extra"
-                    type="mapgis-delete"
-                    @click.stop="clickDeleteChild(index, indexChild, itemChild)"
-                  />
+                    class="iconTool"
+                  >
+                    <mapgis-ui-iconfont
+                      type="mapgis-delete"
+                      @click.stop="
+                        clickDeleteChild(index, indexChild, itemChild)
+                      "
+                    />
+                  </mapgis-ui-tooltip>
+                  <slot
+                    slot="extra"
+                    name="saveAsInitViewPoint"
+                    :view-point="itemChild"
+                  ></slot>
                   <div class="collapse-item-content">
                     <div class="collapse-item-left">
                       <img :src="getImage(itemChild.image)" alt="" />
@@ -158,7 +199,9 @@
         </mapgis-ui-collapse-panel>
       </mapgis-ui-collapse>
     </div>
-
+    <div class="save-current-view-point-as-init-div">
+      <slot name="saveCurrentViewPointAsInit"></slot>
+    </div>
     <div class="viewpoint-footer">
       <mapgis-ui-button
         type="primary"
@@ -171,14 +214,6 @@
       <mapgis-ui-button class="save-btn" type="primary" @click="saveConfig"
         >保存
       </mapgis-ui-button>
-
-      <!-- <mapgis-ui-button
-        type="default"
-        :block="true"
-        v-else
-        @click="deleteViewpoint"
-        >删除视点
-      </mapgis-ui-button> -->
     </div>
   </div>
 </template>
@@ -658,8 +693,8 @@ export default {
     text-align: left;
     border-left: unset !important;
   }
-  .edit {
-    margin: 0 5px;
+  .iconTool {
+    margin: 0 5px 0 0;
   }
   .viewpoint-footer {
     border-top: 0px;
@@ -669,6 +704,10 @@ export default {
     .save-btn {
       margin-left: 10px;
     }
+  }
+  .save-current-view-point-as-init-div {
+    width: 100%;
+    margin-top: 5px;
   }
 }
 </style>
