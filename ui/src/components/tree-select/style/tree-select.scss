@@ -177,7 +177,7 @@ $select-tree-prefix-cls: $ant-prefix + "-select-tree";
     z-index: 1;
     display: block;
     padding: 4px;
-    background: transparent;
+    background: $select-dropdown-bg;
     .#{select-prefix-cls}-search__field__wrap {
       width: 100%;
     }

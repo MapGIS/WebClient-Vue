@@ -12,14 +12,14 @@ export default {
    */
   vueIndex: {
     type: [String, Number],
-    default: () => (Math.random() * 100000000).toFixed(0),
+    default: () => (Math.random() * 100000000).toFixed(0)
   },
 
   /**
    * @description 图层过滤功能:'show:0,1'表示显示第0，1个图层，'hide:0，2'表示隐藏第0，2个图层
    */
   layerId: {
-    type: String,
+    type: String
   },
 
   /**
@@ -39,7 +39,7 @@ export default {
     type: Array,
     default() {
       return [];
-    },
+    }
   },
 
   autoReset: { type: Boolean, default: true },
@@ -62,6 +62,10 @@ export default {
    * 用于控制模型显示细节 值较大将会渲染更少的贴图,进而可以提高性能,而较低的值将提高视觉质量
    */
   maximumScreenSpaceError: { type: Number, default: 16 },
+  /**
+   * @description 模型最大内存使用量
+   */
+  maximumMemoryUsage: { type: Number, default: 512 },
   /**
    * @description 图层过滤功能
    */
@@ -114,8 +118,8 @@ export default {
         height: "450px",
         width: "270px",
         top: "0px",
-        left: "0px",
+        left: "0px"
       };
-    },
-  },
+    }
+  }
 };

@@ -21,7 +21,7 @@
           v-if="hasAddonBefore"
           class="mapgis-ui-input-group-addon addon-before"
         >
-          <slot name="addonBefore">{{addonBefore}}</slot>
+          <slot name="addonBefore">{{ addonBefore }}</slot>
         </span>
         <div
           class="color-container"
@@ -43,7 +43,9 @@
               height: '16px'
             }"
           ></div>
-          <div v-if="showColorText" style="line-height:22px;margin-left:8px;">{{color}}</div>
+          <div v-if="showColorText" style="line-height:22px;margin-left:8px;">
+            {{ color }}
+          </div>
         </div>
       </mapgis-ui-row>
     </mapgis-ui-popover>
@@ -98,7 +100,10 @@ export default {
       }
     },
     hasAddonBefore() {
-      return (this.addonBefore && this.addonBefore.length > 0) || (this.$slots && this.$slots.addonBefore);
+      return (
+        (this.addonBefore && this.addonBefore.length > 0) ||
+        (this.$slots && this.$slots.addonBefore)
+      );
     }
   },
   model: {
@@ -110,7 +115,7 @@ export default {
       this.getPickColor(val);
       this.$emit("input", val, this.extraValue);
       let rgba = val.rgba;
-      let color = this.colorObjectToRgba(rgba, this.disableAlpha)
+      let color = this.colorObjectToRgba(rgba, this.disableAlpha);
       this.$emit("change", color, this.extraValue);
     },
     // 颜色拾取器选中事件回调
@@ -122,9 +127,10 @@ export default {
       if (rgba.a !== undefined) {
         colorStr = `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
         // 已传入disableAlpha，并且为true
-        if (disableAlpha) {
-          colorStr = `rgb(${rgba.r}, ${rgba.g}, ${rgba.b})`;
-        }
+        // 如果有透明度则不处理
+        // if (disableAlpha) {
+        //   colorStr = `rgb(${rgba.r}, ${rgba.g}, ${rgba.b})`;
+        // }
       } else {
         colorStr = `rgb(${rgba.r}, ${rgba.g}, ${rgba.b})`;
       }

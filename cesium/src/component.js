@@ -34,6 +34,7 @@ export { default as Mapgis3dArcgisMapLayer } from "./components/Layer/ArcGISServ
 export { default as Mapgis3dGraphicSingleLayer } from "./components/Layer/Graphic/GraphicSingleLayer.vue";
 export { default as Mapgis3dGraphicLayer } from "./components/Layer/Graphic/GraphicLayer.vue";
 export { default as Mapgis3dGraphicLayerService } from "./components/Layer/Graphic/GraphicLayerService.vue";
+export { default as Mapgis3dWebTileLayer } from "./components/Layer/WebTile/WebTileLayer";
 
 // 要素图层
 export { default as Mapgis3dGeojsonLayer } from "./components/Layer/GeoJSON/GeoJsonLayer";
@@ -72,6 +73,9 @@ export { default as Mapgis3dM3dSubsectionLayer } from "./components/Overlay/them
 
 export { default as Mapgis3dIgsTerrain } from "./components/Provider/TerrainProvider/IgsTerrainProvider.vue";
 export { default as Mapgis3dTerrainProvider } from "./components/Provider/TerrainProvider/TerrainProvider.vue";
+
+// 栅格体元模型
+export { default as Mapgis3dVoxelLayer } from "./components/Layer/M3D/Voxel.vue";
 
 // 数据源
 export { default as Mapgis3dGeojsonDatasource } from "./components/DataSource/Geojson/GeoJsonDataSource.vue";
