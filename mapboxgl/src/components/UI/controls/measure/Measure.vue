@@ -54,7 +54,7 @@ import {
   measureEvents,
   measureMethodMap,
   measureModeMap,
-  measureTypeToModeMap
+  measureTypeToModeMap,
 } from "./store/enums";
 const MapboxDraw = MapboxDrawCom.default;
 
@@ -63,7 +63,7 @@ export default {
   mixins: [measureMixin, controlMixin],
   components: {
     MeasureTool,
-    MeasureMarker
+    MeasureMarker,
   },
 
   provide() {
@@ -72,28 +72,28 @@ export default {
       get measure() {
         // 提供给子组件popup或者插槽
         return self.measure;
-      }
+      },
     };
   },
 
   props: {
     editable: {
       type: Boolean,
-      default: true
+      default: true,
     },
     enableControl: {
       type: Boolean,
-      default: false
+      default: false,
     },
     isAdvanceControl: {
       type: Boolean,
-      default: false
+      default: false,
     },
     measureMode: {
       type: String,
       validator(value) {
         return !value || oneOf(value, Object.keys(measureTypeToModeMap));
-      }
+      },
     },
     // geography按照地理坐标系计算长度和面积，
     // projection按照投影坐标系计算长度和面积，both返回两种坐标系的计算结果
@@ -102,17 +102,17 @@ export default {
       default: measureMethodMap.both,
       validator(value) {
         return oneOf(value, Object.keys(measureMethodMap));
-      }
+      },
     },
     styles: {
       type: Array,
-      default: () => defaultStyle
+      default: () => defaultStyle,
     },
     // 管理平台配置的绘制图形样式
     featureConfig: {
       type: Object,
-      defalut: () => {}
-    }
+      defalut: () => {},
+    },
   },
 
   data() {
@@ -127,22 +127,22 @@ export default {
           icon: "mapgis-ruler",
           type: "primary",
           tip: "长度",
-          click: this.enableLengthMeasure
+          click: this.enableLengthMeasure,
         },
         {
           icon: "mapgis-area",
           type: "primary",
           tip: "面积",
-          click: this.enableAreaMeasure
+          click: this.enableAreaMeasure,
         },
         {
           icon: "mapgis-shanchu_dianji",
           type: "primary",
           tip: "清空图元",
-          click: this.remove
-        }
+          click: this.deleteMeasure,
+        },
       ],
-      showTip: true
+      showTip: true,
     };
   },
 
@@ -165,15 +165,15 @@ export default {
         left: "10px",
         [first]: "10px",
         [secend]: "10px",
-        background: isAdvanceControl ? "#fff" : "transparent"
+        background: isAdvanceControl ? "#fff" : "transparent",
       };
     },
     btnStyle() {
       return () => ({
         width: "32px !important",
-        height: "32px !important"
+        height: "32px !important",
       });
-    }
+    },
   },
 
   watch: {
@@ -190,7 +190,7 @@ export default {
     },
     styles(nStyle) {
       this.combineStyle(nStyle);
-    }
+    },
   },
 
   mounted() {
@@ -290,7 +290,7 @@ export default {
               geographyPerimeter,
               geographyArea,
               coordinates,
-              center
+              center,
             };
             break;
           case measureMethodMap.projection:
@@ -298,7 +298,7 @@ export default {
               projectionPerimeter,
               projectionArea,
               coordinates,
-              center
+              center,
             };
             break;
           default:
@@ -308,7 +308,7 @@ export default {
               projectionPerimeter,
               projectionArea,
               coordinates,
-              center
+              center,
             };
             break;
         }
@@ -338,6 +338,10 @@ export default {
       }
       this.$_updateLengthOrArea();
       this.$_emitMeasureResult();
+      const self = this;
+      setTimeout(() => {
+        self.measure.changeMode(measureModeMap.static);
+      }, 100);
       return this.$_emitSelfEvent({ type: eventName }, eventData);
     },
     /**
@@ -350,7 +354,7 @@ export default {
       if (!events.length) return;
       Object.keys(this.$listeners)
         .concat(Object.keys(measureSelfEvents))
-        .forEach(eventName => {
+        .forEach((eventName) => {
           if (events.includes(eventName)) {
             this.$_bindMeasureEvents(
               measureEvents[eventName],
@@ -374,12 +378,18 @@ export default {
           polygon: false,
           trash: false,
           combine_features: false,
-          uncombine_features: false
+          uncombine_features: false,
         },
-        styles: this.measureStyle
+        styles: this.measureStyle,
       };
-      this.measure = new MapboxDraw(draweroptions);
-      // this.$_bindSelfEvents(Object.keys(measureEvents));
+
+      this.measure = {
+        ...this.map._controls.find((item) => item instanceof MapboxDraw),
+      };
+      this.measure.options = { ...draweroptions };
+      this.$_changeMapStyle();
+      this.$_emitEvent("added", { measure: this.measure });
+      // 是否是第一次加载
       this.initial = false;
     },
     /**
@@ -401,8 +411,9 @@ export default {
      */
     combineStyle(newStyles = []) {
       this.measureStyle = this.measureStyle
-        .filter(l => !newStyles.find(f => f.id === l.id))
+        .filter((l) => !newStyles.find((f) => f.id === l.id))
         .concat(newStyles);
+      this.changeMapStyle(this.measureStyle);
     },
 
     /**
@@ -410,21 +421,24 @@ export default {
      */
     changeMapStyle(styles) {
       const { map } = this;
-      styles.forEach(layer => {
-        if (map.getLayer(layer)) {
-          const { id, filter, paint, layout } = layer;
-          if (filter) {
-            map.setFilter(id, filter);
-          }
-          if (paint) {
-            Object.entries(paint).forEach(([key, value]) => {
-              map.setPaintProperty(id, key, value);
-            });
-          }
-          if (layout) {
-            Object.entries(layout).forEach(([key, value]) => {
-              map.setLayoutProperty(id, key, value);
-            });
+      styles.forEach((layer) => {
+        let layerIds = [];
+        layerIds.push(`${layer.id}.cold`, `${layer.id}.hot`);
+        for (let i = 0; i < layerIds.length; i++) {
+          if (map.getLayer(layerIds[i])) {
+            if (layer.filter) {
+              map.setFilter(layerIds[i], layer.filter);
+            }
+            if (layer.paint) {
+              Object.keys(layer.paint).forEach((key) => {
+                map.setPaintProperty(layerIds[i], key, layer.paint[key]);
+              });
+            }
+            if (layer.layout) {
+              Object.keys(layer.layout).forEach((key) => {
+                map.setLayoutProperty(layerIds[i], key, layer.layout[key]);
+              });
+            }
           }
         }
       });
@@ -446,24 +460,40 @@ export default {
      * 启用测量工具
      */
     enableMeasure() {
-      this.$_initMeasure();
+      this.$_moveLayer();
       this.$_changeMapStyle();
-      this.$_unbindDrawEvents();
       this.$_unbindEditEvents();
-      this.$_addMeasureControl(this.measure);
-      this.$_emitEvent("added", { measure: this.measure });
+      this.$_unbindDrawEvents();
       this.$_unbindMeasureEvents();
       this.$_bindSelfEvents(Object.keys(measureEvents));
       this.showTip = true;
     },
     /**
+     * 移动图层，这里是为了让新添加的地图不要覆盖到绘制图层上方，所以将新加的图层顺序调换到绘制图层之前，防止覆盖
+     * 一张图因为调用机制的问题，组件初始化时并不能监测到后续添加的地图，因此在测量绘制前调整顺序
+     */
+    $_moveLayer() {
+      let layersId = [];
+      this.map.getStyle().layers.forEach((layer) => {
+        layersId.push(layer.id);
+      });
+      for (
+        let i = layersId.indexOf("gl-draw-point-static.hot") + 1;
+        i < layersId.length;
+        i++
+      ) {
+        if (this.map.getLayer("gl-draw-polygon-fill-inactive.cold")) {
+          this.map.moveLayer(layersId[i], "gl-draw-polygon-fill-inactive.cold");
+        }
+      }
+    },
+    /**
      * 移除测量组件和事件解绑
      */
     remove() {
-      this.measureResult = null;
       this.changeMode();
+      this.deleteMeasure();
       this.$_unbindMeasureEvents();
-      this.$_removeMeasureControl();
       this.$_emitEvent("removed");
     },
     /**
@@ -471,7 +501,7 @@ export default {
      */
     disableDrag() {
       const vm = this;
-      vm.map.on("draw.selectionchange", e => {
+      vm.map.on("draw.selectionchange", (e) => {
         const { features, points } = e;
         const hasLine = features && features.length > 0;
         const hasPoints = points && points.length > 0;
@@ -505,13 +535,15 @@ export default {
     //   this.toolbarVisible = !this.toolbarVisible;
     // },
     enableLengthMeasure() {
-      this.remove();
       this.startMeasure("draw_line_string");
     },
     enableAreaMeasure() {
-      this.remove();
       this.startMeasure("draw_polygon");
-    }
-  }
+    },
+    deleteMeasure() {
+      this.measureResult = null;
+      this.measure && this.measure.deleteAll();
+    },
+  },
 };
 </script>

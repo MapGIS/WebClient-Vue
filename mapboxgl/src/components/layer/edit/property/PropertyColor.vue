@@ -1,13 +1,13 @@
 <template>
-  <!-- <div class="theme-panel-color-outer"> -->
-  <mapgis-ui-button :size="size" :style="{ width: '100%' }">
-    <colorPicker
-      v-model="value"
-      class="mapgis-property-color"
-      @change="onChange"
-    />
+  <mapgis-ui-button :size="size" :style="{ width: '100%', padding: 0 }">
+    <mapgis-ui-sketch-color-picker
+      :size="size"
+      :color="value"
+      :disableAlpha="false"
+      :showColorText="false"
+      @input="onChange"
+    ></mapgis-ui-sketch-color-picker>
   </mapgis-ui-button>
-  <!-- </div> -->
 </template>
 
 <script>
@@ -20,7 +20,7 @@ export default {
   components: {},
   props: {
     rule: Object,
-    size: { type: String, default: "small" }
+    size: { type: String, default: "default" }
   },
   model: {
     prop: "color",
@@ -41,7 +41,8 @@ export default {
     };
   },
   methods: {
-    onChange(color) {
+    onChange(e) {
+      const color = `rgba(${e.rgba.r}, ${e.rgba.g}, ${e.rgba.b}, ${e.rgba.a})`;
       const { map, rule, layerid } = this;
       this.$emit("change", color);
       this.value = color;

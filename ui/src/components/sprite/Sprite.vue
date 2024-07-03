@@ -3,6 +3,7 @@
     <mapgis-ui-select
       show-search
       class="mapgis-ui-sprite-select"
+      v-model="value"
       :default-value="defaultValue"
       :size="size"
       @change="updateSpriteItem"
@@ -64,14 +65,17 @@ export default {
       base64: undefined,
       width: 512,
       height: 512,
-      show: false
+      show: false,
+      value: undefined
     };
   },
   watch: {
     url: function(next) {
       if (next) this.initSprite();
     },
-    defaultValue: function(next) {}
+    defaultValue: function(next) {
+      this.value = next;
+    }
   },
   computed: {},
   created() {},
@@ -164,6 +168,7 @@ export default {
       this.$emit("change", item);
     },
     clearSprite() {
+      this.value = undefined;
       this.$emit("remove");
     }
   }

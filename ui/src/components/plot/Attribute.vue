@@ -13,7 +13,7 @@
               <div
                 v-if="
                   styleAttributesUIConfig[key] &&
-                    collapse.id === styleAttributesUIConfig[key].groupId
+                  collapse.id === styleAttributesUIConfig[key].groupId
                 "
                 :key="dataIdx"
               >
@@ -31,7 +31,7 @@
                       <div
                         :class="{
                           'tab-item': true,
-                          'tab-item-active': active == ndIdx
+                          'tab-item-active': active == ndIdx,
                         }"
                         @click="() => changeComponent(nodes, name, ndIdx)"
                       >
@@ -115,7 +115,7 @@
                 :span="12"
                 v-if="
                   styleAttributesUIConfig[k] &&
-                    collapse.id === styleAttributesUIConfig[k].groupId
+                  collapse.id === styleAttributesUIConfig[k].groupId
                 "
                 :key="styleIdx"
               >
@@ -187,46 +187,46 @@ export default {
   props: {
     data: {
       type: Object,
-      required: true
+      required: true,
     },
     svg: {
-      type: SVGSVGElement
+      type: SVGSVGElement,
     },
     attributeConfig: {
       type: Object,
       default() {
         return styleAttributesUIConfig;
-      }
+      },
     },
     groupConfig: {
       type: Array,
       default() {
         return groupArr;
-      }
+      },
     },
     baseUrl: {
       type: String,
-      default: ""
+      default: "",
     },
     symbolType: {
       type: String,
-      default: undefined
-    }
+      default: undefined,
+    },
   },
   model: {
     prop: "data",
-    event: "change"
+    event: "change",
   },
   watch: {
     data: {
-      handler: function(obj) {
+      handler: function (obj) {
         this.dataCopy = obj;
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     dataCopy: {
-      handler: function(obj) {
+      handler: function (obj) {
         const vm = this;
         if (this.nodesName) {
           vm.componentName = Object.keys(vm.dataCopy[vm.nodesName])[vm.active];
@@ -238,8 +238,8 @@ export default {
         this.$emit("change", obj);
       },
       deep: true,
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   data() {
     return {
@@ -250,7 +250,7 @@ export default {
       nodesName: undefined,
       svgT: undefined,
       componentName: undefined,
-      group: undefined
+      group: undefined,
     };
   },
   created() {
@@ -269,15 +269,15 @@ export default {
     },
     async $_parseComponent() {
       const vm = this;
-      this.svgT = this.svg || (await this.getSvg(this.dataCopy.symbolUrl));
+      this.svgT = this.svg || (await this.getSvg(this.dataCopy.symbolId));
 
       if (!this.svgT) {
         return window.console.log("缺少符号的svg元素！");
       }
       let svgContainer = document.querySelectorAll(".tab-item");
-      svgContainer.forEach(node => {
+      svgContainer.forEach((node) => {
         let nodeL = node.querySelectorAll("svg");
-        nodeL.forEach(nd => {
+        nodeL.forEach((nd) => {
           node.removeChild(nd);
         });
       });
@@ -304,7 +304,7 @@ export default {
         method: "get",
         url: url,
         dataType: "text",
-        timeout: 1000
+        timeout: 1000,
       });
 
       const xml = await new DOMParser().parseFromString(
@@ -319,14 +319,14 @@ export default {
       const partArr = [];
       const joinArr = [];
       this._applySvgDomArray(cloneDom, partArr);
-      const deleteArr = partArr.filter(s => {
+      const deleteArr = partArr.filter((s) => {
         if (keyArr.indexOf(s.getAttribute("id")) > -1) {
           joinArr.push(s);
           return false;
         }
         return true;
       });
-      deleteArr.forEach(t => {
+      deleteArr.forEach((t) => {
         t.parentElement.removeChild(t);
       });
 
@@ -336,22 +336,24 @@ export default {
       cloneDom.setAttribute("width", width);
       cloneDom.setAttribute("height", height);
 
-      joinArr.forEach(s => {
+      joinArr.forEach((s) => {
         if (s.nodeName == "tspan") {
           s.parentElement.style.transformOrigin = "left top";
-          s.parentElement.style.transform = `scale(${width /
-            cloneDomWidth},${height / cloneDomHeight})`;
+          s.parentElement.style.transform = `scale(${width / cloneDomWidth},${
+            height / cloneDomHeight
+          })`;
           return;
         }
         s.style.transformOrigin = "left top";
-        s.style.transform = `scale(${width / cloneDomWidth},${height /
-          cloneDomHeight})`;
+        s.style.transform = `scale(${width / cloneDomWidth},${
+          height / cloneDomHeight
+        })`;
       });
 
       return cloneDom;
     },
     _applySvgDomArray(dom, partArr) {
-      dom.childNodes.forEach(item => {
+      dom.childNodes.forEach((item) => {
         if (item.nodeName === "g" || item.nodeName === "text") {
           this._applySvgDomArray(item, partArr);
         } else if (item.nodeType === 1) {
@@ -394,7 +396,7 @@ export default {
 
       this.$emit("changeComponent", {
         component: { name: name, style: nodeStyle },
-        index: index
+        index: index,
       });
     },
     changeComponentStyle(key, value) {
@@ -406,15 +408,15 @@ export default {
       this.$emit("changeComponentStyle", {
         key: key,
         value: value,
-        name: vm.componentName
+        name: vm.componentName,
       });
     },
     changeStyle(key, e) {
       this.$emit("changeStyle", {
         key: key,
-        value: e
+        value: e,
       });
-    }
-  }
+    },
+  },
 };
 </script>

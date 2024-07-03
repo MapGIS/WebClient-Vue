@@ -1,6 +1,6 @@
-
 @mixin disabled($prefix) {
   background-color: $switch-disabled-bg-color;
+  opacity: $switch-disabled-opacity;
 
   #{$prefix}-loading-icon,
   &:after {

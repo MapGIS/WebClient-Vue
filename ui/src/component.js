@@ -212,6 +212,7 @@ export { default as MapgisUiSketchColorPicker } from "./components/color-picker/
 export { default as MapgisUiColorPickerLeft } from "./components/color-picker/ColorPickerLeft.vue";
 export { default as MapgisUiSketchColorPickerConfirm } from "./components/color-picker/SketchColorPickerConfirm.vue";
 export { default as MapgisUiColorPicker } from "./components/color-picker/ColorPicker.vue";
+export { default as MapgisUiSliderColorPicker } from "./components/color-picker/SliderColorPicker.vue";
 export { default as MapgisUiColorPickerSetting } from "./components/colorPickerSetting/ColorPickerSetting";
 
 // Ribbon
@@ -258,6 +259,9 @@ export { default as MapgisUiLayerCheckList } from "./view/layer-list/LayerCheckL
 
 // favorites
 export { default as mapgisUiFavorites } from "./view/favorites/favorites.vue";
+
+// feature-edit
+export { default as mapgisUiFeatureEdit } from "./view/feature-edit/FeatureEdit.vue";
 
 // select-list
 export { default as MapgisUiLayerSelectList } from "./view/layer-list/LayerSelectList.vue";

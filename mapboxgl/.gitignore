@@ -55,3 +55,6 @@ vue-mapbox-demo
 checklist.txt
 .flowconfig
 docs_source/.vuepress/dist
+
+# 推到gitee和github上时，放开以下内容
+src/components/layer/edit/Edit.vue";

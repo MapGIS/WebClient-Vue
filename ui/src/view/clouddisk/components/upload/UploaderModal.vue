@@ -13,12 +13,21 @@
         <!-- <mapgis-ui-button key="back" :disabled="true" @click="handleCSVBack" >
           上一步
         </mapgis-ui-button> -->
-        <mapgis-ui-button key="close" type="primary" :disabled="!continueImportCsv" @click="handleCSVGo">
+        <mapgis-ui-button
+          key="close"
+          type="primary"
+          :disabled="!continueImportCsv"
+          @click="handleCSVGo"
+        >
           下一步
         </mapgis-ui-button>
       </div>
       <div v-if="uistatus === 'upload'">
-        <mapgis-ui-button key="back" :disabled="!continueUpload" @click="handleBack" >
+        <mapgis-ui-button
+          key="back"
+          :disabled="!continueUpload"
+          @click="handleBack"
+        >
           继续上传
         </mapgis-ui-button>
         <mapgis-ui-button key="close" type="primary" @click="handleCloseImport">
@@ -32,7 +41,11 @@
       :importDestUrl="importDestUrl"
       @changePathText="changePathText"
     />
-    <mapgis-ui-uploader-csv-check ref="CsvCheck" v-if="uistatus === 'check' && show" :curImportUrl="curImportUrl"/>
+    <mapgis-ui-uploader-csv-check
+      ref="CsvCheck"
+      v-if="uistatus === 'check' && show"
+      :curImportUrl="curImportUrl"
+    />
     <mapgis-ui-uploader-progress
       v-if="uistatus === 'upload' && show"
       @handleUploadComplete="handleUploadComplete"
@@ -43,7 +56,8 @@
       :selectLists="selectLists"
       :currentDocument="currentDocument"
       :handleNewDocument="handleNewDocument"
-      @closeImport="handleCloseImport"/>
+      @closeImport="handleCloseImport"
+    />
   </mapgis-ui-modal>
 </template>
 
@@ -53,7 +67,11 @@ import MapgisUiUploaderCsvCheck from "./UploaderCsvCheck.vue";
 import MapgisUiUploaderProgress from "./UploaderProgress.vue";
 import MapgisUiClouddiskTransform from "../select/LayerTransform";
 import UploadMixin from "../../../../mixin/UploaderMixin";
-import { changeUiState, changeCsvUploadComplete, changePathUploaduri } from "../../../../util/emit/upload";
+import {
+  changeUiState,
+  changeCsvUploadComplete,
+  changePathUploaduri
+} from "../../../../util/emit/upload";
 import { getMapgisPath, getMapgisGroupPath } from "../../config/mapgis";
 import { getFileByWebsocketCallback, importVector } from "../../axios/files";
 
@@ -81,11 +99,11 @@ export default {
     },
     title: {
       type: String,
-      default: '导入文件'
+      default: "导入文件"
     },
     defaultPath: {
       type: String,
-      default: ''
+      default: ""
     },
     isMapstudio: {
       type: Boolean,
@@ -109,36 +127,40 @@ export default {
       importDestUrl: "",
       continueUpload: false,
       selectLists: [],
-      continueImportCsv: false, // csv文件的下一步按钮
+      continueImportCsv: false // csv文件的下一步按钮
     };
   },
   watch: {
     WebsocketContent: {
       handler() {
-        if (this.WebsocketMessageId === this.webSocketTaskId && this.WebsocketAction === 'refresh') {
+        if (
+          this.WebsocketMessageId === this.webSocketTaskId &&
+          this.WebsocketAction === "refresh"
+        ) {
           this.handleWebsocket(this.WebsocketMessageId);
         }
       },
       deep: true
     },
     csvUploadComplete(next) {
-      this.continueImportCsv = next
+      this.continueImportCsv = next;
     },
     defaultPath: {
-      handler (next) {
-        if (next !== '') {
-          let url = getMapgisPath() + '/' + next
-          changePathUploaduri({ uri: url })
-          this.changePathText(url)
+      handler(next) {
+        if (next !== "") {
+          let url = getMapgisPath() + "/" + next;
+          changePathUploaduri({ uri: url });
+          this.changePathText(url);
         }
       },
       immediate: true
-    },
+    }
   },
   computed: {
+    // eslint-disable-next-line vue/return-in-computed-property
     footerHandle() {
-      if (this.uistatus === 'init') {
-        return null
+      if (this.uistatus === "init") {
+        return null;
       }
     }
   },
@@ -161,23 +183,29 @@ export default {
       changeCsvUploadComplete({ csvUploadComplete: false });
       this.continueUpload = false;
     },
-    handleCSVGo () {
-      let CsvParams = this.$refs.CsvCheck.getCsvParams()
+    handleCSVGo() {
+      let CsvParams = this.$refs.CsvCheck.getCsvParams();
       importVector(CsvParams)
         .then(res => {
           if (res.status === 200) {
-            let result = res.data
-            let { errorCode, msg } = result
+            let result = res.data;
+            let { errorCode, msg } = result;
             if (errorCode < 0) {
-              this.$notification.error({ message: errorCode, description: msg })
+              this.$notification.error({
+                message: errorCode,
+                description: msg
+              });
             } else {
               changeUiState({ state: "upload" });
             }
           }
         })
         .catch(error => {
-          this.$notification.error({ message: '网络异常,请检查链接', description: error })
-        })
+          this.$notification.error({
+            message: "网络异常,请检查链接",
+            description: error
+          });
+        });
     },
     changePathText(url) {
       this.curImportUrl = url === "" ? this.uploaduri || "" : url;
@@ -196,12 +224,13 @@ export default {
       }
       return url;
     },
-    handleWebsocket(msgid) { // 在线制图时触发
+    handleWebsocket(msgid) {
+      // 在线制图时触发
       // console.warn('监控到消息', this.WebsocketContent)
       let srcUrl = "";
-      let content = this.WebsocketContent
+      let content = this.WebsocketContent;
       if (this.isMapstudio === false) {
-        this.handleUploaded()
+        this.handleUploaded();
       } else {
         // console.warn('进到调图层来', this.WebsocketAction)
         // let promises = content.map(i => getFileByWebsocketCallback(i.subject));
@@ -219,7 +248,7 @@ export default {
           this.selectLists = res.data.data;
           setTimeout(() => {
             this.$refs.layerTransform.addLayer();
-          },100);
+          }, 100);
         });
       }
     }

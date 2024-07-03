@@ -688,7 +688,8 @@ export default {
           break;
         case "box":
           editPanelValues.id = id;
-          editPanelValues.color = "#FF0000";
+          editPanelValues.color = `rgba(${color[0] * 255},${color[1] *
+            255},${color[2] * 255},${color[3] * 100})`;
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.extrudedHeight = extrudedHeight;
           editPanelValues.offsetHeight = offsetHeight;
@@ -995,6 +996,8 @@ export default {
             color[1] * 255 +
             "," +
             color[2] * 255 +
+            "," +
+            color[3] * 100 +
             ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.width = width;
@@ -1014,6 +1017,8 @@ export default {
             color[1] * 255 +
             "," +
             color[2] * 255 +
+            "," +
+            color[3] * 100 +
             ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.topRadius = topRadius;
@@ -1050,6 +1055,11 @@ export default {
             abelStyle.fillColor.blue * 255 +
             ")";
           editPanelValues.opacity = abelStyle.fillColor.alpha * 100;
+          editPanelValues.outlineWidth = abelStyle.outlineWidth;
+          editPanelValues.outlineOpacity = abelStyle.outlineColor.alpha * 100;
+          editPanelValues.outlineColor = `rgba(${abelStyle.outlineColor.red *
+            255},${abelStyle.outlineColor.green * 255},${abelStyle.outlineColor
+            .blue * 255},${abelStyle.outlineColor.alpha})`;
           editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.labelPlaceType = labelPlaceType;
           editPanelValues.labelPadding = labelPadding;
@@ -1084,6 +1094,8 @@ export default {
       graphicsLayer = this.$_getGraphicLayer();
       DrawTool = new this.Cesium.DrawTool(this.viewer, graphicsLayer);
       this.$_stopDrawing();
+      this.drawMode = drawMode;
+      this.currentEditType = "model";
       this.isStartDrawLine = true;
       this.isStartDrawing = true;
       this.drawDistance = drawDistance;
@@ -1257,6 +1269,9 @@ export default {
           }
           if (drawType === "polygonCube") {
             drawType = "polygon";
+          }
+          if (drawType === "square") {
+            drawType = "box";
           }
           if (drawType === "model") {
             this.$_startDrawModel(

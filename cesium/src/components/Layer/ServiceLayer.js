@@ -702,10 +702,102 @@ export default {
         tilingScheme = new Cesium.GeographicTilingScheme();
       } else if (tileMatrixSetName === "EPSG:3857") {
         tilingScheme = new Cesium.WebMercatorTilingScheme();
+      } else if (
+        ["bd09", "bd09ll", "bd09mc", "gcj02", "gcj02ll", "gcj02mc"].indexOf(
+          tileMatrixSetName
+        ) > -1
+      ) {
+        // 自定义WKID值，请参考webclient或cesium相关文档
+        // 20020902百度墨09卡托，20010202国测局02墨卡托
+        let customWKID;
+        let axisDirection = {
+          x: 1,
+          y: 1
+        };
+        let rectangleSouthwest;
+        let rectangleNortheast;
+        if (["bd09", "bd09ll", "bd09mc"].indexOf(tileMatrixSetName) > -1) {
+          customWKID = 20020902;
+          axisDirection = {
+            x: 1,
+            y: -1
+          };
+          rectangleSouthwest = new Cesium.Cartesian2(
+            -20037726.37,
+            -12474104.17
+          );
+          rectangleNortheast = new Cesium.Cartesian2(20037726.37, 12474104.17);
+        } else if (
+          ["gcj02", "gcj02ll", "gcj02mc"].indexOf(tileMatrixSetName) > -1
+        ) {
+          customWKID = 20010202;
+          const maxLength = Cesium.Ellipsoid.WGS84.maximumRadius * Math.PI;
+          // const maxLength = 20037508.3427892;
+          rectangleSouthwest = new Cesium.Cartesian2(-maxLength, -maxLength);
+          rectangleNortheast = new Cesium.Cartesian2(maxLength, maxLength);
+        }
+        const tileInfo = this.$_getTileInfoByWKID(customWKID);
+        tilingScheme = new Cesium.CustomTilingScheme({
+          wkid: customWKID,
+          axisDirection: axisDirection,
+          rectangleSouthwest: rectangleSouthwest,
+          rectangleNortheast: rectangleNortheast,
+          tileInfo: tileInfo
+        });
       } else {
         tilingScheme = new Cesium.GeographicTilingScheme();
       }
       return tilingScheme;
+    },
+
+    /*
+     * 根据wkid构造瓦片信息
+     * @param wkid 参考系的wkid号
+     * **/
+    $_getTileInfoByWKID(wkid) {
+      let tileInfo = {};
+      if (wkid === 20020902) {
+        // 构建自定义Wkid 百度09墨卡托的默认TileInfo
+        const lods = [];
+        const tileSize = [256, 256];
+        for (let i = 0; i < 19; i++) {
+          const resolution = Math.pow(2, 18 - i);
+          lods[i] = { level: i, resolution: resolution, scale: null };
+        }
+        tileInfo = {
+          dpi: 0,
+          format: "PNG",
+          size: tileSize, // 瓦片宽高的像素大小
+          origin: {
+            coordinates: [0, 0], // 裁图原点
+            type: "Point" // 裁图原点类型
+          },
+          lods: lods
+        };
+      } else if (wkid === 20010202) {
+        // 构建自定义Wkid 国测局02墨卡托的默认TileInfo
+        const lods = [];
+        const tileSize = [256, 256];
+        const maxLength = Cesium.Ellipsoid.WGS84.maximumRadius * Math.PI;
+        // const maxLength = 20037508.3427892;
+        const resolution0 = (maxLength + maxLength) / tileSize[0];
+        // 总共20级
+        for (let i = 0; i < 19; i++) {
+          const resolution = resolution0 / Math.pow(2, i);
+          lods[i] = { level: i, resolution: resolution, scale: null };
+        }
+        tileInfo = {
+          dpi: 0,
+          format: "PNG",
+          size: tileSize, // 瓦片宽高的像素大小
+          origin: {
+            coordinates: [-maxLength, maxLength], // 裁图原点
+            type: "Point" // 裁图原点类型
+          },
+          lods: lods
+        };
+      }
+      return tileInfo;
     }
   }
 };

@@ -53,3 +53,14 @@ vue-mapbox-demo
 checklist.txt
 .flowconfig
 docs_source/.vuepress/dist
+
+# 推到gitee和github上时，放开以下内容
+src/components/simulation
+src/components/Layer/3DPlot
+src/components/Layer/MapStory
+src/components/Analysis/DynamicSection.vue
+src/components/Analysis/Explosion.vue
+src/components/Analysis/HeightLimited.vue
+src/components/Analysis/ModelFlatten.vue
+src/components/Analysis/BIM.vue
+src/components/Analysis/StratifiedHousehold.vue

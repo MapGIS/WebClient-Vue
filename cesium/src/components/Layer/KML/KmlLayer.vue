@@ -7,6 +7,20 @@ export default {
   name: "mapgis-3d-kml-layer",
   inject: ["Cesium", "vueCesium", "viewer"],
   props: {
+    vueKey: {
+      type: String,
+      default: "default"
+    },
+    vueIndex: {
+      type: Number,
+      default() {
+        return Number((Math.random() * 100000000).toFixed(0));
+      }
+    },
+    visible: {
+      type: Boolean,
+      default: true
+    },
     url: {
       type: String,
       default: null
@@ -37,8 +51,18 @@ export default {
   watch: {
     url: {
       handler: function() {
-        this.unmount();
-        this.mount();
+        this.removeKML();
+        if (this.visible === undefined || this.visible) {
+          this.appendKml(this.url, true);
+        }
+      }
+    },
+    visible: {
+      handler: function() {
+        this.removeKML();
+        if (this.visible === undefined || this.visible) {
+          this.appendKml(this.url, false);
+        }
       }
     }
   },
@@ -59,7 +83,7 @@ export default {
         vueCesium.KmlManager.addSource(vueKey, vueIndex, dataSource, {
           kmlData: undefined
         });
-        vm.appendKml(vm.url);
+        vm.appendKml(vm.url, true);
         vm.$emit("loaded", vm);
       });
     },
@@ -68,32 +92,48 @@ export default {
      * @param {String} url 路径
      * @returns {KmlDataSource} kml数据对象
      */
-    appendKml(url) {
+    appendKml(url, changeUrl) {
       if (!url || url.length == 0) {
         return;
       }
       let { vueKey, vueIndex, Cesium, viewer, token } = this;
-      if (token && token.value) {
-        url += "?" + token.key + "=" + token.value;
+      let find = vueCesium.KmlManager.findSource(vueKey, vueIndex);
+      let { options } = find;
+      let { kmlData } = options;
+      if (!kmlData || changeUrl) {
+        if (token && token.value) {
+          url += "?" + token.key + "=" + token.value;
+        }
+        kmlData = Cesium.KmlDataSource.load(url, {
+          camera: viewer.scene.camera,
+          canvas: viewer.scene.canvas,
+          clampToGround: true
+        });
+        vueCesium.KmlManager.changeOptions(
+          vueKey,
+          vueIndex,
+          "kmlData",
+          kmlData
+        );
       }
-      const kmlData = Cesium.KmlDataSource.load(url, {
-        camera: viewer.scene.camera,
-        canvas: viewer.scene.canvas,
-        clampToGround: true
-      });
       viewer.dataSources.add(kmlData);
-      vueCesium.KmlManager.changeOptions(vueKey, vueIndex, "kmlData", kmlData);
       return kmlData;
     },
+    removeKML() {
+      let { viewer } = this;
+      const dataSource = viewer.dataSources.getByName(this.name)[0];
+      if (dataSource) {
+        viewer.dataSources.remove(dataSource);
+      }
+    },
     unmount() {
+      this.removeKML();
       let { vueKey, vueIndex, viewer, vueCesium } = this;
       let find = vueCesium.KmlManager.findSource(vueKey, vueIndex);
       let { options } = find;
       let { kmlData } = options;
       if (kmlData) {
         vueCesium.KmlManager.changeOptions(vueKey, vueIndex, "kmlData", null);
-        const dataSource = viewer.dataSources.getByName(this.name)[0];
-        viewer.dataSources.remove(dataSource);
       }
       this.$emit("unload", this);
     }

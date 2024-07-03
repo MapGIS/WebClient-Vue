@@ -106,7 +106,9 @@ export default {
     type: Object,
     default: function() {
       return {
+        requestWebgl2: true,
         webgl: {
+          // 通过canvas.toDataURL()实现截图需要开启
           preserveDrawingBuffer: true
         }
       };
@@ -129,5 +131,13 @@ export default {
         } */
       };
     }
+  },
+  minZoom: {
+    type: Number,
+    default: undefined
+  },
+  maxZoom: {
+    type: Number,
+    default: undefined
   }
 };

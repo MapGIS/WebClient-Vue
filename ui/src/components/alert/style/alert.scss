@@ -1,14 +1,14 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
-$alert-prefix-cls: $ant-prefix + "alert";
+$alert-prefix-cls: $ant-prefix + "-alert";
 
 $alert-message-color: $heading-color;
 $alert-text-color: $text-color;
 $alert-close-color: $text-color-secondary;
 $alert-close-hover-color: $icon-color-hover;
 
-.#{alert-prefix-cls} {
+.#{$alert-prefix-cls} {
   // .reset-component;
 
   position: relative;
@@ -39,7 +39,7 @@ $alert-close-hover-color: $icon-color-hover;
   &-success {
     background-color: $alert-success-bg-color;
     border: $border-width-base $border-style-base $alert-success-border-color;
-    .#{alert-prefix-cls}-icon {
+    .#{$alert-prefix-cls}-icon {
       color: $alert-success-icon-color;
     }
   }
@@ -47,7 +47,7 @@ $alert-close-hover-color: $icon-color-hover;
   &-info {
     background-color: $alert-info-bg-color;
     border: $border-width-base $border-style-base $alert-info-border-color;
-    .#{alert-prefix-cls}-icon {
+    .#{$alert-prefix-cls}-icon {
       color: $alert-info-icon-color;
     }
   }
@@ -55,7 +55,7 @@ $alert-close-hover-color: $icon-color-hover;
   &-warning {
     background-color: $alert-warning-bg-color;
     border: $border-width-base $border-style-base $alert-warning-border-color;
-    .#{alert-prefix-cls}-icon {
+    .#{$alert-prefix-cls}-icon {
       color: $alert-warning-icon-color;
     }
   }
@@ -63,7 +63,7 @@ $alert-close-hover-color: $icon-color-hover;
   &-error {
     background-color: $alert-error-bg-color;
     border: $border-width-base $border-style-base $alert-error-border-color;
-    .#{alert-prefix-cls}-icon {
+    .#{$alert-prefix-cls}-icon {
       color: $alert-error-icon-color;
     }
   }

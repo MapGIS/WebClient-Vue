@@ -3,10 +3,10 @@ module.exports = {
     loaderOptions: {
       less: {
         lessOptions: {
-          javascriptEnabled: true
-        }
-      }
-    }
+          javascriptEnabled: true,
+        },
+      },
+    },
   },
   productionSourceMap: false,
   outputDir: "dist-libs",
@@ -18,18 +18,23 @@ module.exports = {
   configureWebpack: {
     externals: {
       vue: "vue",
-      "@mapgis/mapbox-gl": "@mapgis/mapbox-gl",
       "@mapgis/geojson-vt": "@mapgis/geojson-vt",
-      "@mapgis/supercluster": "@mapgis/supercluster",
+      "@mapgis/mapbox-gl": "@mapgis/mapbox-gl",
+      "@mapgis/mapbox-gl-compare": "@mapgis/mapbox-gl-compare",
+      "@mapgis/mapbox-gl-draw": "@mapgis/mapbox-gl-draw",
+      "@mapgis/mapbox-gl-draw-circle": "@mapgis/mapbox-gl-draw-circle",
+      "@mapgis/mapbox-gl-draw-radius": "@mapgis/mapbox-gl-draw-radius",
       "@mapgis/mapbox-gl-draw-static-mode":
         "@mapgis/mapbox-gl-draw-static-mode",
-      "@mapgis/mapbox-gl-compare": "@mapgis/mapbox-gl-compare",
       "@mapgis/mapbox-gl-inspect": "@mapgis/mapbox-gl-inspect",
-      "@mapgis/webclient-es6-service": "@mapgis/webclient-es6-service",
+      "@mapgis/supercluster": "@mapgis/supercluster",
+      "@mapgis/webclient-cesium-plugin": "@mapgis/webclient-cesium-plugin",
+      "@mapgis/webclient-common": "@mapgis/webclient-common",
       "@mapgis/webclient-es6-mapboxgl": "@mapgis/webclient-es6-mapboxgl",
+      "@mapgis/webclient-es6-service": "@mapgis/webclient-es6-service",
+      "@mapgis/webclient-plot": "@mapgis/webclient-plot",
       "@mapgis/webclient-store": "@mapgis/webclient-store",
       "@mapgis/webclient-vue-ui": "@mapgis/webclient-vue-ui",
-      "@mapgis/webclient-plot": "@mapgis/webclient-plot",
       "@turf/turf": "@turf/turf",
       echarts: "echarts",
       "file-saver": "file-saver",
@@ -39,7 +44,7 @@ module.exports = {
       "postcss-inline-svg": "postcss-inline-svg",
       "resize-detector": "resize-detector",
       vcolorpicker: "vcolorpicker",
-      vuepress: "vuepress"
-    }
-  }
+      vuepress: "vuepress",
+    },
+  },
 };

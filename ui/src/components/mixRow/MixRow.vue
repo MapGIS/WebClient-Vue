@@ -808,6 +808,7 @@ export default {
         checkBoxArr: [],
         gradient: "#D53E4F,#FB8D59,#FEE08B,#FFFFBF,#E6F598,#99D594,#3288BD",
         directions: ["0, 0, 1000", "0, 0, 1000", "0, 0, 1000"],
+        ids: [0, 1, 2, 3],
         size: undefined,
         style: {
           width: "62px",
@@ -1021,6 +1022,114 @@ export default {
       }
       return newDataSourceCopy;
     },
+    /**
+     * 从GeoJSON中取得数据
+     * @param GeoJSON GeoJSON数据
+     * @param key 字段名
+     * @returns 是否相等
+     * @param type 单值或分段
+     */
+    $_getExplosionDataByGeoJson(GeoJSON, key, type, rangeLevel) {
+      let dataSourceCopy = [],
+        tempDataSourceCopy = [],
+        newDataSourceCopy = [],
+        directions = [],
+        ids = [];
+      if (!GeoJSON) {
+        return;
+      }
+      let features = GeoJSON.features;
+      for (let i = 0; i < features.length; i++) {
+        if (
+          features[i].properties[key] !== "" &&
+          features[i].properties[key] !== null &&
+          features[i].properties[key] !== undefined
+        ) {
+          const obj = {};
+          obj[key] = features[i].properties[key];
+          obj.direction = features[i].direction;
+          obj.id =
+            features[i].properties.FID !== undefined
+              ? features[i].properties.FID
+              : i;
+          tempDataSourceCopy.push(obj);
+        }
+      }
+      tempDataSourceCopy.sort(function(a, b) {
+        return a[key] - b[key];
+      });
+      for (let i = 0; i < tempDataSourceCopy.length; i++) {
+        directions.push(tempDataSourceCopy[i].direction);
+        ids.push(tempDataSourceCopy[i].id);
+        dataSourceCopy.push(tempDataSourceCopy[i][key]);
+      }
+      this.listProps.directions = directions;
+      this.listProps.ids = ids;
+      switch (type) {
+        case "unique":
+          newDataSourceCopy = dataSourceCopy;
+          break;
+        case "range":
+          let length = tempDataSourceCopy.length;
+          //某些情况下，取得的数字数据包含字符串要排除
+          let temp = [];
+          for (let j = 0; j < length; j++) {
+            const obj = tempDataSourceCopy[j];
+            if (!isNaN(Number(tempDataSourceCopy[j][key]))) {
+              obj[key] = Number(tempDataSourceCopy[j][key]);
+            }
+            temp.push(obj);
+          }
+          dataSourceCopy = temp;
+          let range = dataSourceCopy[length - 1][key] - dataSourceCopy[0][key];
+          if (range === 0) {
+            newDataSourceCopy.push(dataSourceCopy[0][key]);
+          } else {
+            let rangeSect = range / rangeLevel;
+            let floatLength;
+            if (String(rangeSect).indexOf(".") > -1) {
+              floatLength = String(rangeSect).split(".")[1].length;
+            }
+            for (let j = 0; j < rangeLevel; j++) {
+              newDataSourceCopy.push(
+                Number(dataSourceCopy[0][key]) + (j + 1) * rangeSect
+              );
+            }
+            let index = 0;
+            let distance = undefined;
+            let rangeDirections = [];
+            if (dataSourceCopy[0].direction1 == undefined) {
+              for (let m = 0; m < dataSourceCopy.length; m++) {
+                // 重新计算directions和ids,direction取分段里最大值
+                const tempData = dataSourceCopy[m];
+                const { direction } = tempData;
+                const value = Number(direction.split(",")[2]);
+                if (distance === undefined) {
+                  distance = value;
+                } else {
+                  distance = Math.min(distance, value);
+                }
+                if (
+                  index == newDataSourceCopy.length - 1 &&
+                  m == dataSourceCopy.length - 1
+                ) {
+                  rangeDirections.push(`0,0,${distance}`);
+                } else if (
+                  index < newDataSourceCopy.length - 1 &&
+                  dataSourceCopy[m + 1][key] >= newDataSourceCopy[index]
+                ) {
+                  index += 1;
+                  rangeDirections.push(`0,0,${distance}`);
+                  distance = undefined;
+                }
+              }
+              this.listProps.directions = rangeDirections;
+            }
+          }
+          break;
+      }
+      return newDataSourceCopy;
+    },
     $_initProps() {
       switch (this.type) {
         case "MapgisUiSlider":
@@ -1100,11 +1209,6 @@ export default {
         case "MapgisUiExplosionUnique":
           this.listProps = Object.assign(this.listProps, this.props);
           this.$_setThemeListDataSource("unique");
-          const defaultDirections = this.listProps.directions;
-          this.listProps.directions = this.$_getUniqueDirections(
-            defaultDirections,
-            this.listProps.dataSource
-          );
           this.$nextTick(function() {
             let panel = document.getElementById(this.panelId);
             this.panelWidth = panel.offsetWidth;
@@ -1149,31 +1253,19 @@ export default {
       }
       return colors;
     },
-    $_getUniqueDirections(directionArr, dataSourceCopy) {
-      let directions = [];
-      if (dataSourceCopy && dataSourceCopy.length > 0) {
-        let directionArrLength = directionArr.length;
-        let dataLength = dataSourceCopy.length;
-        if (dataLength <= directionArrLength) {
-          directions = [...directionArr];
-        } else {
-          for (let i = 0; i < dataLength; i++) {
-            directions.push[
-              directionArr[
-                i - directionArrLength * parseInt(i / directionArrLength)
-              ]
-            ];
-          }
-        }
-      }
-      return directions;
-    },
     $_setThemeListDataSource(type) {
       if (type === "range" && this.listProps.dataSource) {
         if (!(this.listProps.dataSource instanceof Array)) {
           let rangeLevel = this.listProps.gradient.split(",").length;
           if (this.type === "MapgisUiExplosionRange") {
-            rangeLevel = this.listProps.directions.length;
+            // 模型爆炸默认初始分段为5，后面看数据长度，如果数据长度小于5，则以数据长度为准
+            rangeLevel = this.listProps.segments || 5;
+            this.listProps.dataSource = this.$_getExplosionDataByGeoJson(
+              this.listProps.dataSource,
+              this.listProps.field,
+              type,
+              rangeLevel
+            );
           }
           this.listProps.dataSource = this.$_getDataByGeoJson(
             this.listProps.dataSource,
@@ -1185,11 +1277,19 @@ export default {
         this.listProps.startData = 0;
       } else {
         if (!(this.listProps.dataSource instanceof Array)) {
-          this.listProps.dataSource = this.$_getDataByGeoJson(
-            this.listProps.dataSource,
-            this.listProps.field,
-            type
-          );
+          if (this.type === "MapgisUiExplosionUnique") {
+            this.listProps.dataSource = this.$_getExplosionDataByGeoJson(
+              this.listProps.dataSource,
+              this.listProps.field,
+              type
+            );
+          } else {
+            this.listProps.dataSource = this.$_getDataByGeoJson(
+              this.listProps.dataSource,
+              this.listProps.field,
+              type
+            );
+          }
         }
       }
     },
@@ -1273,6 +1373,7 @@ export default {
         0,
         this.listProps.directions[index]
       );
+      this.listProps.ids.splice(index + 1, 0, this.listProps.ids[index]);
       this.listProps.radiusArray.splice(index + 1, 0, false);
       this.$emit("change", this.type);
     },
@@ -1281,6 +1382,7 @@ export default {
         this.listProps.dataSource.splice(index, 1);
         this.listProps.colors.splice(index, 1);
         this.listProps.directions.splice(index, 1);
+        this.listProps.ids.splice(index, 1);
       }
       this.$emit("change", this.type);
     },
@@ -1329,6 +1431,7 @@ export default {
         0,
         this.listProps.directions[index]
       );
+      this.listProps.ids.splice(index + 1, 0, this.listProps.ids[index]);
       this.listProps.radiusArray.splice(index + 1, 0, false);
       // this.listProps.radius.splice(index + 1, 0, this.listProps.radius[index]);
       this.$emit("change", this.type);
@@ -1339,6 +1442,7 @@ export default {
         this.listProps.rangeLevel--;
         this.listProps.colors.splice(index, 1);
         this.listProps.directions.splice(index, 1);
+        this.listProps.ids.splice(index, 1);
       }
       this.$emit("change", this.type);
     },

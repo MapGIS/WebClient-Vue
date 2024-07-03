@@ -74,6 +74,8 @@ export function initVueCesium() {
     window.vueCesium.M3DIgsManager || new EventHandlerManager();
   window.vueCesium.ArcgisManager =
     window.vueCesium.ArcgisManager || new EventHandlerManager();
+  window.vueCesium.WebTileManager =
+    window.vueCesium.WebTileManager || new EventHandlerManager();
   window.vueCesium.IgsDocLayerManager =
     window.vueCesium.IgsDocLayerManager || new IgsDocLayerManager();
   window.vueCesium.IgsTilecLayerManager =

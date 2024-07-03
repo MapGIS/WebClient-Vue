@@ -83,12 +83,17 @@ export default {
     }
   },
   watch: {
-    vueIndex(val) {
-      let layer = this.getLayer();
-      if (layer) {
-        this.initDrawTool();
-        this.setPick();
-      }
+    vueIndex: {
+      handler(val) {
+        if (val !== "") {
+          let layer = this.getLayer();
+          if (layer) {
+            this.initDrawTool();
+            this.setPick();
+          }
+        }
+      },
+      immediate: true
     }
   },
   data() {
@@ -105,7 +110,7 @@ export default {
     };
   },
   mounted() {
-    console.log("useIGS",this.useIGS)
+    console.log("useIGS", this.useIGS);
     this.mount();
   },
   destroyed() {
@@ -287,9 +292,9 @@ export default {
       let exist = this.getSymbol();
       let symbol;
       //当使用IGS作为文件服务时，使用ID
-      if(vm.useIGS) {
+      if (vm.useIGS) {
         symbol = manager.getLeafByID(data.icon.id);
-      }else {
+      } else {
         //当不使用IGS作为文件服务时，使用symbolId
         symbol = manager.getLeafByID(data.icon.symbolId);
       }

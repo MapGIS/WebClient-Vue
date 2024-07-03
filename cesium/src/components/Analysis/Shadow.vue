@@ -436,7 +436,7 @@ export default {
           );
           const xPaneNum = Math.ceil(recXLength / 4); // X轴方向插值点个数
           const yPaneNum = Math.ceil(recYLength / 4); // Y轴方向插值点个数
-          const zPaneNum = Math.ceil((stretchHeight - minHeight) / 4); // Z轴方向插值点个数
+          const zPaneNum = Math.ceil(stretchHeight / 4); // Z轴方向插值点个数
 
           shadowAnalysis = new Cesium.ShadowAnalysis(viewer, {
             xPaneNum: xPaneNum,
@@ -454,7 +454,7 @@ export default {
           shadowAnalysis.calcPointsArrayInShadowTime(
             positions,
             minHeight,
-            stretchHeight,
+            minHeight + stretchHeight,
             startTime,
             endTime
           );

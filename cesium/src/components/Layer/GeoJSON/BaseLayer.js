@@ -94,12 +94,12 @@ export default {
         }
       },
       deep: true
-    },
-    visible: {
-      handler: function(value) {
-        this.changeVisible();
-      }
     }
+    // visible: {
+    //   handler: function(value) {
+    //     this.changeVisible();
+    //   }
+    // }
   },
   methods: {
     // 获取vueManager中的source

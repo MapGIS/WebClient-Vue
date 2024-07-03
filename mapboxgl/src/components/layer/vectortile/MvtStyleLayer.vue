@@ -45,7 +45,8 @@ export default {
   data() {
     return {
       lastStyle: undefined,
-      themeRules: []
+      themeRules: [],
+      preBefore: undefined
     };
   },
 
@@ -71,6 +72,13 @@ export default {
           this.remove(deleteStyle);
           this.$_initStyle(this.mode, next);
           this.lastStyle = next;
+        } else {
+          // 防止被底图覆盖
+          if (this.before && this.preBefore !== this.before) {
+            this.remove(deleteStyle);
+            this.$_initStyle(this.mode, this.lastStyle);
+            this.preBefore = this.before;
+          }
         }
       },
       deep: true
@@ -78,6 +86,7 @@ export default {
   },
 
   created() {
+    console.log("created");
     this.$_deferredMount();
   },
 
@@ -193,9 +202,7 @@ export default {
       // 如果样式文件中，paint为null，则mapboxgl会报错，这里给个默认值
       const layers = newLayer.map(item => {
         if (!item.paint) {
-          item.paint = {
-            "text-color": "rgba(0,0,0,1)"
-          };
+          item.paint = {};
         }
         if (item.minzoom !== undefined && item.minzoom < self.minimumLevel) {
           item.minzoom = self.minimumLevel;
@@ -258,6 +265,8 @@ export default {
           return total.concat(layer);
         }
       }, []);
+      console.log("mergeLayers");
+      debugger;
 
       // 将未直接合并覆盖的图层重新根据原来的顺序进行插入
       let befores = news.map((u, i) => {

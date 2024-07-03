@@ -34,6 +34,7 @@ export { default as Mapgis3dArcgisMapLayer } from "./components/Layer/ArcGISServ
 export { default as Mapgis3dGraphicSingleLayer } from "./components/Layer/Graphic/GraphicSingleLayer.vue";
 export { default as Mapgis3dGraphicLayer } from "./components/Layer/Graphic/GraphicLayer.vue";
 export { default as Mapgis3dGraphicLayerService } from "./components/Layer/Graphic/GraphicLayerService.vue";
+export { default as Mapgis3dWebTileLayer } from "./components/Layer/WebTile/WebTileLayer";
 
 // 要素图层
 export { default as Mapgis3dGeojsonLayer } from "./components/Layer/GeoJSON/GeoJsonLayer";
@@ -73,6 +74,9 @@ export { default as Mapgis3dM3dSubsectionLayer } from "./components/Overlay/them
 export { default as Mapgis3dIgsTerrain } from "./components/Provider/TerrainProvider/IgsTerrainProvider.vue";
 export { default as Mapgis3dTerrainProvider } from "./components/Provider/TerrainProvider/TerrainProvider.vue";
 
+// 栅格体元模型
+export { default as Mapgis3dVoxelLayer } from "./components/Layer/M3D/Voxel.vue";
+
 // 数据源
 export { default as Mapgis3dGeojsonDatasource } from "./components/DataSource/Geojson/GeoJsonDataSource.vue";
 export { default as Mapgis3dCzmlDatasource } from "./components/DataSource/Czml/CzmlDataSource";
@@ -81,12 +85,9 @@ export { default as Mapgis3dCzmlDatasource } from "./components/DataSource/Czml/
 export { default as Mapgis3dViewshed } from "./components/Analysis/Viewshed.vue";
 export { default as Mapgis3dSightline } from "./components/Analysis/Sightline.vue";
 export { default as Mapgis3dSkyline } from "./components/Analysis/SkyLine";
-export { default as Mapgis3dModelFlatten } from "./components/Analysis/ModelFlatten";
 export { default as Mapgis3dExcavate } from "./components/Analysis/Excavate";
-export { default as Mapgis3dHeightlimited } from "./components/Analysis/HeightLimited";
 export { default as Mapgis3dShadow } from "./components/Analysis/Shadow";
 export { default as Mapgis3dDynamicCutting } from "./components/Analysis/DynamicCutting";
-export { default as Mapgis3dDynamicSection } from "./components/Analysis/DynamicSection";
 export { default as Mapgis3dFill } from "./components/Analysis/Fill";
 export { default as Mapgis3dAspect } from "./components/Analysis/Aspect";
 export { default as Mapgis3dSlope } from "./components/Analysis/Slope";
@@ -100,11 +101,8 @@ export { default as Mapgis3dBufferAnalysis } from "./components/Analysis/buffer/
 export { default as Mapgis3dModelBufferAnalysis } from "./components/Analysis/buffer/ModelBuffer.vue";
 export { default as Mapgis3dOverlayAanalysis } from "./components/Analysis/overlay/Overlay.vue";
 export { default as Mapgis3dModelOverlayAnalysis } from "./components/Analysis/overlay/ModelOverlay.vue";
-export { default as Mapgis3dStratifiedHousehold } from "./components/Analysis/StratifiedHousehold.vue";
 export { default as Mapgis3dProjectorManger } from "./components/Analysis/scene-projector/ProjectorManager.vue";
 export { default as Mapgis3dProjectorSetting } from "./components/Analysis/scene-projector/ProjectorSetting.vue";
-export { default as Mapgis3dBimComponent } from "./components/Analysis/BIM.vue";
-export { default as Mapgis3dExplosionAnalysis } from "./components/Analysis/Explosion.vue";
 
 //融合组件
 export { default as Mapgis3dComponentMix } from "./components/UI/mixComponent/GeojsonCom";
@@ -122,18 +120,27 @@ export { default as Mapgis3DComprehensiveQuery } from "./components/service/comp
 export { default as Mapgis3DDataFlow } from "./components/Layer/DataFlow/DataFlow";
 export { default as Mapgis3DTack } from "./components/Layer/Track/Track";
 export { default as Mapgis3DPlottingLayer } from "./components/Layer/Plotting/PlottingLayer";
-export { default as Mapgis3DMapStory } from "./components/Layer/MapStory/MapStory";
-export { default as Mapgis3DPreviewMapStory } from "./components/Layer/MapStory/PreviewMapStory";
+
+// 推到gitee和github上时，屏蔽以下内容
 
 //模拟仿真
-export { default as Mapgis3dCityGrow } from "./components/simulation/CityGrow/CityGrow";
-export { default as Mapgis3dCityGrowOptions } from "./components/simulation/CityGrow/CityGrowOptions";
-export { default as Mapgis3dPondingSimulation } from "./components/simulation/PondingSimulation.vue";
-export { default as Mapgis3dPondingSimulationTimeline } from "./components/simulation/PondingSimulation/PondingSimulationTimeline.vue";
-export { default as Mapgis3dBuildingGlow } from "./components/simulation/BuildingGrow";
+// export { default as Mapgis3dCityGrow } from "./components/simulation/CityGrow/CityGrow";
+// export { default as Mapgis3dCityGrowOptions } from "./components/simulation/CityGrow/CityGrowOptions";
+// export { default as Mapgis3dPondingSimulation } from "./components/simulation/PondingSimulation.vue";
+// export { default as Mapgis3dPondingSimulationTimeline } from "./components/simulation/PondingSimulation/PondingSimulationTimeline.vue";
+// export { default as Mapgis3dBuildingGlow } from "./components/simulation/BuildingGrow";
 
-// 标绘
-export { default as Mapgis3DPlot } from "./components/Layer/3DPlot/Plot.vue";
-export { default as Mapgis3DPlotLink } from "./components/Layer/3DPlot/Plot3DLink.vue";
-export { default as Mapgis3DPlotLayer } from "./components/Layer/3DPlot/PlotLayer.vue";
-export { default as Mapgis3DPlotAnimation } from "./components/Layer/3DPlot/PlotAnimation.vue";
+// // 标绘
+// export { default as Mapgis3DPlot } from "./components/Layer/3DPlot/Plot.vue";
+// export { default as Mapgis3DPlotLink } from "./components/Layer/3DPlot/Plot3DLink.vue";
+// export { default as Mapgis3DPlotLayer } from "./components/Layer/3DPlot/PlotLayer.vue";
+// export { default as Mapgis3DPlotAnimation } from "./components/Layer/3DPlot/PlotAnimation.vue";
+
+// export { default as Mapgis3dDynamicSection } from "./components/Analysis/DynamicSection";
+// export { default as Mapgis3dExplosionAnalysis } from "./components/Analysis/Explosion.vue";
+// export { default as Mapgis3dHeightlimited } from "./components/Analysis/HeightLimited";
+// export { default as Mapgis3dModelFlatten } from "./components/Analysis/ModelFlatten";
+// export { default as Mapgis3dBimComponent } from "./components/Analysis/BIM.vue";
+// export { default as Mapgis3dStratifiedHousehold } from "./components/Analysis/StratifiedHousehold.vue";
+// export { default as Mapgis3DMapStory } from "./components/Layer/MapStory/MapStory";
+// export { default as Mapgis3DPreviewMapStory } from "./components/Layer/MapStory/PreviewMapStory";

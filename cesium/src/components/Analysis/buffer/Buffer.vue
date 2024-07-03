@@ -500,7 +500,7 @@ export default {
     mount() {
       this.$emit("load", this);
       // 进行缓冲区分析前，优先关闭深度检测
-      setDepthTestAgainstTerrainEnable(false, this.viewer);
+      this.viewer && setDepthTestAgainstTerrainEnable(false, this.viewer);
     },
     unmount() {
       this.maskShow = false;
@@ -745,6 +745,9 @@ export default {
     },
     AnalysisSuccess(data) {
       this.maskShow = false;
+      if (data.results[0].Value === null) {
+        return this.$message.error("分析失败");
+      }
       // this.$emit("listenLayer", this.destLayer);
       // 设置缓冲区样式
       const bufferStyle = new FillStyle({

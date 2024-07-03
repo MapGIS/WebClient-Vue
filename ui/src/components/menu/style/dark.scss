@@ -1,4 +1,4 @@
-$menu-prefix-cls: $ant-prefix + "-menu";
+// $menu-prefix-cls: $ant-prefix + "-menu";
 
 .#{$menu-prefix-cls} {
   // dark theme
@@ -95,12 +95,12 @@ $menu-prefix-cls: $ant-prefix + "-menu";
   }
   &-dark &-item:hover {
     // background-color: $menu-dark-item-hover-bg;
-    color: $hover-color;
+    color: $menu-dark-highlight-color;
   }
 
   &-dark &-item-selected {
-    // color: $menu-dark-highlight-color;
-    color: $hover-color;
+    color: $menu-dark-highlight-color;
+    // color: $hover-color;
     border-right: 0;
     &::after {
       border-right: 0;
@@ -109,10 +109,10 @@ $menu-prefix-cls: $ant-prefix + "-menu";
     > a:hover {
       color: $menu-dark-highlight-color;
     }
-    .#{iconfont-css-prefix} {
+    .#{$iconfont-css-prefix} {
       color: $menu-dark-selected-item-icon-color;
     }
-    .#{iconfont-css-prefix} + span {
+    .#{$iconfont-css-prefix} + span {
       color: $menu-dark-selected-item-text-color;
     }
   }
@@ -139,5 +139,18 @@ $menu-prefix-cls: $ant-prefix + "-menu";
         }
       }
     }
+  }
+}
+
+.#{$menu-prefix-cls}.#{$menu-prefix-cls}-dark {
+  .#{$menu-prefix-cls}-submenu {
+    border-bottom: 0;
+  }
+  .#{$menu-prefix-cls}-item {
+    border-bottom: 0;
+  }
+  .#{$menu-prefix-cls}-inline.#{$menu-prefix-cls}-sub {
+    background: $menu-dark-bg;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45) inset;
   }
 }

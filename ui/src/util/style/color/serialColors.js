@@ -38,7 +38,7 @@ const antdFunctionColors = {
   infoColor: $blue6,
   successColor: $green6,
   warningColor: $glod6,
-  dangerColor: $red6
+  dangerColor: $red6,
 };
 
 const isBrowser = typeof window !== "undefined";
@@ -101,7 +101,7 @@ const replaceColorList = [
   "dropdownBackground",
   "panelBackground",
   "tableBackground",
-  "darkHeaderBackground"
+  "darkHeaderBackground",
 ];
 
 export function getColorWithOpacity(color, opacity, isStack = true) {
@@ -120,9 +120,7 @@ export function getColorWithOpacity(color, opacity, isStack = true) {
 }
 
 export function getDarkenColor(color, amount) {
-  return tinyColor(color)
-    .darken(amount)
-    .toString();
+  return tinyColor(color).darken(amount).toString();
 }
 
 export function getDerivedColorsByTextColor(textColor, opacity) {
@@ -193,7 +191,7 @@ export function getFunctionSerialColors(functionColors) {
     if (antdFunctionColors.hasOwnProperty(key)) {
       const color = acceptFunctionColors[key] || antdFunctionColors[key];
       nextFunctionSerialColors[key] = [];
-      seriesIndex.forEach(item => {
+      seriesIndex.forEach((item) => {
         const nextColor = item === 6 ? color : colorPalette(color, item);
         nextFunctionSerialColors[key].push(nextColor);
       });
@@ -231,7 +229,7 @@ export function getExtralColors(
     dangerShadowColor: getColorWithOpacity(functionColors.dangerColor[4], 0.25),
     disabledDarkenBgColor10: getDarkenColor(themeStyleData.disabledBgColor, 10),
     tableHeaderSortActiveBg,
-    tableHeaderFilterActiveBg: getDarkenColor(tableHeaderSortActiveBg, 5)
+    tableHeaderFilterActiveBg: getDarkenColor(tableHeaderSortActiveBg, 5),
   };
   return extraSerialColors;
 }
@@ -239,7 +237,7 @@ export function getExtralColors(
 export function dealWithTheme(nextThemeStyle) {
   const defaultThemeStyle = nextThemeStyle.style || "light";
   const defaultTheme = themeFactory.find(
-    item => item.label === defaultThemeStyle
+    (item) => item.label === defaultThemeStyle
   );
   // 合并 lightTheme 是因为可能其他 theme 没有完整的参数，如 disableColor
   const themeStyleData = Object.assign(
@@ -253,21 +251,15 @@ export function dealWithTheme(nextThemeStyle) {
     themeStyleData.opacity || 1
   );
   const functionSerialColorsReplacer = getFunctionSerialColors(themeStyleData);
-  const nextThemeStyleData = Object.assign({}, themeStyleData, {
-    selectedColor: serialColorsReplacer[1],
-    // 影响在theme.json中设置的hoverColor样式
-    // hoverColor: serialColorsReplacer[4],
-    clickColor: serialColorsReplacer[6]
-  });
   const nextThemeData = {
-    themeStyle: nextThemeStyleData,
+    themeStyle: themeStyleData,
     primarySerialColors: serialColorsReplacer,
     functionSerialColors: functionSerialColorsReplacer,
     extraSerialColors: getExtralColors(
       themeStyleData,
       serialColorsReplacer,
       functionSerialColorsReplacer
-    )
+    ),
   };
   setRootStyle(nextThemeData);
   return nextThemeData;
@@ -278,12 +270,12 @@ function setRootStyle(themeData) {
     themeStyle,
     primarySerialColors,
     functionSerialColors,
-    extraSerialColors
+    extraSerialColors,
   } = themeData;
   const primaryColor = themeStyle.colorGroup[0];
   const variables = {
     "--antd-wave-shadow-color": primaryColor,
-    "--primary-color": primaryColor
+    "--primary-color": primaryColor,
   };
   const themeInfo = Object.assign({}, themeStyle, extraSerialColors);
   const themeKeys = Object.keys(themeInfo);
@@ -297,7 +289,7 @@ function setRootStyle(themeData) {
       variables[varKey] = color;
     });
   }
-  themeKeys.forEach(key => {
+  themeKeys.forEach((key) => {
     if (!isArray(themeInfo[key])) {
       const varKey = `--${key.replace(/[A-Z]/g, "-$&").toLowerCase()}`;
       variables[varKey] = themeInfo[key];
@@ -319,7 +311,7 @@ function setRootStyle(themeData) {
       silent: true,
       onlyLegacy: true,
       variables: {},
-      watch: false
+      watch: false,
     };
     if (!isNativeSupport) {
       options.onlyLegacy = false;
@@ -334,13 +326,13 @@ function setRootStyle(themeData) {
 export function dealWithLayout(nextLayoutStyle) {
   const defaultLayoutStyle = nextLayoutStyle || "admin";
   const defaultLayout = layoutFactory.find(
-    item => item.label === defaultLayoutStyle.label
+    (item) => item.label === defaultLayoutStyle.label
   );
   const layoutInfo = Object.assign({}, defaultLayout);
   const variables = {};
 
   const layoutKeys = Object.keys(layoutInfo);
-  layoutKeys.forEach(key => {
+  layoutKeys.forEach((key) => {
     if (!isArray(layoutInfo[key])) {
       const varKey = `--${key.replace(/[A-Z]/g, "-$&").toLowerCase()}`;
       variables[varKey] = layoutInfo[key];
@@ -348,7 +340,7 @@ export function dealWithLayout(nextLayoutStyle) {
   });
 
   const nextLayoutData = {
-    layoutStyle: layoutInfo
+    layoutStyle: layoutInfo,
   };
 
   const rootStyle = `:root ${JSON.stringify(variables, null, 2)
@@ -367,7 +359,7 @@ export function dealWithLayout(nextLayoutStyle) {
       silent: true,
       onlyLegacy: true,
       variables: {},
-      watch: false
+      watch: false,
     };
     if (!isNativeSupport) {
       options.onlyLegacy = false;
@@ -382,7 +374,7 @@ export function dealWithLayout(nextLayoutStyle) {
 
 export function dealWithBackgroundOpacity(themeData) {
   const opacity = themeData.opacity || 0.5;
-  replaceColorList.forEach(item => {
+  replaceColorList.forEach((item) => {
     if (themeData[item]) {
       themeData[item] = setColorOpacity(themeData[item], opacity);
     }

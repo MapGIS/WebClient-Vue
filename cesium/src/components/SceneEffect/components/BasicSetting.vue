@@ -65,27 +65,6 @@
         <mapgis-ui-switch-panel
           class="odd"
           size="small"
-          label="罗盘控件"
-          :checked="basicSetting.compass"
-          @changeChecked="enableCompass"
-        />
-      </mapgis-ui-col>
-      <mapgis-ui-col :span="12">
-        <mapgis-ui-switch-panel
-          class="odd"
-          size="small"
-          label="缩放控件"
-          :checked="basicSetting.zoom"
-          @changeChecked="enableZoom"
-        />
-      </mapgis-ui-col>
-    </mapgis-ui-row>
-
-    <mapgis-ui-row>
-      <mapgis-ui-col :span="12">
-        <mapgis-ui-switch-panel
-          class="odd"
-          size="small"
           label="状态栏"
           :checked="basicSetting.statebar"
           @changeChecked="handleChangeStatebar"
@@ -98,6 +77,27 @@
           label="平面模式"
           :checked="basicSetting.sceneMode"
           @changeChecked="handleChangeSceneMode"
+        />
+      </mapgis-ui-col>
+    </mapgis-ui-row>
+
+    <mapgis-ui-row>
+      <mapgis-ui-col :span="12">
+        <mapgis-ui-switch-panel
+          class="odd"
+          size="small"
+          label="罗盘控件"
+          :checked="basicSetting.compass"
+          @changeChecked="enableCompass"
+        />
+      </mapgis-ui-col>
+      <mapgis-ui-col :span="12" v-if="basicSetting.zoom !== undefined">
+        <mapgis-ui-switch-panel
+          class="odd"
+          size="small"
+          label="缩放控件"
+          :checked="basicSetting.zoom"
+          @changeChecked="enableZoom"
         />
       </mapgis-ui-col>
     </mapgis-ui-row>
@@ -190,6 +190,10 @@ export default {
           layersaturation: 1.0
         };
       }
+    },
+    // 左侧板宽度
+    stuffWidth: {
+      type: Number
     }
   },
   computed: {
@@ -419,7 +423,7 @@ export default {
       }
       let options = {};
       options.enableCompass = this.basicSetting.compass;
-      options.enableZoomControls = this.basicSetting.zoom;
+      options.enableZoomControls = this.basicSetting.zoom || false;
       viewer.createNavigationTool(options);
       // this.changeNavPos();
     },
@@ -434,8 +438,14 @@ export default {
       }
       let options = {};
       options.enableCompass = this.basicSetting.compass;
-      options.enableZoomControls = this.basicSetting.zoom;
+      options.enableZoomControls = this.basicSetting.zoom || false;
       viewer.createNavigationTool(options);
+      this.$nextTick(() => {
+        const compassDiv = document.querySelector(".compass");
+        if (compassDiv) {
+          compassDiv.style.left = `${this.stuffWidth}px`;
+        }
+      });
       // this.changeNavPos();
     },
     /*

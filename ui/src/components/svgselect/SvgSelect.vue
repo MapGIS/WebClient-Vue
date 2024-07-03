@@ -1,27 +1,40 @@
 <template>
   <div class="svg-select-outer">
-    <img class="svg-select-reset"
-         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAA6xJREFUWEfFlk2IHEUUx/+vdsC4ixFBCQiRFQ0EL+pFYyJEBGEHBUFhXMxBF0H0IDibrtfOYrAF3Z2u6Z3gGPGTuIpCEDwoEg0oRmHxprlEchz0IARyCexuDj39pJrqpTNOz0zPSlKXYbrex6/ee/VeEa7zouvsHxMDdDqdGzY2Nh7qP0Cj0Thb5lClANrt9t1xHFeJqCoi1QJHXSJai+P4s0aj0R0FkwIYY54A8K5V1Fq/OUjJGFMH0B5lsG//rIi85fv+T0V6GcDPAB6xQsx8VVQ6nc7ura2tNhG90GekKyKnlVIXs+8isoeIjojI7pxsLCJ13/dPDIIYCtBsNu9VSr0PYDvXRBTEcfxLUa6DIKjMzMzMJ0kyT0SPZ06J6ITW+pV+iEKAKIoeTpJkDcBdTuk8gNeY+btx09Bqtd4QkSAXobbv+0fz+gMBoiiqJknyCYDbrTARnapUKov1ev2fcZ1ncmEYPkZE7wHY575VmfmH7ci4ItyuARF5mois81uc0IfM/FJZx3n5Vqv1rIh86b6tz87OHq7Var30cP0AALYA3OiEjzPz4k6c5yLxNRE95SIaZLdtEECqQ0Rva61f/z+cWxvNZvOgUmrd2T6jtZ4risAwn2vMvDAplDEmS/VlZr55EoAuM985KUD+VhDRQa31b9tNx22mzWjIWi1zDfvtRFF0T5Ik9jrbtcjMx0vNgklPnukFQTA9PT294f5rZo6uKcDq6ureXq/3lyvEF7XWH19rgPt7vd7vDuAZrfVXAwFWVlbSWig720elKN+QlFJznued+Q+AdT41NWWvC0TkSd/3vx1leNx9Y4wdy49a+TiOb11aWro0FICIftVaHx7XwTA5Y8x9AP5wMqeZOZ2UA1NgjPkeQNqpALzKzO/sFKJvMj7HzJ8XAuTTAOBvl68/J4UIw/AIEX3h9Lubm5v7giCICwHsRhiGJ4koa7vnlVI1z/NKQ4RheICIbE3tcgALzGzfGekqvIZRFO1PkuRTAAecbGkIV/XHAOx3Rb3k+/5KPpJD+0AYhjcppT4SkXmndNE+TgCcsn28KCV28hHR0Wz8OrkPmPnlfp2xGpExJgJw1VMKwI8A7MPUPsMviMguInoQwAMA7G9+GWb2BwGPBWAVjTFzIrJARLVxi5GIvhGRFjOn74AdAWTKxphDAJ53p7wDQDrX3boC4BwAW6zrzHxyFOzYESgytLy8fFulUtmrlNr0PO/CKIcT1UBZo2XkdxyBMs4Gyf4LHSR7MFf1C5MAAAAASUVORK5CYII="
-         title="还原样式"
-         @click="$_reset"
-         alt="">
+    <img
+      class="svg-select-reset"
+      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAA6xJREFUWEfFlk2IHEUUx/+vdsC4ixFBCQiRFQ0EL+pFYyJEBGEHBUFhXMxBF0H0IDibrtfOYrAF3Z2u6Z3gGPGTuIpCEDwoEg0oRmHxprlEchz0IARyCexuDj39pJrqpTNOz0zPSlKXYbrex6/ee/VeEa7zouvsHxMDdDqdGzY2Nh7qP0Cj0Thb5lClANrt9t1xHFeJqCoi1QJHXSJai+P4s0aj0R0FkwIYY54A8K5V1Fq/OUjJGFMH0B5lsG//rIi85fv+T0V6GcDPAB6xQsx8VVQ6nc7ura2tNhG90GekKyKnlVIXs+8isoeIjojI7pxsLCJ13/dPDIIYCtBsNu9VSr0PYDvXRBTEcfxLUa6DIKjMzMzMJ0kyT0SPZ06J6ITW+pV+iEKAKIoeTpJkDcBdTuk8gNeY+btx09Bqtd4QkSAXobbv+0fz+gMBoiiqJknyCYDbrTARnapUKov1ev2fcZ1ncmEYPkZE7wHY575VmfmH7ci4ItyuARF5mois81uc0IfM/FJZx3n5Vqv1rIh86b6tz87OHq7Var30cP0AALYA3OiEjzPz4k6c5yLxNRE95SIaZLdtEECqQ0Rva61f/z+cWxvNZvOgUmrd2T6jtZ4risAwn2vMvDAplDEmS/VlZr55EoAuM985KUD+VhDRQa31b9tNx22mzWjIWi1zDfvtRFF0T5Ik9jrbtcjMx0vNgklPnukFQTA9PT294f5rZo6uKcDq6ureXq/3lyvEF7XWH19rgPt7vd7vDuAZrfVXAwFWVlbSWig720elKN+QlFJznued+Q+AdT41NWWvC0TkSd/3vx1leNx9Y4wdy49a+TiOb11aWro0FICIftVaHx7XwTA5Y8x9AP5wMqeZOZ2UA1NgjPkeQNqpALzKzO/sFKJvMj7HzJ8XAuTTAOBvl68/J4UIw/AIEX3h9Lubm5v7giCICwHsRhiGJ4koa7vnlVI1z/NKQ4RheICIbE3tcgALzGzfGekqvIZRFO1PkuRTAAecbGkIV/XHAOx3Rb3k+/5KPpJD+0AYhjcppT4SkXmndNE+TgCcsn28KCV28hHR0Wz8OrkPmPnlfp2xGpExJgJw1VMKwI8A7MPUPsMviMguInoQwAMA7G9+GWb2BwGPBWAVjTFzIrJARLVxi5GIvhGRFjOn74AdAWTKxphDAJ53p7wDQDrX3boC4BwAW6zrzHxyFOzYESgytLy8fFulUtmrlNr0PO/CKIcT1UBZo2XkdxyBMs4Gyf4LHSR7MFf1C5MAAAAASUVORK5CYII="
+      title="还原样式"
+      @click="$_reset"
+      alt=""
+    />
     <div class="svg-select-inner" @click="$_toggle">
-      <img class="svg-select-inner-img" :src="selectIcon" v-if="selectIcon">
-      <img class="svg-select-inner-img" v-if="!selectIcon"
-           src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNjMwMDMxNDgwMjU0IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjI0MjYiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNNTEwLjY5MTE5MSA2NC41Njc1NTFjLTI0Ni41NDgyMzIgMC00NDcuMTI1NDU3IDIwMC41NzgyNDgtNDQ3LjEyNTQ1NyA0NDcuMTI1NDU3IDAgMjQ2LjU0MzExNiAyMDAuNTc4MjQ4IDQ0Ny4xMjU0NTcgNDQ3LjEyNTQ1NyA0NDcuMTI1NDU3IDI0Ni41NDMxMTYgMCA0NDcuMTI1NDU3LTIwMC41ODIzNDEgNDQ3LjEyNTQ1Ny00NDcuMTI1NDU3Qzk1Ny44MTY2NDggMjY1LjE0NDc3NiA3NTcuMjM0MzA3IDY0LjU2NzU1MSA1MTAuNjkxMTkxIDY0LjU2NzU1MXpNNTEwLjY5MTE5MSA4NjMuNDg5MzA2Yy0xOTMuOTgyMDE2IDAtMzUxLjc5NjI5OC0xNTcuODE0MjgyLTM1MS43OTYyOTgtMzUxLjc5NjI5OHMxNTcuODE0MjgyLTM1MS43OTYyOTggMzUxLjc5NjI5OC0zNTEuNzk2Mjk4Uzg2Mi40ODc0ODkgMzE3LjcxMDk5MiA4NjIuNDg3NDg5IDUxMS42OTMwMDggNzA0LjY3MzIwOCA4NjMuNDg5MzA2IDUxMC42OTExOTEgODYzLjQ4OTMwNnoiIHAtaWQ9IjI0MjciIGZpbGw9IiM1RDVENUQiPjwvcGF0aD48cGF0aCBkPSJNNTEwLjY5MTE5MSA1MTEuNjkzMDA4bS0yMTQuNDkxMTE5IDBhMjA5LjYwNiAyMDkuNjA2IDAgMSAwIDQyOC45ODIyMzggMCAyMDkuNjA2IDIwOS42MDYgMCAxIDAtNDI4Ljk4MjIzOCAwWiIgcC1pZD0iMjQyOCIgZmlsbD0iIzVENUQ1RCI+PC9wYXRoPjwvc3ZnPg==">
+      <img class="svg-select-inner-img" :src="selectIcon" v-if="selectIcon" />
+      <img
+        class="svg-select-inner-img"
+        v-if="!selectIcon"
+        src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNjMwMDMxNDgwMjU0IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjI0MjYiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNNTEwLjY5MTE5MSA2NC41Njc1NTFjLTI0Ni41NDgyMzIgMC00NDcuMTI1NDU3IDIwMC41NzgyNDgtNDQ3LjEyNTQ1NyA0NDcuMTI1NDU3IDAgMjQ2LjU0MzExNiAyMDAuNTc4MjQ4IDQ0Ny4xMjU0NTcgNDQ3LjEyNTQ1NyA0NDcuMTI1NDU3IDI0Ni41NDMxMTYgMCA0NDcuMTI1NDU3LTIwMC41ODIzNDEgNDQ3LjEyNTQ1Ny00NDcuMTI1NDU3Qzk1Ny44MTY2NDggMjY1LjE0NDc3NiA3NTcuMjM0MzA3IDY0LjU2NzU1MSA1MTAuNjkxMTkxIDY0LjU2NzU1MXpNNTEwLjY5MTE5MSA4NjMuNDg5MzA2Yy0xOTMuOTgyMDE2IDAtMzUxLjc5NjI5OC0xNTcuODE0MjgyLTM1MS43OTYyOTgtMzUxLjc5NjI5OHMxNTcuODE0MjgyLTM1MS43OTYyOTggMzUxLjc5NjI5OC0zNTEuNzk2Mjk4Uzg2Mi40ODc0ODkgMzE3LjcxMDk5MiA4NjIuNDg3NDg5IDUxMS42OTMwMDggNzA0LjY3MzIwOCA4NjMuNDg5MzA2IDUxMC42OTExOTEgODYzLjQ4OTMwNnoiIHAtaWQ9IjI0MjciIGZpbGw9IiM1RDVENUQiPjwvcGF0aD48cGF0aCBkPSJNNTEwLjY5MTE5MSA1MTEuNjkzMDA4bS0yMTQuNDkxMTE5IDBhMjA5LjYwNiAyMDkuNjA2IDAgMSAwIDQyOC45ODIyMzggMCAyMDkuNjA2IDIwOS42MDYgMCAxIDAtNDI4Ljk4MjIzOCAwWiIgcC1pZD0iMjQyOCIgZmlsbD0iIzVENUQ1RCI+PC9wYXRoPjwvc3ZnPg=="
+      />
     </div>
-    <div class="svg-select-triangle-up" v-show="showPanel"/>
+    <div class="svg-select-triangle-up" v-show="showPanel" />
     <div class="svg-select-panel" v-show="showPanel">
       <div class="svg-select-panel-head">
         <div class="svg-select-panel-prev" @click="$_prev">
           <div class="svg-select-triangle-left"></div>
         </div>
         <div class="svg-select-panel-head-tabs">
-          <div id="translateId" class="svg-select-panel-head-translateX"
-               :style="{transform: 'translateX(' + translateX + 'px)'}">
-            <div :class="{svgActiveType: activeType === iconObj.type}" :id="iconObj.type"
-                 @click="$_changeType(iconObj.type)" class="svg-select-panel-tab" v-for="(iconObj,index) in icons"
-                 :key="index">
+          <div
+            id="translateId"
+            class="svg-select-panel-head-translateX"
+            :style="{ transform: 'translateX(' + translateX + 'px)' }"
+          >
+            <div
+              :class="{ svgActiveType: activeType === iconObj.type }"
+              :id="iconObj.type"
+              @click="$_changeType(iconObj.type)"
+              class="svg-select-panel-tab"
+              v-for="(iconObj, index) in icons"
+              :key="index"
+            >
               {{ iconObj.type }}
             </div>
           </div>
@@ -30,10 +43,20 @@
           <div class="svg-select-triangle-right"></div>
         </div>
       </div>
-      <div class="svg-select-panel-content" v-for="(iconObj,index) in icons" :key="index"
-           v-show="activeType === iconObj.type">
-        <img class="svg-select-icon" @click="$_clickIcon(icon)" :src="icon" style="fill:red;"
-             v-for="(icon,index) in iconObj.icons" :key="index">
+      <div
+        class="svg-select-panel-content"
+        v-for="(iconObj, index) in icons"
+        :key="index"
+        v-show="activeType === iconObj.type"
+      >
+        <img
+          class="svg-select-icon"
+          @click="$_clickIcon(icon)"
+          :src="icon"
+          style="fill:red;"
+          v-for="(icon, index) in iconObj.icons"
+          :key="index"
+        />
       </div>
     </div>
   </div>
@@ -52,13 +75,12 @@ export default {
   },
   watch: {
     defaultIcon: {
-      handler: function () {
+      handler: function() {
         this.selectIcon = this.defaultIcon;
       }
     },
     selectIcon: {
-      handler: function () {
-      }
+      handler: function() {}
     }
   },
   data() {
@@ -69,7 +91,7 @@ export default {
       translateXStep: 10,
       translateLength: 0,
       selectIcon: undefined
-    }
+    };
   },
   mounted() {
     if (this.icons && this.icons.length > 0) {
@@ -96,8 +118,9 @@ export default {
       // this.selectIcon = this.defaultIcon;
     }
     let vm = this;
-    window.onclick = function (event) {
-      if (event.target.className !== "theme-panel-options" &&
+    window.onclick = function(event) {
+      if (
+        event.target.className !== "theme-panel-options" &&
         event.target.className !== "svg-select-inner-img" &&
         event.target.className !== "svg-select-panel-content" &&
         event.target.className !== "svg-select-panel-tab" &&
@@ -108,7 +131,7 @@ export default {
       ) {
         vm.showPanel = false;
       }
-    }
+    };
   },
   methods: {
     $_reset() {
@@ -118,7 +141,8 @@ export default {
       if (this.translateLength === 0) {
         let translateLength = 0;
         for (let i = 0; i < this.icons.length; i++) {
-          let divWidth = document.getElementById(this.icons[i].type).offsetWidth;
+          let divWidth = document.getElementById(this.icons[i].type)
+            .offsetWidth;
           translateLength += divWidth;
         }
         this.translateLength = translateLength;
@@ -154,7 +178,10 @@ export default {
       let translate = document.getElementById("translateId");
       let translateLength = this.$_getTranslateLength();
       if (translateLength > translate.offsetWidth) {
-        if (this.translateX - this.translateXStep < (translate.offsetWidth - translateLength)) {
+        if (
+          this.translateX - this.translateXStep <
+          translate.offsetWidth - translateLength
+        ) {
           this.translateX = translate.offsetWidth - translateLength;
         } else {
           this.translateX = this.translateX - this.translateXStep;
@@ -162,7 +189,7 @@ export default {
       }
     }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -194,7 +221,8 @@ export default {
   cursor: pointer;
 }
 
-.svg-select-panel-prev, .svg-select-panel-next {
+.svg-select-panel-prev,
+.svg-select-panel-next {
   display: inline-block;
   position: absolute;
   cursor: pointer;

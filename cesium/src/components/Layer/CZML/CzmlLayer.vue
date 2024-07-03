@@ -27,8 +27,18 @@ export default {
   watch: {
     url: {
       handler: function() {
-        this.unmount();
-        this.mount();
+        this.removeCzml();
+        if (this.visible === undefined || this.visible) {
+          this.appendCzml(this.url, true);
+        }
+      }
+    },
+    visible: {
+      handler: function() {
+        this.removeCzml();
+        if (this.visible === undefined || this.visible) {
+          this.appendCzml(this.url, false);
+        }
       }
     }
   },
@@ -49,7 +59,7 @@ export default {
         vueCesium.CzmlManager.addSource(vueKey, vueIndex, dataSource, {
           czmlData: undefined
         });
-        vm.appendCzml(vm.url);
+        vm.appendCzml(vm.url, true);
         vm.$emit("loaded", vm);
       });
     },
@@ -58,37 +68,48 @@ export default {
      * @param {String} url 路径
      * @returns {CzmlDataSource} czml数据对象
      */
-    appendCzml(url) {
+    appendCzml(url, changeUrl) {
       if (!url || url.length == 0) {
         return;
       }
       let { vueKey, vueIndex, Cesium, viewer, token } = this;
-      if (token && token.value) {
-        url += "?" + token.key + "=" + token.value;
+      let find = vueCesium.CzmlManager.findSource(vueKey, vueIndex);
+      let { options } = find;
+      let { czmlData } = options;
+      if (!czmlData || changeUrl) {
+        if (token && token.value) {
+          url += "?" + token.key + "=" + token.value;
+        }
+        czmlData = Cesium.CzmlDataSource.load(url, {
+          camera: viewer.scene.camera,
+          canvas: viewer.scene.canvas,
+          clampToGround: true
+        });
+        vueCesium.CzmlManager.changeOptions(
+          vueKey,
+          vueIndex,
+          "czmlData",
+          czmlData
+        );
       }
-      const czmlData = Cesium.CzmlDataSource.load(url, {
-        camera: viewer.scene.camera,
-        canvas: viewer.scene.canvas,
-        clampToGround: true
-      });
       viewer.dataSources.add(czmlData);
-      vueCesium.CzmlManager.changeOptions(
-        vueKey,
-        vueIndex,
-        "czmlData",
-        czmlData
-      );
       return czmlData;
     },
+    removeCzml() {
+      let { viewer } = this;
+      const dataSource = viewer.dataSources.getByName(this.name)[0];
+      if (dataSource) {
+        viewer.dataSources.remove(dataSource);
+      }
+    },
     unmount() {
+      this.removeCzml();
       let { vueKey, vueIndex, viewer, vueCesium } = this;
       let find = vueCesium.CzmlManager.findSource(vueKey, vueIndex);
       let { options } = find;
       let { czmlData } = options;
       if (czmlData) {
         vueCesium.CzmlManager.changeOptions(vueKey, vueIndex, "czmlData", null);
-        const dataSource = viewer.dataSources.getByName(this.name)[0];
-        viewer.dataSources.remove(dataSource);
       }
       this.$emit("unload", this);
     }

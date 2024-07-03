@@ -178,9 +178,11 @@ export default {
   components: {
     Uploader,
     UploaderBtn,
+    // eslint-disable-next-line vue/no-unused-components
     UploaderDrop,
     UploaderUnsupport,
     UploaderList,
+    // eslint-disable-next-line vue/no-unused-components
     UploaderFiles,
     UploaderFile
   },
@@ -332,6 +334,7 @@ export default {
     tokenChange() {
       // let token = this.$store.state.user.token
       let token = window.localStorage.getItem("mapgis_clouddisk_token");
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       this.options.headers.Authorization = token;
       return token;
     },

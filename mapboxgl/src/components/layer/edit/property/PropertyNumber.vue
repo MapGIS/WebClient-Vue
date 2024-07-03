@@ -63,7 +63,10 @@ export default {
         value = rule.default;
         const layer = this.$_getLayer(layerid);
         if (layer && layer[layertype] && layer[layertype][layerprop]) {
-          value = layer[layertype][layerprop];
+          // 这里有可能是object，需要判断
+          if (typeof layer[layertype][layerprop] === "number") {
+            value = layer[layertype][layerprop];
+          }
         }
       }
       return value;

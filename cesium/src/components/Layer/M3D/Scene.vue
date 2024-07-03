@@ -1137,6 +1137,7 @@ export default {
         let position = movement.position || movement.endPosition;
         let cartesian = viewer.getCartesian3Position(position);
         let ray = scene.camera.getPickRay(position, tempRay);
+        // 拾取球上地形的点，先屏蔽
         let cartesian2 = scene.globe.pick(ray, scene, tempPos);
 
         let pickedFeature = viewer.scene.pick(movement.position);
@@ -1147,12 +1148,12 @@ export default {
 
         let longitudeString2, latitudeString2, heightString2;
 
-        if (Cesium.defined(cartesian2)) {
-          let cartographic2 = Cesium.Cartographic.fromCartesian(cartesian);
-          longitudeString2 = Cesium.Math.toDegrees(cartographic2.longitude);
-          latitudeString2 = Cesium.Math.toDegrees(cartographic2.latitude);
-          heightString2 = cartographic2.height;
-        }
+        // if (Cesium.defined(cartesian2)) {
+        let cartographic2 = Cesium.Cartographic.fromCartesian(cartesian);
+        longitudeString2 = Cesium.Math.toDegrees(cartographic2.longitude);
+        latitudeString2 = Cesium.Math.toDegrees(cartographic2.latitude);
+        heightString2 = cartographic2.height;
+        // }
 
         if (cartesian || cartesian2) {
           let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
@@ -1172,20 +1173,23 @@ export default {
           // vm.restoreM3d();
           vm.selectLayerIndex = index;
           vm.selectedKeys = [`${index}`];
+          let layerInfo = g3dLayer.getLayerInfo(index);
+          const { layerName, gdbpUrl } = layerInfo;
           if (version == "1.0" || version == "0.0") {
             let properties = {};
             let name = pickedFeature.getProperty("name"); // 获取要素名
             if (name && name !== "") {
               const nameStrs = name.split("_");
               const featureId = nameStrs[nameStrs.length - 1];
-              properties = await this.getFeaturePorpertiesByOid(featureId);
+              properties = await this.getFeaturePorpertiesByOid(
+                featureId,
+                layerName
+              );
             }
             if (Object.keys(properties).length > 0) {
               vm.featureproperties = properties;
               vm.iClickFeatures = [{ properties }];
             } else {
-              let layerInfo = g3dLayer.getLayerInfo(index);
-              const { layerName, gdbpUrl } = layerInfo;
               vm.featureproperties = { layerName, gdbpUrl };
               vm.iClickFeatures = [{ properties: { layerName, gdbpUrl } }];
             }
@@ -1204,16 +1208,25 @@ export default {
             tileset.pickedColor = Cesium.Color.fromCssColorString(
               this.highlightStyle
             );
-            if (tileset._useRawSaveAtt && Cesium.defined(pickedFeature)) {
-              let result = pickedFeature.content.getAttributeByOID(oid) || {};
-              vm.featureproperties = result;
-              vm.iClickFeatures = [{ properties: result }];
+            const properties20 = await this.getFeaturePorpertiesByOid(
+              oid,
+              layerName
+            );
+            if (Object.keys(properties20).length > 0) {
+              vm.featureproperties = properties20;
+              vm.iClickFeatures = [{ properties20 }];
             } else {
-              tileset.queryAttributes(oid).then(function(result) {
-                result = result || {};
+              if (tileset._useRawSaveAtt && Cesium.defined(pickedFeature)) {
+                let result = pickedFeature.content.getAttributeByOID(oid) || {};
                 vm.featureproperties = result;
                 vm.iClickFeatures = [{ properties: result }];
-              });
+              } else {
+                tileset.queryAttributes(oid).then(function(result) {
+                  result = result || {};
+                  vm.featureproperties = result;
+                  vm.iClickFeatures = [{ properties: result }];
+                });
+              }
             }
           }
           if (
@@ -1280,21 +1293,30 @@ export default {
     projectScreen(file) {
       this.$emit("project-screen", file);
     },
-    async getFeaturePorpertiesByOid(oid) {
+    async getFeaturePorpertiesByOid(oid, layerName) {
       const properties = {};
       if (this.searchParams) {
         const {
-          ip,
-          port,
           domain,
           serverName,
           layerIndex,
-          gdbp
+          serverType,
+          mapList
         } = this.searchParams;
+        let { gdbp } = this.searchParams;
+        if (serverType === "IGSMapImage" && layerName) {
+          // 关联的地图文档
+          if (mapList && mapList.length > 0) {
+            for (let i = 0; i < mapList.length; i++) {
+              const item = mapList[i];
+              if (layerName.includes(item.LayerName)) {
+                gdbp = item.URL;
+              }
+            }
+          }
+        }
         const featureSet = await Feature.FeatureQuery.query(
           {
-            ip,
-            port: port.toString(),
             domain,
             f: "json",
             IncludeAttribute: true,

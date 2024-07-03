@@ -12,6 +12,7 @@
         :value="cameraSetting.selfAdaptionParams.maxHeigh"
         :range="[0, 1000000]"
         :step="100"
+        @change="enableSelfAdaption"
       />
     </mapgis-ui-switch-panel>
     <mapgis-ui-switch-panel
@@ -165,42 +166,46 @@ export default {
      *
      */
     enableSelfAdaption(e) {
+      const { viewer, Cesium } = this;
       let vm = this;
-      vm.cameraSetting.selfAdaption = e;
+      if (typeof e === "boolean") {
+        vm.cameraSetting.selfAdaption = e;
+        if (vm.cameraSetting.selfAdaption) {
+          //设置地表自适应透明
+          viewer.camera.changed.addEventListener(() => {
+            if (vm.cameraSetting.selfAdaption) {
+              vm._changeAlphaByCamera();
+            }
+          });
+        } else {
+          viewer.camera.changed.removeEventListener();
+          // 不开启地表自适应透明，地表透明度应该为设置的值
+          vm.setGlobeBackFaceAlpha(1, true);
+        }
+      } else {
+        vm.cameraSetting.selfAdaptionParams.maxHeigh = e;
+      }
       if (vm.cameraSetting.selfAdaption) {
         vm._changeAlphaByCamera();
-        //设置地表自适应透明
-        viewer.camera.changed.addEventListener(() => {
-          if (vm.cameraSetting.selfAdaption) {
-            vm._changeAlphaByCamera();
-          }
-        });
-      } else {
-        viewer.camera.changed.removeEventListener();
-        // 不开启地表自适应透明，地表透明度应该为设置的值
-        vm.setGlobeBackFaceAlpha(1, true);
       }
     },
     _changeAlphaByCamera() {
-      let max = this.boundingSphereRadius;
-      if (max) {
-        // 当出现包围球大于400km的图层时，使用400km的阈值
-        const maxHeigh =
-          this.cameraSetting.selfAdaptionParams.maxHeigh || 400000;
-        max = Math.min(max, this.cameraSetting.selfAdaptionParams.maxHeigh);
-        let startDis = max * 5;
-        let stopDis = max;
+      let max = this.boundingSphereRadius || 0;
+      // 当出现包围球大于400km的图层时，使用400km的阈值
+      const maxHeigh = this.cameraSetting.selfAdaptionParams.maxHeigh || 400000;
+      max = Math.min(max, this.cameraSetting.selfAdaptionParams.maxHeigh);
+      let startDis = max * 5;
+      let stopDis = max;
 
-        // 当前高度
-        let height = this.viewer.camera.positionCartographic.height;
-        // 当进入图层高度调整视高阈值内
-        if (height < startDis) {
-          const imageryLayerAlpha =
-            height < stopDis ? 0 : 1 - (startDis - height) / startDis;
-          this.setGlobeBackFaceAlpha(imageryLayerAlpha, true);
-        } else {
-          this.setGlobeBackFaceAlpha(1, true);
-        }
+      // 当前高度
+      let height = this.viewer.camera.positionCartographic.height;
+      // 当进入图层高度调整视高阈值内
+      if (height < startDis) {
+        const imageryLayerAlpha =
+          height < stopDis ? 0 : 1 - (startDis - height) / startDis;
+        this.setGlobeBackFaceAlpha(imageryLayerAlpha, true);
+      } else {
+        this.setGlobeBackFaceAlpha(1, true);
       }
     },
     /**

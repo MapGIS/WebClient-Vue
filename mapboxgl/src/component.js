@@ -43,7 +43,6 @@ export { default as MapgisVideoLayer } from "./components/layer/VideoLayer";
 export { default as MapgisVectorLayer } from "./components/layer/VectorLayer";
 
 export { default as MapgisMvtStyleLayer } from "./components/layer/vectortile/MvtStyleLayer";
-export { default as MapgisMvtEditor } from "./components/layer/edit/Edit";
 export { default as MapgisMvtScale } from "./components/layer/edit/Scale";
 export { default as MapgisMvtLegend } from "./components/UI/controls/legend/LegendMvt";
 
@@ -85,3 +84,7 @@ export { default as Mapgis2dPlot } from "./components/layer/2DPlot/plot.vue";
 export { default as Mapgis2dPlotLink } from "./components/layer/2DPlot/Plot2DLink.vue";
 export { default as Mapgis2dPlotLayer } from "./components/layer/2DPlot/plotLayer.vue";
 export { default as Mapgis2DPlotAnimation } from "./components/layer/2DPlot/plotAnimation.vue";
+
+// 推到gitee和github上时，屏蔽以下内容
+
+// export { default as MapgisMvtEditor } from "./components/layer/edit/Edit";

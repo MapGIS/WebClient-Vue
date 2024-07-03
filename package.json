@@ -1,6 +1,6 @@
 {
   "name": "@mapgis/webclient-vue",
-  "version": "16.5.0",
+  "version": "17.0.0",
   "private": true,
   "scripts": {
     "build-all": "cd ui && npm run build && cd ../ && npm run build-storybook &&  cd cesium && npm run docs:build && npm run build && cd ../mapboxgl && npm run docs:build && npm run build",
@@ -16,11 +16,11 @@
     "storybook": "start-storybook -s ./stories/public -p 8895"
   },
   "dependencies": {
-    "@mapgis/cesium": "^16.4.0",
-    "@mapgis/webclient-es6-service": "^16.4.0",
-    "@mapgis/webclient-es6-mapboxgl": "^16.4.0",
+    "@mapgis/cesium": "~17.0.0",
+    "@mapgis/webclient-es6-service": "~16.2.0",
+    "@mapgis/webclient-es6-mapboxgl": "~16.2.0",
     "@mapgis/webclient-store": "^10.5.5",
-    "@mapgis/webclient-vue-ui": "~16.5.0",
+    "@mapgis/webclient-vue-ui": "~17.0.0",
     "@storybook/addon-knobs": "^6.3.0",
     "@storybook/preset-scss": "^1.0.3",
     "@turf/turf": "^6.3.0",

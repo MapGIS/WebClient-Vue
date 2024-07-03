@@ -27,15 +27,13 @@ export default {
   methods: {},
   computed: {
     uiClass() {
-      return this.autoWidth
-        ? 'mapgis-ui-select-auto-width'
-        : '';
+      return this.autoWidth ? "mapgis-ui-select-auto-width" : "";
     },
     addListeners() {
       const vm = this;
       return {
-        change: function(value) {
-          vm.$emit("change", value);
+        change: function(value, option) {
+          vm.$emit("change", value, option);
         }
       };
     }

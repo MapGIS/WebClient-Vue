@@ -1,32 +1,42 @@
 <template>
   <div class="monitor-point-popup-wrapper">
-    <div class="data-point-content" v-if="type === 'data'">
+    <div class="data-point-content">
       <div class="monitor-left">
-        <span class="monitor-title">监测点信息- {{ monitorPointId }}</span>
-        <mapgis-ui-list
-          item-layout="horizontal"
-          :locale="emptyText"
-          :data-source="dataList"
-          size="small"
-          class="table-marker"
-          bordered
+        <span class="monitor-title" v-show="listPanelVisible"
+          >监测点信息- {{ monitorTitle }}</span
         >
-          <mapgis-ui-list-item
-            slot="renderItem"
-            slot-scope="item"
-            class="table-marker-item"
+        <div class="monitor-table">
+          <mapgis-ui-list
+            item-layout="horizontal"
+            :locale="emptyText"
+            :data-source="dataList"
+            size="small"
+            class="table-marker"
+            bordered
+            :style="{ width: listPanelVisible ? '350px' : 0 }"
           >
-            <div :title="item">
-              {{ item }}
-            </div>
-            <div :title="infoData[item]">
-              {{ infoData[item] }}
-            </div>
-          </mapgis-ui-list-item>
-        </mapgis-ui-list>
+            <mapgis-ui-list-item
+              slot="renderItem"
+              slot-scope="item"
+              class="table-marker-item"
+            >
+              <div :title="item">
+                {{ item }}
+              </div>
+              <div :title="infoData[item]">
+                {{ infoData[item] }}
+              </div>
+            </mapgis-ui-list-item>
+          </mapgis-ui-list>
+          <div class="monitor-handle" @click="onTogglelistPanel">
+            <mapgis-ui-iconfont
+              :type="listPanelVisible ? 'mapgis-left' : 'mapgis-right'"
+            ></mapgis-ui-iconfont>
+          </div>
+        </div>
       </div>
-      <div class="monitor-right">
-        <span class="monitor-title">监测曲线</span>
+      <div class="monitor-right" v-if="type === 'data'">
+        <span class="monitor-title">监测曲线- {{ monitorTitle }}</span>
         <div class="monitor-search-time">
           <mapgis-ui-range-picker
             :locale="locale"
@@ -51,17 +61,48 @@
             </mapgis-ui-select-option>
           </mapgis-ui-select>
         </div>
+
         <div :ref="id" class="monitor-echart" v-show="showEcharts" />
         <span class="monitor-tips" v-show="!showEcharts">暂无数据</span>
       </div>
-    </div>
-    <div class="monitor-point-content" v-if="type === 'video'">
-      <!-- <video
-        class="monitor-video"
-        controls="controls"
-        autoplay="autoplay"
-        src="https://www.w3school.com.cn/i/movie.ogg"
-      ></video> -->
+      <div class="monitor-point-content" v-if="type === 'video'">
+        <div class="monitor-title">视频- {{ monitorTitle }}</div>
+        <div class="monitor-video">
+          <div class="monitor-search-time">
+            <mapgis-ui-range-picker
+              :locale="locale"
+              :show-time="{ format: 'HH:mm:ss' }"
+              :placeholder="['开始时间', '结束时间']"
+              v-model="timePick"
+              format="YYYY-MM-DD HH:mm:ss"
+              @change="onChange"
+              @openChange="openChange"
+            />
+            <mapgis-ui-select
+              default-value="最近一周"
+              style="width: 100px;margin-left: 5px"
+              @change="handleChange"
+            >
+              <mapgis-ui-select-option
+                v-for="(item, index) in selectTimeRange"
+                :value="item.label"
+                :key="index"
+              >
+                {{ item.label }}
+              </mapgis-ui-select-option>
+            </mapgis-ui-select>
+          </div>
+          <div class="monitor-video-content">
+            <div
+              id="projectorVideoContainer"
+              :width="300"
+              :height="200"
+              v-if="videoUrl"
+            ></div>
+            <mapgis-ui-empty v-else class="empty"></mapgis-ui-empty>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -73,6 +114,11 @@ import moment from "moment";
 import locale from "ant-design-vue/es/date-picker/locale/zh_CN";
 import "moment/dist/locale/zh-cn";
 import { Empty } from "ant-design-vue";
+import videojs from "video.js";
+import "videojs-contrib-hls";
+import "video.js/dist/video-js.css";
+
+window.monitorPointDomMap = {};
 
 export default {
   name: "mapgis-3d-monitor-point-popup",
@@ -120,6 +166,29 @@ export default {
           mon_project_unit: "监测指标单位"
         };
       }
+    },
+    // 视频流类型
+    videoType: {
+      type: String,
+      default: ""
+    },
+    // x轴显示字段
+    xAxis: {
+      type: String,
+      default: "mon_time_ts"
+    },
+    // y轴显示字段
+    yAxis: {
+      type: String,
+      default: "mon_acc_value"
+    },
+    // 设备名称显示字段
+    title: {
+      type: String,
+      default: "测点"
+    },
+    exhibition: {
+      type: Object
     }
   },
   data() {
@@ -168,7 +237,9 @@ export default {
           label: "全部"
         }
       ],
-      hasChange: false
+      hasChange: false,
+      listPanelVisible: false,
+      videoUrl: ""
     };
   },
   computed: {
@@ -177,6 +248,9 @@ export default {
     },
     monitorPointId() {
       return this.properties[this.monPntID];
+    },
+    monitorTitle() {
+      return this.properties[this.title];
     },
     emptyText() {
       const customEmptyText = "未查询到监测点信息";
@@ -190,6 +264,55 @@ export default {
       };
     }
   },
+  watch: {
+    listPanelVisible: {
+      handler() {
+        if (this.type === "video") {
+          const dom = document.querySelectorAll(
+            ".mapgis-feature-popup-container"
+          );
+
+          dom &&
+            dom.forEach(item => {
+              if (this.listPanelVisible) {
+                item.style.width = `${this.componentWidth}px`;
+              } else {
+                item.style.width = "550px";
+              }
+            });
+        }
+      }
+    },
+    monitorPointId: {
+      immediate: true,
+      async handler() {
+        if (this.type === "video") {
+          if (
+            window.monitorPointDomMap &&
+            window.monitorPointDomMap[this.monitorPointId]
+          ) {
+            this._getVideoDom();
+          } else {
+            const layerName = this.exhibition.options
+              ? this.exhibition.options[this.exhibition.activeOptionId].name
+              : this.exhibition.option.name;
+            const videoName = this.properties[this.monPntID];
+            const path = await this.getPath(videoName, layerName);
+            if (path.indexOf("undefined") > -1) {
+              this.videoUrl = "";
+              return this.$message.info("获取视频流失败");
+            }
+            const baseUrl = this.dataUrl.replace(
+              "/catalog/hdfs/services",
+              "/services/file/hdfs"
+            );
+            this.videoUrl = `${baseUrl}/${path}/download?isPreview=true`;
+            this._getVideoDom();
+          }
+        }
+      }
+    }
+  },
 
   async mounted() {
     if (this.type === "data") {
@@ -197,10 +320,138 @@ export default {
       setTimeout(() => {
         this.initEcharts();
       }, 500);
+    } else {
+      this.getMonitorData();
     }
   },
 
   methods: {
+    async getPath(videoName, layerName) {
+      const res = await axios.get(this.dataUrl);
+
+      if (res.status === 200) {
+        const {
+          t: { rtn }
+        } = res.data;
+        const result = await this.getUrl(
+          videoName,
+          rtn,
+          this.dataUrl,
+          layerName
+        );
+        console.log(result, "res");
+        return result;
+      }
+    },
+    async getUrl(videoName, rtn, baseUrl, layerName) {
+      const obj =
+        rtn.find(item => item.name === layerName) ||
+        rtn.find(item => item.name === videoName);
+
+      if (obj) {
+        const url = `${baseUrl}/${obj.name}`;
+        const res = await axios.get(url);
+        if (res.status === 200) {
+          const { rtn } = res.data.t;
+          const resName = await this.getUrl(videoName, rtn, url);
+          return `${obj.name}/${resName}`;
+        }
+      } else {
+        const item = rtn.find(
+          item => item.name === `${videoName}.${this.videoType}`
+        );
+        if (item) {
+          return item.name;
+        }
+      }
+    },
+    _getVideoDom() {
+      let tempVideoDom;
+      if (
+        window.monitorPointDomMap &&
+        window.monitorPointDomMap[this.monitorPointId]
+      ) {
+        const { videoDom, hlsPlayer } = window.monitorPointDomMap[
+          this.monitorPointId
+        ];
+        tempVideoDom = videoDom;
+      } else {
+        if (!this.videoUrl) {
+          return null;
+        }
+        // 创建video元素
+        tempVideoDom = this.createVideoElement(
+          this.videoType,
+          this.videoUrl,
+          this.monitorPointId
+        );
+      }
+      this.videoDom = tempVideoDom;
+
+      this.$nextTick(function() {
+        const projectorVideoContainer = document.getElementById(
+          "projectorVideoContainer"
+        );
+        projectorVideoContainer.innerHTML = "";
+        tempVideoDom.width = 300;
+        tempVideoDom.height = 200;
+        tempVideoDom.controls = true;
+        projectorVideoContainer.appendChild(tempVideoDom);
+      });
+    },
+    createVideoElement(protocol, videoUrl, id) {
+      if (window.monitorPointDomMap[id]) {
+        const { videoDom, hlsPlayer } = window.monitorPointDomMap[id];
+        return videoDom;
+      }
+      const playerType = this.getVideoPlayerType(protocol);
+      const videoContainer = document.createElement("div");
+      const width = 300;
+      const height = 200;
+      videoContainer.innerHTML = `<video id="projector-video-${id}" class="video-js vjs-default-skin" controls preload="auto" width="${width}" height="${height}" crossOrigin="anonymous">
+      <source src="${videoUrl}" type="${playerType}" /></video>`;
+      const videoDom = videoContainer.getElementsByTagName("video")[0];
+      const options = {
+        // 播放速度  playbackRates: [0.7, 1.0, 1.5, 2.0],
+        autoplay: true, // 如果true,浏览器准备好时开始回放。
+        loop: false, // 导致视频一结束就重新开始。
+        preload: "auto", // 建议浏览器在<video>加载元素后是否应该开始下载视频数据。auto浏览器选择最佳行为,立即开始加载视频（如果浏览器支持）
+        aspectRatio: "16:9", // 将播放器置于流畅模式，并在计算播放器的动态大小时使用该值。值应该代表一个比例 - 用冒号分隔的两个数字（例如"16:9"或"4:3"）
+        fluid: true // 当true时，Video.js player将拥有流体大小。换句话说，它将按比例缩放以适应其容器。
+      };
+      const hlsPlayer = window.videojs(videoDom, options);
+      hlsPlayer.src({
+        type: playerType,
+        src: videoUrl
+      });
+      hlsPlayer.load(videoUrl);
+      hlsPlayer.play();
+      hlsPlayer.loop();
+      window.monitorPointDomMap[id] = {
+        videoDom,
+        hlsPlayer
+      };
+      return videoDom;
+    },
+    getVideoPlayerType(protocol) {
+      let type = "video/mp4";
+      if (protocol === "mp4") {
+        type = "video/mp4";
+      } else if (protocol === "m3u8") {
+        type = "application/x-mpegURL";
+      } else if (protocol === "webm") {
+        type = "video/webm";
+      } else if (protocol === "ogg") {
+        type = "video/ogg";
+      }
+      return type;
+    },
+    onTogglelistPanel() {
+      this.listPanelVisible = !this.listPanelVisible;
+      if (this.type === "data") {
+        this.initEcharts();
+      }
+    },
     async initEcharts() {
       const beginDate = this.timePick[0]
         ? moment(this.timePick[0]).format("YYYY-MM-DD+HH:mm:ss")
@@ -211,38 +462,35 @@ export default {
       await this.getMonitorEchartsData(endDate, beginDate);
     },
     getMonitorData() {
-      axios
-        .get(
-          `${this.dataUrl}/hotel/api/QueryJcjkHqjcXm?access_token=${this.access_token}&mon_point_id=${this.monitorPointId}`
-        )
-        .then(res => {
-          if (res.status === 200) {
-            const data = res.data;
-            if (data.records && data.records.length === 0) {
-              this.$message.info(`监测点${this.monitorPointId}未查询到信息!`);
-              return;
+      if (this.dataUrl.indexOf("datastore") > -1) {
+        this.infoData = this.properties;
+        this.listPanelVisible = true;
+      } else {
+        axios
+          .get(
+            `${this.dataUrl}/hotel/api/QueryJcjkHqjcXm?access_token=${this.access_token}&mon_point_id=${this.monitorPointId}`
+          )
+          .then(res => {
+            if (res.status === 200) {
+              const data = res.data;
+              if (data.records && data.records.length === 0) {
+                this.$message.info(`监测点${this.monitorTitle}未查询到信息!`);
+                return;
+              }
+              const record = data.records[0];
+              const info = {};
+              Object.keys(this.propertyRelation).forEach(item => {
+                const key = this.propertyRelation[item];
+                info[key] = record[item];
+              });
+              this.infoData = info;
+              this.listPanelVisible = true;
             }
-            const record = data.records[0];
-            const info = {};
-            Object.keys(this.propertyRelation).forEach(item => {
-              const key = this.propertyRelation[item];
-              info[key] = record[item];
-            });
-            this.infoData = {
-              监测点编号: record.cd,
-              监测单位: record.jcdw,
-              监测对象: record.jcdx,
-              所属测区: record.ssyq,
-              监测类型: record.lx,
-              监测项目: record.jcxm,
-              监测方式: record.fs,
-              监测指标单位: record.mon_project_unit
-            };
-          }
-        })
-        .catch(e => {
-          this.$message.error(`监测点${this.monitorPointId}信息查询异常!`);
-        });
+          })
+          .catch(e => {
+            this.$message.error(`监测点${this.monitorPointId}信息查询异常!`);
+          });
+      }
     },
     getMonitorEchartsData(endDate, beginDate) {
       let url = `${this.dataUrl}/hotel/api/QueryJcjkHqjcSj?access_token=${this.access_token}&mon_point_id=${this.monitorPointId}`;
@@ -265,7 +513,7 @@ export default {
               return;
             }
             const timeerDate = res.data.records.reduce((arr, item) => {
-              const res = [item["mon_time_ts"], item["mon_acc_value"]];
+              const res = [item[this.xAxis], item[this.yAxis]];
               arr.push(res);
               return arr;
             }, []);
@@ -293,9 +541,9 @@ export default {
       if (!echartsDom) return;
       this.myCharts = echarts.init(echartsDom, null, {
         renderer: "canvas",
-        useDirtyRect: false,
-        width: echartsDom.clientWidth,
-        height: echartsDom.clientHeight
+        useDirtyRect: false
+        // width: echartsDom.clientWidth,
+        // height: echartsDom.clientHeight
       });
       const option = {
         tooltip: {
@@ -480,10 +728,32 @@ export default {
           flex: 1 0 0%;
         }
       }
+      .monitor-table {
+        position: relative;
+        .monitor-handle {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border: 1px solid var(--border-color-base);
+          border-left: none;
+          color: var(--text-color);
+          border-radius: 0 4px 4px 0;
+          width: 16px;
+          height: 64px;
+          position: absolute;
+          top: 100px;
+          right: -15px;
+          cursor: pointer;
+          &:hover {
+            color: white;
+            background: var(--primary-color);
+          }
+        }
+      }
     }
     .monitor-right {
       flex: 1;
-      margin-left: 12px;
+      margin-left: 16px;
       display: flex;
       flex-direction: column;
       .monitor-echart {
@@ -497,11 +767,24 @@ export default {
         color: var(--text-color);
       }
     }
-  }
-  .monitor-point-content {
-    margin-top: 15px;
-    .monitor-video {
-      width: 100%;
+    .monitor-point-content {
+      flex: 1;
+      margin-left: 30px;
+      .monitor-video {
+        height: 250px;
+        max-height: 250px;
+        text-align: center;
+        margin-top: 20px;
+        .monitor-video-content {
+          height: 100%;
+          .empty {
+            line-height: 200px;
+          }
+          .video {
+            height: 100%;
+          }
+        }
+      }
     }
   }
 }

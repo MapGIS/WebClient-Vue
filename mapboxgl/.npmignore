@@ -1,6 +1,7 @@
 build/
 node_modules/
 src/
+docs/
 .browserslistrc
 .eslintignore
 .eslintrc.js
