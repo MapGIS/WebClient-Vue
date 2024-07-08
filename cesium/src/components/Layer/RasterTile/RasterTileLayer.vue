@@ -11,8 +11,8 @@ export default {
   props: {
     crs: {
       type: String,
-      defalut: "EPSG:4326",
-    },
+      defalut: "EPSG:4326"
+    }
   },
   data() {
     return {
@@ -29,10 +29,10 @@ export default {
         maximumLevel: "number",
         credit: "object|String",
         vueKey: "string",
-        vueIndex: "string | Number",
+        vueIndex: "string | Number"
       },
       managerName: "RasterManager",
-      providerName: "UrlTemplateImageryProvider",
+      providerName: "UrlTemplateImageryProvider"
     };
   },
   created() {},
@@ -53,18 +53,48 @@ export default {
       //先处理相关参数：
       let options = {};
       //如果crs存在，则生成tilingScheme对象
-
-      if (crs) {
-        options.tilingScheme = this.$_setTilingScheme(crs);
+      let tempCrs = crs;
+      if (!tempCrs) {
+        tempCrs = "EPSG:4326";
+      }
+      options.tilingScheme = this.$_setTilingScheme(tempCrs);
+      const { offset } = this.$props.options;
+      let tag;
+      if (baseUrl.includes("{") && baseUrl.includes("}/")) {
+        const urlStrs = baseUrl.split("{");
+        tag = urlStrs[1].split("}/")[0];
+      }
+      if (tag && offset) {
+        options.customTags = {};
+        options.customTags[tag] = function(imageryProvider, x, y, level) {
+          return level - offset;
+        };
+      }
+      let tempBaseUrl = baseUrl;
+      if (baseUrl.includes("format=")) {
+        const urlStrs = baseUrl.split("format=");
+        const strChilds = urlStrs[1].split("&");
+        if (
+          options.hasOwnProperty("extensions") &&
+          options.extensions.length > 0
+        ) {
+          options.extensions.push({
+            key: "format",
+            value: strChilds[0]
+          });
+        } else {
+          options.extensions = [{ key: "format", value: strChilds[0] }];
+        }
+        tempBaseUrl = urlStrs[0] + strChilds[1];
       }
       // options.minimumLevel = -2;
-      const allOptions = { ...options, baseUrl };
+      const allOptions = { ...options, baseUrl: tempBaseUrl };
 
       this.$_mount(allOptions);
     },
     unmount() {
       this.$_unmount();
-    },
-  },
+    }
+  }
 };
 </script>
