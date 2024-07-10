@@ -10,41 +10,43 @@ export default {
   excludeStories: /.*Data$/,
   argTypes: {
     layer: {
-      description:'[layer使用参考](https://docs.mapbox.com/mapbox-gl-js/style-spec/#layers)',
-      type: { name: 'Object | String', required: true },
-      table:{
-        type: { summary: 'Object | String' },
-        defaultValue: { summary: '必传' },
+      description:
+        "[layer使用参考](https://docs.mapbox.com/mapbox-gl-js/style-spec/#layers)",
+      type: { name: "Object | String", required: true },
+      table: {
+        type: { summary: "Object | String" },
+        defaultValue: { summary: "必传" },
       },
-      control:'object'
+      control: "object",
     },
     source: {
-      description:'包含 video 的数据源<br/>' +
-          '详见[videosource使用参考](https://docs.mapbox.com/mapbox-gl-js/api/#videosource)',
-      type: { name: 'Object | String', required: false },
-      table:{
-        type: { summary: 'Object | String' },
+      description:
+        "包含 video 的数据源<br/>" +
+        "详见[videosource使用参考](https://docs.mapbox.com/mapbox-gl-js/api/#videosource)",
+      type: { name: "Object | String", required: false },
+      table: {
+        type: { summary: "Object | String" },
         // defaultValue: { summary: '' },
       },
-      control:'object'
+      control: "object",
     },
-    layerId:  {
-      description: '待添加的图层的id，不能与现有的图层冲突',
-      type: { name: 'String', required: true },
-      table:{
-        type: { summary: 'String' },
-        defaultValue: { summary: '必传' },
+    layerId: {
+      description: "待添加的图层的id，不能与现有的图层冲突",
+      type: { name: "String", required: true },
+      table: {
+        type: { summary: "String" },
+        defaultValue: { summary: "必传" },
       },
-      control:'text'
+      control: "text",
     },
     sourceId: {
-      description: '待添加的数据源的id，不能与现有的数据源冲突',
-      type: { name: 'String', required: true },
-      table:{
-        type: { summary: 'String' },
-        defaultValue: { summary: '必传' },
+      description: "待添加的数据源的id，不能与现有的数据源冲突",
+      type: { name: "String", required: true },
+      table: {
+        type: { summary: "String" },
+        defaultValue: { summary: "必传" },
       },
-      control:'text'
+      control: "text",
     },
   },
 };
@@ -69,8 +71,8 @@ export const 视频 = Template.bind({});
   source: {
     type: "video",
     urls: [
-      `http://${window.webclient.ip}:${window.webclient.port}/static/data/video/drone.mp4`,
-      `http://${window.webclient.ip}:${window.webclient.port}/static/data/video/drone.webm`,
+      `${window.domain}/static/data/video/drone.mp4`,
+      `${window.domain}/static/data/video/drone.webm`,
     ],
     coordinates: [
       [-122.51596391201019, 37.56238816766053],

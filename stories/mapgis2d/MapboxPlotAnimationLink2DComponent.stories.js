@@ -16,14 +16,16 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       link: true,
-      url1: "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
-      url2: "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
+      url1:
+        "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
+      url2:
+        "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
       rect: {},
       vueIndex1: undefined,
       vueKey1: undefined,
-      jsonUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/test.json`,
-      symbolUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/symbols.json`,
-      dataUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/animation.json`,
+      jsonUrl: `${window.domain}/标绘/test.json`,
+      symbolUrl: `${window.domain}/标绘/symbols.json`,
+      dataUrl: `${window.domain}/标绘/animation.json`,
       vueIndex: 12345,
       containers: [
         { vueIndex: 12345, vueKey: "default", type: "mapbox" },

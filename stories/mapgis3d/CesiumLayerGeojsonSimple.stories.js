@@ -62,7 +62,7 @@ const Template = (args, { argTypes }) => ({
 });
 
 export const 点 = Template.bind({});
-// data: `http://${window.webclient.ip}:${window.webclient.port}/geojson/metroStation.json`
+// data: `${window.domain}/geojson/metroStation.json`
 点.args = {
   data: `http://192.168.21.191:8088/Vector/json/metroStation_topo.json`,
   autoReset: true,
@@ -81,7 +81,7 @@ export const 点 = Template.bind({});
 };
 
 export const 线 = Template.bind({});
-// data: `http://${window.webclient.ip}:${window.webclient.port}/geojson/metro.json`
+// data: `${window.domain}/geojson/metro.json`
 线.args = {
   data: `http://192.168.21.191:8088/Vector/json/metro.json`,
   autoReset: true,
@@ -99,7 +99,7 @@ export const 线 = Template.bind({});
 };
 
 export const 区 = Template.bind({});
-// data: `http://${window.webclient.ip}:${window.webclient.port}/geojson/populationSizeGeoJson_2017.json`
+// data: `${window.domain}/geojson/populationSizeGeoJson_2017.json`
 区.args = {
   data: "http://192.168.21.191:8088/Vector/json/metro.json",
   autoReset: true,

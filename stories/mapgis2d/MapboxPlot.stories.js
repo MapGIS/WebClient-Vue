@@ -62,7 +62,7 @@ const Template = (args, { argTypes }) => ({
         zoom: 7,
         center: [116.19, 34.01],
       },
-      jsonUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/test.json`,
+      jsonUrl: `${window.domain}/标绘/test.json`,
       manager: undefined,
       editable: true,
     };
@@ -156,9 +156,9 @@ const Template = (args, { argTypes }) => ({
 
 export const 二维标绘 = Template.bind({});
 二维标绘.args = {
-  symbolUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/symbols.json`,
-  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/`,
-  useIGS: false
+  symbolUrl: `${window.domain}/标绘/symbols.json`,
+  baseUrl: `${window.domain}/`,
+  useIGS: false,
 };
 
 二维标绘.parameters = {

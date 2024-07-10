@@ -279,7 +279,7 @@
 export default {
   data() {
     return {
-      m3dUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
+      m3dUrl: `${window.domain}/igs/rest/g3d/ZondyModels`,
       autoReset: true,
       maximumScreenSpaceError: 8,
       modelUrl: "./CesiumModels/Cesium_Camera.glb",
@@ -302,22 +302,22 @@ export default {
                 videoSource: {
                   protocol: "m3u8",
                   videoUrl:
-                    "http://192.168.91.123:10008/record/video1/20211221/out.m3u8",
+                    "http://192.168.91.123:10008/record/video1/20211221/out.m3u8"
                 },
                 cameraPosition: {
                   x: 114.401228136856,
                   y: 30.467421377675457,
-                  z: 84.94989410478892,
+                  z: 84.94989410478892
                 },
                 orientation: {
                   heading: 6.053866507322313,
                   pitch: -73.6,
-                  roll: 354.1,
+                  roll: 354.1
                 },
                 hFOV: 34.6,
                 vFOV: 18.9,
-                hintLineVisible: true,
-              },
+                hintLineVisible: true
+              }
             },
             {
               id: "987-765-543-123",
@@ -330,22 +330,22 @@ export default {
                 videoSource: {
                   protocol: "m3u8",
                   videoUrl:
-                    "http://192.168.91.123:10008/record/video2/20211221/out.m3u8",
+                    "http://192.168.91.123:10008/record/video2/20211221/out.m3u8"
                 },
                 cameraPosition: {
                   x: 114.40088870656619,
                   y: 30.467421563975016,
-                  z: 84.91172691510191,
+                  z: 84.91172691510191
                 },
                 orientation: {
                   heading: 359.89407747239846,
                   pitch: -74.2,
-                  roll: 0,
+                  roll: 0
                 },
                 hFOV: 33.1,
                 vFOV: 19.2,
-                hintLineVisible: true,
-              },
+                hintLineVisible: true
+              }
             },
             {
               id: "987-765-543-124",
@@ -358,24 +358,24 @@ export default {
                 videoSource: {
                   protocol: "m3u8",
                   videoUrl:
-                    "http://192.168.91.123:10008/record/video3/20211221/out.m3u8",
+                    "http://192.168.91.123:10008/record/video3/20211221/out.m3u8"
                 },
                 cameraPosition: {
                   x: 114.4006886798949,
                   y: 30.467287432107295,
-                  z: 85.46751512564336,
+                  z: 85.46751512564336
                 },
                 orientation: {
                   heading: 271.628505216584,
                   pitch: -78.4,
-                  roll: 359.3,
+                  roll: 359.3
                 },
                 hFOV: 32.5,
                 vFOV: 19,
-                hintLineVisible: true,
-              },
-            },
-          ],
+                hintLineVisible: true
+              }
+            }
+          ]
         },
         {
           id: "567-789-123-345",
@@ -392,22 +392,22 @@ export default {
                 videoSource: {
                   protocol: "m3u8",
                   videoUrl:
-                    "http://192.168.91.123:10008/record/video1/20211221/out.m3u8",
+                    "http://192.168.91.123:10008/record/video1/20211221/out.m3u8"
                 },
                 cameraPosition: {
                   x: 114.401228136856,
                   y: 30.467421377675457,
-                  z: 84.94989410478892,
+                  z: 84.94989410478892
                 },
                 orientation: {
                   heading: 6.053866507322313,
                   pitch: -73.6,
-                  roll: 354.1,
+                  roll: 354.1
                 },
                 hFOV: 34.6,
                 vFOV: 18.9,
-                hintLineVisible: true,
-              },
+                hintLineVisible: true
+              }
             },
             {
               id: "765-987-543-123",
@@ -420,28 +420,28 @@ export default {
                 videoSource: {
                   protocol: "m3u8",
                   videoUrl:
-                    "http://192.168.91.123:10008/record/video2/20211221/out.m3u8",
+                    "http://192.168.91.123:10008/record/video2/20211221/out.m3u8"
                 },
                 cameraPosition: {
                   x: 114.40088870656619,
                   y: 30.467421563975016,
-                  z: 84.91172691510191,
+                  z: 84.91172691510191
                 },
                 orientation: {
                   heading: 359.89407747239846,
                   pitch: -74.2,
-                  roll: 0,
+                  roll: 0
                 },
                 hFOV: 33.1,
                 vFOV: 19.2,
-                hintLineVisible: true,
-              },
-            },
-          ],
-        },
-      ],
+                hintLineVisible: true
+              }
+            }
+          ]
+        }
+      ]
     };
-  },
+  }
 };
 </script>
 ```

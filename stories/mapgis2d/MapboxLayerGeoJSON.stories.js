@@ -4,7 +4,7 @@ import MapgisGeojsonLayer from "../../mapboxgl/src/components/layer/GeojsonLayer
 import { Style } from "@mapgis/webclient-es6-service";
 const { MarkerStyle, LineStyle, PointStyle, FillStyle } = Style;
 
-import '../style/popup.css';
+import "../style/popup.css";
 
 export default {
   title: "二维/数据图层/矢量/GeoJSON/点",
@@ -46,8 +46,7 @@ export const 点 = Template.bind({});
       outlineColor: "#ff0000",
     }),
   },
-  data:
-      `http://${window.webclient.ip}:${window.webclient.port}/static/data/geojson/china.geojson` /* geojson, */,
+  data: `${window.domain}/static/data/geojson/china.geojson` /* geojson, */,
   enablePopup: true,
   enableTips: true,
 };

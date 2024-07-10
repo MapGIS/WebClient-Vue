@@ -64,7 +64,7 @@ export default {
         clearInterval(interval);
         //初始化一个符号管理器
         window.manager = new SymbolManager(
-          `http://${window.webclient.ip}:${window.webclient.port}/标绘/symbols.json`
+          `${window.domain}/标绘/symbols.json`
         );
         //获取符号信息
         window.manager.getSymbols().then(function () {

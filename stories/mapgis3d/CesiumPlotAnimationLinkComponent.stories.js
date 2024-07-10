@@ -16,14 +16,16 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       link: true,
-      url1: "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
-      url2: "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
+      url1:
+        "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
+      url2:
+        "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
       rect: {},
       vueIndex1: undefined,
       vueKey1: undefined,
-      jsonUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/test.json`,
-      symbolUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/symbols.json`,
-      dataUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/animation.json`,
+      jsonUrl: `${window.domain}/标绘/test.json`,
+      symbolUrl: `${window.domain}/标绘/symbols.json`,
+      dataUrl: `${window.domain}/标绘/animation.json`,
       dataSource: undefined,
       vueIndex: 12345,
       containers: [
@@ -121,10 +123,13 @@ const Template = (args, { argTypes }) => ({
       });
       let canvas = new e.Plot.FabricLayer(map, e.Plot.PlotLayer2DGroup);
       canvas._containerId = map._container.id;
-      let mapboxManager = window.vueMap.MapManager.findSource("default", this.vueIndex);
-      if(!mapboxManager) {
+      let mapboxManager = window.vueMap.MapManager.findSource(
+        "default",
+        this.vueIndex
+      );
+      if (!mapboxManager) {
         window.vueMap.MapManager.addSource(this.vueKey, this.vueIndex, map, {
-          canvas: canvas
+          canvas: canvas,
         });
       }
       let fabricCanvas = canvas.getFabricCanvas();

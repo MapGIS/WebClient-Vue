@@ -46,9 +46,9 @@ const Template = (args, { argTypes }) => ({
         zoom: 7,
         center: [116.19, 34.01],
       },
-      jsonUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/test.json`,
-      symbolUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/symbols.json`,
-      dataUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/animation.json`,
+      jsonUrl: `${window.domain}/标绘/test.json`,
+      symbolUrl: `${window.domain}/标绘/symbols.json`,
+      dataUrl: `${window.domain}/标绘/animation.json`,
       // 打包时使用
       // jsonUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/test.json`,
       // symbolUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/symbols.json`,
