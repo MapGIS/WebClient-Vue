@@ -8,7 +8,7 @@ export default {
     longitude: 110,
     latitude: 30,
     height: 0,
-    iconUrl:""
+    iconUrl: "",
   },
 };
 
@@ -40,9 +40,9 @@ const Template = (args, { argTypes }) => ({
         <mapgis-3d-marker
           :key="'primitive'"
           :enableCluster="true"
-          :geojson="'http://${window.webclient.ip}:${window.webclient.port}/geojson/cityResource/education.json'"
+          :geojson="'${window.domain}/geojson/cityResource/education.json'"
           :height="0"
-          :iconUrl="'http://${window.webclient.ip}:${window.webclient.port}/img/poi-route.png'"
+          :iconUrl="'${window.domain}/img/poi-route.png'"
           :iconWidth="32"
           :iconHeight="32"
         ></mapgis-3d-marker>
@@ -52,9 +52,9 @@ const Template = (args, { argTypes }) => ({
           :key="'hospital'"
           :usePrimitive="true"
           :circleColor="circleColors"
-          :geojson="'http://${window.webclient.ip}:${window.webclient.port}/geojson/cityResource/hospitalization.json'"
+          :geojson="'${window.domain}/geojson/cityResource/hospitalization.json'"
           :height="0"
-          :iconUrl="'http://${window.webclient.ip}:${window.webclient.port}/img/poi-zhuan.png'"
+          :iconUrl="'${window.domain}/img/poi-zhuan.png'"
           :iconWidth="32"
           :iconHeight="32"
           @click="click"
@@ -62,32 +62,32 @@ const Template = (args, { argTypes }) => ({
       </template>
     </mapgis-web-scene>
   `,
-  data(){
+  data() {
     return {
       urlT: "http://t0.tianditu.gov.cn/img_c/wmts",
       //参考系
       tileMatrixSetID: "c",
       srs: "EPSG:4326",
-      layer:"img",
+      layer: "img",
       format: "tiles",
-      token:{
+      token: {
         key: "tk",
-        value: "f5347cab4b28410a6e8ba5143e3d5a35"
+        value: "f5347cab4b28410a6e8ba5143e3d5a35",
       },
-      circleColors: '#ff0000'
-    }
+      circleColors: "#ff0000",
+    };
   },
   methods: {
-    mouseEnter(icon){
-      console.log("mouseEnter",icon);
+    mouseEnter(icon) {
+      console.log("mouseEnter", icon);
     },
-    mouseLeave(icon){
-      console.log("mouseLeave",icon);
+    mouseLeave(icon) {
+      console.log("mouseLeave", icon);
     },
-    click(icon){
-      console.log("click",icon);
-    }
-  }
+    click(icon) {
+      console.log("click", icon);
+    },
+  },
 });
 
 export const 图标 = Template.bind({});

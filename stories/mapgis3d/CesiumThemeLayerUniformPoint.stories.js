@@ -5,21 +5,16 @@ export default {
   title: "三维/可视化/专题图/统一",
 };
 
-const Template = (args, {argTypes}) => ({
+const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  methods:{
-    load(data) {
-    },
-    unload(data) {
-    },
-    handlebbox(data) {
-    },
-    handleClick(data) {
-    },
-    handleHover(data) {
-    }
+  methods: {
+    load(data) {},
+    unload(data) {},
+    handlebbox(data) {},
+    handleClick(data) {},
+    handleHover(data) {},
   },
-  template:`
+  template: `
     <mapgis-web-scene :style="{height: '95vh'}">
       // <mapgis-3d-arcgis-tile-layer
       //   baseUrl="http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer"
@@ -39,7 +34,7 @@ const Template = (args, {argTypes}) => ({
 export const 点数据 = Template.bind({});
 点数据.args = {
   // baseUrl: `http://${window.webclient.ip}/static/data/geojson/省级行政区.geojson`,
-  // baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/geojson/china-city.geojson`,
+  // baseUrl: `${window.domain}/geojson/china-city.geojson`,
   baseUrl: `http://develop.smaryun.com/static/data/geojson/省会城市.geojson`,
 
   visible: true,
@@ -53,6 +48,6 @@ export const 点数据 = Template.bind({});
       color: "#ff0000",
       outlineColor: "#0000ff",
       outlineWidth: 10,
-    }
-  }
-}
+    },
+  },
+};

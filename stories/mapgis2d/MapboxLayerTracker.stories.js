@@ -4,7 +4,7 @@ export default {
   title: "二维/可视化/轨迹跟踪",
   component: MapgisTrackerLayer,
   argTypes: {
-    geojson: `http://${window.webclient.ip}:${window.webclient.port}/static/data/geojson/tracker.geojson`,
+    geojson: `${window.domain}/static/data/geojson/tracker.geojson`,
   },
 };
 
@@ -35,5 +35,5 @@ const Template = (args, { argTypes }) => ({
 
 export const 轨迹跟踪 = Template.bind({});
 轨迹跟踪.args = {
-  geojson: `http://${window.webclient.ip}:${window.webclient.port}/static/data/geojson/tracker.geojson`,
+  geojson: `${window.domain}/static/data/geojson/tracker.geojson`,
 };

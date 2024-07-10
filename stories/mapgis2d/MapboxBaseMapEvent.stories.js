@@ -82,7 +82,7 @@ const Template = (args, { argTypes }) => ({
             opacity: 0.8,
           }),
         },
-        data: `http://${window.webclient.ip}:${window.webclient.port}static/data/geojson/中华人民共和国.json`,
+        data: `${window.domain}static/data/geojson/中华人民共和国.json`,
         enablePopup: true,
         enableTips: false,
       },
@@ -103,7 +103,7 @@ const Template = (args, { argTypes }) => ({
             outlineColor: "#2cf7fe",
           }),
         },
-        data: `http://${window.webclient.ip}:${window.webclient.port}static/data/geojson/省会城市.geojson`,
+        data: `${window.domain}static/data/geojson/省会城市.geojson`,
         enablePopup: true,
         enableTips: false,
       },
@@ -128,7 +128,7 @@ const Template = (args, { argTypes }) => ({
             color: "rgba(255, 0, 0, 1.0)",
           }),
         },
-        data: `http://${window.webclient.ip}:${window.webclient.port}static/data/geojson/省会城市.geojson`,
+        data: `${window.domain}static/data/geojson/省会城市.geojson`,
         enablePopup: false,
         enableTips: false,
       },
@@ -157,7 +157,7 @@ const Template = (args, { argTypes }) => ({
           type: "marker",
           marker: new MarkerStyle({}),
         },
-        data: `http://${window.webclient.ip}:${window.webclient.port}static/data/geojson/省会城市.geojson`,
+        data: `${window.domain}static/data/geojson/省会城市.geojson`,
         enablePopup: false,
         enableTips: false,
       },
@@ -178,11 +178,14 @@ const Template = (args, { argTypes }) => ({
       ];
       const promises = images.map((i) => {
         return new Promise((resolve) => {
-          map.loadImage(`http://${window.webclient.staticIP}:8895/img/${i}.png`, (err, image) => {
-            if (err) throw err;
-            map.addImage(i, image);
-            resolve();
-          });
+          map.loadImage(
+            `http://${window.webclient.staticIP}:8895/img/${i}.png`,
+            (err, image) => {
+              if (err) throw err;
+              map.addImage(i, image);
+              resolve();
+            }
+          );
         });
       });
       Promise.all(promises).then((res) => {
@@ -192,7 +195,7 @@ const Template = (args, { argTypes }) => ({
           type: "symbol",
           source: {
             type: "geojson",
-            data: `http://${window.webclient.ip}:${window.webclient.port}static/data/geojson/省会城市.geojson`,
+            data: `${window.domain}static/data/geojson/省会城市.geojson`,
           },
           layout: {
             "icon-image": [

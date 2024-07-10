@@ -60,25 +60,24 @@ export default {
       format: "tiles",
       token: {
         key: "tk",
-        value: "9c157e9585486c02edf817d2ecbc7752",
+        value: "9c157e9585486c02edf817d2ecbc7752"
       },
-      baseUrl:
-        "http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/docs/北京市",
+      baseUrl: "${window.domain}/igs/rest/mrms/docs/北京市",
       boundaryStyle: {
         color: "#1E90FF",
         opacity: 0.5,
-        outlineColor: "rgba(0,191,255,0.5)",
+        outlineColor: "rgba(0,191,255,0.5)"
       },
       autoReset: true,
-      m3dUrl1: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
+      m3dUrl1: `${window.domain}/igs/rest/g3d/ZondyModels`
     };
   },
   methods: {
     loaded(e) {
       // 获取旋转组件对象
       this.rotate = e;
-    },
-  },
+    }
+  }
 };
 </script>
 ```

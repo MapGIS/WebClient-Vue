@@ -6,93 +6,99 @@ export default {
   component: MapgisGeojsonLayer,
   argTypes: {
     data: {
-      description:'GeoJSON 对象或者 GeoJSON 数据的 url。<br/>' +
-          '详见[GeoJSONSource使用参考](https://docs.mapbox.com/mapbox-gl-js/api/#geojsonsource)',
-      type: { name: 'Object | String', required: true },
-      table:{
-        type: { summary: 'Object | String' },
-        defaultValue: { summary: '必传' },
+      description:
+        "GeoJSON 对象或者 GeoJSON 数据的 url。<br/>" +
+        "详见[GeoJSONSource使用参考](https://docs.mapbox.com/mapbox-gl-js/api/#geojsonsource)",
+      type: { name: "Object | String", required: true },
+      table: {
+        type: { summary: "Object | String" },
+        defaultValue: { summary: "必传" },
       },
-      control:'object'
+      control: "object",
     },
-    enablePopup:{
-      description:'控制是否开启 popup 弹窗',
-      type: { name: 'Boolean', required: false },
+    enablePopup: {
+      description: "控制是否开启 popup 弹窗",
+      type: { name: "Boolean", required: false },
       defaultValue: false,
-      table:{
-        type: { summary: 'Boolean' },
-        defaultValue: { summary: 'false' },
+      table: {
+        type: { summary: "Boolean" },
+        defaultValue: { summary: "false" },
       },
-      control:'boolean'
-    } ,
-    enableTips:{
-      description:'控制是否开启 tooltip 弹窗',
-      type: { name: 'Boolean', required: false },
+      control: "boolean",
+    },
+    enableTips: {
+      description: "控制是否开启 tooltip 弹窗",
+      type: { name: "Boolean", required: false },
       defaultValue: false,
-      table:{
-        type: { summary: 'Boolean' },
-        defaultValue: { summary: 'false' },
+      table: {
+        type: { summary: "Boolean" },
+        defaultValue: { summary: "false" },
       },
-      control:'boolean'
-    } ,
+      control: "boolean",
+    },
     popupOptions: {
-      description:'popup 弹窗时的配置参数,popupOptions 对象中 title 指弹窗的标题，展示 geojson 数据中的某一个字段属性，fields 展示列表，由传参者决定展示哪些字段值',
-      type: { name: 'Object', required: false },
-      table:{
+      description:
+        "popup 弹窗时的配置参数,popupOptions 对象中 title 指弹窗的标题，展示 geojson 数据中的某一个字段属性，fields 展示列表，由传参者决定展示哪些字段值",
+      type: { name: "Object", required: false },
+      table: {
         type: {
-          summary: 'Object',
-          detail: '示例:\n' +
-              'popupOptions: {\n' +
-              '  title: "name",\n' +
-              '  fields: ["acroutes", "adcode"]\n' +
-              '}'
+          summary: "Object",
+          detail:
+            "示例:\n" +
+            "popupOptions: {\n" +
+            '  title: "name",\n' +
+            '  fields: ["acroutes", "adcode"]\n' +
+            "}",
         },
         // defaultValue: { summary: '' },
       },
-      control:'object'
+      control: "object",
     },
     tipsOptions: {
-      description:'tooltip 弹窗时的配置参数,tooltip 对象中 title 指弹窗的标题，展示 geojson 数据中的某一个字段属性，fields 展示列表，由传参者决定展示哪些字段值',
-      type: { name: 'Object', required: false },
-      table:{
+      description:
+        "tooltip 弹窗时的配置参数,tooltip 对象中 title 指弹窗的标题，展示 geojson 数据中的某一个字段属性，fields 展示列表，由传参者决定展示哪些字段值",
+      type: { name: "Object", required: false },
+      table: {
         type: {
-          summary: 'Object',
-          detail: '示例:\n' +
-              'tipsOptions: {\n' +
-              '  title: "name",\n' +
-              '  fields: ["acroutes", "adcode"]\n' +
-              '}'
+          summary: "Object",
+          detail:
+            "示例:\n" +
+            "tipsOptions: {\n" +
+            '  title: "name",\n' +
+            '  fields: ["acroutes", "adcode"]\n' +
+            "}",
         },
         // defaultValue: { summary: '' },
       },
-      control:'object'
+      control: "object",
     },
     layer: {
-      description:'[layer使用参考](https://docs.mapbox.com/mapbox-gl-js/style-spec/#layers)',
-      type: { name: 'Object | String', required: true },
-      table:{
-        type: { summary: 'Object | String' },
-        defaultValue: { summary: '必传' },
+      description:
+        "[layer使用参考](https://docs.mapbox.com/mapbox-gl-js/style-spec/#layers)",
+      type: { name: "Object | String", required: true },
+      table: {
+        type: { summary: "Object | String" },
+        defaultValue: { summary: "必传" },
       },
-      control:'object'
+      control: "object",
     },
-    layerId:  {
-      description: '待添加的图层的id，不能与现有的图层冲突',
-      type: { name: 'String', required: true },
-      table:{
-        type: { summary: 'String' },
-        defaultValue: { summary: '必传' },
+    layerId: {
+      description: "待添加的图层的id，不能与现有的图层冲突",
+      type: { name: "String", required: true },
+      table: {
+        type: { summary: "String" },
+        defaultValue: { summary: "必传" },
       },
-      control:'text'
+      control: "text",
     },
     sourceId: {
-      description: '待添加的数据源的id，不能与现有的数据源冲突',
-      type: { name: 'String', required: true },
-      table:{
-        type: { summary: 'String' },
-        defaultValue: { summary: '必传' },
+      description: "待添加的数据源的id，不能与现有的数据源冲突",
+      type: { name: "String", required: true },
+      table: {
+        type: { summary: "String" },
+        defaultValue: { summary: "必传" },
       },
-      control:'text'
+      control: "text",
     },
   },
 };
@@ -124,7 +130,7 @@ Fill.args = {
     },
   },
   layerId: "geojsonLayer",
-  data: `http://${window.webclient.ip}:${window.webclient.port}/static/data/geojson/china.geojson`,
+  data: `${window.domain}/static/data/geojson/china.geojson`,
   sourceId: "geojson_source_id",
   enablePopup: true,
   enableTips: true,

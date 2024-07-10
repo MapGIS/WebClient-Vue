@@ -174,7 +174,7 @@ onChangeSetting(val, tag)
 export default {
   data() {
     return {
-      m3dUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
+      m3dUrl: `${window.domain}/igs/rest/g3d/ZondyModels`,
       autoReset: true,
       maximumScreenSpaceError: 8,
       isM3DLoaded: false,
@@ -192,23 +192,23 @@ export default {
           videoSource: {
             protocol: "m3u8",
             videoUrl:
-              "http://192.168.91.123:10008/record/video3/20211221/out.m3u8",
+              "http://192.168.91.123:10008/record/video3/20211221/out.m3u8"
           },
           cameraPosition: {
             x: 114.4006886798949,
             y: 30.467287432107295,
-            z: 85.46751512564336,
+            z: 85.46751512564336
           },
           orientation: {
             heading: 271.628505216584,
             pitch: -78.4,
-            roll: 359.3,
+            roll: 359.3
           },
           hFOV: 32.5,
           vFOV: 19,
-          hintLineVisible: true,
-        },
-      },
+          hintLineVisible: true
+        }
+      }
     };
   },
   methods: {
@@ -217,8 +217,8 @@ export default {
         //增加延时，确保模型已加载
         this.isM3DLoaded = true;
       }, 5000);
-    },
-  },
+    }
+  }
 };
 </script>
 ```

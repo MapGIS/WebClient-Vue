@@ -87,8 +87,8 @@ const Template = (args, { argTypes }) => ({
 export const 态势推演 = Template.bind({});
 态势推演.args = {
   jsonUrl: `http://${window.webclient.ip}:8086/storybook/标绘/test.json`,
-  symbolUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/symbols.json`,
-  dataUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/animation.json`,
+  symbolUrl: `${window.domain}/标绘/symbols.json`,
+  dataUrl: `${window.domain}/标绘/animation.json`,
 };
 
 态势推演.parameters = {
