@@ -3,7 +3,7 @@
 module.exports = {
   title: "VueCesium",
   dest: "dist-docs",
-  base: "/vue-cesium/",
+  base: "/static/modules/component/api/vue-cesium/",
 
   /*   evergreen: true,
   serviceWorker: true, */
