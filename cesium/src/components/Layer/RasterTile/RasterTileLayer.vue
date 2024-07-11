@@ -53,11 +53,9 @@ export default {
       //先处理相关参数：
       let options = {};
       //如果crs存在，则生成tilingScheme对象
-      let tempCrs = crs;
-      if (!tempCrs) {
-        tempCrs = "EPSG:4326";
+      if (crs) {
+        options.tilingScheme = this.$_setTilingScheme(crs);
       }
-      options.tilingScheme = this.$_setTilingScheme(tempCrs);
       const { offset } = this.$props.options;
       let tag;
       if (baseUrl.includes("{") && baseUrl.includes("}/")) {
@@ -69,6 +67,10 @@ export default {
         options.customTags[tag] = function(imageryProvider, x, y, level) {
           return level - offset;
         };
+        //如果crs不存在，则默认生成4326的tilingScheme对象
+        if (!crs) {
+          options.tilingScheme = this.$_setTilingScheme("EPSG:4326");
+        }
       }
       let tempBaseUrl = baseUrl;
       if (baseUrl.includes("format=")) {
