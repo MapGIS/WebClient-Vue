@@ -992,7 +992,7 @@ const Template = (args, { argTypes }) => ({
         if (geoCoord) {
           res.push({
             name: data[i].name,
-            value: geoCoord.concat(data[i].value)
+            value: geoCoord.concat(data[i].value),
           });
         }
       }
@@ -1022,7 +1022,7 @@ const Template = (args, { argTypes }) => ({
           trigger: "item",
         },
         mapboxgl: {
-          roam: true
+          roam: true,
         },
         postRender: true,
         series: [

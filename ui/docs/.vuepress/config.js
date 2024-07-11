@@ -3,7 +3,7 @@
 module.exports = {
   title: "VueUI",
   dest: "dist-docs",
-  base: "/vue-ui/",
+  base: "/static/modules/component/api/vue-ui/",
 
   /*   evergreen: true,
          serviceWorker: true, */

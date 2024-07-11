@@ -16,7 +16,7 @@ Vue.use(MapgisCesiumComponents, {});
 window.webclient = {
   ip: "webclient.smaryun.com",
   port: null,
-  igsIp: "192.168.82.89",
+  igsIp: "webclient.smaryun.com",
   igsPort: "8089",
   igsNetPort: "6163",
   filePort: "8200",
@@ -31,8 +31,8 @@ if (!window.webclient.port || window.webclient.port == "") {
   window.domain = `http://${window.webclient.ip}:${window.webclient.port}`;
 }
 
-window.VueCesiumLibPath = `${window.domain}/cesium/Cesium.js`;
-window.VueCesiumPluginPath = `${window.domain}/cesium/webclient-cesium-plugin.min.js`;
+window.VueCesiumLibPath = `${window.domain}/static/libs/cdn/cesium/Cesium.js`;
+window.VueCesiumPluginPath = `${window.domain}/static/libs/cdn/zondyclientOld/webclient-cesium-plugin.min.js`;
 
 async function initConfig() {
   const res = await axios.get("./config.json");
