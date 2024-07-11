@@ -14,22 +14,25 @@ Vue.use(MapgisMapboxComponents, {});
 Vue.use(MapgisCesiumComponents, {});
 
 window.webclient = {
-  ip: "localhost",
-  port: "8895",
+  ip: "webclient.smaryun.com",
+  port: null,
   igsIp: "192.168.82.89",
   igsPort: "8089",
-  igsNetPort:"6163",
-  filePort:"8200"
+  igsNetPort: "6163",
+  filePort: "8200",
 };
 
 window.glyphs = "igs/rest/mrcs/vtiles/fonts"; //java版igs用这个接口
-// window.glyphs = "igs/rest/mrms/vtiles/fonts";//司马云用这个接口
 
-window.VueCesiumLibPath =
-  `http://${window.webclient.ip}:${window.webclient.port}/cesium/Cesium.js`;
+window.domain = undefined;
+if (!window.webclient.port || window.webclient.port == "") {
+  window.domain = `http://${window.webclient.ip}`;
+} else {
+  window.domain = `http://${window.webclient.ip}:${window.webclient.port}`;
+}
 
-window.VueCesiumPluginPath =
-  `http://${window.webclient.ip}:${window.webclient.port}/cesium/webclient-cesium-plugin.min.js`;
+window.VueCesiumLibPath = `${window.domain}/cesium/Cesium.js`;
+window.VueCesiumPluginPath = `${window.domain}/cesium/webclient-cesium-plugin.min.js`;
 
 async function initConfig() {
   const res = await axios.get("./config.json");
