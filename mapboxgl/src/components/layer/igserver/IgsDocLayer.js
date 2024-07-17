@@ -10,48 +10,52 @@ export default {
     ...igsOptions,
     serverName: {
       type: String,
-      require: true
+      require: true,
     },
     layers: {
       type: String,
-      default: null
+      default: null,
     },
     filters: {
       type: String,
-      default: null
+      default: null,
     },
     igsMapStyle: {
       type: Object,
-      default: null
+      default: null,
     },
     f: {
       type: String,
-      default: "png"
+      default: "png",
     },
     proj: {
       type: String,
-      default: null
+      default: null,
     },
     guid: {
       type: String,
-      default: undefined
+      default: undefined,
     },
     dynamicTile: {
       type: Boolean,
-      default: false
+      default: false,
     },
     isAntialiasing: {
       type: Boolean,
-      default: false
+      default: false,
     },
     update: {
       type: Boolean,
-      default: false
+      default: false,
     },
     mode: {
       type: String,
-      default: null
-    }
+      default: null,
+    },
+    renderMode: {
+      type: String,
+      default: "raster",
+    },
   },
   watch: {
     layers(next) {
@@ -65,7 +69,11 @@ export default {
     filters(next) {
       if (this.initial) return;
       this.changelayers();
-    }
+    },
+    renderMode(next) {
+      if (this.initial) return;
+      this.changelayers();
+    },
   },
   methods: {
     changelayers() {
@@ -160,13 +168,56 @@ export default {
     },
     $_deferredMount() {
       this.$_init();
-      let source = {
-        type: "raster",
-        tiles: [this._url],
-        tileSize: this.tileSize,
-        mapgisOffset: this.zoomOffset,
-        ...this.source
-      };
+
+      let source;
+
+      let renderMode = this.renderMode;
+      // 根据renderMode，以不同的方式输出图片
+      // 龚跃健-202407017
+      if (renderMode === "image-map") {
+        // image-map类型
+        source = {
+          url: this._url,
+          ...this.source,
+          rebaseRequestUrl(url, params) {
+            const _sw = this.map
+              .getCRS()
+              .projection.project(this.map.getBounds()._sw);
+            const _ne = this.map
+              .getCRS()
+              .projection.project(this.map.getBounds()._ne);
+            const bound = [..._sw, ..._ne];
+            const bbox = bound.toString();
+            const [imageWidth, imageHeight] = params.imageSize;
+            const split = url.split("&");
+            split.forEach((part) => {
+              if (part.includes("size=")) {
+                url = url.replace(part, `size=${imageWidth},${imageHeight}`);
+              }
+              if (part.includes("w=")) {
+                url = url.replace(part, `w=${imageWidth}`);
+              }
+              if (part.includes("h=")) {
+                url = url.replace(part, `h=${imageHeight}`);
+              }
+              if (part.includes("bbox=")) {
+                url = url.replace(part, `bbox=${bbox}`);
+              }
+            });
+            return url;
+          },
+          type: "image-map",
+        };
+      } else {
+        // 瓦片类型
+        source = {
+          type: "raster",
+          tiles: [this._url],
+          tileSize: this.tileSize,
+          mapgisOffset: this.zoomOffset,
+          ...this.source,
+        };
+      }
 
       this.map.on("dataloading", this.$_watchSourceLoading);
       try {
@@ -186,6 +237,6 @@ export default {
       this.map.removeLayer(this.layerId);
       this.map.removeSource(this.sourceId || this.layerId);
       this.initial = true;
-    }
-  }
+    },
+  },
 };

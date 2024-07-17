@@ -25,9 +25,9 @@ All common [layers props](/api/Layers/README.md#props)
   3. include：除显示默认图层（地图文档内图层状态为可见的图层）外，另追加这些被指定的图层显示，追加的这些图层必须为地图中包含的图层；
   4. exclude: 从默认图层列表里删除这些被指定的图层后，进行显示。
 - **图层序号获取方式:**
-  在Mapgis server manager的地图与数据服务中找到对应地图文档的服务详情，通过`取图层信息的REST服务地址`（如`http://192.168.81.103:8089/igs/rest/mrcs/docs/北京市/0/layers?f=json`），查询地图图层信息。
+  在 Mapgis server manager 的地图与数据服务中找到对应地图文档的服务详情，通过`取图层信息的REST服务地址`（如`http://192.168.81.103:8089/igs/rest/mrcs/docs/北京市/0/layers?f=json`），查询地图图层信息。
   ![](./Doc1.png)
-  其中图层信息中的 `LayerIndex` 字段即为传入layers中的图层序号
+  其中图层信息中的 `LayerIndex` 字段即为传入 layers 中的图层序号
   ![](./Doc2.png)
 - **示例:** `show:1,2`
 
@@ -112,6 +112,13 @@ All common [layers props](/api/Layers/README.md#props)
 - **非侦听属性**
 - **描述:** 模式，如果是快显取图（hiRender,fast_display），文档为只读，只有 bbox,w,h 有效。
 
+### `renderMode`
+
+- **类型:** `String`
+- **默认值:** `raster`
+- **侦听属性**
+- **描述:** 瓦片请求加载模式，可选 raster、image-map。raster 以瓦片方式加载，image-map 以屏幕区域请求方式加载。
+
 ### `layer`
 
 - **类型:** `Object`
@@ -185,7 +192,7 @@ export default {
         //添加来源
         sources: {},
         //设置加载并显示来源的图层信息
-        layers: []
+        layers: [],
       }, // 地图样式
       mapZoom: 8, // 地图初始化级数
       outerCenter: [116.39, 40.2], // 地图显示中心
@@ -193,14 +200,14 @@ export default {
       layers: "show:1,2",
       layerRasterId: "raster_layerId",
       sourceRasterId: "raster_sourceId",
-      baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市"
+      baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
     };
   },
 
   created() {
     // 在组件中使用mapbox-gl.js的脚本库功能
     this.mapbox = Mapbox;
-  }
+  },
 };
 </script>
 

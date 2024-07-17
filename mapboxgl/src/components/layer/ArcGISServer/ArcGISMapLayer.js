@@ -7,52 +7,52 @@ export default {
   props: {
     baseUrl: {
       type: String,
-      default: null,
+      default: null
     },
-    type: {
+    renderMode: {
       type: String,
-      default: "raster",
+      default: "raster"
     },
     bboxsr: {
-      type: Number,
+      type: Number
     },
     imagesr: {
-      type: Number,
+      type: Number
     },
     layers: {
       type: String,
-      default: null,
+      default: null
     },
     width: {
       type: Number,
-      default: 256,
+      default: 256
     },
     height: {
       type: Number,
-      default: 256,
+      default: 256
     },
     format: {
       type: String,
-      default: "png",
+      default: "png"
     },
     f: {
       type: String,
-      default: "image",
+      default: "image"
     },
     dpi: {
       type: Number,
-      default: 96,
+      default: 96
     },
     transparent: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   created() {
     this.$_deferredMount();
 
     if (this.baseUrl) {
-      this.$watch("baseUrl", function (next) {
+      this.$watch("baseUrl", function(next) {
         if (this.initial) return;
         if (next !== "") {
           this.$_deferredUnMount();
@@ -61,7 +61,7 @@ export default {
       });
     }
     if (this.layers) {
-      this.$watch("layers", function (next) {
+      this.$watch("layers", function(next) {
         if (this.initial) return;
         if (next !== "") {
           this.$_deferredUnMount();
@@ -69,8 +69,8 @@ export default {
         }
       });
 
-      if (this.type) {
-        this.$watch("type", function (next) {
+      if (this.renderMode) {
+        this.$watch("renderMode", function(next) {
           if (this.initial) return;
           if (next !== "") {
             this.$_deferredUnMount();
@@ -130,14 +130,14 @@ export default {
       this.$_init();
       let source;
 
-      let type = this.type;
+      let renderMode = this.renderMode;
 
-      if (type === "image-map") {
+      if (renderMode === "image-map") {
         // image-map类型
         source = {
           url: this._url,
           ...this.source,
-          rebaseRequestUrl: function (url, params) {
+          rebaseRequestUrl: function(url, params) {
             let bbox;
             const code = this.map.getCRS().epsgCode.split(":")[1];
             let bound;
@@ -151,7 +151,7 @@ export default {
             bbox = bound.toString();
             const [imageWidth, imageHeight] = params.imageSize;
             const split = url.split("&");
-            split.forEach((part) => {
+            split.forEach(part => {
               if (part.includes("size=")) {
                 url = url.replace(part, `size=${imageWidth},${imageHeight}`);
               }
@@ -161,7 +161,7 @@ export default {
             });
             return url;
           },
-          type: "image-map",
+          type: "image-map"
         };
       } else {
         // 瓦片类型
@@ -169,7 +169,7 @@ export default {
           type: "raster",
           tiles: [this._url],
           tileSize: this.tileSize,
-          ...this.source,
+          ...this.source
         };
       }
 
@@ -186,6 +186,6 @@ export default {
       this.$_bindLayerEvents(layerEvents);
       this.map.off("dataloading", this.$_watchSourceLoading);
       this.initial = false;
-    },
-  },
+    }
+  }
 };

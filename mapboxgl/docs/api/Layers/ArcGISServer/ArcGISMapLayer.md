@@ -13,7 +13,7 @@ All common [layers props](/api/Layers/README.md#props)
 - **侦听属性**
 - **描述:** 地图请求的基地址路径。
 
-### `type`
+### `renderMode`
 
 - **类型:** `String`
 - **默认值:** `raster`
