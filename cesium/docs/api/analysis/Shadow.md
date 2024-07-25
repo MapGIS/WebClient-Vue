@@ -43,6 +43,7 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 - **描述:** 非阴影部分颜色
 
 ### `minHeight`
+
 - **类型:** `Number`
 - **可选**
 - **侦听属性**
@@ -50,15 +51,24 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 - **描述:** 底部高程，单位为米
 
 ### `stretchHeight`
+
 - **类型:** `Number`
 - **可选**
 - **侦听属性**
 - **默认值:** `0`
 - **描述:** 拉伸高度，单位为米
 
+### `spacing`
+
+- **类型:** `Number`
+- **可选**
+- **侦听属性**
+- **默认值:** `5`
+- **描述:** 插值间隔
+
 ## 方法
 
-### `removeAll` 
+### `removeAll`
 
 - **Description:** 移除阴影分析对象，移除阴影分析结果和日照分析结果。
 
@@ -66,7 +76,7 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 
 ### `@load`
 
-- **Description:** 在 Shadow组件 加载完毕后发送该事件
+- **Description:** 在 Shadow 组件 加载完毕后发送该事件
 - **Payload** 阴影分析对象
 
 ### `@analysisBegin`
@@ -76,7 +86,6 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 ### `@success`
 
 - **Description:** 在阴影分析结束后发送该事件
-
 
 ## 示例
 
@@ -95,11 +104,12 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
         :vue-index="vueIndex"
       />
       <mapgis-ui-card class="storybook-ui-card">
-      <mapgis-3d-shadow 
-          :vue-index="vueIndex" 
-          :shadowColor="shadowColor" 
+        <mapgis-3d-shadow
+          :vue-index="vueIndex"
+          :shadowColor="shadowColor"
           :sunColor="sunColor"
-          @load="load"></mapgis-3d-shadow>
+          @load="load"
+        ></mapgis-3d-shadow>
       </mapgis-ui-card>
     </mapgis-web-scene>
   </div>
@@ -115,13 +125,13 @@ export default {
       autoReset: true,
       maximumScreenSpaceError: 6,
       vueIndex: 22,
-      shadowColor:'#2E8B57',
-      sunColor:'#FFA500',
-      shadowAnalysis:undefined
+      shadowColor: "#2E8B57",
+      sunColor: "#FFA500",
+      shadowAnalysis: undefined
     };
   },
   methods: {
-    load(shadowAnalysis){
+    load(shadowAnalysis) {
       this.shadowAnalysis = shadowAnalysis;
     }
   }
