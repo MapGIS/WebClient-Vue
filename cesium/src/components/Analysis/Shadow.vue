@@ -45,18 +45,18 @@
           size="large"
           label="拉伸高度(米)"
           v-model="formData.stretchHeight"
-          :range="[0]"
+          :range="[0, 100]"
           :rangeShow="true"
           :slider="true"
         />
 
         <mapgis-ui-input-number-panel
           size="large"
-          label="间隔时间(分钟)"
-          v-model="formData.intervalTime"
-          :range="[1]"
-          :rangeShow="false"
-          :slider="false"
+          label="插值间隔"
+          v-model="formData.spacing"
+          :range="[3, 20]"
+          :rangeShow="true"
+          :slider="true"
         />
 
         <mapgis-ui-color-pick-panel
@@ -66,7 +66,7 @@
           :color.sync="formData.shadowColor"
           :disableAlpha="true"
           @input="
-            val =>
+            (val) =>
               (formData.shadowColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
           "
         />
@@ -77,7 +77,7 @@
           :color.sync="formData.sunColor"
           :disableAlpha="true"
           @input="
-            val =>
+            (val) =>
               (formData.sunColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
           "
         />
@@ -95,12 +95,12 @@
           </mapgis-ui-button>
           <!-- </mapgis-ui-space> -->
         </mapgis-ui-setting-footer>
-        <mapgis-ui-mask
+        <!-- <mapgis-ui-mask
           :loading="maskShow"
           :parentDivClass="'cesium-map-wrapper'"
           :percent="percent"
           :text="maskText"
-        ></mapgis-ui-mask>
+        ></mapgis-ui-mask> -->
         <span>
           <Popup v-model="visible" :position="position" forceRender>
             <PopupContent :currentLayerInfo="currentClickInfo"></PopupContent>
@@ -137,7 +137,7 @@ export default {
      */
     layout: {
       type: String,
-      default: "vertical" // 'horizontal' 'vertical' 'inline'
+      default: "vertical", // 'horizontal' 'vertical' 'inline'
     },
     /**
      * @type String
@@ -146,7 +146,7 @@ export default {
      */
     shadowColor: {
       type: String,
-      default: "rgba(0,255,0,255)"
+      default: "rgba(0,255,0,255)",
     },
     /**
      * @type String
@@ -155,7 +155,7 @@ export default {
      */
     sunColor: {
       type: String,
-      default: "rgba(255,0,0,255)"
+      default: "rgba(255,0,0,255)",
     },
     /**
      * @type Number
@@ -164,7 +164,7 @@ export default {
      */
     minHeight: {
       type: Number,
-      default: 0
+      default: 0,
     },
     /**
      * @type Number
@@ -173,25 +173,16 @@ export default {
      */
     stretchHeight: {
       type: Number,
-      default: 20
+      default: 20,
     },
     /**
      * @type Number
-     * @default 60
-     * @description 间隔时间（分钟）
+     * @default 5
+     * @description 插值间隔
      */
-    intervalTime: {
+    spacing: {
       type: Number,
-      default: 60
-    },
-    /**
-     * @type Number
-     * @default 8
-     * @description 时区，UTC标准时间 + 时区 = 本地时间
-     */
-    timeZone: {
-      type: Number,
-      default: 8
+      default: 5,
     },
     /**
      * @type Boolean
@@ -200,21 +191,20 @@ export default {
      */
     enableShadowRatio: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
       formData: {
         date: "2021-7-1", // 日期
-        startTime: "10:00:00", // 开始时间
-        endTime: "14:00:00", // 结束时间
-        dateTimeVal: "10:00:00",
+        startTime: "6:00:00", // 开始时间
+        endTime: "18:00:00", // 结束时间
         minHeight: 0, // 最低高程(米)
         stretchHeight: 20, // 拉伸高度(米)
-        intervalTime: 60, //间隔时间
+        spacing: 5, //插值间隔
         shadowColor: "rgba(0,255,0,255)", // 阴影颜色
-        sunColor: "rgba(255,0,0,255)" // 非阴影颜色
+        sunColor: "rgba(255,0,0,255)", // 非阴影颜色
       },
       startDate: "",
       formDataTime: "",
@@ -231,20 +221,19 @@ export default {
       position: {
         longitude: 110,
         latitude: 30,
-        height: 0
+        height: 0,
       },
       visible: false,
       currentClickInfo: undefined,
-      handler: undefined
+      handler: undefined,
     };
   },
   components: {
     Popup,
-    PopupContent
+    PopupContent,
   },
   created() {
     this.startDate = shadowMoment(this.formData.date, "YYYY-MM-DD");
-    // this.formDataTime = shadowMoment(this.formData.time, "HH:mm:ss");
     this.startTime = shadowMoment(this.formData.startTime, "HH:mm:ss");
     this.endTime = shadowMoment(this.formData.endTime, "HH:mm:ss");
   },
@@ -257,73 +246,73 @@ export default {
   computed: {
     formDataNew() {
       return JSON.parse(JSON.stringify(this.formData));
-    }
+    },
   },
   watch: {
     shadowColor: {
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         if (newVal.indexOf("#") > -1) {
           this.shadowColor = hexToRgba(newVal, 1);
         }
         this.formData.shadowColor = this.shadowColor;
       },
-      immediate: true
+      immediate: true,
     },
     sunColor: {
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         if (newVal.indexOf("#") > -1) {
           this.sunColor = hexToRgba(newVal, 1);
         }
         this.formData.sunColor = this.sunColor;
       },
-      immediate: true
+      immediate: true,
     },
     minHeight: {
-      handler: function() {
+      handler: function () {
         this.formData.minHeight = this.minHeight;
       },
-      immediate: true
+      immediate: true,
     },
     stretchHeight: {
-      handler: function() {
+      handler: function () {
         this.formData.stretchHeight = this.stretchHeight;
       },
-      immediate: true
+      immediate: true,
     },
-    intervalTime: {
-      handler: function() {
-        this.formData.intervalTime = this.intervalTime;
+    spacing: {
+      handler: function () {
+        this.formData.spacing = this.spacing;
       },
-      immediate: true
+      immediate: true,
     },
     formDataNew: {
       deep: true,
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         let find = this.findSource();
         if (find && find.options.shadowAnalysis) {
           // console.log("shadowAnalysis",find.options.shadowAnalysis)
         }
-      }
+      },
     },
     maskShow: {
-      handler: function() {
+      handler: function () {
         this.getShadowRatio();
-      }
-    }
+      },
+    },
   },
   methods: {
     async createCesiumObject() {
       return new Promise(
-        resolve => {
+        (resolve) => {
           resolve();
         },
-        reject => {}
+        (reject) => {}
       );
     },
     mount() {
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function(dataSource) {
+      promise.then(function (dataSource) {
         vm.$emit("loaded", vm);
       });
     },
@@ -344,19 +333,6 @@ export default {
     },
 
     /**
-     * 时间字符串转JulianDate时间
-     */
-    getJulianDate(timeStr) {
-      let { timeZone } = this;
-      const utc = this.Cesium.JulianDate.fromDate(new Date(timeStr)); // UTC
-      return this.Cesium.JulianDate.addHours(
-        utc,
-        timeZone, //默认北京时区，8
-        new this.Cesium.JulianDate()
-      ); // 北京时间
-    },
-
-    /**
      * 范围时间段阴影分析
      */
     shadow() {
@@ -365,17 +341,15 @@ export default {
 
       // 初始化交互式绘制控件
       let drawElement = new Cesium.DrawElement(viewer);
-      let {
-        date,
-        stretchHeight,
-        minHeight,
-        intervalTime,
-        shadowColor,
-        sunColor
-      } = this.formData;
+      let { date, stretchHeight, minHeight, spacing, shadowColor, sunColor } =
+        this.formData;
       // const time = new Date(`${date} ${this.formData.time}`);
-      const startTime = this.timeTransfer(`${date} ${this.formData.startTime}`);
-      const endTime = this.timeTransfer(`${date} ${this.formData.endTime}`);
+      const startTime = Cesium.JulianDate.fromDate(
+        new Date(`${date} ${this.formData.startTime}`)
+      );
+      const endTime = Cesium.JulianDate.fromDate(
+        new Date(`${date} ${this.formData.endTime}`)
+      );
 
       const self = this;
       let shadowAnalysis;
@@ -384,7 +358,7 @@ export default {
       // 激活交互式绘制工具
       drawElement.startDrawingPolygon({
         // 绘制完成回调函数
-        callback: async results => {
+        callback: async (results) => {
           drawElement.stopDrawing();
 
           let positions = results.positions;
@@ -396,86 +370,41 @@ export default {
               res > self.formData.minHeight ? res : self.formData.minHeight;
           }
           const minHeight = self.formData.minHeight;
-          // self.remove();
 
-          self.toggleMask(true);
+          // self.toggleMask(true);
 
           this.$emit("analysisBegin");
-          let xmin;
-          let ymin;
-          let xmax;
-          let ymax;
 
           viewer.scene.globe.depthTestAgainstTerrain = true;
-
-          positions.forEach(point => {
-            const { x, y } = point;
-            if (xmin === undefined || x < xmin) {
-              xmin = x;
-            }
-            if (xmax === undefined || x > xmax) {
-              xmax = x;
-            }
-            if (ymin === undefined || y < ymin) {
-              ymin = y;
-            }
-            if (ymax === undefined || y > ymax) {
-              ymax = y;
-            }
-          });
-
-          // 多边形x方向长度
-          const recXLength = self.Cesium.Cartesian3.distance(
-            new this.Cesium.Cartesian3(xmin, ymin, 0),
-            new this.Cesium.Cartesian3(xmax, ymin, 0)
-          );
-          // 多边形y方向长度
-          const recYLength = self.Cesium.Cartesian3.distance(
-            new this.Cesium.Cartesian3(xmin, ymin, 0),
-            new this.Cesium.Cartesian3(xmin, ymax, 0)
-          );
-          const xPaneNum = Math.ceil(recXLength / 4); // X轴方向插值点个数
-          const yPaneNum = Math.ceil(recYLength / 4); // Y轴方向插值点个数
-          const zPaneNum = Math.ceil(stretchHeight / 4); // Z轴方向插值点个数
-
-          shadowAnalysis = new Cesium.ShadowAnalysis(viewer, {
-            xPaneNum: xPaneNum,
-            yPaneNum: yPaneNum,
-            zPaneNum: zPaneNum,
-            shadowColor: shadowColor,
-            sunColor: sunColor,
-            percentCallback: this.setPercent,
-            intervalTime: intervalTime,
-            pointSize: 10
-          });
-          console.log("startTime", startTime);
-          console.log("endTime", endTime);
-          // 时间段范围阴影分析
-          shadowAnalysis.calcPointsArrayInShadowTime(
-            positions,
-            minHeight,
-            minHeight + stretchHeight,
+          // 更新阴影分析接口-龚跃健，20240725
+          shadowAnalysis = new Cesium.ShadowRateAnalysis(viewer, {
             startTime,
-            endTime
-          );
+            endTime,
+            spacing: spacing,
+            pointSize: 10,
+            minHeight: minHeight,
+            maxHeight: minHeight + stretchHeight,
+          });
+
+          shadowAnalysis.pointsArray = positions;
+          shadowAnalysis.shadowRate();
 
           self.getShadowRatio();
 
           // 深拷贝positions数组对象
           let positionCopy = [];
           positionCopy = this.copy(positions);
-          // positionCopy = JSON.parse(JSON.stringify(positions));
           vueCesium.shadowAnalysisManager.addSource(
             self.vueKey,
             self.vueIndex,
             null,
             {
               shadowAnalysis: shadowAnalysis,
-              drawElement: drawElement
+              drawElement: drawElement,
             }
           );
           // drawElement.stopDrawing();
-        }
+        },
       });
     },
 
@@ -493,11 +422,11 @@ export default {
      */
     getMinHeightByPoints(cartesians) {
       const positions = [];
-      cartesians.forEach(cartesian => {
+      cartesians.forEach((cartesian) => {
         positions.push(this.cartesianToCartographic(cartesian));
       });
       const terrain = this.viewer.terrainProvider;
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         try {
           if (terrain.constructor.name.indexOf("EllipsoidTerrainProvider") > -1)
             resolve(false);
@@ -505,9 +434,9 @@ export default {
             terrain,
             positions
           );
-          promise.then(updatedPositions => {
+          promise.then((updatedPositions) => {
             const resultCartesians = [];
-            updatedPositions.forEach(position => {
+            updatedPositions.forEach((position) => {
               if (position) {
                 resultCartesians.push(position.height);
               }
@@ -521,37 +450,27 @@ export default {
       });
     },
 
-    timeTransfer(time) {
-      const { timeZone } = this;
-      let timeInTimezone = new Date(time);
-      let timezoneInms = timeInTimezone.getTime();
-      let utcInms = timezoneInms + timeZone * 3600000;
-      let timeInUTC = new Date(utcInms);
-
-      return timeInUTC;
-    },
-
     /**
      * 原生日照分析
      */
     sun() {
       this.removeSun();
-      // this.remove();
-      let { viewer } = this;
+      let { viewer, Cesium } = this;
       viewer.scene.globe.enableLighting = true; // 开启日照
       viewer.shadows = true; // 开启阴影
       const { date, startTime, endTime } = this.formData;
       // 时间段日照分析
       viewer.clock.shouldAnimate = true; // 开启计时
 
-      // var utc = Cesium.JulianDate.fromDate(new Date('2019/10/04 15:00:00')); //UTC
-      // viewer.clockViewModel.currentTime = Cesium.JulianDate.addHours(utc, 8, new Cesium.JulianDate()); //北京时间=UTC+8=GMT+8
-
-      viewer.clock.startTime = this.getJulianDate(`${date} ${startTime}`);
-      viewer.clock.stopTime = this.getJulianDate(`${date} ${endTime}`);
-      viewer.clock.currentTime = this.getJulianDate(`${date} ${startTime}`);
-      console.log("sun starttime", viewer.clock.startTime);
-      console.log("sun endTime", viewer.clock.stopTime);
+      viewer.clock.startTime = Cesium.JulianDate.fromDate(
+        new Date(`${date} ${startTime}`)
+      );
+      viewer.clock.stopTime = Cesium.JulianDate.fromDate(
+        new Date(`${date} ${endTime}`)
+      );
+      viewer.clock.currentTime = Cesium.JulianDate.fromDate(
+        new Date(`${date} ${startTime}`)
+      );
       viewer.clock.multiplier = 3600; // cesium中1秒表示现实中1个小时
       viewer.clock.clockRange = this.Cesium.ClockRange.LOOP_STOP; // 循环动画
     },
@@ -559,19 +478,19 @@ export default {
     /**
      * 时间段阴影分析回调函数，获取分析进度值
      */
-    setPercent(result) {
-      this.percent = result;
-      this.maskText = `正在分析中, 请稍等...${Number(
-        (result * 100).toFixed(2)
-      )}%`;
-      const timer = setInterval(() => {
-        if (this.percent === result) {
-          this.toggleMask(false);
-          this.$emit("success");
-        }
-        clearInterval(timer);
-      }, 200);
-    },
+    // setPercent(result) {
+    //   this.percent = result;
+    //   this.maskText = `正在分析中, 请稍等...${Number(
+    //     (result * 100).toFixed(2)
+    //   )}%`;
+    //   const timer = setInterval(() => {
+    //     if (this.percent === result) {
+    //       // this.toggleMask(false);
+    //       this.$emit("success");
+    //     }
+    //     clearInterval(timer);
+    //   }, 200);
+    // },
 
     /**
      * 获取时间段阴影分析结果点的阴影率
@@ -582,9 +501,8 @@ export default {
         let vm = this;
 
         //左击查看阴影时间和光照时间
-        // console.log('startComputeShadowRatio');
         handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-        handler.setInputAction(function(movement) {
+        handler.setInputAction(function (movement) {
           //获取鼠标点击位置的实体
           let pickedFeature = viewer.scene.pick(movement.endPosition, 10, 10);
 
@@ -593,27 +511,21 @@ export default {
             pickedFeature.primitive &&
             pickedFeature.primitive.id
           ) {
-            // console.log('pickedFeature',pickedFeature);
-
             //获取点的属性信息
             let info = pickedFeature.primitive.id;
             let timeInSun = info.timeInSun;
-            // console.log('timeInSun', timeInSun);
             let timeInShadow = info.timeInShadow;
-            let shadowRatio = Math.round(
-              (timeInShadow / (timeInShadow + timeInSun)) * 100
-            );
+            let shadowRatio = info.shadowRatio.toFixed(7);
 
             //设置popup的内容
             vm.currentClickInfo = [
               {
-                // title:"阴影率信息",
                 properties: {
                   光照时间: timeInSun + "分钟",
                   阴影时间: timeInShadow + "分钟",
-                  阴影率: shadowRatio + "%"
-                }
-              }
+                  阴影率: shadowRatio * 100 + "%",
+                },
+              },
             ];
 
             //获取点的经纬度坐标
@@ -636,7 +548,6 @@ export default {
             viewer.scene.requestRender();
           } else {
             vm.visible = false;
-            // console.log("未选中");
           }
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
       }
@@ -665,17 +576,15 @@ export default {
      */
     remove() {
       let { vueKey, vueIndex, vueCesium, Cesium } = this;
-      // let findSource = vm.$_getManager(manager);
       if (handler) {
         handler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
       }
       let findSource = this.findSource();
-      // console.log("findSource", findSource)
       // 判断是否已有阴影分析结果
       if (findSource && findSource.options) {
         // 移除阴影分析显示结果
         this.visible = false;
-        findSource.options.shadowAnalysis.remove();
+        findSource.options.shadowAnalysis.clear();
         findSource.options.shadowAnalysis = null;
         // 取消交互式绘制矩形事件激活状态
         findSource.options.drawElement.stopDrawing();
@@ -702,17 +611,17 @@ export default {
     /**
      * 阴影分析遮罩层
      */
-    toggleMask(status) {
-      this.maskShow = status;
-    },
+    // toggleMask(status) {
+    //   this.maskShow = status;
+    // },
 
     changeShadowColor(color) {
       this.formData.shadowColor = color;
     },
     changeSunColor(color) {
       this.formData.sunColor = color;
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -741,5 +650,19 @@ export default {
   width: 50%;
   text-align: right;
   font-size: 14px;
+}
+</style>
+
+<style>
+.mapgis-ui-time-picker-panel-inner {
+  background-color: var(--select-dropdown-background) !important;
+}
+
+.mapgis-ui-time-picker-panel {
+  color: var(--text-color) !important;
+}
+
+.mapgis-ui-calendar-input {
+  color: var(--text-color) !important;
 }
 </style>
