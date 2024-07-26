@@ -248,11 +248,10 @@ export default {
     unmount() {
       let { vueCesium, vueKey, vueIndex } = this;
       let tool = this.findRotateTool();
-      if(tool){
-        try{
-          tool.stop()
-        }catch{
-        }
+      if (tool) {
+        try {
+          tool.stop();
+        } catch {}
       }
       vueCesium.RotateManager.deleteSource(vueKey, vueIndex);
     },
@@ -339,7 +338,10 @@ export default {
               cartographic1.latitude
             );
             vm.coordinate.height = cartographic1.height;
-          } else if (feature instanceof vm.Cesium.Cesium3DTileFeature) {
+          } else if (
+            feature instanceof vm.Cesium.Cesium3DTileFeature ||
+            feature.primitive instanceof vm.Cesium.Cesium3DTileset
+          ) {
             let cartesian = vm.viewer.scene.pickPosition(event.position);
             if (vm.Cesium.defined(cartesian)) {
               let cartographic = Cesium.Cartographic.fromCartesian(cartesian);
