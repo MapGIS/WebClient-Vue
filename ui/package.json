@@ -1,9 +1,9 @@
 {
   "name": "@mapgis/webclient-vue-ui",
-  "version": "17.0.0",
+  "version": "17.0.1",
   "description": "中地数码webclient-vue-ui",
-  "main1": "dist-libs/webclient-vue-ui.umd.min.js",
-  "module": "src/index.js",
+  "main": "dist-libs/webclient-vue-ui.umd.min.js",
+  "module1": "src/index.js",
   "scripts": {
     "build": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-ui src/index.js",
     "build-cdn": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --inline-vue --name webclient-vue-ui src/index.js",
