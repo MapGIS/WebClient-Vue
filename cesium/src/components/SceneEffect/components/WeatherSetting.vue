@@ -367,14 +367,14 @@ export default {
         ) {
           viewer.camera.flyTo({
             destination: new Cesium.Cartesian3(
-              -moonPosition.x / 4,
-              -moonPosition.y / 4,
-              -moonPosition.z / 8
+              moonPosition.x / 1.2,
+              moonPosition.y / 1.2,
+              moonPosition.z / 1.2
             ),
             orientation: {
-              heading: Cesium.Math.toRadians(90),
-              pitch: Cesium.Math.toRadians(-90),
-              roll: Cesium.Math.toRadians(-20),
+              heading: 0,
+              pitch: Cesium.Math.toRadians(90),
+              roll: 0,
             },
             duration: 0.5,
           });
