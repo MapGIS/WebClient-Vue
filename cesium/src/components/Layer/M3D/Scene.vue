@@ -56,7 +56,7 @@
               layerIndex,
               layerType,
               key,
-              subLayerType
+              subLayerType,
             }"
           >
             <mapgis-ui-iconfont
@@ -67,7 +67,7 @@
               :class="{
                 'mapgis-3d-scene-layer-span': true,
                 'mapgis-3d-scene-layer-span-inline': true,
-                select: selectLayerIndex == layerIndex
+                select: selectLayerIndex == layerIndex,
               }"
             >
               <span v-if="title && title.indexOf(searchValue) > -1">
@@ -86,11 +86,11 @@
               <mapgis-ui-iconfont
                 v-if="
                   layerType == type.cache &&
-                    (!isolation || selectLayerIndex == layerIndex)
+                  (!isolation || selectLayerIndex == layerIndex)
                 "
                 :type="icon"
                 class="iconfont"
-                style="marginLeft:8px;"
+                style="marginleft: 8px"
                 @click="
                   () =>
                     handleActiveItemKey({
@@ -101,14 +101,14 @@
                       port,
                       domain,
                       layerIndex,
-                      key
+                      key,
                     })
                 "
               />
               <mapgis-ui-iconfont
                 v-if="
                   layerType == type.cache &&
-                    (!isolation || selectLayerIndex == layerIndex)
+                  (!isolation || selectLayerIndex == layerIndex)
                 "
                 :type="layerKey == key ? 'mapgis-unlock' : 'mapgis-lock'"
                 class="iconfont"
@@ -123,7 +123,7 @@
                       port,
                       domain,
                       layerIndex,
-                      key
+                      key,
                     })
                 "
               />
@@ -215,40 +215,40 @@ export default {
       type: Object,
       default: () => {
         return { popupType: "card" };
-      }
+      },
     },
     dataStoreIp: {
       type: String,
-      default: "192.168.96.101"
+      default: "192.168.96.101",
     },
     dataStorePort: {
       type: String,
-      default: "9014"
+      default: "9014",
     },
     // 查询知识图谱的数据集位置
     dataStoreDataset: {
       type: String,
-      default: "Graph3/GraphDataset1"
+      default: "Graph3/GraphDataset1",
     },
     // 气泡框展示位置default、right
     popupShowType: {
       type: String,
-      default: "default"
+      default: "default",
     },
     // 高亮样式
     highlightStyle: {
       type: String,
-      default: "rgba(255,255,0,0.5)"
+      default: "rgba(255,255,0,0.5)",
     },
     // 挂靠的查询参数，比如三维简单要素类，如果有挂靠的查询参数，则拾取的要素属性使用从三维简单要素类里的内容
     searchParams: {
       type: Object,
-      default: () => {}
-    }
+      default: () => {},
+    },
   },
   mixins: [PopupMixin],
   components: {
-    M3dMenus
+    M3dMenus,
   },
   data() {
     return {
@@ -256,24 +256,24 @@ export default {
       layerIds: this.parseLayers(),
       type: {
         terrain: G3DLayerType.g3dTerrainLayer,
-        cache: G3DLayerType.g3dCacheLayer
+        cache: G3DLayerType.g3dCacheLayer,
       },
       menus: [
         {
           title: "静态单体化查询",
           icon: "mapgis-highlight",
-          active: this.enablePopup
+          active: this.enablePopup,
         },
         {
           title: "批量设置",
           icon: "mapgis-setting",
-          active: false
+          active: false,
         },
         {
           title: "隐藏面板",
           icon: "mapgis-hide",
-          active: false
-        }
+          active: false,
+        },
       ],
       layerTree: [
         {
@@ -284,8 +284,8 @@ export default {
           icon: "mapgis-layer1",
           menu: "mapgis-down",
           children: [],
-          scopedSlots: { icon: "custom", title: "title" }
-        }
+          scopedSlots: { icon: "custom", title: "title" },
+        },
       ],
       expandedKeys: [],
       searchValue: "",
@@ -309,7 +309,7 @@ export default {
       iEnableIot: false,
       showDetail: false,
       isUnClosePopup: true,
-      layerVisibleArr: [] //记录显示的图层，拾取时隐藏的图层直接忽略
+      layerVisibleArr: [], //记录显示的图层，拾取时隐藏的图层直接忽略
     };
   },
   provide() {
@@ -317,7 +317,7 @@ export default {
     return {
       get m3ds() {
         return self.m3ds;
-      }
+      },
     };
   },
   created() {},
@@ -357,15 +357,15 @@ export default {
     },
     layerIds(next) {
       this.changeLayerVisible(this.layerIds);
-    }
+    },
   },
   methods: {
     createCesiumObject() {
       return new Promise(
-        resolve => {
+        (resolve) => {
           resolve();
         },
-        reject => {}
+        (reject) => {}
       );
     },
     onM3dLoaded(e) {},
@@ -384,13 +384,13 @@ export default {
       let layers = this.parseLayers();
       if (!layers) this.layerIds = [];
 
-      g3dLayer.then(e => {
+      g3dLayer.then((e) => {
         let g3d = viewer.scene.layers.appendSceneLayer(url, {
           ...$props,
-          loaded: function(layer) {
+          loaded: function (layer) {
             // 该回调有多少图层循环进多少次
           },
-          getDocLayerIndexes: vm.getDocLayerIndexes
+          getDocLayerIndexes: vm.getDocLayerIndexes,
         });
       });
 
@@ -411,7 +411,7 @@ export default {
     },
     // 图层回调解析
     getDocLayerIndexes(indexes, g3d) {
-      const { vueIndex, vueKey, vueCesium, viewer, enablePopup } = this;
+      const { vueIndex, vueKey, vueCesium, Cesium, viewer, enablePopup } = this;
       const { ip, port, domain } = this;
       const vm = this;
       let layers = this.parseLayers();
@@ -423,7 +423,7 @@ export default {
         layerId: vueIndex,
         g3dLayerIndex: vm.g3dLayerIndex,
         collection: collection,
-        primitiveCollection: viewer.scene.primitives.add(collection)
+        primitiveCollection: viewer.scene.primitives.add(collection),
       });
       let g3dLayer = viewer.scene.layers.getLayer(vm.g3dLayerIndex);
       vm.layerTree[0].version = g3dLayer.version;
@@ -439,7 +439,7 @@ export default {
           let layer = g3dLayer.getLayer(`${gIndex}`);
           return layer.readyPromise;
         });
-        Promise.all(props).then(m3ds => {
+        Promise.all(props).then((m3ds) => {
           vm.$emit("loaded", { g3d: vm, component: vm });
           vm.recordOriginStyle();
           if (enablePopup) {
@@ -469,8 +469,8 @@ export default {
               menu: "mapgis-down",
               scopedSlots: {
                 icon: "custom",
-                title: "title"
-              }
+                title: "title",
+              },
             });
             if (layers) {
               if (layers.indexOf(`${i}`) >= 0) {
@@ -482,7 +482,7 @@ export default {
               layer.show = true;
             }
           });
-          loopM3ds(m3ds, types => {
+          loopM3ds(m3ds, (types) => {
             types.forEach((t, i) => {
               const child = vm.layerTree[0].children;
               child[layerIndexs[i]].subLayerType = checkTypeIcon(t);
@@ -516,7 +516,7 @@ export default {
       for (let i = 0; i < tree.length; i++) {
         const node = tree[i];
         if (node.children) {
-          if (node.children.some(item => item.key === key)) {
+          if (node.children.some((item) => item.key === key)) {
             parentKey = node.key;
           } else if (this.getParentKey(key, node.children)) {
             parentKey = this.getParentKey(key, node.children);
@@ -528,7 +528,7 @@ export default {
     onChange(e) {
       let { layerTree } = this;
       const dataList = [];
-      const generateList = data => {
+      const generateList = (data) => {
         for (let i = 0; i < data.length; i++) {
           const node = data[i];
           const { key } = node;
@@ -542,7 +542,7 @@ export default {
 
       const value = e.target.value;
       const expandedKeys = dataList
-        .map(item => {
+        .map((item) => {
           if (item.title.indexOf(value) > -1) {
             return this.getParentKey(item.key, layerTree);
           }
@@ -552,7 +552,7 @@ export default {
       Object.assign(this, {
         expandedKeys,
         searchValue: value,
-        autoExpandParent: true
+        autoExpandParent: true,
       });
     },
     onSelect(e, payload) {
@@ -568,7 +568,7 @@ export default {
     // 图层解析
     parseTerrain() {
       const vm = this;
-      const { vueKey, vueIndex, vueCesium } = this;
+      const { vueKey, vueIndex, vueCesium, viewer } = this;
       const { g3dLayerIndex } = this;
 
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
@@ -576,7 +576,7 @@ export default {
       if (!g3dLayer) return;
       let indexes = g3dLayer.getTerrainLayerIndexes();
       let terrains = g3dLayer.getTerrainLayers();
-      indexes.forEach(i => {
+      indexes.forEach((i) => {
         let info = g3dLayer.getLayerInfo(i);
         let { layerName, layerType } = info;
         layerType =
@@ -592,8 +592,8 @@ export default {
             menu: "mapgis-down",
             scopedSlots: {
               icon: "custom",
-              title: "title"
-            }
+              title: "title",
+            },
           });
         }
         vm.layerIds.push(`${i}`);
@@ -607,7 +607,7 @@ export default {
     },
     parserVector() {
       const vm = this;
-      const { vueKey, vueIndex, vueCesium } = this;
+      const { vueKey, vueIndex, vueCesium, viewer } = this;
       const { g3dLayerIndex } = this;
 
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
@@ -615,7 +615,7 @@ export default {
       if (!g3dLayer) return;
       let indexes = g3dLayer.getVectorLayerIndexes();
       let vectors = g3dLayer.getVectorLayers();
-      indexes.forEach(i => {
+      indexes.forEach((i) => {
         let info = g3dLayer.getLayerInfo(i);
         let { layerName, layerType } = info;
         layerType =
@@ -631,8 +631,8 @@ export default {
             menu: "mapgis-down",
             scopedSlots: {
               icon: "custom",
-              title: "title"
-            }
+              title: "title",
+            },
           });
         }
         vm.layerIds.push(`${i}`);
@@ -655,7 +655,7 @@ export default {
       return {
         ip: this.ip,
         port: this.port,
-        domain: this.domain
+        domain: this.domain,
       };
     },
     parseVersion(url) {
@@ -698,7 +698,7 @@ export default {
       }
       let layerStr = layerString.replace(/show:/i, "");
       let layerStrs = layerStr.split(",");
-      let layers = layerStrs.map(l => l);
+      let layers = layerStrs.map((l) => l);
 
       return layers;
     },
@@ -708,7 +708,7 @@ export default {
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let indexes = g3dLayer.getAllLayerIndexes();
-      indexes.forEach(index => {
+      indexes.forEach((index) => {
         let layer = g3dLayer.getLayer(index);
         if (layers.indexOf(`${index}`) >= 0) {
           if (layer) {
@@ -730,7 +730,7 @@ export default {
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let indexes = g3dLayer.getAllLayerIndexes();
       this.layerVisibleArr = [];
-      indexes.forEach(index => {
+      indexes.forEach((index) => {
         let layer = g3dLayer.getLayer(index);
         if (layers.indexOf(`${index}`) >= 0) {
           if (layer) {
@@ -779,7 +779,7 @@ export default {
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let layerIndexs = g3dLayer.getM3DLayerIndexes();
       let originStyles = [];
-      layerIndexs.forEach(index => {
+      layerIndexs.forEach((index) => {
         let m3dlayer = g3dLayer.getLayer(index);
         if (m3dlayer) {
           originStyles.push(m3dlayer.style);
@@ -793,7 +793,7 @@ export default {
       );
     },
     restoreOriginStyle() {
-      const { vueKey, vueIndex, vueCesium, g3dLayerIndex } = this;
+      const { vueKey, vueIndex, vueCesium, g3dLayerIndex, viewer } = this;
       let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
 
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
@@ -817,7 +817,7 @@ export default {
       }
     },
     restoreOrigindVisible() {
-      const { vueKey, vueIndex, vueCesium, g3dLayerIndex } = this;
+      const { vueKey, vueIndex, vueCesium, g3dLayerIndex, viewer } = this;
       let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
 
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
@@ -853,7 +853,7 @@ export default {
       let layerIndexs = g3dLayer.getM3DLayerIndexes();
       this.featurevisible = false;
       this.selectedKeys = [`${layerIndex}`];
-      layerIndexs.forEach(index => {
+      layerIndexs.forEach((index) => {
         let m3dlayer = g3dLayer.getLayer(index);
         if (m3dlayer) {
           if (index != layerIndex) {
@@ -864,7 +864,7 @@ export default {
           }
         }
       });
-      let children = this.layerTree[0].children.map(c => {
+      let children = this.layerTree[0].children.map((c) => {
         if (c.layerIndex == layerIndex) {
           c.disabled = false;
         } else {
@@ -875,7 +875,7 @@ export default {
       this.layerTree[0].children.splice(0, 1, children[0]);
     },
     disableIsolation() {
-      let children = this.layerTree[0].children.map(c => {
+      let children = this.layerTree[0].children.map((c) => {
         c.disabled = false;
         return c;
       });
@@ -900,7 +900,7 @@ export default {
       console.log("进入pick---------------", performance.now());
       const { movement, pickedFeature } = payload;
       const vm = this;
-      const { g3dLayerIndex } = this;
+      const { g3dLayerIndex, viewer } = this;
       if (
         !pickedFeature ||
         !movement ||
@@ -1011,7 +1011,7 @@ export default {
       this.restoreOriginStyle();
     },
     highlightM3d(layerIndex) {
-      const { vueKey, vueIndex, vueCesium } = this;
+      const { vueKey, vueIndex, vueCesium, Cesium, viewer } = this;
       this.selectLayerIndex = layerIndex;
       let g3dLayer = viewer.scene.layers.getLayer(this.g3dLayerIndex);
       let m3dlayer = g3dLayer.getLayer(`${layerIndex}`);
@@ -1031,7 +1031,7 @@ export default {
         );
         m3dlayer.style = new Cesium.Cesium3DTileStyle({
           // color: `color('#FFFF00', 1)`
-          color: this.highlightStyle
+          color: this.highlightStyle,
         });
       }
     },
@@ -1085,7 +1085,7 @@ export default {
                     vm.featureposition = {
                       longitude: lng,
                       latitude: lat,
-                      height: height
+                      height: height,
                     };
                   } else if (vm.popupShowType === "right") {
                     vm.showDetail = true;
@@ -1117,7 +1117,7 @@ export default {
                 mapPosition.z
               ),
               tolerance,
-              layerIndex: String(layerIndex)
+              layerIndex: String(layerIndex),
             }
           );
         }
@@ -1168,7 +1168,7 @@ export default {
           this.prePickFeature = {
             feature: pickedFeature,
             color: pickedFeature.color,
-            index: pickedFeature._content._tileset._layerIndex
+            index: pickedFeature._content._tileset._layerIndex,
           };
           // vm.restoreM3d();
           vm.selectLayerIndex = index;
@@ -1221,7 +1221,7 @@ export default {
                 vm.featureproperties = result;
                 vm.iClickFeatures = [{ properties: result }];
               } else {
-                tileset.queryAttributes(oid).then(function(result) {
+                tileset.queryAttributes(oid).then(function (result) {
                   result = result || {};
                   vm.featureproperties = result;
                   vm.iClickFeatures = [{ properties: result }];
@@ -1239,7 +1239,7 @@ export default {
               vm.featureposition = {
                 longitude: longitudeString2,
                 latitude: latitudeString2,
-                height: heightString2
+                height: heightString2,
               };
             } else {
               vm.showDetail = true;
@@ -1263,7 +1263,7 @@ export default {
         this.prePickFeature = undefined;
       }
       let m3ds = g3dLayer.getM3DLayerIndexes();
-      m3ds.forEach(index => {
+      m3ds.forEach((index) => {
         let m3d = g3dLayer.getLayer(index);
         if (m3d) {
           // m3d.reset(); //该函数目前底层MapGISM3DSet.reset无效 后期记得修改
@@ -1273,7 +1273,7 @@ export default {
     },
     restoreBeforeM3d() {
       if (this.prePickFeature) {
-        let g3dLayer = viewer.scene.layers.getLayer(this.g3dLayerIndex);
+        let g3dLayer = this.viewer.scene.layers.getLayer(this.g3dLayerIndex);
         g3dLayer.translucencyByLayerIndex(
           this.prePickFeature.index,
           this.opacity
@@ -1296,13 +1296,8 @@ export default {
     async getFeaturePorpertiesByOid(oid, layerName) {
       const properties = {};
       if (this.searchParams) {
-        const {
-          domain,
-          serverName,
-          layerIndex,
-          serverType,
-          mapList
-        } = this.searchParams;
+        const { domain, serverName, layerIndex, serverType, mapList } =
+          this.searchParams;
         let { gdbp } = this.searchParams;
         if (serverType === "IGSMapImage" && layerName) {
           // 关联的地图文档
@@ -1328,7 +1323,7 @@ export default {
             layerIdxs: layerIndex,
             rtnLabel: false,
             objectIds: oid,
-            requestType: "POST"
+            requestType: "POST",
           },
           false,
           true
@@ -1345,7 +1340,7 @@ export default {
         }
       }
       return properties;
-    }
-  }
+    },
+  },
 };
 </script>
