@@ -27,13 +27,13 @@ export default {
   },
   methods: {
     createCesiumObject() {
-      const { $props, url } = this;
+      const { $props, url, Cesium } = this;
       const options = { ...$props, igserver: false, url: url };
       const tileset = new Cesium.MapGISM3DSet(options);
       return tileset;
     },
     mount() {
-      const { viewer, autoReset } = this;
+      const { Cesium, viewer, autoReset } = this;
       if (viewer.isDestroyed()) return;
 
       let tileset = this.createCesiumObject();
@@ -82,4 +82,3 @@ export default {
   },
 };
 </script>
-

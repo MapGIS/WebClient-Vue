@@ -31,6 +31,7 @@ export default {
       return point;
     },
     $_getAngle(position) {
+      const { Cesium } = this;
       var center = Cesium.Matrix4.multiplyByPoint(
         this.mtx,
         positions[0],
@@ -58,6 +59,7 @@ export default {
       return dg;
     },
     $_getM3DBox(m3d) {
+      const { Cesium } = this;
       let result = {
         length: 0,
         width: 0,

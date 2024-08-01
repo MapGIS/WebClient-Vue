@@ -61,40 +61,40 @@ export default {
     // 右侧展示气泡框props
     popupShowType: {
       type: String,
-      default: "default"
+      default: "default",
     },
     popupOverlay: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     dataStoreIp: {
       type: String,
-      default: "192.168.96.101"
+      default: "192.168.96.101",
     },
     dataStorePort: {
       type: String,
-      default: "9014"
+      default: "9014",
     },
     // 查询知识图谱的数据集位置
     dataStoreDataset: {
       type: String,
-      default: "Graph3/GraphDataset1"
+      default: "Graph3/GraphDataset1",
     },
     popupOptions: {
       type: Object,
       default: () => {
         return { popupType: "card" };
-      }
+      },
     },
     // 挂靠的查询参数，比如三维简单要素类，如果有挂靠的查询参数，则拾取的要素属性使用从三维简单要素类里的内容
     searchParams: {
       type: Object,
-      default: () => {}
-    }
+      default: () => {},
+    },
   },
   components: {
     modelSwitchPopup,
-    Popup
+    Popup,
   },
   data() {
     return {
@@ -106,7 +106,7 @@ export default {
       tile: {},
       iEnableIot: false,
       featureposition: undefined,
-      featureproperties: undefined
+      featureproperties: undefined,
     };
   },
   created() {},
@@ -149,7 +149,7 @@ export default {
     },
     enableIot(next) {
       this.iEnableIot = next;
-    }
+    },
   },
   /* render(h) {
     return this.$_render(h);
@@ -164,15 +164,15 @@ export default {
       const vm = this;
       const { vueCesium, viewer, url } = this;
       return new Promise(
-        resolve => {
+        (resolve) => {
           // M3D服务调用Cesium底层appendM3DLayer方法
           let options = this.getOptions();
-          options.loaded = function() {
+          options.loaded = function () {
             resolve({ layerIndex: vm.layerIndex });
           };
           vm.layerIndex = viewer.scene.layers.appendM3DLayer(url, options);
         },
-        reject => {}
+        (reject) => {}
       );
 
       return m3dLayer;
@@ -181,7 +181,7 @@ export default {
     getOptions() {
       const { $props } = this;
       let options = {};
-      Object.keys($props).forEach(function(key) {
+      Object.keys($props).forEach(function (key) {
         options[key] = $props[key];
       });
       return options;
@@ -195,7 +195,7 @@ export default {
       if (viewer.isDestroyed()) return;
 
       let promise = this.createCesiumObject();
-      promise.then(payload => {
+      promise.then((payload) => {
         const { layerIndex } = payload;
         if (layerIndex >= 0) {
           // 2.0版本的处理方式
@@ -211,7 +211,7 @@ export default {
           vm.loopM3d(m3ds, "2.0");
           vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, {
             version: "2.0",
-            url: url
+            url: url,
           });
           vm.$emit("loaded", { tileset: m3dLayer, m3ds: m3ds });
           vm.bindPopupEvent();
@@ -228,7 +228,7 @@ export default {
       vueCesium.M3DIgsManager.deleteSource(vueKey, vueIndex);
     },
     removeLayer() {
-      const { url, layerIndex } = this;
+      const { url, layerIndex, viewer } = this;
       if (layerIndex === undefined) {
         return;
       }
@@ -246,13 +246,13 @@ export default {
         let m3ds = find.source;
         !viewer.isDestroyed() &&
           m3ds &&
-          m3ds.forEach(l => {
+          m3ds.forEach((l) => {
             l.destroy();
           });
       }
     },
     bindPopupEvent() {
-      const { vueKey, vueIndex } = this;
+      const { vueKey, vueIndex, vueCesium } = this;
       const { enablePopup, enableTips, enableModelSwitch } = this;
 
       let clickhandler, hoverhandler;
@@ -281,7 +281,7 @@ export default {
       );
     },
     unbindPopupEvent() {
-      const { Cesium, vueCesium, vueKey, vueIndex } = this;
+      const { Cesium, vueCesium, vueKey, vueIndex, viewer } = this;
       const { highlightStyle, layerIndex } = this;
       let find = vueCesium.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find && find.options) {
@@ -309,7 +309,7 @@ export default {
 
       const { popupOptions, highlightStyle, vueKey, vueIndex } = this;
       // const { color = "rgba(255, 255, 0, 0.6)" } = highlightStyle;
-      const { viewer } = this;
+      const { viewer, vueCesium, Cesium } = this;
       const { version, layerIndex } = this;
 
       /* 只有在多模态下为真 */
@@ -373,7 +373,7 @@ export default {
             vm.popupOverlay && vm.popupOverlay.setContent(popupContent);
           }
         } else {
-          tileset.queryAttributes(oid).then(function(result) {
+          tileset.queryAttributes(oid).then(function (result) {
             result = result || {};
             if (this.popupShowType === "default") {
               // vm.iClickFeatures = [
@@ -486,7 +486,7 @@ export default {
     },
     cancelFeature(payload) {
       const { movement } = payload;
-      const { version, layerIndex } = this;
+      const { version, layerIndex, viewer, Cesium } = this;
       const { highlightStyle } = this;
       let oid = viewer.scene.pickOid(movement.position);
 
@@ -511,29 +511,29 @@ export default {
       this.popupOverlay && this.popupOverlay.setContent(null);
     },
     changeShow(show) {
-      const { vueKey, vueIndex } = this;
+      const { vueKey, vueIndex, vueCesium } = this;
       let find = vueCesium.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find) {
         let m3ds = find.source;
-        m3ds && m3ds.forEach(m3d => (m3d.show = show));
+        m3ds && m3ds.forEach((m3d) => (m3d.show = show));
       }
       this.layerList = this.parseLayers();
       this.changeLayerVisible(this.layerList);
     },
     changeOpacity(opacity) {
-      const { vueKey, vueIndex } = this;
+      const { vueKey, vueIndex, vueCesium, Cesium } = this;
       const vm = this;
       let find = vueCesium.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find) {
         let m3ds = find.source;
         if (!m3ds) return;
-        m3ds.forEach(m3d => {
+        m3ds.forEach((m3d) => {
           // 新的Cesium这里不需要再做判断，直接设置即可，2023-11-17，龚跃健
           // let type = vm.checkType(m3d);
           // type = type == M3dType.UnKnow ? m3d.type : type;
           // if (type == M3dType.Model || type == M3dType.Instance) {
           m3d.style = new Cesium.Cesium3DTileStyle({
-            color: `color('#FFFFFF', ${opacity})`
+            color: `color('#FFFFFF', ${opacity})`,
           });
           // }
         });
@@ -549,13 +549,13 @@ export default {
       if (version == "0.0" || version == "1.0") {
         // m3d 0.x  1.x版本逻辑判断 type =0是模型 =1是示例化数据 =2是点云
         if (!children || children.length <= 0) return m3dType;
-        children.forEach(child => {
+        children.forEach((child) => {
           let tempType = vm.checkTypeNode(child, version, callback);
           m3dType = tempType || m3dType;
         });
       } else if (version == "2.0") {
         if (!children || children.length <= 0) return m3dType;
-        children.forEach(child => {
+        children.forEach((child) => {
           let tempType = vm.checkTypeNode(child, version, callback);
           m3dType = tempType ? tempType : m3dType;
         });
@@ -602,7 +602,7 @@ export default {
         }
       }
 
-      tileset.children.forEach(child => {
+      tileset.children.forEach((child) => {
         let tempType = vm.checkTypeNode(child, version, callback);
         m3dType = tempType ? tempType : m3dType;
       });
@@ -611,19 +611,19 @@ export default {
     },
     loopM3d(m3ds, version) {
       const vm = this;
-      const { vueKey, vueIndex, vueCesium, opacity, url } = this;
-      let dataCallback = cbtype => {
+      const { vueKey, vueIndex, vueCesium, Cesium, opacity, url } = this;
+      let dataCallback = (cbtype) => {
         if (loop) {
           window.clearInterval(loop);
           loop = undefined;
-          m3ds.forEach(m3d => {
+          m3ds.forEach((m3d) => {
             let type = vm.checkType(m3d);
             m3d.type = type || cbtype;
             switch (type) {
               case M3dType.Model:
               case M3dType.Instance:
                 m3d.style = new Cesium.Cesium3DTileStyle({
-                  color: `color('#FFFFFF', ${opacity})`
+                  color: `color('#FFFFFF', ${opacity})`,
                 });
                 break;
               case M3dType.CloudPoint:
@@ -639,12 +639,12 @@ export default {
             }
           });
           vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, {
-            url: url
+            url: url,
           });
         }
       };
       // let loop = window.setInterval(() => {
-      m3ds.forEach(m3d => {
+      m3ds.forEach((m3d) => {
         vm.checkType(m3d, dataCallback);
       });
       // }, 100);
@@ -658,17 +658,17 @@ export default {
       }
       let layerStr = layerString.replace(/layers=show:/i, "");
       let layerStrs = layerStr.split(",");
-      let layers = layerStrs.map(l => parseInt(l));
+      let layers = layerStrs.map((l) => parseInt(l));
       return layers;
     },
     changeLayerVisible(layers) {
       layers = layers || this.layerList;
-      const { vueKey, vueIndex, show } = this;
+      const { vueKey, vueIndex, show, vueCesium } = this;
       let find = vueCesium.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find) {
         let m3ds = find.source;
         if (!m3ds) return;
-        m3ds.forEach(m3d => {
+        m3ds.forEach((m3d) => {
           if (layers) {
             m3d.show = true;
             // @description cesium 1.84 (M3D 2.0)将layerIndex内部隐藏起来了
@@ -700,7 +700,7 @@ export default {
             layerIdxs: layerIndex,
             rtnLabel: false,
             objectIds: oid,
-            requestType: "POST"
+            requestType: "POST",
           },
           false,
           true
@@ -717,7 +717,7 @@ export default {
         }
       }
       return properties;
-    }
-  }
+    },
+  },
 };
 </script>
