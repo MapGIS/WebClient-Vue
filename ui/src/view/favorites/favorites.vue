@@ -215,6 +215,10 @@ export default {
   computed: {
     getImage() {
       return image => {
+        const appProductName = window._CONFIG.productName || "psmap";
+        if (appProductName === "psmap" && image.startsWith("/file")) {
+          return `${this.baseUrl}/${appProductName}${image}`;
+        }
         return `${this.baseUrl}${image}`;
       };
     }

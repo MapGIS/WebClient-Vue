@@ -286,8 +286,7 @@ export default {
         marker: {
           yOffset: 0,
           xOffset: 0,
-          markerUrl:
-            "/api/file/data/2023/09/22/测试图片_20230922092705A003.png",
+          markerUrl: "/file/data/2023/09/22/测试图片_20230922092705A003.png",
           rotation: 0,
           width: 20,
           imageScale: 1,
