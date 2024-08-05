@@ -82,6 +82,15 @@
     </mapgis-ui-row>
 
     <mapgis-ui-row>
+      <!-- <mapgis-ui-col :span="12" v-if="basicSetting.zoom !== undefined">
+        <mapgis-ui-switch-panel
+          class="odd"
+          size="small"
+          label="缩放控件"
+          :checked="basicSetting.zoom"
+          @changeChecked="enableZoom"
+        />
+      </mapgis-ui-col> -->
       <mapgis-ui-col :span="12">
         <mapgis-ui-switch-panel
           class="odd"
@@ -91,16 +100,13 @@
           @changeChecked="enableCompass"
         />
       </mapgis-ui-col>
-      <mapgis-ui-col :span="12" v-if="basicSetting.zoom !== undefined">
-        <mapgis-ui-switch-panel
-          class="odd"
-          size="small"
-          label="缩放控件"
-          :checked="basicSetting.zoom"
-          @changeChecked="enableZoom"
-        />
-      </mapgis-ui-col>
     </mapgis-ui-row>
+
+    <compass-position-setting
+      v-show="basicSetting.compass"
+      :position="compassPosition"
+      @updateCompassPosition="updateCompassPosition"
+    />
 
     <!-- <div class="dividerWrapper"><div class="divider" /></div> -->
 
@@ -153,22 +159,26 @@ import ServiceLayer from "../../UI/Controls/ServiceLayer";
 // import "@mapgis/cesium/dist/MapGIS/css/mapgis.css"
 import "./navigation-all.css";
 import StateBar from "../../UI/Controls/State/StateControl.vue";
+import CompassPositionSetting from "./CompassPositionSetting.vue";
 
 export default {
   name: "BasicSetting",
+  components: {
+    CompassPositionSetting,
+  },
   mixins: [ServiceLayer, StateBar],
   props: {
     initialStatebar: {
       type: Boolean,
-      default: false
+      default: false,
     },
     initialDepthTest: {
       type: Boolean,
-      default: false
+      default: false,
     },
     initialSceneMode: {
       type: Boolean,
-      default: false
+      default: false,
     },
     initBasicSetting: {
       type: Object,
@@ -181,20 +191,21 @@ export default {
           FPS: false,
           timeline: false,
           compass: false,
+          compassPosition: undefined,
           zoom: false,
           statebar: true,
           sceneMode: false,
           layerbrightness: 1.0,
           layercontrast: 1.0,
           layerhue: 0.0,
-          layersaturation: 1.0
+          layersaturation: 1.0,
         };
-      }
+      },
     },
     // 左侧板宽度
     stuffWidth: {
-      type: Number
-    }
+      type: Number,
+    },
   },
   computed: {
     basicSetting: {
@@ -203,13 +214,14 @@ export default {
       },
       set() {
         this.$emit("updateBasicSetting", this.basicSetting);
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       lyrBrtRange: [0, 3],
-      lyrHueRange: [-1, 1]
+      lyrHueRange: [-1, 1],
+      compassPosition: undefined,
     };
   },
   mounted() {
@@ -220,7 +232,7 @@ export default {
     );
     if (!manager) {
       window.vueCesium.SettingToolManager.addSource(vueKey, vueIndex, null, {
-        timeline: null
+        timeline: null,
       });
     }
     this.init();
@@ -231,15 +243,15 @@ export default {
         this.basicSetting.depthTest = e;
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     initBasicSetting: {
       handler(e) {
         this.init();
       },
       deep: true,
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   methods: {
     init() {
@@ -253,7 +265,7 @@ export default {
       );
       if (!manager) {
         window.vueCesium.SettingToolManager.addSource(vueKey, vueIndex, null, {
-          timeline: null
+          timeline: null,
         });
       }
       const {
@@ -270,7 +282,7 @@ export default {
         layerbrightness,
         layercontrast,
         layerhue,
-        layersaturation
+        layersaturation,
       } = this.basicSetting;
       this.enableEarth(earth);
       this.enableSkyAtmosphere(skyAtmosphere);
@@ -360,7 +372,7 @@ export default {
 
         if (vm.basicSetting.statebar) {
           //改变时间轴的上下位置
-          vm.$nextTick(function() {
+          vm.$nextTick(function () {
             let list = document.getElementsByClassName("mapgis-3d-statebar");
             let style = window.getComputedStyle(list[0]);
             if (style.bottom === "0px") {
@@ -425,7 +437,25 @@ export default {
       options.enableCompass = this.basicSetting.compass;
       options.enableZoomControls = this.basicSetting.zoom || false;
       viewer.createNavigationTool(options);
+      const self = this;
+      this.$nextTick(() => {
+        const compassDiv = document.querySelector(".compass");
+        if (compassDiv) {
+          self.compassPosition = self.basicSetting.compassPosition || {
+            anchor: "top-left",
+            horizontalOffset: this.stuffWidth,
+            verticalOffset: 400,
+          };
+        }
+      });
       // this.changeNavPos();
+    },
+
+    /**
+     * 更新罗盘位置配置信息
+     */
+    updateCompassPosition(e) {
+      this.basicSetting.compassPosition = e;
     },
     /*
      * 导航控件（罗盘控件和缩放控件的状态控制）
@@ -440,10 +470,15 @@ export default {
       options.enableCompass = this.basicSetting.compass;
       options.enableZoomControls = this.basicSetting.zoom || false;
       viewer.createNavigationTool(options);
+      const self = this;
       this.$nextTick(() => {
         const compassDiv = document.querySelector(".compass");
         if (compassDiv) {
-          compassDiv.style.left = `${this.stuffWidth}px`;
+          self.compassPosition = self.basicSetting.compassPosition || {
+            anchor: "top-left",
+            horizontalOffset: this.stuffWidth,
+            verticalOffset: 400,
+          };
         }
       });
       // this.changeNavPos();
@@ -504,7 +539,7 @@ export default {
 
       // 改变状态栏的上下位置
       if (vm.basicSetting.timeline) {
-        vm.$nextTick(function() {
+        vm.$nextTick(function () {
           let list = document.getElementsByClassName(
             "cesium-viewer-timelineContainer"
           );
@@ -517,7 +552,7 @@ export default {
         });
       } else {
         // 时间轴和状态栏都存在时关闭时间轴，状态栏复原到最下方
-        vm.$nextTick(function() {
+        vm.$nextTick(function () {
           let list = document.getElementsByClassName("mapgis-3d-statebar");
           let stateContainer = list[0];
           if (stateContainer) stateContainer.style.bottom = "0px";
@@ -534,22 +569,18 @@ export default {
         let rectangle3D = vm.viewer.camera.computeViewRectangle();
         // 若地球不在屏幕视野范围内，则恢复初始视角
         if (!rectangle3D) {
-          let {
-            north,
-            south,
-            east,
-            west
-          } = Cesium.Camera.DEFAULT_VIEW_RECTANGLE;
+          let { north, south, east, west } =
+            Cesium.Camera.DEFAULT_VIEW_RECTANGLE;
           let lon = Cesium.Math.toDegrees((east + west) / 2);
           let lat = Cesium.Math.toDegrees((north + south) / 2);
           const height = 16846164;
           vm.viewer.camera.setView({
-            destination: Cesium.Cartesian3.fromDegrees(lon, lat, height)
+            destination: Cesium.Cartesian3.fromDegrees(lon, lat, height),
           });
         }
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

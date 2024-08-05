@@ -36,6 +36,15 @@
     "timeline": false,
     // 是否显示罗盘控件
     "compass": false,
+    // 罗盘控件位置,默认为undefined
+    "compassPosition"：{
+      // 罗盘控件位置，"top-left","top-right","bottom-left","bottom-right"
+      "anchor": "top-left",
+      // 水平相对距离，对应left和right
+      "horizontalOffset": this.stuffWidth,
+      // 垂直相对距离，对应top和bottom
+      "verticalOffset": 400,
+    },
     // 是否显示缩放控件
     "zoom": false,
     // 是否显示状态栏
@@ -213,10 +222,10 @@ export default {
         top: "10px",
         left: "10px",
         width: "320px",
-        background: "#fff",
-      },
+        background: "#fff"
+      }
     };
-  },
+  }
 };
 </script>
 ```
