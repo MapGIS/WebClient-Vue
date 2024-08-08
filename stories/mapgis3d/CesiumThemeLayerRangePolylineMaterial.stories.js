@@ -6,19 +6,14 @@ export default {
   title: "三维/可视化/专题图/分段/线数据",
 };
 
-const Template = (args, {argTypes}) => ({
+const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  methods:{
-    load(data) {
-    },
-    unload(data) {
-    },
-    handlebbox(data) {
-    },
-    handleClick(data) {
-    },
-    handleHover(data) {
-    }
+  methods: {
+    load(data) {},
+    unload(data) {},
+    handlebbox(data) {},
+    handleClick(data) {},
+    handleHover(data) {},
   },
   data() {
     return {
@@ -29,88 +24,88 @@ const Template = (args, {argTypes}) => ({
         materialType: "PolylineTrailLink",
         styleGroups: [
           {
-            range: ['0.9', '1.1'],
+            range: ["0.9", "1.1"],
             style: {
               width: 10,
               color: "#ff0000",
             },
             material: {
-              image: `http://${window.webclient.ip}:${window.webclient.port}/material/arrow_1.png`,
+              image: `${window.domain}/material/arrow_1.png`,
               direction: 1.0,
               duration: 100000,
               gapColor: "#ffffff",
               dashLength: 16.0,
-              dashPattern: 255.0
-            }
-          }
-        ]
+              dashPattern: 255.0,
+            },
+          },
+        ],
       },
       themeOptions2: {
         hasMaterial: true,
         materialType: "PolylineTrailLink",
         styleGroups: [
           {
-            range: ['1.9', '2.1'],
+            range: ["1.9", "2.1"],
             style: {
               width: 10,
               color: "#00ff00",
             },
             material: {
-              image: `http://${window.webclient.ip}:${window.webclient.port}/material/arrow_1.png`,
+              image: `${window.domain}/material/arrow_1.png`,
               direction: 1.0,
               duration: 100000,
               gapColor: "#ffffff",
               dashLength: 16.0,
-              dashPattern: 255.0
-            }
-          }
-        ]
+              dashPattern: 255.0,
+            },
+          },
+        ],
       },
       themeOptions3: {
         hasMaterial: true,
         materialType: "PolylineTrailLink",
         styleGroups: [
           {
-            range: ['2.9', '3.1'],
+            range: ["2.9", "3.1"],
             style: {
               width: 10,
               color: "#0000ff",
             },
             material: {
-              image: `http://${window.webclient.ip}:${window.webclient.port}/material/arrow_1.png`,
+              image: `${window.domain}/material/arrow_1.png`,
               direction: 1.0,
               duration: 100000,
               gapColor: "#ffffff",
               dashLength: 16.0,
-              dashPattern: 255.0
-            }
-          }
-        ]
+              dashPattern: 255.0,
+            },
+          },
+        ],
       },
       themeOptions4: {
         hasMaterial: true,
         materialType: "PolylineTrailLink",
         styleGroups: [
           {
-            range: ['3.9', '4.1'],
+            range: ["3.9", "4.1"],
             style: {
               width: 10,
               color: "#ff00ff",
             },
             material: {
-              image: `http://${window.webclient.ip}:${window.webclient.port}/material/arrow_1.png`,
+              image: `${window.domain}/material/arrow_1.png`,
               direction: 1.0,
               duration: 100000,
               gapColor: "#ffffff",
               dashLength: 16.0,
-              dashPattern: 255.0
-            }
-          }
-        ]
-      }
+              dashPattern: 255.0,
+            },
+          },
+        ],
+      },
     };
   },
-  template:`
+  template: `
     <mapgis-web-scene :style="{height: '95vh'}">
       // <mapgis-3d-arcgis-tile-layer
       //   baseUrl="http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer"
@@ -136,19 +131,19 @@ const Template = (args, {argTypes}) => ({
       //   @themeHover="handleHover"
       // />
       // <mapgis-3d-theme-layer-custom 
-      //   baseUrl='http://${window.webclient.ip}:${window.webclient.port}/geojson/roadClass2.json'
+      //   baseUrl='${window.domain}/geojson/roadClass2.json'
       //   :themeOptions="themeOptions2"
       //   :type="type1"
       //   :field="field1"
       // />
       // <mapgis-3d-theme-layer-custom 
-      //   baseUrl='http://${window.webclient.ip}:${window.webclient.port}/geojson/roadClass3.json'
+      //   baseUrl='${window.domain}/geojson/roadClass3.json'
       //   :themeOptions="themeOptions3"
       //   :type="type1"
       //   :field="field1"
       // />
       // <mapgis-3d-theme-layer-custom 
-      //   baseUrl='http://${window.webclient.ip}:${window.webclient.port}/geojson/roadClass4.json'
+      //   baseUrl='${window.domain}/geojson/roadClass4.json'
       //   :themeOptions="themeOptions4"
       //   :type="type1"
       //   :field="field1"
@@ -159,7 +154,7 @@ const Template = (args, {argTypes}) => ({
 export const 线数据material = Template.bind({});
 线数据material.args = {
   // baseUrl: `http://${window.webclient.ip}/static/data/geojson/省级行政区.geojson`,
-  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/geojson/metro.json`,
+  baseUrl: `${window.domain}/geojson/metro.json`,
 
   type: "range",
   field: "x",
@@ -178,13 +173,13 @@ export const 线数据material = Template.bind({});
           color: "#ff0000",
         },
         material: {
-          image: `http://${window.webclient.ip}:${window.webclient.port}/img/arrow_1.png`,
+          image: `${window.domain}/img/arrow_1.png`,
           direction: 1.0,
           duration: 100000,
           gapColor: "ffffff",
           dashLength: 16.0,
-          dashPattern: 255.0
-        }
+          dashPattern: 255.0,
+        },
       },
       {
         // range: ['5号线', '6号线', '7号线', '8号线',],
@@ -195,13 +190,13 @@ export const 线数据material = Template.bind({});
           color: "#00ff00",
         },
         material: {
-          image: `http://${window.webclient.ip}:${window.webclient.port}/img/arrow_1.png`,
+          image: `${window.domain}/img/arrow_1.png`,
           direction: 2.0,
           duration: 1000,
           gapColor: "ffffff",
           dashlength: 8.0,
-          dashPattern: 255.0
-        }
+          dashPattern: 255.0,
+        },
       },
       {
         // range: ['11号线', '16号线', '21号线'],
@@ -212,16 +207,16 @@ export const 线数据material = Template.bind({});
           color: "#0000ff",
         },
         material: {
-          image: `http://${window.webclient.ip}:${window.webclient.port}/img/LinkPulse.png`,
+          image: `${window.domain}/img/LinkPulse.png`,
           direction: 1.0,
           duration: 1000,
           gapColor: "ffffff",
           dashLength: 320,
-          dashPattern: 2550.0
-        }
-      }
-    ]
-  }
+          dashPattern: 2550.0,
+        },
+      },
+    ],
+  },
 };
 线数据material.parameters = {
   docs: {

@@ -19,29 +19,33 @@ const Template = (args, { argTypes }) => ({
       link: true,
       url1:
         "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
-      url2: "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
+      url2:
+        "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
       rect: {},
       vueIndex1: undefined,
       vueKey1: undefined,
-      jsonUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/test.json`,
-      symbolUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/symbols.json`,
+      jsonUrl: `${window.domain}/标绘/test.json`,
+      symbolUrl: `${window.domain}/标绘/symbols.json`,
       vueIndex: 12345,
-      containers:[{vueIndex:12345,vueKey: "default",type:"cesium"},{vueIndex:12345,vueKey: "default",type:"mapbox"}],
-      layers: [{vueIndex:23456,vueKey: "default"}],
+      containers: [
+        { vueIndex: 12345, vueKey: "default", type: "cesium" },
+        { vueIndex: 12345, vueKey: "default", type: "mapbox" },
+      ],
+      layers: [{ vueIndex: 23456, vueKey: "default" }],
       manager: undefined,
       mapboxActive: false,
       rectCount: 0,
       bbox: [
         [116.2396164394222, 36.857699114405676],
-        [119.38483688908019,33.044482287500756],
+        [119.38483688908019, 33.044482287500756],
       ],
-      useIGS: false
+      useIGS: false,
     };
   },
   watch: {
     rect: function (next) {
       this.rectCount++;
-      if(this.rectCount > 1){
+      if (this.rectCount > 1) {
         const { east, north, south, west } = next["2d"];
         let map = this.map || window.map;
         let bbox = [
@@ -54,36 +58,45 @@ const Template = (args, { argTypes }) => ({
       }
     },
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     handleLoaded(e) {
       this.vueIndex1 = e.vueIndex;
       this.vueKey1 = e.vueKey;
       window.viewer = e.vm.viewer;
       e.vm.viewer.camera.flyTo({
-        destination: Cesium.Rectangle.fromDegrees(this.bbox[0][0],this.bbox[1][1],this.bbox[1][0],this.bbox[0][1]),
+        destination: Cesium.Rectangle.fromDegrees(
+          this.bbox[0][0],
+          this.bbox[1][1],
+          this.bbox[1][0],
+          this.bbox[0][1]
+        ),
         orientation: {
           heading: Cesium.Math.toRadians(0),
           pitch: Cesium.Math.toRadians(-90),
           roll: 0,
         },
-        duration: 1
-      })
+        duration: 1,
+      });
     },
     changeMode() {
       this.link = !this.link;
     },
     flyToRect(bounds) {
       window.viewer.camera.flyTo({
-        destination: Cesium.Rectangle.fromDegrees(bounds._sw.lng,bounds._sw.lat,bounds._ne.lng,bounds._ne.lat),
+        destination: Cesium.Rectangle.fromDegrees(
+          bounds._sw.lng,
+          bounds._sw.lat,
+          bounds._ne.lng,
+          bounds._ne.lat
+        ),
         orientation: {
           heading: Cesium.Math.toRadians(0),
           pitch: Cesium.Math.toRadians(-90),
           roll: 0,
         },
-        duration: 0.1
-      })
+        duration: 0.1,
+      });
     },
     handle2dLoad(e) {
       let vm = this;
@@ -91,36 +104,39 @@ const Template = (args, { argTypes }) => ({
       this.map.fitBounds(this.bbox, {
         duration: 0,
       });
-      this.map.on('wheel', function (e) {
+      this.map.on("wheel", function (e) {
         let bounds = vm.map.getBounds();
         vm.flyToRect(bounds);
       });
-      this.map.on('wheel', function (e) {
+      this.map.on("wheel", function (e) {
         let bounds = vm.map.getBounds();
         vm.flyToRect(bounds);
       });
-      this.map.on('mousedown', function (e) {
+      this.map.on("mousedown", function (e) {
         vm.mapboxActive = true;
       });
-      this.map.on('mouseup', function (e) {
+      this.map.on("mouseup", function (e) {
         vm.mapboxActive = false;
       });
       let canvas = new e.Plot.FabricLayer(map, e.Plot.PlotLayer2DGroup);
       canvas._containerId = map._container.id;
-      let mapboxManager = window.vueMap.MapManager.findSource("default", this.vueIndex);
-      if(!mapboxManager) {
+      let mapboxManager = window.vueMap.MapManager.findSource(
+        "default",
+        this.vueIndex
+      );
+      if (!mapboxManager) {
         window.vueMap.MapManager.addSource(this.vueKey, this.vueIndex, map, {
-          canvas: canvas
+          canvas: canvas,
         });
       }
       let fabricCanvas = canvas.getFabricCanvas();
-      fabricCanvas.on("mouse:move",function () {
-        if(vm.mapboxActive){
+      fabricCanvas.on("mouse:move", function () {
+        if (vm.mapboxActive) {
           let bounds = vm.map.getBounds();
           vm.flyToRect(bounds);
         }
       });
-    }
+    },
   },
   template: `<div class="mapgis-link-test">
     <div class="mapbox-item top-left">

@@ -1,6 +1,6 @@
-import wuhan from "../assets/geojson/wuhan";
+import wuhan_house from "../assets/geojson/wuhan_house";
 export default {
-  title: "二维/可视化/专题图/标签/多边形",
+  title: "二维/可视化/专题图/标签/点",
   argTypes: {
     dataSource: {
       description:
@@ -47,7 +47,9 @@ export default {
         "3.16、<span class='storybook-span'>enableIgs</span>(选填)：是否启用IGS服务计算多边形中心，仅多边形有效，默认不启用，必须填写baseUrl，会逐个计算要素的中心点，每个要素发一个请求，因此对网络有一定的要求而<br>" +
         "3.17、<span class='storybook-span'>baseUrl</span>(选填)：IGS服务的ip和端口号，例如'http://localhost:6163'<br>" +
         "",
-      defaultValue: { summary: "null" },
+      table: {
+        defaultValue: { summary: "null" },
+      },
     },
   },
 };
@@ -80,14 +82,14 @@ const Template = (args, { argTypes }) => ({
   },
 });
 
-export const 多边形 = Template.bind({});
-多边形.args = {
-  dataSource: wuhan,
+export const 点 = Template.bind({});
+点.args = {
+  dataSource: wuhan_house,
   type: "uniform",
-  field: "name",
+  field: "display_x",
   themeOptions: {
     textStyle: {
-      field: "name",
+      field: "Name",
       fontColor: "#FFFFFF",
       fontFamily: "宋体",
       fontSize: 14,

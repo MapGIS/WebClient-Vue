@@ -20,8 +20,7 @@ const Template = (args, { argTypes }) => ({
   components: { MapgisMvtLegend },
   data() {
     return {
-      mvtStyle:
-          `http://${window.webclient.ip}:${window.webclient.port}/${window.styles}/街道-墨卡托.json`,
+      mvtStyle: `${window.domain}/${window.styles}/街道-墨卡托.json`,
     };
   },
   methods: {

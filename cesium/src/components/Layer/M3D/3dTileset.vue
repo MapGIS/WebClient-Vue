@@ -39,7 +39,7 @@ export default {
     return {
       layerIndex: undefined,
       featureposition: undefined,
-      featureproperties: undefined
+      featureproperties: undefined,
     };
   },
   watch: {
@@ -56,16 +56,18 @@ export default {
       }
     },
     show(next) {
+      const { viewer } = this;
       const tileset = viewer.scene.layers.getCesium3DTilesetLayer(
         this.layerIndex
       );
       tileset.show = next;
-    }
+    },
   },
   methods: {
     createCesiumObject() {
+      const { viewer, Cesium } = this;
       return new Promise(
-        resolve => {
+        (resolve) => {
           const { $props, url, token } = this;
           const { headers } = $props;
           let layerIndex;
@@ -88,7 +90,7 @@ export default {
           this.layerIndex = layerIndex;
           resolve({ layerIndex });
         },
-        reject => {}
+        (reject) => {}
       );
       // let options = { ...$props, url: urlSource };
       // const tileset = new Cesium.Cesium3DTileset(options);
@@ -96,13 +98,13 @@ export default {
     getOptions() {
       const { $props } = this;
       let options = {};
-      Object.keys($props).forEach(function(key) {
+      Object.keys($props).forEach(function (key) {
         options[key] = $props[key];
       });
       return options;
     },
     changeOpacity(opacity) {
-      const { vueKey, vueIndex } = this;
+      const { vueKey, vueIndex, vueCesium, Cesium } = this;
       const vm = this;
       let find = vueCesium.Tileset3DManager.findSource(vueKey, vueIndex);
       if (find) {
@@ -110,7 +112,7 @@ export default {
         if (!tileset) return;
 
         tileset.style = new Cesium.Cesium3DTileStyle({
-          color: `color('#FFFFFF', ${opacity})`
+          color: `color('#FFFFFF', ${opacity})`,
         });
       }
     },
@@ -120,7 +122,7 @@ export default {
       if (tileset) {
         let tilesetLayer = [tileset];
         vueCesium.Tileset3DManager.addSource(vueKey, vueIndex, tileset, {
-          url: url
+          url: url,
         });
         vm.$emit("loaded", { tileset: tileset, m3d: tilesetLayer });
         vm.bindPopupEvent();
@@ -132,7 +134,7 @@ export default {
 
       const { popupOptions, highlightStyle, vueKey, vueIndex } = this;
       // const { color = "rgba(255, 255, 0, 0.6)" } = highlightStyle;
-      const { viewer } = this;
+      const { viewer, Cesium } = this;
       const { version, layerIndex } = this;
 
       const tileset = viewer.scene.layers.getCesium3DTilesetLayer(layerIndex);
@@ -158,7 +160,7 @@ export default {
         const propertyNames = feature.getPropertyNames();
         if (propertyNames && propertyNames.length > 0) {
           const properties = {};
-          propertyNames.forEach(item => {
+          propertyNames.forEach((item) => {
             properties[item] = feature.getProperty(item);
           });
           vm.featureproperties = properties;
@@ -171,12 +173,13 @@ export default {
     },
     cancelFeature() {
       if (this.feature) {
+        const { Cesium } = this;
         this.feature.color = new Cesium.Color();
         this.feature = null;
         this.featureposition = undefined;
         this.featureproperties = undefined;
       }
-    }
-  }
+    },
+  },
 };
 </script>

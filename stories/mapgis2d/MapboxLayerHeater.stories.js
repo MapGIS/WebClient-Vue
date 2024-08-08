@@ -5,8 +5,7 @@ export default {
   component: MapgisHeaterLayer,
   argTypes: {
     field: "驻留时间",
-    geojson:
-      `http://${window.webclient.ip}:${window.webclient.port}/static/data/geojson/chinamobile_1000.geojson`
+    geojson: `${window.domain}/static/data/geojson/chinamobile_1000.geojson`,
   },
 };
 
@@ -37,6 +36,5 @@ const Template = (args, { argTypes }) => ({
 export const 热力 = Template.bind({});
 热力.args = {
   field: "驻留时间",
-  geojson:
-      `http://${window.webclient.ip}:${window.webclient.port}/static/data/geojson/chinamobile_1000.geojson`,
+  geojson: `${window.domain}/static/data/geojson/chinamobile_1000.geojson`,
 };

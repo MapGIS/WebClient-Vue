@@ -1,9 +1,9 @@
 {
   "name": "@mapgis/webclient-vue-mapboxgl",
-  "version": "17.0.0",
+  "version": "17.0.1",
   "description": "中地数码webclient-vue-mapboxgl",
-  "main1": "dist-libs/webclient-vue-mapboxgl.umd.min.js",
-  "module": "src/main.js",
+  "main": "dist-libs/webclient-vue-mapboxgl.umd.min.js",
+  "module1": "src/main.js",
   "scripts": {
     "build": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-mapboxgl src/main.js",
     "serve": "vue-cli-service build --target lib --name webclient-vue-mapboxgl src/index.js --watch",

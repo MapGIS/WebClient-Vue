@@ -87,7 +87,7 @@
                   </mapgis-ui-tooltip>
                 </mapgis-ui-input-number-addon>
               </mapgis-ui-col>
-              <mapgis-ui-col :span="12" style="paddingTop:8px;">
+              <!-- <mapgis-ui-col :span="12" style="paddingTop:8px;">
                 <mapgis-ui-input-number-addon
                   v-model.number="coordinate.height"
                   :min="0"
@@ -96,7 +96,7 @@
                     <mapgis-ui-iconfont type="mapgis-Zzhouyidong" />
                   </mapgis-ui-tooltip>
                 </mapgis-ui-input-number-addon>
-              </mapgis-ui-col>
+              </mapgis-ui-col> -->
             </mapgis-ui-row>
 
             <!-- <mapgis-ui-form-item label="x坐标">
@@ -248,11 +248,10 @@ export default {
     unmount() {
       let { vueCesium, vueKey, vueIndex } = this;
       let tool = this.findRotateTool();
-      if(tool){
-        try{
-          tool.stop()
-        }catch{
-        }
+      if (tool) {
+        try {
+          tool.stop();
+        } catch {}
       }
       vueCesium.RotateManager.deleteSource(vueKey, vueIndex);
     },
@@ -330,28 +329,13 @@ export default {
           let cartographic1 = vm.Cesium.Ellipsoid.WGS84.cartesianToCartographic(
             position1
           );
-          let feature = vm.viewer.scene.pick(event.position);
-          if (feature == undefined) {
-            vm.coordinate.longitude = Cesium.Math.toDegrees(
-              cartographic1.longitude
-            );
-            vm.coordinate.latitude = Cesium.Math.toDegrees(
-              cartographic1.latitude
-            );
-            vm.coordinate.height = cartographic1.height;
-          } else if (feature instanceof vm.Cesium.Cesium3DTileFeature) {
-            let cartesian = vm.viewer.scene.pickPosition(event.position);
-            if (vm.Cesium.defined(cartesian)) {
-              let cartographic = Cesium.Cartographic.fromCartesian(cartesian);
-              vm.coordinate.longitude = Cesium.Math.toDegrees(
-                cartographic.longitude
-              );
-              vm.coordinate.latitude = Cesium.Math.toDegrees(
-                cartographic.latitude
-              );
-              vm.coordinate.height = cartographic.height;
-            }
-          }
+          vm.coordinate.longitude = Cesium.Math.toDegrees(
+            cartographic1.longitude
+          );
+          vm.coordinate.latitude = Cesium.Math.toDegrees(
+            cartographic1.latitude
+          );
+          vm.coordinate.height = cartographic1.height;
         }, vm.Cesium.ScreenSpaceEventType.LEFT_CLICK);
       }
     },

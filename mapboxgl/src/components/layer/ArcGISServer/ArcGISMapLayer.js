@@ -9,7 +9,7 @@ export default {
       type: String,
       default: null,
     },
-    type: {
+    renderMode: {
       type: String,
       default: "raster",
     },
@@ -69,8 +69,8 @@ export default {
         }
       });
 
-      if (this.type) {
-        this.$watch("type", function (next) {
+      if (this.renderMode) {
+        this.$watch("renderMode", function (next) {
           if (this.initial) return;
           if (next !== "") {
             this.$_deferredUnMount();
@@ -130,9 +130,9 @@ export default {
       this.$_init();
       let source;
 
-      let type = this.type;
+      let renderMode = this.renderMode;
 
-      if (type === "image-map") {
+      if (renderMode === "image-map") {
         // image-map类型
         source = {
           url: this._url,

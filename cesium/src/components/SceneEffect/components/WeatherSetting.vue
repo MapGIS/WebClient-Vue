@@ -180,32 +180,32 @@ export default {
           skybox: false,
           clouds: false,
           cloudsParams: {
-            cloudsduration: 5
+            cloudsduration: 5,
           },
           rain: false,
           rainParams: {
             speed: 18,
             rainOpacity: 0.6,
             angle: -30,
-            length: 1
+            length: 1,
           },
           snow: false,
           snowParams: {
             size: 5,
-            density: 5
+            density: 5,
           },
           fog: false,
           fogParams: {
             fogOpacity: 0.5,
-            color: "#FFFFFF"
+            color: "#FFFFFF",
           },
           surficialFog: true,
           surfFogParams: {
-            surfFogDst: 0.0002
-          }
+            surfFogDst: 0.0002,
+          },
         };
-      }
-    }
+      },
+    },
   },
   computed: {
     weatherSetting: {
@@ -214,8 +214,8 @@ export default {
       },
       set() {
         this.$emit("updateWeatherSetting", this.weatherSetting);
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -235,7 +235,7 @@ export default {
       densityRange: [5, 20],
       //雾的透明度范围
       fogOpacityRange: [0.0, 1.0],
-      surfFogDstRange: [0.0002, 0.002]
+      surfFogDstRange: [0.0002, 0.002],
     };
   },
   watch: {
@@ -244,8 +244,8 @@ export default {
         this.init();
       },
       deep: true,
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   mounted() {
     const { vueKey, vueIndex } = this;
@@ -258,7 +258,7 @@ export default {
         SkyBox: null,
         Rain: null,
         Fog: null,
-        Snow: null
+        Snow: null,
       }
     );
   },
@@ -278,7 +278,7 @@ export default {
         fog,
         fogParams,
         surficialFog,
-        surfFogParams
+        surfFogParams,
       } = this.weatherSetting;
       this.enableSun(sun);
       this.enableMoon(moon);
@@ -328,16 +328,16 @@ export default {
         if (sunPosition.x !== 0 && sunPosition.y !== 0 && sunPosition !== 0) {
           viewer.camera.flyTo({
             destination: new Cesium.Cartesian3(
-              -sunPosition.x / 1000,
-              -sunPosition.y / 1000,
-              -sunPosition.z / 2000
+              -sunPosition.x / 2000,
+              -sunPosition.y / 2000,
+              -sunPosition.z / 4000
             ),
             orientation: {
-              heading: 0,
+              heading: Cesium.Math.toRadians(90),
               pitch: Cesium.Math.toRadians(-90),
-              roll: 0
+              roll: Cesium.Math.toRadians(-20),
             },
-            duration: 0.5
+            duration: 0.5,
           });
         } else {
           viewer.camera.flyHome(0.5);
@@ -374,13 +374,10 @@ export default {
             orientation: {
               heading: 0,
               pitch: Cesium.Math.toRadians(90),
-              roll: 0
+              roll: 0,
             },
-            duration: 0.5
+            duration: 0.5,
           });
-
-          let hpRange = new Cesium.HeadingPitchRange(0, 90, 100000000);
-          viewer.camera.lookAt(moonPosition, hpRange);
         } else {
           viewer.camera.flyHome(0.5);
         }
@@ -409,7 +406,7 @@ export default {
     enableSkyBox() {
       const { vueKey, vueIndex, viewer, Cesium } = this;
       let skyBox = new Cesium.GlobeEffect(viewer, {
-        cloudsDuration: 100000
+        cloudsDuration: 100000,
       });
       skyBox.addDefaultSkyBox("SkyBox3"); //添加天空盒默认样式1
       // skyBox.addDefaultSkyBox('SkyBox2'); //添加天空盒默认样式2
@@ -454,7 +451,7 @@ export default {
 
       let vm = this;
 
-      setTimeout(function() {
+      setTimeout(function () {
         if (vm.weatherSetting.clouds) {
           vm.enableClouds();
         } else {
@@ -480,7 +477,7 @@ export default {
       let durationInms = this.weatherSetting.cloudsParams.cloudsduration * 1000;
       let clouds = new Cesium.GlobeEffect(viewer, {
         cloudsDuration: durationInms,
-        cloudsImgSource: Cesium.buildModuleUrl("Assets/Images/clouds.png")
+        cloudsImgSource: Cesium.buildModuleUrl("Assets/Images/clouds.png"),
       });
       clouds.addGlobeClouds(); //添加云层
       window.vueCesium["SettingToolManager"].changeOptions(
@@ -515,7 +512,7 @@ export default {
 
       let vm = this;
 
-      setTimeout(function() {
+      setTimeout(function () {
         if (vm.weatherSetting.rain) {
           vm.enableRain();
         } else {
@@ -560,7 +557,7 @@ export default {
 
       let vm = this;
 
-      setTimeout(function() {
+      setTimeout(function () {
         if (vm.weatherSetting.snow) {
           vm.enableSnow();
         } else {
@@ -591,7 +588,7 @@ export default {
 
       let vm = this;
 
-      setTimeout(function() {
+      setTimeout(function () {
         if (vm.weatherSetting.fog) {
           vm.enableFog();
         } else {
@@ -609,17 +606,13 @@ export default {
     },
 
     enableRain() {
-      const {
-        speed,
-        angle,
-        length,
-        rainOpacity
-      } = this.weatherSetting.rainParams;
+      const { speed, angle, length, rainOpacity } =
+        this.weatherSetting.rainParams;
       let rainOptions = {
         speed,
         angle,
         rainLength: length,
-        alpha: rainOpacity
+        alpha: rainOpacity,
       };
       this.$_enableWeather("Rain", rainOptions);
     },
@@ -627,7 +620,7 @@ export default {
       const { density, size } = this.weatherSetting.snowParams;
       let snowOptions = {
         size: density,
-        scale: size
+        scale: size,
       };
       this.$_enableWeather("Snow", snowOptions);
     },
@@ -638,7 +631,7 @@ export default {
       );
       let fogOptions = {
         fogcolor: color,
-        alpha: this.weatherSetting.fogParams.fogOpacity
+        alpha: this.weatherSetting.fogParams.fogOpacity,
       };
       this.$_enableWeather("Fog", fogOptions);
     },
@@ -692,7 +685,7 @@ export default {
         vueIndex
       );
       if (manager && manager.options) {
-        Object.keys(manager.options).forEach(function(name) {
+        Object.keys(manager.options).forEach(function (name) {
           if (name === WeatherName && manager.options[WeatherName]) {
             switch (WeatherName) {
               case "Rain":
@@ -732,8 +725,8 @@ export default {
       viewer.scene.fog.density = this.weatherSetting.surfFogParams.surfFogDst;
       // viewer.scene.fog.minimumBrightness = this.surfFogMinBrt;
       viewer.scene.fog.enabled = this.weatherSetting.surficialFog;
-    }
-  }
+    },
+  },
 };
 </script>
 

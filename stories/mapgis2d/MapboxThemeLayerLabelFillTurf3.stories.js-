@@ -1,6 +1,6 @@
 import wuhan from "../assets/geojson/wuhan";
 export default {
-  title: "二维/可视化/专题图/标签/多边形",
+  title: "二维/图层/专题图/标签/多边形/IGS生成标签(10.5以后可用)",
   argTypes: {
     dataSource: {
       description:
@@ -80,13 +80,15 @@ const Template = (args, { argTypes }) => ({
   },
 });
 
-export const 多边形 = Template.bind({});
-多边形.args = {
+export const IGS生成标签 = Template.bind({});
+IGS生成标签.args = {
   dataSource: wuhan,
   type: "uniform",
   field: "name",
   themeOptions: {
     textStyle: {
+      enableIgs: true,
+      baseUrl: `${window.domain}`,
       field: "name",
       fontColor: "#FFFFFF",
       fontFamily: "宋体",

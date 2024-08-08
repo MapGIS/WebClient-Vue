@@ -14,7 +14,6 @@ ui/dist-libs
 ui/node_modules
 dist
 package-lock.json
-yarn.lock
 stories/public/cesium
 stories/public/static/color
 

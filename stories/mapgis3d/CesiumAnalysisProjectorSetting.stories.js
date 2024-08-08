@@ -75,7 +75,7 @@ const Template = (args, { argTypes }) => ({
 export const 投放配置 = Template.bind({});
 投放配置.args = {
   m3dUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:ZondyModels`,
-  modelUrl: `http://${window.webclient.ip}:${window.webclient.port}/CesiumModels/Cesium_Camera.glb`,
+  modelUrl: `${window.domain}/CesiumModels/Cesium_Camera.glb`,
   modelOffset: { headingOffset: -90, pitchOffset: 0, rollOffset: 0 },
   hideVPInvisible: false,
   settings: {
@@ -88,7 +88,7 @@ export const 投放配置 = Template.bind({});
       imgUrl: "",
       videoSource: {
         protocol: "m3u8",
-        videoUrl: `http://${window.webclient.ip}:${window.webclient.port}/record/video3/20211221/out.m3u8`,
+        videoUrl: `${window.domain}/record/video3/20211221/out.m3u8`,
       },
       cameraPosition: {
         x: 114.4006886798949,

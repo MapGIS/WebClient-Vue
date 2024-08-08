@@ -137,9 +137,9 @@ const Template = (args, { argTypes }) => ({
 
 export const 标绘 = Template.bind({});
 标绘.args = {
-  symbolUrl: `http://${window.webclient.ip}:${window.webclient.port}/标绘/symbols.json`,
-  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/`,
-  useIGS: false
+  symbolUrl: `${window.domain}/标绘/symbols.json`,
+  baseUrl: `${window.domain}/`,
+  useIGS: false,
   // 打包时使用
   // symbolUrl: `http://${window.webclient.staticIP}:8086/storybook/标绘/symbols.json`,
 };

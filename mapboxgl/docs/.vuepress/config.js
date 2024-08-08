@@ -3,7 +3,7 @@ module.exports = {
   // description: "Combine powers of Mapbox GL JS and Vue.js",
   dest: "dist-docs",
   // head: [["link", { rel: "icon", href: "/favicon.ico" }]],
-  // base: "/vue-mapbox/",
+  base: "/static/modules/component/api/vue-mapboxgl/",
 
   locales: {
     "/": {
@@ -118,7 +118,7 @@ module.exports = {
           },
           {
             text: "WebClient",
-            link: "http://develop.smaryun.com",
+            link: "http://webclient.smaryun.com",
           },
           { text: "开源", link: "https://github.com/MapGIS/WebClient-Vue" },
         ],
@@ -283,7 +283,7 @@ module.exports = {
     [
       "link",
       {
-        href: "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.css",
+        href: "http://develop.smaryun.com/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.css",
         rel: "stylesheet",
         type: "text/css",
       },
@@ -291,7 +291,7 @@ module.exports = {
     [
       "script",
       {
-        src: "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.umd.js",
+        src: "http://develop.smaryun.com/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.umd.js",
       },
     ],
     /* [
