@@ -355,6 +355,11 @@ export default {
     rainAngle: {
       type: Number,
       default: 30
+    },
+    // 当积水仿真执行错误时(例如计算中途发现没有地形数据)，关闭遮罩的延时
+    maskCloseTime: {
+      type: Number,
+      default: 1000
     }
   },
   data() {
@@ -865,7 +870,7 @@ export default {
         setTimeout(function () {
           vm.stopSimulation()
           vm.$message.warn('该绘制范围内，未检测到地形数据，在绘制几何时，请确保绘制区域内包含了地形数据！')
-        },  1000)
+        },  vm.maskCloseTime)
       } else if (eventtype == "minmax") {
         let min = eventdata.minHeight;
         let max = eventdata.maxHeight;
