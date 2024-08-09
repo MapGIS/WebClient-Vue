@@ -355,6 +355,11 @@ export default {
     rainAngle: {
       type: Number,
       default: 30
+    },
+    // 当积水仿真执行错误时(例如计算中途发现没有地形数据)，关闭遮罩的延时
+    maskCloseTime: {
+      type: Number,
+      default: 1000
     }
   },
   data() {
@@ -612,6 +617,13 @@ export default {
       const { Cesium, viewer } = this;
       const vm = this;
       if (viewer.terrainProvider) {
+        // fix(5992): 积水仿真点击后不出结果
+        // 修改人: 杨琨 2024-8-9
+        // 修改说明: 积水仿真内部使用了填挖方分析，填挖方分析目前仅支持SKT地形和MapGIS地形，不支持自带地形，因此使用自带地形时，不进行积水仿真
+        if (viewer.terrainProvider instanceof Cesium.EllipsoidTerrainProvider) {
+            vm.$message.warn('使用积水仿真功能时，请添加一个SKT地形图层或者MapGIS地形图层！')
+            return false
+        }
         if (!vm.pondingPanelShow) {
           // pondingPanelShow为false，面板隐藏，模拟区域通过参数传入
           vm.stopCaculate = false;
@@ -734,10 +746,17 @@ export default {
       let minH, maxH;
       viewer.terrainProvider.readyPromise
         .then(function() {
-          maxH = viewer.terrainProvider.range3D.zMax;
-          // //将地形的最大高程设置为积水上涨高度的上限
-          // vm.maxH = Math.round(maxH * 100) / 100;
-          minH = viewer.terrainProvider.range3D.zMin;
+          // fix(5992): 积水仿真点击后不出结果
+          // 修改人: 杨琨 2024-8-9
+          // 修改说明: 积水仿真必须要有一个场景高度范围，默认从地形上取，只有MapGIS地形有三维范围，SKT地形没有三维范围
+          // 当场景里只添加了SKT地形数据(元数据中只有二维范围，没有三维范围)而没有添加其他三维数据时，无法获取场景的高度范围，因此直接设置为珠穆朗玛峰的高度
+          if (!viewer.terrainProvider.range3D) {
+            maxH = 8848.86;
+            minH = 0;
+          } else {
+            maxH = viewer.terrainProvider.range3D.zMax;
+            minH = viewer.terrainProvider.range3D.zMin;
+          }
         })
         .otherwise(function(err) {
           console.log(err);
@@ -842,7 +861,17 @@ export default {
       // console.log(eventtype, eventdata);
       const vm = this;
 
-      if (eventtype == "minmax") {
+      // fix(5992): 积水仿真点击后不出结果
+      // 修改人: 杨琨 2024-8-9
+      // 修改说明: 在场景中添加一个地形服务，其范围为一个矩形，矩形范围内不一定全有地形数据，
+      // 当绘制区域内完全没有地形数据时，填挖方分析会无限次执行(依据computePondingHeight内的判断方法)
+      // 因此当判断填挖方体积都为0时，取消积水仿真分析，给1000毫秒缓存，使得遮罩消失的更自然
+      if (eventdata.cutVolume === 0 && eventdata.fillVolume === 0) {
+        setTimeout(function () {
+          vm.stopSimulation()
+          vm.$message.warn('该绘制范围内，未检测到地形数据，在绘制几何时，请确保绘制区域内包含了地形数据！')
+        },  vm.maskCloseTime)
+      } else if (eventtype == "minmax") {
         let min = eventdata.minHeight;
         let max = eventdata.maxHeight;
         // console.log("minmax callback");
