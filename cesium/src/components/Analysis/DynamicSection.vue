@@ -18,7 +18,7 @@
             v-for="(option, index) in checkboxOptions"
             :key="`model-${index}`"
           >
-            <mapgis-ui-checkbox :value="option.value" style="line-height:32px;" >
+            <mapgis-ui-checkbox :value="option.value" style="line-height: 32px">
               {{ option.label }}
             </mapgis-ui-checkbox>
           </mapgis-ui-row>
@@ -60,7 +60,7 @@
             style="width: 100%"
           />
         </mapgis-ui-form-item>
-        
+
         <!-- <mapgis-ui-form-item label="剖切距离">
           <mapgis-ui-slider
             v-model="distanceCopy"
@@ -72,13 +72,13 @@
         </mapgis-ui-form-item> -->
       </mapgis-ui-setting-form>
       <mapgis-ui-input-number-panel
-          size="large"
-          label="剖切距离"
-          :range="[min, max]"
-          v-model="distanceCopy"
-          @change="setDistance"
-          :disabled="readonly"
-        />
+        size="large"
+        label="剖切距离"
+        :range="[min, max]"
+        v-model="distanceCopy"
+        @change="setDistance"
+        :disabled="readonly"
+      />
       <mapgis-ui-setting-footer>
         <mapgis-ui-button type="primary" @click="startClipping">
           分析
@@ -104,27 +104,27 @@ export default {
     // 模型集合
     models: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     axis: {
       type: String,
-      default: "X"
+      default: "X",
     },
     color: {
       type: String,
-      default: "rgba(200,200,200,0.5)"
+      default: "rgba(200,200,200,0.5)",
     },
     time: {
       type: Number,
-      default: 10
+      default: 10,
     },
     distance: {
       type: Number,
-      default: 0
+      default: 0,
     },
     layout: {
       type: String,
-      default: "vertical" // 'horizontal' 'vertical' 'inline'
+      default: "vertical", // 'horizontal' 'vertical' 'inline'
     },
   },
   data() {
@@ -160,18 +160,21 @@ export default {
       checked: [],
 
       // 提示信息
-      info:
-        "模型剖切支持对多个模型图层同时进行剖切分析,通常这些图层描述的是用户感兴趣的同一个空间内不同的构成元素，如：一个图层描述地上模型层，一个描述地下模型层，可以通过剖切分析同时剖切地上地下模型，以查看地上地下模型内部结构。",
-      reverse: false
+      info: "模型剖切支持对多个模型图层同时进行剖切分析,通常这些图层描述的是用户感兴趣的同一个空间内不同的构成元素，如：一个图层描述地上模型层，一个描述地下模型层，可以通过剖切分析同时剖切地上地下模型，以查看地上地下模型内部结构。",
+      reverse: false,
+      // 模型集包围球
+      mergeLayersBoundingSphere: 0,
+      scaleHeight: 2,
+      scaleWidth: 2,
     };
   },
   watch: {
     models: {
-      handler: function(layers) {
+      handler: function (layers) {
         this.checkboxOptions = [];
         this.vueIndexs = [];
         this.layerIndexs = [];
-        layers.forEach(layer => {
+        layers.forEach((layer) => {
           const { title, vueIndex } = layer;
           const obj = { label: title, value: vueIndex };
           this.checkboxOptions.push(obj);
@@ -179,46 +182,46 @@ export default {
         this._removeDynaCut();
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     axis: {
       immediate: true,
-      handler: function() {
+      handler: function () {
         this.axisCopy = this.axis;
-      }
+      },
     },
     color: {
       immediate: true,
-      handler: function() {
+      handler: function () {
         this.colorCopy = this.color;
-      }
+      },
     },
     colorCopy: {
       immediate: true,
-      handler: function() {
+      handler: function () {
         this.changePlaneColor(this._edgeColor());
-      }
+      },
     },
     time: {
       immediate: true,
-      handler: function() {
+      handler: function () {
         this.timeCopy = this.time;
-      }
+      },
     },
     distance: {
       immediate: true,
-      handler: function() {
+      handler: function () {
         this.distanceCopy = this.distance;
-      }
+      },
     },
     axisCopy: {
       deep: true,
       immediate: true,
-      handler: function() {
+      handler: function () {
         this._getMaxMin();
         this.startClipping();
-      }
-    }
+      },
+    },
   },
   created() {},
   mounted() {
@@ -231,24 +234,24 @@ export default {
     async createCesiumObject() {
       const { baseUrl, options } = this;
       return new Promise(
-        resolve => {
+        (resolve) => {
           resolve();
         },
-        reject => {}
+        (reject) => {}
       );
     },
     mount() {
       const { viewer, vueCesium, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function(dataSource) {
+      promise.then(function (dataSource) {
         vm.$emit("load", vm);
         vueCesium.DynamicSectionAnalysisManager.addSource(
           vueKey,
           vueIndex,
           dataSource,
           {
-            dynamicSectionAnalysis: null
+            dynamicSectionAnalysis: null,
           }
         );
       });
@@ -281,7 +284,7 @@ export default {
      * 获取剖切距离的最大最小值
      */
     _getMaxMin() {
-      this._m3dIsReady().then(m3dSetArray => {
+      this._m3dIsReady().then((m3dSetArray) => {
         if (m3dSetArray && m3dSetArray.length > 0) {
           const range = this._getM3DSetArrayRange(m3dSetArray);
           this._getMaxMinByRange(range);
@@ -297,7 +300,7 @@ export default {
       return new Promise((resolve, reject) => {
         if (checked.length > 0) {
           this.$_getAll3DTileSetArray(
-            function(m3ds) {
+            function (m3ds) {
               if (m3ds && m3ds.length > 0) {
                 resolve(m3ds);
               } else {
@@ -403,7 +406,7 @@ export default {
     startClipping() {
       this._removeDynaCut();
       this._clearTimer();
-      this._m3dIsReady().then(m3dSetArray => {
+      this._m3dIsReady().then((m3dSetArray) => {
         let { vueCesium, vueKey, vueIndex } = this;
         let find = vueCesium.DynamicSectionAnalysisManager.findSource(
           vueKey,
@@ -423,8 +426,8 @@ export default {
           distance: this.distanceCopy || 0,
           color: this._edgeColor(),
           // 剖切辅助面的宽高缩放比(基于模型球的半径)
-          scaleHeight: 2.0,
-          scaleWidth: 2.0
+          scaleHeight: this.scaleHeight,
+          scaleWidth: this.scaleWidth,
         });
         vueCesium.DynamicSectionAnalysisManager.changeOptions(
           vueKey,
@@ -484,22 +487,34 @@ export default {
       let max = 10000;
       let min = -max;
       let length = max - min;
+      // 获取模型集包围球的半径
+      const { radius } = this.mergeLayersBoundingSphere;
       switch (this.axisCopy) {
         case "X":
           this.min = xmin;
           this.max = xmax;
           this.distanceCopy = (xmin + xmax) / 2;
+          // 如果是x轴，那么剖切面的宽是y方向，高是z方向
+          // 因为剖切面是基于包围球的半径计算宽高的，这里使用剖切面的边长除以包围球，计算出对应的scale，接口中，会基于包围球半径和scale计算出剖切面的宽高
+          this.scaleHeight = (zmax - zmin) / radius;
+          this.scaleWidth = (ymax - ymin) / radius;
           break;
         case "Y":
           this.min = ymin;
           this.max = ymax;
           this.distanceCopy = (ymin + ymax) / 2;
+          // 如果是y轴，那么剖切面的宽是x方向，高是z方向
+          this.scaleHeight = (zmax - zmin) / radius;
+          this.scaleWidth = (xmax - xmin) / radius;
           break;
         case "Z":
           const height = zmax - zmin;
           this.min = -height;
           this.max = height;
           this.distanceCopy = 0;
+          // 如果是z轴，那么剖切面的宽是x方向，高是y方向
+          this.scaleHeight = (ymax - ymin) / radius;
+          this.scaleWidth = (xmax - xmin) / radius;
           break;
         default:
           break;
@@ -515,12 +530,12 @@ export default {
       let ymax;
       let zmin;
       let zmax;
-      const boundingSphere = this.Cesium.AlgorithmLib.mergeLayersBoundingSphere(
-        m3dSetArray
-      );
+      this.mergeLayersBoundingSphere =
+        this.Cesium.AlgorithmLib.mergeLayersBoundingSphere(m3dSetArray);
+
       for (let i = 0; i < m3dSetArray.length; i++) {
         const m3d = m3dSetArray[i];
-        const range = this._getM3DSetRange(m3d, boundingSphere);
+        const range = this._getM3DSetRange(m3d, this.mergeLayersBoundingSphere);
         if (!range) {
           continue;
         }
@@ -566,16 +581,14 @@ export default {
 
       if (m3dSet.constructor.name == "Cesium3DTileset") {
         let range = { xmin, ymin, xmax, ymax, zmin, zmax };
-        Object.keys(range).forEach(item => {
+        Object.keys(range).forEach((item) => {
           if (item == "xmin" || item == "ymin")
             range[item] = -layersBoundingSphereRadius;
           if (item == "xmax" || item == "ymax")
             range[item] = layersBoundingSphereRadius;
-          if (item == "zmin")
-            range[item] = -layersBoundingSphereRadius/2;
-          if (item == "zmax")
-            range[item] = layersBoundingSphereRadius/2;
-        })
+          if (item == "zmin") range[item] = -layersBoundingSphereRadius / 2;
+          if (item == "zmax") range[item] = layersBoundingSphereRadius / 2;
+        });
         return range;
       }
 
@@ -640,8 +653,8 @@ export default {
       xmax = northeastCornerLocal.x - layersBoundingSphereCenterLocal.x;
       ymax = northeastCornerLocal.y - layersBoundingSphereCenterLocal.y;
       return { xmin, ymin, xmax, ymax, zmin, zmax };
-    }
-  }
+    },
+  },
 };
 </script>
 
