@@ -17,6 +17,7 @@
             :disabled="disableLayerSelect"
             :autoWidth="true"
             size="default"
+            v-model="innerVueIndex"
             @change="handleSelectChange"
             placeholder="请选择图层"
           >
@@ -77,7 +78,7 @@
               :class="{
                 'mapgis-3d-stratified-household-span': true,
                 'mapgis-3d-stratified-household-span-inline': true,
-                select: selectLayerIndex == layerIndex
+                select: selectLayerIndex == layerIndex,
               }"
             >
               <span v-if="title && title.indexOf(searchValue) > -1">
@@ -100,9 +101,9 @@
                   :type="s.icon()"
                   :class="{
                     iconfont: true,
-                    'iconfont-disabled': !enableStratifiedHouse
+                    'iconfont-disabled': !enableStratifiedHouse,
                   }"
-                  style="marginLeft:8px;"
+                  style="marginleft: 8px"
                   @click="
                     s.click({
                       title,
@@ -111,7 +112,7 @@
                       gdbp,
                       layerIndex,
                       key,
-                      guid
+                      guid,
                     })
                   "
                 />
@@ -185,7 +186,7 @@ export default {
   props: {
     getProjectorStatus: {
       type: Function,
-      default: () => {}
+      default: () => {},
     },
     outStyle: {
       type: Object,
@@ -198,9 +199,9 @@ export default {
           height: "450px",
           width: "270px",
           top: "0px",
-          left: "0px"
+          left: "0px",
         };
-      }
+      },
     },
     /**
      * @description 分层分户的图层列表, 每个内部{title, vueIndex},
@@ -215,7 +216,7 @@ export default {
       type: Object,
       default: () => {
         return { popupType: "card" };
-      }
+      },
     },
     enableCollapse: { type: Boolean, default: true },
     enableStratifiedHouse: { type: Boolean, default: false },
@@ -225,35 +226,35 @@ export default {
      */
     featureHighlightColorProp: {
       type: String,
-      default: "rgba(255,255,0,0.5)"
+      default: "rgba(255,255,0,0.5)",
     },
     /**
      * 选中图层高亮颜色，支持rgb，rgba和十六进制格式
      */
     layerHighlightColorProp: {
       type: String,
-      default: "rgba(255,0,0,0.5)"
+      default: "rgba(255,0,0,0.5)",
     },
     dataStoreIp: {
       type: String,
-      default: "192.168.96.101"
+      default: "192.168.96.101",
     },
     dataStorePort: {
       type: String,
-      default: "9014"
+      default: "9014",
     },
     // 查询知识图谱的数据集位置
     dataStoreDataset: {
       type: String,
-      default: "Graph3/GraphDataset1"
+      default: "Graph3/GraphDataset1",
     },
     dataStoreStep: {
       type: Number,
-      default: 2
-    }
+      default: 2,
+    },
   },
   components: {
-    StratifiedHouseholdMenus
+    StratifiedHouseholdMenus,
   },
   computed: {
     layerHighlightColor() {
@@ -270,41 +271,41 @@ export default {
         color = `color('${hex}',${a})`;
       }
       return color;
-    }
+    },
   },
   data() {
     return {
-      innerVueIndex: this.vueIndex,
+      innerVueIndex: undefined, // 这里的innerVueIndex对应layer的id
       title: "分层分户",
       layerIds: [],
       menus: [
         {
           title: "查询",
           icon: "mapgis-highlight",
-          active: this.enablePopup
+          active: this.enablePopup,
         },
         {
           title: "模型爆炸",
           icon: "mapgis-fire1",
-          active: false
+          active: false,
         },
         {
           title: "隐藏面板",
           icon: "mapgis-hide",
-          active: false
-        }
+          active: false,
+        },
       ],
       collapsemenus: [
         {
           title: "查询",
           icon: "mapgis-highlight",
-          active: this.enablePopup
+          active: this.enablePopup,
         },
         {
           title: "模型爆炸",
           icon: "mapgis-fire1",
-          active: false
-        }
+          active: false,
+        },
       ],
       submenus: [
         {
@@ -314,11 +315,11 @@ export default {
               ? "进入图层菜单"
               : "请按照分层分户要求制作数据",
           icon: () => "mapgis-layer",
-          click: payload => {
+          click: (payload) => {
             if (this.enableStratifiedHouse) {
               this.handleActiveItemKey(payload);
             }
-          }
+          },
         },
         {
           title: "锁定/解锁图层",
@@ -326,26 +327,27 @@ export default {
             this.enableStratifiedHouse
               ? "锁定/解锁图层"
               : "请按照分层分户要求制作数据",
-          icon: key => (this.layerKey == key ? "mapgis-lock" : "mapgis-unlock"),
-          click: payload => {
+          icon: (key) =>
+            this.layerKey == key ? "mapgis-lock" : "mapgis-unlock",
+          click: (payload) => {
             if (this.enableStratifiedHouse) {
               this.changeIsolation(payload);
             }
-          }
+          },
         },
         {
           title: "查看关系图谱",
           tooltip: () => "查看关系图谱",
           icon: () => "mapgis-share-alt",
-          click: payload => {
+          click: (payload) => {
             // this.relationshipInfo.layerTree = this.layerTree;
             // 获取楼层id
             this.relationshipInfo.floor = payload.guid;
             this.relationshipInfo.layerIndex = payload.layerIndex;
             this.relationshipInfo.isFloor = true;
             this.$emit("show-relationship-graph", this.relationshipInfo);
-          }
-        }
+          },
+        },
       ],
       layerTree: [],
       expandedKeys: [],
@@ -370,7 +372,7 @@ export default {
       showModal: false,
       relationshipInfo: {}, // 关系谱图相关信息
       prevFloorId: undefined,
-      lastPrevFloorId: undefined // 记录楼栋切换楼层的最后一次prevFloorId
+      lastPrevFloorId: undefined, // 记录楼栋切换楼层的最后一次prevFloorId
     };
   },
   provide() {
@@ -378,7 +380,7 @@ export default {
     return {
       get m3ds() {
         return self.m3ds;
-      }
+      },
     };
   },
   created() {},
@@ -410,7 +412,7 @@ export default {
     innerVueIndex(next) {
       this.unmount();
       this.mount();
-    }
+    },
   },
   methods: {
     createCesiumObject() {
@@ -424,7 +426,7 @@ export default {
       return new Promise((resolve, reject) => {
         let layerIndex = 0;
         this.$_getG3DByInterval(
-          function(g3ds) {
+          function (g3ds) {
             if (g3ds && g3ds.length > 0) {
               if (
                 !g3ds[layerIndex] ||
@@ -450,7 +452,7 @@ export default {
       const { viewer, enablePopup } = this;
 
       let promise = this.createCesiumObject();
-      promise.then(find => {
+      promise.then((find) => {
         if (find && find.options) {
           let { m3ds, g3dLayerIndex } = find.options;
 
@@ -480,8 +482,8 @@ export default {
               menu: "mapgis-down",
               scopedSlots: {
                 icon: "custom",
-                title: "title"
-              }
+                title: "title",
+              },
             });
           });
           vm.layerIds = all;
@@ -497,7 +499,7 @@ export default {
               m3ds: m3ds,
               modelExplosion: modelExplosion,
               collection: collection,
-              primitiveCollection: viewer.scene.primitives.add(collection)
+              primitiveCollection: viewer.scene.primitives.add(collection),
             }
           );
           vm.recordOriginStyle();
@@ -535,19 +537,19 @@ export default {
     },
     handleSelectChange(vueIndex) {
       this.innerVueIndex = vueIndex;
-      let finds = this.layers.filter(l => l.vueIndex == vueIndex);
+      let finds = this.layers.filter((l) => l.vueIndex == vueIndex);
       if (finds && finds.length > 0) {
         this.$emit("change-layer", finds[0]);
         // 动态添加关系图谱图标
         const relationship = this.collapsemenus.find(
-          item => item.type === "relationship"
+          (item) => item.type === "relationship"
         );
         if (!relationship) {
           this.collapsemenus.push({
             title: "关系图谱",
             icon: "mapgis-share-alt",
             type: "relationship",
-            active: false
+            active: false,
           });
         }
       }
@@ -557,7 +559,7 @@ export default {
       for (let i = 0; i < tree.length; i++) {
         const node = tree[i];
         if (node.children) {
-          if (node.children.some(item => item.key === key)) {
+          if (node.children.some((item) => item.key === key)) {
             parentKey = node.key;
           } else if (this.getParentKey(key, node.children)) {
             parentKey = this.getParentKey(key, node.children);
@@ -569,7 +571,7 @@ export default {
     onChange(e) {
       let { layerTree } = this;
       const dataList = [];
-      const generateList = data => {
+      const generateList = (data) => {
         for (let i = 0; i < data.length; i++) {
           const node = data[i];
           const { key } = node;
@@ -583,7 +585,7 @@ export default {
 
       const value = e.target.value;
       const expandedKeys = dataList
-        .map(item => {
+        .map((item) => {
           if (item.title.indexOf(value) > -1) {
             return this.getParentKey(item.key, layerTree);
           }
@@ -593,7 +595,7 @@ export default {
       Object.assign(this, {
         expandedKeys,
         searchValue: value,
-        autoExpandParent: true
+        autoExpandParent: true,
       });
     },
     onSelect(e, payload) {
@@ -654,7 +656,7 @@ export default {
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let layerIndexs = g3dLayer.getM3DLayerIndexes();
       let originStyles = [];
-      layerIndexs.forEach(index => {
+      layerIndexs.forEach((index) => {
         let m3dlayer = g3dLayer.getLayer(index);
         originStyles.push(m3dlayer.style);
       });
@@ -687,7 +689,7 @@ export default {
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let m3ds = g3dLayer.getM3DLayerIndexes();
-      m3ds.forEach(index => {
+      m3ds.forEach((index) => {
         let m3d = g3dLayer.getLayer(index);
         if (m3d) {
           m3d.reset(); //该函数目前底层MapGISM3DSet.reset无效 后期记得修改
@@ -733,7 +735,7 @@ export default {
       let layerIndexs = g3dLayer.getM3DLayerIndexes();
       this.featurevisible = false;
       this.selectedKeys = [`${layerIndex}`];
-      layerIndexs.forEach(index => {
+      layerIndexs.forEach((index) => {
         let m3dlayer = g3dLayer.getLayer(index);
         if (index != layerIndex) {
           m3dlayer.show = false;
@@ -742,7 +744,7 @@ export default {
           viewer.camera.flyToBoundingSphere(m3dlayer.boundingSphere);
         }
       });
-      let children = this.layerTree.map(c => {
+      let children = this.layerTree.map((c) => {
         if (c.layerIndex == layerIndex) {
           c.disabled = false;
         } else {
@@ -754,7 +756,7 @@ export default {
       this.restoreM3d();
     },
     disableIsolation() {
-      let children = this.layerTree.map(c => {
+      let children = this.layerTree.map((c) => {
         c.disabled = false;
         return c;
       });
@@ -779,14 +781,14 @@ export default {
       if (find && find.options) {
         const { modelExplosion } = find.options;
         let layerIndexs = g3dLayer.getM3DLayerIndexes();
-        layerIndexs.forEach(index => {
+        layerIndexs.forEach((index) => {
           let m3dlayer = g3dLayer.getLayer(index);
           m3ds.push(m3dlayer);
         });
         modelExplosion.multiLayerAxisExplosionNoAnimate(m3ds, {
           direction: vector,
           expDistance: expDistance,
-          speed: speed
+          speed: speed,
         });
       }
     },
@@ -801,14 +803,14 @@ export default {
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let layerIndexs = g3dLayer.getM3DLayerIndexes();
-      layerIndexs.forEach(index => {
+      layerIndexs.forEach((index) => {
         let m3dlayer = g3dLayer.getLayer(index);
         m3ds.push(m3dlayer);
       });
       if (find && find.options) {
         const { modelExplosion } = find.options;
         modelExplosion.removeModelExplosion(m3ds);
-        setTimeout(function() {
+        setTimeout(function () {
           // 将mapgism3d的modelExplosion属性修改为false，确保不对其他功能造成性能影响
           modelExplosion.recover(m3ds);
         }, 1000);
@@ -888,7 +890,7 @@ export default {
       const vm = this;
       const { Cesium, viewer } = this;
       let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-      handler.setInputAction(function(movement) {
+      handler.setInputAction(function (movement) {
         vm.$_pickEvent(movement);
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
       return handler;
@@ -920,7 +922,7 @@ export default {
        * @修改时间 2022/1/13
        */
       m3dlayer.style = new Cesium.Cesium3DTileStyle({
-        color: layerHighlightColor
+        color: layerHighlightColor,
       });
     },
     handleDynamicQuery() {
@@ -986,7 +988,7 @@ export default {
                   vm.featureposition = {
                     longitude: lng,
                     latitude: lat,
-                    height: height
+                    height: height,
                   };
                 }
                 // _extrudedHeight和_height这样设置后才能贴模型
@@ -1008,7 +1010,7 @@ export default {
                 mapPosition.z
               ),
               tolerance,
-              layerIndex: layerIndex
+              layerIndex: layerIndex,
             }
           );
         }
@@ -1079,7 +1081,7 @@ export default {
               let result = feature.content.getAttributeByOID(oid) || {};
               vm.featureproperties = result;
             } else {
-              tileset.queryAttributes(oid).then(function(result) {
+              tileset.queryAttributes(oid).then(function (result) {
                 result = result || {};
                 vm.featureproperties = result;
               });
@@ -1094,7 +1096,7 @@ export default {
             vm.featureposition = {
               longitude: longitudeString2,
               latitude: latitudeString2,
-              height: heightString2
+              height: heightString2,
             };
           }
         } else {
@@ -1106,7 +1108,7 @@ export default {
       this.layerIds = [`${key}`];
     },
     changeSimpleSlider(keys) {
-      let keyStr = keys.map(k => `${k}`);
+      let keyStr = keys.map((k) => `${k}`);
       this.layerIds = keyStr;
     },
     customLabel(label) {
@@ -1160,7 +1162,7 @@ export default {
         modelExplosion.multiLayerAxisExplosionNoAnimate([tileset], {
           direction: vector,
           expDistance: expDistance,
-          speed: speed
+          speed: speed,
         });
         this.highlightM3d(data.layerIndex);
       }
@@ -1188,7 +1190,7 @@ export default {
       let layerIndexs = g3dLayer.getM3DLayerIndexes();
       this.featurevisible = false;
       this.selectedKeys = [`${layerIndex}`];
-      layerIndexs.forEach(index => {
+      layerIndexs.forEach((index) => {
         let m3dlayer = g3dLayer.getLayer(index);
         if (index != layerIndex) {
           m3dlayer.show = false;
@@ -1210,7 +1212,7 @@ export default {
       this.restoreM3d();
     },
     resizeGraph() {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         this.revertFloor().then(() => {
           resolve();
         });
@@ -1218,7 +1220,7 @@ export default {
     },
 
     revertFloor() {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         if (this.prevFloorId) {
           const { vueKey, innerVueIndex, vueCesium, m3ds } = this;
           let find = vueCesium.StratifiedHousehouldManager.findSource(
@@ -1245,7 +1247,7 @@ export default {
     },
 
     restoreFloor() {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         if (this.lastPrevFloorId) {
           this.highlightM3d(this.lastPrevFloorId + "");
           this.lastPrevFloorId = undefined;
@@ -1257,7 +1259,7 @@ export default {
     },
     changeFloor(data) {
       const layerInfo = this.relationshipInfo.layerTree.find(
-        item => item.guid === data.guid
+        (item) => item.guid === data.guid
       );
       this.relationshipInfo.isFloor = data.isFloor;
       this.relationshipInfo.floor = data.guid;
@@ -1265,7 +1267,7 @@ export default {
         ? layerInfo.layerIndex
         : undefined;
       this.$emit("show-relationship-graph", this.relationshipInfo);
-    }
-  }
+    },
+  },
 };
 </script>
