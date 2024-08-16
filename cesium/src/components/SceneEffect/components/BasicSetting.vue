@@ -183,23 +183,7 @@ export default {
     initBasicSetting: {
       type: Object,
       default: () => {
-        return {
-          earth: true,
-          skyAtmosphere: true,
-          shadow: false,
-          depthTest: false,
-          FPS: false,
-          timeline: false,
-          compass: false,
-          compassPosition: undefined,
-          zoom: false,
-          statebar: true,
-          sceneMode: false,
-          layerbrightness: 1.0,
-          layercontrast: 1.0,
-          layerhue: 0.0,
-          layersaturation: 1.0,
-        };
+        return this.basicSetting;
       },
     },
     // 左侧板宽度
@@ -207,21 +191,28 @@ export default {
       type: Number,
     },
   },
-  computed: {
-    basicSetting: {
-      get() {
-        return this.initBasicSetting;
-      },
-      set() {
-        this.$emit("updateBasicSetting", this.basicSetting);
-      },
-    },
-  },
   data() {
     return {
       lyrBrtRange: [0, 3],
       lyrHueRange: [-1, 1],
       compassPosition: undefined,
+      basicSetting: {
+        earth: true,
+        skyAtmosphere: true,
+        shadow: false,
+        depthTest: false,
+        FPS: false,
+        timeline: false,
+        compass: false,
+        compassPosition: undefined,
+        zoom: false,
+        statebar: true,
+        sceneMode: false,
+        layerbrightness: 1.0,
+        layercontrast: 1.0,
+        layerhue: 0.0,
+        layersaturation: 1.0,
+      },
     };
   },
   mounted() {
@@ -247,7 +238,37 @@ export default {
     },
     initBasicSetting: {
       handler(e) {
+        this.basicSetting = JSON.parse(JSON.stringify(this.initBasicSetting));
         this.init();
+      },
+      deep: true,
+      immediate: true,
+    },
+    basicSetting: {
+      handler(e) {
+        this.$emit("updateBasicSetting", this.basicSetting);
+      },
+      deep: true,
+    },
+    stuffWidth: {
+      handler(e) {
+        if (!this.basicSetting.compassPosition) {
+          this.basicSetting.compassPosition = {
+            anchor: "top-left",
+            horizontalOffset: this.stuffWidth,
+            verticalOffset: 400,
+          };
+        } else {
+          // 如果罗盘显示在左上或者左下，与左侧的距离传入的stuffWidth保持一致
+          if (
+            this.basicSetting.compassPosition.anchor === "top-left" ||
+            this.basicSetting.compassPosition.anchor === "bottom-left"
+          ) {
+            this.basicSetting.compassPosition.horizontalOffset =
+              this.stuffWidth;
+          }
+        }
+        this.compassPosition = this.basicSetting.compassPosition;
       },
       deep: true,
       immediate: true,
@@ -439,14 +460,14 @@ export default {
       viewer.createNavigationTool(options);
       const self = this;
       this.$nextTick(() => {
-        const compassDiv = document.querySelector(".compass");
-        if (compassDiv) {
-          self.compassPosition = self.basicSetting.compassPosition || {
+        if (!self.basicSetting.compassPosition) {
+          self.basicSetting.compassPosition = {
             anchor: "top-left",
-            horizontalOffset: this.stuffWidth,
+            horizontalOffset: self.stuffWidth,
             verticalOffset: 400,
           };
         }
+        self.compassPosition = self.basicSetting.compassPosition;
       });
       // this.changeNavPos();
     },
@@ -456,6 +477,7 @@ export default {
      */
     updateCompassPosition(e) {
       this.basicSetting.compassPosition = e;
+      this.compassPosition = this.basicSetting.compassPosition;
     },
     /*
      * 导航控件（罗盘控件和缩放控件的状态控制）
@@ -472,14 +494,14 @@ export default {
       viewer.createNavigationTool(options);
       const self = this;
       this.$nextTick(() => {
-        const compassDiv = document.querySelector(".compass");
-        if (compassDiv) {
-          self.compassPosition = self.basicSetting.compassPosition || {
+        if (!self.basicSetting.compassPosition) {
+          self.basicSetting.compassPosition = {
             anchor: "top-left",
-            horizontalOffset: this.stuffWidth,
+            horizontalOffset: self.stuffWidth,
             verticalOffset: 400,
           };
         }
+        self.compassPosition = self.basicSetting.compassPosition;
       });
       // this.changeNavPos();
     },
