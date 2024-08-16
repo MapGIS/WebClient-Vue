@@ -49,26 +49,11 @@ export default {
     initLightSetting: {
       type: Object,
       default: () => {
-        return {
-          sunlight: false,
-          sunlightParams: {
-            lightingMode: "DAYNIGHT_SHADING",
-            lightColor: "rgba(255,255,255,255)"
-          },
-          lightIntensity: 10
-        };
-      }
-    }
+        return this.lightSetting;
+      },
+    },
   },
   computed: {
-    lightSetting: {
-      get() {
-        return this.initLightSetting;
-      },
-      set() {
-        this.$emit("updateLightSetting", this.lightSetting);
-      }
-    },
     lightingMode: {
       get() {
         return this.lightSetting.sunlightParams.lightingMode;
@@ -77,31 +62,46 @@ export default {
         const { viewer, Cesium } = this;
         this.lightSetting.sunlightParams.lightingMode = val;
         viewer.scene.globe.lightingMode = Cesium.LightingMode[val];
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       lightingModes: [
         {
           key: "DAYNIGHT_SHADING",
-          value: "太阳光照"
+          value: "太阳光照",
         },
         {
           key: "VERTEX_LIGHTING",
-          value: "顶点光照"
-        }
-      ]
+          value: "顶点光照",
+        },
+      ],
+      lightSetting: {
+        sunlight: false,
+        sunlightParams: {
+          lightingMode: "DAYNIGHT_SHADING",
+          lightColor: "rgba(255,255,255,255)",
+        },
+        lightIntensity: 10,
+      },
     };
   },
   watch: {
     initLightSetting: {
       handler(e) {
+        this.lightSetting = JSON.parse(JSON.stringify(this.initLightSetting));
         this.init();
       },
       deep: true,
-      immediate: true
-    }
+      immediate: true,
+    },
+    lightSetting: {
+      handler(e) {
+        this.$emit("updateLightSetting", this.lightSetting);
+      },
+      deep: true,
+    },
   },
   methods: {
     init() {
@@ -126,7 +126,7 @@ export default {
       this.$emit("updateSpin", true);
       let vm = this;
 
-      setTimeout(function() {
+      setTimeout(function () {
         viewer.scene.globe.enableLighting = vm.lightSetting.sunlight;
         // var sunLight = new Cesium.SunLight({color:Cesium.Color.RED});
         // viewer.scene.light = sunLight
@@ -147,8 +147,8 @@ export default {
       const { viewer } = this;
       this.lightSetting.lightIntensity = e;
       viewer.scene.light.intensity = this.lightSetting.lightIntensity;
-    }
-  }
+    },
+  },
 };
 </script>
 

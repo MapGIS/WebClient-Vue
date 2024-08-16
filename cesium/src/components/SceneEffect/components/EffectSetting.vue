@@ -57,42 +57,40 @@ export default {
     initEffectSetting: {
       type: Object,
       default: () => {
-        return {
-          blckWhite: false,
-          ntVision: false,
-          bloom: false,
-          bloomParams: {
-            bloomBrt: -0.3,
-            bloomCtrst: 128
-          }
-        };
-      }
-    }
-  },
-  computed: {
-    effectSetting: {
-      get() {
-        return this.initEffectSetting;
+        return this.effectSetting;
       },
-      set() {
-        this.$emit("updateEffectSetting", this.effectSetting);
-      }
-    }
+    },
   },
   data() {
     return {
       bloomBrtRange: [-0.6, 0.2],
-      bloomCtrstRange: [-255, 255]
+      bloomCtrstRange: [-255, 255],
+      effectSetting: {
+        blckWhite: false,
+        ntVision: false,
+        bloom: false,
+        bloomParams: {
+          bloomBrt: -0.3,
+          bloomCtrst: 128,
+        },
+      },
     };
   },
   watch: {
     initEffectSetting: {
       handler(e) {
+        this.effectSetting = JSON.parse(JSON.stringify(this.initEffectSetting));
         this.init();
       },
       deep: true,
-      immediate: true
-    }
+      immediate: true,
+    },
+    effectSetting: {
+      handler(e) {
+        this.$emit("updateEffectSetting", this.effectSetting);
+      },
+      deep: true,
+    },
   },
   methods: {
     init() {
@@ -118,7 +116,7 @@ export default {
       this.$emit("updateSpin", true);
       let vm = this;
 
-      setTimeout(function() {
+      setTimeout(function () {
         viewer.scene.postProcessStages.bloom.enabled = vm.effectSetting.bloom;
         vm.$emit("updateSpin", false);
       }, 400);
@@ -129,7 +127,8 @@ export default {
     bloomBrtChange(e) {
       const { viewer } = this;
       this.effectSetting.bloomParams.bloomBrt = e;
-      viewer.scene.postProcessStages.bloom.uniforms.brightness = this.effectSetting.bloomParams.bloomBrt;
+      viewer.scene.postProcessStages.bloom.uniforms.brightness =
+        this.effectSetting.bloomParams.bloomBrt;
     },
     /*
      * 泛光对比度
@@ -137,7 +136,8 @@ export default {
     bloomCtrstChange(e) {
       const { viewer } = this;
       this.effectSetting.bloomParams.bloomCtrst = e;
-      viewer.scene.postProcessStages.bloom.uniforms.contrast = this.effectSetting.bloomParams.bloomCtrst;
+      viewer.scene.postProcessStages.bloom.uniforms.contrast =
+        this.effectSetting.bloomParams.bloomCtrst;
     },
 
     //黑白照片
@@ -177,8 +177,8 @@ export default {
       if (length > 0) {
         viewer.scene.postProcessStages.removeAll();
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

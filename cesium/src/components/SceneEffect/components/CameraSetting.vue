@@ -52,54 +52,52 @@ export default {
     initCameraSetting: {
       type: Object,
       default: () => {
-        return {
-          selfAdaption: false,
-          selfAdaptionParams: {
-            maxHeigh: 400000
-          },
-          undgrd: false,
-          undgrdParams: {
-            groundAlpha: 0.5
-          },
-          fov: 60
-        };
-      }
+        return this.cameraSetting;
+      },
     },
     boundingSphereRadius: {
       type: Number,
-      default: 0
+      default: 0,
     },
     baseLayerIds: {
       type: Array,
-      default: () => []
-    }
-  },
-  computed: {
-    cameraSetting: {
-      get() {
-        return this.initCameraSetting;
-      },
-      set() {
-        this.$emit("updateCameraSetting", this.cameraSetting);
-      }
-    }
+      default: () => [],
+    },
   },
   data() {
     return {
       range: [0, 1],
       fovRange: [0, 180],
       beforeGroundAlpha: undefined,
-      beforeUndgrd: undefined
+      beforeUndgrd: undefined,
+      cameraSetting: {
+        selfAdaption: false,
+        selfAdaptionParams: {
+          maxHeigh: 400000,
+        },
+        undgrd: false,
+        undgrdParams: {
+          groundAlpha: 0.5,
+        },
+        fov: 60,
+      },
     };
   },
   watch: {
     initCameraSetting: {
       handler(e) {
+        this.cameraSetting = JSON.parse(JSON.stringify(this.initCameraSetting));
         this.init();
       },
       deep: true,
-      immediate: true
-    }
+      immediate: true,
+    },
+    cameraSetting: {
+      handler(e) {
+        this.$emit("updateCameraSetting", this.cameraSetting);
+      },
+      deep: true,
+    },
   },
   methods: {
     init() {
@@ -114,7 +112,7 @@ export default {
         !this.cameraSetting.selfAdaptionParams.maxHeigh
       ) {
         this.cameraSetting.selfAdaptionParams = {
-          maxHeigh: 400000
+          maxHeigh: 400000,
         };
       }
       const { selfAdaption, fov, undgrdParams, undgrd } = this.cameraSetting;
@@ -144,9 +142,9 @@ export default {
       this.$emit("updateSpin", true);
       let vm = this;
 
-      setTimeout(function() {
-        viewer.scene.screenSpaceCameraController.enableCollisionDetection = !vm
-          .cameraSetting.undgrd;
+      setTimeout(function () {
+        viewer.scene.screenSpaceCameraController.enableCollisionDetection =
+          !vm.cameraSetting.undgrd;
         viewer.scene.globe.translucency.enabled = vm.cameraSetting.undgrd;
         if (vm.cameraSetting.undgrd) {
           //设置地表透明度
@@ -217,7 +215,8 @@ export default {
       if (isSelfAdaption) {
         // 当透明度为1时，关闭地表自适应透明
         const enableTranslucency = groundAlpha !== 1;
-        viewer.scene.screenSpaceCameraController.enableCollisionDetection = !enableTranslucency;
+        viewer.scene.screenSpaceCameraController.enableCollisionDetection =
+          !enableTranslucency;
         viewer.scene.globe.translucency.enabled = enableTranslucency;
         const layers = viewer.imageryLayers._layers;
         for (let i = 1; i < layers.length; i++) {
@@ -246,8 +245,8 @@ export default {
       viewer.scene.camera.frustum.fov = Cesium.Math.toRadians(
         this.cameraSetting.fov
       );
-    }
-  }
+    },
+  },
 };
 </script>
 

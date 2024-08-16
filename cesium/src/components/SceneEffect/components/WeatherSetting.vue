@@ -173,47 +173,7 @@ export default {
     initWeatherSetting: {
       type: Object,
       default: () => {
-        return {
-          sun: true,
-          moon: true,
-          sceneSkybox: true,
-          skybox: false,
-          clouds: false,
-          cloudsParams: {
-            cloudsduration: 5,
-          },
-          rain: false,
-          rainParams: {
-            speed: 18,
-            rainOpacity: 0.6,
-            angle: -30,
-            length: 1,
-          },
-          snow: false,
-          snowParams: {
-            size: 5,
-            density: 5,
-          },
-          fog: false,
-          fogParams: {
-            fogOpacity: 0.5,
-            color: "#FFFFFF",
-          },
-          surficialFog: true,
-          surfFogParams: {
-            surfFogDst: 0.0002,
-          },
-        };
-      },
-    },
-  },
-  computed: {
-    weatherSetting: {
-      get() {
-        return this.initWeatherSetting;
-      },
-      set() {
-        this.$emit("updateWeatherSetting", this.weatherSetting);
+        return this.weatherSetting;
       },
     },
   },
@@ -236,15 +196,55 @@ export default {
       //雾的透明度范围
       fogOpacityRange: [0.0, 1.0],
       surfFogDstRange: [0.0002, 0.002],
+      weatherSetting: {
+        sun: true,
+        moon: true,
+        sceneSkybox: true,
+        skybox: false,
+        clouds: false,
+        cloudsParams: {
+          cloudsduration: 5,
+        },
+        rain: false,
+        rainParams: {
+          speed: 18,
+          rainOpacity: 0.6,
+          angle: -30,
+          length: 1,
+        },
+        snow: false,
+        snowParams: {
+          size: 5,
+          density: 5,
+        },
+        fog: false,
+        fogParams: {
+          fogOpacity: 0.5,
+          color: "#FFFFFF",
+        },
+        surficialFog: true,
+        surfFogParams: {
+          surfFogDst: 0.0002,
+        },
+      },
     };
   },
   watch: {
     initWeatherSetting: {
       handler(e) {
+        this.weatherSetting = JSON.parse(
+          JSON.stringify(this.initWeatherSetting)
+        );
         this.init();
       },
       deep: true,
       immediate: true,
+    },
+    weatherSetting: {
+      handler(e) {
+        this.$emit("updateWeatherSetting", this.weatherSetting);
+      },
+      deep: true,
     },
   },
   mounted() {
