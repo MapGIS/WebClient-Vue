@@ -338,7 +338,8 @@ export default {
     shadow() {
       this.remove();
       const { viewer, vueCesium, Cesium } = this;
-
+      // 开启软阴影，解决阴影出现毛刺现象
+      viewer.shadowMap.softShadows = true;
       // 初始化交互式绘制控件
       let drawElement = new Cesium.DrawElement(viewer);
       let { date, stretchHeight, minHeight, spacing, shadowColor, sunColor } =
@@ -456,6 +457,8 @@ export default {
     sun() {
       this.removeSun();
       let { viewer, Cesium } = this;
+      // 开启软阴影，解决阴影出现毛刺现象
+      viewer.shadowMap.softShadows = true;
       viewer.scene.globe.enableLighting = true; // 开启日照
       viewer.shadows = true; // 开启阴影
       const { date, startTime, endTime } = this.formData;
