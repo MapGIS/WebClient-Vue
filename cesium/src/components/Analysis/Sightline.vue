@@ -110,6 +110,15 @@ export default {
     unVisibleColor: {
       type: String,
       default: "#ff0000"
+    },
+    /**
+     * @type String
+     * @default '左键单击输入起始点，再次左键单击输入目标点，右键单击结束绘制'
+     * @description 通视分析默认提示文本
+     */
+    lookAnalysisTip: {
+      type: String,
+      default: '左键单击输入起始点，再次左键单击输入目标点，右键单击结束绘制'
     }
   },
   data() {
@@ -263,6 +272,7 @@ export default {
     },
     // 点击“分析”按钮回调
     onClickStart() {
+      const { vueKey, vueIndex } = this
       //开启三维视图事件处理（例如鼠标点击）
       this.startEventHandler();
       this.onClickStop();
@@ -274,6 +284,15 @@ export default {
         // 如果深度检测没有开启，则开启
         setDepthTestAgainstTerrainEnable(true, this.viewer);
       }
+      // fix(6027): PTSYB-通视分析加入“右键单击结束绘制”提示
+      // 修改人: 杨琨 2024-8-19
+      // 修改说明: 点击通视分析时，初始化Cesium提示框对象，环通视分析已有提示，不需要新增
+      vueCesium.VisiblityAnalysisManager.changeOptions(
+        vueKey,
+        vueIndex,
+        "tooltip",
+        new Cesium.Tooltip(viewer.container, {})
+      );
       this.addEventListener();
     },
     // 环视通视分析
@@ -415,6 +434,10 @@ export default {
       this.isAddEventListener = false;
       // 清除观察点位置信息
       this.viewPointPosition = "";
+      // fix(6027): PTSYB-通视分析加入“右键单击结束绘制”提示
+      // 修改人: 杨琨 2024-8-19
+      // 修改说明: 销毁微件时，销毁提示框
+      this._destroyToolTip()
     },
 
     // 为鼠标的各种行为注册监听事件
@@ -500,6 +523,10 @@ export default {
         Cesium.ScreenSpaceEventType.MOUSE_MOVE
       );
       this.isAddEventListener = false;
+      // fix(6027): PTSYB-通视分析加入“右键单击结束绘制”提示
+      // 修改人: 杨琨 2024-8-19
+      // 修改说明: 点击右键时，销毁提示框
+      this._destroyToolTip()
     },
 
     // 注册通视分析鼠标移动事件
@@ -508,6 +535,14 @@ export default {
       let cartesian = this.viewer.getCartesian3Position(event.endPosition);
       if (cartesian) {
         visiblity.targetPosition = cartesian;
+        // fix(6027): PTSYB-通视分析加入“右键单击结束绘制”提示
+        // 修改人: 杨琨 2024-8-19
+        // 修改说明: 在鼠标移动时，给于提示
+        let find = this.findSource();
+        if (find && find.options && find.options.tooltip) {
+          const tooltip = find.options.tooltip;
+          tooltip.showAt(event.endPosition, this.lookAnalysisTip);
+        }
       }
     },
 
@@ -561,6 +596,15 @@ export default {
     // 从地图上移除目标点
     removeTargetPoint() {
       if (this.targetPoint) this.viewer.entities.remove(this.targetPoint);
+    },
+
+    // 销毁toolTip对象
+    _destroyToolTip() {
+      let find = this.findSource();
+      if (find && find.options && find.options.tooltip) {
+        find.options.tooltip.destroy();
+        find.options.tooltip = undefined;
+      }
     }
   },
   mounted() {
