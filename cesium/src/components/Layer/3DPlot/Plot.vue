@@ -235,39 +235,17 @@ export default {
       // layer.pickEventType = Cesium.ScreenSpaceEventType.RIGHT_CLICK;
       this.$emit("pick", this);
     },
-    formatData(list) {
-      let symbols = list.symbols || [];
-      for (let i = 0; i < symbols.length; i++) {
-        if (symbols[i].type === "folder") {
-          symbols[i].id = symbols[i].symbolId;
-          symbols[i].path = symbols[i].symbolId;
-          let items = symbols[i].items || [];
-          for (let j = 0; j < items.length; j++) {
-            if (items[j].type === "folder") {
-              items[j].id = items[j].symbolId;
-              items[j].path = items[j].symbolId;
-              let icons = items[j].items || [];
-              for (let k = 0; k < icons.length; k++) {
-                icons[k].id = icons[k].symbolId;
-                icons[k].path = icons[k].symbolId;
-              }
-            }
-          }
-        }
-      }
-    },
     /**
      * 解析符号库
      */
     getSymbolLib() {
       const vm = this;
-      // console.log("symbolUrl-3d", this.symbolUrl);
-      this.formatData(this.symbolUrl);
       let manager = this.getSymbolManager();
       if (!manager) {
         manager = new SymbolManager(this.symbolUrl, {
           fontURL: vm.fontUrl,
-          baseUrl: vm.baseUrl
+          baseUrl: vm.baseUrl,
+          requestSymbolSourceType:this.useIGS?'id':'path'
         });
         window.PlotSymbolManager = manager;
       }
