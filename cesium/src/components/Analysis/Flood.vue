@@ -610,14 +610,15 @@ export default {
 }
 
 ::v-deep .mapgis-ui-switch-row-left-title {
-  padding-left: 0px;
+  padding-left: 0px !important;
+  width: unset !important;
 }
 
 ::v-deep .mapgis-ui-switch-row-left-switch {
-  padding-right: 10px;
-  text-align: right;
+  padding-right: 10px !important;
+  text-align: right !important;
   float: right;
-  width: unset;
+  width: unset !important;
 }
 
 ::v-deep .mapgis-ui-form-item {
