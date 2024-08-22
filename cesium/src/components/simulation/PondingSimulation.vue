@@ -162,7 +162,7 @@
           label="排水体积(m³)"
           size="large"
           v-model="drainageVol"
-          :range="[0, 100]"
+          :range="[0, drainageVolMax]"
           :rangeShow="true"
           :step="1"
           :slider="true"
@@ -424,6 +424,8 @@ export default {
       rainFallVol: undefined,
       //排水体积
       drainageVol: 0,
+      //最大排水体积
+      drainageVolMax: 100,
       //雨大小的选项，0-3分别对应小雨，中雨，大雨，暴雨
       rainOption: 2,
       //雨倾斜角度
@@ -555,6 +557,16 @@ export default {
           //   console.log("polygoncartesian",vm.positions);
         }
       }
+
+      // fix(6032): PTSYB-积水仿真，排水体积功能疑似无效
+      // 修改人: 杨琨 2024-8-22
+      // 修改说明: 当前的排水体积范围为0到100，实际操作中绘制淹没区域后计算的淹没体积大多超过一万立方米，
+      // 最大排水体积设置为100立方米，已经无法满足实际需求，因此在绘制结束后，计算淹没区域体积作为最大排水体积
+      // 计算淹没区域面积
+      const turfPoly = turf.polygon([vm.lnglat]);
+      const area = turf.area(turfPoly); //square meters
+      // 计算淹没区域体积
+      this.drainageVolMax = Math.floor(area * this.rainFall * 0.001);
     },
     //获取圆形边界的经纬度坐标点
     getCircleDegrees(center, radius) {
