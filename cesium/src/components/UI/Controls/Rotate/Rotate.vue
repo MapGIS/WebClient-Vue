@@ -314,29 +314,26 @@ export default {
       return [lon, lat];
     },
     /**
-     * @description 通过getPickRay鼠标拾取点的经纬度和高度。
+     * @description  通过鼠标左键点击拾取场景中的经纬度点坐标
      */
     getM3dCenter(value) {
-      let vm = this;
-      vm.getCenter = value;
+      const { viewer, Cesium } = this;
+      this.getCenter = value;
       if (value) {
         this.handlerAction = new Cesium.ScreenSpaceEventHandler(
           this.viewer.scene.canvas
         );
-        this.handlerAction.setInputAction(event => {
-          let ray = vm.viewer.scene.camera.getPickRay(event.position);
-          let position1 = vm.viewer.scene.globe.pick(ray, vm.viewer.scene);
-          let cartographic1 = vm.Cesium.Ellipsoid.WGS84.cartesianToCartographic(
-            position1
+        this.handlerAction.setInputAction((event) => {
+          const cartesian3Position = viewer.getCartesian3Position(event.position);
+          const cartographicPosition = Cesium.Cartographic.fromCartesian(cartesian3Position);
+          this.coordinate.longitude = Cesium.Math.toDegrees(
+            cartographicPosition.longitude
           );
-          vm.coordinate.longitude = Cesium.Math.toDegrees(
-            cartographic1.longitude
+          this.coordinate.latitude = Cesium.Math.toDegrees(
+            cartographicPosition.latitude
           );
-          vm.coordinate.latitude = Cesium.Math.toDegrees(
-            cartographic1.latitude
-          );
-          vm.coordinate.height = cartographic1.height;
-        }, vm.Cesium.ScreenSpaceEventType.LEFT_CLICK);
+          this.coordinate.height = cartographicPosition.height;
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
       }
     },
     beginRotate() {
