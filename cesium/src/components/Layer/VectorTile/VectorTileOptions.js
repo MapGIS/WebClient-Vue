@@ -60,6 +60,25 @@ export default {
   tilingScheme: { type: [String, Object] },
 
   /**
+   * @type Object
+   * @description 瓦片切图信息。没有tilingScheme时，可传入tileInfo、spatialReference、extent，描述图层切图信息及空间参考系和范围。有tilingScheme，则不考虑tileInfo、spatialReference、extent的值。
+   */
+  tileInfo: { type: Object },
+
+  /**
+   * @type Object
+   * @description 空间参考系。没有tilingScheme时，可传入tileInfo、spatialReference、extent，描述图层切图信息及空间参考系和范围。有tilingScheme，则不考虑tileInfo、spatialReference、extent的值。
+   */
+
+  spatialReference: { type: Object },
+
+  /**
+   * @type Object
+   * @description 图层范围。没有tilingScheme时，可传入tileInfo、spatialReference、extent，描述图层切图信息及空间参考系和范围。有tilingScheme，则不考虑tileInfo、spatialReference、extent的值。
+   */
+  extent: { type: [Object] },
+
+  /**
    * @description 第三方需要的token，比如mapbox
    */
   token: { type: Object },
