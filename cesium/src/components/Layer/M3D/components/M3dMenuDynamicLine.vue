@@ -10,278 +10,143 @@
         :labelCol="24"
         :wrapperCol="24"
       />
-      <mapgis-ui-select-panel
-        transparent
-        label="扫描方向"
-        v-model="direction"
-        :labelCol="24"
-        :wrapperCol="24"
-        :selectOptions="Object.keys(directions)"
-      />
 
       <mapgis-ui-input-number-panel
         transparent
         size="large"
-        label="最小值"
-        v-model="min"
-        :range="[0, 1000]"
+        label="扫描速度"
+        tooltip="扫描速度,建议取值区间(0,1)，值越小，扫描速度越慢"
+        v-model="scanSpeed"
+        :step="0.1"
+        :range="[0, 1]"
       >
       </mapgis-ui-input-number-panel>
 
       <mapgis-ui-input-number-panel
         transparent
         size="large"
-        label="最大值"
-        v-model="max"
-        :range="[0, 1000]"
+        label="扫描线宽度"
+        tooltip="扫描线宽度,建议取值区间(0,1)，值越小，扫描线越细"
+        v-model="lineWidth"
+        :step="0.1"
+        :range="[0, 1]"
       >
       </mapgis-ui-input-number-panel>
-
-      <mapgis-ui-input-number-panel
-        transparent
-        size="large"
-        label="持续时间"
-        v-model="duration"
-        :range="[0, 10000]"
-      >
-      </mapgis-ui-input-number-panel>
-
-      <mapgis-ui-switch-panel
-        v-model="isGridTrail"
-        label="拖尾效果"
-        size="small"
-        layout="horizontal"
-      >
-        <mapgis-ui-input-number-panel
-          transparent
-          size="large"
-          label="栅格宽度"
-          v-model="gridWidth"
-          :range="[0, 1000]"
-        >
-        </mapgis-ui-input-number-panel>
-        <mapgis-ui-input-number-panel
-          transparent
-          size="large"
-          label="栅格线宽度"
-          v-model="gridLineWidth"
-          :range="[0, 1000]"
-        >
-        </mapgis-ui-input-number-panel>
-        <mapgis-ui-input-number-panel
-          transparent
-          size="large"
-          label="栅格行数"
-          v-model="gridRowNum"
-          :range="[0, 1000]"
-        >
-        </mapgis-ui-input-number-panel>
-      </mapgis-ui-switch-panel>
+      <mapgis-ui-row>
+        <label class="mapgis-3d-m3d-menu-bloom-label">底部高度偏移</label>
+        <mapgis-ui-tooltip style="margin-left: 4px">
+          <template slot="title">模型底部相对于制图原点的高度偏移</template>
+          <mapgis-ui-iconfont type="mapgis-info-circle" />
+        </mapgis-ui-tooltip>
+      </mapgis-ui-row>
+      <mapgis-ui-row>
+        <mapgis-ui-input-number
+          v-model="bottomHeightOffset"
+          label="底部高度偏移"
+          placeholder="底部高度偏移"
+          :step="0.1"
+          :style="{ width: '256px' }"
+        ></mapgis-ui-input-number>
+      </mapgis-ui-row>
     </div>
     <mapgis-ui-setting-footer>
       <mapgis-ui-button type="primary" @click="addEffect">执行动态线</mapgis-ui-button>
       <mapgis-ui-button @click="removeEffect">删除动态线</mapgis-ui-button>
     </mapgis-ui-setting-footer>
-    <!-- <mapgis-ui-button
-      type="primary"
-      @click="addEffect"
-      :style="{ width: '100%' }"
-      >执行动态线</mapgis-ui-button
-    >
-    <mapgis-ui-button
-      :style="{ width: '100%', marginTop: '4px', display: 'block' }"
-      @click="removeEffect"
-      >删除动态线</mapgis-ui-button
-    > -->
   </div>
 </template>
 
 <script>
 import BaseLayer from "../BaseLayer";
+import EffectMixin from "./mixins/EffectMixin";
 
 export default {
   name: "mapgis-3d-m3d-menu-dynamic-line",
   inject: ["Cesium", "vueCesium", "viewer", "m3ds"],
-  mixins: [BaseLayer],
+  mixins: [BaseLayer, EffectMixin],
   props: {
     version: {
       type: String
     },
     layerIndex: {
-      type: Number
+      type: [Number, String]
     }
   },
   data() {
     return {
       layout: "horizontal",
-      labelCol: { span: 8 },
-      wrapperCol: { span: 16 },
-      currentMenu: undefined,
-      directions: {
-        X轴正方向: 1.0,
-        Y轴正方向: 2.0,
-        Z轴正方向: 3.0,
-        X轴负方向: -1.0,
-        Y轴负方向: -2.0,
-        Z轴负方向: -3.0
-      },
-      direction: "Z轴正方向",
-      max: 150.0,
-      min: 0.0,
+      // 扫描速度
+      scanSpeed: 0.5,
+      // 扫描线宽度
+      lineWidth: 0.2,
+      // 扫描线颜色
       lightColor: "#FFFF00",
-      duration: 5000,
-      isGridTrail: false,
-      gridWidth: 20,
-      gridLineWidth: 0.05,
-      gridLineColor: "#FF0000",
-      gridRowNum: 2
+      // 底部高度偏移
+      bottomHeightOffset: 0.0
     };
   },
   created() {},
-  mounted() {
-    this.mount();
-  },
+  mounted() {},
   destroyed() {
     this.unmount();
   },
-  watch: {
-    direction(next) {
-      let { logic } = this;
-      if (logic) {
-        const {
-          minHeight,
-          maxHeight,
-          minWidth,
-          maxWidth,
-          minLength,
-          maxLength
-        } = logic;
-        switch (next) {
-          case "X轴正方向":
-          case "X轴负方向":
-            this.min = minLength;
-            this.max = maxLength;
-            break;
-          case "Y轴正方向":
-          case "Y轴负方向":
-            this.min = minWidth;
-            this.max = maxWidth;
-            break;
-          case "Z轴正方向":
-          case "Z轴负方向":
-            this.min = minHeight;
-            this.max = maxHeight;
-            break;
-        }
-      }
-    },
-    layerIndex(next) {
-      this.parseM3d();
-    }
-  },
+  watch: {},
   methods: {
-    createCesiumObject() {
-      return new Promise(
-        resolve => {
-          resolve();
-        },
-        reject => {}
-      );
-    },
-    mount() {
-      const vm = this;
-      const { Cesium, vueIndex, vueKey, vueCesium } = this;
-      const { viewer } = this;
-
-      this.parseM3d();
-
-      let dynamicline = this.createCesiumObject();
-      dynamicline.then(res => {
-        vueCesium.DynamicLightLineManager.addSource(vueKey, vueIndex, this, {});
-      });
-
-      if (viewer.isDestroyed()) return;
-    },
-    unmount() {
-      const { vueCesium, vueKey, vueIndex } = this;
-      this.removeEffect();
-      this.$emit("unload", { component: this });
-      vueCesium.DynamicLightLineManager.deleteSource(vueKey, vueIndex);
-    },
-    parseM3d() {
-      let tileset = this.getM3DSet();
-      let logic = this.$_getM3DBox(tileset).logic;
-    },
-    getM3DSet() {
-      const { layerIndex, viewer, m3ds } = this;
-      let tileset;
-      if (m3ds) {
-        tileset = m3ds[layerIndex];
-      } else {
-        tileset = viewer.scene.layers.getM3DLayer(layerIndex);
-      }
-      return tileset;
-    },
+    /**
+     * 添加呼吸灯特效
+     * */
     addEffect() {
-      const { vueKey, vueIndex, vueCesium, Cesium, viewer } = this;
-      const {
-        direction,
-        directions,
-        min,
-        max,
-        lightColor,
-        duration,
-        isGridTrail,
-        gridWidth,
-        gridLineWidth,
-        gridLineColor,
-        gridRowNum
-      } = this;
+      const { Cesium } = this;
+      // 1 获取MapGISM3DSet对象
 
       let tileset = this.getM3DSet();
-      if (!tileset) return;
-      let direct = directions[direction];
+      if (!tileset) return
 
-      this.removeEffect();
-      let dynamicline = new Cesium.DynamicLightLineEffect(
-        viewer,
-        [],
-        tileset.root.transform,
-        {
-          direct,
-          min,
-          max,
-          lightColor: new Cesium.Color.fromCssColorString(lightColor),
-          duration,
-          isGridTrail,
-          gridWidth,
-          gridLineWidth,
-          gridLineColor,
-          gridRowNum
-        }
-      );
+      // 2 如果MapGISM3DSet对象上有style，则备份
+      this.setHighLightBack(tileset)
+      // 置空style，否则会影响自定义着色器
+      tileset.style = undefined
 
-      dynamicline.add();
-      vueCesium.DynamicLightLineManager.changeOptions(
-        vueKey,
-        vueIndex,
-        "dynamicline",
-        dynamicline
-      );
-    },
-    removeEffect() {
-      const { vueKey, vueIndex, vueCesium } = this;
-      let find = vueCesium.DynamicLightLineManager.findSource(vueKey, vueIndex);
-      if (find && find.options && find.options.dynamicline) {
-        let dynamicline = find.options.dynamicline;
-        dynamicline.remove && dynamicline.remove();
-      }
+      // 3 设置自定义着色器
+      // 3.1 构造扫描线颜色字符串
+      const color = Cesium.Color.fromCssColorString(this.lightColor)
+      const colorVec4Sting = this.formatNumberToString(color.red) + ', ' + this.formatNumberToString(color.green) + ', ' + this.formatNumberToString(color.blue) + ', ' + this.formatNumberToString(color.alpha)
+      // 3.2 获取外包盒半径
+      const radius = this.formatNumberToString(tileset.boundingSphere.radius)
+      // 3.3 获取扫描线宽
+      const lineWidth = this.formatNumberToString(this.lineWidth / 10)
+      // 3.4 获取底部高度偏移
+      const bottomHeightOffset = this.formatNumberToString(this.bottomHeightOffset)
+      // 3.5 设置自定义着色器
+      tileset.customShader = new Cesium.CustomShader({
+        uniforms: {},
+        fragmentShaderText: `
+          void fragmentMain(vec4 position, float frameNumber, vec4 oid, inout vec4 fragColor) {
+            float currentHeight = position.y + ${bottomHeightOffset} + ${radius};
+            // 将0~1之间的值映射到20~720之间
+            float mappedSpeed = ${this.scanSpeed} * (20.0 - 720.0) + 720.0;
+            // 根据当前帧时间(czm_frameNumber)，获取当前顶点所处的周期
+            float time = fract(frameNumber / mappedSpeed);
+            // 获取当前高度占整体高度的百分比，0到1之间的值
+            // clamp参考https://learn.microsoft.com/zh-cn/previous-versions/hh308289(v=vs.120)
+            currentHeight = clamp(currentHeight / ${radius * 2}, 0.0, 1.0);
+            // 处理周期
+            time = abs(time - 0.5) * 2.0;
+            // 根据高度和周期计算光圈
+            float circle = step(${lineWidth}, abs(currentHeight - time));
+            if (abs(currentHeight - time) < ${lineWidth}) {
+                circle = abs(currentHeight - time) * (1.0 / ${lineWidth});
+            }
+            fragColor += vec4(${colorVec4Sting}) * (1.0 - circle);
+          }
+        `
+      });
     }
   }
 };
 </script>
 
-<style>
+<style scoped>
 .mapgis-3d-m3d-menu-dynamicline {
   height: 100%;
   width: 100%;
@@ -289,5 +154,13 @@ export default {
 .mapgis-3d-m3d-menu-dynamic-line {
   height: 248px;
   overflow-y: auto;
+  width: 275px;
+}
+.mapgis-3d-m3d-menu-bloom-label {
+  height: 32px;
+  line-height: 32px;
+  font-size: 14px;
+  font-family: 'Microsoft YaHei';
+  color: white;
 }
 </style>

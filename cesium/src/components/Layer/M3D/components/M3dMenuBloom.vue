@@ -11,197 +11,159 @@
           :labelCol="24"
           :wrapperCol="24"
         />
-
-        <mapgis-ui-input-number-panel
-          transparent
-          size="large"
-          label="最小高度"
-          v-model="minHeight"
-          :range="[0, 1000]"
-        >
-        </mapgis-ui-input-number-panel>
-
-        <mapgis-ui-input-number-panel
-          transparent
-          size="large"
-          label="最大高度"
-          v-model="maxHeight"
-          :range="[0, 1000]"
-        >
-        </mapgis-ui-input-number-panel>
-
-        <mapgis-ui-input-number-panel
-          transparent
-          size="large"
-          label="混合系数"
-          v-model="mixFactor"
-          :step="0.1"
-          :range="[0, 1]"
-        >
-        </mapgis-ui-input-number-panel>
       </div>
 
+      <mapgis-ui-input-number-panel
+        size="large"
+        label="呼吸速度"
+        tooltip="呼吸灯速度,建议取值区间(0,1)，值越小，闪烁速度越慢"
+        v-model="breathSpeed"
+        :step="0.1"
+        :range="[0, 1]"
+      >
+      </mapgis-ui-input-number-panel>
       <mapgis-ui-switch-panel
-        v-model="startBreath"
-        label="呼吸开启"
+        v-model="enableGradient"
+        label="启用渐变"
         size="small"
         layout="horizontal"
       >
-        <mapgis-ui-input-number-panel
-          size="large"
-          label="呼吸速度"
-          tooltip="呼吸灯速度,建议取值区间(0,0.1)，值越小，闪烁速度越慢"
-          v-model="breathSpeed"
-          :step="0.1"
-          :range="[0, 1]"
-        >
-        </mapgis-ui-input-number-panel>
+        <mapgis-ui-row>
+          <label class="mapgis-3d-m3d-menu-bloom-label">渐变中心高度</label>
+          <mapgis-ui-tooltip style="margin-left: 4px">
+            <template slot="title">从指定高度开始渐变</template>
+            <mapgis-ui-iconfont type="mapgis-info-circle" style="color: white"/>
+          </mapgis-ui-tooltip>
+        </mapgis-ui-row>
+        <mapgis-ui-row>
+          <mapgis-ui-input-number
+            v-model="gradientCenterHeight"
+            label="渐变中心高度"
+            placeholder="渐变中心高度"
+            :step="0.1"
+            :style="{ width: '256px' }"
+          ></mapgis-ui-input-number>
+        </mapgis-ui-row>
+        <mapgis-ui-row>
+          <label class="mapgis-3d-m3d-menu-bloom-label">渐变半径</label>
+          <mapgis-ui-tooltip style="margin-left: 4px">
+            <template slot="title">渐变效果半径</template>
+            <mapgis-ui-iconfont type="mapgis-info-circle" style="color: white"/>
+          </mapgis-ui-tooltip>
+        </mapgis-ui-row>
+        <mapgis-ui-row>
+          <mapgis-ui-input-number
+            v-model="gradientRadius"
+            label="渐变半径"
+            placeholder="渐变半径"
+            :step="0.1"
+            :style="{ width: '256px' }"
+          ></mapgis-ui-input-number>
+        </mapgis-ui-row>
       </mapgis-ui-switch-panel>
     </div>
     <mapgis-ui-setting-footer>
       <mapgis-ui-button type="primary" @click="addEffect">执行泛光</mapgis-ui-button>
       <mapgis-ui-button @click="removeEffect">删除泛光</mapgis-ui-button>
     </mapgis-ui-setting-footer>
-    <!-- <mapgis-ui-button
-      type="primary"
-      @click="addEffect"
-      :style="{ width: '100%' }"
-      >执行泛光</mapgis-ui-button
-    > -->
-    <!-- <mapgis-ui-button
-      :style="{ width: '100%', marginTop: '4px', display: 'block' }"
-      @click="removeEffect"
-      >删除泛光</mapgis-ui-button
-    > -->
   </div>
 </template>
 
 <script>
 import BaseLayer from "../BaseLayer";
+import EffectMixin from "./mixins/EffectMixin";
 
 export default {
   name: "mapgis-3d-m3d-menu-bloom",
   inject: ["Cesium", "vueCesium", "viewer", "m3ds"],
-  mixins: [BaseLayer],
+  mixins: [BaseLayer, EffectMixin],
   props: {
     version: {
       type: String
     },
     layerIndex: {
-      type: Number
+      type: [Number, String]
     }
   },
-  watch: {
-    layerIndex(next) {
-      this.parseM3d();
-    }
-  },
+  watch: {},
   data() {
     return {
-      layout: "horizontal",
-      labelCol: { span: 8 },
-      wrapperCol: { span: 16 },
-      currentMenu: undefined,
-      maxHeight: 20,
-      minHeight: 0.00000001,
+      // 泛光颜色
       lightColor: "#FF0000",
-      mixFactor: 0.8,
-      startBreath: false,
-      breathSpeed: 0.05
+      // 呼吸灯速度，越小越慢
+      breathSpeed: 0.5,
+      // 如果tileset上已经设置了style，则备份下来，删除泛光时还原
+      highLightBack: undefined,
+      // 是否启用渐变
+      enableGradient: false,
+      // 渐变中心高度
+      gradientCenterHeight: 0.0,
+      // 渐变半径
+      gradientRadius: 1.0
     };
   },
   created() {},
-  mounted() {
-    this.mount();
-  },
+  mounted() {},
   destroyed() {
     this.unmount();
   },
   methods: {
-    createCesiumObject() {
-      return new Promise(
-        resolve => {
-          resolve();
-        },
-        reject => {}
-      );
-    },
-    mount() {
-      const vm = this;
-      const { Cesium, vueIndex, vueKey, vueCesium } = this;
-      const { viewer } = this;
-
-      this.parseM3d();
-
-      let bloom = this.createCesiumObject();
-      bloom.then(res => {
-        vueCesium.BloomEffectManager.addSource(vueKey, vueIndex, this, {});
-      });
-
-      if (viewer.isDestroyed()) return;
-    },
-    unmount() {
-      const { vueCesium, vueKey, vueIndex } = this;
-      this.removeEffect();
-      this.$emit("unload", { component: this });
-      vueCesium.BloomEffectManager.deleteSource(vueKey, vueIndex);
-    },
-    parseM3d() {
-      let tileset = this.getM3DSet();
-      let logic = this.$_getM3DBox(tileset).logic;
-      this.minHeight = logic.minHeight;
-      this.maxHeight = logic.maxHeight;
-    },
-    getM3DSet() {
-      const { layerIndex, viewer, m3ds } = this;
-      let tileset;
-      if (m3ds) {
-        tileset = m3ds[layerIndex];
-      } else {
-        tileset = viewer.scene.layers.getM3DLayer(layerIndex);
-      }
-      return tileset;
-    },
+    /**
+     * 添加呼吸灯特效
+     * */
     addEffect() {
-      const { vueKey, vueIndex, vueCesium, Cesium, viewer } = this;
-      const {
-        lightColor,
-        mixFactor,
-        minHeight,
-        maxHeight,
-        startBreath,
-        breathSpeed
-      } = this;
+      const { Cesium } = this;
+      // 1 获取MapGISM3DSet对象
       let tileset = this.getM3DSet();
-      if (!tileset) return;
+      if (!tileset) return
 
-      this.removeEffect();
+      // 2 如果MapGISM3DSet对象上有style，则备份
+      this.setHighLightBack(tileset)
+      // 置空style，否则会影响自定义着色器
+      tileset.style = undefined
 
-      let bloom = new Cesium.BloomEffect(viewer, [], tileset.root.transform, {
-        minHeight: minHeight,
-        maxHeight: maxHeight,
-        lightColor: new Cesium.Color.fromCssColorString(lightColor),
-        mixFactor: mixFactor,
-        startBreath: startBreath,
-        breathSpeed: breathSpeed
-      });
-
-      bloom.add();
-      if (startBreath) bloom.startBreathLight();
-      vueCesium.BloomEffectManager.changeOptions(
-        vueKey,
-        vueIndex,
-        "bloom",
-        bloom
-      );
-    },
-    removeEffect() {
-      const { vueKey, vueIndex, vueCesium, startBreath } = this;
-      let find = vueCesium.BloomEffectManager.findSource(vueKey, vueIndex);
-      if (find && find.options && find.options.bloom) {
-        let bloom = find.options.bloom;
-        bloom.remove && bloom.remove();
-        if (startBreath) bloom.stopBreathLight();
+      // 3 设置自定义着色器
+      // 3.1 构造呼吸灯颜色字符串
+      const color = Cesium.Color.fromCssColorString(this.lightColor)
+      const colorVec4Sting = this.formatNumberToString(color.red) + ', ' + this.formatNumberToString(color.green) + ', ' + this.formatNumberToString(color.blue) + ', ' + this.formatNumberToString(color.alpha)
+      // 3.2 启用渐变
+      if (this.enableGradient) {
+        // 3.2.1 获取渐变中心高度
+        const gradientCenterHeight = this.formatNumberToString(this.gradientCenterHeight)
+        // 3.2.2 获取渐变半径
+        const gradientRadius = this.formatNumberToString(this.gradientRadius)
+        // 3.2.3 设置带渐变的泛光效果
+        tileset.customShader = new Cesium.CustomShader({
+          uniforms: {},
+          fragmentShaderText: `
+          void fragmentMain(vec4 position, float frameNumber, vec4 oid, inout vec4 fragColor) {
+            // 将0~1之间的值映射到5~720之间
+            float mappedSpeed = ${this.breathSpeed} * (5.0 - 720.0) + 720.0;
+            // 根据当前帧时间(czm_frameNumber)，获取当前顶点所处的周期
+            float time = fract(frameNumber / mappedSpeed);
+            time = abs(time - 0.5) * 2.0;
+            float diffHeight = abs((position.y) + ${gradientCenterHeight});
+            float mappedValue = clamp(diffHeight / ${gradientRadius}, 0.0, 1.0);
+            fragColor += vec4(${colorVec4Sting}) * (1.0 - mappedValue) * time;
+          }
+        `
+        });
+      }
+      // 3.3 不启用渐变，设置不带渐变的泛光效果
+      else {
+        tileset.customShader = new Cesium.CustomShader({
+          uniforms: {},
+          fragmentShaderText: `
+          void fragmentMain(vec4 position, float frameNumber, vec4 oid, inout vec4 fragColor) {
+            // 将0~1之间的值映射到5~720之间
+            float mappedSpeed = ${this.breathSpeed} * (5.0 - 720.0) + 720.0;
+            // 根据当前帧时间(czm_frameNumber)，获取当前顶点所处的周期
+            float time = fract(frameNumber / mappedSpeed);
+            time = abs(time - 0.5) * 2.0;
+            fragColor += vec4(${colorVec4Sting}) * 0.5 * time;
+          }
+        `
+        });
       }
     }
   }
@@ -216,5 +178,13 @@ export default {
 .mapgis-3d-m3d-menu-bloom-content {
   height: 248px;
   overflow-y: auto;
+  width: 275px;
+}
+.mapgis-3d-m3d-menu-bloom-label {
+  height: 32px;
+  line-height: 32px;
+  font-size: 14px;
+  font-family: 'Microsoft YaHei';
+  color: white;
 }
 </style>
