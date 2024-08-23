@@ -439,7 +439,10 @@ export default {
             water: waterReflection,
             minHeight,
             maxHeight: maxHeightCopy,
-            floodSpeed: Number(floodSpeedCopy) / 60,
+            // fix(6037): PTSYB-地形分析中淹没开启水面倒影后，时间轴和图像不对应
+            // 修改人: 杨琨 224-8-23
+            // 修改说明: 最新的水面反射洪水淹没，速度单位已经改为米/每秒，更新使用方式
+            floodSpeed: Number(floodSpeedCopy),
             closeBorder: true,
           });
         floodAnalysisReflection.start();
