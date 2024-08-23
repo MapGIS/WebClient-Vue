@@ -394,6 +394,7 @@ export default {
   },
   destroyed() {
     this.restoreHighlight();
+    this.restoreOriginCustomShader();
     this.restoreOriginStyle();
     this.unmount();
   },
@@ -503,6 +504,7 @@ export default {
             }
           );
           vm.recordOriginStyle();
+          vm.recordOriginCustomShader();
           if (enablePopup) {
             vm.$_bindPickFeature();
           }
@@ -648,26 +650,50 @@ export default {
     handleProjectScreen(payload) {
       this.$emit("project-screen", payload);
     },
-    recordOriginStyle() {
+    /**
+     * 保存指定的M3D属性
+     * @param {String} storeName 存储属性值数组的对象的名称
+     * @param {Function} callback 执行存储操作的回调函数
+     * */
+    recordM3DProps(storeName, callback) {
       const { g3dLayerIndex, viewer } = this;
       const { vueKey, innerVueIndex, vueCesium } = this;
 
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let layerIndexs = g3dLayer.getM3DLayerIndexes();
-      let originStyles = [];
+      let props = [];
       layerIndexs.forEach((index) => {
         let m3dlayer = g3dLayer.getLayer(index);
-        originStyles.push(m3dlayer.style);
+        if (m3dlayer && callback && callback instanceof Function) {
+          callback(m3dlayer, props)
+        }
       });
       vueCesium.StratifiedHousehouldManager.changeOptions(
         vueKey,
         innerVueIndex,
-        "originStyles",
-        originStyles
+        storeName,
+        props
       );
     },
-    restoreOriginStyle() {
+    // 存储M3D的style属性
+    recordOriginStyle() {
+      this.recordM3DProps('originStyles', function (m3d, props) {
+        props.push(m3d.style);
+      })
+    },
+    // 存储M3D的customShader属性
+    recordOriginCustomShader() {
+      this.recordM3DProps('originCustomShaders', function (m3d, props) {
+        props.push(m3d.customShader);
+      })
+    },
+    /**
+     * 恢复原有的属性
+     * @param {String} storeName 存储属性值数组的对象的名称
+     * @param {Function} callback 执行恢复操作的回调函数
+     * */
+    restoreOriginProps(storeName, callback) {
       const { vueKey, innerVueIndex, vueCesium, g3dLayerIndex } = this;
       let find = vueCesium.StratifiedHousehouldManager.findSource(
         vueKey,
@@ -676,12 +702,26 @@ export default {
 
       if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      if (find && find.options.originStyles) {
-        find.options.originStyles.forEach((s, i) => {
+      if (find && find.options[storeName]) {
+        find.options[storeName].forEach((s, i) => {
           let m3dlayer = g3dLayer.getLayer(`${i}`);
-          m3dlayer.style = s;
+          if (m3dlayer && callback && callback instanceof Function) {
+            callback(m3dlayer, s)
+          }
         });
       }
+    },
+    // 恢复默认样式
+    restoreOriginStyle() {
+      this.restoreOriginProps('originStyles', function (m3dlayer, prop) {
+        m3dlayer.style = prop
+      })
+    },
+    // 恢复默认自定义着色器
+    restoreOriginCustomShader() {
+      this.restoreOriginProps('originCustomShaders', function (m3dlayer, prop) {
+        m3dlayer.customShader = prop
+      })
     },
     restoreHighlight() {
       const { g3dLayerIndex, viewer } = this;
