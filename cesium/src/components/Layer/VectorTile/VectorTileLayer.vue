@@ -1,8 +1,22 @@
 <script>
+import {
+  Extent,
+  TileInfo,
+  SpatialReference,
+  Point,
+  IGSVectorTileLayer,
+} from "@mapgis/webclient-common";
+import {
+  getTilingSchemeBySpatialReference,
+  CustomTilingScheme,
+  MapGISVectorTileImageryProvider,
+  VectorTileLayer,
+  getExtent,
+  VectorTileLayerUtil,
+} from "@mapgis/webclient-cesium-plugin";
 import VectorTileOptions from "./VectorTileOptions";
 import ServiceLayer from "../ServiceLayer";
 import clonedeep from "lodash.clonedeep";
-import VectorTileRender from "./VectorTileRender";
 
 export default {
   name: "mapgis-3d-vectortile-layer",
@@ -48,16 +62,29 @@ export default {
     async createCesiumObject() {
       const { $props, viewer, vueCesium } = this;
       const { tilingScheme } = $props;
-      let tileScheme;
+      let tileScheme = undefined;
 
-      if (typeof tilingScheme === "string") {
-        tileScheme = this.checkTiling(tilingScheme);
+      // 获取tilingScheme对象
+      if (tilingScheme) {
+        if (typeof tilingScheme === "string") {
+          tileScheme = this.checkTiling(tilingScheme);
+        } else {
+          tileScheme = tilingScheme;
+        }
+      } else if ($props.tileInfo && $props.spatialReference && $props.extent) {
+        // 传入tileInfo、spatialReference、extent，获取自定义的tilingScheme对象
+        tileScheme = this.getCustomTilingScheme(
+          $props.tileInfo,
+          $props.spatialReference,
+          $props.extent
+        );
       } else {
-        tileScheme = tilingScheme;
+        // 没有传tilingScheme和tileInfo、spatialReference、extent，给定默认4326地理坐标系
+        tileScheme = new Cesium.GeographicTilingScheme();
       }
 
       return new Promise(
-        resolve => {
+        async (resolve) => {
           let vectortile;
 
           const minimumLevel = $props.options.minimumLevel || 0;
@@ -67,14 +94,117 @@ export default {
             minimumLevel,
             maximumLevel,
             tilingScheme: tileScheme,
-            callback: () => {
-              resolve(vectortile);
-            }
           };
-          vectortile = new VectorTileRender(viewer, opt);
+
+          // 获取图层范围
+          const extent = getExtent(opt, opt.tilingScheme.rectangle);
+          // 矢量瓦片动态注记wgs84Extent需要将extent的空间参考系强制设置为EPSG:4326
+          extent.spatialReference = new SpatialReference("EPSG:4326");
+          const rectangle = new Cesium.Rectangle(
+            extent.xmin,
+            extent.ymin,
+            extent.xmax,
+            extent.ymax
+          );
+
+          // 获取矢量瓦片图层样式对象
+          opt.style = await this.getMVTStyleObject();
+
+          // 获取根据styleLayerId获取相应styleLayer对象
+          const getStyleLayer = function (styleLayerId, style) {
+            const styleLayers = style.layers;
+            for (let i = 0; i < styleLayers.length; i++) {
+              if (styleLayers[i].id === styleLayerId) {
+                return styleLayers[i];
+              }
+            }
+            return null;
+          };
+
+          // 适配webclient-common层layer上的getExtendProperties接口
+          opt.getExtendProperties = function (styleLayerId, key) {
+            const _styleLayer = getStyleLayer(styleLayerId, this.style);
+            if (
+              _styleLayer &&
+              _styleLayer.extendProperties &&
+              Object.prototype.toString.call(_styleLayer.extendProperties) ===
+                "[object Object]"
+            ) {
+              return _styleLayer.extendProperties[key];
+            }
+            return null;
+          };
+          // 获取label信息
+          const _labelingInfos =
+            VectorTileLayerUtil._getSublayerLabelingInfos(opt);
+
+          // 初始化VectorTileLayer，对应webclient-cesium-plugin层的innerLayer
+          vectortile = new VectorTileLayer(viewer, {
+            tilingScheme: opt.tilingScheme,
+            rectangle,
+            style: opt.style,
+            labelsRenderMode: opt.labelsRenderMode
+              ? opt.labelsRenderMode
+              : "off-screen",
+            opacity: opt.opacity ? opt.opacity : 1,
+            tileWidth: opt.tileInfo.size[0],
+            tileHeight: opt.tileInfo.size[1],
+            mvtExtent: opt.mvtExtent ? opt.mvtExtent : 4096,
+            sublayerLabelingInfos: _labelingInfos,
+            tokenKey: opt.tokenKey ? opt.tokenKey : "",
+            tokenValue: opt.tokenValue ? opt.tokenValue : "",
+            // 初始化是否可见
+            show: opt.visible ? opt.visible : true,
+            callback: () => {
+              // 请求成功信息
+              resolve(vectortile);
+            },
+          });
         },
-        reject => {}
+        (reject) => {}
       );
+    },
+    // 获取适量瓦片样式对象
+    getMVTStyleObject() {
+      let styleUrl = undefined;
+      let styleObject = undefined;
+      let url = this.styleUrl;
+      return new Promise((resolve, reject) => {
+        if (this.mvtStyle) {
+          if (typeof this.mvtStyle === "string") {
+            //如果是个网络地址，就通过url请求获取矢量瓦片json对象
+            styleUrl = this.mvtStyle;
+          } else {
+            styleObject = this.mvtStyle;
+          }
+        } else if (this.styleUrl) {
+          // 样式json文件路径,有styleUrl就可以直接读取styleUrl里的信息;不然就是加载中地发布的矢量瓦片，使用ip，port和layerName先拼接styleUrl路径再进行查询。
+          if (typeof this.styleUrl === "string") {
+            styleUrl = this.styleUrl;
+          } else {
+            if (this.ip && this.port && this.layerName)
+              styleUrl = `${window.location.protocol}//${this.ip}:${this.port}/igs/rest/mrcs/vtiles/0/${this.layerName}`;
+          }
+        } else {
+          if (!this.vectortilejson) {
+            //如果没有矢量瓦片json对象，就通过url请求获取矢量瓦片json对象
+            styleUrl = this.url;
+          } else {
+            styleObject = this.vectortilejson;
+          }
+        }
+        if (!styleUrl && !styleObject) {
+          resolve();
+        } else {
+          const igsVectorTileLayer = new IGSVectorTileLayer({
+            url: styleUrl,
+            style: styleObject
+          });
+          igsVectorTileLayer.load().then((res) => {
+            resolve(res.style);
+          });
+        }
+      });
     },
     checkTiling(tileMatrixSetName) {
       let tilingScheme;
@@ -90,6 +220,36 @@ export default {
       } else {
         tilingScheme = new Cesium.GeographicTilingScheme();
       }
+      return tilingScheme;
+    },
+    // 根据tileInfo、spatialReference、extent，获取自定义TilingScheme对象
+    getCustomTilingScheme(tileInfo, spatialReference, extent) {
+      const spatialReferenceCommon = new SpatialReference({
+        wkid: spatialReference.wkid
+      });
+      const originCommon = new Point({
+        coordinates: [tileInfo.origin.x, tileInfo.origin.y],
+        spatialReference
+      });
+      const extentCommon = new Extent({
+        xmin: extent.xmin,
+        ymin: extent.ymin,
+        xmax: extent.xmax,
+        ymax: extent.ymax
+      });
+      const tileInfoCommon = new TileInfo({
+        dpi: tileInfo.dpi,
+        format: tileInfo.format,
+        origin: originCommon,
+        lods: tileInfo.lods,
+        spatialReference: spatialReferenceCommon,
+        size: tileInfo.size
+      });
+      const tilingScheme = getTilingSchemeBySpatialReference(
+        spatialReferenceCommon,
+        extentCommon,
+        tileInfoCommon
+      );
       return tilingScheme;
     },
     watchProp() {
@@ -140,7 +300,7 @@ export default {
       this.$vectortile.updateStyle(style);
     },
     provider() {
-      return this.$vectortile ? this.$vectortile.provider : undefined;
+      return this.$vectortile ? this.$vectortile._innderLayer : undefined;
     },
     $_mount() {
       const { vueIndex, vueKey, vueCesium } = this;
@@ -156,7 +316,7 @@ export default {
       let promise = this.createCesiumObject();
       promise.then(vectortile => {
         vm.$vectortile = vectortile;
-        let imageryLayer = vectortile.provider;
+        let imageryLayer = vectortile._innderLayer;
 
         if (vueKey && vueIndex) {
           vueCesium.VectorTileManager.addSource(
