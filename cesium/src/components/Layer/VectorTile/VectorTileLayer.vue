@@ -7,11 +7,10 @@ import {
   IGSVectorTileLayer,
 } from "@mapgis/webclient-common";
 import {
-  getTilingSchemeBySpatialReference,
+  getTilingScheme,
   CustomTilingScheme,
   MapGISVectorTileImageryProvider,
-  VectorTileLayer,
-  getExtent,
+  getProviderExtent,
   VectorTileLayerUtil,
 } from "@mapgis/webclient-cesium-plugin";
 import VectorTileOptions from "./VectorTileOptions";
@@ -30,8 +29,9 @@ export default {
   inject: ["Cesium", "viewer", "vueCesium"],
   created() {},
   mounted() {
-    this.$_mount();
-    this.watchProp();
+    this.$_mount().then(()=>{
+      this.watchProp();
+    });
   },
   destroyed() {
     this.$_unmount();
@@ -96,11 +96,11 @@ export default {
             tilingScheme: tileScheme,
           };
 
-          // 获取图层范围
-          const extent = getExtent(opt, opt.tilingScheme.rectangle);
+          // 获取provider图层范围
+          const extent = getProviderExtent(opt, opt.tilingScheme.rectangle);
           // 矢量瓦片动态注记wgs84Extent需要将extent的空间参考系强制设置为EPSG:4326
           extent.spatialReference = new SpatialReference("EPSG:4326");
-          const rectangle = new Cesium.Rectangle(
+          opt.rectangle = new Cesium.Rectangle(
             extent.xmin,
             extent.ymin,
             extent.xmax,
@@ -110,59 +110,54 @@ export default {
           // 获取矢量瓦片图层样式对象
           opt.style = await this.getMVTStyleObject();
 
-          // 获取根据styleLayerId获取相应styleLayer对象
-          const getStyleLayer = function (styleLayerId, style) {
-            const styleLayers = style.layers;
-            for (let i = 0; i < styleLayers.length; i++) {
-              if (styleLayers[i].id === styleLayerId) {
-                return styleLayers[i];
-              }
-            }
-            return null;
-          };
-
-          // 适配webclient-common层layer上的getExtendProperties接口
-          opt.getExtendProperties = function (styleLayerId, key) {
-            const _styleLayer = getStyleLayer(styleLayerId, this.style);
-            if (
-              _styleLayer &&
-              _styleLayer.extendProperties &&
-              Object.prototype.toString.call(_styleLayer.extendProperties) ===
-                "[object Object]"
-            ) {
-              return _styleLayer.extendProperties[key];
-            }
-            return null;
-          };
-          // 获取label信息
-          const _labelingInfos =
-            VectorTileLayerUtil._getSublayerLabelingInfos(opt);
-
-          // 初始化VectorTileLayer，对应webclient-cesium-plugin层的innerLayer
-          vectortile = new VectorTileLayer(viewer, {
-            tilingScheme: opt.tilingScheme,
-            rectangle,
-            style: opt.style,
-            labelsRenderMode: opt.labelsRenderMode
-              ? opt.labelsRenderMode
-              : "off-screen",
-            opacity: opt.opacity ? opt.opacity : 1,
-            tileWidth: opt.tileInfo.size[0],
-            tileHeight: opt.tileInfo.size[1],
-            mvtExtent: opt.mvtExtent ? opt.mvtExtent : 4096,
-            sublayerLabelingInfos: _labelingInfos,
-            tokenKey: opt.tokenKey ? opt.tokenKey : "",
-            tokenValue: opt.tokenValue ? opt.tokenValue : "",
-            // 初始化是否可见
-            show: opt.visible ? opt.visible : true,
-            callback: () => {
-              // 请求成功信息
-              resolve(vectortile);
-            },
-          });
+          opt.scene = viewer.scene
+          opt.tileWidth = opt.tileInfo && opt.tileInfo.size ? opt.tileInfo.size[0]:256
+          opt.tileHeight = opt.tileInfo && opt.tileInfo.size ? opt.tileInfo.size[1]:256
+          // 添加矢量图层
+          vectortile = this.$_addLayer(opt)
+          resolve(vectortile);
         },
         (reject) => {}
       );
+    },
+    // 添加图层
+    $_addLayer(opt){
+      // 初始化构建MapGISVectorTileImageryProvider对象
+      const vectorTileProvider = new MapGISVectorTileImageryProvider({
+        style: opt.style,
+        opacity: opt.opacity ? opt.opacity : 1,
+        // 初始化是否可见
+        show: opt.visible ? opt.visible : true,
+        tilingScheme: opt.tilingScheme,
+        scene: opt.scene,
+        labelsRenderMode: opt.labelsRenderMode
+          ? opt.labelsRenderMode
+          : "off-screen",
+        rectangle: opt.rectangle,
+        tileWidth: opt.tileWidth,
+        tileHeight: opt.tileHeight,
+        transform: opt.mvtExtent ? [512 / opt.mvtExtent, 0, 0, 512 / opt.mvtExtent, 0, 0] : [0.125, 0, 0, 0.125, 0, 0],
+        tokenKey: opt.tokenKey ? opt.tokenKey : "",
+        tokenValue: opt.tokenValue ? opt.tokenValue : "",
+        minimumLevel: opt.minimumLevel,
+        maximumLevel: opt.maximumLevel
+      });
+      // 添加图层到Cesium视图中
+      return viewer.imageryLayers.addImageryProvider(vectorTileProvider)
+    },
+    // 移除图层
+    $_removeLayer() {
+      if (this.$vectortile) {
+        if (this.$vectortile._imageryProvider) {
+          this.$vectortile._imageryProvider._removeEvents()
+          if (this.$vectortile._imageryProvider._dynamicLabelLayer) {
+            this.$vectortile._imageryProvider._dynamicLabelLayer.destroyed()
+            this.$vectortile._imageryProvider._dynamicLabelLayer = null
+          }
+        }
+        this.viewer.imageryLayers.remove(this.$vectortile, true)
+        this.$vectortile.show = false
+      }
     },
     // 获取适量瓦片样式对象
     getMVTStyleObject() {
@@ -245,7 +240,7 @@ export default {
         spatialReference: spatialReferenceCommon,
         size: tileInfo.size
       });
-      const tilingScheme = getTilingSchemeBySpatialReference(
+      const tilingScheme = getTilingScheme(
         spatialReferenceCommon,
         extentCommon,
         tileInfoCommon
@@ -267,16 +262,16 @@ export default {
       if (show) {
         this.$watch("show", function(next) {
           if (this.initial) return;
-          if (find) {
-            !viewer.isDestroyed() && find.source.setVisible(next);
+          if (find && !viewer.isDestroyed()) {
+             find.source.show = next;
           }
         });
       }
       if (mvtStyle) {
         this.$watch("mvtStyle", {
           handler(nextStyle) {
-            if (typeof nextStyle === "object") {
-              !viewer.isDestroyed() && this.$vectortile.updateStyle(nextStyle);
+            if (typeof nextStyle === "object" && !viewer.isDestroyed()) {
+              this.updateStyle(nextStyle);
             }
           },
           deep: true
@@ -287,9 +282,10 @@ export default {
           handler(nextStyle) {
             if (
               typeof nextStyle === "object" &&
-              this.$vectortile !== undefined
+              this.$vectortile !== undefined &&
+              !viewer.isDestroyed()
             ) {
-              !viewer.isDestroyed() && this.$vectortile.updateStyle(nextStyle);
+              this.updateStyle(nextStyle);
             }
           },
           deep: true
@@ -297,10 +293,13 @@ export default {
       }
     },
     updateStyle(style) {
-      this.$vectortile.updateStyle(style);
+      const options = this.$vectortile && this.$vectortile._imageryProvider ? this.$vectortile._imageryProvider.options : {}
+      options.style = style
+      this.$_removeLayer()
+      this.$vectortile = this.$_addLayer(options)
     },
     provider() {
-      return this.$vectortile ? this.$vectortile._innderLayer : undefined;
+      return this.$vectortile ? this.$vectortile._imageryProvider : undefined;
     },
     $_mount() {
       const { vueIndex, vueKey, vueCesium } = this;
@@ -316,7 +315,7 @@ export default {
       let promise = this.createCesiumObject();
       promise.then(vectortile => {
         vm.$vectortile = vectortile;
-        let imageryLayer = vectortile._innderLayer;
+        let imageryLayer = vectortile;
 
         if (vueKey && vueIndex) {
           vueCesium.VectorTileManager.addSource(
@@ -359,12 +358,14 @@ export default {
         //得到layerStyle的副本，供watch使用
         vm.layerStyleCopy = clonedeep(layerStyle);
       });
+      return promise
     },
     $_unmount() {
       const { viewer, vueKey, vueIndex, vueCesium } = this;
       let find = vueCesium.VectorTileManager.findSource(vueKey, vueIndex);
-      if (find) {
-        !viewer.isDestroyed() && find.options.vectortile.destroy();
+      if (find && !viewer.isDestroyed()) {
+        this.$_removeLayer();
+        this.$vectortile = undefined;
       }
       vueCesium.VectorTileManager.deleteSource(vueKey, vueIndex);
     }
