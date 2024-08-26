@@ -16,6 +16,7 @@ import {
 import VectorTileOptions from "./VectorTileOptions";
 import ServiceLayer from "../ServiceLayer";
 import clonedeep from "lodash.clonedeep";
+import isEqual from "lodash.isequal";
 
 export default {
   name: "mapgis-3d-vectortile-layer",
@@ -279,9 +280,12 @@ export default {
       }
       if (vectortilejson) {
         this.$watch("vectortilejson", {
-          handler(nextStyle) {
+          handler(nextStyle, oldStyle) {
+            const isEqualStyle = isEqual(nextStyle, oldStyle)
+            // 判断条件中增加比较新旧style值的逻辑。当nextStyle和oldStyle的对象属性值相同，不更新style。
             if (
               typeof nextStyle === "object" &&
+              !isEqualStyle && 
               this.$vectortile !== undefined &&
               !viewer.isDestroyed()
             ) {
@@ -294,9 +298,13 @@ export default {
     },
     updateStyle(style) {
       const options = this.$vectortile && this.$vectortile._imageryProvider ? this.$vectortile._imageryProvider.options : {}
-      options.style = style
-      this.$_removeLayer()
-      this.$vectortile = this.$_addLayer(options)
+      // 如果style对象属性值有改变，则更新图层（采用先删除在添加图层的方案）
+      if(!isEqual(style, options.style)){
+        this.layerStyle = style
+        options.style = style
+        this.$_removeLayer()
+        this.$vectortile = this.$_addLayer(options)
+      }
     },
     provider() {
       return this.$vectortile ? this.$vectortile._imageryProvider : undefined;
