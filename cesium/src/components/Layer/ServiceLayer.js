@@ -1,3 +1,4 @@
+import { CustomWKID } from "@mapgis/webclient-common";
 export default {
   inject: ["viewer"],
   props: {
@@ -702,25 +703,21 @@ export default {
         tilingScheme = new Cesium.GeographicTilingScheme();
       } else if (tileMatrixSetName === "EPSG:3857") {
         tilingScheme = new Cesium.WebMercatorTilingScheme();
-      } else if (
-        ["bd09", "bd09ll", "bd09mc", "gcj02", "gcj02ll", "gcj02mc"].indexOf(
-          tileMatrixSetName
-        ) > -1
-      ) {
+      } else if (this.$_isCustomWKID(tileMatrixSetName)) {
         // 自定义WKID值，请参考webclient或cesium相关文档
         // 20020902百度墨09卡托，20010202国测局02墨卡托
         let customWKID;
         let axisDirection = {
           x: 1,
-          y: 1
+          y: -1,
         };
         let rectangleSouthwest;
         let rectangleNortheast;
-        if (["bd09", "bd09ll", "bd09mc"].indexOf(tileMatrixSetName) > -1) {
-          customWKID = 20020902;
+        customWKID = Number(tileMatrixSetName);
+        if ([CustomWKID.bd09ll, CustomWKID.bd09mc].indexOf(customWKID) > -1) {
           axisDirection = {
             x: 1,
-            y: -1
+            y: 1,
           };
           rectangleSouthwest = new Cesium.Cartesian2(
             -20037726.37,
@@ -728,9 +725,8 @@ export default {
           );
           rectangleNortheast = new Cesium.Cartesian2(20037726.37, 12474104.17);
         } else if (
-          ["gcj02", "gcj02ll", "gcj02mc"].indexOf(tileMatrixSetName) > -1
+          [CustomWKID.gcj02ll, CustomWKID.gcj02mc].indexOf(customWKID) > -1
         ) {
-          customWKID = 20010202;
           const maxLength = Cesium.Ellipsoid.WGS84.maximumRadius * Math.PI;
           // const maxLength = 20037508.3427892;
           rectangleSouthwest = new Cesium.Cartesian2(-maxLength, -maxLength);
@@ -742,14 +738,30 @@ export default {
           axisDirection: axisDirection,
           rectangleSouthwest: rectangleSouthwest,
           rectangleNortheast: rectangleNortheast,
-          tileInfo: tileInfo
+          tileInfo: tileInfo,
         });
       } else {
         tilingScheme = new Cesium.GeographicTilingScheme();
       }
       return tilingScheme;
     },
-
+    // 是否为自定义wkid
+    $_isCustomWKID(wkid) {
+      const wkidNum = Number(wkid);
+      if (!isNaN(wkidNum)) {
+        if (
+          wkidNum === CustomWKID.gcj02 ||
+          wkidNum === CustomWKID.gcj02ll ||
+          wkidNum === CustomWKID.gcj02mc ||
+          wkidNum === CustomWKID.bd09 ||
+          wkidNum === CustomWKID.bd09ll ||
+          wkidNum === CustomWKID.bd09mc
+        ) {
+          return true;
+        }
+      }
+      return false;
+    },
     /*
      * 根据wkid构造瓦片信息
      * @param wkid 参考系的wkid号
@@ -796,7 +808,42 @@ export default {
           },
           lods: lods
         };
-      }
+      } else if (wkid === 20020901 || wkid === 20010201) {
+        const extent = {
+          xmin: -180,
+          ymin: -90,
+          xmax: 180,
+          ymax: 90
+        };
+        const numberOfMinLevelTilesX = 2;
+        const tileSize = 256;
+        const mapUnitToMeters = 111319490.79327358;
+        // 最大(第0级)分辨率
+        const resolution0 =
+          (extent.xmax - extent.xmin) / numberOfMinLevelTilesX / tileSize;
+        // 开始计算分辨率
+        const lods = [];
+        // 默认构造20级分辨率
+        for (let i = 0; i < 19; i++) {
+          const resolutions = resolutions0 / Math.pow(2,i)
+          const lod = {
+            level: i,
+            resolution: resolutions[i] / 2,
+            scale: (mapUnitToMeters * (resolution * 96)) / 0.0254
+          };
+          lods.push(lod);
+        }
+        tileInfo = {
+          dpi: 96,
+          format: "PNG",
+          size: tileSize, // 瓦片宽高的像素大小
+          origin: {
+            coordinates: [180, -90], // 裁图原点
+            type: "Point", 
+          },
+          lods: lods
+        };
+      } 
       return tileInfo;
     }
   }
