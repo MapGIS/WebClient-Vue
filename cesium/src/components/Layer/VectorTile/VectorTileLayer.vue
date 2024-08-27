@@ -88,8 +88,17 @@ export default {
         async (resolve) => {
           let vectortile;
 
-          const minimumLevel = $props.options.minimumLevel || 0;
-          const maximumLevel = $props.options.maximumLevel || 20;
+          // 获取图层tileInfo上的最大最小层级，与传入的最大最小层级区交集
+          const limitLevels = this.$_getLevelRangeByTileInfo($props.tileInfo)
+          let minimumLevel = 0;
+          let maximumLevel = 22;
+          if ($props.options) {
+            const optMinimumLevel = $props.options.minimumLevel || 0;
+            const optMaximumLevel = $props.options.maximumLevel || 22;
+            minimumLevel = Math.max(optMinimumLevel,limitLevels[0])
+            maximumLevel = Math.min(optMaximumLevel,limitLevels[1])
+          }
+          
           const opt = {
             ...$props,
             minimumLevel,
@@ -159,6 +168,21 @@ export default {
         this.viewer.imageryLayers.remove(this.$vectortile, true)
         this.$vectortile.show = false
       }
+    },
+    // 根据tileInfo获取层级范围
+    $_getLevelRangeByTileInfo(tileInfo) {
+      const levels = [0, 22]
+      if (
+        !tileInfo ||
+        !Array.isArray(tileInfo.lods) ||
+        tileInfo.lods.length === 0
+      ) {
+        return levels
+      }
+      const lods = tileInfo.lods
+      const firstLevel = lods[0].level
+      const lastLevel = lods[lods.length - 1].level
+      return [firstLevel, lastLevel]
     },
     // 获取适量瓦片样式对象
     getMVTStyleObject() {
