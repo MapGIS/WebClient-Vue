@@ -137,6 +137,7 @@
             @update-setting="updateSetting"
             @remove-road="removeRoad"
             @show-road="showRoad"
+            @toggle-road="toggleRoad"
           ></path-roaming>
         </div>
       </div>
@@ -523,6 +524,15 @@ export default {
         }
       });
       this.viewer.flyTo(this.polyline);
+    },
+    /**
+     * 显示或隐藏SceneRoaming组件自己绘制的线
+     * @param {Object} payLoad 事件参数
+     * */
+    toggleRoad(payLoad) {
+      if (this.polyline) {
+        this.polyline.show = payLoad.show
+      }
     },
     drawPoint(flag) {
       // flag为true表示不需要重新绘制全部点（正常绘制路线），反之则为修改路线的点位，需要重新绘制点位

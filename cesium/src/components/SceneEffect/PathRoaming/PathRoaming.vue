@@ -60,7 +60,7 @@
             @change="val => onEffectsChange(val, 'pitch')"
           />
           <mapgis-ui-input-number-panel
-            v-show="settingCopy.animationType !== 1"
+            v-show="showDistanceSlider()"
             size="large"
             label="距离"
             :range="[1, 200]"
@@ -68,7 +68,7 @@
             :disabled="settingCopy.animationType === 1 ? true : false"
             @change="val => changeRange(val)"
           />
-          <mapgis-ui-form-item label="视角">
+          <mapgis-ui-form-item label="视角" >
             <mapgis-ui-row>
               <mapgis-ui-col :span="24">
                 <mapgis-ui-select
@@ -318,7 +318,11 @@ export default {
           value: "HermitePolynomialApproximation"
         }
       ],
-      modelUrl: ""
+      modelUrl: "",
+      // 备份用户点击的showPath的状态，当视角从锁定第一视角转为其他视角时，恢复状态
+      showPathBack: true,
+      // 备份用户点击的showInfo的状态，当视角从锁定第一视角转为其他视角时，恢复状态
+      showInfoBack: true,
     };
   },
   created() {},
@@ -440,8 +444,11 @@ export default {
       // 绝对高程下exHeight设置为1
       window.SceneWanderManager.animation.exHeight =
         elevationType === "addition" ? exHeight : 1;
-      window.SceneWanderManager.animation.heading = heading;
-      window.SceneWanderManager.animation.pitch = pitch;
+      // fix(6171): PTSYB-场景漫游：设置的参数重新播放时，没有按当前参数显示， 仍是默认回到初始状态
+      // 修改人: 杨琨 2024-8-28
+      // 修改说明: 新版的场景漫游要求heading和pitch参数的单位为弧度，适配最新的场景漫游工具
+      window.SceneWanderManager.animation.heading = Cesium.Math.toRadians(heading);
+      window.SceneWanderManager.animation.pitch = Cesium.Math.toRadians(pitch);
       window.SceneWanderManager.animation.animationType = animationType;
       window.SceneWanderManager.animation.isLoop = isLoop;
       window.SceneWanderManager.animation.isShowPath = showPath;
@@ -474,20 +481,39 @@ export default {
         this.settingCopy.range = 1;
       }
       window.SceneWanderManager.animation.range = this.settingCopy.range;
+      // fix(6171): PTSYB-场景漫游：设置的参数重新播放时，没有按当前参数显示， 仍是默认回到初始状态
+      // 修改人: 杨琨 2024-8-28
+      // 修改说明:
+      // 1、当视角类型为锁定第一视角时，显隐漫游工具绘制的线和提示信息
+      // 2、开始漫游时，删除SceneRoaming组件绘制的线
+      // 显隐漫游工具绘制的线和提示信息
+      if (window.SceneWanderManager.animation.animationType === 2) {
+        window.SceneWanderManager.animation.isShowPath = false
+        window.SceneWanderManager.animation.showInfo = false
+        this.settingCopy.showPath = false
+        this.settingCopy.showInfo = false
+      }
+      // 开始漫游时，删除SceneRoaming组件绘制的线
+      this.$emit("remove-road");
     },
     onCheckBoxChange(val, key) {
       this.settingCopy[key] = val;
+      // fix(6171): PTSYB-场景漫游：设置的参数重新播放时，没有按当前参数显示， 仍是默认回到初始状态
+      // 修改人: 杨琨 2024-8-28
+      // 修改说明: 当未开始漫游时，用户可以显示和隐藏漫游路径
       if (key === "showPath") {
-        if (
-          window.SceneWanderManager.animation &&
-          window.SceneWanderManager.animation.animationModel &&
-          window.SceneWanderManager.animation.animationModel.pathCopy
-        ) {
-          window.SceneWanderManager.animation.animationModel.pathCopy.show._value = val;
-        }
-      } else {
-        window.SceneWanderManager.animation[key] = val;
+        // 备份用户点击的showPath的状态，当视角从锁定第一视角转为其他视角时，恢复状态
+        this.showPathBack = val
+        // 显隐SceneRoaming组件绘制的线
+        this.$emit("toggle-road", {
+          show: val
+        });
       }
+      // 备份用户点击的showInfo的状态，当视角从锁定第一视角转为其他视角时，恢复状态
+      if (key === "showInfo") {
+        this.showInfoBack = val
+      }
+      window.SceneWanderManager.animation[key] = val;
     },
     onEffectsChange(val, key) {
       window.SceneWanderManager.animation[key] = this.Cesium.Math.toRadians(
@@ -504,10 +530,18 @@ export default {
         this.settingCopy.range = 200;
       } else if (window.SceneWanderManager.animation.animationType === 2) {
         this.settingCopy.range = 10;
+        // 当场景漫游的视角类型是锁定第一视角时，隐藏显示路径和显示提示信息的状态
+        this.settingCopy.showPath = false
+        this.settingCopy.showInfo = false
       } else {
         this.settingCopy.range = 1;
       }
       window.SceneWanderManager.animation.range = this.settingCopy.range;
+      // 当场景漫游的视角类型不是锁定第一视角时，还原显示路径和显示提示信息的状态
+      if (value !== 2) {
+        this.settingCopy.showPath = this.showPathBack
+        this.settingCopy.showInfo = this.showInfoBack
+      }
     },
     onModelChange(value) {
       window.SceneWanderManager.animation._modelUrl = value;
@@ -524,6 +558,13 @@ export default {
         arr[i] = this.settingCopy.exHeight;
       }
       return arr;
+    },
+    /**
+     * 当漫游类型为跟随和上帝视角视角时，才能设置相机距离
+     * @return {Boolean} 是否能设置相机距离
+     * */
+    showDistanceSlider() {
+      return this.settingCopy.animationType === 1 || this.settingCopy.animationType === 3
     }
   }
 };
