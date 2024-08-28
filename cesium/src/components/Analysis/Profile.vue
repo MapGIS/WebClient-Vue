@@ -25,6 +25,11 @@
             ></mapgis-ui-sketch-color-picker>
           </mapgis-ui-form-item>
           <mapgis-ui-switch-panel
+            label="开启高精度采样"
+            v-model="sampleSceneMostDetail"
+            size="default"
+          ></mapgis-ui-switch-panel>
+          <mapgis-ui-switch-panel
             label="显示剖切面"
             v-model="showPolygonCopy"
             size="default"
@@ -330,6 +335,7 @@ export default {
       polyLineColorCopy: "rgb(0,255,0)", // 交互线颜色(开启剖面的时候生效)
       pointColorCopy: "rgb(0,255,0)", // 交互点颜色(关闭剖面的时候生效)
       polylineGroundColorCopy: "rgb(255,0,0)", // 剖切线颜色
+      sampleSceneMostDetail: false, // 是否开启高精度采样
       showPolygonCopy: false, // 是否显示剖面
       samplePrecisionCopy: 2, // 采样精度(采样间隔，平面距离，单位米，模型推荐为0.2，地形推荐为2)
       isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
@@ -431,7 +437,8 @@ export default {
         polylineGroundColorCopy,
         showPolygonCopy,
         samplePrecisionCopy,
-        echartsOptions
+        echartsOptions,
+        sampleSceneMostDetail
       } = this;
       const pColor = this._getColor(polygonColorCopy);
       const ptColor = this._getColor(pointColorCopy);
@@ -449,6 +456,7 @@ export default {
           showPolygon: showPolygonCopy,
           polylineGroundColor: pgColor,
           samplePrecision: samplePrecisionCopy,
+          sampleSceneMostDetail,
           profileType, // 0表示只采地形，分析中界面不会卡顿；1表示支持模型和地形，分析中界面会卡顿
           echart: this.profileeChart
         });
