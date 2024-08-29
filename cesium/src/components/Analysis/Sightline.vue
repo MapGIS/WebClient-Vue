@@ -137,17 +137,8 @@ export default {
       // 观察者位置信息
       viewPointPosition: "",
 
-      // 观察点
-      // viewPoint: undefined,
-
-      // 目标点
-      // targetPoint: undefined,
-
       // 观察点坐标
       viewPosition: undefined,
-
-      //通视分析结果集
-      visibilityArr: [],
 
       isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
 
@@ -192,8 +183,9 @@ export default {
           newVal.visibleColor
         );
         let find = this.findSource();
-        if (this.visibilityArr.length > 0) {
-          this.visibilityArr.forEach(item => {
+        const visibilityArr = this.getVisibilityArr()
+        if (visibilityArr.length > 0) {
+          visibilityArr.forEach(item => {
             if (find.options.visiblityAnalysis) {
               let visiblityAnalysis = find.options.visiblityAnalysis;
               visiblityAnalysis.unvisibleColor = unVisibleColor;
@@ -251,6 +243,8 @@ export default {
           vueIndex,
           dataSource,
           {
+            // 通视分析结果集
+            visibilityArr: [],
             visiblityAnalysis: null
           }
         );
@@ -303,17 +297,17 @@ export default {
       // 获取当前坐标系标准
       const ellipsoid = this.viewer.scene.globe.ellipsoid;
 
-      // this.startEventHandler();
       if (!this.isDepthTestAgainstTerrainEnable) {
         // 如果深度检测没有开启，则开启
         setDepthTestAgainstTerrainEnable(true, this.viewer);
       }
-      // this.addEventListener();
+
       let visibility;
       let find = this.findSource();
+      const visibilityArr = this.getVisibilityArr()
       if (find && find.options && find.options.visiblityAnalysis) {
         visibility = find.options.visiblityAnalysis;
-        this.visibilityArr.push(visibility);
+        visibilityArr.push(visibility);
       } else {
         visibility = this.createVisibility();
       }
@@ -384,7 +378,13 @@ export default {
       visibility.visibleColor = visibleColor;
       // 添加通视分析结果显示
       viewer.scene.visualAnalysisManager.add(visibility);
-      this.visibilityArr.push(visibility);
+      // fix(6026): PTSYB-通视分析刚打开时卡很长时间才能开始分析
+      // 修改人: 杨琨 2024-8-29
+      // 修改说明: 在通视分析微件中使用Vue的数组来存储Cesium.VisiblityAnalysis对象，
+      // 此时该对象会被Cesium和Vue双重监听，导致部分浏览器卡死，
+      // 因此使用VisiblityAnalysisManager上的数组对象来存储Cesium.VisiblityAnalysis对象，避免双重监听
+      const visibilityArr = this.getVisibilityArr()
+      visibilityArr.push(visibility);
       return visibility;
     },
     /**
@@ -419,14 +419,15 @@ export default {
       }
       this.viewer.entities.removeAll();
 
-      if (this.visibilityArr.length > 0 && !this.maskShow) {
-        this.visibilityArr.forEach(item => {
+      let visibilityArr = this.getVisibilityArr()
+      if (visibilityArr.length > 0 && !this.maskShow) {
+        visibilityArr.forEach(item => {
           // 移除通视分析结果
           this.viewer.scene.visualAnalysisManager.remove(item);
           // 销毁通视分析类
           item.destroy();
         });
-        this.visibilityArr = [];
+        visibilityArr = [];
       }
       //恢复深度检测的原始设置
       this._restoreDepthTestAgainstTerrain();
@@ -596,6 +597,23 @@ export default {
     // 从地图上移除目标点
     removeTargetPoint() {
       if (this.targetPoint) this.viewer.entities.remove(this.targetPoint);
+    },
+
+    /**
+     * 获取通视分析结果集
+     * @return {Array} 通视分析结果集
+     * */
+    getVisibilityArr() {
+      const find = this.findSource();
+      let visibilityArr = []
+      if (find && find.options) {
+        if (find.options.visibilityArr) {
+          visibilityArr = find.options.visibilityArr
+        } else {
+          find.options.visibilityArr = visibilityArr
+        }
+      }
+      return visibilityArr
     },
 
     // 销毁toolTip对象
