@@ -247,9 +247,18 @@ export default {
     baseUrl() {
       return window._CONFIG.domainURL;
     },
+    appProductName() {
+      return window._CONFIG.productName || "psmap";
+    },
     getImage() {
       return image => {
-        return `${this.baseUrl}${image}`;
+        if (image.startsWith("/file")) {
+          return `${this.baseUrl}/${this.appProductName}${image}`;
+        } else if (image.startsWith("data:")) {
+          return image;
+        } else {
+          return `${this.baseUrl}${image}`;
+        }
       };
     }
   },
