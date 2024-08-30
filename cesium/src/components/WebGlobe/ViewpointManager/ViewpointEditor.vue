@@ -298,6 +298,15 @@ export default {
     this.unmount();
   },
   methods: {
+    getimageUrl(url) {
+      if (url.startsWith("/file")) {
+        return `${this.baseUrl}/${this.appProductName}${url}`;
+      } else if (url.startsWith("data:")) {
+        return url;
+      } else {
+        return `${this.baseUrl}${url}`;
+      }
+    },
     mount() {
       this.$emit("load", this);
     },
@@ -307,8 +316,7 @@ export default {
     initConfig(val) {
       this.name = val.name;
 
-      this.image =
-        this.mode === "add" ? val.image : `${this.baseUrl}${val.image}`;
+      this.image = this.getimageUrl(val.image);
       this.imageUrl = val.image;
 
       this.longitude = val.destination.x;
@@ -361,7 +369,7 @@ export default {
         const imageObj = vm.base64ToFile(canvas.toDataURL(), id);
         vm.uploadImage(imageObj)
           .then(res => {
-            vm.image = `${vm.baseUrl}${res.data.url}`;
+            vm.image = vm.getimageUrl(res.data.url);
             vm.imageUrl = res.data.url;
             vm.spinning = false;
           })
