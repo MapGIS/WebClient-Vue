@@ -28,7 +28,7 @@ export default {
     },
     layerStyle: {
       type: Object,
-      default: function () {
+      default: function() {
         return {
           visible: true,
           opacity: 1
@@ -92,7 +92,7 @@ export default {
   },
   watch: {
     layerStyle: {
-      handler: function () {
+      handler: function() {
         let { vueKey, vueIndex } = this;
         let layer = window.vueCesium[this.managerName].findSource(
           vueKey,
@@ -115,7 +115,7 @@ export default {
       deep: true
     },
     options: {
-      handler: function () {
+      handler: function() {
         let vm = this;
         let isEqual = this.$_isEqual(vm.options, vm.optionsBack);
         if (!isEqual) {
@@ -127,7 +127,7 @@ export default {
       deep: true
     },
     id: {
-      handler: function () {
+      handler: function() {
         const { vueIndex, vueKey } = this;
         let layer = window.vueCesium[this.managerName].findSource(
           vueKey,
@@ -181,7 +181,7 @@ export default {
 
       //取得除options、layerStyle和id之外的必要参数
       const { $props, vueIndex, vueKey } = this;
-      Object.keys($props).forEach(function (key) {
+      Object.keys($props).forEach(function(key) {
         if (key !== "options" && key !== "layerStyle" && key !== "id") {
           opt[key] = $props[key];
         }
@@ -372,7 +372,7 @@ export default {
         vm = this;
 
       //遍历window.vueCesium下所有的Manager
-      Object.keys(window.vueCesium).forEach(function (key) {
+      Object.keys(window.vueCesium).forEach(function(key) {
         if (key.indexOf("Manager") > -1 && key !== "GlobesManager") {
           //取出含有与webScene组件相同vueKey的Manager对象
           if (window.vueCesium[key].hasOwnProperty("vueKey")) {
@@ -396,7 +396,7 @@ export default {
       });
 
       //对数组进行排序
-      Layers.sort(function (a, b) {
+      Layers.sort(function(a, b) {
         if (a.options && b.options) {
           return a.options.zIndex - b.options.zIndex;
         }
@@ -638,7 +638,7 @@ export default {
     $_checkProps(checkObj, checkType) {
       let vm = this;
       if (checkObj && checkType) {
-        Object.keys(checkObj).forEach(function (key) {
+        Object.keys(checkObj).forEach(function(key) {
           let result;
           if (checkType.hasOwnProperty(key) && typeof key === "string") {
             result = vm.$_checkValue(checkObj, key, checkType[key]);
@@ -709,7 +709,7 @@ export default {
         let customWKID;
         let axisDirection = {
           x: 1,
-          y: -1,
+          y: -1
         };
         let rectangleSouthwest;
         let rectangleNortheast;
@@ -717,7 +717,7 @@ export default {
         if ([CustomWKID.bd09ll, CustomWKID.bd09mc].indexOf(customWKID) > -1) {
           axisDirection = {
             x: 1,
-            y: 1,
+            y: 1
           };
           rectangleSouthwest = new Cesium.Cartesian2(
             -20037726.37,
@@ -738,7 +738,7 @@ export default {
           axisDirection: axisDirection,
           rectangleSouthwest: rectangleSouthwest,
           rectangleNortheast: rectangleNortheast,
-          tileInfo: tileInfo,
+          tileInfo: tileInfo
         });
       } else {
         tilingScheme = new Cesium.GeographicTilingScheme();
@@ -768,10 +768,12 @@ export default {
      * **/
     $_getTileInfoByWKID(wkid) {
       let tileInfo = {};
+      let tileSize;
+      let lods = [];
+      let resolution0;
       if (wkid === 20020902) {
         // 构建自定义Wkid 百度09墨卡托的默认TileInfo
-        const lods = [];
-        const tileSize = [256, 256];
+        tileSize = [256, 256];
         for (let i = 0; i < 19; i++) {
           const resolution = Math.pow(2, 18 - i);
           lods[i] = { level: i, resolution: resolution, scale: null };
@@ -788,11 +790,10 @@ export default {
         };
       } else if (wkid === 20010202) {
         // 构建自定义Wkid 国测局02墨卡托的默认TileInfo
-        const lods = [];
-        const tileSize = [256, 256];
+        tileSize = [256, 256];
         const maxLength = Cesium.Ellipsoid.WGS84.maximumRadius * Math.PI;
         // const maxLength = 20037508.3427892;
-        const resolution0 = (maxLength + maxLength) / tileSize[0];
+        resolution0 = (maxLength + maxLength) / tileSize[0];
         // 总共20级
         for (let i = 0; i < 19; i++) {
           const resolution = resolution0 / Math.pow(2, i);
@@ -816,19 +817,18 @@ export default {
           ymax: 90
         };
         const numberOfMinLevelTilesX = 2;
-        const tileSize = 256;
+        tileSize = 256;
         const mapUnitToMeters = 111319490.79327358;
         // 最大(第0级)分辨率
-        const resolution0 =
+        resolution0 =
           (extent.xmax - extent.xmin) / numberOfMinLevelTilesX / tileSize;
         // 开始计算分辨率
-        const lods = [];
         // 默认构造20级分辨率
         for (let i = 0; i < 19; i++) {
-          const resolutions = resolutions0 / Math.pow(2,i)
+          const resolution = resolution0 / Math.pow(2, i);
           const lod = {
             level: i,
-            resolution: resolutions[i] / 2,
+            resolution,
             scale: (mapUnitToMeters * (resolution * 96)) / 0.0254
           };
           lods.push(lod);
@@ -839,11 +839,11 @@ export default {
           size: tileSize, // 瓦片宽高的像素大小
           origin: {
             coordinates: [180, -90], // 裁图原点
-            type: "Point", 
+            type: "Point"
           },
           lods: lods
         };
-      } 
+      }
       return tileInfo;
     }
   }

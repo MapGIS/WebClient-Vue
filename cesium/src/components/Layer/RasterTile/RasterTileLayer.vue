@@ -4,6 +4,7 @@
 <script>
 import ServiceLayer from "../ServiceLayer";
 
+// 已废弃，请使用mapgis-3d-web-tile-layer
 export default {
   name: "mapgis-3d-rastertile-layer",
   inject: ["Cesium", "viewer", "vueCesium"],
@@ -11,8 +12,8 @@ export default {
   props: {
     crs: {
       type: String,
-      defalut: "EPSG:4326"
-    }
+      defalut: "EPSG:4326",
+    },
   },
   data() {
     return {
@@ -29,10 +30,10 @@ export default {
         maximumLevel: "number",
         credit: "object|String",
         vueKey: "string",
-        vueIndex: "string | Number"
+        vueIndex: "string | Number",
       },
       managerName: "RasterManager",
-      providerName: "UrlTemplateImageryProvider"
+      providerName: "UrlTemplateImageryProvider",
     };
   },
   created() {},
@@ -64,7 +65,7 @@ export default {
       }
       if (tag && offset) {
         options.customTags = {};
-        options.customTags[tag] = function(imageryProvider, x, y, level) {
+        options.customTags[tag] = function (imageryProvider, x, y, level) {
           return level - offset;
         };
         //如果crs不存在，则默认生成4326的tilingScheme对象
@@ -82,7 +83,7 @@ export default {
         ) {
           options.extensions.push({
             key: "format",
-            value: strChilds[0]
+            value: strChilds[0],
           });
         } else {
           options.extensions = [{ key: "format", value: strChilds[0] }];
@@ -96,7 +97,7 @@ export default {
     },
     unmount() {
       this.$_unmount();
-    }
-  }
+    },
+  },
 };
 </script>
