@@ -48,6 +48,12 @@ export default {
     clampToGround: {
       type: Boolean,
       default: false
+    },
+    featureStyle: {
+      type: Object,
+      default() {
+        return {};
+      }
     }
   },
   data() {
@@ -80,6 +86,7 @@ export default {
         renderer,
         filter,
         clampToGround,
+        featureStyle,
         vueIndex
       } = this;
       let vm = this;
@@ -90,12 +97,24 @@ export default {
         clampToGround,
         filter: filter
       };
-      if (baseUrl.indexOf("/igs/rest/mrfs/layer") !== -1) {
+      let transformRenderer;
+      if (baseUrl && baseUrl.indexOf("/igs/rest/mrfs/layer") !== -1) {
         options.layers = gdbps;
       }
 
       const features = await this.queryFeaturesInLayers(gdbps, baseUrl);
-      this.addLayer(viewer, renderer, features);
+
+      if (
+        JSON.stringify(renderer) === "{}" &&
+        JSON.stringify(featureStyle) !== "{}"
+      ) {
+        const fristFeature = features[0];
+        if (fristFeature) {
+          const type = fristFeature.geometry.type;
+          transformRenderer = this.getRenderer(type, featureStyle);
+        }
+      }
+      this.addLayer(viewer, transformRenderer || renderer, features);
 
       this.getDocLayer(vueIndex);
       // return new Promise(
