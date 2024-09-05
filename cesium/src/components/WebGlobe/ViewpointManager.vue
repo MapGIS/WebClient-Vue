@@ -247,9 +247,18 @@ export default {
     baseUrl() {
       return window._CONFIG.domainURL;
     },
+    appProductName() {
+      return window._CONFIG.productName || "psmap";
+    },
     getImage() {
       return image => {
-        return `${this.baseUrl}${image}`;
+        if (image.startsWith("/file")) {
+          return `${this.baseUrl}/${this.appProductName}${image}`;
+        } else if (image.startsWith("data:")) {
+          return image;
+        } else {
+          return `${this.baseUrl}${image}`;
+        }
       };
     }
   },
@@ -376,28 +385,29 @@ export default {
 
       const marks = this.items[index].viewGroupItems;
 
-      for (var i = 0; i < marks.length; i++) {
-        (function(i, data) {
-          // 匿名函数的形参
-          setTimeout(function() {
-            viewer.scene.camera.flyTo({
-              destination: Cesium.Cartesian3.fromDegrees(
-                marks[i].destination.x,
-                marks[i].destination.y,
-                marks[i].destination.z
-              ), //定位坐标点，建议使用谷歌地球坐标位置无偏差
-              duration: marks[i].duration, //定位的时间间隔,
-              orientation: {
-                heading: Cesium.Math.toRadians(marks[i].orientation.heading),
-                pitch: Cesium.Math.toRadians(marks[i].orientation.pitch),
-                roll: Cesium.Math.toRadians(marks[i].orientation.roll)
-              }
-            });
-            if (i === marks.length) {
-              console.log("飞行结束！");
+      let time = 0;
+
+      for (let i = 0; i < marks.length; i++) {
+        const info = marks[i - 1];
+        if (info) {
+          // time += Number(info.duration) > 2.5 ? Number(info.duration) : 2.5;
+          time += Number(info.duration);
+        }
+        setTimeout(() => {
+          viewer.scene.camera.flyTo({
+            destination: Cesium.Cartesian3.fromDegrees(
+              marks[i].destination.x,
+              marks[i].destination.y,
+              marks[i].destination.z
+            ), //定位坐标点，建议使用谷歌地球坐标位置无偏差
+            duration: marks[i].duration, //定位的时间间隔,
+            orientation: {
+              heading: Cesium.Math.toRadians(marks[i].orientation.heading),
+              pitch: Cesium.Math.toRadians(marks[i].orientation.pitch),
+              roll: Cesium.Math.toRadians(marks[i].orientation.roll)
             }
-          }, 2500 * i); // 还是每秒执行一次，不是累加的
-        })(i, "其他参数"); // 实参，这里把要用的参数传进去
+          });
+        }, 1000 * time);
       }
     },
 

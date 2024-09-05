@@ -110,41 +110,59 @@
 
     <!-- <div class="dividerWrapper"><div class="divider" /></div> -->
 
-    <mapgis-ui-input-number-panel
-      size="large"
-      label="亮度"
-      :value="basicSetting.layerbrightness"
-      :range="lyrBrtRange"
-      :step="0.2"
-      @change="layerBrtChange"
+    <mapgis-ui-switch-panel
+      class="odd"
+      size="small"
+      label="颜色校正"
+      :checked="basicSetting.colorCorrection"
+      @changeChecked="enableColorCorrection"
     />
+    <div v-if="showColorCorrectionSetting">
+      <mapgis-ui-input-number-panel
+        size="large"
+        label="亮度"
+        :value="basicSetting.brightness"
+        :range="ColorCorrectionRange"
+        :step="0.1"
+        @change="brtChange"
+      />
 
-    <mapgis-ui-input-number-panel
-      size="large"
-      label="对比度"
-      :value="basicSetting.layercontrast"
-      :range="lyrBrtRange"
-      :step="0.2"
-      @change="layerCtrstChange"
-    />
+      <mapgis-ui-input-number-panel
+        size="large"
+        label="对比度"
+        :value="basicSetting.contrast"
+        :range="contrastRange"
+        :step="0.1"
+        @change="ctrstChange"
+      />
 
-    <mapgis-ui-input-number-panel
-      size="large"
-      label="色调"
-      :value="basicSetting.layerhue"
-      :range="lyrHueRange"
-      :step="0.1"
-      @change="layerHueChange"
-    />
+      <mapgis-ui-input-number-panel
+        size="large"
+        label="色相"
+        :value="basicSetting.hue"
+        :range="ColorCorrectionRange"
+        :step="0.1"
+        @change="hueChange"
+      />
 
-    <mapgis-ui-input-number-panel
-      size="large"
-      label="饱和度"
-      :value="basicSetting.layersaturation"
-      :range="lyrBrtRange"
-      :step="0.2"
-      @change="layerSaturationChange"
-    />
+      <mapgis-ui-input-number-panel
+        size="large"
+        label="饱和度"
+        :value="basicSetting.saturation"
+        :range="ColorCorrectionRange"
+        :step="0.1"
+        @change="saturationChange"
+      />
+
+      <mapgis-ui-input-number-panel
+        size="large"
+        label="曝光度"
+        :value="basicSetting.exposure"
+        :range="ColorCorrectionRange"
+        :step="0.1"
+        @change="exposureChange"
+      />
+    </div>
 
     <mapgis-3d-statebar
       v-if="basicSetting.statebar"
@@ -183,23 +201,7 @@ export default {
     initBasicSetting: {
       type: Object,
       default: () => {
-        return {
-          earth: true,
-          skyAtmosphere: true,
-          shadow: false,
-          depthTest: false,
-          FPS: false,
-          timeline: false,
-          compass: false,
-          compassPosition: undefined,
-          zoom: false,
-          statebar: true,
-          sceneMode: false,
-          layerbrightness: 1.0,
-          layercontrast: 1.0,
-          layerhue: 0.0,
-          layersaturation: 1.0,
-        };
+        return this.basicSetting;
       },
     },
     // 左侧板宽度
@@ -207,21 +209,31 @@ export default {
       type: Number,
     },
   },
-  computed: {
-    basicSetting: {
-      get() {
-        return this.initBasicSetting;
-      },
-      set() {
-        this.$emit("updateBasicSetting", this.basicSetting);
-      },
-    },
-  },
   data() {
     return {
-      lyrBrtRange: [0, 3],
-      lyrHueRange: [-1, 1],
+      contrastRange: [0, 2],
+      ColorCorrectionRange: [-1, 1],
       compassPosition: undefined,
+      basicSetting: {
+        earth: true,
+        skyAtmosphere: true,
+        shadow: false,
+        depthTest: false,
+        FPS: false,
+        timeline: false,
+        compass: false,
+        compassPosition: undefined,
+        zoom: false,
+        statebar: true,
+        sceneMode: false,
+        colorCorrection: false,
+        brightness: 0.0,
+        contrast: 1.0,
+        hue: 0.0,
+        saturation: 0.0,
+        exposure: 0.0,
+      },
+      showColorCorrectionSetting: false,
     };
   },
   mounted() {
@@ -235,6 +247,7 @@ export default {
         timeline: null,
       });
     }
+    this.basicSetting = this.defaultParams();
     this.init();
   },
   watch: {
@@ -247,13 +260,79 @@ export default {
     },
     initBasicSetting: {
       handler(e) {
+        this.basicSetting = JSON.parse(JSON.stringify(this.initBasicSetting));
         this.init();
+      },
+      deep: true,
+      immediate: true,
+    },
+    basicSetting: {
+      handler(e) {
+        this.$emit("updateBasicSetting", this.basicSetting);
+      },
+      deep: true,
+    },
+    stuffWidth: {
+      handler(e) {
+        if (!this.basicSetting.compassPosition) {
+          this.basicSetting.compassPosition = {
+            anchor: "top-left",
+            horizontalOffset: this.stuffWidth,
+            verticalOffset: 400,
+          };
+        } else {
+          // 如果罗盘显示在左上或者左下，与左侧的距离传入的stuffWidth保持一致
+          if (
+            this.basicSetting.compassPosition.anchor === "top-left" ||
+            this.basicSetting.compassPosition.anchor === "bottom-left"
+          ) {
+            this.basicSetting.compassPosition.horizontalOffset =
+              this.stuffWidth;
+          }
+        }
+        this.compassPosition = this.basicSetting.compassPosition;
       },
       deep: true,
       immediate: true,
     },
   },
   methods: {
+    defaultParams() {
+      let earth = true;
+      let skyAtmosphere = true;
+      let shadow = false;
+      let depthTest = false;
+      let FPS = false;
+      let colorCorrection = false;
+      const { viewer } = this;
+      if (viewer) {
+        earth = viewer.scene.globe.show;
+        skyAtmosphere = viewer.scene.globe.showGroundAtmosphere;
+        depthTest = viewer.scene.globe.depthTestAgainstTerrain;
+        shadow = viewer.shadows;
+        FPS = viewer.scene.debugShowFramesPerSecond;
+        colorCorrection = viewer.scene.colorCorrection.enabled;
+      }
+      return {
+        earth,
+        skyAtmosphere,
+        shadow,
+        depthTest,
+        FPS,
+        timeline: false,
+        compass: false,
+        compassPosition: undefined,
+        zoom: false,
+        statebar: true,
+        sceneMode: false,
+        colorCorrection,
+        brightness: viewer.scene.brightness || 0.0,
+        contrast: viewer.scene.contrast || 1.0,
+        hue: viewer.scene.hue || 0.0,
+        saturation: viewer.scene.saturation || 0.0,
+        exposure: viewer.scene.exposure || 0.0,
+      };
+    },
     init() {
       if (!this.basicSetting) {
         return;
@@ -279,11 +358,15 @@ export default {
         zoom,
         statebar,
         sceneMode,
-        layerbrightness,
-        layercontrast,
-        layerhue,
-        layersaturation,
+        colorCorrection,
+        brightness,
+        contrast,
+        hue,
+        saturation,
+        exposure,
       } = this.basicSetting;
+
+      this.showColorCorrectionSetting = colorCorrection;
       this.enableEarth(earth);
       this.enableSkyAtmosphere(skyAtmosphere);
       this.enableShadow(shadow);
@@ -292,10 +375,11 @@ export default {
       this.enableTimeline(timeline);
       this.enableCompass(compass);
       this.enableZoom(zoom);
-      this.layerBrtChange(layerbrightness);
-      this.layerCtrstChange(layercontrast);
-      this.layerHueChange(layerhue);
-      this.layerSaturationChange(layersaturation);
+      this.brtChange(brightness);
+      this.ctrstChange(contrast);
+      this.hueChange(hue);
+      this.saturationChange(saturation);
+      this.exposureChange(exposure);
       this.handleChangeStatebar(statebar);
       this.handleChangeSceneMode(sceneMode);
     },
@@ -439,14 +523,14 @@ export default {
       viewer.createNavigationTool(options);
       const self = this;
       this.$nextTick(() => {
-        const compassDiv = document.querySelector(".compass");
-        if (compassDiv) {
-          self.compassPosition = self.basicSetting.compassPosition || {
+        if (!self.basicSetting.compassPosition) {
+          self.basicSetting.compassPosition = {
             anchor: "top-left",
-            horizontalOffset: this.stuffWidth,
+            horizontalOffset: self.stuffWidth,
             verticalOffset: 400,
           };
         }
+        self.compassPosition = self.basicSetting.compassPosition;
       });
       // this.changeNavPos();
     },
@@ -456,6 +540,7 @@ export default {
      */
     updateCompassPosition(e) {
       this.basicSetting.compassPosition = e;
+      this.compassPosition = this.basicSetting.compassPosition;
     },
     /*
      * 导航控件（罗盘控件和缩放控件的状态控制）
@@ -472,53 +557,79 @@ export default {
       viewer.createNavigationTool(options);
       const self = this;
       this.$nextTick(() => {
-        const compassDiv = document.querySelector(".compass");
-        if (compassDiv) {
-          self.compassPosition = self.basicSetting.compassPosition || {
+        if (!self.basicSetting.compassPosition) {
+          self.basicSetting.compassPosition = {
             anchor: "top-left",
-            horizontalOffset: this.stuffWidth,
+            horizontalOffset: self.stuffWidth,
             verticalOffset: 400,
           };
         }
+        self.compassPosition = self.basicSetting.compassPosition;
       });
       // this.changeNavPos();
     },
-    /*
-     * 图层亮度
-     * */
-    layerBrtChange(e) {
-      this.basicSetting.layerbrightness = e;
-      this.layerValueChange("brightness", this.basicSetting.layerbrightness);
-    },
-    /*
-     * 图层对比度
-     * */
-    layerCtrstChange(e) {
-      this.basicSetting.layercontrast = e;
-      this.layerValueChange("contrast", this.basicSetting.layercontrast);
-    },
-    /*
-     * 图层色调
+    /**
+     * 设置是否开启颜色校正
+     * @param {boolean} e
      */
-    layerHueChange(e) {
-      this.basicSetting.layerhue = e;
-      this.layerValueChange("hue", this.basicSetting.layerhue);
+    enableColorCorrection(e) {
+      this.basicSetting.colorCorrection = e;
+      this.showColorCorrectionSetting = e;
+      viewer.scene.colorCorrection.enabled = e;
     },
-    /*
-     * 图层饱和度
-     * */
-    layerSaturationChange(e) {
-      this.basicSetting.layersaturation = e;
-      this.layerValueChange("saturation", this.basicSetting.layersaturation);
-    },
-    layerValueChange(parameter, value) {
-      const { viewer } = this;
 
-      let i;
-      let length = viewer.scene.imageryLayers._layers.length;
-      for (i = 0; i < length; i++) {
-        let layer = viewer.scene.imageryLayers._layers[i];
-        layer[parameter] = value;
+    /**
+     * 设置场景亮度
+     * @param {number} e
+     */
+    brtChange(e) {
+      this.basicSetting.brightness = e;
+      if (this.basicSetting.colorCorrection) {
+        viewer.scene.brightness = e;
+      }
+    },
+
+    /**
+     * 设置场景对比度
+     * @param {number} e
+     */
+    ctrstChange(e) {
+      this.basicSetting.contrast = e;
+      if (this.basicSetting.colorCorrection) {
+        viewer.scene.contrast = e;
+      }
+    },
+
+    /**
+     * 设置场景色调
+     * @param {number} e
+     */
+    hueChange(e) {
+      this.basicSetting.hue = e;
+      if (this.basicSetting.colorCorrection) {
+        viewer.scene.hue = e;
+      }
+    },
+
+    /**
+     * 设置场景饱和度
+     * @param {number} e
+     */
+    saturationChange(e) {
+      this.basicSetting.saturation = e;
+      if (this.basicSetting.colorCorrection) {
+        viewer.scene.saturation = e;
+      }
+    },
+
+    /**
+     * 设置场景曝光度
+     * @param {number} e
+     */
+    exposureChange(e) {
+      this.basicSetting.exposure = e;
+      if (this.basicSetting.colorCorrection) {
+        viewer.scene.exposure = e;
       }
     },
 

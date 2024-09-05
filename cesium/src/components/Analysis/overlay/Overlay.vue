@@ -32,6 +32,20 @@
               v-model="radius"
             ></mapgis-ui-input-number>
           </mapgis-ui-form-model-item>
+          <mapgis-ui-form-model-item label="容差半径单位">
+            <mapgis-ui-select
+              v-model="selectedUnit"
+              :placeholder="unit[0].name"
+              @change="selectCurrentUnit($event)"
+            >
+              <mapgis-ui-select-option
+                v-for="(item, index) in unit"
+                :key="index"
+                :value="item.unitParam"
+                >{{ item.name }}</mapgis-ui-select-option
+              >
+            </mapgis-ui-select>
+          </mapgis-ui-form-model-item>
           <mapgis-ui-form-model-item label="图层样式">
             <mapgis-ui-select
               v-model="selectedInfoOptType"
@@ -49,14 +63,14 @@
           <mapgis-ui-checkbox
             :default-checked="attOptType"
             v-model="attOptType"
-            style="line-height:32px;"
+            style="line-height: 32px"
             >进行属性操作</mapgis-ui-checkbox
           >
           <br />
           <mapgis-ui-checkbox
             :default-checked="isValidReg"
             v-model="isValidReg"
-            style="line-height:32px;"
+            style="line-height: 32px"
             >检查区合法性</mapgis-ui-checkbox
           >
           <!-- 3.输出结果 -->
@@ -86,7 +100,7 @@
               </mapgis-ui-col>
             </mapgis-ui-row>
             <mapgis-ui-checkbox
-              style="line-height:32px;"
+              style="line-height: 32px"
               :default-checked="overlayAdd"
               @change="sendOverlayAdd"
               >将结果图层添加到视图中</mapgis-ui-checkbox
@@ -117,7 +131,7 @@ export default {
   props: {
     layout: {
       type: String,
-      default: "vertical" // 'horizontal' 'vertical' 'inline'
+      default: "vertical", // 'horizontal' 'vertical' 'inline'
     },
     /**
      * @type String
@@ -126,7 +140,7 @@ export default {
      */
     baseUrl: {
       type: String,
-      default: "http://localhost:6163"
+      default: "http://localhost:6163",
     },
     /**
      * @type String
@@ -135,7 +149,7 @@ export default {
      */
     srcType: {
       type: String,
-      default: "Layer"
+      default: "Layer",
     },
     /**
      * @type String
@@ -144,7 +158,7 @@ export default {
      */
     srcALayer: {
       type: String,
-      default: ""
+      default: "",
     },
     /**
      * @type String
@@ -153,7 +167,7 @@ export default {
      */
     srcBLayer: {
       type: String,
-      default: ""
+      default: "",
     },
     /**
      * @type Object
@@ -162,9 +176,9 @@ export default {
      */
     srcAFeature: {
       type: Object,
-      default: function() {
+      default: function () {
         return {};
-      }
+      },
     },
     /**
      * @type Object
@@ -173,9 +187,9 @@ export default {
      */
     srcBFeature: {
       type: Object,
-      default: function() {
+      default: function () {
         return {};
-      }
+      },
     },
     /**
      * @type Boolean
@@ -184,20 +198,22 @@ export default {
      */
     useMask: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   data() {
     return {
+      // 与桌面同步，igs后面也会与桌面同步，暂时屏蔽，内裁，外裁和叠加
+      // 龚跃健-20240809
       overType: [
         { name: "求并", type: "Ovly_Union", typeValue: 0 },
         { name: "求交", type: "Ovly_Inter", typeValue: 1 },
         { name: "求减（差）", type: "Ovly_Sub", typeValue: 2 },
-        { name: "内裁（交）", type: "Ovly_InClip", typeValue: 3 },
-        { name: "外裁（差）", type: "Ovly_OutClip", typeValue: 4 },
-        { name: "叠加", type: "Ovly_Overlay", typeValue: 5 },
+        // { name: "内裁（交）", type: "Ovly_InClip", typeValue: 3 },
+        // { name: "外裁（差）", type: "Ovly_OutClip", typeValue: 4 },
+        // { name: "叠加", type: "Ovly_Overlay", typeValue: 5 },
         { name: "对称差", type: "Ovly_SymDiff", typeValue: 6 },
-        { name: "判别", type: "Ovly_Ident", typeValue: 7 }
+        { name: "判别", type: "Ovly_Ident", typeValue: 7 },
       ],
       selectedOverType: 1, // 叠加分析类型，取值0-7，默认为1 Ovly_Inter
       radius: 0.001, // 容差半径 Number
@@ -206,13 +222,13 @@ export default {
         {
           name: "使用图层1（被叠加对象）的图层样式",
           type: "UsesAInfo",
-          typeValue: 1
+          typeValue: 1,
         },
         {
           name: "使用图层2（叠加对象）的图层样式",
           type: "UsesBInfo",
-          typeValue: 2
-        }
+          typeValue: 2,
+        },
       ],
       selectedInfoOptType: 1, // 图形参数操作，取值0-2，默认为1 UsesAInfo
       attOptType: true, // 是否进行属性操作，0不允许 1允许，默认为1 Number
@@ -220,7 +236,16 @@ export default {
       destLayer: "",
       overlayAdd: true, // 结果添加到地图文档，默认为true
       maskShow: false,
-      maskText: "正在分析中, 请稍等..."
+      maskText: "正在分析中, 请稍等...",
+      // 新增容差半径单位
+      // 龚跃健-20240809
+      unit: [
+        { name: "米", unitParam: "meters" },
+        { name: "千米", unitParam: "kilometers" },
+        { name: "英里", unitParam: "miles" },
+        { name: "度", unitParam: "degrees" },
+      ],
+      selectedUnit: "meters",
     };
   },
   watch: {
@@ -228,7 +253,7 @@ export default {
       if (val != oldval) {
         this.destLayer = val + this.currentTime();
       }
-    }
+    },
   },
   mounted() {
     this.mount();
@@ -270,19 +295,20 @@ export default {
         var url = new URL(this.baseUrl);
         domain = url.origin;
       }
+      const tempRadius = this.convertRadUnit(this.radius, this.selectedUnit);
       if (this.srcType == "Layer") {
         var overlayLayer = new OverlayByLayer({
           ip: this.baseUrl.split("/")[2].split(":")[0],
           port: this.baseUrl.split("/")[2].split(":")[1],
           domain,
           overType: this.selectedOverType,
-          radius: Number(this.radius),
+          radius: tempRadius,
           infoOptType: this.selectedInfoOptType,
           attOptType: Number(this.attOptType),
           isValidReg: this.isValidReg,
           srcInfo1: this.srcALayer,
           srcInfo2: this.srcBLayer,
-          desInfo: this.destLayer
+          desInfo: this.destLayer,
         });
         overlayLayer.execute(
           this.AnalysisSuccess,
@@ -300,12 +326,12 @@ export default {
           port: this.baseUrl.split("/")[2].split(":")[1],
           domain,
           overType: this.selectedOverType,
-          radius: Number(this.radius),
+          radius: tempRadius,
           infoOptType: this.selectedInfoOptType,
           attOptType: Number(this.attOptType),
           isValidReg: this.isValidReg,
           srcInfo1: this.srcALayer,
-          desInfo: this.destLayer
+          desInfo: this.destLayer,
         });
         var polygonList = this.transformToPoint(this.srcAFeature);
         var anyLineList = this.transformToAnyLine(polygonList);
@@ -368,18 +394,42 @@ export default {
     },
     deleteResult() {
       this.$emit("deleteResult");
-    }
+    },
+    selectCurrentUnit(event) {
+      this.selectedUnit = event;
+    },
+    convertRadUnit(currentRad, currentUnit) {
+      const earthRadius = 6371.393; // 地球半径, km
+      switch (currentUnit) {
+        case "meters":
+          // 米转度公式
+          currentRad = ((currentRad / 1000) * 180) / (Math.PI * earthRadius);
+          break;
+        case "kilometers":
+          // 千米转度公式: degree（圆心角）=l(弧长) × 180/(π（圆周率）× r（半径）)  纬度1°约等于111km
+          currentRad = (currentRad * 180) / (Math.PI * earthRadius);
+          break;
+        case "miles":
+          // 英里转度 1英里=1.609344千米
+          currentRad = (currentRad * 1.609344 * 180) / (Math.PI * earthRadius);
+          break;
+        case "degrees":
+          currentRad = currentRad * 1;
+          break;
+      }
+      return currentRad;
+    },
   },
   computed: {
     formItemLayout({ layout }) {
       return layout === "horizontal"
         ? {
             labelCol: { span: 6 },
-            wrapperCol: { span: 17 }
+            wrapperCol: { span: 17 },
           }
         : {};
-    }
-  }
+    },
+  },
 };
 </script>
 

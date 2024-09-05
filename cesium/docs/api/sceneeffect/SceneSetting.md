@@ -51,14 +51,18 @@
     "statebar": true,
     // 是否开启平面模式
     "sceneMode": false,
-    // 亮度
-    "layerbrightness": 1.0,
-    // 对比度
-    "layercontrast": 1.0,
-    // 色调
-    "layerhue": 0.0,
-    // 饱和度
-    "layersaturation": 1.0
+    // 是否开启颜色校正
+    "colorCorrection": false,
+    // 场景亮度
+    "brightness": 0.0,
+    // 场景对比度
+    "contrast": 1.0,
+    // 场景色调
+    "hue": 0.0,
+    // 场景饱和度
+    "saturation": 0.0,
+    // 场景曝光度
+    "exposure": 0.0,
   },
   // 相机设置
   "cameraSetting": {

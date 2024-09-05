@@ -59,7 +59,7 @@ import VueOptions from "../Base/Vue/VueOptions";
 import {
   colorToCesiumColor,
   isDepthTestAgainstTerrainEnable,
-  setDepthTestAgainstTerrainEnable
+  setDepthTestAgainstTerrainEnable,
 } from "../WebGlobe/util";
 import { getPolygonSamplePoints } from "../Utils/util";
 
@@ -75,7 +75,7 @@ export default {
      */
     layout: {
       type: String,
-      default: "vertical" // 'horizontal' 'vertical' 'inline'
+      default: "vertical", // 'horizontal' 'vertical' 'inline'
     },
     /**
      * @type Number
@@ -84,7 +84,7 @@ export default {
      */
     startHeight: {
       type: Number,
-      default: 0
+      default: 0,
     },
     /**
      * @type Number
@@ -93,7 +93,7 @@ export default {
      */
     minHeight: {
       type: Number,
-      default: 0
+      default: 0,
     },
     /**
      * @type Number
@@ -102,7 +102,7 @@ export default {
      */
     maxHeight: {
       type: Number,
-      default: 2000
+      default: 2000,
     },
     /**
      * @type String
@@ -111,7 +111,7 @@ export default {
      */
     floodColor: {
       type: String,
-      default: "rgba(149,232,249,0.5)"
+      default: "rgba(149,232,249,0.5)",
     },
     /**
      * @type Number
@@ -120,7 +120,7 @@ export default {
      */
     floodSpeed: {
       type: Number,
-      default: 80
+      default: 80,
     },
     /**
      * @type Number
@@ -129,7 +129,7 @@ export default {
      */
     specularIntensity: {
       type: Number,
-      default: 2
+      default: 2,
     },
     /**
      * @type Number
@@ -138,7 +138,7 @@ export default {
      */
     amplitude: {
       type: Number,
-      default: 10
+      default: 10,
     },
     /**
      * @type Number
@@ -147,7 +147,7 @@ export default {
      */
     animationSpeed: {
       type: Number,
-      default: 0.01
+      default: 0.01,
     },
     /**
      * @type Number
@@ -156,7 +156,7 @@ export default {
      */
     frequency: {
       type: Number,
-      default: 500
+      default: 500,
     },
     /**
      * @type Number
@@ -165,8 +165,8 @@ export default {
      */
     step: {
       type: Number,
-      default: 500
-    }
+      default: 500,
+    },
   },
   data() {
     return {
@@ -181,7 +181,7 @@ export default {
       timer: null,
       changeMaxHeight: false,
       changeStartHeight: false,
-      isWaterReflectionMode: false
+      isWaterReflectionMode: false,
     };
   },
   created() {},
@@ -195,23 +195,23 @@ export default {
     params() {
       const { startHeightCopy, speedCopy, floodColorCopy } = this;
       return { startHeightCopy, speedCopy, floodColorCopy };
-    }
+    },
   },
   watch: {
     params: {
-      handler: function(e) {
+      handler: function (e) {
         if (this.positions) {
           this.recalculate = true;
         }
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     startHeight: {
       handler() {
         this.startHeightCopy = this.startHeight;
       },
-      immediate: true
+      immediate: true,
     },
     startHeightCopy: {
       handler() {
@@ -221,28 +221,28 @@ export default {
         if (!floodAnalysis) return;
         this.changeStartHeight = true;
       },
-      immediate: true
+      immediate: true,
     },
     maxHeight: {
       handler() {
         this.maxHeightCopy = this.maxHeight;
       },
-      immediate: true
+      immediate: true,
     },
     floodColor: {
       handler() {
         this.floodColorCopy = this.floodColor;
       },
-      immediate: true
+      immediate: true,
     },
     floodSpeed: {
       handler() {
         this.floodSpeedCopy = this.floodSpeed;
       },
-      immediate: true
+      immediate: true,
     },
     maxHeightCopy: {
-      handler: function(e) {
+      handler: function (e) {
         const { viewer, vueCesium, vueKey, vueIndex } = this;
         const options = this._getSourceOptions();
         const { floodAnalysis } = options;
@@ -267,32 +267,32 @@ export default {
             viewer.scene.requestRender();
           }, 1000);
         }
-      }
+      },
     },
     isWaterReflectionMode() {
       this.remove();
-    }
+    },
   },
   methods: {
     async createCesiumObject() {
       return new Promise(
-        resolve => {
+        (resolve) => {
           resolve();
         },
-        reject => {}
+        (reject) => {}
       );
     },
     mount() {
       const { vueCesium, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function(dataSource) {
+      promise.then(function (dataSource) {
         vm.$emit("load", vm);
         vueCesium.FloodAnalysisManager.addSource(vueKey, vueIndex, dataSource, {
           drawElement: null,
           floodAnalysis: null,
           floodAnalysisReflection: null,
-          waterReflection: null
+          waterReflection: null,
         });
       });
     },
@@ -332,7 +332,7 @@ export default {
       // 激活交互式绘制工具
       drawElement.startDrawingPolygon({
         // 绘制完成回调函数
-        callback: result => {
+        callback: (result) => {
           this.remove();
           this.positions = result.positions;
           // let cartP = [];
@@ -388,13 +388,13 @@ export default {
           this.$emit("showProgress", {
             startHeightCopy: this.startHeightCopy,
             maxHeightCopy: this.maxHeightCopy,
-            floodSpeedCopy: this.floodSpeedCopy
+            floodSpeedCopy: this.floodSpeedCopy,
           });
           //   },
           //   { level: 12 }
           // );
           // sampleElevationTool.start();
-        }
+        },
       });
     },
     /**
@@ -415,12 +415,8 @@ export default {
         for (let position of positions) {
           positionsArr.push(Cesium.Cartographic.fromCartesian(position));
         }
-        const {
-          minHeight,
-          maxHeightCopy,
-          floodSpeedCopy,
-          floodColorCopy
-        } = this;
+        const { minHeight, maxHeightCopy, floodSpeedCopy, floodColorCopy } =
+          this;
         const waterColor = this._getColor(floodColorCopy);
         waterReflection =
           waterReflection ||
@@ -428,7 +424,7 @@ export default {
             viewer: this.viewer,
             positions: positionsArr,
             distortionScale: 2.0,
-            waterColor
+            waterColor,
           });
         vueCesium.FloodAnalysisManager.changeOptions(
           vueKey,
@@ -443,8 +439,11 @@ export default {
             water: waterReflection,
             minHeight,
             maxHeight: maxHeightCopy,
-            floodSpeed: Number(floodSpeedCopy) / 60,
-            closeBorder: true
+            // fix(6037): PTSYB-地形分析中淹没开启水面倒影后，时间轴和图像不对应
+            // 修改人: 杨琨 224-8-23
+            // 修改说明: 最新的水面反射洪水淹没，速度单位已经改为米/每秒，更新使用方式
+            floodSpeed: Number(floodSpeedCopy),
+            closeBorder: true,
           });
         floodAnalysisReflection.start();
         vueCesium.FloodAnalysisManager.changeOptions(
@@ -463,7 +462,7 @@ export default {
           specularIntensity,
           amplitude,
           animationSpeed,
-          frequency
+          frequency,
         } = this;
 
         // 初始化洪水淹没分析类
@@ -545,11 +544,8 @@ export default {
     _removeFlood() {
       const { vueCesium, vueKey, vueIndex } = this;
       const options = this._getSourceOptions();
-      const {
-        floodAnalysis,
-        floodAnalysisReflection,
-        waterReflection
-      } = options;
+      const { floodAnalysis, floodAnalysisReflection, waterReflection } =
+        options;
 
       // 判断是否已有洪水淹没分析结果
       if (floodAnalysis) {
@@ -606,8 +602,8 @@ export default {
 
       this.positions = null;
       this.recalculate = false;
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped>
@@ -617,7 +613,15 @@ export default {
 }
 
 ::v-deep .mapgis-ui-switch-row-left-title {
-  padding-left: 0px;
+  padding-left: 0px !important;
+  width: unset !important;
+}
+
+::v-deep .mapgis-ui-switch-row-left-switch {
+  padding-right: 10px !important;
+  text-align: right !important;
+  float: right;
+  width: unset !important;
 }
 
 ::v-deep .mapgis-ui-form-item {
