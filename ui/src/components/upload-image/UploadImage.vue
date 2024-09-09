@@ -7,12 +7,11 @@
       :multiple="false"
       method="post"
       :withCredentials="true"
-      :showUploadList="showUploadList"
+      :show-upload-list="showUploadList"
       @change="onChangeFile"
     >
-      <!-- <a-button> -->
-      <mapgis-ui-iconfont type="mapgis-upload" :style="{ fontSize: '18px' }" />
-      <!-- </a-button> -->
+      <img v-if="value" :src="value" />
+      <mapgis-ui-iconfont v-else type="mapgis-upload" class="upload-img" />
     </mapgis-ui-upload>
   </div>
 </template>
@@ -25,25 +24,29 @@ export default {
     uploadUrl: {
       type: String,
       required: true,
-      default: ""
+      default: "",
     },
     click: {
       type: Function,
-      required: false
+      required: false,
     },
     showUploadList: {
       type: Boolean,
       require: false,
-      default: true
+      default: true,
     },
     baseUrl: {
       type: String,
-      default: "/api"
+      default: "",
     },
     hasPrefix: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
+    value: {
+      type: String,
+      default: null,
+    },
   },
   methods: {
     onChangeFile(info) {
@@ -72,7 +75,19 @@ export default {
           ? this.$emit("image-url", `${baseUrl}${url}`)
           : this.$emit("image-url", url);
       }
-    }
-  }
+    },
+  },
 };
 </script>
+<style lang="scss" scoped>
+img {
+  width: 2em;
+  height: 2em;
+  margin-bottom: 0.3em;
+}
+
+.upload-img {
+  font-size: "18px";
+  color: var(--text-color);
+}
+</style>
