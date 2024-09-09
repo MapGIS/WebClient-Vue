@@ -123,17 +123,17 @@ const mockData = {
       type: "Feature",
       properties: {
         oid: 1,
-        AREA: 0
-      }
+        AREA: 0,
+      },
     },
     {
       type: "Feature",
       properties: {
         oid: 2,
-        AREA: 1
-      }
-    }
-  ]
+        AREA: 1,
+      },
+    },
+  ],
 };
 
 export default {
@@ -144,12 +144,12 @@ export default {
     ...VueOptions,
     layout: {
       type: String,
-      default: "vertical" // 'horizontal' 'vertical' 'inline'
+      default: "vertical", // 'horizontal' 'vertical' 'inline'
     },
     // 模型集合
     models: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     setting: {
       type: Object,
@@ -157,10 +157,10 @@ export default {
         return {
           groupType: "MapgisUiExplosionUnique",
           explosionField: "oid",
-          distance: 1
+          distance: 1,
         };
-      }
-    }
+      },
+    },
   },
   computed: {
     rangeFormOptions() {
@@ -172,14 +172,14 @@ export default {
             size: "small",
             field: this.settingCopy.explosionField,
             dataSource: this.dataSource || mockData,
-            segments: this.segments
+            segments: this.segments,
           },
           customProps: {
-            showBorder: false
-          }
-        }
+            showBorder: false,
+          },
+        },
       ];
-    }
+    },
   },
   data() {
     return {
@@ -187,18 +187,18 @@ export default {
       settingCopy: {
         groupType: "MapgisUiExplosionUnique",
         explosionField: "oid",
-        distance: 1000
+        distance: 1000,
       },
       // 爆炸方法集
       groupTypes: [
         {
           label: "单值",
-          value: "MapgisUiExplosionUnique"
+          value: "MapgisUiExplosionUnique",
         },
         {
           label: "分段",
-          value: "MapgisUiExplosionRange"
-        }
+          value: "MapgisUiExplosionRange",
+        },
         // {
         //   label: "随机",
         //   value: "MapgisUiExplosionRandom"
@@ -210,27 +210,26 @@ export default {
       openAdvancedSetting: false,
       disableGroupTypeChange: false,
       segments: 5,
-      info:
-        "爆炸距离默认值为模型包围盒高度/2。爆炸方向默认为垂直方向。要素平移距离默认值=(要素中心点高程-索引号最小的要素中心点高程)*爆炸距离。"
+      info: "爆炸距离默认值为模型包围盒高度/2。爆炸方向默认为垂直方向。要素平移距离默认值=(要素中心点高程-索引号最小的要素中心点高程)*爆炸距离。",
     };
   },
   watch: {
     models: {
-      handler: function(models) {
+      handler: function (models) {
         if (models && models.length > 0) {
           this.currentModelId = models[0].vueIndex;
         }
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     setting: {
-      handler: function(setting) {
+      handler: function (setting) {
         this.settingCopy = JSON.parse(JSON.stringify(setting));
       },
       deep: true,
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   created() {},
   mounted() {
@@ -243,33 +242,33 @@ export default {
     async createCesiumObject() {
       const { baseUrl, options } = this;
       return new Promise(
-        resolve => {
+        (resolve) => {
           resolve();
         },
-        reject => {}
+        (reject) => {}
       );
     },
     mount() {
       const { Cesium, viewer, vueCesium, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function(dataSource) {
+      promise.then(function (dataSource) {
         vm.$emit("load", vm);
         let modelExplosionTool = new Cesium.ModelExplosion(viewer);
         vueCesium.ExplosionManager.addSource(vueKey, vueIndex, dataSource, {
           modelExplosionTool: modelExplosionTool,
-          m3dSet: undefined
+          m3dSet: undefined,
         });
       });
     },
     unmount() {
+      this.removeExplosion();
       let { vueCesium, vueKey, vueIndex } = this;
       let find = vueCesium.ExplosionManager.findSource(vueKey, vueIndex);
       if (find) {
       }
       vueCesium.ExplosionManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
-      this.removeExplosion();
     },
 
     /**
@@ -280,7 +279,7 @@ export default {
       return new Promise((resolve, reject) => {
         if (currentModelId.length > 0) {
           this.$_getAll3DTileSetArray(
-            function(m3ds) {
+            function (m3ds) {
               if (m3ds && m3ds.length > 0) {
                 resolve(m3ds);
               } else {
@@ -299,7 +298,7 @@ export default {
       if (!this.explosionFields) {
         return;
       }
-      const field = this.explosionFields.find(item => item.name === val);
+      const field = this.explosionFields.find((item) => item.name === val);
       const fieldType = field.type;
       if (
         this.dataSource.dataCount < 3 ||
@@ -314,7 +313,7 @@ export default {
     },
     onSelectedModelChange(val) {
       this.currentModelId = val;
-      const currentModel = this.models.find(item => item.id === val);
+      const currentModel = this.models.find((item) => item.id === val);
       const { url, searchParams } = currentModel;
       if (searchParams && searchParams.searchName) {
         // 存在searchParams，则查询属性字段等
@@ -323,7 +322,7 @@ export default {
         this.getFields({ domain, searchParams });
       }
       const { Cesium, vueCesium, vueKey, vueIndex } = this;
-      this._m3dIsReady().then(m3dSetArray => {
+      this._m3dIsReady().then((m3dSetArray) => {
         if (m3dSetArray && m3dSetArray.length > 0) {
           vueCesium.ExplosionManager.changeOptions(
             vueKey,
@@ -339,7 +338,7 @@ export default {
           if (!searchParams || !searchParams.searchName) {
             const features = this.getM3DFeatures(m3dSet._root.children);
             // console.log(features);
-            features.sort(function(a, b) {
+            features.sort(function (a, b) {
               return a.id - b.id;
             });
             let firstFeatureCenterHeight = 0; //第一个要素中心点高度
@@ -356,28 +355,29 @@ export default {
                 for (let k = 0; k < keys.length; k++) {
                   const field = {
                     type: typeof properties[keys[k]],
-                    name: keys[k]
+                    name: keys[k],
                   };
                   fields.push(field);
                 }
                 this.explosionFields = fields;
                 this.settingCopy.explosionField = fields[0].name;
               } else {
-                direction = `0,0,${(feature.centerHeight -
-                  firstFeatureCenterHeight) *
-                  this.settingCopy.distance}`;
+                direction = `0,0,${
+                  (feature.centerHeight - firstFeatureCenterHeight) *
+                  this.settingCopy.distance
+                }`;
               }
               tempFeatures.push({
                 type: feature.type,
                 properties: feature.properties,
                 direction,
-                id: feature.id
+                id: feature.id,
               });
             }
             this.dataSource = {
               type: "FeatureCollection",
               dataCount: tempFeatures.length,
-              features: tempFeatures
+              features: tempFeatures,
             };
             this.onExplosionFieldChange(this.explosionFields[0].name);
           }
@@ -401,7 +401,7 @@ export default {
               type: "Feature",
               id: keys[j],
               centerHeight: (zmin + zmax) / 2,
-              properties: obj[keys[j]]
+              properties: obj[keys[j]],
             };
             features.push(feature);
           }
@@ -419,7 +419,7 @@ export default {
           url: searchName,
           pageCount: 99999,
           page: 0,
-          returnGeometry: true
+          returnGeometry: true,
         };
         this.geoJSONData = await Feature.FeatureQuery.igsQueryResourceServer(
           tempParams
@@ -441,7 +441,7 @@ export default {
       let tempFeatures = [];
       let firstFeatureCenterHeight = 0; //第一个要素中心点高度
       if (features[0].attributes && features[0].attributes.FID) {
-        features.sort(function(a, b) {
+        features.sort(function (a, b) {
           return a.attributes.FID - b.attributes.FID;
         });
       }
@@ -468,13 +468,13 @@ export default {
           properties: attributes,
           bound,
           direction,
-          id: attributes.FID !== undefined ? attributes.FID : i
+          id: attributes.FID !== undefined ? attributes.FID : i,
         });
       }
       this.dataSource = {
         type: "FeatureCollection",
         dataCount: features.length,
-        features: tempFeatures
+        features: tempFeatures,
       };
     },
     explosion() {
@@ -503,7 +503,7 @@ export default {
           //爆炸方向，true：单方向，false：多方向
           singleDirection: false,
           //是否每帧执行爆炸操作，默认false，有lod数据时，请设置为true可实时更新模型位置
-          enableFrameFunction: false
+          enableFrameFunction: false,
         });
       }
     },
@@ -528,7 +528,7 @@ export default {
             tempDataSourceCopy.push(obj);
           }
         }
-        tempDataSourceCopy.sort(function(a, b) {
+        tempDataSourceCopy.sort(function (a, b) {
           return a[key] - b[key];
         });
       }
@@ -546,7 +546,7 @@ export default {
             const value = Number(rangeArr[i].id);
             valueGroups.push({
               value,
-              direction
+              direction,
             });
             break;
           case "MapgisUiExplosionRange":
@@ -560,7 +560,7 @@ export default {
                 const value = tempDataSourceCopy[i].id;
                 valueGroups.push({
                   value,
-                  direction
+                  direction,
                 });
               }
             }
@@ -579,8 +579,8 @@ export default {
         modelExplosionTool = find.options.modelExplosionTool;
         modelExplosionTool.resetExplosionByField();
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
