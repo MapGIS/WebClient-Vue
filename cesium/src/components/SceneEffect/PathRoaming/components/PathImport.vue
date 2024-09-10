@@ -12,7 +12,12 @@
       <mapgis-ui-button key="cancel" @click="onImportCancel">
         取消
       </mapgis-ui-button>
-      <mapgis-ui-button key="ok" type="primary" @click="onImportOk">
+      <mapgis-ui-button
+        key="ok"
+        type="primary"
+        @click="onImportOk"
+        :loading="loading"
+      >
         确定
       </mapgis-ui-button>
     </template>
@@ -55,6 +60,7 @@ export default {
     return {
       data: null,
       node: null,
+      loading: false,
     };
   },
   methods: {
@@ -73,6 +79,7 @@ export default {
     },
     // 读取json文件或者上传wl文件
     readOrUploadFile(e) {
+      this.loading = true;
       if (this.importModalType === "json") {
         this.readImportFile(e);
       } else {
@@ -97,6 +104,7 @@ export default {
               path: newCoordinates.join(",").split(","),
               name: result.name.split(".")[0],
             };
+            this.loading = false;
           }
         }
       } catch {}
@@ -149,6 +157,7 @@ export default {
       reader.onload = (e) => {
         const data = JSON.parse(e.target.result);
         this.data = data;
+        this.loading = false;
       };
     },
   },
