@@ -16,7 +16,7 @@
               v-model="bufferMethod"
               :options="[
                 { label: '客户端分析', value: 'client' },
-                { label: '服务端分析', value: 'server' }
+                { label: '服务端分析', value: 'server' },
               ]"
             >
             </mapgis-ui-radio-group>
@@ -30,7 +30,7 @@
           :colon="false"
           v-if="
             srcType == 'Feature' &&
-              (bufferMethod === 'client' || renderMethod === 'client')
+            (bufferMethod === 'client' || renderMethod === 'client')
           "
         >
           <mapgis-ui-form-model-item label="设置半径">
@@ -65,8 +65,8 @@
                 {
                   label: '服务端渲染',
                   value: 'server',
-                  disabled: bufferMethod === 'client'
-                }
+                  disabled: bufferMethod === 'client',
+                },
               ]"
             >
             </mapgis-ui-radio-group>
@@ -85,7 +85,7 @@
             :disableAlpha="false"
             :colorStyle="colorStyle"
             @input="
-              val =>
+              (val) =>
                 (colorCopyLine = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
             "
           >
@@ -98,7 +98,7 @@
             :disableAlpha="false"
             :colorStyle="colorStyle"
             @input="
-              val => (
+              (val) => (
                 (colorCopyFill = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`),
                 (colorCopyOpacity = `${val.rgba.a}`)
               )
@@ -118,7 +118,7 @@
               </mapgis-ui-col>
             </mapgis-ui-row>
             <mapgis-ui-checkbox
-              style="line-height:32px;"
+              style="line-height: 32px"
               :default-checked="bufferAdd"
               @change="sendBufferAdd"
               >将结果图层添加到视图中</mapgis-ui-checkbox
@@ -133,7 +133,7 @@
           :colon="false"
           v-if="
             srcType == 'Layer' ||
-              (bufferMethod === 'server' && renderMethod === 'server')
+            (bufferMethod === 'server' && renderMethod === 'server')
           "
         >
           <mapgis-ui-form-model-item label="缓冲半径">
@@ -141,7 +141,7 @@
               v-model="isByAtt"
               :options="[
                 { label: '指定半径', value: false },
-                { label: '根据属性值', value: true }
+                { label: '根据属性值', value: true },
               ]"
               :disabled="srcType == 'Feature' && bufferMethod === 'server'"
             >
@@ -165,7 +165,7 @@
               </mapgis-ui-col>
             </mapgis-ui-row>
             <mapgis-ui-checkbox
-              style="line-height:32px;"
+              style="line-height: 32px"
               :default-checked="equalLeftRight"
               v-model="equalLeftRight"
               >左右等距</mapgis-ui-checkbox
@@ -207,7 +207,7 @@
               v-model="angelType"
               :options="[
                 { label: '圆头', value: false },
-                { label: '平头', value: true }
+                { label: '平头', value: true },
               ]"
             >
             </mapgis-ui-radio-group>
@@ -220,7 +220,7 @@
               v-model="isDissolve"
               :options="[
                 { label: '合并', value: true },
-                { label: '不合并', value: false }
+                { label: '不合并', value: false },
               ]"
             >
             </mapgis-ui-radio-group>
@@ -230,7 +230,7 @@
               v-model="renderMethod"
               :options="[
                 { label: '客户端渲染', value: 'client' },
-                { label: '服务端渲染', value: 'server' }
+                { label: '服务端渲染', value: 'server' },
               ]"
             >
             </mapgis-ui-radio-group>
@@ -250,7 +250,7 @@
               :disableAlpha="false"
               :colorStyle="colorStyle"
               @input="
-                val =>
+                (val) =>
                   (colorCopyLine = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
               "
             >
@@ -263,7 +263,7 @@
               :disableAlpha="false"
               :colorStyle="colorStyle"
               @input="
-                val => (
+                (val) => (
                   (colorCopyFill = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`),
                   (colorCopyOpacity = `${val.rgba.a}`)
                 )
@@ -291,7 +291,7 @@
               </mapgis-ui-col>
             </mapgis-ui-row>
             <mapgis-ui-checkbox
-              style="line-height:32px;"
+              style="line-height: 32px"
               :default-checked="bufferAdd"
               @change="sendBufferAdd"
               >将结果图层添加到视图中</mapgis-ui-checkbox
@@ -336,7 +336,7 @@ export default {
      */
     layout: {
       type: String,
-      default: "vertical" // 'horizontal' 'vertical' 'inline'
+      default: "vertical", // 'horizontal' 'vertical' 'inline'
     },
     /**
      * @type String
@@ -345,7 +345,7 @@ export default {
      */
     baseUrl: {
       type: String,
-      default: "http://localhost:6163"
+      default: "http://localhost:6163",
     },
     /**
      * @type String
@@ -354,7 +354,7 @@ export default {
      */
     srcType: {
       type: String,
-      default: "Feature"
+      default: "Feature",
     },
     /**
      * @type String
@@ -363,7 +363,7 @@ export default {
      */
     srcLayer: {
       type: String,
-      default: "gdbp://MapGISLocalPlus/sample/sfcls/等值线"
+      default: "gdbp://MapGISLocalPlus/sample/sfcls/等值线",
     },
     /**
      * @type Object
@@ -372,9 +372,9 @@ export default {
      */
     srcFeature: {
       type: Object,
-      default: function() {
+      default: function () {
         return {};
-      }
+      },
     },
     /**
      * @type Boolean
@@ -383,8 +383,8 @@ export default {
      */
     useMask: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   data() {
     return {
@@ -394,7 +394,7 @@ export default {
       colorCopyOpacity: 1,
       size: "default",
       colorStyle: {
-        fontSize: "14px"
+        fontSize: "14px",
         // padding:"0 0 8px",
       },
       // 图层级半径缓冲
@@ -416,7 +416,7 @@ export default {
         { name: "米", unitParam: "meters" },
         { name: "千米", unitParam: "kilometers" },
         { name: "英里", unitParam: "miles" },
-        { name: "度", unitParam: "degrees" }
+        { name: "度", unitParam: "degrees" },
       ],
       selectedUnit: "meters",
       // steps: 8,
@@ -427,7 +427,7 @@ export default {
       bufferMethod: "client",
       renderMethod: "client",
       maskShow: false,
-      maskText: "正在分析中, 请稍等..."
+      maskText: "正在分析中, 请稍等...",
     };
   },
   watch: {
@@ -467,7 +467,7 @@ export default {
           this.getAttribute();
         }
       },
-      immediate: true
+      immediate: true,
     },
     isByAtt(val, oldval) {
       if (val == true) {
@@ -488,7 +488,7 @@ export default {
       if (oldval == false && val == true) {
         this.rightRad = this.leftRad;
       }
-    }
+    },
   },
   mounted() {
     this.mount();
@@ -529,7 +529,7 @@ export default {
         //是否仅比较要素的外包矩形
         CompareRectOnly: false,
         //是否相交
-        Intersect: true
+        Intersect: true,
       });
       //实例化查询参数对象
       var queryParam = new Zondy.MRFS.QueryByLayerParameter(this.srcLayer, {
@@ -538,7 +538,7 @@ export default {
         //查询结构
         struct: queryStruct,
         //查询规则
-        rule: rule
+        rule: rule,
       });
       //设置查询分页号
       queryParam.pageIndex = 0;
@@ -548,7 +548,7 @@ export default {
       var queryService = new Zondy.MRFS.QueryLayerFeature(queryParam, {
         ip: (this.baseUrl || "").split("/")[2].split(":")[0],
         port: (this.baseUrl || "").split("/")[2].split(":")[1],
-        domain
+        domain,
       });
       //执行查询操作，querySuccess为成功回调，queryError为失败回调
       queryService.query(this.onSuccess, () => {
@@ -646,7 +646,7 @@ export default {
           port: this.baseUrl.split("/")[2].split(":")[1],
           domain,
           isByAtt: this.isByAtt,
-          color: 6
+          color: 6,
         });
         if (this.isByAtt == false) {
           clsBufBySRt.leftRad = this.realLeftRad;
@@ -674,13 +674,13 @@ export default {
           var newRadius = this.convertRadUnit(this.radius, this.selectedUnit);
           this.realRadius = newRadius;
           var buffered = turf.buffer(this.srcFeature, this.realRadius, {
-            units: "degrees"
+            units: "degrees",
           });
           var bufferStyle = new FillStyle({
             color: this.colorCopyFill,
             outlineColor: this.colorCopyLine,
             outlineWidth: Number(this.colorLineWidth),
-            opacity: Number(this.colorCopyOpacity)
+            opacity: Number(this.colorCopyOpacity),
           });
           this.maskShow = false;
           this.$emit("listenFeature", buffered, this.destLayer, bufferStyle);
@@ -722,7 +722,7 @@ export default {
         leftRad: this.realLeftRad,
         //设置要素缓冲分析右半径
         rightRad: this.realRightRad,
-        color: 6
+        color: 6,
       });
 
       /*设置缓冲分析参数*/
@@ -738,7 +738,7 @@ export default {
       this.destLayer = this.srcLayer + this.currentTime();
       featureBufBySR.resultName = this.destLayer;
       //调用Zondy.Service.AnalysisBase基类的execute方法执行要素缓冲分析，AnalysisSuccess为回调函数。
-      featureBufBySR.execute(this.AnalysisSuccess, "post", error => {
+      featureBufBySR.execute(this.AnalysisSuccess, "post", (error) => {
         this.maskShow = false;
         console.log(error);
       });
@@ -754,7 +754,7 @@ export default {
         color: this.colorCopyFill,
         outlineColor: this.colorCopyLine,
         outlineWidth: Number(this.colorLineWidth),
-        opacity: Number(this.colorCopyOpacity)
+        opacity: Number(this.colorCopyOpacity),
       });
       // 传出gdbp路径，缓冲区样式，renderType类型
       this.$emit(
@@ -767,24 +767,33 @@ export default {
     cancel() {
       this.maskShow = false;
       Object.assign(this.$data, this.$options.data());
+      if (
+        this.renderMethod === "client" &&
+        this.bufferMethod === "client" &&
+        this.srcType === "Feature"
+      ) {
+        this.destLayer = this.currentTime();
+      } else {
+        this.destLayer = this.srcLayer + this.currentTime();
+      }
     },
     exportResult() {
       this.$emit("exportResult");
     },
     deleteResult() {
       this.$emit("deleteResult");
-    }
+    },
   },
   computed: {
     formItemLayout({ layout }) {
       return layout === "horizontal"
         ? {
             labelCol: { span: 6 },
-            wrapperCol: { span: 17 }
+            wrapperCol: { span: 17 },
           }
         : {};
-    }
-  }
+    },
+  },
 };
 </script>
 
