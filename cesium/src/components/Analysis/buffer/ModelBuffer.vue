@@ -16,7 +16,7 @@
               v-model="isByAtt"
               :options="[
                 { label: '指定半径', value: false },
-                { label: '根据属性值', value: true }
+                { label: '根据属性值', value: true },
               ]"
               :disabled="srcType == 'Feature'"
             >
@@ -61,7 +61,7 @@
               v-model="jointStyle"
               :options="[
                 { label: '圆头', value: 1 },
-                { label: '平头', value: 0 }
+                { label: '平头', value: 0 },
               ]"
             >
             </mapgis-ui-radio-group>
@@ -106,7 +106,7 @@
               </mapgis-ui-col>
             </mapgis-ui-row>
             <mapgis-ui-checkbox
-              style="line-height:32px;"
+              style="line-height: 32px"
               :default-checked="bufferAdd"
               @change="sendBufferAdd"
               >将结果图层添加到视图中</mapgis-ui-checkbox
@@ -142,7 +142,7 @@ export default {
      */
     layout: {
       type: String,
-      default: "vertical" // 'horizontal' 'vertical' 'inline'
+      default: "vertical", // 'horizontal' 'vertical' 'inline'
     },
     /**
      * @type String
@@ -151,7 +151,7 @@ export default {
      */
     baseUrl: {
       type: String,
-      default: "http://localhost:6163"
+      default: "http://localhost:6163",
     },
     /**
      * @type String
@@ -160,7 +160,7 @@ export default {
      */
     srcType: {
       type: String,
-      default: "Feature"
+      default: "Feature",
     },
     /**
      * @type String
@@ -169,7 +169,7 @@ export default {
      */
     srcLayer: {
       type: String,
-      default: "gdbp://MapGISLocalPlus/sample/sfcls/等值线"
+      default: "gdbp://MapGISLocalPlus/sample/sfcls/等值线",
     },
     /**
      * @type Object
@@ -178,9 +178,9 @@ export default {
      */
     srcFeature: {
       type: Object,
-      default: function() {
+      default: function () {
         return {};
-      }
+      },
     },
     /**
      * @type Boolean
@@ -189,8 +189,8 @@ export default {
      */
     useMask: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   data() {
     return {
@@ -201,7 +201,7 @@ export default {
         { name: "米", unitParam: "meters" },
         { name: "千米", unitParam: "kilometers" },
         { name: "英里", unitParam: "miles" },
-        { name: "度", unitParam: "degrees" }
+        { name: "度", unitParam: "degrees" },
       ],
       selectedUnit: "meters",
       jointStyle: 0,
@@ -217,9 +217,9 @@ export default {
       maskText: "正在分析中, 请稍等...",
       colorArr: [
         { label: "黄色", value: 4 },
-        { label: "蓝色", value: 2 }
+        { label: "蓝色", value: 2 },
       ],
-      fillColor: 2
+      fillColor: 2,
     };
   },
   watch: {
@@ -236,20 +236,20 @@ export default {
           this.getAttribute();
         }
       },
-      immediate: true
+      immediate: true,
     },
     isByAtt(val, oldval) {
       if (val == true) {
         this.getAttribute();
       }
-    }
+    },
   },
   computed: {
     formItemLayout({ layout }) {
       return layout === "horizontal"
         ? {
             labelCol: { span: 6 },
-            wrapperCol: { span: 17 }
+            wrapperCol: { span: 17 },
           }
         : {};
     },
@@ -260,7 +260,7 @@ export default {
         domain = url.origin;
       }
       return domain;
-    }
+    },
   },
   mounted() {
     this.mount();
@@ -293,7 +293,7 @@ export default {
         //是否仅比较要素的外包矩形
         CompareRectOnly: false,
         //是否相交
-        Intersect: true
+        Intersect: true,
       });
       //实例化查询参数对象
       var queryParam = new Zondy.MRFS.QueryByLayerParameter(this.srcLayer, {
@@ -302,7 +302,7 @@ export default {
         //查询结构
         struct: queryStruct,
         //查询规则
-        rule: rule
+        rule: rule,
       });
       //设置查询分页号
       queryParam.pageIndex = 0;
@@ -312,7 +312,7 @@ export default {
       var queryService = new Zondy.G3D.G3DMapDoc({
         domain: this.domain,
         gdbp: this.srcLayer,
-        ...queryParam
+        ...queryParam,
       });
       //执行查询操作，querySuccess为成功回调，queryError为失败回调
       queryService.GetFeature(this.onSuccess, () => {
@@ -408,7 +408,7 @@ export default {
         simplifyTolerance,
         srcOidList: srcOidList.length > 0 ? srcOidList.join(",") : undefined,
         fieldName: this.isByAtt ? this.selectedFldName : undefined,
-        fillColor: this.fillColor
+        fillColor: this.fillColor,
       };
       const res = await this.modelBuffer(options);
       console.log(res);
@@ -429,14 +429,14 @@ export default {
         bufferQuality,
         simplifyTolerance,
         srcOidList,
-        fieldName
+        fieldName,
       } = options;
       const keys = Object.keys(options);
       let paramArr = [];
       for (let i = 0; i < keys.length; i++) {
         const param = {
           Key: keys[i],
-          Value: options[keys[i]]
+          Value: options[keys[i]],
         };
         paramArr.push(param);
       }
@@ -444,7 +444,7 @@ export default {
       const promise = new Promise((resolve, reject) => {
         axios
           .post(url, paramArr)
-          .then(res => {
+          .then((res) => {
             const { data } = res;
             if (!data) {
               resolve(undefined);
@@ -452,12 +452,12 @@ export default {
               resolve(data);
             }
           })
-          .catch(err => {
+          .catch((err) => {
             reject(err);
           });
       });
       return promise
-        .then(data => {
+        .then((data) => {
           return data;
         })
         .catch(() => {
@@ -468,6 +468,7 @@ export default {
       this.maskShow = false;
       // 传出gdbp路径，缓冲区样式，renderType类型
       this.$emit("listenLayer", this.destLayer);
+      this.destLayer = this.srcLayer + this.currentTime();
     },
     cancel() {
       this.maskShow = false;
@@ -475,8 +476,8 @@ export default {
     },
     deleteResult() {
       this.$emit("deleteResult");
-    }
-  }
+    },
+  },
 };
 </script>
 
