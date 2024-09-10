@@ -12,7 +12,12 @@
       <mapgis-ui-button key="cancel" @click="onImportCancel">
         取消
       </mapgis-ui-button>
-      <mapgis-ui-button key="ok" type="primary" @click="onImportOk">
+      <mapgis-ui-button
+        key="ok"
+        type="primary"
+        @click="onImportOk"
+        :loading="loading"
+      >
         确定
       </mapgis-ui-button>
     </template>
@@ -38,23 +43,24 @@ export default {
   props: {
     visible: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // 弹框的类型，json或wl，表示导入json文件或是上传wl文件
     importModalType: {
       type: String,
-      default: ""
-    }
+      default: "",
+    },
   },
   computed: {
     title() {
       return this.importModalType === "json" ? "导入漫游路径" : "上传文件";
-    }
+    },
   },
   data() {
     return {
       data: null,
-      node: null
+      node: null,
+      loading: false,
     };
   },
   methods: {
@@ -73,6 +79,7 @@ export default {
     },
     // 读取json文件或者上传wl文件
     readOrUploadFile(e) {
+      this.loading = true;
       if (this.importModalType === "json") {
         this.readImportFile(e);
       } else {
@@ -85,39 +92,74 @@ export default {
       formData.append("files", file);
       try {
         const res = await this.uploadRequest(formData);
-        if (res.status === 200) {
-          const result = await this.featureQuery(res.data.uploadFiles[0].path);
-          this.node = {
-            path: result.data.features[0].geometry.coordinates
-              .join(",")
-              .split(","),
-            name: result.data.name.split(".")[0]
-          };
+        if (res && Object.keys(res).length > 0) {
+          const result = await this.featureQuery(res.uploadFiles[0].path);
+          if (result && Object.keys(result).length > 0) {
+            // wl文件里的几何只有二维坐标，这里需要将高程加上，高程默认为0
+            const { coordinates } = result.features[0].geometry;
+            const newCoordinates = coordinates.map((item) => {
+              return [item[0], item[1], 0];
+            });
+            this.node = {
+              path: newCoordinates.join(",").split(","),
+              name: result.name.split(".")[0],
+            };
+            this.loading = false;
+          }
         }
       } catch {}
     },
     uploadRequest(param) {
-      return axios.post(
-        `${window.location.protocol}//${this.ip}:${this.port}/igs/rest/services/system/ResourceServer/files`,
-        param,
-        { headers: { "Content-type": "multipart/form-data" } }
-      );
+      const promise = new Promise((resolve, reject) => {
+        axios({
+          method: "post",
+          url: `${window.location.protocol}//${this.ip}:${this.port}/igs/rest/services/system/ResourceServer/files`,
+          headers: {
+            "Content-type": "multipart/form-data",
+          },
+          data: param,
+          timeout: 20000,
+        }).then((res) => {
+          if (res && res.data) {
+            resolve(res.data);
+          } else {
+            resolve(null);
+          }
+        });
+      });
+      return promise.then((data) => {
+        return data;
+      });
     },
     featureQuery(path) {
-      return axios.get(
-        `${window.location.protocol}//${this.ip}:${this.port}/igs/rest/services/system/ResourceServer/tempData/features/query?f=json&url=${path}`
-      );
+      const promise = new Promise((resolve, reject) => {
+        axios({
+          method: "get",
+          url: `${window.location.protocol}//${this.ip}:${this.port}/igs/rest/services/system/ResourceServer/tempData/features/query?f=json&url=${path}`,
+          timeout: 20000,
+        }).then((res) => {
+          if (res && res.data) {
+            resolve(res.data);
+          } else {
+            resolve(null);
+          }
+        });
+      });
+      return promise.then((data) => {
+        return data;
+      });
     },
     // 读取json文件
     readImportFile(e) {
       const file = e.target.files[0];
       const reader = new FileReader();
       reader.readAsText(file);
-      reader.onload = e => {
+      reader.onload = (e) => {
         const data = JSON.parse(e.target.result);
         this.data = data;
+        this.loading = false;
       };
-    }
-  }
+    },
+  },
 };
 </script>
