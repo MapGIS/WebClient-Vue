@@ -693,15 +693,21 @@ export default {
      * @param service 要调用的服务名称
      * **/
     $_setTilingScheme(tileMatrixSetName) {
+      if (
+        typeof tileMatrixSetName === "string" &&
+        tileMatrixSetName.includes("EPSG:")
+      ) {
+        tileMatrixSetName = Number(tileMatrixSetName.split(":")[1]);
+      }
       let tilingScheme;
       if (
-        tileMatrixSetName === "EPSG:4326" ||
-        tileMatrixSetName === "EPSG:4490" ||
-        tileMatrixSetName === "EPSG:4610" ||
-        tileMatrixSetName === "EPSG:4214"
+        tileMatrixSetName === 4326 ||
+        tileMatrixSetName === 4490 ||
+        tileMatrixSetName === 4610 ||
+        tileMatrixSetName === 4214
       ) {
         tilingScheme = new Cesium.GeographicTilingScheme();
-      } else if (tileMatrixSetName === "EPSG:3857") {
+      } else if (tileMatrixSetName === 3857) {
         tilingScheme = new Cesium.WebMercatorTilingScheme();
       } else if (this.$_isCustomWKID(tileMatrixSetName)) {
         // 自定义WKID值，请参考webclient或cesium相关文档

@@ -66,7 +66,7 @@ export default {
         const urlStrs = baseUrl.split("{");
         tag = urlStrs[1].split("}/")[0];
       }
-      if (tag) {
+      if (tag && offset) {
         options.customTags = {};
         options.customTags[tag] = function (imageryProvider, x, y, level) {
           return level - offset;
