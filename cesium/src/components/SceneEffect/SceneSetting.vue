@@ -18,7 +18,8 @@
           <basic-setting
             ref="attr"
             @updateSpin="changeSpinning"
-            :initBasicSetting.sync="initBasicSetting"
+            :initBasicSetting="initBasicSetting"
+            @updateBasicSetting="updateBasicSetting"
             :initialDepthTest="depthTest"
             :initial-scene-mode="sceneMode"
             :stuffWidth="stuffWidth"
@@ -32,7 +33,8 @@
         >
           <camera-setting
             ref="effect"
-            :initCameraSetting.sync="initCameraSetting"
+            :initCameraSetting="initCameraSetting"
+            @updateCameraSetting="updateCameraSetting"
             :boundingSphereRadius="boundingSphereRadius"
             :baseLayerIds="baseLayerIds"
             @updateSpin="changeSpinning"
@@ -46,7 +48,8 @@
         >
           <light-setting
             ref="effect"
-            :initLightSetting.sync="initLightSetting"
+            :initLightSetting="initLightSetting"
+            @updateLightSetting="updateLightSetting"
             @updateSpin="changeSpinning"
           ></light-setting>
         </mapgis-ui-tab-pane>
@@ -58,7 +61,8 @@
         >
           <weather-setting
             ref="effect"
-            :initWeatherSetting.sync="initWeatherSetting"
+            :initWeatherSetting="initWeatherSetting"
+            @updateWeatherSetting="updateWeatherSetting"
             @updateSpin="changeSpinning"
           ></weather-setting>
         </mapgis-ui-tab-pane>
@@ -70,7 +74,8 @@
         >
           <effect-setting
             ref="effect"
-            :initEffectSetting.sync="initEffectSetting"
+            :initEffectSetting="initEffectSetting"
+            @updateEffectSetting="updateEffectSetting"
             @updateSpin="changeSpinning"
           ></effect-setting>
         </mapgis-ui-tab-pane>
@@ -116,7 +121,7 @@ export default {
     LightSetting,
     WeatherSetting,
     EffectSetting,
-    AutonomousRoamingSetting
+    AutonomousRoamingSetting,
   },
   mixins: [ServiceLayer],
   props: {
@@ -124,40 +129,40 @@ export default {
      * 面板样式
      */
     panelStyle: {
-      type: Object
+      type: Object,
     },
     initParams: {
       type: Object,
       default: () => {
         return {};
-      }
+      },
     },
     initFavoritesParams: {
       type: Object,
       default: () => {
         return {};
-      }
+      },
     },
     boundingSphereRadius: {
       type: Number,
-      default: 0
+      default: 0,
     },
     baseLayerIds: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     publicPath: {
       type: String,
-      default: "/"
+      default: "/",
     },
     isWidgetOpen: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // 左侧板宽度
     stuffWidth: {
-      type: Number
-    }
+      type: Number,
+    },
   },
   computed: {
     initBasicSetting() {
@@ -176,7 +181,7 @@ export default {
           layerbrightness: 1.0,
           layercontrast: 1.0,
           layerhue: 0.0,
-          layersaturation: 1.0
+          layersaturation: 1.0,
         }
       );
     },
@@ -191,13 +196,13 @@ export default {
           this.initParams.cameraSetting || {
             selfAdaption: false,
             selfAdaptionParams: {
-              maxHeigh: 400000
+              maxHeigh: 400000,
             },
             undgrd: false,
             undgrdParams: {
-              groundAlpha: 0.5
+              groundAlpha: 0.5,
             },
-            fov: 60
+            fov: 60,
           }
         );
       }
@@ -214,9 +219,9 @@ export default {
             sunlight: false,
             sunlightParams: {
               lightingMode: "DAYNIGHT_SHADING",
-              lightColor: "rgba(255,255,255,255)"
+              lightColor: "rgba(255,255,255,255)",
             },
-            lightIntensity: 10
+            lightIntensity: 10,
           }
         );
       }
@@ -236,29 +241,29 @@ export default {
             skybox: false,
             clouds: false,
             cloudsParams: {
-              cloudsduration: 5
+              cloudsduration: 5,
             },
             rain: false,
             rainParams: {
               speed: 18,
               rainOpacity: 0.6,
               angle: -30,
-              length: 1
+              length: 1,
             },
             snow: false,
             snowParams: {
               size: 5,
-              density: 5
+              density: 5,
             },
             fog: false,
             fogParams: {
               fogOpacity: 0.5,
-              color: "#FFFFFF"
+              color: "#FFFFFF",
             },
             surficialFog: true,
             surfFogParams: {
-              surfFogDst: 0.0002
-            }
+              surfFogDst: 0.0002,
+            },
           }
         );
       }
@@ -277,15 +282,15 @@ export default {
             bloom: false,
             bloomParams: {
               bloomBrt: -0.3,
-              bloomCtrst: 128
-            }
+              bloomCtrst: 128,
+            },
           }
         );
       }
     },
     initFavoritesEffectSetting() {
       return this.initFavoritesParams.effectSetting;
-    }
+    },
   },
   data() {
     return {
@@ -293,14 +298,19 @@ export default {
       transform: undefined,
       tabBarStyle: {
         margin: "0px",
-        textAlign: "center"
+        textAlign: "center",
         // borderBottom: "1px solid #F0F0F0"
       },
       show: true,
       hover: false,
       spinning: false,
       depthTest: undefined,
-      sceneMode: undefined
+      sceneMode: undefined,
+      basicSetting: undefined,
+      cameraSetting: undefined,
+      LightSetting: undefined,
+      weatherSetting: undefined,
+      effectSetting: undefined,
     };
   },
 
@@ -320,7 +330,7 @@ export default {
       this.$emit("loaded", this);
     },
     unmount() {
-      this.$_deleteManger("SettingToolManager", function(manager) {
+      this.$_deleteManger("SettingToolManager", function (manager) {
         console.log("destroyed");
       });
       this.$emit("unload");
@@ -335,8 +345,42 @@ export default {
 
     changeSpinning(e) {
       this.spinning = e;
-    }
-  }
+    },
+    updateBasicSetting(e) {
+      this.basicSetting = e;
+    },
+    getBasicSetting(e) {
+      return this.basicSetting || this.initBasicSetting;
+    },
+
+    updateCameraSetting(e) {
+      this.cameraSetting = e;
+    },
+    getCameraSetting(e) {
+      return this.cameraSetting || this.initCameraSetting;
+    },
+
+    updateLightSetting(e) {
+      this.lightSetting = e;
+    },
+    getLightSetting(e) {
+      return this.lightSetting || this.initLightSetting;
+    },
+
+    updateWeatherSetting(e) {
+      this.weatherSetting = e;
+    },
+    getWeatherSetting(e) {
+      return this.weatherSetting || this.initWeatherSetting;
+    },
+
+    updateEffectSetting(e) {
+      this.effectSetting = e;
+    },
+    getEffectSetting(e) {
+      return this.effectSetting || this.initEffectSetting;
+    },
+  },
 };
 </script>
 
