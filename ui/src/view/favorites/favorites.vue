@@ -206,9 +206,15 @@ export default {
     dataList: {
       deep: true,
       handler() {
-        this.bookMarkList = JSON.parse(JSON.stringify(this.dataList));
         // 存一份数据用于搜索后还原数据
         this.bookMarkListCopy = JSON.parse(JSON.stringify(this.dataList));
+        if (this.searchValue) {
+          this.bookMarkList = this.bookMarkListCopy.filter(
+            item => item.name.indexOf(this.searchValue) !== -1
+          );
+        } else {
+          this.bookMarkList = JSON.parse(JSON.stringify(this.dataList));
+        }
       }
     }
   },
@@ -247,10 +253,9 @@ export default {
       this.type = "edit";
       const deepCloneData = JSON.parse(JSON.stringify(data));
       this.bookMarkName = deepCloneData.name;
-      let editIndex = index;
-      if (editIndex === undefined) {
-        editIndex = this.bookMarkList.findIndex(item => item.id === data.id);
-      }
+      const editIndex = this.bookMarkListCopy.findIndex(
+        item => item.id === deepCloneData.id
+      );
       this.editIndex = editIndex;
     },
     onAddCancel() {
