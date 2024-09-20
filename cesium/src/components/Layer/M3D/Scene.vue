@@ -440,7 +440,6 @@ export default {
           return layer.readyPromise;
         });
         Promise.all(props).then((m3ds) => {
-          vm.$emit("loaded", { g3d: vm, component: vm });
           vm.recordOriginStyle();
           if (enablePopup) {
             vm.bindPopupEvent();
@@ -488,6 +487,7 @@ export default {
               child[layerIndexs[i]].subLayerType = checkTypeIcon(t);
             });
           });
+          vm.$emit("loaded", { g3d: vm, component: vm });
           vm.parseTerrain();
           vm.parserVector();
           vm.resortLayers();
