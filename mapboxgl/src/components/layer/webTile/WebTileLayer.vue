@@ -4,6 +4,7 @@
 <script>
 import rasterTileLayer from "../customtile/rasterTileLayer.js";
 import rasterLayer from "../RasterLayer.js";
+import layerEvents from "../../../lib/layerEvents";
 import { newGuid } from "../../util";
 
 export default {
@@ -13,6 +14,9 @@ export default {
     layerId: {
       type: String,
       required: true,
+    },
+    sourceId: {
+      type: String,
     },
     baseUrl: {
       type: String,
@@ -30,91 +34,76 @@ export default {
       type: Object,
       default: () => {}
     },
-    srs: {
-      type: String,
-      default: "EPSG:4326"
+    zoomOffset: {
+      type: Number
+    },
+    minimumLevel: {
+      type: Number,
+      default: 0
+    },
+    maximumLevel: {
+      type: Number,
+      default: 22
     }
   },
   inject: ["mapbox", "map"],
-  data() {
-    return {
-      //监测props
-      checkType: {
-        visible: "boolean",
-        opacity: "number",
-        zIndex: "number",
-        vueKey: "string",
-        vueIndex: "string | Number"
-      },
-      managerName: "WebTileManager",
-      // providerName: "BaiduImageryProvider", //cesium调用的类名
-      providerName: "UrlTemplateImageryProvider"
-    };
-  },
-  created() {
-    console.log('this.map: ', this.map);
-    debugger
-  },
-  mounted() {
-    this.mount();
-  },
-  destroyed() {
-    this.unmount();
-  },
   methods: {
-    mount() {
-      this.layerId = this.layerId?this.layerId:newGuid()
+    $_deferredMount() {
+      this.layerId = this.layerId ? this.layerId : newGuid()
+      this.sourceId = this.sourceId ? this.sourceId : this.layerId
       const wkid = Number(this.spatialReference.wkid)
       if (wkid === 20020902) {
         // 百度bd09墨卡托
-        // this.map.addLayer(rasterTileLayer('bdsl', 'Baidu.Normal.Map'));
-        const bdLayerId = 'bd'+ this.layerId
+        const bdLayerId = this.layerId
         rasterTileLayer.providers.Baidu[bdLayerId] = {
             Map: this.baseUrl,
         }
-        this.map.addLayer(rasterTileLayer(bdLayerId, `Baidu.${bdLayerId}.Map`));
+        this.map.addLayer(rasterTileLayer(bdLayerId, `Baidu.${bdLayerId}.Map`), this.before);
       } else if (wkid === 20010202) {
         // 高德gcj02墨卡托
-        const gcjLayerId = 'gcj'+ this.layerId
+        const gcjLayerId = this.layerId
         rasterTileLayer.providers.GaoDe[gcjLayerId] = {
             Map: this.baseUrl,
         }
-        this.map.addLayer(rasterTileLayer(gcjLayerId, `GaoDe.${gcjLayerId}.Map`));
-      } 
-      else {
-        // this.map.addLayer(rasterTileLayer(layerId, layerType, options));
-        this.addTile({
+        this.map.addLayer(rasterTileLayer(gcjLayerId, `GaoDe.${gcjLayerId}.Map`), this.before);
+      } else {
+        this.$_addWebTile({
+          // url: 'http://192.168.82.91:8089/igs/rest/mrms/tile/Tile:HuBei_4326/{z}/{y}/{x}',
           url: this.baseUrl,
-          id: this.layerId,
+          layerId: this.layerId,
+          sourceId: this.sourceId,
           tileSize: this.tileSize[0],
           tileSliceType: this.tileSliceType,
           opacity: 1,
-          visible: "visible"
+          visible: "visible",
+          zoomOffset: this.zoomOffset,
+          minimumLevel: this.minimumLevel,
+          maximumLevel: this.maximumLevel
         })
       }
+      this.$_emitEvent("added", { layerId: this.layerId });
+      this.$_bindLayerEvents(layerEvents);
+      this.map.off("dataloading", this.$_watchSourceLoading);
+      this.initial = false;
     },
-    addTile(layer){
-      const sourceID = `source_${layer.id}`
-      const layerID = `layer_${layer.id}`
-      const mapSource = this._getRasterSource(
-        layer.url,
-        layer.tileSize,
-        layer.renderMode,
-        layer.subDomains,
-        layer.requestParams,
-        layer.clippingArea,
-        layer.tileSliceType
-      )
-      if (layer.tileSliceType === 'tms') {
-        mapSource.scheme = 'tms'
+    $_addWebTile(layer){
+      // 获取并添加rasterSource
+      const mapSource = this.$_getRasterSource(layer)
+      this.map.on("dataloading", this.$_watchSourceLoading);
+      try {
+        this.map.addSource(layer.sourceId, mapSource)
+      } catch (err) {
+        if (this.replaceSource) {mapSource
+          this.map.removeSource(this.sourceId || this.layerId);
+          this.map.addSource(this.sourceId || this.layerId, source);
+        }
       }
-      const mapLayer = this._getRasterLayer(layerID, sourceID, layer)
-    
-      // 添加source和layer
-      this.map.addSource(sourceID, mapSource)
-      this.map.addLayer(mapLayer)
+      // 获取并添加rasterLayer
+      const rasterLayer = this.$_getRasterLayer(layer.layerId, layer.sourceId, layer)
+      this.map.addLayer(rasterLayer, this.before);
     },
-    _getRasterSource(url, tileSize, renderMode, subDomains, requestParams, clippingArea) {
+    $_getRasterSource(options) {
+      const {url, tileSize, renderMode, subDomains, requestParams, clippingArea, zoomOffset, minimumLevel, maximumLevel, tileSliceType} = options
       let rasterSource
       let urls = [url]
       // 支持子域名模式
@@ -173,223 +162,57 @@ export default {
           clippingArea:clippingArea
         }
       }
+      // 解析zoomOffset
+      let _zoomOffset = zoomOffset;
+      if (this.map.getCRS().epsgCode.includes("4326")) {
+        if (_zoomOffset === undefined) {
+          if (
+            url.indexOf('tianditu.com/DataServer') > -1 ||
+            url.indexOf('tianditu.gov.cn/DataServer') > -1 
+          ) {
+            // 天地图DataServer服务第0级1.4062499999782967
+            _zoomOffset = 0;
+          } else {
+            // 标准的4326缺裁图方式，第0级分辨率0.7031249999891483，和mapboxgl引擎默认的4326 crs第0级分辨率1.4062499999782967相比，缺少一级
+            _zoomOffset = -1;
+          }
+        }
+      }
+      rasterSource.mapgisOffset = _zoomOffset
+
+      rasterSource.minzoom = minimumLevel
+      rasterSource.maxzoom = maximumLevel
+      if (tileSliceType === 'tms') {
+        rasterSource.scheme = 'tms'
+      }
+
       return rasterSource
     },
-    _getRasterLayer(layerID, sourceID, layer){
-        return {
-        id: layerID,
+    $_getRasterLayer(layerId, sourceId, options){
+      let existed = this.map.getLayer(this.layerId);
+      if (existed) {
+        if (this.replace) {
+          this.map.removeLayer(this.layerId);
+        } else {
+          this.$_emitEvent("layer-exists", { layerId: this.layerId });
+          return existed;
+        }
+      }
+      let layer = {
+        id: layerId,
         type: 'raster',
-        source: sourceID,
+        source: sourceId,
         // 初始化时设置图层透明度
         paint: {
-          'raster-opacity': layer.opacity
+          'raster-opacity': options.opacity
         },
         // 初始化时设置图层可见性
         layout: {
-          visibility: layer.visible
+          visibility: options.visible
         }
       }
+      return layer
     },
-    addWebTile() {
-      let options = {};
-      if (this.$props.spatialReference) {
-        const wkid = Number(this.$props.spatialReference.wkid)
-        // 构造TileInfo
-        const tileInfo = this.$_getTileInfoByWKID(wkid);
-        // 根据TileInfo构造mapbox-gl引擎所需的crs对象
-        const resolutions = []
-        tileInfo.lods.forEach((lod)=>{
-          resolutions.push(lod.resolution)
-        })
-        const origin = tileInfo.origin
-        const tileSize = tileInfo.size[0]
-        const extent = this.$_getExtentByWKID(wkid)
-        const bounds = [extent.xmin,extent.ymin,extent.xmax,extent.ymax]
-        // this.test = this.mapbox
-        // this.test1 = this.map
-        // const map = new this.mapbox.Map({
-        //   //地图容器div的id
-        //   container: 'map',
-        //   // 构建自定义CRS
-        //   crs: new CRS(`EPSG:${wkid}`, '', {
-        //       resolutions,
-        //       origin,
-        //       tileSize,
-        //       bounds,
-        //       tileSliceType: 'tms'
-        //   }),
-        //   style: {
-        //         //设置版本号，一定要设置
-        //         "version": 8,
-        //         //添加来源
-        //         "sources": {
-        //             "baidu": {
-        //                 type: 'raster',
-        //                 tiles: ['http://api1.map.bdimg.com/customimage/tile?&udt=20180601&scale=1&x={x}&y={y}&z={z}&styles=midnight','http://api2.map.bdimg.com/customimage/tile?&udt=20180601&scale=1&x={x}&y={y}&z={z}&styles=midnight'],
-        //                 tileSize:256,
-        //                 scheme:'tms'
-        //             }
-        //         },
-        //         //设置加载并显示来源的图层信息
-        //         "layers": [
-        //             {
-        //                 //图层id，要保证唯一性
-        //                 "id": "baidu-tile",
-        //                 //图层类型
-        //                 "type": "raster",
-        //                 //连接图层来源
-        //                 "source": "baidu",
-        //                 //图层最小缩放级数
-        //                 "minzoom": 0,
-        //                 //图层最大缩放级数
-        //                 "maxzoom": 22
-        //             }
-        //         ]
-        //   }
-        // });
-      }
-      this.$_mount(options);
-    },
-    unmount() {
-      this.$_unmount();
-    },
-    $_getExtentByWKID(wkid){
-      let extent = undefined
-      if (wkid === 20020902) {
-        // 构建 自定义Wkid 百度09墨卡托的默认extent
-        extent = {
-          xmin: -20037726.37,
-          ymin: -12474104.17,
-          xmax: 20037726.37,
-          ymax: 12474104.17,
-        }
-      } else if ([3857, 20010202].indexOf(wkid)) {
-        // 是Web墨卡托坐标系或者高德墨卡托
-        extent = {
-          xmin: -20037508.3427892,
-          ymin: -20037508.3427892,
-          xmax: 20037508.3427892,
-          ymax: 20037508.3427892,
-          spatialReference: SpatialReference.fromJSON(this.spatialReference)
-        }
-      } else if ([4326, 4490, 4610, 4214, 20020901, 20010201].indexOf(wkid)) {
-        // 是经纬度坐标系 或者 百度经纬度、高德经纬度
-         extent = {
-          xmin: -180,
-          ymin: -90,
-          xmax: 180,
-          ymax: 90
-        };
-      } 
-      return extent
-    },
-    /*
-     * 根据wkid构造瓦片信息
-     * @param wkid 参考系的wkid号
-     * **/
-    $_getTileInfoByWKID(wkid) {
-      let tileInfo = {};
-      if (wkid === 20020902) {
-        // 构建自定义Wkid 百度09墨卡托的默认TileInfo
-        const lods = [];
-        const tileSize = [256, 256];
-        for (let i = 0; i < 19; i++) {
-          const resolution = Math.pow(2, 18 - i);
-          lods[i] = { level: i, resolution: resolution, scale: null };
-        }
-        tileInfo = {
-          dpi: 0,
-          format: "PNG",
-          size: tileSize, // 瓦片宽高的像素大小
-          origin: {
-            coordinates: [0, 0], // 裁图原点
-            type: "Point" // 裁图原点类型
-          },
-          lods: lods
-        };
-      } else if (wkid === 20010202) {
-        // 构建自定义Wkid 国测局02墨卡托的默认TileInfo
-        const lods = [];
-        const tileSize = [256, 256];
-        const maxLength = 20037508.3427892;
-        const resolution0 = (maxLength + maxLength) / tileSize[0];
-        // 总共20级
-        for (let i = 0; i < 19; i++) {
-          const resolution = resolution0 / Math.pow(2, i);
-          lods[i] = { level: i, resolution: resolution, scale: null };
-        }
-        tileInfo = {
-          dpi: 0,
-          format: "PNG",
-          size: tileSize, // 瓦片宽高的像素大小
-          origin: {
-            coordinates: [-maxLength, maxLength], // 裁图原点
-            type: "Point" // 裁图原点类型
-          },
-          lods: lods
-        };
-      } else if ([4326, 4490, 4610, 4214, 20020901, 20010201].indexOf(wkid)) {
-        const extent = this.$_getExtentByWKID(wkid)
-        const numberOfMinLevelTilesX = 2;
-        const tileSize = 256;
-        const mapUnitToMeters = 111319490.79327358;
-        // 最大(第0级)分辨率
-        const resolution0 =
-          (extent.xmax - extent.xmin) / numberOfMinLevelTilesX / tileSize;
-        // 开始计算分辨率
-        const lods = [];
-        // 默认构造20级分辨率
-        for (let i = 0; i < 19; i++) {
-          const resolutions = resolutions0 / Math.pow(2,i)
-          const lod = {
-            level: i,
-            resolution: resolutions[i] / 2,
-            scale: (mapUnitToMeters * (resolution * 96)) / 0.0254
-          };
-          lods.push(lod);
-        }
-        tileInfo = {
-          dpi: 96,
-          format: "PNG",
-          size: tileSize, // 瓦片宽高的像素大小
-          origin: {
-            coordinates: [180, -90], // 裁图原点
-            type: "Point", 
-          },
-          lods: lods
-        };
-      } else if ([3857].indexOf(wkid)) {
-        const extent = this.$_getExtentByWKID(wkid)
-        const numberOfMinLevelTilesX = 1;
-        const tileSize = 256;
-        // 最大(第0级)分辨率
-        const resolution0 =
-          (extent.xmax - extent.xmin) / numberOfMinLevelTilesX / tileSize;
-        // 开始计算分辨率
-        const lods = [];
-        // 默认构造20级分辨率
-        for (let i = 0; i < 19; i++) {
-          const resolutions = resolutions0 / Math.pow(2,i)
-          const lod = {
-            level: i,
-            resolution: resolutions[i] / 2,
-            scale: (resolution * 96) / 0.0254
-          };
-          lods.push(lod);
-        }
-        tileInfo = {
-          dpi: 96,
-          format: "PNG",
-          size: tileSize, // 瓦片宽高的像素大小
-          origin: {
-            coordinates: [20037508.3427892, -20037508.3427892], // 裁图原点
-            type: "Point", 
-          },
-          lods: lods
-        };
-      }
-      return tileInfo;
-    }
   }
 };
 </script>
