@@ -693,11 +693,12 @@ export default {
      * @param service 要调用的服务名称
      * **/
     $_setTilingScheme(tileMatrixSetName) {
-      if (
-        typeof tileMatrixSetName === "string" &&
-        tileMatrixSetName.includes("EPSG:")
-      ) {
-        tileMatrixSetName = Number(tileMatrixSetName.split(":")[1]);
+      if (typeof tileMatrixSetName === "string") {
+        if (tileMatrixSetName.includes("EPSG:")) {
+          tileMatrixSetName = Number(tileMatrixSetName.split(":")[1]);
+        } else {
+          tileMatrixSetName = Number(tileMatrixSetName);
+        }
       }
       let tilingScheme;
       if (
