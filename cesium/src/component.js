@@ -135,6 +135,7 @@ export { default as Mapgis3dCityGrowOptions } from "./components/simulation/City
 export { default as Mapgis3dPondingSimulation } from "./components/simulation/PondingSimulation.vue";
 export { default as Mapgis3dPondingSimulationTimeline } from "./components/simulation/PondingSimulation/PondingSimulationTimeline.vue";
 export { default as Mapgis3dBuildingGlow } from "./components/simulation/BuildingGrow";
+export { default as Mapgis3dWind } from "./components/simulation/Wind3D/Wind3D";
 
 // 标绘
 export { default as Mapgis3DPlot } from "./components/Layer/3DPlot/Plot.vue";
