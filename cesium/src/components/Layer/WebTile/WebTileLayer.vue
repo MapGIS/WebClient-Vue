@@ -66,16 +66,14 @@ export default {
         const urlStrs = baseUrl.split("{");
         tag = urlStrs[1].split("}/")[0];
       }
+      // 如果存在tag，并且offset不为空或者>0(即只有存在级别偏移的时候),则走customTags的方式
       if (tag && offset) {
         options.customTags = {};
         options.customTags[tag] = function (imageryProvider, x, y, level) {
           return level - offset;
         };
-        //如果crs不存在，则默认生成4326的tilingScheme对象
-        if (!this.$props.spatialReference) {
-          options.tilingScheme = this.$_setTilingScheme("EPSG:4326");
-        }
       }
+      // 把format的值放到options.extensions中，cesium接口中需要这么设置
       let tempBaseUrl = baseUrl;
       if (baseUrl.includes("format=")) {
         const urlStrs = baseUrl.split("format=");
@@ -93,7 +91,7 @@ export default {
         }
         tempBaseUrl = urlStrs[0] + strChilds[1];
       }
-      // options.minimumLevel = -2;
+
       const allOptions = { ...options, baseUrl: tempBaseUrl };
 
       this.$_mount(allOptions);
