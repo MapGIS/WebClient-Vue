@@ -34,16 +34,9 @@ export default {
       type: Object,
       default: () => {}
     },
-    zoomOffset: {
-      type: Number
-    },
-    minimumLevel: {
-      type: Number,
-      default: 0
-    },
-    maximumLevel: {
-      type: Number,
-      default: 22
+    options: {
+      type: Object,
+      default: () => {}
     }
   },
   inject: ["mapbox", "map"],
@@ -67,6 +60,13 @@ export default {
         }
         this.map.addLayer(rasterTileLayer(gcjLayerId, `GaoDe.${gcjLayerId}.Map`), this.before);
       } else {
+        if (!this.baseUrl.includes("{z}") && this.baseUrl.includes("{") && this.baseUrl.includes("}/")) {
+          const urlStrs = this.baseUrl.split("{");
+          const tag = urlStrs[1].split("}/")[0];
+          this.baseUrl = this.baseUrl.replace(`{${tag}}`, "{z}");
+        }
+        const optMinimumLevel = this.options.minimumLevel || 0;
+        const optMaximumLevel = this.options.maximumLevel || 22;
         this.$_addWebTile({
           // url: 'http://192.168.82.91:8089/igs/rest/mrms/tile/Tile:HuBei_4326/{z}/{y}/{x}',
           url: this.baseUrl,
@@ -76,9 +76,9 @@ export default {
           tileSliceType: this.tileSliceType,
           opacity: 1,
           visible: "visible",
-          zoomOffset: this.zoomOffset,
-          minimumLevel: this.minimumLevel,
-          maximumLevel: this.maximumLevel
+          zoomOffset: -this.options.offset,
+          minimumLevel: optMinimumLevel,
+          maximumLevel: optMaximumLevel
         })
       }
       this.$_emitEvent("added", { layerId: this.layerId });
@@ -165,18 +165,16 @@ export default {
       // 解析zoomOffset
       let _zoomOffset = zoomOffset;
       if (this.map.getCRS().epsgCode.includes("4326")) {
-        if (_zoomOffset === undefined) {
-          if (
+        if (
             url.indexOf('tianditu.com/DataServer') > -1 ||
             url.indexOf('tianditu.gov.cn/DataServer') > -1 
           ) {
             // 天地图DataServer服务第0级1.4062499999782967
-            _zoomOffset = 0;
+            _zoomOffset = _zoomOffset === undefined ? 0 : _zoomOffset;
           } else {
             // 标准的4326缺裁图方式，第0级分辨率0.7031249999891483，和mapboxgl引擎默认的4326 crs第0级分辨率1.4062499999782967相比，缺少一级
-            _zoomOffset = -1;
+            _zoomOffset = _zoomOffset === undefined ? -1 : _zoomOffset - 1;
           }
-        }
       }
       rasterSource.mapgisOffset = _zoomOffset
 
