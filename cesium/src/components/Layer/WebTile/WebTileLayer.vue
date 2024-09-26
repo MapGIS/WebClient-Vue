@@ -13,6 +13,10 @@ export default {
       type: Object,
       default: () => {},
     },
+    options: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     return {
