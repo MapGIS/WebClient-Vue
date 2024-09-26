@@ -176,6 +176,10 @@ export default {
         return this.weatherSetting;
       },
     },
+    isFavorites: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -280,8 +284,9 @@ export default {
         surficialFog,
         surfFogParams,
       } = this.weatherSetting;
-      this.enableSun(sun);
-      this.enableMoon(moon);
+      // init方法执行加上标识，跟点击事件做区分
+      this.enableSun(sun, true);
+      this.enableMoon(moon, true);
       this.enableSceneSkybox(sceneSkybox);
       this.$_enableSkyBox(skybox);
       this.$_enableClouds(clouds);
@@ -316,13 +321,13 @@ export default {
     /*
      * 太阳
      * */
-    enableSun(e) {
+    enableSun(e, isInit) {
       const { viewer } = this;
       this.weatherSetting.sun = e;
-      if (viewer.scene.sun.show === this.weatherSetting.sun) {
+      viewer.scene.sun.show = this.weatherSetting.sun;
+      if (this.isFavorites && isInit) {
         return;
       }
-      viewer.scene.sun.show = this.weatherSetting.sun;
       if (this.weatherSetting.sun) {
         let sunPosition = viewer.scene.sun._boundingVolume.center;
         if (sunPosition.x !== 0 && sunPosition.y !== 0 && sunPosition !== 0) {
@@ -349,14 +354,13 @@ export default {
     /*
      * 月亮
      * */
-    enableMoon(e) {
+    enableMoon(e, isInit) {
       const { viewer } = this;
       this.weatherSetting.moon = e;
-      if (viewer.scene.moon.show === this.weatherSetting.moon) {
+      viewer.scene.moon.show = this.weatherSetting.moon;
+      if (this.isFavorites && isInit) {
         return;
       }
-      viewer.scene.moon.show = this.weatherSetting.moon;
-
       if (this.weatherSetting.moon) {
         let moonPosition =
           viewer.scene.moon._ellipsoidPrimitive._boundingSphere.center;

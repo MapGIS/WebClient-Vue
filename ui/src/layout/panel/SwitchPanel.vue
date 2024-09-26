@@ -140,10 +140,13 @@ export default {
       innerChecked: this.checked
     };
   },
-  mounted() {
-    const { height = "fit-content" } = this;
-    if (this.checked) {
-      this.maxHeight = height;
+  watch: {
+    // 外层再次传入checked的值时innerChecked不会响应式变化
+    checked(val) {
+      if (this.innerChecked !== val) {
+        this.innerChecked = val;
+        this.init();
+      }
     }
   },
   computed: {
@@ -157,7 +160,16 @@ export default {
         : {};
     }
   },
+  mounted() {
+    this.init();
+  },
   methods: {
+    init() {
+      const { height = "fit-content" } = this;
+      if (this.checked) {
+        this.maxHeight = height;
+      }
+    },
     changeChecked(e) {
       let vm = this;
       const { height = "fit-content" } = this;
