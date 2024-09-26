@@ -75,6 +75,9 @@ export default {
           window.VueCesiumLibPath ||
           "http://develop.smaryun.com/static/libs/cdn/cesium/Cesium.js";
 
+        const $scriptNetCDF = document.createElement("script");
+        $scriptNetCDF.src = this.netCDFPath;
+        global.document.body.appendChild($scriptNetCDF);
         return new Promise(resolve => {
           $scriptMain.onload = () => {
             if (global.Cesium) {

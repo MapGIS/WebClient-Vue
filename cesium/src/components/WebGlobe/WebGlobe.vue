@@ -29,6 +29,11 @@ export default {
     height: {
       type: Number,
     },
+    // 风场可视化库(netcdfjs)的资源路径
+    netCDFPath: {
+      type: String,
+      default: "/netcdf/netcdfjs.min.js"
+    },
     ...options,
   },
 
