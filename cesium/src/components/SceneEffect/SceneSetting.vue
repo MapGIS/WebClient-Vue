@@ -62,6 +62,7 @@
           <weather-setting
             ref="effect"
             :initWeatherSetting="initWeatherSetting"
+            :isFavorites="isFavorites"
             @updateWeatherSetting="updateWeatherSetting"
             @updateSpin="changeSpinning"
           ></weather-setting>
@@ -166,24 +167,28 @@ export default {
   },
   computed: {
     initBasicSetting() {
-      return (
-        this.initParams.basicSetting || {
-          earth: true,
-          skyAtmosphere: true,
-          shadow: false,
-          depthTest: false,
-          FPS: false,
-          timeline: false,
-          compass: false,
-          zoom: false,
-          statebar: true,
-          sceneMode: false,
-          layerbrightness: 1.0,
-          layercontrast: 1.0,
-          layerhue: 0.0,
-          layersaturation: 1.0,
-        }
-      );
+      if (this.initFavoritesBasicSetting) {
+        return this.initFavoritesBasicSetting;
+      } else {
+        return (
+          this.initParams.basicSetting || {
+            earth: true,
+            skyAtmosphere: true,
+            shadow: false,
+            depthTest: false,
+            FPS: false,
+            timeline: false,
+            compass: false,
+            zoom: false,
+            statebar: true,
+            sceneMode: false,
+            layerbrightness: 1.0,
+            layercontrast: 1.0,
+            layerhue: 0.0,
+            layersaturation: 1.0,
+          }
+        );
+      }
     },
     initFavoritesBasicSetting() {
       return this.initFavoritesParams.basicSetting;
@@ -231,8 +236,13 @@ export default {
     },
     initWeatherSetting() {
       if (this.initFavoritesWeatherSetting) {
+        // 收藏夹复现时无论取消/选择太阳和月亮时不执行跳转动作
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.isFavorites = true;
         return this.initFavoritesWeatherSetting;
       } else {
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.isFavorites = false;
         return (
           this.initParams.weatherSetting || {
             sun: true,
@@ -311,6 +321,7 @@ export default {
       LightSetting: undefined,
       weatherSetting: undefined,
       effectSetting: undefined,
+      isFavorites: false,
     };
   },
 
