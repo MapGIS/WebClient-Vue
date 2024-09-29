@@ -690,7 +690,7 @@ export default {
     },
     /*
      * 设置tilingScheme
-     * @param service 要调用的服务名称
+     * @param tileMatrixSetName 参考系的wkid号,wkid支持输入类似字符串"EPSG：4326"和"4326",以及数值4326
      * **/
     $_setTilingScheme(tileMatrixSetName) {
       if (typeof tileMatrixSetName === "string") {

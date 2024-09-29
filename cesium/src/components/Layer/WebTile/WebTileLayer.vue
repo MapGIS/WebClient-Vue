@@ -64,17 +64,21 @@ export default {
           this.$props.spatialReference.wkid
         );
       }
-      const offset = this.$props.options.offset || 0;
+      const zoomOffset = this.$props.options.zoomOffset || 0;
       let tag;
       if (baseUrl.includes("{") && baseUrl.includes("}/")) {
         const urlStrs = baseUrl.split("{");
         tag = urlStrs[1].split("}/")[0];
       }
-      // 如果存在tag，并且offset不为空或者>0(即只有存在级别偏移的时候),则走customTags的方式
-      if (tag && offset) {
+      // 如果存在tag，并且zoomOffset不为空或者>0(即只有存在级别偏移的时候),则走customTags的方式
+      if (tag && zoomOffset) {
+        if (tag === "z") {
+          tag = "sz";
+          baseUrl = baseUrl.replace("{z}", "{sz}");
+        }
         options.customTags = {};
         options.customTags[tag] = function (imageryProvider, x, y, level) {
-          return level - offset;
+          return level - zoomOffset;
         };
       }
       // 把format的值放到options.extensions中，cesium接口中需要这么设置
