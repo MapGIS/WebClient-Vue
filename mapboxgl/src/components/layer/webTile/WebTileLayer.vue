@@ -22,6 +22,11 @@ export default {
       type: String,
       default: ""
     },
+    // 子域名集
+    subDomains: {
+      type: Array,
+      default: () => []
+    },
     tileSize:{
       type: Array,
       default: () => [256, 256]
@@ -45,11 +50,20 @@ export default {
       this.layerId = this.layerId ? this.layerId : newGuid()
       this.sourceId = this.sourceId ? this.sourceId : this.layerId
       const wkid = Number(this.spatialReference.wkid)
+      // 支持子域名模式，统一子域名关键字
+      const subDomainKeys = ['{s}','{subDomain}','{subDomains}']
+      subDomainKeys.forEach(key => {
+        if (this.baseUrl && this.baseUrl.includes(key)) {
+          this.baseUrl = this.baseUrl.replace(key, '{s}')
+        }
+      })
+
       if (wkid === 20020902) {
         // 百度bd09墨卡托
         const bdLayerId = this.layerId
         rasterTileLayer.providers.Baidu[bdLayerId] = {
             Map: this.baseUrl,
+            Subdomains: this.subDomains.toString(),
         }
         this.map.addLayer(rasterTileLayer(bdLayerId, `Baidu.${bdLayerId}.Map`), this.before);
       } else if (wkid === 20010202) {
@@ -57,6 +71,7 @@ export default {
         const gcjLayerId = this.layerId
         rasterTileLayer.providers.GaoDe[gcjLayerId] = {
             Map: this.baseUrl,
+            Subdomains: this.subDomains.toString(),
         }
         this.map.addLayer(rasterTileLayer(gcjLayerId, `GaoDe.${gcjLayerId}.Map`), this.before);
       } else {
