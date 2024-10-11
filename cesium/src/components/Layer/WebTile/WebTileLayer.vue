@@ -9,6 +9,11 @@ export default {
   inject: ["Cesium", "viewer", "vueCesium"],
   mixins: [ServiceLayer],
   props: {
+    // 子域名集
+    subDomains: {
+      type: Array,
+      default: () => []
+    },
     spatialReference: {
       type: Object,
       default: () => {},
@@ -54,7 +59,7 @@ export default {
       return new Cesium.ImageryLayer(provider);
     },
     mount() {
-      const { baseUrl } = this;
+      let { baseUrl } = this;
       //先处理相关参数：
       let options = {};
       //如果spatialReference存在，则生成tilingScheme对象
@@ -81,6 +86,15 @@ export default {
           return level - zoomOffset;
         };
       }
+      
+      // 支持子域名模式，统一子域名关键字
+      const subDomainKeys = ['{s}','{subDomain}','{subDomains}']
+      subDomainKeys.forEach(key => {
+        if (baseUrl && baseUrl.includes(key)) {
+          baseUrl = baseUrl.replace(key, '{s}')
+        }
+      })
+
       // 把format的值放到options.extensions中，cesium接口中需要这么设置
       let tempBaseUrl = baseUrl;
       if (baseUrl.includes("format=")) {
@@ -101,6 +115,10 @@ export default {
       }
 
       const allOptions = { ...options, baseUrl: tempBaseUrl };
+
+      if (this.subDomains && this.subDomains.length > 0) {
+        allOptions.subdomains = this.subDomains
+      }
 
       this.$_mount(allOptions);
     },
