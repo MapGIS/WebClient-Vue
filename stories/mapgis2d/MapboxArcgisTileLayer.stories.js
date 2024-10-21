@@ -61,7 +61,7 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisWebMap, MapgisArcgisTileLayer },
   template: `
-    <mapgis-web-map crs="EPSG:4326" :center="[114.299039,30.594797]" :zoom="8" style="height:95vh">
+    <mapgis-web-map crs="EPSG:3857" :center="[114.299039,30.594797]" :zoom="3" style="height:95vh">
     <mapgis-arcgis-tile-layer v-bind="$props" />
     <mapgis-arcgis-legend :url="baseUrl"></mapgis-arcgis-legend>
     </mapgis-web-map>`,
@@ -73,5 +73,5 @@ export const 瓦片图层 = Template.bind({});
   // sourceId: "arcgis_tile_sourceId",
   //baseUrl: "http://192.168.81.35:6080/arcgis/rest/services/study/wuhan_2/MapServer",
   baseUrl:
-    "http://219.142.81.85/arcgis/rest/services/10wanZH/MapServer/tile/{z}/{y}/{x}",
+    "https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer",
 };

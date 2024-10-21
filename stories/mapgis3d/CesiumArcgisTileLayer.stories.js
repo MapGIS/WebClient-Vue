@@ -16,7 +16,7 @@ export const 瓦片图层 = Template.bind({});
 瓦片图层.args = {
   // url: "http://219.142.81.85/arcgis/rest/services/20wanZL/MapServer",
   baseUrl:
-    "http://219.142.81.85/arcgis/rest/services/10wanZH/MapServer/tile/{z}/{y}/{x}",
+    "https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer",
   layerStyle: {
     visible: true,
     opacity: 1,
