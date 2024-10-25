@@ -146,6 +146,7 @@ $upload-picture-card-border-style: $border-style-base;
 }
 
 .#{$upload-prefix-cls}-list {
+  color: $text-color;
   // .reset-component;
   // .clearfix;
   &-item-list-type-text {
