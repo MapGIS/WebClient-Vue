@@ -69,7 +69,7 @@
             <mapgis-ui-col :span="6"> </mapgis-ui-col>
             <mapgis-ui-col :span="18">
               <div class="current-camera">
-                <label style="color: #0081e2;margin:0 16px;"
+                <label style="color: #0081e2; margin: 0 16px"
                   >展开详细参数</label
                 >
               </div>
@@ -207,25 +207,25 @@ export default {
   props: {
     show: {
       type: Boolean,
-      default: false
+      default: false,
     },
     config: {
-      type: [Object, Array]
+      type: [Object, Array],
     },
     mode: {
-      type: String
+      type: String,
     },
     editTuple: {
-      type: Array
+      type: Array,
     },
     layout: {
       type: String,
-      default: "horizontal" // 'horizontal' 'vertical' 'inline'
-    }
+      default: "horizontal", // 'horizontal' 'vertical' 'inline'
+    },
   },
   model: {
     prop: "config",
-    event: "update"
+    event: "update",
   },
   watch: {
     show(val) {
@@ -240,25 +240,25 @@ export default {
       this.$emit("change", val);
     },
     config: {
-      handler: function(val) {
+      handler: function (val) {
         if (val) {
           console.log(val);
           this.initConfig(val);
         }
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   data() {
     return {
       bodyStyle: {
-        padding: "8px 16px"
+        padding: "8px 16px",
       },
 
       collapseStyle: {
         border: "0",
         overflow: "hidden",
-        padding: "0"
+        padding: "0",
       },
 
       innerShow: this.show,
@@ -277,7 +277,7 @@ export default {
       resultConfig: undefined,
       spinning: false,
       labelCol: { span: 6 },
-      wrapperCol: { span: 18 }
+      wrapperCol: { span: 18 },
     };
   },
   computed: {
@@ -289,7 +289,7 @@ export default {
     },
     imagesUploadApi() {
       return `${this.baseUrl}/${this.appProductName}/rest/services/system/ResourceServer/files/pictures`;
-    }
+    },
   },
   mounted() {
     this.mount();
@@ -346,8 +346,8 @@ export default {
         orientation: {
           heading: Cesium.Math.toRadians(vm.heading),
           pitch: Cesium.Math.toRadians(vm.pitch),
-          roll: Cesium.Math.toRadians(vm.roll)
-        }
+          roll: Cesium.Math.toRadians(vm.roll),
+        },
       });
     },
     /* 截图 */
@@ -358,9 +358,9 @@ export default {
 
       let opt = {
         allowTaint: true,
-        useCORS: true
+        useCORS: true,
       };
-      html2canvas(viewer.scene.canvas, opt).then(function(canvas) {
+      html2canvas(viewer.scene.canvas, opt).then(function (canvas) {
         let image = document.querySelector(".thumbnail");
         // document.body.appendChild(canvas);
         image.setAttribute("src", canvas.toDataURL());
@@ -368,12 +368,12 @@ export default {
         const id = (Math.random() * 1000000).toFixed(0);
         const imageObj = vm.base64ToFile(canvas.toDataURL(), id);
         vm.uploadImage(imageObj)
-          .then(res => {
+          .then((res) => {
             vm.image = vm.getimageUrl(res.data.url);
             vm.imageUrl = res.data.url;
             vm.spinning = false;
           })
-          .catch(Error => {
+          .catch((Error) => {
             vm.$message.error("图片上传失败！");
             image.setAttribute("src", vm.image);
             vm.spinning = false;
@@ -386,7 +386,7 @@ export default {
       let image = document.querySelector(".thumbnail");
       const vm = this;
 
-      file.onchange = function() {
+      file.onchange = function () {
         let fileData = this.files[0]; //获取到一个FileList对象中的第一个文件( File 对象),是我们上传的文件
         let pettern = /^image/;
 
@@ -397,12 +397,12 @@ export default {
           return;
         }
         let reader = new FileReader();
-        reader.onloadstart = function() {
+        reader.onloadstart = function () {
           this.spinning = true;
         };
         reader.readAsDataURL(fileData); //异步读取文件内容，结果用data:url的字符串形式表示
         /*当读取操作成功完成时调用*/
-        reader.onload = function(e) {
+        reader.onload = function (e) {
           // console.log(e); //查看对象
           // console.log(this.result);//要的数据 这里的this指向FileReader（）对象的实例reader
           image.setAttribute("src", this.result);
@@ -410,7 +410,7 @@ export default {
           vm.imageUrl = this.result;
           vm.spinning = false;
         };
-        reader.onabort = function() {
+        reader.onabort = function () {
           vm.spinning = false;
         };
       };
@@ -451,14 +451,14 @@ export default {
         destination: {
           x: vm.longitude,
           y: vm.latitude,
-          z: vm.height
+          z: vm.height,
         },
         orientation: {
           heading: vm.heading,
           pitch: vm.pitch,
-          roll: vm.roll
+          roll: vm.roll,
         },
-        duration: vm.duration
+        duration: vm.duration,
       };
       this.$emit("update", [this.resultConfig, this.editTuple]);
       this.innerShow = false;
@@ -481,35 +481,38 @@ export default {
     uploadImage(image) {
       const file = new FormData();
       file.append("file", image);
+      const token = window._CONFIG["productName"]
+        ? `access_token_${window._CONFIG["productName"]}`
+        : "access_token";
       return new Promise((resolve, reject) => {
         axios
           .post(this.imagesUploadApi, file, {
             headers: {
               "Content-Type": "multipart/form-data",
-              Authorization: JSON.parse(localStorage.getItem("access_token"))
-            }
+              Authorization: JSON.parse(localStorage.getItem(token)),
+            },
           })
-          .then(res => {
+          .then((res) => {
             resolve(res);
           })
-          .catch(Error => {
+          .catch((Error) => {
             reject(Error);
           });
       });
-    }
+    },
   },
   directives: {
     drag: {
       // 指令的定义
-      bind: function(el) {
+      bind: function (el) {
         let odiv = el; //获取当前元素
         const vm = this;
-        odiv.onmousedown = e => {
+        odiv.onmousedown = (e) => {
           //算出鼠标相对元素的位置
           let disX = e.clientX - odiv.offsetLeft;
           let disY = e.clientY - odiv.offsetTop;
 
-          document.onmousemove = e => {
+          document.onmousemove = (e) => {
             //用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
             let left = e.clientX - disX;
             let top = e.clientY - disY;
@@ -522,14 +525,14 @@ export default {
             odiv.style.left = left + "px";
             odiv.style.top = top + "px";
           };
-          document.onmouseup = e => {
+          document.onmouseup = (e) => {
             document.onmousemove = null;
             document.onmouseup = null;
           };
         };
-      }
-    }
-  }
+      },
+    },
+  },
 };
 </script>
 
