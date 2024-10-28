@@ -161,6 +161,12 @@
 - **默认值** `false`
 - **描述** 是否会存在剖面几何,用于折线剖面
 
+### `extensions`
+
+- **类型**: `Object`
+- **非侦听属性** 非-watch 属性
+- **描述** 扩展属性。以支持通过对象的方式批量传入图层属性，但是优先级低于单个传入属性，即如果单个属性有传入值，优先使用传入的值，如果没有传入，但是 extensions 中有该属性，则使用 extensions 里对应的值。`优先级：单个传入值 > extensions 中的值 > 单个默认值`。即假如 maximumScreenSpaceError 传入了 24，则 maximumScreenSpaceError 直接使用 24；假如 maximumScreenSpaceError 没有传入 24，是默认值 16，但是 extensions 中有 maximumScreenSpaceError，值为 8，则 maximumScreenSpaceError 使用 8。
+
 ### 其他 3d-tileset 通用属性
 
 | 名称                                      | 类型    | 默认值  |

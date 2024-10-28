@@ -39,7 +39,7 @@ export default {
     return {
       layerIndex: undefined,
       featureposition: undefined,
-      featureproperties: undefined
+      featureproperties: undefined,
     };
   },
   watch: {
@@ -61,13 +61,13 @@ export default {
         this.layerIndex
       );
       tileset.show = next;
-    }
+    },
   },
   methods: {
     createCesiumObject() {
       const { viewer, Cesium } = this;
       return new Promise(
-        resolve => {
+        (resolve) => {
           const { $props, url, token } = this;
           const { headers } = $props;
           let layerIndex;
@@ -90,7 +90,7 @@ export default {
           this.layerIndex = layerIndex;
           resolve({ layerIndex });
         },
-        reject => {}
+        (reject) => {}
       );
       // let options = { ...$props, url: urlSource };
       // const tileset = new Cesium.Cesium3DTileset(options);
@@ -98,8 +98,21 @@ export default {
     getOptions() {
       const { $props } = this;
       let options = {};
-      Object.keys($props).forEach(function(key) {
-        options[key] = $props[key];
+      // 新增extensions属性
+      // 以支持通过对象的方式批量传入图层属性，
+      // 但是优先级低于单个传入属性，即如果单个属性有传入值，优先使用传入的值，
+      // 如果没有传入，但是extensions中有该属性，则使用extensions里对应的值
+      // 修改者：龚跃健 2024/10/28
+      const tempProps = {
+        ...this.$props,
+        ...this.$props.extensions,
+        ...this.$options.propsData,
+      };
+      Object.keys(tempProps).forEach(function (key) {
+        if (key === "extensions") {
+          return;
+        }
+        options[key] = tempProps[key];
       });
       return options;
     },
@@ -112,7 +125,7 @@ export default {
         if (!tileset) return;
 
         tileset.style = new Cesium.Cesium3DTileStyle({
-          color: `color('#FFFFFF', ${opacity})`
+          color: `color('#FFFFFF', ${opacity})`,
         });
       }
     },
@@ -121,11 +134,11 @@ export default {
       const { vueIndex, vueKey, vueCesium, url, opacity } = this;
       if (tileset) {
         tileset.style = new Cesium.Cesium3DTileStyle({
-          color: `color('#FFFFFF', ${opacity})`
+          color: `color('#FFFFFF', ${opacity})`,
         });
         let tilesetLayer = [tileset];
         vueCesium.Tileset3DManager.addSource(vueKey, vueIndex, tileset, {
-          url: url
+          url: url,
         });
         vm.$emit("loaded", { tileset: tileset, m3d: tilesetLayer });
         vm.bindPopupEvent();
@@ -163,7 +176,7 @@ export default {
         const propertyNames = feature.getPropertyNames();
         if (propertyNames && propertyNames.length > 0) {
           const properties = {};
-          propertyNames.forEach(item => {
+          propertyNames.forEach((item) => {
             properties[item] = feature.getProperty(item);
           });
           vm.featureproperties = properties;
@@ -182,7 +195,7 @@ export default {
         this.featureposition = undefined;
         this.featureproperties = undefined;
       }
-    }
-  }
+    },
+  },
 };
 </script>
