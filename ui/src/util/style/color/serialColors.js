@@ -38,7 +38,7 @@ const antdFunctionColors = {
   infoColor: $blue6,
   successColor: $green6,
   warningColor: $glod6,
-  dangerColor: $red6,
+  dangerColor: $red6
 };
 
 const isBrowser = typeof window !== "undefined";
@@ -101,7 +101,7 @@ const replaceColorList = [
   "dropdownBackground",
   "panelBackground",
   "tableBackground",
-  "darkHeaderBackground",
+  "darkHeaderBackground"
 ];
 
 export function getColorWithOpacity(color, opacity, isStack = true) {
@@ -120,7 +120,9 @@ export function getColorWithOpacity(color, opacity, isStack = true) {
 }
 
 export function getDarkenColor(color, amount) {
-  return tinyColor(color).darken(amount).toString();
+  return tinyColor(color)
+    .darken(amount)
+    .toString();
 }
 
 export function getDerivedColorsByTextColor(textColor, opacity) {
@@ -135,6 +137,19 @@ export function getDerivedColorsByTextColor(textColor, opacity) {
   return derivedColor;
 }
 
+export function hexToRgba(hexColor, opacity = 1) {
+  if (!hexColor) return;
+  // 移除 # 号并提取颜色值
+  var hex = hexColor.replace("#", "");
+  // 将颜色值拆分成 R、‌G、‌B 三个部分
+  var r = parseInt(hex.substring(0, 2), 16);
+  var g = parseInt(hex.substring(2, 4), 16);
+  var b = parseInt(hex.substring(4, 6), 16);
+  // 转换为 RGBA 格式并添加透明度
+  var rgba = `rgba(${r},${g},${b},${opacity})`;
+  return rgba;
+}
+
 export function getPrimarySerialColors(nextThemeInfo, opacity = 1) {
   const series = [];
   const nextThemeStyle = nextThemeInfo;
@@ -146,7 +161,10 @@ export function getPrimarySerialColors(nextThemeInfo, opacity = 1) {
   ) {
     prevPrimaryColor = nextThemeStyle.colorGroup[0];
   }
-  const acceptColor = prevPrimaryColor || antdPrimaryColor;
+  const acceptColor =
+    hexToRgba(nextThemeInfo.primaryColor) ||
+    prevPrimaryColor ||
+    antdPrimaryColor;
   for (let index = 1; index <= 10; index++) {
     let nextColor;
     switch (index) {
@@ -191,7 +209,7 @@ export function getFunctionSerialColors(functionColors) {
     if (antdFunctionColors.hasOwnProperty(key)) {
       const color = acceptFunctionColors[key] || antdFunctionColors[key];
       nextFunctionSerialColors[key] = [];
-      seriesIndex.forEach((item) => {
+      seriesIndex.forEach(item => {
         const nextColor = item === 6 ? color : colorPalette(color, item);
         nextFunctionSerialColors[key].push(nextColor);
       });
@@ -229,7 +247,7 @@ export function getExtralColors(
     dangerShadowColor: getColorWithOpacity(functionColors.dangerColor[4], 0.25),
     disabledDarkenBgColor10: getDarkenColor(themeStyleData.disabledBgColor, 10),
     tableHeaderSortActiveBg,
-    tableHeaderFilterActiveBg: getDarkenColor(tableHeaderSortActiveBg, 5),
+    tableHeaderFilterActiveBg: getDarkenColor(tableHeaderSortActiveBg, 5)
   };
   return extraSerialColors;
 }
@@ -237,7 +255,7 @@ export function getExtralColors(
 export function dealWithTheme(nextThemeStyle) {
   const defaultThemeStyle = nextThemeStyle.style || "light";
   const defaultTheme = themeFactory.find(
-    (item) => item.label === defaultThemeStyle
+    item => item.label === defaultThemeStyle
   );
   // 合并 lightTheme 是因为可能其他 theme 没有完整的参数，如 disableColor
   const themeStyleData = Object.assign(
@@ -259,7 +277,7 @@ export function dealWithTheme(nextThemeStyle) {
       themeStyleData,
       serialColorsReplacer,
       functionSerialColorsReplacer
-    ),
+    )
   };
   setRootStyle(nextThemeData);
   return nextThemeData;
@@ -270,12 +288,12 @@ function setRootStyle(themeData) {
     themeStyle,
     primarySerialColors,
     functionSerialColors,
-    extraSerialColors,
+    extraSerialColors
   } = themeData;
   const primaryColor = themeStyle.colorGroup[0];
   const variables = {
     "--antd-wave-shadow-color": primaryColor,
-    "--primary-color": primaryColor,
+    "--primary-color": primaryColor
   };
   const themeInfo = Object.assign({}, themeStyle, extraSerialColors);
   const themeKeys = Object.keys(themeInfo);
@@ -289,7 +307,7 @@ function setRootStyle(themeData) {
       variables[varKey] = color;
     });
   }
-  themeKeys.forEach((key) => {
+  themeKeys.forEach(key => {
     if (!isArray(themeInfo[key])) {
       const varKey = `--${key.replace(/[A-Z]/g, "-$&").toLowerCase()}`;
       variables[varKey] = themeInfo[key];
@@ -311,7 +329,7 @@ function setRootStyle(themeData) {
       silent: true,
       onlyLegacy: true,
       variables: {},
-      watch: false,
+      watch: false
     };
     if (!isNativeSupport) {
       options.onlyLegacy = false;
@@ -326,13 +344,13 @@ function setRootStyle(themeData) {
 export function dealWithLayout(nextLayoutStyle) {
   const defaultLayoutStyle = nextLayoutStyle || "admin";
   const defaultLayout = layoutFactory.find(
-    (item) => item.label === defaultLayoutStyle.label
+    item => item.label === defaultLayoutStyle.label
   );
   const layoutInfo = Object.assign({}, defaultLayout);
   const variables = {};
 
   const layoutKeys = Object.keys(layoutInfo);
-  layoutKeys.forEach((key) => {
+  layoutKeys.forEach(key => {
     if (!isArray(layoutInfo[key])) {
       const varKey = `--${key.replace(/[A-Z]/g, "-$&").toLowerCase()}`;
       variables[varKey] = layoutInfo[key];
@@ -340,7 +358,7 @@ export function dealWithLayout(nextLayoutStyle) {
   });
 
   const nextLayoutData = {
-    layoutStyle: layoutInfo,
+    layoutStyle: layoutInfo
   };
 
   const rootStyle = `:root ${JSON.stringify(variables, null, 2)
@@ -359,7 +377,7 @@ export function dealWithLayout(nextLayoutStyle) {
       silent: true,
       onlyLegacy: true,
       variables: {},
-      watch: false,
+      watch: false
     };
     if (!isNativeSupport) {
       options.onlyLegacy = false;
@@ -374,7 +392,7 @@ export function dealWithLayout(nextLayoutStyle) {
 
 export function dealWithBackgroundOpacity(themeData) {
   const opacity = themeData.opacity || 0.5;
-  replaceColorList.forEach((item) => {
+  replaceColorList.forEach(item => {
     if (themeData[item]) {
       themeData[item] = setColorOpacity(themeData[item], opacity);
     }
