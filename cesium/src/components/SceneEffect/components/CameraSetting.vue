@@ -5,6 +5,7 @@
       label="地表自适应透明"
       :checked="cameraSetting.selfAdaption"
       @changeChecked="enableSelfAdaption"
+      ref="selfAdaption"
     >
       <mapgis-ui-input-number-panel
         size="large"
@@ -12,7 +13,7 @@
         :value="cameraSetting.selfAdaptionParams.maxHeigh"
         :range="[0, 1000000]"
         :step="100"
-        @change="enableSelfAdaption"
+        @change="setSelfAdaption"
       />
     </mapgis-ui-switch-panel>
     <mapgis-ui-switch-panel
@@ -20,14 +21,21 @@
       label="地下模式"
       :checked="cameraSetting.undgrd"
       @changeChecked="enableUndgrd"
+      ref="Undgrd"
     >
+      <mapgis-ui-switch-panel
+        size="default"
+        label="影像透明度独立控制"
+        :checked="cameraSetting.independentTranslucency"
+        @changeChecked="enableIndependentTranslucency"
+      ></mapgis-ui-switch-panel>
       <mapgis-ui-input-number-panel
         size="large"
         label="地表透明度"
         :value="cameraSetting.undgrdParams.groundAlpha"
         :range="range"
         :step="0.1"
-        @change="enableUndgrd"
+        @change="setGlobeBackFaceAlpha"
       />
     </mapgis-ui-switch-panel>
 
@@ -68,14 +76,14 @@ export default {
     return {
       range: [0, 1],
       fovRange: [0, 180],
-      beforeGroundAlpha: undefined,
-      beforeUndgrd: undefined,
       cameraSetting: {
         selfAdaption: false,
         selfAdaptionParams: {
           maxHeigh: 400000,
         },
         undgrd: false,
+        // 是否开启图层透明度独立控制
+        independentTranslucency: false,
         undgrdParams: {
           groundAlpha: 0.5,
         },
@@ -98,8 +106,24 @@ export default {
       },
       deep: true,
     },
+    // 如果boundingSphereRadius发生变化，重新设置地表自适应透明度
+    boundingSphereRadius: {
+      handler(e) {
+        this.boundingSphereRadius = e
+        // 确保boundingSphereRadius大于0，才能设置地表自适应透明度，这个是一张图业务
+        if (this.boundingSphereRadius > 0) {
+          // 设置地表自适应透明度
+          this.setSelfAdaption()
+          this.openSelfAdaptionPanel()
+        }
+      },
+      deep: true
+    }
   },
   methods: {
+    /**
+     * 初始化组件
+     * */
     init() {
       if (!this.cameraSetting) {
         return;
@@ -115,137 +139,218 @@ export default {
           maxHeigh: 400000,
         };
       }
-      const { selfAdaption, fov, undgrdParams, undgrd } = this.cameraSetting;
-      this.enableSelfAdaption(selfAdaption);
+      const { selfAdaption, fov, undgrd } = this.cameraSetting;
+      // 初始化透明度工具
+      this.initImageLayersTranslucencyManager()
+      // 确保boundingSphereRadius大于0，才能设置地表自适应透明度，这个是一张图业务
+      if (this.boundingSphereRadius > 0) {
+        this.enableSelfAdaption(selfAdaption);
+      }
       this.fovChange(fov);
+      // 初始化地下模式设置
       this.enableUndgrd(undgrd);
-      this.enableUndgrd(undgrdParams.groundAlpha);
     },
-    /*
-     * 地下模式
+    /**
+     * 开启或关闭图层透明度独立控制，开启后图层透明度和地表透明度分开控制
+     * @param {Boolean} e 开启或关闭图层透明度独立控制
+     * */
+    enableIndependentTranslucency(e) {
+      // 1 获取透明度工具
+      const _independentTranslucency = this.getImageLayersTranslucencyManager();
+
+      // 2 设置不受地表透明影响的影像图层
+      if (_independentTranslucency) {
+        const imageryLayers = [];
+        // 2.1 开启地表透明度独立控制
+        if (e) {
+          // i从1开始，因为第0个是Cesium初始底图
+          for (let i = 1; i < viewer.imageryLayers._layers.length; i++) {
+            imageryLayers.push(viewer.imageryLayers._layers[i]);
+          }
+          // 开启影像图层透明度独立控制，则通过globeFaceAlpha设置球体透明度
+          _independentTranslucency.globeFaceAlpha = this.cameraSetting.undgrdParams.groundAlpha;
+        }
+        // 2.2 关闭开启地表透明度独立控制
+        else {
+          // 关闭开启影像图层透明度独立控制，则通过frontFaceAlpha和backFaceAlpha设置球体透明度
+          _independentTranslucency.frontFaceAlpha = this.cameraSetting.undgrdParams.groundAlpha;
+          _independentTranslucency.backFaceAlpha = this.cameraSetting.undgrdParams.groundAlpha;
+        }
+        // 2.3 当imageryLayers数组的长度大于0，开启影像透明度独立控制，否则不开启
+        _independentTranslucency.imageryLayers = imageryLayers;
+      }
+    },
+    /**
+     * 开启或关闭地下模式，开启后地表半透明，视角可以穿梭到地下
+     * @param {Boolean} e 开启或关闭地下模式
      * */
     enableUndgrd(e) {
-      const { viewer, Cesium } = this;
-      if (typeof e === "boolean") {
-        if (this.beforeUndgrd && this.beforeUndgrd === e) {
-          return;
-        }
-        this.cameraSetting.undgrd = e;
-        this.beforeUndgrd = e;
-      } else {
-        if (this.beforeGroundAlpha && this.beforeGroundAlpha === e) {
-          return;
-        }
-        this.cameraSetting.undgrdParams.groundAlpha = e;
-        this.beforeGroundAlpha = e;
-      }
+      this.cameraSetting.undgrd = e;
       this.$emit("updateSpin", true);
       let vm = this;
-
+      // 给一个延迟，方便外部给一个遮罩，由于是对外事件，不进行更改
       setTimeout(function () {
-        viewer.scene.screenSpaceCameraController.enableCollisionDetection =
-          !vm.cameraSetting.undgrd;
-        viewer.scene.globe.translucency.enabled = vm.cameraSetting.undgrd;
         if (vm.cameraSetting.undgrd) {
-          //设置地表透明度
+          // 设置地表透明度
           vm.setGlobeBackFaceAlpha(
-            vm.cameraSetting.undgrdParams.groundAlpha,
-            false
+            vm.cameraSetting.undgrdParams.groundAlpha
           );
         } else {
           // 不开启地表透明度，地表透明度应该为1
-          vm.setGlobeBackFaceAlpha(1, false);
+          vm.setGlobeBackFaceAlpha(1);
         }
         vm.$emit("updateSpin", false);
       }, 300);
     },
-    /*
+    /**
      * 地表自适应透明
-     *
+     * @param {Boolean} e 是否开启或关闭地表自适应透明
      */
     enableSelfAdaption(e) {
-      const { viewer, Cesium } = this;
-      let vm = this;
-      if (typeof e === "boolean") {
-        vm.cameraSetting.selfAdaption = e;
-        if (vm.cameraSetting.selfAdaption) {
-          //设置地表自适应透明
-          viewer.camera.changed.addEventListener(() => {
-            if (vm.cameraSetting.selfAdaption) {
-              vm._changeAlphaByCamera();
-            }
-          });
-        } else {
-          viewer.camera.changed.removeEventListener();
-          // 不开启地表自适应透明，地表透明度应该为设置的值
-          vm.setGlobeBackFaceAlpha(1, true);
-        }
-      } else {
-        vm.cameraSetting.selfAdaptionParams.maxHeigh = e;
+      // 1 确保boundingSphereRadius大于0，才能设置地表自适应透明度，这个是一张图业务
+      if (this.boundingSphereRadius <= 0) {
+        this.closeSelfAdaptionPanel()
+        this.$message.warning("场景中未添加符合要求的模型数据！");
+        return
       }
-      if (vm.cameraSetting.selfAdaption) {
-        vm._changeAlphaByCamera();
-      }
-    },
-    _changeAlphaByCamera() {
-      let max = this.boundingSphereRadius || 0;
-      // 当出现包围球大于400km的图层时，使用400km的阈值
-      const maxHeigh = this.cameraSetting.selfAdaptionParams.maxHeigh || 400000;
-      max = Math.min(max, this.cameraSetting.selfAdaptionParams.maxHeigh);
-      let startDis = max * 5;
-      let stopDis = max;
 
-      // 当前高度
-      let height = this.viewer.camera.positionCartographic.height;
-      // 当进入图层高度调整视高阈值内
-      if (height < startDis) {
-        const imageryLayerAlpha =
-          height < stopDis ? 0 : 1 - (startDis - height) / startDis;
-        this.setGlobeBackFaceAlpha(imageryLayerAlpha, true);
-      } else {
-        this.setGlobeBackFaceAlpha(1, true);
+      // 2 开启或关闭地表自适应透明
+      let _independentTranslucency = this.getImageLayersTranslucencyManager();
+      if (_independentTranslucency) {
+        if (e) {
+          this.setSelfAdaption();
+        } else {
+          this.closeSelfAdaption();
+        }
       }
     },
     /**
      * 设置地表透明度
+     * @param {Number} groundAlpha 地表透明度
      */
-    setGlobeBackFaceAlpha(groundAlpha, isSelfAdaption) {
-      const { viewer, Cesium } = this;
+    setGlobeBackFaceAlpha(groundAlpha) {
+      // 1 获取透明度工具
+      const _independentTranslucency = this.getImageLayersTranslucencyManager()
 
-      if (isSelfAdaption) {
-        // 当透明度为1时，关闭地表自适应透明
-        const enableTranslucency = groundAlpha !== 1;
-        viewer.scene.screenSpaceCameraController.enableCollisionDetection =
-          !enableTranslucency;
-        viewer.scene.globe.translucency.enabled = enableTranslucency;
-        const layers = viewer.imageryLayers._layers;
-        for (let i = 1; i < layers.length; i++) {
-          if (this.baseLayerIds.includes(layers[i].id)) {
-            layers[i].alpha = groundAlpha;
-          }
+      // 2 设置地表透明度
+      if (_independentTranslucency) {
+        // 2.1 imageryLayers数组的长度大于0，表示开启图层透明度独立控制
+        if (_independentTranslucency.imageryLayers.length > 0) {
+          _independentTranslucency.globeFaceAlpha = groundAlpha
+        }
+        // 2.1 否则同意控制球体和影像图层的透明度
+        else {
+          _independentTranslucency.frontFaceAlpha = groundAlpha
+          _independentTranslucency.backFaceAlpha = groundAlpha
         }
       }
-
-      viewer.scene.globe.translucency.backFaceAlpha = groundAlpha;
-      // 下面这一句会给所有二维图层都设置透明度
-      // viewer.scene.globe.translucency.frontFaceAlpha = groundAlpha;
-      // 只把Cesium自带的天地图底图设置透明，其他图层透明度保持不变
-      const defaultColor = Cesium.Color.clone(viewer.scene.globe.baseColor);
-      defaultColor.alpha = groundAlpha;
-      viewer.scene.globe.baseColor = defaultColor;
-      viewer.imageryLayers._layers[0].alpha = groundAlpha;
     },
-    /*
+    /**
      * FOV设置
+     * @param {Number} e 相机的开合角度
      * */
     fovChange(e) {
       const { viewer, Cesium } = this;
       this.cameraSetting.fov = e;
-      //   console.log('default fov',Cesium.Math.toDegrees(1.0471975511965976));
       viewer.scene.camera.frustum.fov = Cesium.Math.toRadians(
         this.cameraSetting.fov
       );
     },
+    /**
+     * 设置地表自适应透明的值
+     * */
+    setSelfAdaption() {
+      // 1 获取地表自适应透明度的间隔高度，自适应透明度范围为[stepHeight, stepHeight * 5]
+      const _stepHeight = this._getStepHeight();
+
+      // 2 获取透明度工具
+      let _independentTranslucency = this.getImageLayersTranslucencyManager()
+
+      // 3 设置地表自适应透明的值
+      if (_independentTranslucency) {
+        const { imageryLayers } = _independentTranslucency
+        // imageryLayers数组的长度大于0时，表示开启图层透明度独立控制，使用globeFaceAlphaByDistance设置地表自适应透明的值
+        if (imageryLayers.length > 0) {
+          _independentTranslucency.globeFaceAlphaByDistance = new Cesium.NearFarScalar(_stepHeight, 0, _stepHeight * 5, 1)
+        }
+        // 否则，使用frontFaceAlphaByDistance设置地表自适应透明的值
+        else {
+          _independentTranslucency.frontFaceAlphaByDistance = new Cesium.NearFarScalar(_stepHeight, 0, _stepHeight * 5, 1)
+        }
+      }
+    },
+    /**
+     * 关闭地表自适应透明面板
+     * */
+    closeSelfAdaptionPanel() {
+      this.cameraSetting.selfAdaption = false
+      if (this.$refs.selfAdaption) {
+        this.$refs.selfAdaption.innerChecked = false
+        this.$refs.selfAdaption.maxHeight = "0px"
+      }
+    },
+    /**
+     * 开启地表自适应透明面板
+     * */
+    openSelfAdaptionPanel() {
+      this.cameraSetting.selfAdaption = true
+      if (this.$refs.selfAdaption) {
+        this.$refs.selfAdaption.innerChecked = true
+        this.$refs.selfAdaption.maxHeight = "fit-content"
+      }
+    },
+    /**
+     * 关闭地表自适应透明功能
+     * */
+    closeSelfAdaption() {
+      let _independentTranslucency = this.getImageLayersTranslucencyManager()
+      if (_independentTranslucency) {
+        _independentTranslucency.globeFaceAlphaByDistance = new Cesium.NearFarScalar(0, 1, 1, 1)
+        _independentTranslucency.frontFaceAlphaByDistance = new Cesium.NearFarScalar(0, 1, 1, 1)
+        _independentTranslucency.backFaceAlphaByDistance = new Cesium.NearFarScalar(0, 1, 1, 1)
+      }
+    },
+    /**
+     * 获取控制地表透明度的工具对象
+     * @private
+     * @return {Cesium.GlobeIndependentTranslucency} 控制地表透明度的工具对象
+     * */
+    getImageLayersTranslucencyManager() {
+      const { vueCesium, vueIndex, vueKey } = this;
+      const _independentTranslucency = vueCesium.ImageLayersTranslucencyManager.findSource(vueKey, vueIndex)
+      if (_independentTranslucency && _independentTranslucency.source) {
+        return _independentTranslucency.source
+      }
+      return undefined
+    },
+    /**
+     * 初始化控制地表透明度的工具对象
+     * @return {Cesium.GlobeIndependentTranslucency} 控制地表透明度的工具对象
+     * */
+    initImageLayersTranslucencyManager() {
+      const { Cesium, vueCesium, vueKey, vueIndex } = this
+      let _independentTranslucency = vueCesium.ImageLayersTranslucencyManager.findSource(vueKey, vueIndex);
+      if (!_independentTranslucency) {
+        _independentTranslucency = new Cesium.GlobeIndependentTranslucency(
+          viewer
+        )
+        // 开启地表透明
+        _independentTranslucency.enabled = true
+        vueCesium.ImageLayersTranslucencyManager.addSource(vueKey, vueIndex, _independentTranslucency)
+      }
+      return _independentTranslucency
+    },
+    /**
+     * 获取地表自适应透明高度值
+     * @private
+     * @return {Number} 地表自适应透明高度值
+     * */
+    _getStepHeight() {
+      let _boundingSphereRadius = this.boundingSphereRadius || 0;
+      // 当出现包围球大于400km的图层时，使用400km的阈值
+      const _selfAdaptionMaxHeight = this.cameraSetting.selfAdaptionParams.maxHeigh || 400000;
+      return  Math.min(_selfAdaptionMaxHeight, _boundingSphereRadius);
+    }
   },
 };
 </script>
