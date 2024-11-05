@@ -49,6 +49,13 @@
             >{{ option.label }}</mapgis-ui-select-option
           >
         </mapgis-ui-select>
+        <mapgis-ui-input-number-panel
+          class="mapgis-excavate-form"
+          size="large"
+          label="开挖深度(米)"
+          :range="[0, 2000]"
+          v-model="excavateDepth"
+        />
         <mapgis-ui-setting-footer>
           <mapgis-ui-button type="primary" @click="analysis"
             >分析</mapgis-ui-button
@@ -99,8 +106,8 @@ export default {
   watch: {
     models: {
       handler: function (layers) {
-        console.log(layers, 'watch-layer');
-        
+        console.log(layers, "watch-layer");
+
         this.checkboxOptions = [];
         this.vueIndexs = [];
         this.layerIndexs = [];
@@ -116,14 +123,14 @@ export default {
   },
   data() {
     return {
-      modelPositions: [],
+      excavateDepth: 100,
       // checkbox选项合集
       checkboxOptions: [],
       // 选择项
       checked: [],
       drawElement: null,
       pnts: [],
-      drawPositions: [],
+      sampledPositions: [],
       cutTool: null,
       selectTerrainGround: "",
       selectTerrainWall: "",
@@ -254,47 +261,24 @@ export default {
 
     async getCutLayers() {
       // 如果传了图层直接用传的图层
-      if (this.models && this.models.length) {
-        // return this.layers;
-        const m3ds = (await this.m3dIsReady()) || [];
-        return m3ds;
-      }
-      // 如果是模型开挖，则获取m3d图层
-      if (this.layerType === "model") {
+      try {
+        if (this.models && this.models.length) {
+          const m3ds = await this.m3dIsReady();
+          return m3ds;
+        }
+        return [];
+      } catch (err) {
         return [];
       }
-      // 其他情况默认是地形开挖
-      return [];
     },
     /**
      * @description 开始绘制并分析
      */
     async analysis() {
       let { vueCesium, vueKey, vueIndex, Cesium } = this;
-      //  var positions = [
-      //               Cesium.Cartesian3.fromDegrees(113.46, 22.27, 0),
-      //               Cesium.Cartesian3.fromDegrees(113.41, 29.58, 0),
-      //               Cesium.Cartesian3.fromDegrees(115.45, 29.47, 0),
-      //               Cesium.Cartesian3.fromDegrees(120.52, 30.41, 0)
-      //           ];
-      //           var samplePrecision = 10000;
-
-      //           var terrainExcavateTool = new Cesium.TerrainExcavateTool(this.viewer, {});
-      //           var result = terrainExcavateTool._prepareWell(positions, samplePrecision, 0);
-      //           console.log(result);
-      //           const pointPrimitives = new Cesium.PointPrimitiveCollection();
-      //           for (const point of result.no_height_top) {
-      //               pointPrimitives.add({
-      //                   position: point,
-      //                   color: Cesium.Color.YELLOW,
-      //                   pixelSize: 10
-      //               });
-      //           }
-      //           this.viewer.scene.primitives.add(pointPrimitives);
-      // this.createWellWall()
       let find = vueCesium.ExcavateAnalysisManager.findSource(vueKey, vueIndex);
-      let { options } = find;
-      let { cutTool, drawElement } = options;
+      let { options } = find || {};
+      let { cutTool, drawElement } = options || {};
       const { viewer } = this;
       // 初始化交互式绘制控件
       drawElement = drawElement || new this.Cesium.DrawElement(viewer);
@@ -304,6 +288,7 @@ export default {
         "drawElement",
         drawElement
       );
+
       const vm = this;
       // 添加一个剖切工具
       const m3dLayers = await this.getCutLayers();
@@ -336,7 +321,7 @@ export default {
       // 激活交互式绘制工具
       drawElement.startDrawingPolygon({
         // 绘制完成回调函数
-        callback: (result) => {
+        callback: async (result) => {
           let positions = result.positions;
           this.pnts = [];
           const cartographicPnts = [];
@@ -349,14 +334,16 @@ export default {
               Cesium.Math.toDegrees(c1.latitude),
               c1.height
             );
-            console.log(positions, c1, p1, "高程值");
-
             this.pnts.push(p1);
           }
-          this.drawPositions = [...positions]
-          this.modelPositions = this.prepareWell([...positions], 0.1);
-          // this.getModelSampleHeight(cartographicPnts);
-          this.createTerrainCuttingVolume(cutTool);
+          const modlePositions = this.prepareWell([...positions], 1);
+          this.sampledPositions = this.getModelSampleHeight(modlePositions);
+          console.log(this.sampledPositions, 'samplePositions');
+          let terrainHeight = 0
+          if(viewer.terrainProvider._layers) {
+            terrainHeight = await this.getTerrainSampleHeight(cartographicPnts) 
+          }
+          this.createTerrainCuttingVolume(cutTool, terrainHeight);
           drawElement.stopDrawing();
         },
       });
@@ -374,69 +361,33 @@ export default {
         drawElement.stopDrawing();
       }
     },
-    // // 构建裁剪体进行模型开挖
-    // drawModelPolygon(drawElement, cutTool) {
-    //   const { vueCesium, vueKey, vueIndex, Cesium } =
-    //     this;
-    //   drawElement.startDrawingPolygon({
-    //     getCoordinates: function (result) {
-    //       let positions = result.positions;
-    //       let pnts = [];
-    //       for (let i = 0; i < positions.length; i++) {
-    //         let position = positions[i];
-    //         let c1 = Cesium.Cartographic.fromCartesian(position);
-
-    //         pnts.push(Cesium.Math.toDegrees(c1.longitude));
-    //         pnts.push(Cesium.Math.toDegrees(c1.latitude));
-    //       }
-    //       console.log(pnts, cutTool.createModelCuttingPolygon, "cuttool");
-    //       cutTool.createModelCuttingPolygon(
-    //         pnts,
-    //         //裁剪深度
-    //         -200,
-    //         //裁剪高度
-    //         500,
-    //         {
-    //           //裁剪方向，false：原方向，true反方向
-    //           unionClippingRegions: false,
-    //           //配置裁剪体的颜色，以及透明度
-    //           color: new Cesium.Color(1, 1, 1, 0.2),
-    //           //是否显示裁剪体
-    //           showCuttingPlane: true,
-    //         }
-    //       );
-    //       drawElement.stopDrawing();
-    //     },
-    //   });
-    // },
     // 通过构建裁剪体进行地形开挖
-    createTerrainCuttingVolume(cutTool) {
+    createTerrainCuttingVolume(cutTool, terrainHeight) {
       if (!cutTool) {
         return false;
       }
+      const exactExcavateDepth = (this.excavateDepth - terrainHeight) * -1;
       // options 参数
       let options = {
         unionClippingRegions: true, // 裁剪方向，false：原方向，true：反方向
         showCuttingPlane: false, // 是否显示辅助面
-        getCoordinates: this.getModelSampleHeight,
-        samplePrecision: 0.1,
+        getCoordinates: this.getCoordinates,
+        samplePrecision: 1,
       };
+      console.log(options, 'optios--');
+      
       if (this.selectTerrainWall) {
         options.terrainWallFillImage = this.selectTerrainWall;
       }
       if (this.selectTerrainGround) {
         options.terrainGroundFillImage = this.selectTerrainGround;
       }
-      console.log(options, "this.pnts--", this.pnts);
-
       cutTool.createModelCuttingVolume(
         this.pnts, // 区域边界点数组
-        -2000, // 最小高程
+        exactExcavateDepth, // 最小高程
         5000, // 最大高程
         options
       );
-
-      console.log(cutTool._terrainPlan._samplePrecision, "_samplePrecision");
     },
 
     prepareWell(positions, samplePrecision) {
@@ -459,10 +410,8 @@ export default {
               Cesium.Cartesian3.fromRadians(prev[0], prev[1], 0)
             );
           }
-
           var distance = Cesium.Cartesian3.distance(positions[i], positions[u]);
           var split = Math.ceil(distance / samplePrecision);
-
           for (var j = 1; j <= split; j++) {
             var longitudeLerp = Cesium.Math.lerp(prev[0], next[0], j / split);
             var latitudeLerp = Cesium.Math.lerp(prev[1], next[1], j / split);
@@ -473,100 +422,75 @@ export default {
             }
           }
         }
-        console.log(noHeightPos, "noHeightPos--");
-
         return noHeightPos;
       }
     },
 
-    // 获取模型高程值
+    // 获取地形高程值
+    async getTerrainSampleHeight(pnts) {
+      const { Cesium, viewer } = this;
+      const terrainPositions =
+        (await Cesium.sampleTerrainMostDetailed(
+          viewer.terrainProvider,
+          pnts
+        )) || [];
+      const totolHeight = terrainPositions.reduce((pre, next) => {
+        return pre + next.height;
+      }, 0);
+      return totolHeight / terrainPositions.length;
+    },
 
-    getModelSampleHeight(axis) {
-      const { Cesium } = this;
-      const pnts = this.modelPositions;
-      console.log(pnts, "传过来的坐标", axis);
-      // 筛选地形点
-      // const filterPnts = this.evenlySpaceArray(pnts, 1000);
+    // 获取模型高程值
+    getModelSampleHeight(pnts) {
+      const { Cesium, viewer } = this;
       let positions = pnts.map((item) => {
         let c1 = Cesium.Cartographic.fromCartesian(item);
-        // c1.height = 0;
-        const position = new Cesium.Cartographic(
-          c1.longitude,
-          c1.latitude,
-        );
-        return position;
+        // const position = new Cesium.Cartographic(c1.longitude, c1.latitude);
+        return c1;
       });
-      console.log(positions, "弧度坐标", positions);
-      const promise = this.viewer.scene.sampleHeightMostDetailed(positions);
-      this.createWellWall(pnts, positions);
-      promise.then((updatedPosition) => {
-        console.log(updatedPosition, "updatedPosition");
-
-        this.createWellWall(pnts, updatedPosition);
-      }).catch(err => {
-        console.log(err, 'err----');
-
-      });
-    },
-    // 间隔筛选
-    evenlySpaceArray(arr, parts) {
-      const result = [];
-      const interval = (arr.length - 1) / (parts - 1);
-      for (let i = 0; i < parts; i++) {
-        const index = Math.round(i * interval);
-        result.push(arr[index]);
+      const sampledPositions = [];
+      for (var n = 0; n < positions.length; n++) {
+        positions[n].height = viewer.scene.sampleHeight(positions[n]);
+        sampledPositions.push(positions[n].clone());
       }
-      return result;
+      return sampledPositions;
     },
+    // api获取地形开挖坐标
+    getCoordinates(axis) {
+      this.createWellWall(axis, this.sampledPositions);
+    },
+
     // 填充纹理
-
     createWellWall(bottomPos, modelPositions) {
-      // if (!bottomPos.length) {
-      //   return;
-      // }
-      console.log("执行wall", this.pnts);
-
+      if (!bottomPos.length) {
+        return;
+      }
       const { Cesium, viewer } = this;
       // 采取模型上的点
       const maxHeights = [];
       const minHeights = [];
       let positions = [];
-      for (let i = 0; i < this.pnts.length; i++) {
-        console.log("for 循环执行");
-
-        // const p1 = modelPositions[i];
-        // if (p1.height) {
-        //   const c1 = Cesium.Cartesian3.fromRadians(
-        //     p1.latitude,
-        //     p1.longitude,
-        //     p1.height
-        //   );
-        //   const c2 = Cesium.Cartographic.fromCartesian(bottomPos[i]);
-        //   positions.push(c1);
-        //   maxHeights.push(1110.7303636465031);
-        //   // maxHeights.push(p1.height);
-        //   minHeights.push(0);
-        // }
-        maxHeights.push(1110.7303636465031);
-        // maxHeights.push(p1.height);
-        minHeights.push(0);
+      for (let i = 0; i < modelPositions.length; i++) {
+        const p1 = modelPositions[i];
+        if (p1.height) {
+          const c1 = Cesium.Cartesian3.fromRadians(
+            p1.longitude,
+            p1.latitude,
+            p1.height
+          );
+          const p2 = Cesium.Cartographic.fromCartesian(bottomPos[i]);
+          positions.push(c1);
+          maxHeights.push(p1.height);
+          minHeights.push(p2.height);
+        }
       }
-      console.log("for循环外执行");
-
-      positions = this.pnts;
-      var wall = new Cesium.WallGeometry({
-        positions: this.drawPositions,
-        maximumHeights: [
-          100, 100, 100, 100, 100
-        ],
-        minimumHeights: [
-          0, 0, 0, 0, 0
-        ],
+      const wall = new Cesium.WallGeometry({
+        positions,
+        maximumHeights: maxHeights,
+        minimumHeights: minHeights,
       });
-      console.log(this.drawPositions, "wall----", maxHeights, minHeights);
-
-      var geometry = Cesium.WallGeometry.createGeometry(wall);
-      var material = new Cesium.Material({
+      const geometry = Cesium.WallGeometry.createGeometry(wall);
+      const material = new Cesium.Material({
         fabric: {
           materials: {
             diffuseMaterial: {
@@ -582,7 +506,7 @@ export default {
           },
         },
       });
-      var appearance = new Cesium.MaterialAppearance({
+      const appearance = new Cesium.MaterialAppearance({
         translucent: false,
         flat: true,
         material: material,
