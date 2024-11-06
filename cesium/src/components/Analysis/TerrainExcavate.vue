@@ -4,8 +4,8 @@
       <div class="mapgis-widget-excavate-analysis">
         <mapgis-ui-row class="model">
           <mapgis-ui-checkbox-group
+            v-model="checked"
             v-if="checkboxOptions.length > 0"
-            @change="onCheckboxGroupChange"
           >
             <mapgis-ui-row
               v-for="(option, index) in checkboxOptions"
@@ -21,34 +21,39 @@
           </mapgis-ui-checkbox-group>
           <div v-else>暂无数据！</div>
         </mapgis-ui-row>
-        <mapgis-ui-select
-          class="mapgis-3d-fill-image mapgis-3d-select"
-          :autoWidth="true"
-          size="default"
-          v-model="selectTerrainWall"
-          placeholder="请选择纹理"
-        >
-          <mapgis-ui-select-option
-            v-for="(option, i) in terrainWallFillImages"
-            :key="i"
-            :value="option.value"
-            >{{ option.label }}</mapgis-ui-select-option
+        <mapgis-ui-form-item label="剖面纹理">
+          <mapgis-ui-select
+            class="mapgis-3d-fill-image mapgis-3d-select"
+            :autoWidth="true"
+            size="default"
+            v-model="selectTerrainWall"
+            placeholder="请选择纹理"
           >
-        </mapgis-ui-select>
-        <mapgis-ui-select
-          class="mapgis-3d-fill-image mapgis-3d-select"
-          :autoWidth="true"
-          size="default"
-          v-model="selectTerrainGround"
-          placeholder="请选择纹理"
-        >
-          <mapgis-ui-select-option
-            v-for="(option, i) in terrainGroundFillImages"
-            :key="i"
-            :value="option.value"
-            >{{ option.label }}</mapgis-ui-select-option
+            <mapgis-ui-select-option
+              v-for="(option, i) in terrainWallFillImages"
+              :key="i"
+              :value="option.value"
+              >{{ option.label }}</mapgis-ui-select-option
+            >
+          </mapgis-ui-select>
+        </mapgis-ui-form-item>
+        <mapgis-ui-form-item label="底面纹理">
+          <mapgis-ui-select
+            class="mapgis-3d-fill-image mapgis-3d-select"
+            :autoWidth="true"
+            size="default"
+            v-model="selectTerrainGround"
+            placeholder="请选择纹理"
           >
-        </mapgis-ui-select>
+            <mapgis-ui-select-option
+              v-for="(option, i) in terrainGroundFillImages"
+              :key="i"
+              :value="option.value"
+              >{{ option.label }}</mapgis-ui-select-option
+            >
+          </mapgis-ui-select>
+        </mapgis-ui-form-item>
+
         <mapgis-ui-input-number-panel
           class="mapgis-excavate-form"
           size="large"
@@ -56,6 +61,18 @@
           :range="[0, 2000]"
           v-model="excavateDepth"
         />
+        <mapgis-ui-input-number-panel
+          class="mapgis-excavate-form"
+          size="large"
+          label="开挖精度"
+          :range="[1, 100]"
+          v-model="samplePrecision"
+        />
+        <mapgis-ui-switch-panel
+          label="开启模型封边"
+          v-model="useModelFill"
+          size="default"
+        ></mapgis-ui-switch-panel>
         <mapgis-ui-setting-footer>
           <mapgis-ui-button type="primary" @click="analysis"
             >分析</mapgis-ui-button
@@ -64,25 +81,18 @@
         </mapgis-ui-setting-footer>
       </div>
     </slot>
+    <mapgis-ui-mask
+      :parentDivClass="'cesium-map-wrapper'"
+      :loading="maskShow"
+      :text="maskText"
+      :showSvg="true"
+    ></mapgis-ui-mask>
   </div>
 </template>
 
 <script>
-import { rgbaToHex } from "../Utils/common/color-util";
-/* import { Util } from "@mapgis/webclient-vue-ui";
-const { ColorUtil } = Util; */
 import VueOptions from "../Base/Vue/VueOptions";
 import BaseLayer from "./BaseLayer";
-import {
-  isEnableLighting,
-  setEnableLighting,
-  getLight,
-  setLight,
-  getDynamicAtmosphereLighting,
-  setDynamicAtmosphereLighting,
-  getDynamicAtmosphereLightingFromSun,
-  setDynamicAtmosphereLightingFromSun,
-} from "../WebGlobe/util";
 
 export default {
   name: "mapgis-3d-terrain-aspect",
@@ -91,12 +101,13 @@ export default {
   props: {
     ...VueOptions,
     /**
-     * @type String  model | terrain
-     * @description 开挖的图层类型
+     * @type Boolean
+     * @default true
+     * @description 是否使用内置的遮罩层
      */
-    layerType: {
-      type: String,
-      default: "model",
+    useMask: {
+      type: Boolean,
+      default: true,
     },
     models: {
       type: Array,
@@ -107,15 +118,25 @@ export default {
     models: {
       handler: function (layers) {
         console.log(layers, "watch-layer");
-
         this.checkboxOptions = [];
         this.vueIndexs = [];
         this.layerIndexs = [];
-        layers.forEach((layer) => {
-          const { title, vueIndex } = layer;
-          const obj = { label: title, value: vueIndex };
-          this.checkboxOptions.push(obj);
-        });
+        if (layers.length > 0) {
+          const currentLayer = layers[layers.length - 1];
+          if (
+            !this.checkboxOptions.find(
+              (item) => item.value === currentLayer.vueIndex
+            ) &&
+            !this.checked.includes(currentLayer.vueIndex)
+          ) {
+            this.checked.push(currentLayer.vueIndex);
+          }
+          layers.forEach((layer) => {
+            const { title, vueIndex } = layer;
+            const obj = { label: title, value: vueIndex };
+            this.checkboxOptions.push(obj);
+          });
+        }
       },
       deep: true,
       immediate: true,
@@ -123,6 +144,12 @@ export default {
   },
   data() {
     return {
+      m3dLayers: [],
+      useModelFill: true,
+      maskText: "正在分析中, 请稍等...",
+      maskShow: true,
+      samplePrecision: 50,
+      wallSpace: null,
       excavateDepth: 100,
       // checkbox选项合集
       checkboxOptions: [],
@@ -177,22 +204,15 @@ export default {
             "http://192.168.82.91:8200/NoneSpatialData/image/wall-texture-3.jpg",
         },
       ],
-
-      isEnableLighting: undefined, // 光照是否已开启
-
-      light: undefined, // 是否有light对象
-
-      dynamicAtmosphereLighting: undefined,
-
-      dynamicAtmosphereLightingFromSun: undefined,
-
-      info: "坡向分析需要带法线地形。\r\n坡向按照东北西南的顺序表示方向,即0°表示坡向指向正东方向。",
-
-      value: 1,
     };
   },
-  computed: {},
-  created() {},
+  computed: {
+    samplePrecisionComputed() {
+      const baseNum = 50
+      return baseNum / this.samplePrecision
+    }
+  },
+
   mounted() {
     this.mount();
   },
@@ -200,9 +220,6 @@ export default {
     this.unmount();
   },
   methods: {
-    onCheckboxGroupChange(val) {
-      this.checked = [...val];
-    },
     async createCesiumObject() {
       const { baseUrl, options } = this;
       return new Promise(
@@ -288,26 +305,17 @@ export default {
         "drawElement",
         drawElement
       );
-
       const vm = this;
+      vm.removeCuttingPlane();
       // 添加一个剖切工具
-      const m3dLayers = await this.getCutLayers();
-      cutTool = new this.Cesium.CuttingTool(viewer, [...m3dLayers], {
+      this.m3dLayers = await this.getCutLayers();
+      cutTool = new this.Cesium.CuttingTool(viewer, [...this.m3dLayers], {
         isCuttingTerrain: true,
         onErrorCallback: function (type, msg) {
           console.log("错误信息：" + type + ":" + msg);
         },
       });
-      vm.removeCuttingPlane();
-      console.log(m3dLayers, "m3dLayer-----", [...m3dLayers]);
       this.drawTerrainPolygon(drawElement, cutTool);
-      // if (m3dLayers && m3dLayers.length) {
-      //   // m3d图层，说明是模型开挖
-      //   this.drawModelPolygon(drawElement, cutTool);
-      // } else {
-      //   // 地形开挖
-      //   this.drawTerrainPolygon(drawElement, cutTool);
-      // }
       vueCesium.ExcavateAnalysisManager.changeOptions(
         vueKey,
         vueIndex,
@@ -317,11 +325,14 @@ export default {
     },
     // 绘制地形裁剪区域
     drawTerrainPolygon(drawElement, cutTool) {
-      const { vueCesium, vueKey, vueIndex, Cesium } = this;
+      const { Cesium } = this;
       // 激活交互式绘制工具
       drawElement.startDrawingPolygon({
         // 绘制完成回调函数
         callback: async (result) => {
+          this.maskShow = true;
+          console.log("callback", this, this.maskShow);
+
           let positions = result.positions;
           this.pnts = [];
           const cartographicPnts = [];
@@ -336,24 +347,32 @@ export default {
             );
             this.pnts.push(p1);
           }
-          const modlePositions = this.prepareWell([...positions], 1);
-          this.sampledPositions = this.getModelSampleHeight(modlePositions);
-          console.log(this.sampledPositions, 'samplePositions');
-          let terrainHeight = 0
-          if(viewer.terrainProvider._layers) {
-            terrainHeight = await this.getTerrainSampleHeight(cartographicPnts) 
+          const modlePositions = this.prepareWell(
+            [...positions],
+            this.samplePrecisionComputed
+          );
+          // 如果有模型且需要模型封边
+          if (this.m3dLayers.length && this.useModelFill) {
+            this.sampledPositions = this.getModelSampleHeight(modlePositions);
+          }
+          let terrainHeight = 0;
+          // 如果加载了地形
+          if (viewer.terrainProvider._layers) {
+            terrainHeight = await this.getTerrainSampleHeight(cartographicPnts);
           }
           this.createTerrainCuttingVolume(cutTool, terrainHeight);
           drawElement.stopDrawing();
+          this.maskShow = false;
         },
       });
     },
     // 移除之前剪裁效果
     removeCuttingPlane() {
-      let { vueCesium, vueKey, vueIndex, Cesium } = this;
+      let { vueCesium, vueKey, vueIndex, viewer } = this;
       let find = vueCesium.ExcavateAnalysisManager.findSource(vueKey, vueIndex);
       let { options } = find || {};
       let { cutTool, drawElement } = options || {};
+      viewer.scene.primitives.remove(this.wallSpace);
       if (cutTool) {
         cutTool.removeAll();
       }
@@ -361,7 +380,7 @@ export default {
         drawElement.stopDrawing();
       }
     },
-    // 通过构建裁剪体进行地形开挖
+    // 通过构建裁剪体进行开挖
     createTerrainCuttingVolume(cutTool, terrainHeight) {
       if (!cutTool) {
         return false;
@@ -372,49 +391,48 @@ export default {
         unionClippingRegions: true, // 裁剪方向，false：原方向，true：反方向
         showCuttingPlane: false, // 是否显示辅助面
         getCoordinates: this.getCoordinates,
-        samplePrecision: 1,
+        samplePrecision: this.samplePrecisionComputed,
       };
-      console.log(options, 'optios--');
-      
       if (this.selectTerrainWall) {
         options.terrainWallFillImage = this.selectTerrainWall;
       }
       if (this.selectTerrainGround) {
         options.terrainGroundFillImage = this.selectTerrainGround;
       }
+      const maxSampleHeight = 5000
       cutTool.createModelCuttingVolume(
         this.pnts, // 区域边界点数组
         exactExcavateDepth, // 最小高程
-        5000, // 最大高程
+        maxSampleHeight, // 最大高程
         options
       );
     },
 
     prepareWell(positions, samplePrecision) {
       const { Cesium } = this;
-      var length = positions.length;
+      let length = positions.length;
       if (length > 0) {
-        var noHeightPos = [];
-        for (var i = 0; i < length; i++) {
-          var u = i == length - 1 ? 0 : i + 1;
-          var cartographicPrev = Cesium.Cartographic.fromCartesian(
+        let noHeightPos = [];
+        for (let i = 0; i < length; i++) {
+          let u = i == length - 1 ? 0 : i + 1;
+          let cartographicPrev = Cesium.Cartographic.fromCartesian(
             positions[i]
           );
-          var cartographicNext = Cesium.Cartographic.fromCartesian(
+          let cartographicNext = Cesium.Cartographic.fromCartesian(
             positions[u]
           );
-          var prev = [cartographicPrev.longitude, cartographicPrev.latitude];
-          var next = [cartographicNext.longitude, cartographicNext.latitude];
+          let prev = [cartographicPrev.longitude, cartographicPrev.latitude];
+          let next = [cartographicNext.longitude, cartographicNext.latitude];
           if (i == 0) {
             noHeightPos.push(
               Cesium.Cartesian3.fromRadians(prev[0], prev[1], 0)
             );
           }
-          var distance = Cesium.Cartesian3.distance(positions[i], positions[u]);
-          var split = Math.ceil(distance / samplePrecision);
-          for (var j = 1; j <= split; j++) {
-            var longitudeLerp = Cesium.Math.lerp(prev[0], next[0], j / split);
-            var latitudeLerp = Cesium.Math.lerp(prev[1], next[1], j / split);
+          let distance = Cesium.Cartesian3.distance(positions[i], positions[u]);
+          let split = Math.ceil(distance / samplePrecision);
+          for (let j = 1; j <= split; j++) {
+            let longitudeLerp = Cesium.Math.lerp(prev[0], next[0], j / split);
+            let latitudeLerp = Cesium.Math.lerp(prev[1], next[1], j / split);
             if (i != length - 1 || j != split) {
               noHeightPos.push(
                 Cesium.Cartesian3.fromRadians(longitudeLerp, latitudeLerp, 0)
@@ -449,7 +467,7 @@ export default {
         return c1;
       });
       const sampledPositions = [];
-      for (var n = 0; n < positions.length; n++) {
+      for (let n = 0; n < positions.length; n++) {
         positions[n].height = viewer.scene.sampleHeight(positions[n]);
         sampledPositions.push(positions[n].clone());
       }
@@ -457,10 +475,11 @@ export default {
     },
     // api获取地形开挖坐标
     getCoordinates(axis) {
-      this.createWellWall(axis, this.sampledPositions);
+      if (this.m3dLayers.length && this.useModelFill) {
+        this.createWellWall(axis, this.sampledPositions);
+      }
     },
-
-    // 填充纹理
+    // 模型封边
     createWellWall(bottomPos, modelPositions) {
       if (!bottomPos.length) {
         return;
@@ -525,7 +544,7 @@ export default {
         appearance: appearance,
         asynchronous: false,
       });
-      viewer.scene.primitives.add(wallSpace);
+      this.wallSpace = viewer.scene.primitives.add(wallSpace);
     },
   },
 };
@@ -534,5 +553,8 @@ export default {
 .mapgis-3d-fill-image.mapgis-3d-select {
   display: block;
   margin-bottom: 10px;
+}
+.mapgis-ui-form-item {
+  margin-bottom: 0;
 }
 </style>
