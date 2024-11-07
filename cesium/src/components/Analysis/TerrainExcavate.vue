@@ -95,29 +95,27 @@ import VueOptions from "../Base/Vue/VueOptions";
 import BaseLayer from "./BaseLayer";
 
 export default {
-  name: "mapgis-3d-terrain-aspect",
+  name: "mapgis-3d-excavate-analysis",
   inject: ["Cesium", "vueCesium", "viewer"],
   mixins: [BaseLayer],
   props: {
     ...VueOptions,
     /**
-     * @type Boolean
-     * @default true
-     * @description 是否使用内置的遮罩层
+     * @type Array
+     * @default []
+     * @description 图层列表
      */
-    useMask: {
-      type: Boolean,
-      default: true,
-    },
     models: {
       type: Array,
       default: () => [],
     },
   },
   watch: {
+    /**
+     * @description props图层改变时候切换选中图层
+     */
     models: {
       handler: function (layers) {
-        console.log(layers, "watch-layer");
         this.checkboxOptions = [];
         this.vueIndexs = [];
         this.layerIndexs = [];
@@ -147,7 +145,7 @@ export default {
       m3dLayers: [],
       useModelFill: true,
       maskText: "正在分析中, 请稍等...",
-      maskShow: true,
+      maskShow: false,
       samplePrecision: 50,
       wallSpace: null,
       excavateDepth: 100,
@@ -155,10 +153,8 @@ export default {
       checkboxOptions: [],
       // 选择项
       checked: [],
-      drawElement: null,
       pnts: [],
       sampledPositions: [],
-      cutTool: null,
       selectTerrainGround: "",
       selectTerrainWall: "",
       terrainGroundFillImages: [
@@ -208,9 +204,9 @@ export default {
   },
   computed: {
     samplePrecisionComputed() {
-      const baseNum = 50
-      return baseNum / this.samplePrecision
-    }
+      const baseNum = 50;
+      return baseNum / this.samplePrecision;
+    },
   },
 
   mounted() {
@@ -220,15 +216,6 @@ export default {
     this.unmount();
   },
   methods: {
-    async createCesiumObject() {
-      const { baseUrl, options } = this;
-      return new Promise(
-        (resolve) => {
-          resolve();
-        },
-        (reject) => {}
-      );
-    },
     /**
      * 判断传入的m3d、Cesium3DTileset图层是否加载完毕
      */
@@ -257,7 +244,7 @@ export default {
       const { viewer, vueCesium, vueKey, vueIndex } = this;
       viewer.scene.globe.depthTestAgainstTerrain = true;
       const vm = this;
-      let promise = this.createCesiumObject();
+      let promise = Promise.resolve();
       promise.then(function (dataSource) {
         vm.$emit("load", vm);
         vueCesium.ExcavateAnalysisManager.addSource(
@@ -273,9 +260,10 @@ export default {
     },
     unmount() {
       this.removeCuttingPlane();
-      this.$emit("unload", this);
     },
-
+    /**
+     * @description 获取裁剪图层
+     */
     async getCutLayers() {
       // 如果传了图层直接用传的图层
       try {
@@ -292,27 +280,25 @@ export default {
      * @description 开始绘制并分析
      */
     async analysis() {
-      let { vueCesium, vueKey, vueIndex, Cesium } = this;
+      let { vueCesium, vueKey, vueIndex, Cesium, viewer } = this;
       let find = vueCesium.ExcavateAnalysisManager.findSource(vueKey, vueIndex);
       let { options } = find || {};
       let { cutTool, drawElement } = options || {};
-      const { viewer } = this;
       // 初始化交互式绘制控件
-      drawElement = drawElement || new this.Cesium.DrawElement(viewer);
+      drawElement = drawElement || new Cesium.DrawElement(viewer);
       vueCesium.ExcavateAnalysisManager.changeOptions(
         vueKey,
         vueIndex,
         "drawElement",
         drawElement
       );
-      const vm = this;
-      vm.removeCuttingPlane();
+      this.removeCuttingPlane();
       // 添加一个剖切工具
       this.m3dLayers = await this.getCutLayers();
-      cutTool = new this.Cesium.CuttingTool(viewer, [...this.m3dLayers], {
+      cutTool = new Cesium.CuttingTool(viewer, [...this.m3dLayers], {
         isCuttingTerrain: true,
         onErrorCallback: function (type, msg) {
-          console.log("错误信息：" + type + ":" + msg);
+          console.warn("错误信息：" + type + ":" + msg);
         },
       });
       this.drawTerrainPolygon(drawElement, cutTool);
@@ -323,46 +309,62 @@ export default {
         cutTool
       );
     },
+    /**
+     * 绘制完成后执行函数
+     * @param result 笛卡尔坐标
+     * @param drawElement 拖拽对象
+     * @param cutTool 裁剪工具
+     */
+    async drawPolygonCallBack(result, drawElement, cutTool) {
+      try {
+        const { Cesium } = this;
+        let positions = result.positions;
+        this.pnts = [];
+        const cartographicPnts = [];
+        for (let i = 0; i < positions.length; i++) {
+          let position = positions[i];
+          let c1 = Cesium.Cartographic.fromCartesian(position);
+          cartographicPnts.push(c1);
+          let p1 = new Cesium.Cartesian3(
+            Cesium.Math.toDegrees(c1.longitude),
+            Cesium.Math.toDegrees(c1.latitude),
+            c1.height
+          );
+          this.pnts.push(p1);
+        }
+        // 获取划分后的坐标
+        const modlePositions = this.prepareWell(
+          [...positions],
+          this.samplePrecisionComputed
+        );
+        // 如果有模型且需要模型封边
+        if (this.m3dLayers.length && this.useModelFill) {
+          this.sampledPositions = this.getModelSampleHeight(modlePositions);
+        }
+        let terrainHeight = 0;
+        // 如果加载了地形
+        if (viewer.terrainProvider._layers) {
+          terrainHeight = await this.getTerrainSampleHeight(cartographicPnts);
+        }
+        this.createTerrainCuttingVolume(cutTool, terrainHeight);
+        drawElement.stopDrawing();
+        this.maskShow = false;
+      } catch (err) {
+        console.warn(err);
+      }
+    },
     // 绘制地形裁剪区域
     drawTerrainPolygon(drawElement, cutTool) {
-      const { Cesium } = this;
       // 激活交互式绘制工具
       drawElement.startDrawingPolygon({
         // 绘制完成回调函数
-        callback: async (result) => {
+        callback: (result) => {
           this.maskShow = true;
-          console.log("callback", this, this.maskShow);
-
-          let positions = result.positions;
-          this.pnts = [];
-          const cartographicPnts = [];
-          for (let i = 0; i < positions.length; i++) {
-            let position = positions[i];
-            let c1 = Cesium.Cartographic.fromCartesian(position);
-            cartographicPnts.push(c1);
-            let p1 = new Cesium.Cartesian3(
-              Cesium.Math.toDegrees(c1.longitude),
-              Cesium.Math.toDegrees(c1.latitude),
-              c1.height
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() =>
+              this.drawPolygonCallBack(result, drawElement, cutTool)
             );
-            this.pnts.push(p1);
-          }
-          const modlePositions = this.prepareWell(
-            [...positions],
-            this.samplePrecisionComputed
-          );
-          // 如果有模型且需要模型封边
-          if (this.m3dLayers.length && this.useModelFill) {
-            this.sampledPositions = this.getModelSampleHeight(modlePositions);
-          }
-          let terrainHeight = 0;
-          // 如果加载了地形
-          if (viewer.terrainProvider._layers) {
-            terrainHeight = await this.getTerrainSampleHeight(cartographicPnts);
-          }
-          this.createTerrainCuttingVolume(cutTool, terrainHeight);
-          drawElement.stopDrawing();
-          this.maskShow = false;
+          });
         },
       });
     },
@@ -399,7 +401,7 @@ export default {
       if (this.selectTerrainGround) {
         options.terrainGroundFillImage = this.selectTerrainGround;
       }
-      const maxSampleHeight = 5000
+      const maxSampleHeight = 5000;
       cutTool.createModelCuttingVolume(
         this.pnts, // 区域边界点数组
         exactExcavateDepth, // 最小高程
@@ -407,7 +409,12 @@ export default {
         options
       );
     },
-
+    /**
+     * @description 将坐标按照精度划分成多个坐标
+     * @param {Array} positions - 被划分的笛卡尔坐标
+     * @param {Number} samplePrecision - 划分精度
+     * @return {Array} - 不含高度的划分后坐标
+     */
     prepareWell(positions, samplePrecision) {
       const { Cesium } = this;
       let length = positions.length;
@@ -444,21 +451,28 @@ export default {
       }
     },
 
-    // 获取地形高程值
+    /**
+     * @description 获取模地形平均高程
+     * @param {Array} pnts - 底面笛卡尔坐标
+     * @return {Number} - 地形平均高程
+     */
     async getTerrainSampleHeight(pnts) {
       const { Cesium, viewer } = this;
-      const terrainPositions =
-        (await Cesium.sampleTerrainMostDetailed(
-          viewer.terrainProvider,
-          pnts
-        )) || [];
+      const terrainPositions = await Cesium.sampleTerrainMostDetailed(
+        viewer.terrainProvider,
+        pnts
+      );
       const totolHeight = terrainPositions.reduce((pre, next) => {
         return pre + next.height;
       }, 0);
       return totolHeight / terrainPositions.length;
     },
 
-    // 获取模型高程值
+    /**
+     * @description 获取模型高程坐标
+     * @param {Array} pnts - 底面笛卡尔坐标
+     * @return {Array} - 模型高程数组坐标
+     */
     getModelSampleHeight(pnts) {
       const { Cesium, viewer } = this;
       let positions = pnts.map((item) => {
@@ -479,7 +493,11 @@ export default {
         this.createWellWall(axis, this.sampledPositions);
       }
     },
-    // 模型封边
+    /**
+     * @description 模型封边
+     * @param {Array} bottomPos - 底面坐标
+     * @param {Array} modelPositions - 顶面坐标
+     */
     createWellWall(bottomPos, modelPositions) {
       if (!bottomPos.length) {
         return;

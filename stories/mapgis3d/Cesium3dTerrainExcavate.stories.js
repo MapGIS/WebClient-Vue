@@ -3,18 +3,7 @@ import Markdown from "../../cesium/docs/api/analysis/Aspect.md";
 
 export default {
   title: "三维/三维分析/地形分析",
-  argTypes: {
-    rampColors: {
-      description: "坡向分析角度颜色数组",
-      table: {
-        defaultValue: {
-          summary:
-            '[{ min: 0, max: 60, color: "rgba(244, 67, 54, 0.5)" },{ min: 60, max: 120, color: "rgba(233, 30, 99, 0.5)" },{ min: 120, max: 180, color: "rgba(156, 39, 176, 0.5)" },{ min: 180, max: 240, color: "rgba(255, 235, 59, 0.5)" },{ min: 240, max: 300, color: "rgba(96, 125, 139, 0.5)" },{ min: 300, max: 360, color: "rgba(76, 175, 80, 0.5)" }]',
-        },
-      },
-      control: "array",
-    },
-  },
+  argTypes: {},
 };
 
 const Template = (args, { argTypes }) => ({
@@ -22,7 +11,6 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       url: "http://t6.tianditu.gov.cn/img_c/wmts",
-      terrainUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/g3d/Scene:TwTerrain`,
       tileMatrixSet: "c",
       tilingScheme: "EPSG:4326",
       layer: "img",
@@ -34,9 +22,7 @@ const Template = (args, { argTypes }) => ({
     };
   },
   template: `
-      <mapgis-web-scene style="height:95vh"
-                        v-on:load="handleLoad"
-      >
+      <mapgis-web-scene style="height:95vh" v-on:load="handleLoad">
       <mapgis-3d-ogc-wmts-layer
           :baseUrl="url"
           :wmtsLayer="layer"
@@ -47,9 +33,7 @@ const Template = (args, { argTypes }) => ({
       ></mapgis-3d-ogc-wmts-layer>
       <mapgis-3d-terrain-provider :url="terrainUrl" />
       <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-terrain-aspect
-            :rampColors="rampColors"
-        />
+        <mapgis-3d-excavate-analysis />
       </mapgis-ui-card>
       </mapgis-web-scene>
     `,
@@ -87,14 +71,6 @@ const Template = (args, { argTypes }) => ({
 
 export const 地形开挖 = Template.bind({});
 地形开挖.args = {
-  rampColors: [
-    { min: 0, max: 60, color: "rgba(244, 67, 54, 0.5)" },
-    { min: 60, max: 120, color: "rgba(233, 30, 99, 0.5)" },
-    { min: 120, max: 180, color: "rgba(156, 39, 176, 0.5)" },
-    { min: 180, max: 240, color: "rgba(255, 235, 59, 0.5)" },
-    { min: 240, max: 300, color: "rgba(96, 125, 139, 0.5)" },
-    { min: 300, max: 360, color: "rgba(76, 175, 80, 0.5)" },
-  ],
   terrainUrl:
     "http://webclient.smaryun.com:8200/3DData/TerrainCache/HubeiTerrain/",
 };

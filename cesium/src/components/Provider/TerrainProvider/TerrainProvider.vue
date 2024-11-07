@@ -54,12 +54,7 @@ export default {
       this.$emit("load", this.layer, this);
     },
     unmount() {
-      let { webGlobe, vueKey, vueIndex } = this;
-      webGlobe.deleteTerrain();
-      let find = window.vueCesium.TerrainManager.findSource(
-        vueKey,
-        vueIndex
-      );
+      let { vueKey, vueIndex } = this;
       window.vueCesium.TerrainManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this.layer, this);
     },
