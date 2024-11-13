@@ -18,56 +18,56 @@ export default {
     // 数据目录中选中的document图层
     layers: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     // 默认展开的tree节点，若设置某个节点展开，其父级节点也会展开
     expandedKeys: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     // 默认勾选的节点
     checkedKeys: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     // tree节点是否全部展开，若为true，则expandedKeys设置失效
     isExpandAll: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // 当前tree初始化是否默认全部勾选，若为true，则isSingleCheck值为true失效
     isCheckAll: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // tree节点勾选类型  单选|多选
     isSingleCheck: {
       type: Boolean,
-      default: true
+      default: true,
     },
     // 使用同ant-design中tree组件的replaceFields属性
     replaceFields: {
       type: Object,
       default: () => {
         return { children: "sublayers" };
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       layerListArr: [], // 将treeData转换成Array
       showTree: false, // 确保tree保持展开状态
       checkedTreeKeys: [], // tree选中节点
-      flag: false // isSingleCheck为true时的标识
+      flag: false, // isSingleCheck为true时的标识
     };
   },
   computed: {
     checkLayers() {
       return (
         // this.layers.filter(item => [6, 5, 23, 11].includes(item.type)) || []
-        this.layers.filter(item => item.type)
+        this.layers.filter((item) => item.type)
       );
-    }
+    },
   },
   watch: {
     checkLayers(val) {
@@ -82,7 +82,7 @@ export default {
       if (this.flag) return;
       this.changeCheck();
       this.flag = false;
-    }
+    },
   },
   methods: {
     treeConvertList() {
@@ -99,7 +99,7 @@ export default {
       });
     },
     toConvert(treeData, arr, keyList, currentKey) {
-      treeData.forEach(item => {
+      treeData.forEach((item) => {
         if (item.type) {
           currentKey = item.id;
           item.key = item.id;
@@ -120,7 +120,8 @@ export default {
             title: item.title,
             url: item.url,
             isRoot: item.type,
-            isChild: false
+            isChild: false,
+            isVisible: item.isVisible,
           });
           this.toConvert(item.sublayers, arr, keyList, currentKey);
         } else {
@@ -131,7 +132,8 @@ export default {
             layer: item.layer,
             url: item.url,
             isRoot: item.type,
-            isChild: true
+            isChild: true,
+            visible: item.visible,
           });
         }
       });
@@ -141,34 +143,34 @@ export default {
       const newRoot = [];
       // 组件更新前的地图文档key列表
       const oldRoot = [];
-      arr.forEach(item => {
+      arr.forEach((item) => {
         if (item.isRoot) {
           newRoot.push(item.key);
         }
       });
-      this.layerListArr.forEach(item => {
+      this.layerListArr.forEach((item) => {
         if (item.isRoot) {
           oldRoot.push(item.key);
         }
       });
 
       // 新增的地图文档
-      const addRoot = newRoot.filter(item => !oldRoot.includes(item));
+      const addRoot = newRoot.filter((item) => !oldRoot.includes(item));
       // checkedTreeKeys需要新增的keys
       let newAddKeys = [];
-      addRoot.forEach(item => {
-        const addKeys = arr.forEach(obj => {
+      addRoot.forEach((item) => {
+        const addKeys = arr.forEach((obj) => {
           if (obj.key.indexOf(item) !== -1) {
             newAddKeys.push(obj.key);
           }
         });
       });
       // 移除的地图文档
-      const removeRoot = oldRoot.filter(item => !newRoot.includes(item));
+      const removeRoot = oldRoot.filter((item) => !newRoot.includes(item));
       // checkedTreeKeys需要移除的keys
       let newRemoveKeys = [];
-      removeRoot.forEach(item => {
-        const removeKeys = this.layerListArr.forEach(obj => {
+      removeRoot.forEach((item) => {
+        const removeKeys = this.layerListArr.forEach((obj) => {
           if (obj.key.indexOf(item) !== -1) {
             newRemoveKeys.push(obj.key);
           }
@@ -177,12 +179,12 @@ export default {
 
       if (this.isCheckAll) {
         const currentKeys = [];
-        this.checkedTreeKeys.forEach(item => {
+        this.checkedTreeKeys.forEach((item) => {
           currentKeys.push(item);
         });
         const addCheckKeys = [...currentKeys, ...newAddKeys];
         this.checkedTreeKeys = addCheckKeys.filter(
-          item => !newRemoveKeys.includes(item)
+          (item) => !newRemoveKeys.includes(item)
         );
       } else {
         if (this.isSingleCheck) {
@@ -196,10 +198,10 @@ export default {
           }
         } else {
           const oldCheckedKeys = this.checkedTreeKeys.filter(
-            item => !newRemoveKeys.includes(item)
+            (item) => !newRemoveKeys.includes(item)
           );
           const filterKeys = oldCheckedKeys.filter(
-            item => !this.checkedKeys.includes(item)
+            (item) => !this.checkedKeys.includes(item)
           );
           this.checkedTreeKeys = [...filterKeys, ...this.checkedKeys];
         }
@@ -210,8 +212,8 @@ export default {
       // 只返回最下级勾选的节点信息
       const needCheckList = [];
       // 只返回最下级勾选的节点
-      const needKeys = this.checkedTreeKeys.filter(item => {
-        const data = this.layerListArr.find(child => child.key === item);
+      const needKeys = this.checkedTreeKeys.filter((item) => {
+        const data = this.layerListArr.find((child) => child.key === item);
         if (data.isChild) {
           needCheckList.push(data);
         }
@@ -231,8 +233,8 @@ export default {
           this.flag = false;
         }
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

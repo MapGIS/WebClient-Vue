@@ -73,7 +73,7 @@
     <mapgis-ui-setting-footer v-show="showCancelButton || showOkButton">
       <mapgis-ui-button
         v-show="showCancelButton"
-        type="primary"
+        type="default"
         @click="onClose"
       >
         取消
@@ -631,6 +631,7 @@ export default {
     // 关闭事件
     onClose() {
       this.syncedVisible = false;
+      this.$emit("cancel");
     },
   },
 };
