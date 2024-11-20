@@ -32,7 +32,7 @@
           class="control-content"
         >
           <camera-setting
-            ref="effect"
+            ref="cameraSetting"
             :initCameraSetting="initCameraSetting"
             @updateCameraSetting="updateCameraSetting"
             :boundingSphereRadius="boundingSphereRadius"
@@ -206,6 +206,7 @@ export default {
             undgrd: false,
             undgrdParams: {
               groundAlpha: 0.5,
+              enableIndependentTranslucency: false
             },
             fov: 60,
           }
@@ -390,6 +391,13 @@ export default {
     },
     getEffectSetting(e) {
       return this.effectSetting || this.initEffectSetting;
+    },
+
+    /**
+     * 更新二维影像图层独立控制影响的图层
+     * */
+    updateIndependentTranslucency() {
+      this.$refs.cameraSetting.updateIndependentTranslucency()
     },
   },
 };

@@ -149,6 +149,9 @@ export function initVueCesium() {
     window.vueCesium.CompareManager || new CompareManager();
   window.vueCesium.WindManager =
     window.vueCesium.WindManager || new WindManager();
+  window.vueCesium.ImageLayersTranslucencyManager =
+    window.vueCesium.ImageLayersTranslucencyManager ||
+    new ImageLayersTranslucencyManager();
 
   //在window.vueCesium下添加取得WebGlobe对象的方法
   window.vueCesium.getViewer = function(vueKey) {
@@ -378,3 +381,4 @@ export class PlotSymbolManager extends BaseManager {}
 export class M3DSubSectionManager extends BaseManager {}
 export class CompareManager extends BaseManager {}
 export class WindManager extends BaseManager {}
+export class ImageLayersTranslucencyManager extends BaseManager {}
