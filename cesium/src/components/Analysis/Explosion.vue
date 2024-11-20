@@ -335,52 +335,7 @@ export default {
           const zmax = m3dSet._root.boundingVolume.maximumHeight;
           this.settingCopy.distance = Math.ceil((zmax - zmin) / 2);
           // 如果没有挂searchName，则需要从M3DSet中去拿对应的属性信息，没有属性信息，就直接使用FID
-          if (!searchParams || !searchParams.searchName) {
-            const features = this.getM3DFeatures(m3dSet._root.children);
-            // console.log(features);
-            features.sort(function (a, b) {
-              return a.id - b.id;
-            });
-            let firstFeatureCenterHeight = 0; //第一个要素中心点高度
-            const tempFeatures = [];
-            for (let i = 0; i < features.length; i++) {
-              const feature = features[i];
-              let direction;
-              if (i === 0) {
-                firstFeatureCenterHeight = feature.centerHeight;
-                direction = "0, 0, 0";
-                const { properties } = feature;
-                const keys = Object.keys(properties);
-                const fields = [];
-                for (let k = 0; k < keys.length; k++) {
-                  const field = {
-                    type: typeof properties[keys[k]],
-                    name: keys[k],
-                  };
-                  fields.push(field);
-                }
-                this.explosionFields = fields;
-                this.settingCopy.explosionField = fields[0].name;
-              } else {
-                direction = `0,0,${
-                  (feature.centerHeight - firstFeatureCenterHeight) *
-                  this.settingCopy.distance
-                }`;
-              }
-              tempFeatures.push({
-                type: feature.type,
-                properties: feature.properties,
-                direction,
-                id: feature.id,
-              });
-            }
-            this.dataSource = {
-              type: "FeatureCollection",
-              dataCount: tempFeatures.length,
-              features: tempFeatures,
-            };
-            this.onExplosionFieldChange(this.explosionFields[0].name);
-          }
+          this.getDataSource();
         }
       });
     },
@@ -424,7 +379,6 @@ export default {
         this.geoJSONData = await Feature.FeatureQuery.igsQueryResourceServer(
           tempParams
         );
-        // console.log("geoJSONData", this.geoJSONData);
         const { fields } = this.geoJSONData;
         this.explosionFields = fields;
         this.settingCopy.explosionField = fields[0].name;
@@ -434,48 +388,109 @@ export default {
       }
     },
     getDataSource() {
-      if (!this.geoJSONData) {
-        return;
+      const { vueCesium, vueKey, vueIndex } = this;
+      // 如果没有挂searchName，则需要从M3DSet中去拿对应的属性信息，没有属性信息，就直接使用FID
+      let find = vueCesium.ExplosionManager.findSource(vueKey, vueIndex);
+      let m3dSetArray;
+      if (find && find.options) {
+        m3dSetArray = find.options.m3dSet;
       }
-      const { features } = this.geoJSONData;
-      let tempFeatures = [];
-      let firstFeatureCenterHeight = 0; //第一个要素中心点高度
-      if (features[0].attributes && features[0].attributes.FID) {
+      const currentModel = this.models.find(
+        (item) => item.id === this.currentModelId
+      );
+      const { searchParams } = currentModel;
+      if (
+        (!searchParams || !searchParams.searchName) &&
+        m3dSetArray &&
+        m3dSetArray.length > 0
+      ) {
+        const m3dSet = m3dSetArray[0];
+        const features = this.getM3DFeatures(m3dSet._root.children);
         features.sort(function (a, b) {
-          return a.attributes.FID - b.attributes.FID;
+          return a.id - b.id;
         });
-      }
-      for (let i = 0; i < features.length; i++) {
-        const feature = features[i];
-        const { attributes, bound } = feature;
-        const { zmin, zmax } = bound;
-        let direction;
-        const centerHeight = (zmin + zmax) / 2;
-        if (i === 0) {
-          firstFeatureCenterHeight = centerHeight;
-          direction = "0, 0, 0";
-        } else {
-          let distance = Number(
-            (centerHeight - firstFeatureCenterHeight).toFixed(2)
-          );
-          if (distance === 0) {
-            distance = 0.1;
+        let firstFeatureCenterHeight = 0; //第一个要素中心点高度
+        const tempFeatures = [];
+        const fields = [];
+        for (let i = 0; i < features.length; i++) {
+          const feature = features[i];
+          let direction;
+          if (i === 0) {
+            firstFeatureCenterHeight = feature.centerHeight;
+            direction = "0, 0, 0";
+            const { properties } = feature;
+            const keys = Object.keys(properties);
+            for (let k = 0; k < keys.length; k++) {
+              const field = {
+                type: typeof properties[keys[k]],
+                name: keys[k],
+              };
+              fields.push(field);
+            }
+          } else {
+            direction = `0,0,${
+              (feature.centerHeight - firstFeatureCenterHeight) *
+              this.settingCopy.distance
+            }`;
           }
-          direction = `0,0,${distance * this.settingCopy.distance}`;
+          tempFeatures.push({
+            type: feature.type,
+            properties: feature.properties,
+            direction,
+            id: feature.id,
+          });
         }
-        tempFeatures.push({
-          type: "Feature",
-          properties: attributes,
-          bound,
-          direction,
-          id: attributes.FID !== undefined ? attributes.FID : i,
-        });
+        this.dataSource = {
+          type: "FeatureCollection",
+          dataCount: tempFeatures.length,
+          features: tempFeatures,
+        };
+        if (JSON.stringify(this.explosionFields) !== JSON.stringify(fields)) {
+          this.explosionFields = fields;
+          this.settingCopy.explosionField = fields[0].name;
+          this.onExplosionFieldChange(this.explosionFields[0].name);
+        }
+      } else if (this.geoJSONData) {
+        const { features } = this.geoJSONData;
+        let tempFeatures = [];
+        let firstFeatureCenterHeight = 0; //第一个要素中心点高度
+        if (features[0].attributes && features[0].attributes.FID) {
+          features.sort(function (a, b) {
+            return a.attributes.FID - b.attributes.FID;
+          });
+        }
+        for (let i = 0; i < features.length; i++) {
+          const feature = features[i];
+          const { attributes, bound } = feature;
+          const { zmin, zmax } = bound;
+          let direction;
+          const centerHeight = (zmin + zmax) / 2;
+          if (i === 0) {
+            firstFeatureCenterHeight = centerHeight;
+            direction = "0, 0, 0";
+          } else {
+            let distance = Number(
+              (centerHeight - firstFeatureCenterHeight).toFixed(2)
+            );
+            if (distance === 0) {
+              distance = 0.1;
+            }
+            direction = `0,0,${distance * this.settingCopy.distance}`;
+          }
+          tempFeatures.push({
+            type: "Feature",
+            properties: attributes,
+            bound,
+            direction,
+            id: attributes.FID !== undefined ? attributes.FID : i,
+          });
+        }
+        this.dataSource = {
+          type: "FeatureCollection",
+          dataCount: features.length,
+          features: tempFeatures,
+        };
       }
-      this.dataSource = {
-        type: "FeatureCollection",
-        dataCount: features.length,
-        features: tempFeatures,
-      };
     },
     explosion() {
       const vm = this;
