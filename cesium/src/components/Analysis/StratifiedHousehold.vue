@@ -666,7 +666,7 @@ export default {
       layerIndexs.forEach((index) => {
         let m3dlayer = g3dLayer.getLayer(index);
         if (m3dlayer && callback && callback instanceof Function) {
-          callback(m3dlayer, props)
+          callback(m3dlayer, props);
         }
       });
       vueCesium.StratifiedHousehouldManager.changeOptions(
@@ -678,15 +678,15 @@ export default {
     },
     // 存储M3D的style属性
     recordOriginStyle() {
-      this.recordM3DProps('originStyles', function (m3d, props) {
+      this.recordM3DProps("originStyles", function (m3d, props) {
         props.push(m3d.style);
-      })
+      });
     },
     // 存储M3D的customShader属性
     recordOriginCustomShader() {
-      this.recordM3DProps('originCustomShaders', function (m3d, props) {
+      this.recordM3DProps("originCustomShaders", function (m3d, props) {
         props.push(m3d.customShader);
-      })
+      });
     },
     /**
      * 恢复原有的属性
@@ -706,22 +706,22 @@ export default {
         find.options[storeName].forEach((s, i) => {
           let m3dlayer = g3dLayer.getLayer(`${i}`);
           if (m3dlayer && callback && callback instanceof Function) {
-            callback(m3dlayer, s)
+            callback(m3dlayer, s);
           }
         });
       }
     },
     // 恢复默认样式
     restoreOriginStyle() {
-      this.restoreOriginProps('originStyles', function (m3dlayer, prop) {
-        m3dlayer.style = prop
-      })
+      this.restoreOriginProps("originStyles", function (m3dlayer, prop) {
+        m3dlayer.style = prop;
+      });
     },
     // 恢复默认自定义着色器
     restoreOriginCustomShader() {
-      this.restoreOriginProps('originCustomShaders', function (m3dlayer, prop) {
-        m3dlayer.customShader = prop
-      })
+      this.restoreOriginProps("originCustomShaders", function (m3dlayer, prop) {
+        m3dlayer.customShader = prop;
+      });
     },
     restoreHighlight() {
       const { g3dLayerIndex, viewer } = this;
@@ -733,7 +733,7 @@ export default {
         let m3d = g3dLayer.getLayer(index);
         if (m3d) {
           m3d.reset(); //该函数目前底层MapGISM3DSet.reset无效 后期记得修改
-          m3d.pickedOid = undefined;
+          m3d.style = undefined;
         }
       });
     },
@@ -1076,6 +1076,7 @@ export default {
 
         if (!pickedFeature) {
           vm.clickvisible = false;
+          vm.featurevisible = false;
           // 点击模型外去除高亮
           vm.restoreHighlight();
           vm.restoreM3d();
@@ -1102,26 +1103,44 @@ export default {
             const { layerName, gdbpUrl } = layerInfo;
             vm.featureproperties = { layerName, gdbpUrl };
             vm.highlightM3d(index);
-          } else if (version == "2.0") {
+          } else {
             if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0)
               return;
             let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-
-            let oid = viewer.scene.pickOid(movement.position);
-            let feature = viewer.scene.pick(movement.position);
             let tileset = g3dLayer.getLayer(index);
             vm.restoreHighlight();
 
-            tileset.pickedOid = oid;
-            tileset.pickedColor = Cesium.Color.fromCssColorString(
-              featureHighlightColorProp
-            );
+            // 修改说明：M3D2.1已弃用viewer.scene.pickOid方法，后面统一从feature上获取要素id，高亮统一使用Cesium3DTileStyle设置
+            // 修改人:龚跃健
+            // 修改日期：2024-11-22
+            const { tilesetVersion } = tileset.version;
+            let id;
+            let conditions;
+            if (tilesetVersion === "2.1") {
+              id = pickedFeature.getProperty("tid");
+              conditions = [["${tid} === ${id}", featureHighlightColorProp]];
+            } else {
+              id = pickedFeature.getProperty("OID");
+              conditions = [["${OID} === ${id}", featureHighlightColorProp]];
+            }
+            tileset.style = new Cesium.Cesium3DTileStyle({
+              defines: {
+                id,
+              },
+              color: {
+                conditions,
+              },
+            });
 
-            if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
-              let result = feature.content.getAttributeByOID(oid) || {};
+            if (tileset._useRawSaveAtt && Cesium.defined(pickedFeature)) {
+              let result = {};
+              const propertyNames = pickedFeature.getPropertyNames();
+              propertyNames.forEach((name) => {
+                result[name] = pickedFeature.getProperty(name);
+              });
               vm.featureproperties = result;
             } else {
-              tileset.queryAttributes(oid).then(function (result) {
+              tileset.queryAttributes(id).then(function (result) {
                 result = result || {};
                 vm.featureproperties = result;
               });
@@ -1212,10 +1231,25 @@ export default {
       const { viewer, g3dLayerIndex, featureHighlightColorProp } = this;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let tileset = g3dLayer.getLayer(data.layerIndex + "");
-      tileset.pickedOid = data.oid || 5;
-      tileset.pickedColor = Cesium.Color.fromCssColorString(
-        featureHighlightColorProp
-      );
+      // 修改说明：M3D2.1已弃用viewer.scene.pickOid方法，后面统一从feature上获取要素id，高亮统一使用Cesium3DTileStyle设置
+      // 修改人:龚跃健
+      // 修改日期：2024-11-22
+      const { version } = tileset;
+      let id = data.oid || 5;
+      let conditions;
+      if (version === "2.1") {
+        conditions = [["${tid} === ${id}", featureHighlightColorProp]];
+      } else {
+        conditions = [["${OID} === ${id}", featureHighlightColorProp]];
+      }
+      tileset.style = new Cesium.Cesium3DTileStyle({
+        defines: {
+          id,
+        },
+        color: {
+          conditions,
+        },
+      });
     },
     // 关系图谱打开的根节点为楼层时展示当前楼层
     lockFloor(layerIndex) {

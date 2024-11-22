@@ -310,8 +310,7 @@ export default {
 
       let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
       if (tileset) {
-        tileset.pickedOid = 0;
-        tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
+        tileset.style = undefined;
       }
       this.featureposition = undefined;
       this.featureproperties = undefined;
@@ -321,9 +320,8 @@ export default {
       const { movement } = payload;
 
       const { popupOptions, highlightStyle, vueKey, vueIndex } = this;
-      // const { color = "rgba(255, 255, 0, 0.6)" } = highlightStyle;
       const { viewer, vueCesium, Cesium } = this;
-      const { version, layerIndex } = this;
+      const { layerIndex } = this;
 
       /* 只有在多模态下为真 */
       vm.modelSwitchVisible = false;
@@ -334,17 +332,8 @@ export default {
         vm.modelSwitchVisible = true;
         return;
       }
-      let oid = viewer.scene.pickOid(movement.position);
       let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
       if (feature.tileset !== tileset) {
-        // tileset.pickedOid = oid;
-        // tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
-        // this.featureposition = undefined;
-        // this.featureproperties = undefined;
-        // this.uniqueKey = undefined;
-
-        // 拾取非当前tileset时不进行关闭，让高亮和气泡框展示
-        // this.cancelFeature(payload);
         return;
       }
       vueCesium.M3DIgsManager.changeOptions(vueKey, vueIndex, "pick", tileset);
@@ -354,10 +343,29 @@ export default {
         "pickStyle",
         tileset.pickedColor || Cesium.Color.fromCssColorString(highlightStyle)
       );
-      tileset.pickedOid = oid;
-      tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
+      // 修改说明：M3D2.1已弃用viewer.scene.pickOid方法，后面统一从feature上获取要素id，高亮统一使用Cesium3DTileStyle设置
+      // 修改人:龚跃健
+      // 修改日期：2024-11-22
+      const { version } = tileset;
+      let id;
+      let conditions;
+      if (version === "2.1") {
+        id = feature.getProperty("tid");
+        conditions = [["${tid} === ${id}", highlightStyle]];
+      } else {
+        id = feature.getProperty("OID");
+        conditions = [["${OID} === ${id}", highlightStyle]];
+      }
+      tileset.style = new Cesium.Cesium3DTileStyle({
+        defines: {
+          id,
+        },
+        color: {
+          conditions,
+        },
+      });
       let titlefield = popupOptions ? popupOptions.title : undefined;
-      const properties = await this.getFeaturePorpertiesByOid(oid);
+      const properties = await this.getFeaturePorpertiesById(id);
       if (Object.keys(properties).length > 0) {
         if (this.popupShowType === "default") {
           vm.featureproperties = properties;
@@ -371,11 +379,15 @@ export default {
         }
       } else {
         if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
-          let result = feature.content.getAttributeByOID(oid) || {};
+          // 修改说明：属性信息也统一从feature上获取
+          // 修改人:龚跃健
+          // 修改日期：2024-11-22
+          let result = {};
+          const propertyNames = feature.getPropertyNames();
+          propertyNames.forEach((name) => {
+            result[name] = feature.getProperty(name);
+          });
           if (this.popupShowType === "default") {
-            // vm.iClickFeatures = [
-            //   { properties: result, title: result[titlefield] }
-            // ];
             vm.featureproperties = result;
           } else {
             // title放在最前面
@@ -386,12 +398,9 @@ export default {
             vm.popupOverlay && vm.popupOverlay.setContent(popupContent);
           }
         } else {
-          tileset.queryAttributes(oid).then(function (result) {
+          tileset.queryAttributes(id).then(function (result) {
             result = result || {};
             if (this.popupShowType === "default") {
-              // vm.iClickFeatures = [
-              //   { properties: result, title: result[titlefield] }
-              // ];
               vm.featureproperties = result;
             } else {
               // title放在最前面
@@ -406,121 +415,17 @@ export default {
       }
       if (this.popupShowType === "default" && vm.iClickPosition) {
         vm.featureposition = vm.iClickPosition;
-        // let clickinfo = vm.iClickFeatures[0];
-        // const { properties } = clickinfo;
-        // if (properties) {
-        //   Object.keys(properties).forEach(k => {
-        //     if (k.toLowerCase() == "euid") vm.iEnableIot = true;
-        //   });
-        // }
       }
-
-      // if (version == "0.0" || version == "1.0") {
-      // } else if (version == "2.0") {
-      //   /* 只有在多模态下为真 */
-      //   vm.modelSwitchVisible = false;
-      //   let feature = viewer.scene.pick(movement.position);
-      //   /* 多模态切换 */
-      //   if (vm.enableModelSwitch) {
-      //     vm.tile = feature.content.tile.searchMultimodalTile();
-      //     vm.modelSwitchVisible = true;
-      //     return;
-      //   }
-      //   let oid = viewer.scene.pickOid(movement.position);
-      //   let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
-      //   if (feature.tileset !== tileset) {
-      //     // tileset.pickedOid = oid;
-      //     // tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
-      //     // this.featureposition = undefined;
-      //     // this.featureproperties = undefined;
-      //     // this.uniqueKey = undefined;
-      //     this.cancelFeature(payload);
-      //     return;
-      //   }
-      //   vueCesium.M3DIgsManager.changeOptions(
-      //     vueKey,
-      //     vueIndex,
-      //     "pick",
-      //     tileset
-      //   );
-      //   vueCesium.M3DIgsManager.changeOptions(
-      //     vueKey,
-      //     vueIndex,
-      //     "pickStyle",
-      //     tileset.pickedColor || Cesium.Color.fromCssColorString(highlightStyle)
-      //   );
-      //   tileset.pickedOid = oid;
-      //   tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
-      //   let titlefield = popupOptions ? popupOptions.title : undefined;
-      //   if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
-      //     let result = feature.content.getAttributeByOID(oid) || {};
-      //     if (this.popupShowType === "default") {
-      //       // vm.iClickFeatures = [
-      //       //   { properties: result, title: result[titlefield] }
-      //       // ];
-      //       vm.featureproperties = result;
-      //     } else {
-      //       // title放在最前面
-      //       let popupContent = {};
-      //       popupContent = result[titlefield]
-      //         ? { title: result[titlefield], ...result }
-      //         : { ...result };
-      //       vm.popupOverlay && vm.popupOverlay.setContent(popupContent);
-      //     }
-      //   } else {
-      //     tileset.queryAttributes(oid).then(function(result) {
-      //       result = result || {};
-      //       if (this.popupShowType === "default") {
-      //         // vm.iClickFeatures = [
-      //         //   { properties: result, title: result[titlefield] }
-      //         // ];
-      //         vm.featureproperties = result;
-      //       } else {
-      //         // title放在最前面
-      //         let popupContent = {};
-      //         popupContent = result[titlefield]
-      //           ? { title: result[titlefield], ...result }
-      //           : { ...result };
-      //         vm.popupOverlay && vm.popupOverlay.setContent(popupContent);
-      //       }
-      //     });
-      //   }
-      //   if (this.popupShowType === "default" && vm.iClickPosition) {
-      //     vm.featureposition = vm.iClickPosition;
-      //     // let clickinfo = vm.iClickFeatures[0];
-      //     // const { properties } = clickinfo;
-      //     // if (properties) {
-      //     //   Object.keys(properties).forEach(k => {
-      //     //     if (k.toLowerCase() == "euid") vm.iEnableIot = true;
-      //     //   });
-      //     // }
-      //   }
-      // }
     },
     cancelFeature(payload) {
       const { movement } = payload;
       const { version, layerIndex, viewer, Cesium } = this;
       const { highlightStyle } = this;
-      let oid = viewer.scene.pickOid(movement.position);
 
       let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
-      tileset.pickedOid = oid;
-      tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
+      tileset.style = undefined;
       this.featureposition = undefined;
       this.featureproperties = undefined;
-      // if (version == "0.0" || version == "1.0") {
-      // } else if (version == "2.0") {
-      //   let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
-      //   tileset.pickedOid = oid;
-      //   tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
-      //   this.featureposition = undefined;
-      //   this.featureproperties = undefined;
-      //   // if (!oid) {
-      //   //   this.featureposition = undefined;
-      //   //   this.featureproperties = undefined;
-      //   //   this.uniqueKey = undefined;
-      //   // }
-      // }
       this.popupOverlay && this.popupOverlay.setContent(null);
     },
     changeShow(show) {
@@ -541,14 +446,9 @@ export default {
         let m3ds = find.source;
         if (!m3ds) return;
         m3ds.forEach((m3d) => {
-          // 新的Cesium这里不需要再做判断，直接设置即可，2023-11-17，龚跃健
-          // let type = vm.checkType(m3d);
-          // type = type == M3dType.UnKnow ? m3d.type : type;
-          // if (type == M3dType.Model || type == M3dType.Instance) {
           m3d.style = new Cesium.Cesium3DTileStyle({
             color: `color('#FFFFFF', ${opacity})`,
           });
-          // }
         });
       }
     },
@@ -656,11 +556,9 @@ export default {
           });
         }
       };
-      // let loop = window.setInterval(() => {
       m3ds.forEach((m3d) => {
         vm.checkType(m3d, dataCallback);
       });
-      // }, 100);
     },
     parseLayers(layerString) {
       layerString = layerString || this.layers;
@@ -696,7 +594,7 @@ export default {
         });
       }
     },
-    async getFeaturePorpertiesByOid(oid) {
+    async getFeaturePorpertiesById(id) {
       const properties = {};
       if (this.searchParams) {
         const { domain, serverName, layerIndex, gdbp } = this.searchParams;
@@ -712,7 +610,7 @@ export default {
             docName: serverName,
             layerIdxs: layerIndex,
             rtnLabel: false,
-            objectIds: oid,
+            objectIds: id,
             requestType: "POST",
           },
           false,

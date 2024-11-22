@@ -14,28 +14,28 @@ export default {
   name: "mapgis-3d-m3d-menu-popup",
   inject: ["Cesium", "vueCesium", "viewer", "m3ds"],
   components: {
-    Mapgis3dStoryPopup
+    Mapgis3dStoryPopup,
   },
   props: {
     ...VueOptions,
     version: {
-      type: String
+      type: String,
     },
     layerIndex: {
-      type: Number
+      type: Number,
     },
     gdbp: {
-      type: String
+      type: String,
     },
     ip: {
-      type: String
+      type: String,
     },
     port: {
-      type: String
+      type: String,
     },
     domain: {
-      type: String
-    }
+      type: String,
+    },
   },
   data() {
     return {
@@ -44,11 +44,11 @@ export default {
       position: {
         longitude: 0,
         latitude: 0,
-        height: 0
+        height: 0,
       },
       oid: undefined,
       properties: {},
-      show: false
+      show: false,
     };
   },
   created() {},
@@ -61,10 +61,10 @@ export default {
   methods: {
     createCesiumObject() {
       return new Promise(
-        resolve => {
+        (resolve) => {
           resolve();
         },
-        reject => {}
+        (reject) => {}
       );
     },
     mount() {
@@ -73,19 +73,19 @@ export default {
       const { viewer } = this;
 
       let highlight = this.createCesiumObject();
-      highlight.then(res => {
+      highlight.then((res) => {
         vueCesium.G3DManager.addSource(vueKey, vueIndex, this, {
           version_0_0: {
             current: {
               feature: undefined,
-              originalColor: new Cesium.Color()
+              originalColor: new Cesium.Color(),
             },
             currentLayer: undefined,
             analysisManager: new window.CesiumZondy.Manager.AnalysisManager({
-              viewer: viewer
-            })
+              viewer: viewer,
+            }),
           },
-          version_2_0: {}
+          version_2_0: {},
         });
 
         let findViewers = vueCesium.ViewerManager.findAllSource(vueKey);
@@ -130,16 +130,14 @@ export default {
         return;
       }
 
+      //根据鼠标点击位置选择对象
+      let pickedFeature = viewer.scene.pick(movement.position);
+
       if (version == "0.0" || version == "1.0") {
         let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
         if (find && find.options && find.options.version_0_0) {
-          let {
-            current,
-            currentLayer,
-            analysisManager
-          } = find.options.version_0_0;
-          //根据鼠标点击位置选择对象
-          let pickedFeature = viewer.scene.pick(movement.position);
+          let { current, currentLayer, analysisManager } =
+            find.options.version_0_0;
 
           //判断current对象中要素有值，该值和鼠标点击位置不相同
           if (
@@ -168,7 +166,7 @@ export default {
             let idList = [vlueNumber];
             let options = {
               color: new Cesium.Color(255 / 255, 255 / 255, 0 / 255, 1),
-              colorBlendMode: Cesium.Cesium3DTileColorBlendMode.REPLACE
+              colorBlendMode: Cesium.Cesium3DTileColorBlendMode.REPLACE,
             };
             analysisManager.stopCustomDisplay(currentLayer);
             analysisManager.startCustomDisplay(currentLayer, idList, options);
@@ -193,10 +191,30 @@ export default {
             vm.show = false;
           }
         }
-      } else if (version == "2.0") {
-        let oid = viewer.scene.pickOid(movement.position);
-        tileset.pickedOid = oid;
-        tileset.pickedColor = new Cesium.Color(1.0, 1.0, 0.0, 0.6);
+      } else {
+        if (pickedFeature) {
+          // 修改说明：M3D2.1已弃用viewer.scene.pickOid方法，后面统一从feature上获取要素id，高亮统一使用Cesium3DTileStyle设置
+          // 修改人:龚跃健
+          // 修改日期：2024-11-22
+          const { tilesetVersion } = tileset.version;
+          let id;
+          let conditions;
+          if (tilesetVersion === "2.1") {
+            id = pickedFeature.getProperty("tid");
+            conditions = [["${tid} === ${id}", "rgba(255, 255, 0, 0.6)"]];
+          } else {
+            id = pickedFeature.getProperty("OID");
+            conditions = [["${OID} === ${id}", "rgba(255, 255, 0, 0.6)"]];
+          }
+          tileset.style = new Cesium.Cesium3DTileStyle({
+            defines: {
+              id,
+            },
+            color: {
+              conditions,
+            },
+          });
+        }
       }
     },
     $_query(oid, gdbp) {
@@ -212,7 +230,7 @@ export default {
       queryParam.serverPort = port;
       queryParam.domain = domain;
       queryParam.queryG3DFeature(
-        result => {
+        (result) => {
           if (result != null) {
             let keys = result.AttStruct.FldName;
             let values = result.SFEleArray[0].AttValue;
@@ -223,17 +241,17 @@ export default {
             vm.properties = properties;
             vm.feature = {
               geometry: vm.feature.geometry,
-              properties: properties
+              properties: properties,
             };
             vm.show = true;
           }
         },
-        e => {
+        (e) => {
           alert("error");
         },
         "post"
       );
-    }
-  }
+    },
+  },
 };
 </script>
