@@ -170,6 +170,9 @@ export default {
           options.loaded = function () {
             resolve({ layerIndex: vm.layerIndex });
           };
+          options.errorCallback = function () {
+            vm.$emit("unLoaded");
+          };
           vm.layerIndex = viewer.scene.layers.appendM3DLayer(url, options);
         },
         (reject) => {}

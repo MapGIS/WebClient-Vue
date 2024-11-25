@@ -73,6 +73,7 @@ export default {
           let layerIndex;
           const options = this.getOptions();
           options.loaded = this.onTilesetLoaded;
+          options.errorCallback = this.onTilesetLoadedError;
           let urlSource;
           if (headers) {
             urlSource = new Cesium.Resource({ url: url, headers: headers });
@@ -143,6 +144,9 @@ export default {
         vm.$emit("loaded", { tileset: tileset, m3d: tilesetLayer });
         vm.bindPopupEvent();
       }
+    },
+    onTilesetLoadedError(info) {
+      this.$emit("unLoaded");
     },
     pickFeature(payload) {
       const vm = this;
