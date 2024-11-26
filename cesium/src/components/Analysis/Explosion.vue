@@ -312,6 +312,7 @@ export default {
       }
     },
     onSelectedModelChange(val) {
+      this.removeExplosion();
       this.currentModelId = val;
       const currentModel = this.models.find((item) => item.id === val);
       const { url, searchParams } = currentModel;
@@ -518,7 +519,7 @@ export default {
           //爆炸方向，true：单方向，false：多方向
           singleDirection: false,
           //是否每帧执行爆炸操作，默认false，有lod数据时，请设置为true可实时更新模型位置
-          enableFrameFunction: false,
+          enableFrameFunction: true,
         });
       }
     },
