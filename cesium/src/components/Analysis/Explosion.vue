@@ -254,9 +254,8 @@ export default {
       let promise = this.createCesiumObject();
       promise.then(function (dataSource) {
         vm.$emit("load", vm);
-        let modelExplosionTool = new Cesium.ModelExplosion(viewer);
         vueCesium.ExplosionManager.addSource(vueKey, vueIndex, dataSource, {
-          modelExplosionTool: modelExplosionTool,
+          modelExplosionTool: undefined,
           m3dSet: undefined,
         });
       });
@@ -294,6 +293,9 @@ export default {
         }
       });
     },
+    /**
+     * 选择分组字段
+     */
     onExplosionFieldChange(val) {
       if (!this.explosionFields) {
         return;
@@ -311,8 +313,24 @@ export default {
         this.disableGroupTypeChange = false;
       }
     },
+    /**
+     * 切换模型
+     */
     onSelectedModelChange(val) {
+      const { Cesium, vueCesium, vueKey, vueIndex } = this;
       this.removeExplosion();
+      vueCesium.ExplosionManager.changeOptions(
+        vueKey,
+        vueIndex,
+        "modelExplosionTool",
+        undefined
+      );
+      vueCesium.ExplosionManager.changeOptions(
+        vueKey,
+        vueIndex,
+        "m3dSet",
+        undefined
+      );
       this.currentModelId = val;
       const currentModel = this.models.find((item) => item.id === val);
       const { url, searchParams } = currentModel;
@@ -322,9 +340,15 @@ export default {
         const domain = tempUrl.origin;
         this.getFields({ domain, searchParams });
       }
-      const { Cesium, vueCesium, vueKey, vueIndex } = this;
       this._m3dIsReady().then((m3dSetArray) => {
         if (m3dSetArray && m3dSetArray.length > 0) {
+          const modelExplosionTool = new Cesium.ModelExplosion(viewer);
+          vueCesium.ExplosionManager.changeOptions(
+            vueKey,
+            vueIndex,
+            "modelExplosionTool",
+            modelExplosionTool
+          );
           vueCesium.ExplosionManager.changeOptions(
             vueKey,
             vueIndex,
@@ -340,6 +364,9 @@ export default {
         }
       });
     },
+    /**
+     * 从M3D中获取要素
+     */
     getM3DFeatures(childrenArray) {
       let features = [];
       for (let i = 0; i < childrenArray.length; i++) {
@@ -365,6 +392,9 @@ export default {
       }
       return features;
     },
+    /**
+     * 获取分组字段选项数组
+     */
     async getFields(params) {
       // 先支持简单要素类的查询，调用igs的资源接口
       const { domain, searchParams } = params;
@@ -388,6 +418,9 @@ export default {
         return fields;
       }
     },
+    /**
+     * 计算dataSource，计算每个要素默认的爆炸距离，为高级设置组件准备数据
+     */
     getDataSource() {
       const { vueCesium, vueKey, vueIndex } = this;
       // 如果没有挂searchName，则需要从M3DSet中去拿对应的属性信息，没有属性信息，就直接使用FID
@@ -493,6 +526,9 @@ export default {
         };
       }
     },
+    /**
+     * 爆炸分析
+     */
     explosion() {
       const vm = this;
       const { Cesium, vueCesium, vueKey, vueIndex } = this;
@@ -508,7 +544,6 @@ export default {
         const valueGroups = vm.getValueGroups();
         const type =
           groupType === "MapgisUiExplosionUnique" ? "unique" : "range";
-
         modelExplosionTool.explosionByField(m3dSetArray, {
           //过滤数据
           valueGroups,
@@ -523,6 +558,9 @@ export default {
         });
       }
     },
+    /**
+     * 计算用于爆炸分析的爆炸距离数组
+     */
     getValueGroups() {
       const valueGroups = [];
       const rangeForm = this.$refs.rangeForm.$_getForm();
@@ -587,13 +625,23 @@ export default {
       }
       return valueGroups;
     },
+    /**
+     * 结束爆炸，恢复模型
+     */
     removeExplosion() {
       const { vueCesium, vueKey, vueIndex } = this;
       let find = vueCesium.ExplosionManager.findSource(vueKey, vueIndex);
       let modelExplosionTool;
-      if (find && find.options) {
+      if (find && find.options && find.options.modelExplosionTool) {
         modelExplosionTool = find.options.modelExplosionTool;
-        modelExplosionTool.resetExplosionByField();
+        if (
+          modelExplosionTool._fieldM3DSets &&
+          modelExplosionTool._fieldM3DSets.length > 0 &&
+          modelExplosionTool._fieldM3DSets[0].ready
+        ) {
+          // 确保模型在视图中，避免爆炸后，移除模型，再点结束爆炸
+          modelExplosionTool.resetExplosionByField();
+        }
       }
     },
   },

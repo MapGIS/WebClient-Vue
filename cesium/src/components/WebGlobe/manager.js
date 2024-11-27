@@ -201,12 +201,21 @@ export class BaseManager {
     if (!this[vueKey]) {
       this[vueKey] = [];
     }
-    this[vueKey].push({
-      parent: vueKey,
-      key: vueIndex,
-      source: source,
-      options: options
+    const find = this[vueKey].find(s => {
+      return s && s.key === vueIndex;
     });
+    // 如果已存在对应的vueIndex，则直接更新值，避免重复添加
+    if (find) {
+      find.source = source;
+      find.options = options;
+    } else {
+      this[vueKey].push({
+        parent: vueKey,
+        key: vueIndex,
+        source: source,
+        options: options
+      });
+    }
   }
 
   deleteSource(vueKey, vueIndex) {
