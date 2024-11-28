@@ -1,39 +1,41 @@
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
-
-@include b (modal) {
-  @include e(content, '-') {
+@include b(modal) {
+  @include e(content, "-") {
     background-color: $modal-content-bg;
   }
 
-  @include e(header, '-') {
+  @include e(header, "-") {
     border-bottom: 1px solid $modal-header-border-color-split;
   }
 
-  @include e(title, '-') {
+  @include e(title, "-") {
     color: $title-color;
   }
 
-  @include e(body, '-') {
+  @include e(body, "-") {
     color: $text-color;
   }
-  
-  @include e(footer, '-') {
+
+  @include e(footer, "-") {
     border-top: 1px solid $modal-header-border-color-split !important;
   }
 
-  @include e(close, '-') {
+  @include e(close, "-") {
     color: $text-color-secondary;
   }
 
-  @include e(confirm, '-') {
+  @include e(confirm, "-") {
     &-error &-body > .#{$iconfont-css-prefix} {
       color: $error-color;
     }
     &-warning &-body > .#{$iconfont-css-prefix},
     &-confirm &-body > .#{$iconfont-css-prefix} {
       color: $warning-color;
+    }
+    &-body &-content {
+      color: $text-color;
     }
   }
 }
