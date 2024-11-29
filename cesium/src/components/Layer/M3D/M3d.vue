@@ -326,6 +326,8 @@ export default {
       const { viewer, vueCesium, Cesium } = this;
       const { layerIndex } = this;
 
+      const pickInfo = {};
+
       /* 只有在多模态下为真 */
       vm.modelSwitchVisible = false;
       let feature = viewer.scene.pick(movement.position);
@@ -359,6 +361,7 @@ export default {
         id = feature.getProperty("OID");
         conditions = [["${OID} === ${id}", highlightStyle]];
       }
+      pickInfo.id = id;
       tileset.style = new Cesium.Cesium3DTileStyle({
         defines: {
           id,
@@ -370,16 +373,19 @@ export default {
       let titlefield = popupOptions ? popupOptions.title : undefined;
       const properties = await this.getFeaturePorpertiesById(id);
       if (Object.keys(properties).length > 0) {
-        if (this.popupShowType === "default") {
-          vm.featureproperties = properties;
-        } else {
-          // title放在最前面
-          let popupContent = {};
-          popupContent = properties[titlefield]
-            ? { title: properties[titlefield], ...properties }
-            : { ...properties };
-          vm.popupOverlay && vm.popupOverlay.setContent(popupContent);
+        if (vm.showPopup) {
+          if (this.popupShowType === "default") {
+            vm.featureproperties = properties;
+          } else {
+            // title放在最前面
+            let popupContent = {};
+            popupContent = properties[titlefield]
+              ? { title: properties[titlefield], ...properties }
+              : { ...properties };
+            vm.popupOverlay && vm.popupOverlay.setContent(popupContent);
+          }
         }
+        pickInfo.properties = properties;
       } else {
         if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
           // 修改说明：属性信息也统一从feature上获取
@@ -390,19 +396,7 @@ export default {
           propertyNames.forEach((name) => {
             result[name] = feature.getProperty(name);
           });
-          if (this.popupShowType === "default") {
-            vm.featureproperties = result;
-          } else {
-            // title放在最前面
-            let popupContent = {};
-            popupContent = result[titlefield]
-              ? { title: result[titlefield], ...result }
-              : { ...result };
-            vm.popupOverlay && vm.popupOverlay.setContent(popupContent);
-          }
-        } else {
-          tileset.queryAttributes(id).then(function (result) {
-            result = result || {};
+          if (vm.showPopup) {
             if (this.popupShowType === "default") {
               vm.featureproperties = result;
             } else {
@@ -413,12 +407,35 @@ export default {
                 : { ...result };
               vm.popupOverlay && vm.popupOverlay.setContent(popupContent);
             }
+          }
+          pickInfo.properties = result;
+        } else {
+          tileset.queryAttributes(id).then(function (result) {
+            result = result || {};
+            if (vm.showPopup) {
+              if (this.popupShowType === "default") {
+                vm.featureproperties = result;
+              } else {
+                // title放在最前面
+                let popupContent = {};
+                popupContent = result[titlefield]
+                  ? { title: result[titlefield], ...result }
+                  : { ...result };
+                vm.popupOverlay && vm.popupOverlay.setContent(popupContent);
+              }
+            }
+            pickInfo.properties = result;
           });
         }
       }
       if (this.popupShowType === "default" && vm.iClickPosition) {
-        vm.featureposition = vm.iClickPosition;
+        if (vm.showPopup) {
+          vm.featureposition = vm.iClickPosition;
+        }
+        pickInfo.position = vm.iClickPosition;
       }
+      pickInfo.layerId = vm.vueIndex;
+      vm.$emit("pick-info", pickInfo);
     },
     cancelFeature(payload) {
       const { movement } = payload;

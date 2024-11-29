@@ -157,18 +157,23 @@ export default {
       const { viewer, Cesium } = this;
       const { version, layerIndex } = this;
 
+      const pickInfo = {};
+
       const tileset = viewer.scene.layers.getCesium3DTilesetLayer(layerIndex);
 
       let feature = viewer.scene.pick(movement.position);
 
       this.cancelFeature();
-      if (feature.tileset !== tileset) {
+      if (feature._content.tileset !== tileset) {
         // 拾取非当前tileset时不进行关闭，让高亮和气泡框展示
         // vm.iClickFeatures = [];
         // vm.iClickPosition = {};
         return;
       } else {
-        vm.featureposition = vm.iClickPosition;
+        if (vm.showPopup) {
+          vm.featureposition = vm.iClickPosition;
+        }
+        pickInfo.position = vm.iClickPosition;
       }
       if (feature) {
         this.feature = feature;
@@ -178,18 +183,24 @@ export default {
 
       if (this.popupShowType === "default") {
         const propertyNames = feature.getPropertyNames();
-        if (propertyNames && propertyNames.length > 0) {
-          const properties = {};
-          propertyNames.forEach((item) => {
-            properties[item] = feature.getProperty(item);
-          });
-          vm.featureproperties = properties;
-          // vm.iClickFeatures = [{ properties: properties }];
-        } else {
-          // vm.iClickFeatures = [];
-          vm.featureproperties = undefined;
+        const properties = {};
+        if (vm.showPopup) {
+          if (propertyNames && propertyNames.length > 0) {
+            propertyNames.forEach((item) => {
+              properties[item] = feature.getProperty(item);
+            });
+
+            vm.featureproperties = properties;
+            // vm.iClickFeatures = [{ properties: properties }];
+          } else {
+            // vm.iClickFeatures = [];
+            vm.featureproperties = undefined;
+          }
         }
+        pickInfo.properties = properties;
       }
+      pickInfo.layerId = vm.vueIndex;
+      vm.$emit("pick-info", pickInfo);
     },
     cancelFeature() {
       if (this.feature) {

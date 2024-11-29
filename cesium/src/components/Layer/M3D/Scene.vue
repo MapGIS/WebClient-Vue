@@ -897,7 +897,6 @@ export default {
       }
     },
     pickFeature(payload) {
-      console.log("进入pick---------------", performance.now());
       const { movement, pickedFeature } = payload;
       const vm = this;
       const { g3dLayerIndex, viewer } = this;
@@ -1139,6 +1138,8 @@ export default {
       let tempRay = new Cesium.Ray();
       let tempPos = new Cesium.Cartesian3();
 
+      const pickInfo = {};
+
       if (!movement) return;
       if (scene.mode !== Cesium.SceneMode.MORPHING) {
         let position = movement.position || movement.endPosition;
@@ -1188,17 +1189,24 @@ export default {
             if (name && name !== "") {
               const nameStrs = name.split("_");
               const featureId = nameStrs[nameStrs.length - 1];
+              pickInfo.id = featureId;
               properties = await this.getFeaturePorpertiesById(
                 featureId,
                 layerName
               );
             }
             if (Object.keys(properties).length > 0) {
-              vm.featureproperties = properties;
-              vm.iClickFeatures = [{ properties }];
+              if (vm.showPopup) {
+                vm.featureproperties = properties;
+                vm.iClickFeatures = [{ properties }];
+              }
+              pickInfo.properties = properties;
             } else {
-              vm.featureproperties = { layerName, gdbpUrl };
-              vm.iClickFeatures = [{ properties: { layerName, gdbpUrl } }];
+              if (vm.showPopup) {
+                vm.featureproperties = { layerName, gdbpUrl };
+                vm.iClickFeatures = [{ properties: { layerName, gdbpUrl } }];
+              }
+              pickInfo.properties = { layerName, gdbpUrl };
             }
             pickedFeature.color =
               Cesium.Color.fromCssColorString(highlightStyle);
@@ -1218,6 +1226,7 @@ export default {
               id = pickedFeature.getProperty("OID");
               conditions = [["${OID} === ${id}", highlightStyle]];
             }
+            pickInfo.id = id;
             tileset.style = new Cesium.Cesium3DTileStyle({
               defines: {
                 id,
@@ -1231,8 +1240,11 @@ export default {
               layerName
             );
             if (Object.keys(properties20).length > 0) {
-              vm.featureproperties = properties20;
-              vm.iClickFeatures = [{ properties20 }];
+              if (vm.showPopup) {
+                vm.featureproperties = properties20;
+                vm.iClickFeatures = [{ properties20 }];
+              }
+              pickInfo.properties = properties20;
             } else {
               if (tileset._useRawSaveAtt && Cesium.defined(pickedFeature)) {
                 // 修改说明：属性信息也统一从feature上获取
@@ -1243,36 +1255,51 @@ export default {
                 propertyNames.forEach((name) => {
                   result[name] = pickedFeature.getProperty(name);
                 });
-                vm.featureproperties = result;
-                vm.iClickFeatures = [{ properties: result }];
+                if (vm.showPopup) {
+                  vm.featureproperties = result;
+                  vm.iClickFeatures = [{ properties: result }];
+                }
+                pickInfo.properties = result;
               } else {
                 tileset.queryAttributes(id).then(function (result) {
                   result = result || {};
-                  vm.featureproperties = result;
-                  vm.iClickFeatures = [{ properties: result }];
+                  if (vm.showPopup) {
+                    vm.featureproperties = result;
+                    vm.iClickFeatures = [{ properties: result }];
+                  }
+                  pickInfo.properties = result;
                 });
               }
             }
           }
-          if (
-            vm.featureclickenable &&
-            vm.featureproperties &&
-            Object.keys(vm.featureproperties).length > 0
-          ) {
-            if (vm.popupShowType === "default") {
-              vm.featurevisible = true;
-              vm.featureposition = {
-                longitude: longitudeString2,
-                latitude: latitudeString2,
-                height: heightString2,
-              };
-            } else {
-              vm.showDetail = true;
-              if (!vm.isUnClosePopup) {
-                vm.isUnClosePopup = !vm.isUnClosePopup;
+          if (vm.showPopup) {
+            if (
+              vm.featureclickenable &&
+              vm.featureproperties &&
+              Object.keys(vm.featureproperties).length > 0
+            ) {
+              if (vm.popupShowType === "default") {
+                vm.featurevisible = true;
+                vm.featureposition = {
+                  longitude: longitudeString2,
+                  latitude: latitudeString2,
+                  height: heightString2,
+                };
+              } else {
+                vm.showDetail = true;
+                if (!vm.isUnClosePopup) {
+                  vm.isUnClosePopup = !vm.isUnClosePopup;
+                }
               }
             }
           }
+          pickInfo.position = {
+            longitude: longitudeString2,
+            latitude: latitudeString2,
+            height: heightString2,
+          };
+          pickInfo.layerId = vm.vueIndex;
+          vm.$emit("pick-info", pickInfo);
         } else {
           vm.clickvisible = false;
         }
