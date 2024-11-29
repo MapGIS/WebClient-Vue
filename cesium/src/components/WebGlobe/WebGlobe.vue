@@ -32,7 +32,7 @@ export default {
     // 风场可视化库(netcdfjs)的资源路径
     netCDFPath: {
       type: String,
-      default: "/netcdf/netcdfjs.min.js"
+      default: "/netcdf/netcdfjs.min.js",
     },
     ...options,
   },
@@ -316,7 +316,10 @@ export default {
         ScreenSpaceEventHandler: undefined,
       });
 
-      window.viewer = window.viewer || viewer;
+      // 修改之前
+      // window.viewer = window.viewer || viewer;
+      // 修改之后
+      window.viewer = viewer;
       viewer.cesiumWidget.readyPromise &&
         viewer.cesiumWidget.readyPromise.then(function (globe) {
           vm.$emit("webGlobeLoaded", globe);
