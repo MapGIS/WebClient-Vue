@@ -96,6 +96,11 @@ export default {
           // dataUrl: "https://szaqxsbg.szsti.org:8060/hotel/api/QueryJcjkHqjcXm"
         };
       }
+    },
+    // 是否显示气泡框，默认显示
+    showPopup: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
