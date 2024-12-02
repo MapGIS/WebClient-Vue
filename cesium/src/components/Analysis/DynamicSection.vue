@@ -45,14 +45,6 @@
       </mapgis-ui-row>
       <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
       <mapgis-ui-setting-form :layout="layout" size="default">
-        <mapgis-ui-form-item label="剖面颜色">
-          <mapgis-ui-sketch-color-picker
-            :color.sync="colorCopy"
-            :disableAlpha="false"
-            class="colorCopy-picker"
-          >
-          </mapgis-ui-sketch-color-picker>
-        </mapgis-ui-form-item>
         <mapgis-ui-form-item label="动画时间">
           <mapgis-ui-input-number
             v-model="timeCopy"
@@ -60,16 +52,6 @@
             style="width: 100%"
           />
         </mapgis-ui-form-item>
-
-        <!-- <mapgis-ui-form-item label="剖切距离">
-          <mapgis-ui-slider
-            v-model="distanceCopy"
-            :min="min"
-            :max="max"
-            @change="setDistance"
-            :disabled="readonly"
-          />
-        </mapgis-ui-form-item> -->
       </mapgis-ui-setting-form>
       <mapgis-ui-input-number-panel
         size="large"
@@ -79,6 +61,24 @@
         @change="setDistance"
         :disabled="readonly"
       />
+      <mapgis-ui-switch-panel
+        size="default"
+        label="显示辅助面"
+        v-model="showCuttingPlaneCopy"
+        @changeChecked="changePlaneVisible"
+      >
+        <mapgis-ui-setting-form :layout="layout" size="default">
+          <mapgis-ui-form-item label="剖面颜色">
+            <mapgis-ui-sketch-color-picker
+              :color.sync="colorCopy"
+              :disableAlpha="false"
+              class="colorCopy-picker"
+            >
+            </mapgis-ui-sketch-color-picker>
+          </mapgis-ui-form-item>
+        </mapgis-ui-setting-form>
+      </mapgis-ui-switch-panel>
+
       <mapgis-ui-setting-footer>
         <mapgis-ui-button type="primary" @click="startClipping">
           分析
@@ -122,6 +122,11 @@ export default {
       type: Number,
       default: 0,
     },
+    // 是否显示剖面
+    showCuttingPlane: {
+      type: Boolean,
+      default: true,
+    },
     layout: {
       type: String,
       default: "vertical", // 'horizontal' 'vertical' 'inline'
@@ -140,6 +145,9 @@ export default {
 
       // 默认剖切距离
       distanceCopy: 0,
+
+      // 是否显示剖面
+      showCuttingPlaneCopy: true,
 
       // 最大剖切距离
       max: 10000,
@@ -212,6 +220,13 @@ export default {
       immediate: true,
       handler: function () {
         this.distanceCopy = this.distance;
+      },
+    },
+    showCuttingPlane: {
+      immediate: true,
+      handler: function () {
+        this.showCuttingPlaneCopy = this.showCuttingPlane;
+        this.changePlaneVisible();
       },
     },
     axisCopy: {
@@ -352,6 +367,23 @@ export default {
       }
     },
     /**
+     * 是否显示剖面
+     */
+    changePlaneVisible() {
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.DynamicSectionAnalysisManager.findSource(
+        vueKey,
+        vueIndex
+      );
+      if (find) {
+        let { options } = find;
+        let { dynamicSectionAnalysis } = options;
+        if (dynamicSectionAnalysis) {
+          dynamicSectionAnalysis.showCuttingPlane = this.showCuttingPlaneCopy;
+        }
+      }
+    },
+    /**
      * 修改剖切面颜色
      */
     changePlaneColor(value) {
@@ -425,6 +457,8 @@ export default {
         dynamicSectionAnalysis.createModelCuttingPlane(direction, {
           distance: this.distanceCopy || 0,
           color: this._edgeColor(),
+          //是否显示辅助面
+          showCuttingPlane: this.showCuttingPlaneCopy,
           // 剖切辅助面的宽高缩放比(基于模型球的半径)
           scaleHeight: this.scaleHeight,
           scaleWidth: this.scaleWidth,
