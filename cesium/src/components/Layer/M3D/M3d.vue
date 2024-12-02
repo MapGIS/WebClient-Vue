@@ -447,6 +447,7 @@ export default {
       this.featureposition = undefined;
       this.featureproperties = undefined;
       this.popupOverlay && this.popupOverlay.setContent(null);
+      this.$emit("pick-info", {});
     },
     changeShow(show) {
       const { vueKey, vueIndex, vueCesium } = this;

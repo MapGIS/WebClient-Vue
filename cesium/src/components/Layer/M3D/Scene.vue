@@ -945,6 +945,7 @@ export default {
       }
     },
     cancelFeature() {
+      this.$emit("pick-info", {});
       this.cancelHighlight();
     },
     cancelHighlight() {
