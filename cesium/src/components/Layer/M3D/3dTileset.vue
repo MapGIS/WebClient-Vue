@@ -163,7 +163,7 @@ export default {
 
       let feature = viewer.scene.pick(movement.position);
 
-      this.cancelFeature();
+      this.cancelFeature(false);
       if (feature._content.tileset !== tileset) {
         // 拾取非当前tileset时不进行关闭，让高亮和气泡框展示
         // vm.iClickFeatures = [];
@@ -184,25 +184,29 @@ export default {
       if (this.popupShowType === "default") {
         const propertyNames = feature.getPropertyNames();
         const properties = {};
-        if (vm.showPopup) {
-          if (propertyNames && propertyNames.length > 0) {
-            propertyNames.forEach((item) => {
-              properties[item] = feature.getProperty(item);
-            });
+        if (propertyNames && propertyNames.length > 0) {
+          propertyNames.forEach((item) => {
+            properties[item] = feature.getProperty(item);
+          });
 
+          if (vm.showPopup) {
             vm.featureproperties = properties;
-            // vm.iClickFeatures = [{ properties: properties }];
-          } else {
-            // vm.iClickFeatures = [];
+          }
+
+          // vm.iClickFeatures = [{ properties: properties }];
+        } else {
+          // vm.iClickFeatures = [];
+          if (vm.showPopup) {
             vm.featureproperties = undefined;
           }
         }
+
         pickInfo.properties = properties;
       }
       pickInfo.layerId = vm.vueIndex;
       vm.$emit("pick-info", pickInfo);
     },
-    cancelFeature() {
+    cancelFeature(sendPickInfo = true) {
       if (this.feature) {
         const { Cesium } = this;
         this.feature.color = new Cesium.Color();
@@ -210,6 +214,7 @@ export default {
         this.featureposition = undefined;
         this.featureproperties = undefined;
       }
+      sendPickInfo && this.$emit("pick-info", {});
     },
   },
 };
