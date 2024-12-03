@@ -6,6 +6,7 @@
         class="mapgis-3d-explosion-analysis-layers"
         :autoWidth="true"
         size="default"
+        v-model="currentModelId"
         @change="onSelectedModelChange"
         placeholder="请选择图层"
       >
@@ -216,12 +217,9 @@ export default {
   watch: {
     models: {
       handler: function (models) {
-        if (models && models.length > 0) {
-          this.currentModelId = models[0].vueIndex;
-        }
+        this.currentModelId = undefined;
       },
       deep: true,
-      immediate: true,
     },
     setting: {
       handler: function (setting) {
