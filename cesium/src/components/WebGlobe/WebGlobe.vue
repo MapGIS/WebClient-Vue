@@ -13,6 +13,7 @@ import withEvents from "../../lib/withEvents";
 import { flyTo, flyToEx } from "./util";
 import { initManager, initVueCesium } from "./manager";
 import options from "./options";
+import debounce from "lodash/debounce";
 
 export default {
   name: "mapgis-web-scene",
@@ -119,58 +120,63 @@ export default {
 
         // 监听相机变化
         this.cameraChangedListener = viewer.camera.changed.addEventListener(
-          function (camera) {
-            // 是否显示地球
-            const isShowGlobe = viewer.scene.globe.show;
-            // 是否为地下模式,isEnableCollisionDetection为false时，表示为地下模式
-            const isEnableCollisionDetection =
-              viewer.scene.screenSpaceCameraController.enableCollisionDetection;
+          debounce(
+            (camera) => {
+              // 是否显示地球
+              const isShowGlobe = viewer.scene.globe.show;
+              // 是否为地下模式,isEnableCollisionDetection为false时，表示为地下模式
+              const isEnableCollisionDetection =
+                viewer.scene.screenSpaceCameraController
+                  .enableCollisionDetection;
 
-            // 当地球未显示，或者开启地下模式，或者设置的最大级别比比例尺为1：1的时候的级别相等或者还大时，则不回弹
-            if (
-              !isShowGlobe ||
-              !isEnableCollisionDetection ||
-              self.maxZoom >= self.scaleOneZoom
-            ) {
-              return;
-            }
+              // 当地球未显示，或者开启地下模式，或者设置的最大级别比比例尺为1：1的时候的级别相等或者还大时，则不回弹
+              if (
+                !isShowGlobe ||
+                !isEnableCollisionDetection ||
+                self.maxZoom >= self.scaleOneZoom
+              ) {
+                return;
+              }
 
-            // 获取当前视图中心点对应的级别，如果超出设置的级别范围，则回弹
-            const currentZoom = self.getCurrentZoom();
-            if (currentZoom < 1) {
-              return;
-            }
-            if (currentZoom > self.maxZoom || currentZoom < self.minZoom) {
-              // 恢复相机位置和方位
-              const { position, heading, pitch, roll } = self.preCameraPos;
-              viewer.camera.setView({
-                destination: position,
-                orientation: {
+              // 获取当前视图中心点对应的级别，如果超出设置的级别范围，则回弹
+              const currentZoom = self.getCurrentZoom();
+              if (currentZoom < 1) {
+                return;
+              }
+              if (currentZoom > self.maxZoom || currentZoom < self.minZoom) {
+                // 恢复相机位置和方位
+                const { position, heading, pitch, roll } = self.preCameraPos;
+                viewer.camera.setView({
+                  destination: position,
+                  orientation: {
+                    heading,
+                    pitch,
+                    roll,
+                  },
+                });
+                const messageText =
+                  currentZoom > self.maxZoom
+                    ? `地图最大显示级数${self.maxZoom}`
+                    : `地图最小显示级数${self.minZoom}`;
+                self.$message.warning(
+                  `当前视图的显示级数已超出您设置的${messageText}`
+                );
+              } else {
+                // 记录上次变化的相机位置和方位信息，方便回弹设置
+                const tempPosition = new Cesium.Cartesian3();
+                const { position, heading, pitch, roll } = viewer.camera;
+                Cesium.Cartesian3.clone(position, tempPosition);
+                self.preCameraPos = {
+                  position: tempPosition,
                   heading,
                   pitch,
                   roll,
-                },
-              });
-              const messageText =
-                currentZoom > self.maxZoom
-                  ? `地图最大显示级数${self.maxZoom}`
-                  : `地图最小显示级数${self.minZoom}`;
-              self.$message.warning(
-                `当前视图的显示级数已超出您设置的${messageText}`
-              );
-            } else {
-              // 记录上次变化的相机位置和方位信息，方便回弹设置
-              const tempPosition = new Cesium.Cartesian3();
-              const { position, heading, pitch, roll } = viewer.camera;
-              Cesium.Cartesian3.clone(position, tempPosition);
-              self.preCameraPos = {
-                position: tempPosition,
-                heading,
-                pitch,
-                roll,
-              };
-            }
-          }
+                };
+              }
+            },
+            100,
+            { leading: true }
+          )
         );
       }
     },
@@ -194,9 +200,16 @@ export default {
         const coordToLonlat = (viewer, x, y) => {
           const { camera, scene } = viewer;
           const d2 = new Cesium.Cartesian2(x, y);
+          // 如果d2，d3为undefined，则直接返回0
+          if (!d2) {
+            return 0;
+          }
           const ellipsoid = scene.globe.ellipsoid;
           // 2D转3D世界坐标
           const d3 = camera.pickEllipsoid(d2, ellipsoid);
+          if (!d3) {
+            return 0;
+          }
           // 3D世界坐标转弧度
           const upperLeftCartographic =
             scene.globe.ellipsoid.cartesianToCartographic(d3);
