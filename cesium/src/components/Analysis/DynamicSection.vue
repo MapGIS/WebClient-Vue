@@ -379,7 +379,7 @@ export default {
         let { options } = find;
         let { dynamicSectionAnalysis } = options;
         if (dynamicSectionAnalysis) {
-          dynamicSectionAnalysis.showCuttingPlane = this.showCuttingPlaneCopy;
+          dynamicSectionAnalysis.showCuttingPlane(this.showCuttingPlaneCopy);
         }
       }
     },
