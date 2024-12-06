@@ -104,7 +104,7 @@ export default {
   methods: {
     // 获取vueManager中的source
     findDataSource(layerType) {
-      let { vueKey, vueIndex } = this;
+      let { vueKey, vueIndex, vueCesium } = this;
       layerType = layerType ? layerType : this.layerType;
       let find;
       switch (layerType) {

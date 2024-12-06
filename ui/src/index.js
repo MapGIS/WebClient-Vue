@@ -4,6 +4,7 @@ import vcolorpicker from "vcolorpicker";
 import infiniteScroll from "vue-infinite-scroll";
 import * as UIComponents from "./component";
 import * as Util from "./util/common";
+import { setConfirmModal, setMessage } from "./util/common/ui-util.js";
 
 import { setLayout, setLayoutSettingVisible } from "./util/emit/layout";
 import { setTheme } from "./util/style/theme/set-theme";
@@ -42,13 +43,26 @@ const install = function(Vue, options) {
   Vue.component("mapgis-ui-iconfont", MapgisUiIconFont);
 
   Vue.prototype.$form = MapgisUiForm;
-  Vue.prototype.$message = MapgisUiMessage;
+  // 直接将message挂载到vue上使用会一直显示
+  if (options.AntdMessage) {
+    Vue.prototype.$message = setMessage(options.AntdMessage);
+  } else {
+    Vue.prototype.$message = MapgisUiMessage;
+  }
   Vue.prototype.$notification = MapgisUiNotification;
   Vue.prototype.$info = ModalInstance.info;
   Vue.prototype.$success = ModalInstance.success;
   Vue.prototype.$error = ModalInstance.error;
   Vue.prototype.$warning = ModalInstance.warning;
-  Vue.prototype.$confirm = ModalInstance.confirm;
+  // 直接将confirm挂载到vue上使用会报错
+  if (options.AntdModal) {
+    Vue.prototype.$confirm = setConfirmModal(
+      options.AntdModal,
+      UIComponents.MapgisUiModal
+    );
+  } else {
+    Vue.prototype.$confirm = ModalInstance.confirm;
+  }
   Vue.prototype.$destroyAll = ModalInstance.destroyAll;
 };
 

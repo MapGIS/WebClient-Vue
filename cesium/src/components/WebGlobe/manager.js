@@ -149,6 +149,9 @@ export function initVueCesium() {
     window.vueCesium.CompareManager || new CompareManager();
   window.vueCesium.WindManager =
     window.vueCesium.WindManager || new WindManager();
+  window.vueCesium.ImageLayersTranslucencyManager =
+    window.vueCesium.ImageLayersTranslucencyManager ||
+    new ImageLayersTranslucencyManager();
 
   //在window.vueCesium下添加取得WebGlobe对象的方法
   window.vueCesium.getViewer = function(vueKey) {
@@ -198,12 +201,21 @@ export class BaseManager {
     if (!this[vueKey]) {
       this[vueKey] = [];
     }
-    this[vueKey].push({
-      parent: vueKey,
-      key: vueIndex,
-      source: source,
-      options: options
+    const find = this[vueKey].find(s => {
+      return s && s.key === vueIndex;
     });
+    // 如果已存在对应的vueIndex，则直接更新值，避免重复添加
+    if (find) {
+      find.source = source;
+      find.options = options;
+    } else {
+      this[vueKey].push({
+        parent: vueKey,
+        key: vueIndex,
+        source: source,
+        options: options
+      });
+    }
   }
 
   deleteSource(vueKey, vueIndex) {
@@ -378,3 +390,4 @@ export class PlotSymbolManager extends BaseManager {}
 export class M3DSubSectionManager extends BaseManager {}
 export class CompareManager extends BaseManager {}
 export class WindManager extends BaseManager {}
+export class ImageLayersTranslucencyManager extends BaseManager {}

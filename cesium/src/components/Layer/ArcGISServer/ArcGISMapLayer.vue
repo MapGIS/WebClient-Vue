@@ -9,11 +9,11 @@ export default {
   props: {
     srs: {
       type: String,
-      defalut:"EPSG:4326"
+      defalut: "EPSG:4326",
     },
     layers: {
-      type: String
-    }
+      type: String,
+    },
   },
   data() {
     return {
@@ -34,11 +34,10 @@ export default {
       },
       managerName: "ArcgisManager",
       providerName: "ArcGisMapServerImageryProvider",
-    }
+    };
   },
   mixins: [ServiceLayer],
-  created() {
-  },
+  created() {},
   mounted() {
     this.mount();
   },
@@ -50,48 +49,41 @@ export default {
       handler: function () {
         this.unmount();
         this.mount();
-      }
+      },
     },
     layers: {
       handler: function () {
         this.unmount();
         this.mount();
-      }
+      },
     },
   },
   methods: {
-    initUrl() {
-      if (this.baseUrl) {
-        let url = this.baseUrl;
-        const _url = url + "/export";
-        return _url;
-      }
-    },
     mount() {
       //先处理相关参数：
       let options = {};
-      let {layers} = this;
+      let { layers } = this;
       if (layers) {
-        if (layers.indexOf("show") >= 0 ) {
+        if (layers.indexOf("show") >= 0) {
           layers = this.layers.replace("show:", "");
         }
       }
-      const baseUrl = this.initUrl();
-      //tilingScheme，则生成tilingScheme对象
+      const { baseUrl } = this;
+      //存在srs，则生成tilingScheme对象
       if (this.srs) {
         options.tilingScheme = this.$_setTilingScheme(this.srs);
-      };
-      const allOptions = {...options, layers, baseUrl};
+      }
+      // 不使用瓦片缓存，部分服务可能没有开启瓦片服务，比如IGS转发的ArcGIS服务
+      options.usePreCachedTilesIfAvailable = false;
+      const allOptions = { ...options, layers, baseUrl };
 
       this.$_mount(allOptions);
     },
     unmount() {
       this.$_unmount();
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -69,36 +69,36 @@ export default {
     // 右侧展示气泡框props
     popupShowType: {
       type: String,
-      default: "default"
+      default: "default",
     },
     popupOverlay: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     dataStoreIp: {
       type: String,
-      default: "192.168.96.101"
+      default: "192.168.96.101",
     },
     dataStorePort: {
       type: String,
-      default: "9014"
+      default: "9014",
     },
     // 查询知识图谱的数据集位置
     dataStoreDataset: {
       type: String,
-      default: "Graph3/GraphDataset1"
+      default: "Graph3/GraphDataset1",
     },
     popupOptions: {
       type: Object,
       default: () => {
         return { popupType: "card" };
-      }
+      },
     },
     // 挂靠的查询参数，比如三维简单要素类，如果有挂靠的查询参数，则拾取的要素属性使用从三维简单要素类里的内容
     searchParams: {
       type: Object,
-      default: () => {}
-    }
+      default: () => {},
+    },
   },
   components: {
     modelSwitchPopup,
@@ -159,7 +159,7 @@ export default {
     },
     enableIot(next) {
       this.iEnableIot = next;
-    }
+    },
   },
   /* render(h) {
     return this.$_render(h);
@@ -174,15 +174,18 @@ export default {
       const vm = this;
       const { vueCesium, viewer, url } = this;
       return new Promise(
-        resolve => {
+        (resolve) => {
           // M3D服务调用Cesium底层appendM3DLayer方法
           let options = this.getOptions();
-          options.loaded = function() {
+          options.loaded = function () {
             resolve({ layerIndex: vm.layerIndex });
+          };
+          options.errorCallback = function () {
+            vm.$emit("unLoaded");
           };
           vm.layerIndex = viewer.scene.layers.appendM3DLayer(url, options);
         },
-        reject => {}
+        (reject) => {}
       );
 
       return m3dLayer;
@@ -191,8 +194,18 @@ export default {
     getOptions() {
       const { $props } = this;
       let options = {};
-      Object.keys($props).forEach(function(key) {
-        options[key] = $props[key];
+      // 新增extensions属性
+      // 以支持通过对象的方式批量传入图层属性，
+      // 但是优先级低于单个传入属性，即如果单个属性有传入值，优先使用传入的值，
+      // 如果没有传入，但是extensions中有该属性，则使用extensions里对应的值
+      // 修改者：龚跃健 2024/10/28
+      const tempProps = {
+        ...this.$props,
+        ...this.$props.extensions,
+        ...this.$options.propsData,
+      };
+      Object.keys(tempProps).forEach(function (key) {
+        options[key] = tempProps[key];
       });
       return options;
     },
@@ -204,7 +217,7 @@ export default {
       if (viewer.isDestroyed()) return;
 
       let promise = this.createCesiumObject();
-      promise.then(payload => {
+      promise.then((payload) => {
         const { layerIndex } = payload;
         if (layerIndex >= 0) {
           // 2.0版本的处理方式
@@ -227,13 +240,13 @@ export default {
             }
           });
           m3dLayer.style = new Cesium.Cesium3DTileStyle({
-            color: `color('#FFFFFF', ${opacity})`
+            color: `color('#FFFFFF', ${opacity})`,
           });
           let m3ds = [m3dLayer];
           vm.loopM3d(m3ds, "2.0");
           vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, {
             version: "2.0",
-            url: url
+            url: url,
           });
           vm.$emit("loaded", { tileset: m3dLayer, m3ds: m3ds });
           vm.bindPopupEvent();
@@ -319,8 +332,7 @@ export default {
 
       let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
       if (tileset) {
-        tileset.pickedOid = 0;
-        tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
+        tileset.style = undefined;
       }
       this.featureposition = undefined;
       this.featureproperties = undefined;
@@ -330,9 +342,10 @@ export default {
       const { movement } = payload;
 
       const { popupOptions, highlightStyle, vueKey, vueIndex } = this;
-      // const { color = "rgba(255, 255, 0, 0.6)" } = highlightStyle;
       const { viewer, vueCesium, Cesium } = this;
-      const { version, layerIndex } = this;
+      const { layerIndex } = this;
+
+      const pickInfo = {};
 
       /* 只有在多模态下为真 */
       vm.modelSwitchVisible = false;
@@ -343,17 +356,8 @@ export default {
         vm.modelSwitchVisible = true;
         return;
       }
-      let oid = viewer.scene.pickOid(movement.position);
       let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
       if (feature.tileset !== tileset) {
-        // tileset.pickedOid = oid;
-        // tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
-        // this.featureposition = undefined;
-        // this.featureproperties = undefined;
-        // this.uniqueKey = undefined;
-
-        // 拾取非当前tileset时不进行关闭，让高亮和气泡框展示
-        // this.cancelFeature(payload);
         return;
       }
       vueCesium.M3DIgsManager.changeOptions(vueKey, vueIndex, "pick", tileset);
@@ -363,44 +367,56 @@ export default {
         "pickStyle",
         tileset.pickedColor || Cesium.Color.fromCssColorString(highlightStyle)
       );
-      tileset.pickedOid = oid;
-      tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
-      let titlefield = popupOptions ? popupOptions.title : undefined;
-      const properties = await this.getFeaturePorpertiesByOid(oid);
-      if (Object.keys(properties).length > 0) {
-        if (this.popupShowType === "default") {
-          vm.featureproperties = properties;
-        } else {
-          // title放在最前面
-          let popupContent = {};
-          popupContent = properties[titlefield]
-            ? { title: properties[titlefield], ...properties }
-            : { ...properties };
-          vm.popupOverlay && vm.popupOverlay.setContent(popupContent);
-        }
+      // 修改说明：M3D2.1已弃用viewer.scene.pickOid方法，后面统一从feature上获取要素id，高亮统一使用Cesium3DTileStyle设置
+      // 修改人:龚跃健
+      // 修改日期：2024-11-22
+      const { version } = tileset;
+      let id;
+      let conditions;
+      if (version === "2.1") {
+        id = feature.getProperty("tid");
+        conditions = [["${tid} === ${id}", highlightStyle]];
       } else {
-        if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
-          let result = feature.content.getAttributeByOID(oid) || {};
+        id = feature.getProperty("OID");
+        conditions = [["${OID} === ${id}", highlightStyle]];
+      }
+      pickInfo.id = id;
+      tileset.style = new Cesium.Cesium3DTileStyle({
+        defines: {
+          id,
+        },
+        color: {
+          conditions,
+        },
+      });
+      let titlefield = popupOptions ? popupOptions.title : undefined;
+      const properties = await this.getFeaturePorpertiesById(id);
+      if (Object.keys(properties).length > 0) {
+        if (vm.showPopup) {
           if (this.popupShowType === "default") {
-            // vm.iClickFeatures = [
-            //   { properties: result, title: result[titlefield] }
-            // ];
-            vm.featureproperties = result;
+            vm.featureproperties = properties;
           } else {
             // title放在最前面
             let popupContent = {};
-            popupContent = result[titlefield]
-              ? { title: result[titlefield], ...result }
-              : { ...result };
+            popupContent = properties[titlefield]
+              ? { title: properties[titlefield], ...properties }
+              : { ...properties };
             vm.popupOverlay && vm.popupOverlay.setContent(popupContent);
           }
-        } else {
-          tileset.queryAttributes(oid).then(function(result) {
-            result = result || {};
+        }
+        pickInfo.properties = properties;
+      } else {
+        if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
+          // 修改说明：属性信息也统一从feature上获取
+          // 修改人:龚跃健
+          // 修改日期：2024-11-22
+          let result = {};
+          const propertyNames = feature.getPropertyNames();
+          propertyNames.forEach((name) => {
+            result[name] = feature.getProperty(name);
+          });
+          if (vm.showPopup) {
             if (this.popupShowType === "default") {
-              // vm.iClickFeatures = [
-              //   { properties: result, title: result[titlefield] }
-              // ];
               vm.featureproperties = result;
             } else {
               // title放在最前面
@@ -410,134 +426,54 @@ export default {
                 : { ...result };
               vm.popupOverlay && vm.popupOverlay.setContent(popupContent);
             }
+          }
+          pickInfo.properties = result;
+        } else {
+          tileset.queryAttributes(id).then(function (result) {
+            result = result || {};
+            if (vm.showPopup) {
+              if (this.popupShowType === "default") {
+                vm.featureproperties = result;
+              } else {
+                // title放在最前面
+                let popupContent = {};
+                popupContent = result[titlefield]
+                  ? { title: result[titlefield], ...result }
+                  : { ...result };
+                vm.popupOverlay && vm.popupOverlay.setContent(popupContent);
+              }
+            }
+            pickInfo.properties = result;
           });
         }
       }
       if (this.popupShowType === "default" && vm.iClickPosition) {
-        vm.featureposition = vm.iClickPosition;
-        // let clickinfo = vm.iClickFeatures[0];
-        // const { properties } = clickinfo;
-        // if (properties) {
-        //   Object.keys(properties).forEach(k => {
-        //     if (k.toLowerCase() == "euid") vm.iEnableIot = true;
-        //   });
-        // }
+        if (vm.showPopup) {
+          vm.featureposition = vm.iClickPosition;
+        }
+        pickInfo.position = vm.iClickPosition;
       }
-
-      // if (version == "0.0" || version == "1.0") {
-      // } else if (version == "2.0") {
-      //   /* 只有在多模态下为真 */
-      //   vm.modelSwitchVisible = false;
-      //   let feature = viewer.scene.pick(movement.position);
-      //   /* 多模态切换 */
-      //   if (vm.enableModelSwitch) {
-      //     vm.tile = feature.content.tile.searchMultimodalTile();
-      //     vm.modelSwitchVisible = true;
-      //     return;
-      //   }
-      //   let oid = viewer.scene.pickOid(movement.position);
-      //   let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
-      //   if (feature.tileset !== tileset) {
-      //     // tileset.pickedOid = oid;
-      //     // tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
-      //     // this.featureposition = undefined;
-      //     // this.featureproperties = undefined;
-      //     // this.uniqueKey = undefined;
-      //     this.cancelFeature(payload);
-      //     return;
-      //   }
-      //   vueCesium.M3DIgsManager.changeOptions(
-      //     vueKey,
-      //     vueIndex,
-      //     "pick",
-      //     tileset
-      //   );
-      //   vueCesium.M3DIgsManager.changeOptions(
-      //     vueKey,
-      //     vueIndex,
-      //     "pickStyle",
-      //     tileset.pickedColor || Cesium.Color.fromCssColorString(highlightStyle)
-      //   );
-      //   tileset.pickedOid = oid;
-      //   tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
-      //   let titlefield = popupOptions ? popupOptions.title : undefined;
-      //   if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
-      //     let result = feature.content.getAttributeByOID(oid) || {};
-      //     if (this.popupShowType === "default") {
-      //       // vm.iClickFeatures = [
-      //       //   { properties: result, title: result[titlefield] }
-      //       // ];
-      //       vm.featureproperties = result;
-      //     } else {
-      //       // title放在最前面
-      //       let popupContent = {};
-      //       popupContent = result[titlefield]
-      //         ? { title: result[titlefield], ...result }
-      //         : { ...result };
-      //       vm.popupOverlay && vm.popupOverlay.setContent(popupContent);
-      //     }
-      //   } else {
-      //     tileset.queryAttributes(oid).then(function(result) {
-      //       result = result || {};
-      //       if (this.popupShowType === "default") {
-      //         // vm.iClickFeatures = [
-      //         //   { properties: result, title: result[titlefield] }
-      //         // ];
-      //         vm.featureproperties = result;
-      //       } else {
-      //         // title放在最前面
-      //         let popupContent = {};
-      //         popupContent = result[titlefield]
-      //           ? { title: result[titlefield], ...result }
-      //           : { ...result };
-      //         vm.popupOverlay && vm.popupOverlay.setContent(popupContent);
-      //       }
-      //     });
-      //   }
-      //   if (this.popupShowType === "default" && vm.iClickPosition) {
-      //     vm.featureposition = vm.iClickPosition;
-      //     // let clickinfo = vm.iClickFeatures[0];
-      //     // const { properties } = clickinfo;
-      //     // if (properties) {
-      //     //   Object.keys(properties).forEach(k => {
-      //     //     if (k.toLowerCase() == "euid") vm.iEnableIot = true;
-      //     //   });
-      //     // }
-      //   }
-      // }
+      pickInfo.layerId = vm.vueIndex;
+      vm.$emit("pick-info", pickInfo);
     },
     cancelFeature(payload) {
       const { movement } = payload;
       const { version, layerIndex, viewer, Cesium } = this;
       const { highlightStyle } = this;
-      let oid = viewer.scene.pickOid(movement.position);
 
       let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
-      tileset.pickedOid = oid;
-      tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
+      tileset.style = undefined;
       this.featureposition = undefined;
       this.featureproperties = undefined;
-      // if (version == "0.0" || version == "1.0") {
-      // } else if (version == "2.0") {
-      //   let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
-      //   tileset.pickedOid = oid;
-      //   tileset.pickedColor = Cesium.Color.fromCssColorString(highlightStyle);
-      //   this.featureposition = undefined;
-      //   this.featureproperties = undefined;
-      //   // if (!oid) {
-      //   //   this.featureposition = undefined;
-      //   //   this.featureproperties = undefined;
-      //   //   this.uniqueKey = undefined;
-      //   // }
-      // }
       this.popupOverlay && this.popupOverlay.setContent(null);
+      this.$emit("pick-info", {});
     },
     changeShow(show) {
       const { vueKey, vueIndex, vueCesium } = this;
       let find = vueCesium.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find) {
         let m3ds = find.source;
-        m3ds && m3ds.forEach(m3d => (m3d.show = show));
+        m3ds && m3ds.forEach((m3d) => (m3d.show = show));
       }
       this.layerList = this.parseLayers();
       this.changeLayerVisible(this.layerList);
@@ -549,15 +485,10 @@ export default {
       if (find) {
         let m3ds = find.source;
         if (!m3ds) return;
-        m3ds.forEach(m3d => {
-          // 新的Cesium这里不需要再做判断，直接设置即可，2023-11-17，龚跃健
-          // let type = vm.checkType(m3d);
-          // type = type == M3dType.UnKnow ? m3d.type : type;
-          // if (type == M3dType.Model || type == M3dType.Instance) {
+        m3ds.forEach((m3d) => {
           m3d.style = new Cesium.Cesium3DTileStyle({
-            color: `color('#FFFFFF', ${opacity})`
+            color: `color('#FFFFFF', ${opacity})`,
           });
-          // }
         });
       }
     },
@@ -571,13 +502,13 @@ export default {
       if (version == "0.0" || version == "1.0") {
         // m3d 0.x  1.x版本逻辑判断 type =0是模型 =1是示例化数据 =2是点云
         if (!children || children.length <= 0) return m3dType;
-        children.forEach(child => {
+        children.forEach((child) => {
           let tempType = vm.checkTypeNode(child, version, callback);
           m3dType = tempType || m3dType;
         });
       } else if (version == "2.0") {
         if (!children || children.length <= 0) return m3dType;
-        children.forEach(child => {
+        children.forEach((child) => {
           let tempType = vm.checkTypeNode(child, version, callback);
           m3dType = tempType ? tempType : m3dType;
         });
@@ -624,7 +555,7 @@ export default {
         }
       }
 
-      tileset.children.forEach(child => {
+      tileset.children.forEach((child) => {
         let tempType = vm.checkTypeNode(child, version, callback);
         m3dType = tempType ? tempType : m3dType;
       });
@@ -634,18 +565,18 @@ export default {
     loopM3d(m3ds, version) {
       const vm = this;
       const { vueKey, vueIndex, vueCesium, Cesium, opacity, url } = this;
-      let dataCallback = cbtype => {
+      let dataCallback = (cbtype) => {
         if (loop) {
           window.clearInterval(loop);
           loop = undefined;
-          m3ds.forEach(m3d => {
+          m3ds.forEach((m3d) => {
             let type = vm.checkType(m3d);
             m3d.type = type || cbtype;
             switch (type) {
               case M3dType.Model:
               case M3dType.Instance:
                 m3d.style = new Cesium.Cesium3DTileStyle({
-                  color: `color('#FFFFFF', ${opacity})`
+                  color: `color('#FFFFFF', ${opacity})`,
                 });
                 break;
               case M3dType.CloudPoint:
@@ -661,15 +592,15 @@ export default {
             }
           });
           vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, {
-            url: url
+            url: url,
           });
         }
       };
-      // let loop = window.setInterval(() => {
-      m3ds.forEach(m3d => {
-        vm.checkType(m3d, dataCallback);
-      });
-      // }, 100);
+      let loop = window.setInterval(() => {
+        m3ds.forEach((m3d) => {
+          vm.checkType(m3d, dataCallback);
+        });
+      }, 100);
     },
     parseLayers(layerString) {
       layerString = layerString || this.layers;
@@ -680,7 +611,7 @@ export default {
       }
       let layerStr = layerString.replace(/layers=show:/i, "");
       let layerStrs = layerStr.split(",");
-      let layers = layerStrs.map(l => parseInt(l));
+      let layers = layerStrs.map((l) => parseInt(l));
       return layers;
     },
     changeLayerVisible(layers) {
@@ -690,7 +621,7 @@ export default {
       if (find) {
         let m3ds = find.source;
         if (!m3ds) return;
-        m3ds.forEach(m3d => {
+        m3ds.forEach((m3d) => {
           if (layers) {
             m3d.show = true;
             // @description cesium 1.84 (M3D 2.0)将layerIndex内部隐藏起来了
@@ -705,7 +636,7 @@ export default {
         });
       }
     },
-    async getFeaturePorpertiesByOid(oid) {
+    async getFeaturePorpertiesById(id) {
       const properties = {};
       if (this.searchParams) {
         const { domain, serverName, layerIndex, gdbp } = this.searchParams;
@@ -721,8 +652,8 @@ export default {
             docName: serverName,
             layerIdxs: layerIndex,
             rtnLabel: false,
-            objectIds: oid,
-            requestType: "POST"
+            objectIds: id,
+            requestType: "POST",
           },
           false,
           true
@@ -739,7 +670,7 @@ export default {
         }
       }
       return properties;
-    }
-  }
+    },
+  },
 };
 </script>

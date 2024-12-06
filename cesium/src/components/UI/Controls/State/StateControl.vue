@@ -95,11 +95,6 @@ export default {
       if (bottomMap) {
         let dom = false;
         const name = "mapgis-3d-statebar";
-        /* container.children.forEach((element) => {
-          if (element.className == name) {
-            dom = element;
-          }
-        }); */
         for (let i = 0; i < container.children.length; i++) {
           let element = container.children[i];
           if (element.className == name) {
@@ -121,9 +116,6 @@ export default {
         );
 
         screenSpaceMouseEventHandler.setInputAction((movement) => {
-          // vm.updateViewLevel();
-          // vm.selectTile(movement.endPosition);
-          // vm.selectedTile = vm.selectTile(movement.endPosition);
           if (++vm.$_frame % frame == 0) {
             vm.updateShowInfo(movement.endPosition);
           }
@@ -133,9 +125,6 @@ export default {
           lastScreenPos = movement.endPosition;
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
         screenSpaceMouseEventHandler.setInputAction(() => {
-          // vm.updateViewLevel();
-          // vm.selectTile(lastScreenPos);
-          // vm.selectedTile = vm.selectTile(lastScreenPos);
           if (++vm.$_frame % frame == 0) {
             vm.updateShowInfo(lastScreenPos);
           }
@@ -169,6 +158,9 @@ export default {
       let cartesian = viewer.scene.camera.pickEllipsoid(e, ellipsoid);
       if (Cesium.defined(cartesian)) {
         const cartographic = ellipsoid.cartesianToCartographic(cartesian);
+        if (!cartographic) {
+          return;
+        }
         const tilesRendered =
           viewer.scene.globe._surface.tileProvider._tilesToRenderByTextureCount;
         for (
@@ -236,6 +228,9 @@ export default {
       let longlatHeight = "";
       if (cartesian) {
         const cartographic = ellipsoid.cartesianToCartographic(cartesian);
+        if (!cartographic) {
+          return;
+        }
         this.longitude = Cesium.Math.toDegrees(cartographic.longitude).toFixed(
           4
         );
@@ -254,27 +249,6 @@ export default {
           height: this.height,
         });
       }
-      /* let strHpr = "";
-      if (showHpr) {
-        strHpr = ` heading：${Cesium.Math.toDegrees(camera.heading).toFixed(
-          1
-        )} pitch：${Cesium.Math.toDegrees(camera.pitch).toFixed(
-          1
-        )} roll：${Cesium.Math.toDegrees(camera.roll).toFixed(1)}`;
-      }
-      let selectTileInfo = "";
-      if (showSelectTileInfo && selectedTile) {
-        selectTileInfo = `，瓦片X:${selectedTile.x}，瓦片Y:${selectedTile.y}，瓦片级别:${selectedTile.level}，`;
-      }
-      if (height === undefined || height < -7000) {
-        height = 0;
-      }
-      let level = "";
-      if (showViewLevelInfo) {
-        level = `当前地图级别:${viewLevel}`;
-      }
-      const iHtml = longlatHeight + strHpr + selectTileInfo + level;
-      document.getElementById(elementId).innerHTML = iHtml; */
     },
   },
 
@@ -293,11 +267,6 @@ export default {
             dom = element;
           }
         }
-        /* container.children.forEach((element) => {
-          if (element.className == name) {
-            dom = element;
-          }
-        }); */
       }
       if (dom) {
         dom.children[0].innerText = span;

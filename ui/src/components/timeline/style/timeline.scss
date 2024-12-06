@@ -9,6 +9,7 @@ $timeline-prefix-cls: $ant-prefix + "-timeline";
   margin: 0;
   padding: 0;
   list-style: none;
+  color: $text-color;
 
   &-item {
     position: relative;

@@ -187,7 +187,7 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisIgsDocLayer },
-  template: `<mapgis-web-map crs="EPSG:4326" :center="[116.39, 40.20]" :zoom="8" style="height:95vh">
+  template: `<mapgis-web-map crs="EPSG:4326" :center="[113, 31]" :zoom="6" style="height:95vh">
   <mapgis-igs-doc-layer :cache="cache" :layers="layers" :filters="filters" v-bind="$props" />
   <button style="position: absolute;z-index: 1;left:0;top:0;" @click="edit('filters','0:ID>4')">修改filter</button>
   <button style="position: absolute;z-index: 1;left:80px;top:0;" @click="edit('filters','')">置空filter</button>
@@ -199,7 +199,8 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       filters: "",
-      layers: "show:0",
+      layers:
+        "show:0,1-0,1-1,1-2,1-3,1-4,1-5,1-6,1-7,1-8,1-9,1-10,1-11,2-0,2-1,2-2,2-3,2-4,2-5,2-6,2-7,2-8,2-9,2-10,2-11,2-12,2-13,2-14,2-15,2-16,2-17,2-18,2-19,2-20,2-21,2-22,2-23,2-24,2-25,2-26,2-27,2-28,2-29,2-30,2-31,2-32,2-33,2-34,3-0,3-1,3-2,3-3,3-4,3-5,3-6,3-7,3-8,3-9,3-10,3-11,3-12,3-13,3-14,3-15,3-16,3-17,3-18,3-19,3-20,4,5,6,7,8,9",
       cache: false,
     };
   },
@@ -213,7 +214,7 @@ const Template = (args, { argTypes }) => ({
 export const 地图服务 = Template.bind({});
 地图服务.args = {
   layerId: "igs_layer_layerid",
-  baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/docs/WorldJWVector`,
+  baseUrl: `http://${window.webclient.igsIp}:${window.webclient.igsPort}/igs/rest/mrms/docs/Map:湖北省4326`,
   layers: "show:0,1,2,3,4,5,6,7",
   layer: {
     paint: { "raster-opacity": 0.75 },

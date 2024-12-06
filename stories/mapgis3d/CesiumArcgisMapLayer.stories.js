@@ -13,8 +13,9 @@ const Template = (args, { argTypes }) => ({
 
 export const 地图服务 = Template.bind({});
 地图服务.args = {
-  baseUrl: "http://219.142.81.85/arcgis/rest/services/10wanZH/MapServer/export",
-  layers: "show:0,2,4,7,9,10,11,12",
+  baseUrl:
+    "https://sampleserver6.arcgisonline.com/arcgis/rest/services/WorldTimeZones/MapServer",
+  layers: "show:exclude",
   layerStyle: {
     visible: true,
     opacity: 1,

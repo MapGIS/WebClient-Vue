@@ -897,7 +897,6 @@ export default {
       }
     },
     pickFeature(payload) {
-      console.log("进入pick---------------", performance.now());
       const { movement, pickedFeature } = payload;
       const vm = this;
       const { g3dLayerIndex, viewer } = this;
@@ -946,6 +945,7 @@ export default {
       }
     },
     cancelFeature() {
+      this.$emit("pick-info", {});
       this.cancelHighlight();
     },
     cancelHighlight() {
@@ -1125,12 +1125,21 @@ export default {
     },
     async queryStatic(movement) {
       const vm = this;
-      const { Cesium, viewer, version, g3dLayerIndex, popupOptions } = this;
+      const {
+        Cesium,
+        viewer,
+        version,
+        g3dLayerIndex,
+        popupOptions,
+        highlightStyle,
+      } = this;
       const { vueKey, vueIndex, vueCesium } = this;
       const scene = viewer.scene;
 
       let tempRay = new Cesium.Ray();
       let tempPos = new Cesium.Cartesian3();
+
+      const pickInfo = {};
 
       if (!movement) return;
       if (scene.mode !== Cesium.SceneMode.MORPHING) {
@@ -1143,6 +1152,7 @@ export default {
         let pickedFeature = viewer.scene.pick(movement.position);
         if (!pickedFeature) {
           vm.clickvisible = false;
+          vm.featurevisible = false;
           return;
         }
 
@@ -1170,7 +1180,6 @@ export default {
             color: pickedFeature.color,
             index: pickedFeature._content._tileset._layerIndex,
           };
-          // vm.restoreM3d();
           vm.selectLayerIndex = index;
           vm.selectedKeys = [`${index}`];
           let layerInfo = g3dLayer.getLayerInfo(index);
@@ -1181,73 +1190,117 @@ export default {
             if (name && name !== "") {
               const nameStrs = name.split("_");
               const featureId = nameStrs[nameStrs.length - 1];
-              properties = await this.getFeaturePorpertiesByOid(
+              pickInfo.id = featureId;
+              properties = await this.getFeaturePorpertiesById(
                 featureId,
                 layerName
               );
             }
             if (Object.keys(properties).length > 0) {
-              vm.featureproperties = properties;
-              vm.iClickFeatures = [{ properties }];
+              if (vm.showPopup) {
+                vm.featureproperties = properties;
+                vm.iClickFeatures = [{ properties }];
+              }
+              pickInfo.properties = properties;
             } else {
-              vm.featureproperties = { layerName, gdbpUrl };
-              vm.iClickFeatures = [{ properties: { layerName, gdbpUrl } }];
+              if (vm.showPopup) {
+                vm.featureproperties = { layerName, gdbpUrl };
+                vm.iClickFeatures = [{ properties: { layerName, gdbpUrl } }];
+              }
+              pickInfo.properties = { layerName, gdbpUrl };
             }
-            pickedFeature.color = Cesium.Color.fromCssColorString(
-              vm.highlightStyle
-            );
-            // vm.highlightM3d(index);
-          } else if (version == "2.0") {
+            pickedFeature.color =
+              Cesium.Color.fromCssColorString(highlightStyle);
+          } else {
             if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0)
               return;
-
-            let oid = viewer.scene.pickOid(movement.position);
-            // let tileset = g3dLayer.getLayer(`${index}`);
-
-            tileset.pickedOid = oid;
-            tileset.pickedColor = Cesium.Color.fromCssColorString(
-              this.highlightStyle
-            );
-            const properties20 = await this.getFeaturePorpertiesByOid(
-              oid,
+            // 修改说明：M3D2.1已弃用viewer.scene.pickOid方法，后面统一从feature上获取要素id，高亮统一使用Cesium3DTileStyle设置
+            // 修改人:龚跃健
+            // 修改日期：2024-11-22
+            const { tilesetVersion } = tileset.version;
+            let id;
+            let conditions;
+            if (tilesetVersion === "2.1") {
+              id = pickedFeature.getProperty("tid");
+              conditions = [["${tid} === ${id}", highlightStyle]];
+            } else {
+              id = pickedFeature.getProperty("OID");
+              conditions = [["${OID} === ${id}", highlightStyle]];
+            }
+            pickInfo.id = id;
+            tileset.style = new Cesium.Cesium3DTileStyle({
+              defines: {
+                id,
+              },
+              color: {
+                conditions,
+              },
+            });
+            const properties20 = await this.getFeaturePorpertiesById(
+              id,
               layerName
             );
             if (Object.keys(properties20).length > 0) {
-              vm.featureproperties = properties20;
-              vm.iClickFeatures = [{ properties20 }];
+              if (vm.showPopup) {
+                vm.featureproperties = properties20;
+                vm.iClickFeatures = [{ properties20 }];
+              }
+              pickInfo.properties = properties20;
             } else {
               if (tileset._useRawSaveAtt && Cesium.defined(pickedFeature)) {
-                let result = pickedFeature.content.getAttributeByOID(oid) || {};
-                vm.featureproperties = result;
-                vm.iClickFeatures = [{ properties: result }];
-              } else {
-                tileset.queryAttributes(oid).then(function (result) {
-                  result = result || {};
+                // 修改说明：属性信息也统一从feature上获取
+                // 修改人:龚跃健
+                // 修改日期：2024-11-22
+                let result = {};
+                const propertyNames = pickedFeature.getPropertyNames();
+                propertyNames.forEach((name) => {
+                  result[name] = pickedFeature.getProperty(name);
+                });
+                if (vm.showPopup) {
                   vm.featureproperties = result;
                   vm.iClickFeatures = [{ properties: result }];
+                }
+                pickInfo.properties = result;
+              } else {
+                tileset.queryAttributes(id).then(function (result) {
+                  result = result || {};
+                  if (vm.showPopup) {
+                    vm.featureproperties = result;
+                    vm.iClickFeatures = [{ properties: result }];
+                  }
+                  pickInfo.properties = result;
                 });
               }
             }
           }
-          if (
-            vm.featureclickenable &&
-            vm.featureproperties &&
-            Object.keys(vm.featureproperties).length > 0
-          ) {
-            if (vm.popupShowType === "default") {
-              vm.featurevisible = true;
-              vm.featureposition = {
-                longitude: longitudeString2,
-                latitude: latitudeString2,
-                height: heightString2,
-              };
-            } else {
-              vm.showDetail = true;
-              if (!vm.isUnClosePopup) {
-                vm.isUnClosePopup = !vm.isUnClosePopup;
+          if (vm.showPopup) {
+            if (
+              vm.featureclickenable &&
+              vm.featureproperties &&
+              Object.keys(vm.featureproperties).length > 0
+            ) {
+              if (vm.popupShowType === "default") {
+                vm.featurevisible = true;
+                vm.featureposition = {
+                  longitude: longitudeString2,
+                  latitude: latitudeString2,
+                  height: heightString2,
+                };
+              } else {
+                vm.showDetail = true;
+                if (!vm.isUnClosePopup) {
+                  vm.isUnClosePopup = !vm.isUnClosePopup;
+                }
               }
             }
           }
+          pickInfo.position = {
+            longitude: longitudeString2,
+            latitude: latitudeString2,
+            height: heightString2,
+          };
+          pickInfo.layerId = vm.vueIndex;
+          vm.$emit("pick-info", pickInfo);
         } else {
           vm.clickvisible = false;
         }
@@ -1267,7 +1320,7 @@ export default {
         let m3d = g3dLayer.getLayer(index);
         if (m3d) {
           // m3d.reset(); //该函数目前底层MapGISM3DSet.reset无效 后期记得修改
-          m3d.pickedOid = undefined;
+          m3d.style = undefined;
         }
       });
     },
@@ -1293,7 +1346,7 @@ export default {
     projectScreen(file) {
       this.$emit("project-screen", file);
     },
-    async getFeaturePorpertiesByOid(oid, layerName) {
+    async getFeaturePorpertiesById(id, layerName) {
       const properties = {};
       if (this.searchParams) {
         const { domain, serverName, layerIndex, serverType, mapList } =
@@ -1322,7 +1375,7 @@ export default {
             docName: serverName,
             layerIdxs: layerIndex,
             rtnLabel: false,
-            objectIds: oid,
+            objectIds: id,
             requestType: "POST",
           },
           false,

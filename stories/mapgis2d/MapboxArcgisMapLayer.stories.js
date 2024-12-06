@@ -176,15 +176,16 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisWebMap, MapgisArcgisMapLayer },
   methods: {},
-  template: `<mapgis-web-map crs="EPSG:3857" :center="[114.299039,30.594797]" :zoom="8" style="height:95vh">
+  template: `<mapgis-web-map crs="EPSG:3857" :center="[114.299039,30.594797]" :zoom="3" style="height:95vh">
     <mapgis-arcgis-map-layer v-bind="$props" />
     </mapgis-web-map>`,
 });
 
 export const 地图服务 = Template.bind({});
 地图服务.args = {
-  layers: "show:0,2,4,7,9,10,11,12",
-  baseUrl: "http://219.142.81.85/arcgis/rest/services/10wanZH/MapServer/export",
+  layers: "show:exclude",
+  baseUrl:
+    "https://sampleserver6.arcgisonline.com/arcgis/rest/services/WorldTimeZones/MapServer",
   layerId: "arcgismap_layerid",
   sourceId: "arcgismap_sourceid",
 };

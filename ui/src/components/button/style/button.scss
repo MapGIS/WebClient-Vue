@@ -2,8 +2,12 @@
 @import "../../../util/style/theme/theme.scss";
 @import "mixin.scss";
 
-.mapgis-ui-btn-primary[disabled] {
+.mapgis-ui-btn-primary[disabled],
+.mapgis-ui-btn[disabled] {
   color: $btn-disable-color;
+  &.active {
+    color: $btn-disable-color;
+  }
   &:hover {
     color: $btn-disable-color;
   }

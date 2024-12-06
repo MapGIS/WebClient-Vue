@@ -324,10 +324,13 @@ export default {
     enableSun(e, isInit) {
       const { viewer } = this;
       this.weatherSetting.sun = e;
-      viewer.scene.sun.show = this.weatherSetting.sun;
-      if (this.isFavorites && isInit) {
+      if (
+        viewer.scene.sun.show === this.weatherSetting.sun ||
+        (this.isFavorites && isInit)
+      ) {
         return;
       }
+      viewer.scene.sun.show = this.weatherSetting.sun;
       if (this.weatherSetting.sun) {
         let sunPosition = viewer.scene.sun._boundingVolume.center;
         if (sunPosition.x !== 0 && sunPosition.y !== 0 && sunPosition !== 0) {
@@ -357,10 +360,14 @@ export default {
     enableMoon(e, isInit) {
       const { viewer } = this;
       this.weatherSetting.moon = e;
-      viewer.scene.moon.show = this.weatherSetting.moon;
-      if (this.isFavorites && isInit) {
+
+      if (
+        viewer.scene.moon.show === this.weatherSetting.moon ||
+        (this.isFavorites && isInit)
+      ) {
         return;
       }
+      viewer.scene.moon.show = this.weatherSetting.moon;
       if (this.weatherSetting.moon) {
         let moonPosition =
           viewer.scene.moon._ellipsoidPrimitive._boundingSphere.center;
