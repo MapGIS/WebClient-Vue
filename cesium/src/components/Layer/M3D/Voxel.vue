@@ -42,37 +42,7 @@ export default {
   watch: {
     show() {
       this.changeShow();
-    }
-  },
-  computed: {
-    timeScale() {
-      switch (this.unit) {
-        case "years": {
-          return 31536000000;
-        }
-        case "months": {
-          return 259200000;
-        }
-        case "weeks": {
-          return 604800000;
-        }
-        case "days": {
-          return 86400000;
-        }
-        case "hours": {
-          return 3600000;
-        }
-        case "minutes": {
-          return 60000;
-        }
-        case "seconds": {
-          return 1000;
-        }
-        default: {
-          return 1;
-        }
-      }
-    }
+    },
   },
   mounted() {
     this.mount();
@@ -82,34 +52,12 @@ export default {
   },
   methods: {
     mount() {
-      const { viewer, Cesium } = this;
-      const { url } = this;
-      const requestUrl = `${url}/nodes/0?f=json`;
-      // 创建栅格体元图元
-      this.voxel = new Cesium.VoxelPrimitive(requestUrl, {
-        heightScale: 100,
-        loaded: res => {
-          const {
-            variables: {
-              time: { units }
-            }
-          } = res;
-          const unitsArr = units.split(" since ");
-          this.baseDate = new Date(unitsArr[1]).getTime(); // 获取基准时间
-          this.unit = unitsArr[0]; // 获取时间单位
-          this.$emit("loaded", { metaData: res, voxel: this.voxel });
-          this.initQuery();
-        }
-      });
-      viewer.scene.primitives.add(this.voxel);
+      this.initQuery();
     },
     unmount() {
-      const { viewer } = this;
-      viewer.scene.primitives.remove(this.voxel);
       this.stopQuery();
-      this.$emit("unloaded");
     },
-    formatter(time) {
+    formatter(time, unit) {
       const date = new Date(time);
       const year = date.getFullYear();
       const month = date.getMonth() + 1;
@@ -117,7 +65,7 @@ export default {
       const hour = date.getHours();
       const min = date.getMinutes();
       const second = date.getSeconds();
-      switch (this.unit) {
+      switch (unit) {
         case "years": {
           return `${year}`;
         }
@@ -152,31 +100,27 @@ export default {
         }
       }
     },
+    /**
+     *  绑定属性查询
+     */
     initQuery() {
       const { viewer, Cesium } = this;
       this.handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-      this.handler.setInputAction(movement => {
-        const featureproperties = this.voxel.queryPropertyValue(
-          movement.position
-        );
-        if (featureproperties) {
-          this.featureposition = {
-            cartesian: viewer.scene.pickPosition(movement.position)
-          };
-          featureproperties.time = this.formatter(
-            featureproperties.time * this.timeScale + this.baseDate
-          );
-          this.featureproperties = featureproperties;
-        } else {
-          this.featureposition = undefined;
-          this.featureproperties = undefined;
+      this.handler.setInputAction((movement) => {
+        const voxelCell = viewer.scene.pickVoxel(movement.position);
+        if (voxelCell instanceof Cesium.VoxelCell) {
+          const featureproperties = voxelCell.metadata;
+          if (featureproperties) {
+            this.featureposition = {
+              cartesian: viewer.scene.pickPosition(movement.position),
+            };
+            featureproperties.time = this.formatter(
+              featureproperties.time,
+              "hours"
+            );
+            this.featureproperties = featureproperties;
+          }
         }
-        this.featureposition = featureproperties
-          ? {
-              cartesian: viewer.scene.pickPosition(movement.position)
-            }
-          : undefined;
-        this.featureproperties = featureproperties;
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
     },
     stopQuery() {
@@ -185,13 +129,12 @@ export default {
         this.handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
     },
     changeShow() {
-      this.voxel.show = this.show;
       if (this.show) {
         this.initQuery();
       } else {
         this.stopQuery();
       }
-    }
-  }
+    },
+  },
 };
 </script>
