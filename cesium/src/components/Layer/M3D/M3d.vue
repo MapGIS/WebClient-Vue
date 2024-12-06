@@ -235,6 +235,7 @@ export default {
               const { voxelInfo } = layerInfo[0] || {};
               if (voxelInfo) {
                 this.isVoxelLayer = true;
+                m3dLayer.heightScale = 100
                 this.$emit('handelVoxel', vueIndex)
               }
             }
