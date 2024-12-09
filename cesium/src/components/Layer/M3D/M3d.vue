@@ -1,16 +1,21 @@
 <template>
-  <Popup
-    v-if="modelSwitchVisible"
-    :visible="modelSwitchVisible"
-    :position="iClickPosition"
-    forceRender
-  >
-    <mapgis-ui-popup-content class="mapgis-multi-model-status-popup">
-      <modelSwitchPopup :tile="tile" @handleModel="handleModel">
-      </modelSwitchPopup>
-    </mapgis-ui-popup-content>
-  </Popup>
-  <!-- <mapgis-3d-virtual-popup
+  <div>
+    <template v-if="isVoxelLayer">
+      <VoxelLayer v-bind="$props" />
+    </template>
+    <template v-else>
+      <Popup
+        v-if="modelSwitchVisible"
+        :visible="modelSwitchVisible"
+        :position="iClickPosition"
+        forceRender
+      >
+        <mapgis-ui-popup-content class="mapgis-multi-model-status-popup">
+          <modelSwitchPopup :tile="tile" @handleModel="handleModel">
+          </modelSwitchPopup>
+        </mapgis-ui-popup-content>
+      </Popup>
+      <!-- <mapgis-3d-virtual-popup
     v-else-if="popupShowType === 'default'"
     :enablePopup="enablePopup"
     :enableTips="enableTips"
@@ -23,22 +28,24 @@
     :clickFeatures="iClickFeatures"
   >
   </mapgis-3d-virtual-popup> -->
-  <mapgis-3d-feature-popup
-    v-else-if="popupShowType === 'default' && featureposition"
-    :position="featureposition"
-    :popupOptions="popupOptions"
-    :componentWidth="popupWidth"
-    v-bind="popupConfig"
-  >
-    <component
-      :is="popupComponent"
-      :properties="featureproperties"
-      :dataStoreIp="dataStoreIp"
-      :dataStorePort="dataStorePort"
-      :dataStoreDataset="dataStoreDataset"
-      v-bind="popupConfig"
-    />
-  </mapgis-3d-feature-popup>
+      <mapgis-3d-feature-popup
+        v-else-if="popupShowType === 'default' && featureposition"
+        :position="featureposition"
+        :popupOptions="popupOptions"
+        :componentWidth="popupWidth"
+        v-bind="popupConfig"
+      >
+        <component
+          :is="popupComponent"
+          :properties="featureproperties"
+          :dataStoreIp="dataStoreIp"
+          :dataStorePort="dataStorePort"
+          :dataStoreDataset="dataStoreDataset"
+          v-bind="popupConfig"
+        />
+      </mapgis-3d-feature-popup>
+    </template>
+  </div>
 </template>
 
 <script>
@@ -49,6 +56,7 @@ import PopupMixin from "../Mixin/PopupMixin";
 import modelSwitchPopup from "./components/M3dModelSwitch";
 import Popup from "../../UI/Popup/Popup.vue";
 import * as Feature from "../../service/comprehensive-query/util/feature";
+import VoxelLayer from "./Voxel.vue";
 
 const { M3DTileDataInfo } = G3D;
 
@@ -95,6 +103,7 @@ export default {
   components: {
     modelSwitchPopup,
     Popup,
+    VoxelLayer
   },
   data() {
     return {
@@ -107,6 +116,7 @@ export default {
       iEnableIot: false,
       featureposition: undefined,
       featureproperties: undefined,
+      isVoxelLayer: false,
     };
   },
   created() {},
@@ -204,7 +214,6 @@ export default {
       const vm = this;
       const { viewer, vueIndex, vueKey, vueCesium, $props } = this;
       const { url, opacity } = this;
-
       if (viewer.isDestroyed()) return;
 
       let promise = this.createCesiumObject();
@@ -220,6 +229,17 @@ export default {
           vm.layerIndex = layerIndex;
           let m3dLayer;
           m3dLayer = viewer.scene.layers.m3dLayersMap.get(layerIndex);
+          m3dLayer.readyPromise.then(() => {
+            const layerInfo = m3dLayer.layerinfo;
+            if (layerInfo && layerInfo.length) {
+              const { voxelInfo } = layerInfo[0] || {};
+              if (voxelInfo) {
+                this.isVoxelLayer = true;
+                m3dLayer.heightScale = 100
+                this.$emit('handelVoxel', vueIndex)
+              }
+            }
+          });
           m3dLayer.style = new Cesium.Cesium3DTileStyle({
             color: `color('#FFFFFF', ${opacity})`,
           });
