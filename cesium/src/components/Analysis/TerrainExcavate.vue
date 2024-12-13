@@ -93,6 +93,10 @@
 <script>
 import VueOptions from "../Base/Vue/VueOptions";
 import BaseLayer from "./BaseLayer";
+import GroundTexture1 from '../../assets/image/ground-texture-1.jpg'
+import GroundTexture2 from '../../assets/image/ground-texture-2.jpg'
+import WallTexture1 from '../../assets/image/wall-texture-1.jpg'
+import WallTexture2 from '../../assets/image/wall-texture-2.jpg'
 
 export default {
   name: "mapgis-3d-excavate-analysis",
@@ -142,19 +146,17 @@ export default {
   },
   data() {
     return {
-      m3dLayers: [],
       useModelFill: true,
       maskText: "正在分析中, 请稍等...",
       maskShow: false,
-      samplePrecision: 50,
-      wallSpace: null,
+      samplePrecision: 1,
       excavateDepth: 100,
       // checkbox选项合集
       checkboxOptions: [],
       // 选择项
       checked: [],
       pnts: [],
-      sampledPositions: [],
+      
       selectTerrainGround: "",
       selectTerrainWall: "",
       terrainGroundFillImages: [
@@ -164,19 +166,12 @@ export default {
         },
         {
           label: "底面纹理1",
-          value:
-            "http://192.168.82.91:8200/NoneSpatialData/image/ground-texture-1.jpg",
+          value:  GroundTexture1
         },
         {
           label: "底面纹理2",
-          value:
-            "http://192.168.82.91:8200/NoneSpatialData/image/ground-texture-2.jpg",
-        },
-        {
-          label: "底面纹理3",
-          value:
-            "http://192.168.82.91:8200/NoneSpatialData/image/ground-texture-3.jpg",
-        },
+          value: GroundTexture2
+        }
       ],
 
       terrainWallFillImages: [
@@ -186,19 +181,12 @@ export default {
         },
         {
           label: "剖面纹理1",
-          value:
-            "http://192.168.82.91:8200/NoneSpatialData/image/wall-texture-1.jpg",
+          value: WallTexture1
         },
         {
           label: "剖面纹理2",
-          value:
-            "http://192.168.82.91:8200/NoneSpatialData/image/wall-texture-2.jpg",
-        },
-        {
-          label: "剖面纹理3",
-          value:
-            "http://192.168.82.91:8200/NoneSpatialData/image/wall-texture-3.jpg",
-        },
+          value: WallTexture2
+        }
       ],
     };
   },
@@ -338,7 +326,7 @@ export default {
           this.samplePrecisionComputed
         );
         // 如果有模型且需要模型封边
-        if (this.m3dLayers.length && this.useModelFill) {
+        if (this.m3dLayers && this.m3dLayers.length && this.useModelFill) {
           this.sampledPositions = this.getModelSampleHeight(modlePositions);
         }
         let terrainHeight = 0;
@@ -489,7 +477,7 @@ export default {
     },
     // api获取地形开挖坐标
     getCoordinates(axis) {
-      if (this.m3dLayers.length && this.useModelFill) {
+      if (this.m3dLayers && this.m3dLayers.length && this.useModelFill) {
         this.createWellWall(axis, this.sampledPositions);
       }
     },
@@ -533,8 +521,7 @@ export default {
             diffuseMaterial: {
               type: "DiffuseMap",
               uniforms: {
-                image:
-                  "http://192.168.82.91:8200/NoneSpatialData/image/wall-texture-1.jpg",
+                image: WallTexture1
               },
             },
           },
