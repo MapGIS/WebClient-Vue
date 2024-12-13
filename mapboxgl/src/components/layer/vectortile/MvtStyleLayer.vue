@@ -18,35 +18,35 @@ export default {
   props: {
     mvtStyle: {
       type: [String, Object],
-      default: undefined
+      default: undefined,
     },
     mode: {
       type: String,
-      default: "merge" // add set merge
+      default: "merge", // add set merge
     },
     before: {
-      type: String
+      type: String,
     },
     removeForce: {
       type: Boolean,
-      default: true
+      default: true,
     },
     minimumLevel: {
       type: Number,
-      default: 0
+      default: 0,
     },
     maximumLevel: {
       type: Number,
-      default: 22
+      default: 22,
     },
-    token: { Object }
+    token: { Object },
   },
 
   data() {
     return {
       lastStyle: undefined,
       themeRules: [],
-      preBefore: undefined
+      preBefore: undefined,
     };
   },
 
@@ -81,8 +81,8 @@ export default {
           }
         }
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
 
   created() {
@@ -145,16 +145,16 @@ export default {
       let newMapid = this.mvtStyle && this.mvtStyle.id ? this.mvtStyle.id : undefined; */
       let currentLayers = map.getStyle().layers;
       this.themeRules = [];
-      layers.forEach(layer => {
+      layers.forEach((layer) => {
         if (vm.map.getLayer(layer.id)) {
           // 下面地方的处理是针对专题图的显示隐藏特殊处理采取的保留专题图基本的信息前提下更新新的图层可见性
           let currentThemelayer = map
             .getStyle()
-            .layers.find(l => l.id == layer.id);
+            .layers.find((l) => l.id == layer.id);
           if (currentThemelayer) layer.paint = currentThemelayer.paint;
           if (removeForce) {
             vm.map.removeLayer(layer.id);
-            let themes = currentLayers.filter(l => {
+            let themes = currentLayers.filter((l) => {
               let find = l.source == layer.source && vm.isThemeLayer(l.id);
               return find;
             });
@@ -163,7 +163,7 @@ export default {
               this.themeRules.push([].concat(layer).concat(themes));
             }
           } else {
-            let others = currentLayers.filter(l => l.source == layer.source);
+            let others = currentLayers.filter((l) => l.source == layer.source);
             if (others && others.length >= 2) {
               // 有其他图层同时引用同一个数据源，不删除数据
             } else {
@@ -175,9 +175,9 @@ export default {
       if (!sources) return;
       let lefts = this.map.getStyle().layers;
 
-      Object.keys(sources).forEach(source => {
+      Object.keys(sources).forEach((source) => {
         if (vm.map.getSource(source)) {
-          let finds = lefts.find(l => l.source == source);
+          let finds = lefts.find((l) => l.source == source);
           if (!finds) vm.map.removeSource(source);
         }
       });
@@ -200,7 +200,7 @@ export default {
       }
       const self = this;
       // 如果样式文件中，paint为null，则mapboxgl会报错，这里给个默认值
-      const layers = newLayer.map(item => {
+      const layers = newLayer.map((item) => {
         if (!item.paint) {
           item.paint = {};
         }
@@ -213,16 +213,22 @@ export default {
         return item;
       });
 
+      // 修改说明：glyphs优先使用传入的style上的参数，防止字符不识别
+      // 修改人：龚跃健-20241213
       let style = {
         version: oldStyle.version || newStyle.version,
         sprite: oldStyle.sprite || newStyle.sprite,
-        glyphs: oldStyle.glyphs || newStyle.glyphs,
+        glyphs: newStyle.glyphs || oldStyle.glyphs,
         sources: {
           ...oldStyle.sources,
-          ...this.getNewLayerSources(newStyle.sources)
+          ...this.getNewLayerSources(newStyle.sources),
         },
-        layers: layers
+        layers: layers,
       };
+      // 修改说明：先强制删除draw上面的crs,不然加载会报无法识别crs参数的错误
+      // 修改人：龚跃健-20241213
+      delete style.sources["mapbox-gl-draw-cold"].crs;
+      delete style.sources["mapbox-gl-draw-hot"].crs;
       this.$emit("change-style", style);
       return style;
     },
@@ -242,8 +248,8 @@ export default {
     addLayers(olds, news) {
       news = news || [];
       if (!olds) return [].concat(news);
-      let filters = olds.filter(layer => {
-        let find = news.find(l => l.id === layer.id);
+      let filters = olds.filter((layer) => {
+        let find = news.find((l) => l.id === layer.id);
         return find ? false : true;
       });
       return filters.concat(news);
@@ -252,13 +258,13 @@ export default {
     mergeLayers(olds, news) {
       const vm = this;
       news = news || [];
-      let themes = olds.filter(l => vm.isThemeLayer(l.id));
-      olds = olds.filter(l => !vm.isThemeLayer(l.id));
+      let themes = olds.filter((l) => vm.isThemeLayer(l.id));
+      olds = olds.filter((l) => !vm.isThemeLayer(l.id));
       if (!olds) return [].concat(news);
 
       let merges = olds.reduce((total, layer, index, arr) => {
-        let find = news.find(l => l.id == layer.id);
-        let hasold = total.find(l => l.id == layer.id);
+        let find = news.find((l) => l.id == layer.id);
+        let hasold = total.find((l) => l.id == layer.id);
         if (find && !hasold) {
           return total.concat(find);
         } else {
@@ -281,8 +287,8 @@ export default {
         return u;
       });
       // 考虑 A-B-C-D D在之前已经被合并得情况
-      let unmerges = befores.filter(layer => {
-        let find = merges.find(l => l.id == layer.id);
+      let unmerges = befores.filter((layer) => {
+        let find = merges.find((l) => l.id == layer.id);
         return find ? false : true;
       });
       // 考虑 A-B-C 内部的顺序问题  如实际调整为B-A-C
@@ -297,7 +303,7 @@ export default {
           if (index >= 0) {
             this.addLayer(reunmerges, index, layer, "before");
           } else {
-            let beforeLayer = unmerges.find(l => l.id == before);
+            let beforeLayer = unmerges.find((l) => l.id == before);
             if (beforeLayer) {
               index = this.findIndex(reunmerges, layer.id);
               if (index >= 0) {
@@ -328,15 +334,15 @@ export default {
           let theme = undefined;
           let beforetheme = undefined;
           let findtheme = false;
-          themeRules.forEach(rules => {
-            let findtheme = rules.find(r => r.id == layer.id);
+          themeRules.forEach((rules) => {
+            let findtheme = rules.find((r) => r.id == layer.id);
             if (findtheme) {
               theme = findtheme;
               beforetheme = rules[0];
-              let findorigin = total.find(l => l.id == beforetheme.id);
+              let findorigin = total.find((l) => l.id == beforetheme.id);
               if (!findorigin) {
                 findtheme = true;
-                let newbeforetheme = news.find(l => l.id == beforetheme.id);
+                let newbeforetheme = news.find((l) => l.id == beforetheme.id);
                 if (beforetheme) newbeforetheme.paint = beforetheme.paint || {};
                 let themelayer = newbeforetheme || beforetheme;
                 if (themelayer) total = total.concat(themelayer);
@@ -344,7 +350,7 @@ export default {
             }
           });
           if (!findtheme) {
-            if (!total.find(l => l.id == layer.id)) {
+            if (!total.find((l) => l.id == layer.id)) {
               total = total.concat(layer);
             }
           }
@@ -374,14 +380,14 @@ export default {
           }
           return true;
         })
-        .map(u => {
+        .map((u) => {
           delete u.before;
           delete u.after;
           return u;
         });
       let layers = merges.concat(umsorts);
 
-      this.themeRules.forEach(rules => {
+      this.themeRules.forEach((rules) => {
         for (let i = rules.length - 1; i > 0; i--) {
           let r = rules[i];
           let index = vm.findIndex(layers, rules[0].id);
@@ -399,7 +405,7 @@ export default {
     isThemeLayer(name) {
       let isTheme = false;
       if (!name) return isTheme;
-      DefaultThemeLayers.forEach(l => {
+      DefaultThemeLayers.forEach((l) => {
         if (name.indexOf(l) >= 0) {
           isTheme = true;
         }
@@ -409,10 +415,10 @@ export default {
 
     hasTheme(layers) {
       let has = false;
-      this.themeRules.forEach(rules => {
-        rules.forEach(r => {
+      this.themeRules.forEach((rules) => {
+        rules.forEach((r) => {
           if (layers) {
-            layers.forEach(l => {
+            layers.forEach((l) => {
               if (l.id == r.id) {
                 if (r.theme || r.theme !== "none") {
                   has = true;
@@ -431,7 +437,7 @@ export default {
 
     resortTheme(news) {
       let orders = news
-        .filter(l => {
+        .filter((l) => {
           return l.theme != undefined;
         })
         .map((l, i) => {
@@ -439,9 +445,9 @@ export default {
           return l;
         });
       let newRules = [];
-      this.themeRules.forEach(rules => {
+      this.themeRules.forEach((rules) => {
         if (rules.length > 0) {
-          let find = orders.find(l => l.id == rules[0].id);
+          let find = orders.find((l) => l.id == rules[0].id);
           if (find) {
             newRules[find.zindex] = rules;
           }
@@ -464,15 +470,15 @@ export default {
 
     addLayer(arrs, index, layer, mode = "before") {
       if (mode === "before") {
-        if (!arrs.find(l => l.id == layer.id)) {
+        if (!arrs.find((l) => l.id == layer.id)) {
           arrs.splice(index, 0, layer);
         }
       } else if (mode === "after") {
-        if (!arrs.find(l => l.id == layer.id)) {
+        if (!arrs.find((l) => l.id == layer.id)) {
           arrs.splice(index + 1, 0, layer);
         }
       } else {
-        if (!arrs.find(l => l.id == layer.id)) {
+        if (!arrs.find((l) => l.id == layer.id)) {
           arrs.push(layer);
         }
       }
@@ -485,7 +491,7 @@ export default {
     getNewLayerSources(sources) {
       const newSources = { ...sources };
       if (Object.keys(newSources).length > 0) {
-        Object.keys(newSources).forEach(item => {
+        Object.keys(newSources).forEach((item) => {
           const source = newSources[item];
           if (source.tiles) {
             source.tiles = this.setToken(source.tiles);
@@ -497,7 +503,7 @@ export default {
     setToken(tiles) {
       const { token } = this;
       const newTiles = [];
-      tiles.forEach(item => {
+      tiles.forEach((item) => {
         const url = new URL(item);
         const { search } = url;
         if (token.value) {
@@ -511,7 +517,7 @@ export default {
         }
       });
       return newTiles;
-    }
-  }
+    },
+  },
 };
 </script>
