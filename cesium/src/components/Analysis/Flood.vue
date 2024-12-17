@@ -38,10 +38,6 @@
               :disableAlpha="false"
             ></mapgis-ui-sketch-color-picker>
           </mapgis-ui-form-item>
-          <mapgis-ui-switch-row-left
-            title="开启水面倒影"
-            v-model="isWaterReflectionMode"
-          ></mapgis-ui-switch-row-left>
         </mapgis-ui-setting-form>
         <mapgis-ui-setting-footer>
           <mapgis-ui-button type="primary" @click="analysis"
@@ -180,8 +176,7 @@ export default {
       mHeight: 2000, // 淹没最高高度变化前的值
       timer: null,
       changeMaxHeight: false,
-      changeStartHeight: false,
-      isWaterReflectionMode: false,
+      changeStartHeight: false
     };
   },
   created() {},
@@ -268,10 +263,7 @@ export default {
           }, 1000);
         }
       },
-    },
-    isWaterReflectionMode() {
-      this.remove();
-    },
+    }
   },
   methods: {
     async createCesiumObject() {
@@ -317,6 +309,7 @@ export default {
      * @description 开始绘制并分析
      */
     analysis() {
+      this.remove();
       const { vueCesium, vueKey, vueIndex } = this;
       const options = this._getSourceOptions();
       let { drawElement } = options;
@@ -335,82 +328,35 @@ export default {
         callback: (result) => {
           this.remove();
           this.positions = result.positions;
-          // let cartP = [];
-          // let max = 0;
-          // let min = 0;
-          // for (let i = 0; i < result.positions.length; i++) {
-          //   let cartPosition = Cesium.Cartographic.fromCartesian(
-          //     result.positions[i]
-          //   );
-          //   let lnglatTocartographic = Cesium.Cartographic.fromRadians(
-          //     cartPosition.longitude,
-          //     cartPosition.latitude
-          //   );
-          //   let height = this.viewer.scene.sampleHeight(lnglatTocartographic);
-          //   if (max < height) {
-          //     max = height;
-          //   }
-          //   if (min > height) {
-          //     min = height;
-          //   }
-          //   this.startHeightCopy = min;
-          // cartP.push([
-          //   Cesium.Math.toDegrees(cartPosition.longitude),
-          //   Cesium.Math.toDegrees(cartPosition.latitude)
-          // ]);
-          //}
-          // let positions = getPolygonSamplePoints({
-          //   positions: cartP,
-          //   step: this.step
-          // });
-          // let positionsC = [],
-          //   that = this;
-          // for (let i = 0; i < positions.length; i++) {
-          //   positionsC.push(
-          //     Cesium.Cartesian3.fromDegrees(positions[i][0], positions[i][1], 0)
-          //   );
-          // }
-          // let sampleElevationTool = new Cesium.SampleElevationTool(
-          //   viewer,
-          //   positionsC,
-          //   "terrain",
-          //   function(sampleResult) {
-          //     let max = sampleResult[0].height;
-          //     let min = sampleResult[0].height;
-          //     for (let i = 1; i < sampleResult.length; i++) {
-          //       if (max < sampleResult[i].height) {
-          //         max = sampleResult[i].height;
-          //       }
-          //       if (min > sampleResult[i].height) {
-          //         min = sampleResult[i].height;
-          //       }
-          //     }
           this.$emit("showProgress", {
             startHeightCopy: this.startHeightCopy,
             maxHeightCopy: this.maxHeightCopy,
             floodSpeedCopy: this.floodSpeedCopy,
           });
-          //   },
-          //   { level: 12 }
-          // );
-          // sampleElevationTool.start();
         },
       });
     },
     /**
+     *  @description 洪水淹没暂停
+     */
+     _doPause() {
+        if(this.floodAnalysisReflection) {
+            this.floodAnalysisReflection.pause();
+        }
+     },
+    /**
      * @description 进行洪水淹没分析
      */
-    _doAnalysis() {
-      this._removeFlood();
+    _doAnalysis(isPause) {
+      if(!isPause) {
+        this._removeFlood();
+      }
       const { positions } = this;
       if (!positions) {
         this.$message.warning("请绘制分析区域");
         return;
       }
       const { vueCesium, vueKey, vueIndex } = this;
-      const options = this._getSourceOptions();
-      let { floodAnalysis, floodAnalysisReflection, waterReflection } = options;
-      if (this.isWaterReflectionMode) {
         const positionsArr = [];
         for (let position of positions) {
           positionsArr.push(Cesium.Cartographic.fromCartesian(position));
@@ -418,8 +364,7 @@ export default {
         const { minHeight, maxHeightCopy, floodSpeedCopy, floodColorCopy } =
           this;
         const waterColor = this._getColor(floodColorCopy);
-        waterReflection =
-          waterReflection ||
+        this.waterReflection = isPause ? this.waterReflection : 
           new Cesium.WaterReflection({
             viewer: this.viewer,
             positions: positionsArr,
@@ -430,13 +375,12 @@ export default {
           vueKey,
           vueIndex,
           "waterReflection",
-          waterReflection
+          this.waterReflection
         );
-        floodAnalysisReflection =
-          floodAnalysisReflection ||
+        this.floodAnalysisReflection = isPause ? this.floodAnalysisReflection : 
           new Cesium.FloodAnalysisReflection({
             viewer: this.viewer,
-            water: waterReflection,
+            water: this.waterReflection,
             minHeight,
             maxHeight: maxHeightCopy,
             // fix(6037): PTSYB-地形分析中淹没开启水面倒影后，时间轴和图像不对应
@@ -445,65 +389,13 @@ export default {
             floodSpeed: Number(floodSpeedCopy),
             closeBorder: true,
           });
-        floodAnalysisReflection.start();
+        this.floodAnalysisReflection.start();
         vueCesium.FloodAnalysisManager.changeOptions(
           vueKey,
           vueIndex,
           "floodAnalysisReflection",
-          floodAnalysisReflection
+          this.floodAnalysisReflection
         );
-      } else {
-        const {
-          startHeightCopy,
-          minHeight,
-          maxHeightCopy,
-          floodColorCopy,
-          floodSpeedCopy,
-          specularIntensity,
-          amplitude,
-          animationSpeed,
-          frequency,
-        } = this;
-
-        // 初始化洪水淹没分析类
-        floodAnalysis =
-          floodAnalysis || new Cesium.FloodAnalysis(this.viewer, positions);
-        //设置洪水淹没区域最低开始高度
-        floodAnalysis.minHeight = Number(startHeightCopy);
-        //设置洪水淹没区域最高高度
-        floodAnalysis.maxHeight = this.maxHeightCopy || Number(maxHeightCopy);
-        // 设置洪水上涨速度
-        floodAnalysis.floodSpeed = Number(floodSpeedCopy);
-        // 洪水淹没区域最低高度
-        floodAnalysis.startHeight = Number(startHeightCopy);
-        // 洪水颜色
-        floodAnalysis.floodColor = this._getColor(floodColorCopy);
-        // 水纹频率 指波浪的个数
-        floodAnalysis.frequency = Number(frequency);
-        // 水纹速度
-        floodAnalysis.animationSpeed = Number(animationSpeed);
-        // 水波的高度
-        floodAnalysis.amplitude = Number(amplitude);
-        // 指定光线强度
-        floodAnalysis.specularIntensity = Number(specularIntensity);
-
-        this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
-          this.viewer
-        );
-        if (!this.isDepthTestAgainstTerrainEnable) {
-          // 如果深度检测没有开启，则开启
-          setDepthTestAgainstTerrainEnable(true, this.viewer);
-        }
-        // 添加洪水淹没结果显示
-        this.viewer.scene.visualAnalysisManager.add(floodAnalysis);
-        this.mHeight = maxHeightCopy;
-        vueCesium.FloodAnalysisManager.changeOptions(
-          vueKey,
-          vueIndex,
-          "floodAnalysis",
-          floodAnalysis
-        );
-      }
     },
     /**
      * @description 获取SourceOptions,以方便获取洪水淹没分析对象和绘制对象
@@ -543,24 +435,9 @@ export default {
      */
     _removeFlood() {
       const { vueCesium, vueKey, vueIndex } = this;
-      const options = this._getSourceOptions();
-      const { floodAnalysis, floodAnalysisReflection, waterReflection } =
-        options;
-
-      // 判断是否已有洪水淹没分析结果
-      if (floodAnalysis) {
-        // 移除洪水淹没分析显示结果
-        this.viewer.scene.visualAnalysisManager.remove(floodAnalysis);
-        vueCesium.FloodAnalysisManager.changeOptions(
-          vueKey,
-          vueIndex,
-          "floodAnalysis",
-          null
-        );
-      }
-      if (floodAnalysisReflection) {
-        floodAnalysisReflection.destroy();
-        floodAnalysisReflection.destroyWaterCloseBorder();
+      if (this.floodAnalysisReflection) {
+        this.floodAnalysisReflection.destroy();
+        this.floodAnalysisReflection.destroyWaterCloseBorder();
         vueCesium.FloodAnalysisManager.changeOptions(
           vueKey,
           vueIndex,
@@ -568,8 +445,8 @@ export default {
           null
         );
       }
-      if (waterReflection) {
-        waterReflection.destroy();
+      if (this.waterReflection) {
+        this.waterReflection.destroy();
         vueCesium.FloodAnalysisManager.changeOptions(
           vueKey,
           vueIndex,
