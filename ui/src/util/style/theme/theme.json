@@ -12,7 +12,7 @@
     "backgroundLight": "rgba(250,250,250,1)",
     "backgroundBase": "rgba(245,245,245,1)",
     "dataCardBackground": "rgba(255,255,255,1)",
-    "selectedColor": "rgba(0,129,226,1)",
+    "selectedColor": "rgba(0,129,226,0.15)",
     "hoverColor": "rgba(38,159,240,1)",
     "clickColor": "rgba(0,101,189,1)",
     "successColor": "rgba(82,196,26,1)",
