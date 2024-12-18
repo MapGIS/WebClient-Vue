@@ -70,18 +70,26 @@ export default {
     },
   },
   watch: {
-    checkLayers(val) {
-      this.showTree = false;
-      if (val.length > 0) {
-        this.treeConvertList();
-      } else {
-        this.$emit("on-check", [], []);
-      }
+    checkLayers: {
+      deep: true,
+      immediate: true,
+      handler(val) {
+        this.showTree = false;
+        if (val.length > 0) {
+          this.treeConvertList();
+        } else {
+          this.$emit("on-check", [], []);
+        }
+      },
     },
-    checkedTreeKeys(val) {
-      if (this.flag) return;
-      this.changeCheck();
-      this.flag = false;
+    checkedTreeKeys: {
+      deep: true,
+      immediate: true,
+      handler(val) {
+        if (this.flag) return;
+        this.changeCheck();
+        this.flag = false;
+      },
     },
   },
   methods: {
