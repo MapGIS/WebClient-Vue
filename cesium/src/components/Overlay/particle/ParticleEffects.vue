@@ -38,7 +38,7 @@
               <mapgis-ui-list-item
                 class="list-item"
                 :class="{
-                  'list-active': activeIndex === index
+                  'list-active': activeIndex === index,
                 }"
                 slot="renderItem"
                 slot-scope="item, index"
@@ -51,10 +51,11 @@
                     <div v-if="tab.type === 'icon'">
                       <mapgis-ui-iconfont
                         :class="{
-                          'item-active': particleListCopy[index].isShow === true
+                          'item-active':
+                            particleListCopy[index].isShow === true,
                         }"
                         :type="tab.icon"
-                        style="font-size: 16px;padding-right: 4px"
+                        style="font-size: 16px; padding-right: 4px"
                         @click.capture.stop="showOrHide(index)"
                       ></mapgis-ui-iconfont>
                       <span>{{ item.name }}</span>
@@ -62,10 +63,11 @@
                     <div v-else>
                       <img
                         :src="tab.image"
-                        style="width: 24px;padding-right: 4px"
+                        style="width: 24px; padding-right: 4px"
                         alt=""
                         :class="{
-                          'item-active': particleListCopy[index].isShow === true
+                          'item-active':
+                            particleListCopy[index].isShow === true,
                         }"
                         @click="showOrHide(index)"
                       />
@@ -82,7 +84,7 @@
                   >
                     <mapgis-ui-iconfont
                       type="mapgis-shezhiditu"
-                      style="font-size:16px;width:27px;margin:0 4px;"
+                      style="font-size: 16px; width: 27px; margin: 0 4px"
                       @click.capture.stop="setParticleParameter(index)"
                     ></mapgis-ui-iconfont>
                   </mapgis-ui-tooltip>
@@ -92,7 +94,7 @@
                   >
                     <mapgis-ui-iconfont
                       type="mapgis-shanchu"
-                      style="font-size:16px;width:27px;margin:0 4px;"
+                      style="font-size: 16px; width: 27px; margin: 0 4px"
                       @click.capture.stop="onClearParticle(index)"
                     ></mapgis-ui-iconfont>
                   </mapgis-ui-tooltip>
@@ -114,15 +116,24 @@
                 :pageSize="pagination.pageSize"
                 :total="pagination.total"
                 :size="pagination.size"
-                :show-total="total => `共${total}条数据`"
+                :show-total="(total) => `共${total}条数据`"
               ></mapgis-ui-pagination>
               <!-- 批量操作 -->
               <mapgis-ui-setting-footer v-show="isBatch">
-                <mapgis-ui-button @click="allVisible">可见</mapgis-ui-button>
-                <mapgis-ui-button @click="allInvisible"
+                <mapgis-ui-button class="setting-footer-btn" @click="allVisible"
+                  >可见</mapgis-ui-button
+                >
+                <mapgis-ui-button
+                  class="setting-footer-btn"
+                  @click="allInvisible"
                   >不可见</mapgis-ui-button
                 >
-                <mapgis-ui-button @click="allDelete">删除</mapgis-ui-button>
+                <mapgis-ui-button class="setting-footer-btn" @click="allSelect"
+                  >全选</mapgis-ui-button
+                >
+                <mapgis-ui-button class="setting-footer-btn" @click="allDelete"
+                  >删除</mapgis-ui-button
+                >
               </mapgis-ui-setting-footer>
             </div>
           </mapgis-ui-tab-pane>
@@ -149,7 +160,7 @@
               label="发射速率(个/秒)"
               :range="[2, 60]"
               v-model="emissionRateCopy"
-              @change="val => onChangeEffect(val, 'emissionRate')"
+              @change="(val) => onChangeEffect(val, 'emissionRate')"
             />
             <mapgis-ui-input-number-panel
               class="mapgis-ui-number-style"
@@ -157,7 +168,7 @@
               label="尺寸(像素)"
               :range="[2, 60]"
               v-model="imageSizeCopy"
-              @change="val => onChangeEffect(val, 'imageSize')"
+              @change="(val) => onChangeEffect(val, 'imageSize')"
             />
             <mapgis-ui-input-number-panel
               size="large"
@@ -165,7 +176,7 @@
               :range="[0.1, 30.0]"
               v-model="minimumParticleLifeCopy"
               :step="0.1"
-              @change="val => onChangeEffect(val, 'minimumParticleLife')"
+              @change="(val) => onChangeEffect(val, 'minimumParticleLife')"
             />
             <mapgis-ui-input-number-panel
               size="large"
@@ -174,14 +185,14 @@
               :range="[0.1, 30.0]"
               v-model="maximumParticleLifeCopy"
               :step="0.1"
-              @change="val => onChangeEffect(val, 'maximumParticleLife')"
+              @change="(val) => onChangeEffect(val, 'maximumParticleLife')"
             />
             <mapgis-ui-input-number-panel
               size="large"
               label="最小速度(个/秒)"
               :range="[0, 30]"
               v-model="minimumSpeedCopy"
-              @change="val => onChangeEffect(val, 'minimumSpeed')"
+              @change="(val) => onChangeEffect(val, 'minimumSpeed')"
             />
             <mapgis-ui-input-number-panel
               size="large"
@@ -189,7 +200,7 @@
               label="最大速度(个/秒)"
               :range="[0, 30]"
               v-model="maximumSpeedCopy"
-              @change="val => onChangeEffect(val, 'maximumSpeed')"
+              @change="(val) => onChangeEffect(val, 'maximumSpeed')"
             />
             <mapgis-ui-input-number-panel
               size="large"
@@ -197,7 +208,7 @@
               :range="[0.0, 10.0]"
               :step="0.5"
               v-model="startScaleCopy"
-              @change="val => onChangeEffect(val, 'startScale')"
+              @change="(val) => onChangeEffect(val, 'startScale')"
             />
             <mapgis-ui-input-number-panel
               size="large"
@@ -206,7 +217,7 @@
               :range="[0.0, 10.0]"
               :step="0.5"
               v-model="endScaleCopy"
-              @change="val => onChangeEffect(val, 'endScale')"
+              @change="(val) => onChangeEffect(val, 'endScale')"
             />
           </mapgis-ui-tab-pane>
           <mapgis-ui-checkbox
@@ -226,7 +237,7 @@
 import VueOptions from "../../Base/Vue/VueOptions";
 import {
   isLogarithmicDepthBufferEnable,
-  setLogarithmicDepthBufferEnable
+  setLogarithmicDepthBufferEnable,
 } from "../../WebGlobe/util";
 import { emptyImage } from "../../UI/Base64Image/base64Image";
 import { newGuid } from "../../Utils/util";
@@ -246,7 +257,7 @@ export default {
       type: Array,
       default: () => {
         return [];
-      }
+      },
     },
     /**
      * @type Array
@@ -257,8 +268,8 @@ export default {
       type: Array,
       default: () => {
         return [];
-      }
-    }
+      },
+    },
   },
   watch: {
     symbolList: {
@@ -266,7 +277,7 @@ export default {
       immediate: true,
       handler() {
         this.symbolListCopy = this.symbolList;
-      }
+      },
     },
     symbolListCopy: {
       deep: true,
@@ -295,7 +306,7 @@ export default {
           }
           vm.tabIcons.push(particle);
         }
-      }
+      },
     },
     particleList: {
       deep: true,
@@ -308,7 +319,7 @@ export default {
         for (let i = 0; i < next.length; i++) {
           let viewModel = JSON.parse(JSON.stringify(next[i].param));
           // 遍历符号列表，找到symbolGuid对应的符号的image
-          let checkedSymbol = vm.symbolListCopy.filter(f => {
+          let checkedSymbol = vm.symbolListCopy.filter((f) => {
             return f.guid === viewModel.symbolGuid;
           });
           this.imgUrl = checkedSymbol[0].image;
@@ -318,19 +329,19 @@ export default {
             vm.particleArr[i].remove();
           }
         }
-      }
+      },
     },
     particleArr: {
       handler(next) {
         this.pagination.total = this.particleListCopy
           ? this.particleListCopy.length
           : 0;
-      }
-    }
+      },
+    },
   },
   model: {
     prop: "particleList",
-    event: "changeParticle"
+    event: "changeParticle",
   },
   data() {
     return {
@@ -344,7 +355,7 @@ export default {
         minimumSpeed: 9.0,
         maximumSpeed: 9.5,
         startScale: 1.0,
-        endScale: 4.0
+        endScale: 4.0,
       },
       emissionRateCopy: 2.0, // 发射速率
       imageSizeCopy: 5.0, // 尺寸
@@ -368,20 +379,20 @@ export default {
           icon: "mapgis-fire",
           type: "icon",
           guid: "6961EBEA-F6A2-EB46-2119-7F5E2A0BEBCC",
-          image: "./fire.png"
+          image: "./fire.png",
         },
         {
           title: "烟雾",
           icon: "mapgis-smoke",
           type: "icon",
           guid: "9A81F9FB-AABA-D469-8B5E-1572A0BF8515",
-          image: "./smoke.png"
-        }
+          image: "./smoke.png",
+        },
       ],
       tabBarStyle: {
         margin: "0",
         textAlign: "center",
-        borderBottom: "1px solid #F0F0F0"
+        borderBottom: "1px solid #F0F0F0",
       },
       activeKey: "1",
       particleListCopy: this.particleList || [],
@@ -390,14 +401,14 @@ export default {
           guid: "C0EA27B2-0365-1F9F-C71A-B0586ADDCA0D",
           name: "火焰",
           image: "./fire.png",
-          iconUrl: "mapgis-fire"
+          iconUrl: "mapgis-fire",
         },
         {
           guid: "B8AF7BAC-082F-14C6-BECD-8F7AB44C5019",
           name: "烟雾",
           image: "./smoke.png",
-          iconUrl: "mapgis-smoke"
-        }
+          iconUrl: "mapgis-smoke",
+        },
       ],
       // 修改已有粒子参数的索引
       changeParticleIndex: undefined,
@@ -407,7 +418,7 @@ export default {
       emptyImage: undefined,
       imageStyle: {
         height: "150px",
-        margin: "0 auto"
+        margin: "0 auto",
       },
       // 初始化的粒子参数
       initParticleParmeter: {},
@@ -420,7 +431,7 @@ export default {
       // 符号库列表样式
       symbolImgStyle: {
         width: "24px",
-        height: "24px"
+        height: "24px",
       },
       symbolGuid: undefined,
       title: undefined,
@@ -431,18 +442,18 @@ export default {
 
       // 分页
       pagination: {
-        onChange: page => {
+        onChange: (page) => {
           console.log(page);
           this.pagination.current = page;
           this.selectedIds = [];
         },
         current: 1,
         size: "small",
-        pageSize: 7
+        pageSize: 7,
       },
       isBatch: false, //是否批量操作
 
-      selectedIds: [] //选中video的id集合
+      selectedIds: [], //选中video的id集合
     };
   },
 
@@ -488,16 +499,16 @@ export default {
           pixelSize: 10,
           color: Cesium.Color.WHITE.withAlpha(0),
           outlineColor: Cesium.Color.WHITE.withAlpha(0),
-          outlineWidth: 1
-        }
+          outlineWidth: 1,
+        },
       });
       this.viewer.entities.add(entity);
       this.viewer.flyTo(entity, {
         offset: {
           heading: Cesium.Math.toRadians(vm.heading || 0),
           pitch: Cesium.Math.toRadians(vm.pitch || -Cesium.Math.PI_OVER_FOUR),
-          range: 0
-        }
+          range: 0,
+        },
       });
       // 方法二：camera.flyTo
       // this.viewer.scene.camera.flyTo({
@@ -512,10 +523,10 @@ export default {
     },
     async createCesiumObject() {
       return new Promise(
-        resolve => {
+        (resolve) => {
           resolve();
         },
-        reject => {}
+        (reject) => {}
       );
     },
     setEffectOptions(effect) {
@@ -533,7 +544,7 @@ export default {
     mount() {
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function(dataSource) {
+      promise.then(function (dataSource) {
         vm.$emit("load", vm);
       });
       // this.effectOptions = this.effectFireOptions;
@@ -625,7 +636,7 @@ export default {
               minimumSpeed: 9.0,
               maximumSpeed: 9.5,
               startScale: 1.0,
-              endScale: 4.0
+              endScale: 4.0,
             };
             this.emitterTypeCopy = initOperationConfig.emitterType;
             this.emissionRateCopy = initOperationConfig.emissionRate;
@@ -707,7 +718,7 @@ export default {
       this.handlerAction = new Cesium.ScreenSpaceEventHandler(
         this.viewer.scene.canvas
       );
-      this.handlerAction.setInputAction(event => {
+      this.handlerAction.setInputAction((event) => {
         this._registerMouseLClickEvent(event);
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
     },
@@ -748,7 +759,7 @@ export default {
         guid: guid,
         imageUrl: this.imgUrl,
         isShow: true,
-        param: param
+        param: param,
       };
       this.particleListCopy.push(particleItem);
       this.$emit("changeParticle", this.particleListCopy);
@@ -794,7 +805,7 @@ export default {
           minimumImageSize: new this.Cesium.Cartesian2(25.0, 25.0),
           maximumImageSize: new this.Cesium.Cartesian2(25.0, 25.0),
           lifetime: 16.0,
-          viewHeight: -1
+          viewHeight: -1,
         }
       );
       particle.start();
@@ -933,7 +944,7 @@ export default {
           minimumImageSize: new this.Cesium.Cartesian2(25.0, 25.0),
           maximumImageSize: new this.Cesium.Cartesian2(25.0, 25.0),
           lifetime: 16.0,
-          viewHeight: -1
+          viewHeight: -1,
         }
       );
       particle.start();
@@ -1004,6 +1015,14 @@ export default {
         }
       }
     },
+    // 全选
+    allSelect() {
+      this.particleListCopy.forEach((item, index) => {
+        if (!this.selectedIds.includes(index)) {
+          this.selectedIds.push(index);
+        }
+      });
+    },
     /**
      * 批量删除
      */
@@ -1026,8 +1045,8 @@ export default {
         vm.particleArr.splice(indexArr[j], 1);
       }
       this.selectedIds = [];
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped>
@@ -1082,6 +1101,9 @@ export default {
   bottom: 0;
   position: absolute;
   width: 100%;
+}
+.setting-footer-btn {
+  margin-right: 4px;
 }
 
 .pagination {
