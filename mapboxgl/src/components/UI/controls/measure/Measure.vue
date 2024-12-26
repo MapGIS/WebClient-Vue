@@ -5,6 +5,7 @@
     <slot name="measureTool">
       <div v-show="enableControl">
         <measure-tool
+          ref="measureTool"
           :result="measureResult"
           :featureConfig="featureConfig"
           v-if="isAdvanceControl"
@@ -495,6 +496,8 @@ export default {
       this.deleteMeasure();
       this.$_unbindMeasureEvents();
       this.$_emitEvent("removed");
+      // 移除的时候，重置工具条状态
+      this.$refs.measureTool.activeMode = "";
     },
     /**
      * 禁止拖拽

@@ -2,7 +2,11 @@
   <div class="mapgis-3d-measure">
     <slot v-if="initial"></slot>
     <slot name="measureTool">
-      <measure-3d-tool :result="result" :measureConfig="measureConfig" />
+      <measure-3d-tool
+        ref="measureTool"
+        :result="result"
+        :measureConfig="measureConfig"
+      />
     </slot>
   </div>
 </template>
@@ -17,7 +21,7 @@ export default {
   name: "mapgis-3d-measure",
   mixins: [ServiceLayer],
   components: {
-    "measure-3d-tool": Measure3dTool
+    "measure-3d-tool": Measure3dTool,
   },
   props: {
     styles: {
@@ -25,21 +29,21 @@ export default {
       default() {
         return {
           lineColor: "#1890ff",
-          fillColor: "#1890ff"
+          fillColor: "#1890ff",
         };
-      }
+      },
     },
     options: {
       type: Object,
       default() {
         return {};
-      }
+      },
     },
     // 管理平台配置的绘制图形样式
     featureConfig: {
       type: Object,
-      defalut: () => {}
-    }
+      defalut: () => {},
+    },
   },
   data() {
     return {
@@ -50,21 +54,21 @@ export default {
       initial: false,
       measureStyles: {},
       waitManagerName: "GlobesManager",
-      measureConfig: {}
+      measureConfig: {},
     };
   },
   watch: {
     styles: {
-      handler: function() {
+      handler: function () {
         this.initStyles(this.styles);
       },
-      deep: true
+      deep: true,
     },
     measureOptions: {
-      handler: function() {
+      handler: function () {
         this.measureOptions = this.$_formatOptions(this.measureOptions);
       },
-      deep: true
+      deep: true,
     },
     featureConfig: {
       handler(val) {
@@ -73,12 +77,12 @@ export default {
         }
       },
       deep: true,
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   mounted() {
     let vm = this;
-    this.$_init(function() {
+    this.$_init(function () {
       vm.initStyles(vm.styles);
       vm.initial = true;
       vm.$emit("load", vm);
@@ -131,15 +135,15 @@ export default {
     async $_enableMeasure(MeasureName, MeasureType) {
       const lineConfig = this.featureConfig?.feature?.line || {
         color: "rgba(255,0,0,1)",
-        size: "3"
+        size: "3",
       };
       const labelConfig = this.featureConfig?.label?.text || {
         color: "rgba(255,0,102,1)",
         fontSize: "14",
-        fontFamily: "华文行楷"
+        fontFamily: "华文行楷",
       };
       const areaConfig = this.featureConfig?.feature?.reg || {
-        color: "rgba(255,255,0,0.5)"
+        color: "rgba(255,255,0,0.5)",
       };
       if (this.measureConfig.lineColor) {
         this.measureStyles.lineColor = Cesium.Color.fromCssColorString(
@@ -154,12 +158,16 @@ export default {
           width: Number(lineConfig.size),
           material: new Cesium.PolylineGlowMaterialProperty({
             glowPower: 0.15,
-            color: Cesium.Color.fromCssColorString(this.measureConfig.lineColor)
+            color: Cesium.Color.fromCssColorString(
+              this.measureConfig.lineColor
+            ),
           }),
           depthFailMaterial: new Cesium.PolylineGlowMaterialProperty({
             glowPower: 0.15,
-            color: Cesium.Color.fromCssColorString(this.measureConfig.lineColor)
-          })
+            color: Cesium.Color.fromCssColorString(
+              this.measureConfig.lineColor
+            ),
+          }),
         };
         MeasureObject.lineStyle = lineStyle;
       }
@@ -190,7 +198,7 @@ export default {
       // 地形测量参数对象
       let measureObject = {
         lineColor: this.measureStyles.lineColor,
-        callBack: async result => {
+        callBack: async (result) => {
           if (!result) {
             result = await this.waitAreaResult();
             console.log(result);
@@ -202,7 +210,7 @@ export default {
           }
         },
         // 地形开启贴地量算：true
-        isTerrain: MeasureType === "tostick" ? true : false
+        isTerrain: MeasureType === "tostick" ? true : false,
       };
       // 添加量算工具的参数设置到cesium测量对象当中
       for (let element of Object.keys(MeasureObject)) {
@@ -221,7 +229,7 @@ export default {
       measure.startTool();
     },
     deleteMeasure() {
-      this.$_deleteManger("MeasureToolManager", function(manager) {
+      this.$_deleteManger("MeasureToolManager", function (manager) {
         if (manager.source) {
           manager.source.stopTool();
         }
@@ -229,7 +237,7 @@ export default {
     },
     // 获取贴地面结果
     async waitAreaResult() {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         setTimeout(() => {
           const result = this.measure._area;
           resolve(result);
@@ -238,11 +246,14 @@ export default {
     },
     remove() {
       this.deleteMeasure();
+      // 移除的时候，重置工具条状态
+      this.$refs.measureTool.activeMode = "";
+      this.$refs.measureTool.measureResult = null;
     },
     resizeStyles() {
       this.measureConfig.lineColor =
         this.featureConfig?.feature?.line?.color || "#1890ff";
-    }
-  }
+    },
+  },
 };
 </script>
