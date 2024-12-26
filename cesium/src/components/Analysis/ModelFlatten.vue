@@ -43,6 +43,11 @@
               @change="$_change"
             />
           </mapgis-ui-form-item>
+          <mapgis-ui-switch-row-left
+            class="flatten-switch"
+            title="根据ID压平"
+            v-model="flattenWithId"
+          />
         </mapgis-ui-setting-form>
         <mapgis-ui-setting-footer>
           <mapgis-ui-button type="primary" @click="clearModelFlatten(true)"
@@ -106,26 +111,26 @@ export default {
   props: {
     layout: {
       type: String,
-      default: "vertical" // 'horizontal' 'vertical' 'inline'
+      default: "vertical", // 'horizontal' 'vertical' 'inline'
     },
     position: {
       type: String,
-      default: "right"
+      default: "right",
     },
     M3Ds: {
       type: Array,
       default() {
         return [];
-      }
+      },
     },
     heightOffset: {
       type: Number,
-      default: 0
+      default: 0,
     },
     noOneMap: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   inject: ["Cesium", "vueCesium", "viewer"],
   data() {
@@ -134,51 +139,52 @@ export default {
       m3dVueIndex: undefined,
       titleStyle: {
         paddingLeft: 0,
-        fontsize: "14px"
+        fontsize: "14px",
       },
       selectStyle: {
-        paddingRight: 0
+        paddingRight: 0,
       },
       containerStyle: {
-        paddingRight: 0
+        paddingRight: 0,
       },
       classify: [
         {
           key: "1",
-          value: "贴模型"
+          value: "贴模型",
         },
         {
           key: "0",
-          value: "贴地"
+          value: "贴地",
         },
         {
           key: "2",
-          value: "贴模型和贴地"
+          value: "贴模型和贴地",
         },
         {
           key: "-1",
-          value: "都不贴"
-        }
+          value: "都不贴",
+        },
       ],
       mode: "2",
       isStartDrawing: false,
       flattenHeight: 0,
       max: 100,
       min: 0,
-      selectDefaultValue: undefined
+      selectDefaultValue: undefined,
+      flattenWithId: true,
     };
   },
   watch: {
     M3Ds: {
-      handler: function() {
+      handler: function () {
         this.dataSource = this.M3Ds;
         if (this.dataSource.length > 0) {
           this.selectDefaultValue = this.dataSource[0].key;
           this.m3dVueIndex = this.dataSource[0].key;
         }
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   mounted() {
     this.dataSource = this.M3Ds;
@@ -190,7 +196,7 @@ export default {
     this.$_newGraphicLayer({
       vueIndex: this.vueIndex,
       vueKey: this.vueKey,
-      getGraphic: this.getDrawResult
+      getGraphic: this.getDrawResult,
     });
     this.flattenTool = new Cesium.FlattenTool(this.viewer.scene);
   },
@@ -234,8 +240,8 @@ export default {
             color: Cesium.Color.RED.withAlpha(0.8),
             height: 0,
             isPlanePolygon: false,
-            classificationType: this.$_getClassificationType(this.mode)
-          }
+            classificationType: this.$_getClassificationType(this.mode),
+          },
         };
         window.__graphicsLayer__.startDrawing(options);
       }
@@ -276,52 +282,19 @@ export default {
           ),
           height: 0,
           isPlanePolygon: false,
-          classificationType: this.$_getClassificationType(this.mode)
-        }
+          classificationType: this.$_getClassificationType(this.mode),
+        },
       };
       //无法通过manager获取graphicLayer，否则贴地贴模型失效，暂时只能这样
       if (!window.hasOwnProperty("__graphicsLayer__")) {
         window.__graphicsLayer__ = new Cesium.GraphicsLayer(viewer, {
-          getGraphic: this.getDrawResult
+          getGraphic: this.getDrawResult,
         });
       }
       window.__graphicsLayer__.startDrawing(options);
-      // let m3d = this.$_getM3D(this.vueKey, this.m3dVueIndex);
-      // if (m3d) {
-      //   const { _arrayLength, _height, _isFlatten, _positionArray } = m3d;
-      //   window.vueCesium[Managger].addSource(
-      //     vueKey,
-      //     vueIndex,
-      //     {},
-      //     {
-      //       m3d: m3d,
-      //       origin: {
-      //         _arrayLength,
-      //         _height,
-      //         _isFlatten,
-      //         _positionArray
-      //       }
-      //     }
-      //   );
-      // }
     },
     clearModelFlatten(clearPosition) {
       const { viewer } = this;
-      // let find = this.findSource();
-      // if (clearPosition) {
-      //   window._result_ = undefined;
-      // }
-      // if (find && find.source) {
-      //   let m3d = this.$_getM3D(this.vueKey, this.m3dVueIndex);
-      //   if (m3d) {
-      //     let origin = find.options.origin;
-      //     m3d._height = origin._height;
-      //     m3d._isFlatten = origin._isFlatten;
-      //     m3d._arrayLength = origin._arrayLength;
-      //     m3d._positionArray = origin._positionArray;
-      //     viewer.scene.requestRender();
-      //   }
-      // }
       this.flattenTool && this.flattenTool.removeModelFlatten();
     },
     getDrawResult(result) {
@@ -333,37 +306,19 @@ export default {
       this.flattenTool.modelFlatten(
         result.positions,
         this.flattenHeight + this.heightOffset,
+        this.flattenWithId,
         m3d ? [m3d] : undefined
       );
       window.__graphicsLayer__.removeAllGraphic();
       window.__graphicsLayer__.stopDrawing();
       window._result_ = result;
       this.isStartDrawing = false;
-      // const { vueCesium } = this;
-      // let m3d = this.$_getM3D(this.vueKey, this.m3dVueIndex);
-
-      // if (m3d) {
-      //   //模型压平
-      //   if (
-      //     result.positions[0] != result.positions[result.positions.length - 1]
-      //   ) {
-      //     result.positions.push(result.positions[0]);
-      //   }
-      //   m3d.modelFlatten(
-      //     result.positions,
-      //     this.flattenHeight + this.heightOffset
-      //   );
-      //   window.__graphicsLayer__.removeAllGraphic();
-      //   window.__graphicsLayer__.stopDrawing();
-      //   window._result_ = result;
-      //   this.isStartDrawing = false;
-      // }
-    }
-  }
+    },
+  },
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 ::v-deep .mapgis-ui-card-body {
   max-height: 300px;
   width: fit-content;
@@ -389,5 +344,10 @@ export default {
 .mapgis--3d-model-flatten-box {
   padding: 10px;
   border-radius: 4px;
+}
+.flatten-switch {
+  ::v-deep.mapgis-ui-switch-row-left-title {
+    padding-left: 0;
+  }
 }
 </style>
