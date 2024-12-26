@@ -86,7 +86,6 @@ export { default as Mapgis3dViewshed } from "./components/Analysis/Viewshed.vue"
 export { default as Mapgis3dSightline } from "./components/Analysis/Sightline.vue";
 export { default as Mapgis3dSkyline } from "./components/Analysis/SkyLine";
 export { default as Mapgis3dModelFlatten } from "./components/Analysis/ModelFlatten";
-export { default as Mapgis3dExcavate } from "./components/Analysis/Excavate";
 export { default as Mapgis3dHeightlimited } from "./components/Analysis/HeightLimited";
 export { default as Mapgis3dShadow } from "./components/Analysis/Shadow";
 export { default as Mapgis3dDynamicCutting } from "./components/Analysis/DynamicCutting";
@@ -109,7 +108,7 @@ export { default as Mapgis3dProjectorManger } from "./components/Analysis/scene-
 export { default as Mapgis3dProjectorSetting } from "./components/Analysis/scene-projector/ProjectorSetting.vue";
 export { default as Mapgis3dBimComponent } from "./components/Analysis/BIM.vue";
 export { default as Mapgis3dExplosionAnalysis } from "./components/Analysis/Explosion.vue";
-export { default as Mapgis3dTerrainExcavate } from "./components/Analysis/TerrainExcavate";
+export { default as Mapgis3dTerrainExcavate } from "./components/Analysis/Excavate";
 //融合组件
 export { default as Mapgis3dComponentMix } from "./components/UI/mixComponent/GeojsonCom";
 export { default as Mapgis3dComponentLegend } from "./components/UI/mixComponent/Legend";

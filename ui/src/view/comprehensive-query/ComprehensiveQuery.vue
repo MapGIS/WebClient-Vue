@@ -58,7 +58,7 @@
     <div
       :class="['locate-panel-contaner']"
       :style="{ display: locationPanelExpand ? 'block' : 'none' }"
-    >
+    ><mapgis-ui-button class="close-button button-locate" icon="close" @click="onClose" />
       <slot />
     </div>
     <div id="measure-max-height" />

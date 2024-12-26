@@ -27,6 +27,7 @@
   }
   .locate-panel-contaner,
   .search-panel-contaner {
+    position: relative;
     .mapgis-ui-tabs.mapgis-ui-tabs-card {
       .mapgis-ui-tabs-card-bar {
         margin-bottom: 0;
@@ -48,6 +49,17 @@
         }
       }
     }
+        .close-button.button-locate {
+          position: absolute;
+          top: 13px;
+          right: 10px;
+          width: 24px;
+          font-size: 13px;
+          height: 24px;
+          border: 0;
+          cursor: pointer;
+          z-index: 99;
+        }
   }
 }
 
