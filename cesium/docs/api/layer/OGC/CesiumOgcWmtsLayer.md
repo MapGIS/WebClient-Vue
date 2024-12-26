@@ -25,32 +25,21 @@
 - **描述:** wmts 标准中的 layer 属性，即图层名称
   > 这里以司马云上发布的 WMTS 服务为例，ArcGis 同理，访问http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer?service=WMTS&request=GetCapabilities，获取地图元信息
   > 这里得到的是一个 XML 文档。<br/>
-  > ... <br/>
-  > \<Layer\> <br/>
-  > \<ows:Title\>beijing\</ows:Title\> <br/>
-  > \<ows:Identifier\>beijing</ows:Identifier\>//这个值 beijing 就是 wmtsLayer 属性所需要的值 <br/>
-  > ... <br/>
-  > \</Layer\> <br/>
+  > ... <br/> > \<Layer\> <br/> > \<ows:Title\>beijing\</ows:Title\> <br/> > \<ows:Identifier\>beijing</ows:Identifier\>//这个值 beijing 就是 wmtsLayer 属性所需要的值 <br/>
+  > ... <br/> > \</Layer\> <br/>
   > ... <br/>
   > 全文搜索\<Layer\>关键字，在 Layer 下找到\<ows:Identifier\>属性，里面的值"beijing"就是 wmtsLayer 属性所需要的
 
 ### `tileMatrixSet`
 
-- **类型:** `String`
+- **类型:** `Object`
 - **必传**
 - **侦听属性**
 - **描述:** wmts 标准中的 TileMatrixSet 属性，即地图矩阵集合
   > 这里以司马云上发布的 WMTS 服务为例，ArcGis 同理，访问http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer?service=WMTS&request=GetCapabilities，获取地图元信息
   > 这里得到的是一个 XML 文档。<br/>
-  > ... <br/>
-  > \<TileMatrixSet\> <br/>
-  > \<ows:Title\>采用 arcgis 计算方式的瓦片块阵集\</ows:Title\> <br/>
-  > \<ows:Abstract\>该块阵集使用 arcgis 标准计算的比例尺\</ows:Abstract\> <br/>
-  > \<ows:Identifier\>EPSG:4326*北京市\_arcgis_GB\</ows:Identifier\>//这个值 EPSG:4326*北京市*arcgis_GB 就是 TileMatrixSet 属性所需要的值 <br/>
-  > \<ows:SupportedCRS\>urn:ogc:def:crs:EPSG::4326\</ows:SupportedCRS\> <br/>
-  > \<WellKnownScaleSet\>urn:ogc:def:wkss:OGC:1.0:GoogleCRS84Quad\</WellKnownScaleSet\> <br/>
-  > ... <br/>
-  > \<TileMatrixSet\> <br/>
+  > ... <br/> > \<TileMatrixSet\> <br/> > \<ows:Title\>采用 arcgis 计算方式的瓦片块阵集\</ows:Title\> <br/> > \<ows:Abstract\>该块阵集使用 arcgis 标准计算的比例尺\</ows:Abstract\> <br/> > \<ows:Identifier\>EPSG:4326*北京市\_arcgis_GB\</ows:Identifier\>//这个值 EPSG:4326*北京市*arcgis_GB 就是 TileMatrixSet 属性所需要的值 <br/> > \<ows:SupportedCRS\>urn:ogc:def:crs:EPSG::4326\</ows:SupportedCRS\> <br/> > \<WellKnownScaleSet\>urn:ogc:def:wkss:OGC:1.0:GoogleCRS84Quad\</WellKnownScaleSet\> <br/>
+  > ... <br/> > \<TileMatrixSet\> <br/>
   > ... <br/>
   > 全文搜索\<TileMatrixSet\>关键字，在\<TileMatrixSet\>下找到\<ows:Identifier\>属性，里面的值"EPSG:4326*北京市\_arcgis_GB"就是 tileMatrixSet 属性所需要的
 
@@ -62,8 +51,7 @@
 - **描述:** wmts 标准中的 format 属性，即请求的图片的返回格式
   > 这里以司马云上发布的 WMTS 服务为例，ArcGis 同理，访问http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer?service=WMTS&request=GetCapabilities，获取地图元信息
   > 这里得到的是一个 XML 文档。 <br/>
-  > ... <br/>
-  > \<Format\>image/png\</Format\> <br/>
+  > ... <br/> > \<Format\>image/png\</Format\> <br/>
   > ... <br/>
   > 全文搜索\<Format\>关键字，里面的值"image/png"就是 format 属性所需要的
 
@@ -85,11 +73,7 @@
 - **描述:** wmts 标准中的 style 属性，即地图样式
   > 这里以司马云上发布的 WMTS 服务为例，ArcGis 同理，访问http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer?service=WMTS&request=GetCapabilities，获取地图元信息
   > 这里得到的是一个 XML 文档。 <br/>
-  > ... <br/>
-  > \<Style isDefault="true"\> <br/>
-  > \<ows:Title\>Default Style\</ows:Title\> <br/>
-  > \<ows:Identifier\>default\</ows:Identifier\>//里面的"default"就是 wmtsStyle 的值 <br/>
-  > \</Style\> <br/>
+  > ... <br/> > \<Style isDefault="true"\> <br/> > \<ows:Title\>Default Style\</ows:Title\> <br/> > \<ows:Identifier\>default\</ows:Identifier\>//里面的"default"就是 wmtsStyle 的值 <br/> > \</Style\> <br/>
   > ... <br/>
   > 全文搜索 Style 关键字，地图可以有多个 style，这里以 default，默认值为例，在\<Style isDefault="true"\>下找到\<ows:Identifier\>属性，里面的"default"就是 wmtsStyle 的值
 
@@ -209,10 +193,10 @@ export default {
       //token信息
       token: {
         key: "tk",
-        value: "9c157e9585486c02edf817d2ecbc7752"
-      }
+        value: "9c157e9585486c02edf817d2ecbc7752",
+      },
     };
-  }
+  },
 };
 </script>
 
@@ -255,9 +239,9 @@ export default {
       //Cesium的瓦片切图方式
       tilingScheme: "EPSG:4326",
       //返回格式
-      format: "image/png"
+      format: "image/png",
     };
-  }
+  },
 };
 </script>
 
@@ -298,9 +282,9 @@ export default {
       //Cesium的瓦片切图方式
       tilingScheme: "EPSG:4326",
       //返回格式
-      format: "image/png"
+      format: "image/png",
     };
-  }
+  },
 };
 </script>
 
@@ -356,7 +340,7 @@ export default {
       layerStyle: {
         visible: true, //是否显示图层
         opacity: 1, //图层透明度
-        zIndex: 105 //图层zIndex，与css里的zIndex类似
+        zIndex: 105, //图层zIndex，与css里的zIndex类似
       },
       //服务基地址
       baseUrl2:
@@ -369,10 +353,10 @@ export default {
       tilingScheme: "EPSG:4326",
       //样式信息
       layerStyle2: {
-        zIndex: 50
+        zIndex: 50,
       },
       //是否显示图层
-      show: false
+      show: false,
     };
   },
   methods: {
@@ -395,8 +379,8 @@ export default {
       } else {
         this.layerStyle.zIndex = 105;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -450,10 +434,10 @@ export default {
       //token信息
       token: {
         key: "tk",
-        value: "9c157e9585486c02edf817d2ecbc7752"
+        value: "9c157e9585486c02edf817d2ecbc7752",
       },
       layerStyleWmts: {
-        zIndex: 100
+        zIndex: 100,
       },
       //要加载的url
       urlDoc: "http://localhost:6163/igs/rest/mrms/docs/武汉_专题图_4328",
@@ -463,8 +447,8 @@ export default {
       vueKey: "vueKeyOne",
       vueKey2: "vueKeyTwo",
       layerStyleDoc: {
-        zIndex: 1000
-      }
+        zIndex: 1000,
+      },
     };
   },
   methods: {
@@ -474,8 +458,8 @@ export default {
       } else {
         this.layerStyleDoc.zIndex = 1000;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 ```

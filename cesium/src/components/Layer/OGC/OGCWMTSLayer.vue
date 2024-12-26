@@ -4,16 +4,23 @@
 
 <script>
 import ServiceLayer from "../ServiceLayer";
+import {
+  Extent,
+  TileInfo,
+  SpatialReference,
+  Point,
+} from "@mapgis/webclient-common";
+import { getTilingScheme } from "@mapgis/webclient-cesium-plugin";
 export default {
   name: "mapgis-3d-ogc-wmts-layer",
   inject: ["Cesium", "viewer"],
   mixins: [ServiceLayer],
   props: {
     wmtsLayer: { type: String, required: true },
-    tileMatrixSet: { type: String, required: true },
+    tileMatrixSet: { type: Object, required: true },
     wmtsStyle: { type: String, default: "default" },
     tilingScheme: { type: String, required: true },
-    format: { type: String, default: "image/png" }
+    format: { type: String, default: "image/png" },
   },
   data() {
     return {
@@ -37,10 +44,10 @@ export default {
         subdomains: "string|array",
         startLevel: "number",
         vueKey: "string",
-        vueIndex: "number"
+        vueIndex: "number",
       },
       managerName: "OGCWMTSManager",
-      providerName: "WebMapTileServiceImageryProvider"
+      providerName: "WebMapTileServiceImageryProvider",
     };
   },
   mounted() {
@@ -51,29 +58,29 @@ export default {
   },
   watch: {
     wmtsLayer: {
-      handler: function() {
+      handler: function () {
         this.unmount();
         this.mount();
-      }
+      },
     },
     tileMatrixSet: {
-      handler: function() {
+      handler: function () {
         this.unmount();
         this.mount();
-      }
+      },
     },
     tilingScheme: {
-      handler: function() {
+      handler: function () {
         this.unmount();
         this.mount();
-      }
+      },
     },
     wmtsStyle: {
-      handler: function() {
+      handler: function () {
         this.unmount();
         this.mount();
-      }
-    }
+      },
+    },
   },
   methods: {
     mount() {
@@ -84,7 +91,17 @@ export default {
       options.style = this.wmtsStyle;
 
       //如果tilingScheme存在，则生成tilingScheme对象
-      if (this.tilingScheme) {
+      if (this.tileMatrixSet && this.tileMatrixSet.tileInfo) {
+        const { tileInfo } = this.tileMatrixSet;
+        const { fullExtent } = this.tileMatrixSet.layer.activeLayer;
+        const { spatialReference } = tileInfo;
+        const tileScheme = this.getCustomTilingScheme(
+          tileInfo,
+          spatialReference,
+          fullExtent
+        );
+        options.tilingScheme = tileScheme;
+      } else if (this.tilingScheme) {
         options.tilingScheme = this.$_setTilingScheme(this.tilingScheme);
       }
 
@@ -119,7 +136,7 @@ export default {
             "17",
             "18",
             "19",
-            "20"
+            "20",
           ];
         }
       }
@@ -128,13 +145,44 @@ export default {
       options.layer = this.wmtsLayer;
 
       //将tileMatrixSet转为tileMatrixSetID
-      options.tileMatrixSetID = this.tileMatrixSet;
+      options.tileMatrixSetID = this.tileMatrixSet.id;
 
       this.$_mount(options);
     },
+
+    // 根据tileInfo、spatialReference、extent，获取自定义TilingScheme对象
+    getCustomTilingScheme(tileInfo, spatialReference, extent) {
+      const spatialReferenceCommon = new SpatialReference({
+        wkid: spatialReference.wkid,
+      });
+      const originCommon = new Point({
+        coordinates: [tileInfo.origin.x, tileInfo.origin.y],
+        spatialReference,
+      });
+      const extentCommon = new Extent({
+        xmin: extent.xmin,
+        ymin: extent.ymin,
+        xmax: extent.xmax,
+        ymax: extent.ymax,
+      });
+      const tileInfoCommon = new TileInfo({
+        dpi: tileInfo.dpi,
+        format: tileInfo.format,
+        origin: originCommon,
+        lods: tileInfo.lods,
+        spatialReference: spatialReferenceCommon,
+        size: tileInfo.size,
+      });
+      const tilingScheme = getTilingScheme(
+        spatialReferenceCommon,
+        extentCommon,
+        tileInfoCommon
+      );
+      return tilingScheme;
+    },
     unmount() {
       this.$_unmount();
-    }
-  }
+    },
+  },
 };
 </script>
