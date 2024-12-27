@@ -184,15 +184,6 @@
         v-bind="popupConfig"
       />
     </mapgis-3d-feature-popup>
-    <mapgis-3d-popup-feature-detail
-      v-if="showDetail && isUnClosePopup"
-      :properties="featureproperties"
-      :dataStoreIp="dataStoreIp"
-      :dataStorePort="dataStorePort"
-      :dataStoreDataset="dataStoreDataset"
-      @close-popup-window="closePopupWindow"
-      @project-screen="projectScreen"
-    />
   </div>
 </template>
 
@@ -234,6 +225,10 @@ export default {
     popupShowType: {
       type: String,
       default: "default",
+    },
+    popupOverlay: {
+      type: Object,
+      default: () => {},
     },
     // 高亮样式
     highlightStyle: {
@@ -307,8 +302,6 @@ export default {
       featurevisible: undefined,
       featureclickenable: this.enablePopup,
       iEnableIot: false,
-      showDetail: false,
-      isUnClosePopup: true,
       layerVisibleArr: [], //记录显示的图层，拾取时隐藏的图层直接忽略
     };
   },
@@ -919,10 +912,6 @@ export default {
 
       if (!pickedFeature._content && pickedFeature.primitive) {
         this.featurevisible = true;
-        // 右侧展示气泡框展示控制条件之一，关闭再打开会进入这里，showDetail一个控制条件不够
-        if (!this.isUnClosePopup) {
-          this.isUnClosePopup = !this.isUnClosePopup;
-        }
         return;
       }
       let index = pickedFeature._content._tileset._layerIndex;
@@ -954,8 +943,8 @@ export default {
       if (this.popupShowType === "default") {
         this.featurevisible = false;
       } else {
-        if (this.popupShowType === "right" && this.isUnClosePopup) {
-          this.isUnClosePopup = !this.isUnClosePopup;
+        if (this.popupShowType === "right") {
+          this.popupOverlay && this.popupOverlay.setContent(null);
         }
       }
 
@@ -1087,12 +1076,12 @@ export default {
                       latitude: lat,
                       height: height,
                     };
-                  } else if (vm.popupShowType === "right") {
-                    vm.showDetail = true;
-                    if (!vm.isUnClosePopup) {
-                      vm.isUnClosePopup = !vm.isUnClosePopup;
-                    }
+                  } else {
+                    vm.popupOverlay &&
+                      vm.popupOverlay.setContent(vm.featureproperties);
                   }
+                } else {
+                  vm.popupOverlay && vm.popupOverlay.setContent(null);
                 }
                 // _extrudedHeight和_height这样设置后才能贴模型
                 feature.geometryInstances.geometry._extrudedHeight = 0;
@@ -1104,10 +1093,6 @@ export default {
                   "feature",
                   feature
                 );
-              } else {
-                if (vm.popupShowType === "right" && vm.isUnClosePopup) {
-                  vm.isUnClosePopup = !vm.isUnClosePopup;
-                }
               }
             },
             {
@@ -1132,6 +1117,7 @@ export default {
         g3dLayerIndex,
         popupOptions,
         highlightStyle,
+        popupShowType,
       } = this;
       const { vueKey, vueIndex, vueCesium } = this;
       const scene = viewer.scene;
@@ -1211,6 +1197,11 @@ export default {
             }
             pickedFeature.color =
               Cesium.Color.fromCssColorString(highlightStyle);
+
+            if (popupShowType === "right") {
+              vm.popupOverlay &&
+                vm.popupOverlay.setContent(vm.featureproperties);
+            }
           } else {
             if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0)
               return;
@@ -1271,6 +1262,11 @@ export default {
                   pickInfo.properties = result;
                 });
               }
+
+              if (popupShowType === "right") {
+                vm.popupOverlay &&
+                  vm.popupOverlay.setContent(vm.featureproperties);
+              }
             }
           }
           if (vm.showPopup) {
@@ -1286,11 +1282,6 @@ export default {
                   latitude: latitudeString2,
                   height: heightString2,
                 };
-              } else {
-                vm.showDetail = true;
-                if (!vm.isUnClosePopup) {
-                  vm.isUnClosePopup = !vm.isUnClosePopup;
-                }
               }
             }
           }
@@ -1303,6 +1294,9 @@ export default {
           vm.$emit("pick-info", pickInfo);
         } else {
           vm.clickvisible = false;
+          if (popupShowType === "right") {
+            vm.popupOverlay && vm.popupOverlay.setContent(null);
+          }
         }
       }
     },
@@ -1339,9 +1333,6 @@ export default {
     },
     handleBackMain() {
       this.featureclickenable = this.enablePopup;
-    },
-    closePopupWindow() {
-      this.isUnClosePopup = false;
     },
     projectScreen(file) {
       this.$emit("project-screen", file);

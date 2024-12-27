@@ -1,25 +1,30 @@
 export default class PanelManager {
   constructor() {
-    this.panels = []
+    this.panels = [];
   }
 
   static getInstance() {
     // 单例
     if (!this.instance) {
-      this.instance = new PanelManager()
+      if (window.PanelManager) {
+        this.instance = window.PanelManager;
+      } else {
+        this.instance = new PanelManager();
+        window.PanelManager = this.instance;
+      }
     }
-    return this.instance
+    return this.instance;
   }
 
   addPanel(panel) {
-    this.panels.push(panel)
+    this.panels.push(panel);
   }
 
   removePanel(panel) {
-    this.panels.filter(item => item.id != panel.id)
+    this.panels.filter(item => item.id != panel.id);
   }
 
   getPanels() {
-    return this.panels
+    return this.panels;
   }
 }
