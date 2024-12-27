@@ -6,30 +6,34 @@ export default {
     // 右侧展示气泡框props
     popupShowType: {
       type: String,
-      default: "default"
+      default: "default",
+    },
+    popupOverlay: {
+      type: Object,
+      default: () => {},
     },
     dataStoreIp: {
       type: String,
-      default: "192.168.96.101"
+      default: "192.168.96.101",
     },
     dataStorePort: {
       type: String,
-      default: "9014"
+      default: "9014",
     },
     // 查询知识图谱的数据集位置
     dataStoreDataset: {
       type: String,
-      default: "Graph3/GraphDataset1"
+      default: "Graph3/GraphDataset1",
     },
     popupOptions: {
       type: Object,
       default: () => {
         return { popupType: "card" };
-      }
+      },
     },
     token: {
-      type: Object
-    }
+      type: Object,
+    },
   },
   inject: ["Cesium", "vueCesium", "viewer"],
   created() {},
@@ -48,7 +52,7 @@ export default {
     watchProp() {
       let { show } = this;
       if (show) {
-        this.$watch("show", function(next) {
+        this.$watch("show", function (next) {
           if (this.initial) return;
           // this.tileset.show = next;
         });
@@ -61,7 +65,7 @@ export default {
       this.$emit("load", this);
 
       const promise = this.createCesiumObject();
-      promise.then(payload => {
+      promise.then((payload) => {
         const { layerIndex } = payload;
         const layer = viewer.scene.layers.getCesium3DTilesetLayer(layerIndex);
       });
@@ -145,9 +149,9 @@ export default {
       // 关闭右侧气泡框
       this.popupOverlay && this.popupOverlay.setContent(null);
       this.cancelFeature();
-    }
+    },
   },
   render(createElement) {
     return createElement("span");
-  }
+  },
 };

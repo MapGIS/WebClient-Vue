@@ -14,9 +14,11 @@
       :horizontalOffset="50"
       :fullScreenAction="false"
       :dragRange="false"
+      :zIndex="9999"
       title="详细信息"
     >
       <mapgis-3d-popup-iot
+        v-if="showPopupContent"
         :properties="properties"
         :dataStoreIp="dataStoreIp"
         :dataStorePort="dataStorePort"
@@ -59,8 +61,8 @@ const fileType = {
   image: ["jpg", "png"],
   text: [
     // 'doc', 'docx', 'xls', 'xlsx',
-    "pdf"
-  ]
+    "pdf",
+  ],
 };
 
 export default {
@@ -69,31 +71,34 @@ export default {
   props: {
     properties: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     dataStoreIp: {
       type: String,
-      default: "192.168.96.101"
+      default: "192.168.96.101",
     },
     dataStorePort: {
       type: String,
-      default: "9014"
+      default: "9014",
     },
     // 查询知识图谱的数据集位置
     dataStoreDataset: {
       type: String,
-      default: "Graph3/GraphDataset1"
+      default: "Graph3/GraphDataset1",
     },
     toTypes: {
       type: Array,
-      default: () => [101, 301]
-    }
+      default: () => [101, 301],
+    },
+    visible: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       fileData: [],
       showAccessoryInfo: false,
-      showDetail: true
     };
   },
   // mounted() {
@@ -101,11 +106,22 @@ export default {
   // },
   computed: {
     Euid() {
-      return this.properties.Euid;
+      return this.properties?.Euid;
     },
     getMaxHeight() {
       return window.innerHeight - 300;
-    }
+    },
+    showDetail: {
+      get() {
+        return this.visible;
+      },
+      set(val) {
+        !val && this.closePopup();
+      },
+    },
+    showPopupContent() {
+      return this.properties && Object.keys(this.properties).length;
+    },
   },
   watch: {
     Euid: {
@@ -115,8 +131,8 @@ export default {
         if (val) {
           this.getAccessoryData();
         }
-      }
-    }
+      },
+    },
   },
   methods: {
     handleBackMain() {},
@@ -127,7 +143,7 @@ export default {
     getAccessoryData() {
       this.showAccessoryInfo = false;
       const promises = [];
-      this.toTypes.forEach(item => {
+      this.toTypes.forEach((item) => {
         const promise = new Promise((resolve, reject) => {
           axios
             .get(
@@ -138,15 +154,15 @@ export default {
                   fromType: 1,
                   toType: item,
                   pageNo: 1,
-                  pageSize: 99
-                }
+                  pageSize: 99,
+                },
               }
             )
-            .then(res => {
+            .then((res) => {
               if (res.status === 200) {
                 let arr = [];
                 const {
-                  data: { total, rtn }
+                  data: { total, rtn },
                 } = res.data;
                 if (rtn) {
                   switch (item) {
@@ -165,11 +181,11 @@ export default {
                 reject();
               }
             })
-            .catch(e => reject(e));
+            .catch((e) => reject(e));
         });
         promises.push(promise);
       });
-      Promise.all(promises).then(result => {
+      Promise.all(promises).then((result) => {
         const fileList = result[0].concat(result[1]);
         if (fileList.length > 0) {
           this.showAccessoryInfo = true;
@@ -187,7 +203,7 @@ export default {
           const url = `${window.location.protocol}//${this.dataStoreIp}:${this.dataStorePort}/datastore/rest/services/file/${provider}${toDataUrl}/download?isPreview=true`;
           arr.push({
             name,
-            url
+            url,
           });
         }
       });
@@ -202,7 +218,7 @@ export default {
           name: toID,
           type: "hls",
           ownner: "supply",
-          url
+          url,
         });
       });
       return arr;
@@ -215,10 +231,10 @@ export default {
         image: "图片类型",
         video: "多媒体类型",
         text: "文本类型",
-        supply: "可投放类型"
+        supply: "可投放类型",
       };
       const candidateRule = {
-        other: "其他类型"
+        other: "其他类型",
       };
       const files = this.getFileGroupByType(fileList, rules, candidateRule);
       return files;
@@ -226,26 +242,26 @@ export default {
     getFileGroupByType(fileList, rules, candidateRule) {
       let files = [];
       rules = { ...rules, ...candidateRule };
-      Object.keys(rules).forEach(key => {
+      Object.keys(rules).forEach((key) => {
         const list = {
           title: rules[key],
-          list: []
+          list: [],
         };
         files.push(list);
       });
       if (fileList.length > 0) {
-        fileList.forEach(item => {
+        fileList.forEach((item) => {
           let suffix;
           if (!item.type) {
             const type = this.getFileTypeByName(item.name);
-            Object.keys(fileType).forEach(key => {
+            Object.keys(fileType).forEach((key) => {
               if (fileType[key].includes(type)) {
                 suffix = key;
                 return;
               }
             });
             if (!suffix) {
-              Object.keys(candidateRule).forEach(candidate => {
+              Object.keys(candidateRule).forEach((candidate) => {
                 suffix = candidate;
               });
             }
@@ -254,7 +270,7 @@ export default {
           }
 
           const typeList = files.find(
-            itemType => itemType.title === rules[suffix]
+            (itemType) => itemType.title === rules[suffix]
           );
           typeList.list.push(item);
         });
@@ -267,8 +283,8 @@ export default {
         return typeArr[typeArr.length - 1];
       }
       return "";
-    }
-  }
+    },
+  },
 };
 </script>
 

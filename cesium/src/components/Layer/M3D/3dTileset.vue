@@ -12,7 +12,7 @@
   >
   </mapgis-3d-virtual-popup> -->
   <mapgis-3d-feature-popup
-    v-if="popupShowType === 'default' && featureposition"
+    v-if="featureposition"
     :position="featureposition"
     :popupOptions="popupOptions"
     :componentWidth="popupWidth"
@@ -156,6 +156,7 @@ export default {
       // const { color = "rgba(255, 255, 0, 0.6)" } = highlightStyle;
       const { viewer, Cesium } = this;
       const { version, layerIndex } = this;
+      const { popupShowType } = this;
 
       const pickInfo = {};
 
@@ -164,47 +165,44 @@ export default {
       let feature = viewer.scene.pick(movement.position);
 
       this.cancelFeature(false);
-      if (feature._content.tileset !== tileset) {
-        // 拾取非当前tileset时不进行关闭，让高亮和气泡框展示
-        // vm.iClickFeatures = [];
-        // vm.iClickPosition = {};
-        return;
-      } else {
-        if (vm.showPopup) {
-          vm.featureposition = vm.iClickPosition;
-        }
-        pickInfo.position = vm.iClickPosition;
-      }
-      if (feature) {
-        this.feature = feature;
-      }
 
-      feature.color = Cesium.Color.fromCssColorString(highlightStyle);
+      if (feature instanceof Cesium.Cesium3DTileFeature) {
+        if (feature.content.tileset === tileset) {
+          if (popupShowType === "default") {
+            if (vm.showPopup) {
+              vm.featureposition = vm.iClickPosition;
+            }
+            pickInfo.position = vm.iClickPosition;
+          }
 
-      if (this.popupShowType === "default") {
-        const propertyNames = feature.getPropertyNames();
-        const properties = {};
-        if (propertyNames && propertyNames.length > 0) {
-          propertyNames.forEach((item) => {
-            properties[item] = feature.getProperty(item);
-          });
+          if (feature) {
+            this.feature = feature;
+          }
 
-          if (vm.showPopup) {
+          feature.color = Cesium.Color.fromCssColorString(highlightStyle);
+
+          let properties;
+          const propertyNames = feature.getPropertyNames();
+          if (propertyNames && propertyNames.length > 0) {
+            properties = {};
+            propertyNames.forEach((item) => {
+              properties[item] = feature.getProperty(item);
+            });
+          }
+
+          if (popupShowType === "default") {
             vm.featureproperties = properties;
+          } else {
+            vm.popupOverlay &&
+              vm.popupOverlay.setContent(properties ? properties : null);
           }
-
-          // vm.iClickFeatures = [{ properties: properties }];
-        } else {
-          // vm.iClickFeatures = [];
-          if (vm.showPopup) {
-            vm.featureproperties = undefined;
-          }
+          pickInfo.properties = properties;
+          pickInfo.layerId = vm.vueIndex;
+          vm.$emit("pick-info", pickInfo);
         }
-
-        pickInfo.properties = properties;
+      } else {
+        vm.$emit("pick-info", {});
       }
-      pickInfo.layerId = vm.vueIndex;
-      vm.$emit("pick-info", pickInfo);
     },
     cancelFeature(sendPickInfo = true) {
       if (this.feature) {
@@ -213,6 +211,10 @@ export default {
         this.feature = null;
         this.featureposition = undefined;
         this.featureproperties = undefined;
+
+        if (this.popupShowType === "right") {
+          this.popupOverlay && this.popupOverlay.setContent(null);
+        }
       }
       sendPickInfo && this.$emit("pick-info", {});
     },

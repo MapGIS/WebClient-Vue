@@ -5,7 +5,7 @@
       v-show="visible"
       @mousedown.native.capture="onClick"
     >
-      <slot :z-index="state === this.activeState ? 2 : 1" />
+      <slot :z-index="state === activeState ? 2 : 1" />
     </mapgis-ui-window-card>
   </div>
 </template>
@@ -20,10 +20,14 @@ export default {
   // 组件名称，统一以"Mp"开头
   name: "mapgis-ui-window-wrapper",
   props: {
-    visible: { type: Boolean, default: true }
+    visible: { type: Boolean, default: true },
   },
   data() {
-    return { id: uuid(), state: "", activeState: WidgetState.ACTIVE };
+    return {
+      id: uuid(),
+      state: WidgetState.OPENED,
+      activeState: WidgetState.ACTIVE,
+    };
   },
   watch: {
     visible: {
@@ -32,26 +36,25 @@ export default {
           WidgetManager.getInstance().activateWidget(this);
         }
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   mounted() {
     PanelManager.getInstance().addPanel({
       id: this.id,
-      content: this.$refs.mapPanelContainer.$el
+      content: this.$refs.mapPanelContainer.$el,
     });
-    WidgetManager.getInstance().openWidget(this);
   },
   beforeDestroy() {
     PanelManager.getInstance().removePanel({
       id: this.id,
-      content: this.$refs.mapPanelContainer.$el
+      content: this.$refs.mapPanelContainer.$el,
     });
   },
   methods: {
     onClick() {
       WidgetManager.getInstance().activateWidget(this);
-    }
-  }
+    },
+  },
 };
 </script>
