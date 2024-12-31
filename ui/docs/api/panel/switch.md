@@ -2,7 +2,7 @@
 
 > mapgis-ui-switch-panel
 
-``` vue
+```vue
 <mapgis-ui-switch-panel layout="horizontal">
     <mapgis-ui-form-model-item label="周期/秒">
         <mapgis-ui-space>
@@ -52,8 +52,9 @@
 
 - **类型:** `Object`
 - **非侦听属性**
-- **描述:** 当布局layout是horizontal才生效，表示左侧标题的比例，采取24空格比例
-``` json
+- **描述:** 当布局 layout 是 horizontal 才生效，表示左侧标题的比例，采取 24 空格比例
+
+```json
 { "span": 7 }
 ```
 
@@ -61,9 +62,14 @@
 
 - **类型:** `Object`
 - **非侦听属性**
-- **描述:** 当布局layout是horizontal才生效，表示右侧内容的比例，采取24空格比例
-``` json
+- **描述:** 当布局 layout 是 horizontal 才生效，表示右侧内容的比例，采取 24 空格比例
+
+```json
 { "span": 7 }
 ```
 
+### `disabled`
 
+- **类型:** `Boolean`
+- **非侦听属性**
+- **描述:** switch 开关是否可用

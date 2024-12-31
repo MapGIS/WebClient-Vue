@@ -12,6 +12,7 @@
         class="mapgis-ui-switch-panel-switch"
         checked-children="开启"
         un-checked-children="关闭"
+        :disabled="disabled"
         v-model="innerChecked"
         @change="changeChecked"
         v-if="size === 'default'"
@@ -20,6 +21,7 @@
       <mapgis-ui-switch
         slot="handle"
         class="mapgis-ui-switch-panel-switch-sm"
+        :disabled="disabled"
         v-model="innerChecked"
         @change="changeChecked"
         size="small"
@@ -38,6 +40,7 @@
         class="mapgis-ui-switch-panel-switch"
         checked-children="开启"
         un-checked-children="关闭"
+        :disabled="disabled"
         v-model="innerChecked"
         @change="changeChecked"
         v-if="size === 'default'"
@@ -46,6 +49,7 @@
       <mapgis-ui-switch
         slot="front"
         class="mapgis-ui-switch-panel-switch-sm"
+        :disabled="disabled"
         v-model="innerChecked"
         @change="changeChecked"
         size="small"
@@ -63,7 +67,7 @@
       <div
         :class="{
           'mapgis-ui-switch-panel-parameter': true,
-          'mapgis-ui-switch-panel-parameter-transparent': transparent
+          'mapgis-ui-switch-panel-parameter-transparent': transparent,
         }"
         :style="{ maxHeight: maxHeight }"
       >
@@ -79,65 +83,69 @@ export default {
   props: {
     label: {
       type: String,
-      default: "标题"
+      default: "标题",
     },
     showLabel: {
       type: Boolean,
-      default: true
+      default: true,
     },
     checked: {
       type: Boolean,
-      default: false
+      default: false,
     },
     layout: {
       type: String,
-      default: "vertical" // 'horizontal' 'vertical' 'inline'
+      default: "vertical", // 'horizontal' 'vertical' 'inline'
     },
     height: {
       type: String,
-      default: "fit-content"
+      default: "fit-content",
     },
     labelCol: {
       type: Object,
       default: () => {
         return { span: 7 };
-      }
+      },
     },
     wrapperCol: {
       type: Object,
       default: () => {
         return { span: 17 };
-      }
+      },
     },
     size: {
       type: String,
-      default: "default" //default small
+      default: "default", //default small
     },
     transparent: {
       type: Boolean,
-      default: false
+      default: false,
     },
     isTitleBold: {
       type: Boolean,
-      default: true
+      default: true,
     },
     hasTopMargin: {
       type: Boolean,
-      default: true
+      default: true,
     },
     hasBottomMargin: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   model: {
     prop: "checked",
-    event: "changeChecked"
+    event: "changeChecked",
   },
   data() {
     return {
       maxHeight: 40,
-      innerChecked: this.checked
+      innerChecked: this.checked,
     };
   },
   watch: {
@@ -147,7 +155,7 @@ export default {
         this.innerChecked = val;
         this.init();
       }
-    }
+    },
   },
   computed: {
     formItemLayout({ layout }) {
@@ -155,10 +163,10 @@ export default {
       return layout === "horizontal"
         ? {
             labelCol,
-            wrapperCol
+            wrapperCol,
           }
         : {};
-    }
+    },
   },
   mounted() {
     this.init();
@@ -181,7 +189,7 @@ export default {
       }
 
       this.$emit("changeChecked", e);
-    }
-  }
+    },
+  },
 };
 </script>

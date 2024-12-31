@@ -2,7 +2,7 @@
   <div>
     <slot>
       <div class="mapgis-widget-contour-analysis">
-        <mapgis-ui-group-tab title="参数设置"> </mapgis-ui-group-tab>
+        <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
         <mapgis-ui-input-number-panel
           class="mapgis-ui-number-style"
           label="最大分段数"
@@ -41,6 +41,8 @@
           layout="vertical"
           label="等值面"
           v-if="switchOptions.indexOf('isosurface') >= 0"
+          :disabled="isosurfaceDisabled"
+          :checked="isosurface"
           @changeChecked="startIsosurface"
         >
           <mapgis-ui-input-number-panel
@@ -85,7 +87,7 @@ import {
   getDynamicAtmosphereLighting,
   setDynamicAtmosphereLighting,
   getDynamicAtmosphereLightingFromSun,
-  setDynamicAtmosphereLightingFromSun
+  setDynamicAtmosphereLightingFromSun,
 } from "../WebGlobe/util";
 
 export default {
@@ -102,7 +104,7 @@ export default {
       type: Array,
       default: () => {
         return ["isogram", "isosurface"];
-      }
+      },
     },
     /**
      * @type Number
@@ -111,7 +113,7 @@ export default {
      */
     maxSegmentedValue: {
       type: Number,
-      default: 400
+      default: 400,
     },
     /**
      * @type Number
@@ -120,7 +122,7 @@ export default {
      */
     contourSpacing: {
       type: Number,
-      default: 150
+      default: 150,
     },
     /**
      * @type Number
@@ -129,7 +131,7 @@ export default {
      */
     contourWidth: {
       type: Number,
-      default: 200
+      default: 200,
     },
     /**
      * @type String
@@ -138,7 +140,7 @@ export default {
      */
     contourColor: {
       type: String,
-      default: "rgb(255,0,0)"
+      default: "rgb(255,0,0)",
     },
     /**
      * @type Array
@@ -149,7 +151,7 @@ export default {
       type: Array,
       default: () => {
         return [];
-      }
+      },
     },
     /**
      * @type Array
@@ -160,45 +162,45 @@ export default {
       type: Array,
       default: () => {
         return [];
-      }
-    }
+      },
+    },
   },
   watch: {
     maxSegmentedValue: {
       handler(next) {
         this.maxSegmentedValueCopy = next;
       },
-      immediate: true
+      immediate: true,
     },
     contourSpacing: {
       handler(next) {
         this.contourSpacingCopy = this.contourSpacing;
       },
-      immediate: true
+      immediate: true,
     },
     contourWidth: {
       handler() {
         this.formData1.contourWidthCopy = this.contourWidth;
       },
-      immediate: true
+      immediate: true,
     },
     contourColor: {
       handler() {
         this.formData1.contourColorCopy = this.contourColor;
       },
-      immediate: true
+      immediate: true,
     },
     bandPosition: {
       handler() {
         this.bandPositionCopy = this.bandPosition;
       },
-      immediate: true
+      immediate: true,
     },
     colorsArray: {
       handler() {
         this.colorsArrayCopy = this.colorsArray;
       },
-      immediate: true
+      immediate: true,
     },
     isogram: {
       handler(next) {
@@ -211,7 +213,7 @@ export default {
             contourAnalysis.enableContour = false;
           }
         }
-      }
+      },
     },
     formData1: {
       deep: true,
@@ -222,7 +224,7 @@ export default {
         if (contourAnalysis) {
           vm.updateContourAnalysis(contourAnalysis);
         }
-      }
+      },
     },
     formData2: {
       deep: true,
@@ -246,7 +248,7 @@ export default {
             }
           }
         }
-      }
+      },
     },
     contourSpacingCopy: {
       immediate: true,
@@ -263,7 +265,7 @@ export default {
         }
         // 重新计算颜色表
         this.calculateHeightAndColor();
-      }
+      },
     },
     maxSegmentedValueCopy: {
       handler(next) {
@@ -272,8 +274,8 @@ export default {
           // 根据最大分段值计算可设置的最小等间距
           vm.initSpacing = Math.round(vm.zMax / next);
         }
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -287,18 +289,19 @@ export default {
       maxSegmentedValueCopy: 100,
       //等值面开关
       isosurface: false,
+      isosurfaceDisabled: false,
       //修改等间距
       contourSpacingCopy: 150,
       //等值面宽度
       bandThicknessCopy: 300,
       formData1: {
         contourWidthCopy: 10,
-        contourColorCopy: "rgb(255,0,0)"
+        contourColorCopy: "rgb(255,0,0)",
       },
       formData2: {
         bandColorArray: [],
         bandTransparencyCopy: 0.5,
-        isGradient: false
+        isGradient: false,
       },
       //等值面数组，高度，单位米
       bandPositionCopy: [],
@@ -312,7 +315,7 @@ export default {
       isEnableLighting: undefined, // 光照是否已开启
       light: undefined, // 是否有light对象
       dynamicAtmosphereLighting: undefined,
-      dynamicAtmosphereLightingFromSun: undefined
+      dynamicAtmosphereLightingFromSun: undefined,
     };
   },
 
@@ -327,17 +330,17 @@ export default {
   methods: {
     async createCesiumObject() {
       return new Promise(
-        resolve => {
+        (resolve) => {
           resolve();
         },
-        reject => {}
+        (reject) => {}
       );
     },
     mount() {
       const { viewer, vueCesium, vueKey, vueIndex, Cesium } = this;
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function(dataSource) {
+      promise.then(function (dataSource) {
         vm.$emit("load", vm);
         vueCesium.ContourAnalysisManager.addSource(
           vueKey,
@@ -345,7 +348,7 @@ export default {
           dataSource,
           {
             drawElement: null,
-            contourAnalysis: null
+            contourAnalysis: null,
           }
         );
       });
@@ -392,12 +395,11 @@ export default {
       const { viewer } = this;
       this.light = getLight(viewer);
       this.dynamicAtmosphereLighting = getDynamicAtmosphereLighting(viewer);
-      this.dynamicAtmosphereLightingFromSun = getDynamicAtmosphereLightingFromSun(
-        viewer
-      );
+      this.dynamicAtmosphereLightingFromSun =
+        getDynamicAtmosphereLightingFromSun(viewer);
       const searchLight = new this.Cesium.DirectionalLight({
         direction: viewer.scene.camera.directionWC, // Updated every frame
-        intensity: 2.0
+        intensity: 2.0,
       });
       setLight(searchLight, viewer);
       setDynamicAtmosphereLighting(false, viewer);
@@ -472,13 +474,19 @@ export default {
     },
     isTerrianReady() {
       const { viewer } = this;
+      const vm = this;
       return new Promise((resolve, reject) => {
         if (viewer) {
-          let interval = setInterval(function() {
+          let interval = setInterval(function () {
             let range3D = viewer.terrainProvider.range3D;
             if (range3D) {
               clearInterval(interval);
+              vm.isosurface = true;
+              vm.isosurfaceDisabled = false;
               resolve(range3D);
+            } else {
+              vm.isosurface = false;
+              vm.isosurfaceDisabled = true;
             }
           }, 50);
         } else {
@@ -510,7 +518,7 @@ export default {
       // 激活交互式绘制工具
       drawElement.startDrawingPolygon({
         // 绘制完成回调函数
-        callback: result => {
+        callback: (result) => {
           // 分支判断
           this.remove();
           this._enableBrightness();
@@ -558,7 +566,7 @@ export default {
             "contourAnalysis",
             contourAnalysis
           );
-        }
+        },
       });
     },
     getHeightAndColor() {
@@ -577,7 +585,7 @@ export default {
 
     calculateHeightAndColor() {
       let vm = this;
-      this.isTerrianReady().then(zIndex => {
+      this.isTerrianReady().then((zIndex) => {
         vm.formData2.bandColorArray = [];
         // 高度差
         vm.zMax = zIndex.zMax;
@@ -699,8 +707,8 @@ export default {
         this.dynamicAtmosphereLightingFromSun,
         viewer
       );
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped>
