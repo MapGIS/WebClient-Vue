@@ -3,13 +3,12 @@
 </template>
 <script>
 import axios from "axios";
-import plot from "@mapgis/webclient-plot";
-const {
-  PlotLayer2DGroup = Zondy.Plot.PlotLayer2DGroup,
-  PlotLayer2D = Zondy.Plot.PlotLayer2D,
-  SymbolManager = Zondy.Plot.SymbolManager,
-  FabricLayer = Zondy.Plot.FabricLayer
-} = plot;
+import {
+  PlotLayer2DGroup,
+  PlotLayer2D,
+  SymbolManager,
+  FabricLayer,
+} from "@mapgis/webclient-plot";
 
 export default {
   name: "mapgis-2d-plot-layer",
@@ -17,40 +16,40 @@ export default {
   props: {
     vueKey: {
       type: String,
-      default: "default"
+      default: "default",
     },
     vueIndex: {
       type: [Number, String],
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
-      }
+      },
     }, //点击回调事件
     pickPlot: {
-      type: Function
+      type: Function,
     },
     // 标绘图层数据
     dataSource: {
-      type: [String, Object]
+      type: [String, Object],
     },
     // 标绘图层的可见性
     show: {
       type: Boolean,
-      default: true
+      default: true,
     },
     // 标绘图层的可编辑性
     editable: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // 三维贴地,0：贴地，1：贴模型，2：都贴，3： 都不贴
     classificationType: {
       type: Number,
-      default: 3
-    }
+      default: 3,
+    },
   },
   watch: {
     dataSource: {
-      handler: async function(json) {
+      handler: async function (json) {
         if (!json) return;
         if (typeof json === "object") {
           window.vueMap.PlotLayerData.addSource(
@@ -61,42 +60,42 @@ export default {
         }
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     pickPlot: {
-      handler: function(func) {
+      handler: function (func) {
         let layer = this.getLayer();
         if (!func || !layer) return;
         layer.pickPlot = func;
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     classificationType: {
-      handler: function(val) {
+      handler: function (val) {
         let layer = this.getLayer();
         if (layer) {
           layer.classificationType = this.classificationType;
         }
       },
-      immediate: true
+      immediate: true,
     },
     show: {
-      handler: function(val) {
+      handler: function (val) {
         let layer = this.getLayer();
         layer && layer.setVisible(val);
         // console.log("showww-2d", val);
       },
-      immediate: true
+      immediate: true,
     },
     editable: {
-      handler: function(val) {
+      handler: function (val) {
         let layer = this.getLayer();
         if (!layer) return;
         layer.editable = val;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   mounted() {
     this.mount();
@@ -113,7 +112,7 @@ export default {
         this.$message.warning("符号库未加载完成！");
         return;
       }
-      manager.getSymbols().then(function() {
+      manager.getSymbols().then(function () {
         let layer = vm.getLayer();
         if (!layer) {
           layer = new PlotLayer2D();
@@ -135,7 +134,7 @@ export default {
             canvas = new FabricLayer(map, PlotLayer2DGroup);
             canvas._containerId = map._container.id;
             window.vueMap.MapManager.addSource(map.vueKey, map.vueIndex, map, {
-              canvas: canvas
+              canvas: canvas,
             });
           } else {
             canvas = MapManager.options.canvas;
@@ -156,8 +155,8 @@ export default {
             method: "get",
             url: vm.dataSource,
             dataType: "text",
-            timeout: 1000
-          }).then(res => {
+            timeout: 1000,
+          }).then((res) => {
             window.vueMap.PlotLayerData.addSource(
               vm.vueKey,
               vm.vueIndex,
@@ -167,7 +166,7 @@ export default {
             vm.$emit("loaded", {
               vueKey: vm.vueKey,
               vueIndex: vm.vueIndex,
-              vm: vm
+              vm: vm,
             });
           });
         } else {
@@ -175,7 +174,7 @@ export default {
           vm.$emit("loaded", {
             vueKey: vm.vueKey,
             vueIndex: vm.vueIndex,
-            vm: vm
+            vm: vm,
           });
         }
       });
@@ -205,10 +204,11 @@ export default {
       return layerManager && layerManager.source;
     },
     getLayers() {
-      let PlotLayerGroupManager = window.vueMap.PlotLayerGroupManager.findSource(
-        this.vueKey,
-        this.vueIndex
-      );
+      let PlotLayerGroupManager =
+        window.vueMap.PlotLayerGroupManager.findSource(
+          this.vueKey,
+          this.vueIndex
+        );
       return PlotLayerGroupManager && PlotLayerGroupManager.source;
     },
     getLayerData() {
@@ -277,7 +277,7 @@ export default {
     getLayerId() {
       let layer = this.getLayer();
       return layer && layer.getLayerId();
-    }
-  }
+    },
+  },
 };
 </script>
