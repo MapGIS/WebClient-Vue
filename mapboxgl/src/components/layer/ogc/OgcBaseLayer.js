@@ -9,14 +9,14 @@ export default {
     ...IgsOptions,
     baseUrl: {
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
   created() {
     this.$_deferredMount();
 
     if (this.url) {
-      this.$watch("url", function(next) {
+      this.$watch("url", function (next) {
         if (this.initial) return;
         this.$_deferredUnMount();
         this.$_deferredMount();
@@ -31,10 +31,9 @@ export default {
         type: "raster",
         tiles: [this._url],
         tileSize: this.tileSize,
-        mapgisOffset: this.zoomOffset,
         maxzoom: this.maximumLevel,
         minzoom: this.minimumLevel,
-        ...this.source
+        ...this.source,
       };
 
       this.map.on("dataloading", this.$_watchSourceLoading);
@@ -55,6 +54,6 @@ export default {
       this.map.removeLayer(this.layerId);
       this.map.removeSource(this.sourceId || this.layerId);
       this.initial = true;
-    }
-  }
+    },
+  },
 };

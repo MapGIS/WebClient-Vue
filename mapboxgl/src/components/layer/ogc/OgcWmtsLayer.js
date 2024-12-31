@@ -1,4 +1,6 @@
 import OgcBaseLayer from "./OgcBaseLayer";
+import { SpatialReference, Point, Projection } from "@mapgis/webclient-common";
+import { mapboxCustomCRS } from "@mapgis/webclient-mapboxgl-plugin";
 
 export default {
   name: "mapgis-ogc-wmts-layer",
@@ -6,49 +8,63 @@ export default {
   props: {
     wmtsLayer: {
       type: String,
-      default: ""
+      default: "",
     },
     tileMatrixSet: {
-      type: String,
-      default: ""
+      type: Object,
+      default: "",
     },
     version: {
       type: String,
-      default: "1.0.0"
+      default: "1.0.0",
     },
     wmtsStyle: {
       type: String,
-      default: "default"
+      default: "default",
     },
     format: {
       type: String,
-      default: "image/png"
+      default: "image/png",
     },
     zoomOffset: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
   created() {
+    this.CRS = mapboxCustomCRS(this.mapbox, Projection);
     //创建tileMatrixSet监听器
     let watchArr = [
       "wmtsLayer",
       "tileMatrixSet",
       "version",
       "wmtsStyle",
-      "format"
+      "format",
     ];
     for (let i = 0; i < watchArr.length; i++) {
-      this.$watch(watchArr[i], function() {
+      this.$watch(watchArr[i], function () {
         if (this.url) {
           //REST方式，目前还是采用KVP的格式
           this.$_initUrl(this[watchArr[i]], watchArr[i]);
         } else if (this.baseUrl) {
-          if (!this.tileMatrixSet || this.tileMatrixSet.length === 0) {
+          if (!this.tileMatrixSet) {
             return;
           }
           //KVP方式
           this.$_initBaseUrl();
+          if (this.tileMatrixSet && this.tileMatrixSet.tileInfo) {
+            const { tileInfo } = this.tileMatrixSet;
+            const { spatialReference } = tileInfo;
+            let crs;
+            if (this.baseUrl.indexOf("tianditu") > -1) {
+              // 天地图的分辨率比自定义的分辨多一级，0级分辨率是1.4xxxxx，自定义的0级是0.7xxxxx
+              crs = `EPSG:${spatialReference.wkid}`;
+            } else {
+              const { fullExtent } = this.tileMatrixSet.layer.activeLayer;
+              crs = this.$_getCrs(tileInfo, spatialReference, fullExtent);
+            }
+            this.source = { crs };
+          }
           //因为OgcBaseLayer只监听了url，因此这里主动调用重绘和绘制方法
           this.$_deferredUnMount();
           this.$_deferredMount();
@@ -58,16 +74,16 @@ export default {
   },
   methods: {
     $_init() {
-      let { url, wmtsLayer, tileMatrixSet, baseUrl, _url } = this;
+      let { url, wmtsLayer, baseUrl } = this;
       if (url) {
         //REST方式，目前还是采用KVP的格式
         this._url = url;
       } else if (baseUrl) {
-        if (wmtsLayer.length === 0 || tileMatrixSet.length === 0) {
+        if (wmtsLayer.length === 0) {
           return;
         }
         //KVP方式
-        this.$_initBaseUrl(wmtsLayer, tileMatrixSet);
+        this.$_initBaseUrl();
       }
     },
     $_initUrl(propValue, propName) {
@@ -91,6 +107,36 @@ export default {
         this._url = this.url;
       }
     },
+    $_getCrs(tileInfo, spatialReference, extent) {
+      const spatialReferenceCommon = new SpatialReference({
+        wkid: spatialReference.wkid,
+      });
+      const originCommon = new Point({
+        coordinates: [tileInfo.origin.x, tileInfo.origin.y],
+        spatialReference,
+      });
+      const resolutions = {};
+      tileInfo.lods.forEach((lod) => {
+        resolutions[lod.level] = lod.resolution;
+      });
+      if (Object.keys(resolutions).length < 24) {
+        let index = Object.keys(resolutions).length;
+        for (index; index < 23; index++) {
+          resolutions[index] = resolutions[index - 1] / 2;
+        }
+      }
+      const code = `EPSG:${spatialReference.wkid}`;
+      const def = "+proj=longlat +ellps=GRS80 +units=degrees +no_defs";
+
+      const crs = new this.CRS(code, def, {
+        resolutions,
+        origin: [originCommon.coordinates[0], originCommon.coordinates[1]],
+        tileSize: Math.max(tileInfo.size[0], tileInfo.size[1]),
+        bounds: [extent.xmin, extent.ymin, extent.xmax, extent.ymax],
+        unit: "degree",
+      });
+      return crs;
+    },
     $_initBaseUrl() {
       let _baseUrl = this.baseUrl;
       if (this.baseUrl) {
@@ -107,23 +153,19 @@ export default {
         _baseUrl += "service=WMTS&request=GetTile";
       }
       const partUrl = this.$_initAllRequestParams().join("&");
-      this._url =
-        encodeURI(_baseUrl) +
-        "&" +
-        partUrl +
-        "&tileMatrix={z}&tileRow={y}&tileCol={x}";
+      this._url = `${_baseUrl}&${partUrl}&tileMatrix={z}&tileRow={y}&tileCol={x}`;
     },
     $_initAllRequestParams() {
       let params = [];
       params.push("version=" + this.version);
       params.push("style=" + this.wmtsStyle || "");
-      params.push("tileMatrixSet=" + this.tileMatrixSet);
+      params.push("tileMatrixSet=" + this.tileMatrixSet.id);
       params.push("format=" + this.format);
       params.push("layer=" + this.wmtsLayer);
       if (this.token) {
         params.push(this.token.key + "=" + this.token.value);
       }
       return params;
-    }
-  }
+    },
+  },
 };
