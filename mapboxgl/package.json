@@ -32,6 +32,7 @@
     "@mapgis/mapbox-gl-inspect": "~17.4.0",
     "@mapgis/webclient-es6-service": "~16.2.0",
     "@mapgis/webclient-es6-mapboxgl": "~16.2.0",
+    "@mapgis/webclient-mapboxgl-plugin": "~17.4.0",
     "@mapgis/webclient-store": "^10.5.5",
     "@mapgis/webclient-vue-ui": "~17.4.0",
     "@mapgis/webclient-plot": "~17.4.0",
