@@ -24,6 +24,7 @@ module.exports = {
       "@mapgis/mapbox-gl": "@mapgis/mapbox-gl",
       "@mapgis/supercluster": "@mapgis/supercluster",
       "@mapgis/webclient-cesium-plugin": "@mapgis/webclient-cesium-plugin",
+      "@mapgis/webclient-mapboxgl-plugin": "@mapgis/webclient-mapboxgl-plugin",
       "@mapgis/webclient-common": "@mapgis/webclient-common",
       "@mapgis/webclient-es6-service": "@mapgis/webclient-es6-service",
       "@mapgis/webclient-plot": "@mapgis/webclient-plot",
