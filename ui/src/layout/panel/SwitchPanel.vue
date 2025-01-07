@@ -176,6 +176,8 @@ export default {
       const { height = "fit-content" } = this;
       if (this.checked) {
         this.maxHeight = height;
+      } else {
+        this.maxHeight = "0px";
       }
     },
     changeChecked(e) {
