@@ -314,7 +314,7 @@ export default {
       const options = this._getSourceOptions();
       let { drawElement } = options;
       // 初始化交互式绘制控件
-      drawElement = drawElement || new Cesium.DrawElement(this.viewer);
+      drawElement = drawElement || new zondy.cesium.DrawElement(this.viewer);
       vueCesium.FloodAnalysisManager.changeOptions(
         vueKey,
         vueIndex,
@@ -365,7 +365,7 @@ export default {
           this;
         const waterColor = this._getColor(floodColorCopy);
         this.waterReflection = isPause ? this.waterReflection : 
-          new Cesium.WaterReflection({
+          new zondy.cesium.WaterReflection({
             viewer: this.viewer,
             positions: positionsArr,
             distortionScale: 2.0,
@@ -378,7 +378,7 @@ export default {
           this.waterReflection
         );
         this.floodAnalysisReflection = isPause ? this.floodAnalysisReflection : 
-          new Cesium.FloodAnalysisReflection({
+          new zondy.cesium.FloodAnalysisReflection({
             viewer: this.viewer,
             water: this.waterReflection,
             minHeight,

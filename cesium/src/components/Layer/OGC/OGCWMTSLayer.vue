@@ -89,7 +89,6 @@ export default {
       //处理独有参数
       //设置wmts服务的style
       options.style = this.wmtsStyle;
-
       //如果tilingScheme存在，则生成tilingScheme对象
       if (this.tileMatrixSet && this.tileMatrixSet.tileInfo) {
         const { tileInfo } = this.tileMatrixSet;
@@ -165,6 +164,10 @@ export default {
         xmax: extent.xmax,
         ymax: extent.ymax,
       });
+      tileInfo.lods = tileInfo.lods.map(item => {
+        item.level = item.levelValue;
+        return item
+      })
       const tileInfoCommon = new TileInfo({
         dpi: tileInfo.dpi,
         format: tileInfo.format,

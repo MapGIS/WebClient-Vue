@@ -520,7 +520,7 @@ export default {
       let options = {};
       options.enableCompass = this.basicSetting.compass;
       options.enableZoomControls = this.basicSetting.zoom || false;
-      viewer.createNavigationTool(options);
+      // viewer.createNavigationTool(options);
       const self = this;
       this.$nextTick(() => {
         if (!self.basicSetting.compassPosition) {
@@ -554,7 +554,7 @@ export default {
       let options = {};
       options.enableCompass = this.basicSetting.compass;
       options.enableZoomControls = this.basicSetting.zoom || false;
-      viewer.createNavigationTool(options);
+      // viewer.createNavigationTool(options);
       const self = this;
       this.$nextTick(() => {
         if (!self.basicSetting.compassPosition) {

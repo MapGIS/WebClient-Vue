@@ -297,7 +297,7 @@ export default {
       let skylineAnalysisVal = options.skylineAnalysis;
       skylineAnalysisVal =
         skylineAnalysisVal ||
-        new Cesium.SkyLineAnalysis({ scene: viewer.scene });
+        new zondy.cesium.SkyLineAnalysis({ scene: viewer.scene });
       skylineAnalysisVal._analysisEndCallBack = this.analysisEndCallBack;
       skylineAnalysisVal.color = this.edgeColor();
       skylineAnalysisVal.lineWidth = this.formData.skylineWidth;

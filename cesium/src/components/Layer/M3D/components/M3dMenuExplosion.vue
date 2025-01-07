@@ -179,12 +179,12 @@ export default {
     handleDrawDirection() {
       const vm = this;
       const { viewer } = this;
-      let drawElement = new Cesium.DrawElement(viewer);
+      let drawElement = new zondy.cesium.DrawElement(viewer);
       drawElement.startDrawingPolyline({
         color: new Cesium.Color(0.3, 0.7, 0.8, 1.0),
         callback: function (result) {
           // vm.moveDirection = result.positions;
-          var polyline = new Cesium.DrawElement.PolylinePrimitive({
+          var polyline = new zondy.cesium.DrawElement.PolylinePrimitive({
             positions: result.positions,
             width: 1,
             geodesic: true,

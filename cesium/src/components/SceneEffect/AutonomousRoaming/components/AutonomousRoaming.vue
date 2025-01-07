@@ -56,7 +56,7 @@ export default {
         enableMouseLook,
         moveStep
       } = this.roamingSettings;
-      this.roamingTool = new Cesium.KeyboardCameraController(viewer, {
+      this.roamingTool = new zondy.cesium.KeyboardCameraController(viewer, {
         // 是否开启鼠标控制模式，开启后将进入全屏模式，此时相机视角可通过鼠标移动进行操作
         // 由于浏览器限制，不允许自动全屏，需通过用户操作切换全屏，所以这里初始化设置为false
         enableMouseLook: enableMouseLook,

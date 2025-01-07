@@ -624,6 +624,7 @@ export default {
         angle,
         rainLength: length,
         alpha: rainOpacity,
+        viewer: this.viewer
       };
       this.$_enableWeather("Rain", rainOptions);
     },
@@ -632,65 +633,64 @@ export default {
       let snowOptions = {
         size: density,
         scale: size,
+        viewer: this.viewer
       };
       this.$_enableWeather("Snow", snowOptions);
     },
     enableFog() {
-      const { Cesium } = this;
+      const { Cesium, viewer } = this;
       let color = Cesium.Color.fromCssColorString(
         this.weatherSetting.fogParams.color
       );
       let fogOptions = {
         fogcolor: color,
         alpha: this.weatherSetting.fogParams.fogOpacity,
+        viewer
       };
       this.$_enableWeather("Fog", fogOptions);
     },
     $_enableWeather(WeatherName, options) {
       const { vueKey, vueIndex, viewer, Cesium } = this;
-
+      const PostProcessStageLibrary = zondy.cesium.PostProcessStageLibrary
       this.removeWeather(WeatherName);
-
-      // let manager = window.vueCesium['SettingToolManager'].findSource(vueKey, vueIndex );
-      // if(manager && manager.options && manager.options[WeatherName] && manager.options[WeatherName] !== null){
-      //   this.removeWeather(WeatherName);
-      // }
-      let weather = new Cesium.WeatherEffect(viewer);
       switch (WeatherName) {
         case "Rain":
-          weather.addRain(options);
+        const rainStage = PostProcessStageLibrary.createRainStage(options)
+        viewer.scene.postProcessStages.add(rainStage)
           window.vueCesium["SettingToolManager"].changeOptions(
             vueKey,
             vueIndex,
             "Rain",
-            weather
+            rainStage
           );
           break;
         case "Snow":
-          weather.addSnow(options);
+         const snowStage = PostProcessStageLibrary.createSnowStage(options)
+          viewer.scene.postProcessStages.add(snowStage)
           window.vueCesium["SettingToolManager"].changeOptions(
             vueKey,
             vueIndex,
             "Snow",
-            weather
+            snowStage
           );
           break;
         case "Fog":
-          weather.addFog(options);
+         const fogStage = PostProcessStageLibrary.createFogStage(options)
+         viewer.scene.postProcessStages.add(fogStage)
           window.vueCesium["SettingToolManager"].changeOptions(
             vueKey,
             vueIndex,
             "Fog",
-            weather
+            fogStage
           );
           break;
         default:
-          weather.log("传参错误");
+          console.warn("传参错误");
           break;
       }
     },
     removeWeather(WeatherName) {
-      const { vueKey, vueIndex } = this;
+      const { vueKey, vueIndex, viewer } = this;
       let manager = window.vueCesium["SettingToolManager"].findSource(
         vueKey,
         vueIndex
@@ -700,13 +700,13 @@ export default {
           if (name === WeatherName && manager.options[WeatherName]) {
             switch (WeatherName) {
               case "Rain":
-                manager.options.Rain.removeRain();
+              viewer.scene.postProcessStages.remove(manager.options.Rain)
                 break;
               case "Snow":
-                manager.options.Snow.removeSnow();
+              viewer.scene.postProcessStages.remove(manager.options.Snow)
                 break;
               case "Fog":
-                manager.options.Fog.removeFog();
+              viewer.scene.postProcessStages.remove(manager.options.Fog)
                 break;
             }
             window.vueCesium["SettingToolManager"].changeOptions(

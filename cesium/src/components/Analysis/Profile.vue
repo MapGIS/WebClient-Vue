@@ -448,7 +448,7 @@ export default {
       profileAnalysis = null;
       this.profileeChart.setOption(echartsOptions);
       if (!this.Cesium.defined(profileAnalysis)) {
-        profileAnalysis = new this.Cesium.TerrainProfile(this.viewer, {
+        profileAnalysis = new zondy.cesium.TerrainProfile(this.viewer, {
           polygonColor: pColor,
           polygonHeight: polygonHeightCopy,
           polyLineColor: lColor,

@@ -311,7 +311,7 @@ export default {
       } else {
         visibility = this.createVisibility();
       }
-      let drawElement = new Cesium.DrawElement(this.viewer);
+      let drawElement = new zondy.cesium.DrawElement(this.viewer);
       let cesiumColor = Cesium.Color.fromCssColorString("#FF0000").withAlpha(
         0.5
       );

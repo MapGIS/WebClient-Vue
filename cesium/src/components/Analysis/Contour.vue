@@ -505,7 +505,7 @@ export default {
       let { options } = find;
       let { contourAnalysis, drawElement } = options;
       // 初始化交互式绘制控件
-      drawElement = drawElement || new Cesium.DrawElement(viewer);
+      drawElement = drawElement || new zondy.cesium.DrawElement(viewer);
       vueCesium.ContourAnalysisManager.changeOptions(
         vueKey,
         vueIndex,
@@ -524,7 +524,7 @@ export default {
           this._enableBrightness();
           if (vm.isogram && !vm.isosurface) {
             contourAnalysis =
-              contourAnalysis || new Cesium.TerrainAnalyse(viewer);
+              contourAnalysis || new zondy.cesium.TerrainAnalyse(viewer);
             contourAnalysis.enableContour = true;
             // contourAnalysis.updateMaterial("none");
             contourAnalysis.changeContours(
@@ -535,7 +535,7 @@ export default {
             contourAnalysis.changeAnalyseArea(result.positions);
           } else if (vm.isosurface) {
             contourAnalysis =
-              contourAnalysis || new Cesium.TerrainAnalyse(viewer);
+              contourAnalysis || new zondy.cesium.TerrainAnalyse(viewer);
             let { isGradient, bandTransparencyCopy } = vm.formData2;
             // 获取高度数组和颜色数组
             vm.getHeightAndColor();

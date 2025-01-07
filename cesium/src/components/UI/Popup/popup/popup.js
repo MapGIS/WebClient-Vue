@@ -49,15 +49,15 @@ export function updataPopupPosition(
 
   var cartesian_lb = Cesium.Cartesian3.fromDegrees(west, south);
   var cartesian_rt = Cesium.Cartesian3.fromDegrees(east, north);
-  var px_lb = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
+  var px_lb = Cesium.SceneTransforms.worldToWindowCoordinates(
     scene,
     cartesian_lb
   );
-  var px_rt = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
+  var px_rt = Cesium.SceneTransforms.worldToWindowCoordinates(
     scene,
     cartesian_rt
   );
-  var px_position = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
+  var px_position = Cesium.SceneTransforms.worldToWindowCoordinates(
     scene,
     cartesian
   );

@@ -69,11 +69,11 @@ export default {
       viewer.scene.postProcessStages.fxaa.enabled = true;
       this.localVueIndex = vueIndex;
       this.localVueKey = vueKey;
-      if (!Cesium.hasOwnProperty("GraphicsLayer")) {
+      if (!zondy.cesium.hasOwnProperty("GraphicsLayer")) {
         console.warn("请升级最新版的Cesium库！");
         return;
       }
-      let graphicsLayer = new Cesium.GraphicsLayer(viewer, {
+      let graphicsLayer = new zondy.cesium.GraphicsLayer(viewer, {
         getGraphic: getGraphic,
         finishEdit: finishEdit,
         revokeModel: revokeModel,

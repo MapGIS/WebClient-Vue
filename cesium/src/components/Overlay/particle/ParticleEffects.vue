@@ -778,7 +778,7 @@ export default {
       this.viewer.clock.shouldAnimate = true;
 
       // 创建粒子特效
-      let particle = new this.Cesium.StableParticle(
+      let particle = new zondy.cesium.StableParticle(
         this.viewer,
         this.imgUrl,
         [degrees.longitude, degrees.latitude, degrees.height],
@@ -917,7 +917,7 @@ export default {
       // 开启计时
       this.viewer.clock.shouldAnimate = true;
       // 创建粒子特效
-      let particle = new this.Cesium.StableParticle(
+      let particle = new zondy.cesium.StableParticle(
         this.viewer,
         imgUrl,
         [degrees.longitude, degrees.latitude, degrees.height],

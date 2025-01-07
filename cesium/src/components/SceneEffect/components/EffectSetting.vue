@@ -149,7 +149,7 @@ export default {
         vm.removeOtherStages();
 
         let blackAndWhite = viewer.scene.postProcessStages.add(
-          Cesium.PostProcessStageLibrary.createBlackAndWhiteStage()
+          zondy.cesium.PostProcessStageLibrary.createBlackAndWhiteStage()
         );
         blackAndWhite.uniforms.gradations = 5.0; //(灰度级数)
       } else {
@@ -164,7 +164,7 @@ export default {
       if (vm.effectSetting.ntVision) {
         vm.removeOtherStages();
         viewer.scene.postProcessStages.add(
-          Cesium.PostProcessStageLibrary.createNightVisionStage()
+          zondy.cesium.PostProcessStageLibrary.createNightVisionStage()
         );
       } else {
         vm.removeOtherStages();

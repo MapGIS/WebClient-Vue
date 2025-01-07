@@ -52,7 +52,7 @@ MapCoordSys.prototype.dataToPoint = function (data) {
   // var visibility = cullingVolume.computeVisibility(boundingSphere);
   // if (visibility === Cesium.Intersect.INSIDE) {
   var position = Cesium.Cartesian3.fromDegrees(data[0], data[1]);
-  var point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
+  var point = Cesium.SceneTransforms.worldToWindowCoordinates(
     this._CesiumScene,
     position
   );
@@ -70,7 +70,7 @@ MapCoordSys.prototype.pointToData = function (pt) {
     pt[1] + mapOffset[1]
   );
 
-  var point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
+  var point = Cesium.SceneTransforms.worldToWindowCoordinates(
     this._CesiumScene,
     position
   );

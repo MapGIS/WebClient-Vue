@@ -65,6 +65,7 @@ import aspect from "./Aspect.vue";
 import slope from "./Slope.vue";
 import Popup from "../UI/Popup/Popup.vue";
 import PopupContent from "../UI/Geojson/Popup.vue";
+import { DrawElement } from '@mapgis/webclient-cesium-plugin'
 
 export default {
     name: "mapgis-3d-aspect-slope",
@@ -223,7 +224,7 @@ export default {
 
             let { aspectSlopeAnalysis, drawElement, cesiumHandler } = options;
             // 初始化交互式绘制控件
-            drawElement = drawElement || new Cesium.DrawElement(viewer);
+            drawElement = drawElement || new DrawElement(viewer);
             vueCesium.AspectSlopeAnalysisManager.changeOptions(
                 vueKey,
                 vueIndex,
@@ -246,7 +247,7 @@ export default {
                     this._enableBrightness(); // 开启光照
                     aspectSlopeAnalysis =
                         aspectSlopeAnalysis ||
-                        new Cesium.TerrainAnalyse(viewer, {
+                        new zondy.cesium.TerrainAnalyse(viewer, {
                             slopeRampColor: rampColor,
                             slopeRamp: ramp,
                             gradual

@@ -338,7 +338,7 @@ export default {
       const options = this._getSourceOptions();
       let { cutFillAnalysis, drawElement } = options;
       // 初始化交互式绘制控件
-      drawElement = drawElement || new Cesium.DrawElement(viewer);
+      drawElement = drawElement || new zondy.cesium.DrawElement(viewer);
       vueCesium.CutFillAnalysisManager.changeOptions(
         vueKey,
         vueIndex,
@@ -390,7 +390,7 @@ export default {
       const { xPaneNumCopy, yPaneNumCopy, heightCopy } = this;
 
       // 创建填挖方实例
-      const cutFill = new Cesium.CutFillAnalysis(this.viewer, {
+      const cutFill = new zondy.cesium.CutFillAnalysis(this.viewer, {
         callBack: this._analysisSuccess
       });
 
@@ -468,7 +468,6 @@ export default {
      * @param {Array} positions 填挖区域多边形的顶点数组
      */
     startCutFill(cutFill, positions) {
-      debugger;
       const cutfillObject = cutFill;
       cutfillObject._pointsPolygon = positions;
       const minMax = cutfillObject.getMinAndMaxCartesian();
