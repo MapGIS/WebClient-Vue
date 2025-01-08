@@ -41,7 +41,7 @@ export default {
       return Cesium;
     },
     $_draw(drawFunction, viewer, analyseFunction, analysisName) {
-      window.drawElement = new window.Cesium.DrawElement(viewer);
+      window.drawElement = new zondy.cesium.DrawElement(viewer);
       let vm = this;
       window.drawElement[drawFunction]({
         callback: function(result) {

@@ -347,7 +347,7 @@ export default {
       };
 
       //  初始化漫游动画
-      window.SceneWanderManager.animation = new this.Cesium.AnimationTool(
+      window.SceneWanderManager.animation = new zondy.cesium.AnimationTool(
         this.viewer,
         {
           modelUrl: this.modelUrl,

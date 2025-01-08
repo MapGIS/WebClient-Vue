@@ -272,6 +272,7 @@ export default {
         }
         return [];
       } catch (err) {
+        console.warn(err)
         return [];
       }
     },

@@ -453,7 +453,7 @@ export default {
                 color: colorRGB,
               };
               entity.polyline.material =
-                new Cesium.PolylineTrailLinkMaterialProperty(trailLinkMaterial);
+                new zondy.cesium.PolylineTrailLinkMaterialProperty(trailLinkMaterial);
               entity.polyline.width = style.width;
               break;
             case "PolylineArrow":
@@ -493,7 +493,7 @@ export default {
                 color: colorRGB,
               };
               entity.polyline.material =
-                new Cesium.PolylineTrailLinkMaterialProperty(imageMaterialLine);
+                new zondy.cesium.PolylineTrailLinkMaterialProperty(imageMaterialLine);
               entity.polyline.width = style.outlineWidth;
               break;
             case "CircleWave":
@@ -503,7 +503,7 @@ export default {
                 semiMinorAxis: style.radius,
                 outline: true,
                 outlineWidth: style.outlineWidth,
-                material: new Cesium.CircleWaveMaterialProperty({
+                material: new zondy.cesium.CircleWaveMaterialProperty({
                   duration,
                   gradient,
                   color: colorRGB,
@@ -519,7 +519,7 @@ export default {
                 color: colorRGB,
               };
               entity.polyline.material =
-                new Cesium.PolylineTrailLinkMaterialProperty(defaultMaterial);
+                new zondy.cesium.PolylineTrailLinkMaterialProperty(defaultMaterial);
               entity.polyline.width = style.width;
           }
         } else {

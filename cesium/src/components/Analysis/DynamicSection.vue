@@ -450,7 +450,7 @@ export default {
 
         dynamicSectionAnalysis =
           dynamicSectionAnalysis ||
-          new this.Cesium.CuttingTool(viewer, m3dSetArray);
+          new zondy.cesium.CuttingTool(viewer, m3dSetArray);
         // 剖切方向
         const direction = this._clippingDirection();
         // 创建剖切对象实例

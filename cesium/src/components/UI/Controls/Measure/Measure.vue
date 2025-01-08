@@ -223,7 +223,7 @@ export default {
       } else if (MeasureName === "MeasureStickAreaTool") {
         MeasureName = "MeasureAreaTool";
       }
-      let measure = new Cesium[MeasureName](viewer, measureObject);
+      let measure = new zondy.cesium[MeasureName](viewer, measureObject);
       this.measure = measure;
       window.vueCesium.MeasureToolManager.addSource(vueKey, vueIndex, measure);
       measure.startTool();

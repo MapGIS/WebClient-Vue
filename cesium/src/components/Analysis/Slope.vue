@@ -187,7 +187,7 @@ export default {
             let { slopeAnalysis, drawElement } = options;
             const { viewer } = this;
             // 初始化交互式绘制控件
-            drawElement = drawElement || new this.Cesium.DrawElement(viewer);
+            drawElement = drawElement || new zondy.cesium.DrawElement(viewer);
             vueCesium.SlopeAnalysisManager.changeOptions(
                 vueKey,
                 vueIndex,

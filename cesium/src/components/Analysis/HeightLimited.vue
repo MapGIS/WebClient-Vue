@@ -520,7 +520,7 @@ export default {
         }
 
         //调用控高分析接口
-        let heightLimited = new Cesium.HeightLimited(viewer, {
+        let heightLimited = new zondy.cesium.HeightLimited(viewer, {
           height: heightLimitCopy,
           limitedColor: cesiumColor,
           blendTransparency: vm.opacityCopy,

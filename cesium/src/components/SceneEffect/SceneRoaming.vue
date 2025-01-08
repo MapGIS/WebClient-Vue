@@ -337,7 +337,7 @@ export default {
       this.interactiveAdding = true;
       const pathId = this.getPathId();
       this.name = `路线${pathId}`;
-      this.draw = new this.Cesium.DrawElement(this.viewer);
+      this.draw = new zondy.cesium.DrawElement(this.viewer);
 
       const material = this.Cesium.Material.fromType("Color");
       material.uniforms.color = new this.Cesium.Color(0.9, 0.6, 0.1, 0.5);

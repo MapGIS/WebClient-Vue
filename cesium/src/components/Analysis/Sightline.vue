@@ -285,7 +285,7 @@ export default {
         vueKey,
         vueIndex,
         "tooltip",
-        new Cesium.Tooltip(viewer.container, {})
+        new zondy.cesium.Tooltip(viewer.container, {})
       );
       this.addEventListener();
     },
@@ -373,7 +373,7 @@ export default {
       );
 
       // 初始化通视分析类
-      const visibility = new Cesium.VisiblityAnalysis({ scene: viewer.scene });
+      const visibility = new zondy.cesium.VisiblityAnalysis({ scene: viewer.scene });
       visibility.unvisibleColor = unVisibleColor;
       visibility.visibleColor = visibleColor;
       // 添加通视分析结果显示
