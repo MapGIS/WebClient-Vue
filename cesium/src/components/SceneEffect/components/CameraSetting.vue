@@ -216,19 +216,26 @@ export default {
             }
             // 当imageryLayers数组的长度大于0，开启影像透明度独立控制，否则不开启，开启操做必须在设置透明度之前执行
             _independentTranslucency.imageryLayers = imageryLayers;
-            // 开启影像图层透明度独立控制，则通过globeFaceAlpha设置球体透明度
-            _independentTranslucency.globeFaceAlpha =
-              this.cameraSetting.undgrdParams.groundAlpha;
+            if (imageryLayers.length > 0) {
+              // 开启影像图层透明度独立控制，则通过globeFaceAlpha设置球体透明度
+              _independentTranslucency.globeFaceAlpha =
+                this.cameraSetting.undgrdParams.groundAlpha;
+            } else {
+              _independentTranslucency.frontFaceAlpha =
+                this.cameraSetting.undgrdParams.groundAlpha;
+              _independentTranslucency.backFaceAlpha =
+                this.cameraSetting.undgrdParams.groundAlpha;
+            }
           }
           // 2.2 关闭开启地表透明度独立控制
           else {
+            // 当imageryLayers数组的长度等于0，关闭影像透明度独立控制
+            _independentTranslucency.imageryLayers = imageryLayers;
             // 关闭开启影像图层透明度独立控制，则通过frontFaceAlpha和backFaceAlpha设置球体透明度
             _independentTranslucency.frontFaceAlpha =
               this.cameraSetting.undgrdParams.groundAlpha;
             _independentTranslucency.backFaceAlpha =
               this.cameraSetting.undgrdParams.groundAlpha;
-            // 当imageryLayers数组的长度等于0，关闭影像透明度独立控制
-            _independentTranslucency.imageryLayers = imageryLayers;
           }
         }
       }
@@ -237,9 +244,12 @@ export default {
      * 更新二维影像图层独立控制影响的图层
      * */
     updateIndependentTranslucency() {
-      this._enableIndependentTranslucency(
-        this.cameraSetting.undgrdParams.enableIndependentTranslucency
-      );
+      // 只有开启地下模式才进行控制
+      if (this.cameraSetting.undgrd) {
+        this._enableIndependentTranslucency(
+          this.cameraSetting.undgrdParams.enableIndependentTranslucency
+        );
+      }
     },
     /**
      * 开启或关闭地下模式，开启后地表半透明，视角可以穿梭到地下，会触发设置更新事件
@@ -267,9 +277,27 @@ export default {
         this._setGlobeBackFaceAlpha(
           this.cameraSetting.undgrdParams.groundAlpha
         );
+        // 开启地下模式时启用_independentTranslucency
+        this.initEnableIndependentTranslucency();
       } else {
         // 2.2 不开启地表透明度，地表透明度应该为1
         this._setGlobeBackFaceAlpha(1);
+        this.initDisableEnableIndependentTranslucency();
+      }
+    },
+    initEnableIndependentTranslucency() {
+      const _independentTranslucency = this.getImageLayersTranslucencyManager();
+      if (_independentTranslucency) {
+        _independentTranslucency.enabled = true;
+      }
+      this._enableIndependentTranslucency(
+        this.cameraSetting.undgrdParams.enableIndependentTranslucency
+      );
+    },
+    initDisableEnableIndependentTranslucency() {
+      const _independentTranslucency = this.getImageLayersTranslucencyManager();
+      if (_independentTranslucency) {
+        _independentTranslucency.enabled = false;
       }
     },
     /**
@@ -324,16 +352,39 @@ export default {
       // 1 获取透明度工具
       const _independentTranslucency = this.getImageLayersTranslucencyManager();
 
-      // 2 设置地表透明度
       if (_independentTranslucency) {
-        // 2.1 imageryLayers数组的长度大于0，表示开启图层透明度独立控制
-        if (_independentTranslucency.imageryLayers.length > 0) {
-          _independentTranslucency.globeFaceAlpha = groundAlpha;
+        const imageryLayers = [];
+        if (this.cameraSetting.undgrdParams.enableIndependentTranslucency) {
+          // i从1开始，因为第0个是Cesium初始底图
+          for (let i = 1; i < viewer.imageryLayers._layers.length; i++) {
+            imageryLayers.push(viewer.imageryLayers._layers[i]);
+          }
+          // 当imageryLayers数组的长度大于0，开启影像透明度独立控制，否则不开启，开启操做必须在设置透明度之前执行
+          _independentTranslucency.imageryLayers = imageryLayers;
+          if (imageryLayers.length > 0) {
+            // 开启影像图层透明度独立控制，则通过globeFaceAlpha设置球体透明度
+            _independentTranslucency.globeFaceAlpha =
+              this.cameraSetting.undgrdParams.groundAlpha;
+          } else {
+            _independentTranslucency.frontFaceAlpha =
+              this.cameraSetting.undgrdParams.groundAlpha;
+            _independentTranslucency.backFaceAlpha =
+              this.cameraSetting.undgrdParams.groundAlpha;
+          }
         }
-        // 2.1 否则同意控制球体和影像图层的透明度
+        // 2.2 关闭开启地表透明度独立控制
         else {
-          _independentTranslucency.frontFaceAlpha = groundAlpha;
-          _independentTranslucency.backFaceAlpha = groundAlpha;
+          if (this.cameraSetting.undgrd) {
+            // 当imageryLayers数组的长度等于0，关闭影像透明度独立控制
+            _independentTranslucency.imageryLayers = imageryLayers;
+            // 关闭开启影像图层透明度独立控制，则通过frontFaceAlpha和backFaceAlpha设置球体透明度
+            _independentTranslucency.frontFaceAlpha =
+              this.cameraSetting.undgrdParams.groundAlpha;
+            _independentTranslucency.backFaceAlpha =
+              this.cameraSetting.undgrdParams.groundAlpha;
+          } else {
+            _independentTranslucency.globeFaceAlpha = groundAlpha;
+          }
         }
       }
     },
