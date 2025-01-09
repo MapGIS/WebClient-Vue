@@ -45,7 +45,6 @@ export { default as Mapgis3dCzmlLayer } from "./components/Layer/CZML/CzmlLayer"
 export { default as Mapgis3dVectortileLayer } from "./components/Layer/VectorTile/VectorTileLayer.vue";
 
 // 模型
-export { default as Mapgis3dFileM3d } from "./components/Layer/M3D/M3dFile.vue";
 export { default as Mapgis3dSceneLayer } from "./components/Layer/M3D/Scene.vue";
 export { default as Mapgis3dM3dLayer } from "./components/Layer/M3D/M3d.vue";
 export { default as Mapgis3dTileset } from "./components/Layer/M3D/3dTileset.vue";

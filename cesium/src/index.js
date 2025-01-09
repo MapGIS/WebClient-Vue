@@ -21,7 +21,6 @@ import OgcWfsLayer from "./components/Layer/OGC/OGCWFSLayer.vue";
 import VectorTileLayer from "./components/Layer/VectorTile/VectorTileLayer.vue";
 
 // 模型
-import FileM3d from "./components/M3D/M3dFile.vue";
 import IgsM3d from "./components/M3D/M3d.vue";
 import Tileset from "./components/M3D/3dTileset.vue";
 
@@ -56,7 +55,6 @@ export const CesiumTerrainProvider = TerrainProvider;
 
 export const Cesium3dTileset = Tileset;
 export const CesiumIgsM3d = IgsM3d;
-export const CesiumFileM3d = FileM3d;
 
 export const MapgisGeojsonDatasource = GeoJsonDataSource;
 export const MapgisCzmlDatasource = CzmlDataSource;
@@ -87,17 +85,16 @@ const Components = [
 
   Cesium3dTileset,
   CesiumIgsM3d,
-  CesiumFileM3d,
 
   MapgisGeojsonDatasource,
   MapgisCzmlDatasource,
-  CesiumPopup,
+  CesiumPopup
 
   /* CesiumMapvLayer */
 ];
 
-const install = function (Vue, options) {
-  Components.forEach((com) => {
+const install = function(Vue, options) {
+  Components.forEach(com => {
     Vue.component(com.options ? com.options.name : com.name, com);
   });
 };
@@ -106,5 +103,5 @@ if (typeof window !== "undefined" && window["Vue"]) {
 }
 
 export default {
-  install,
+  install
 };

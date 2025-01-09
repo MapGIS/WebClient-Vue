@@ -15,7 +15,7 @@
 | Layer\VectorTile\VectorTileLayer.vue     | 改名 | mapgis-3d-vectortile-layer   |                           | Mapgis3dVectortileLayer |                         | 无   |
 | M3D\3dTileset.vue                        | 改名 | mapgis-3d-tileset            | cesium-3d-tileset         | Mapgis3dTileset         |                         | 无   |
 | M3D\M3d.vue                              | 改名 | mapgis-3d-igs-m3d            | cesium-igs-m3d            | Mapgis3dIgsM3d          |                         | 无   |
-| M3D\M3dFile.vue                          | 改名 | mapgis-3d-file-m3d           | cesium-file-m3d           | Mapgis3dFileM3d         |                         | 无   |
+| M3D.vue                                  | 改名 | mapgis-3d-file-m3d           | cesium-file-m3d           | Mapgis3dFileM3d         |                         | 无   |
 | UI\Controls\Draw\Draw.vue                | 改名 | mapgis-3d-draw               |                           | Mapgis3dDraw            |                         | 无   |
 | UI\Controls\Link\Link.vue                | 改名 | mapgis-3d-link               |                           | Mapgis3dLink            |                         | 无   |
 | UI\Controls\State\StateControl.vue       | 新增 | mapgis-3d-statebar           |                           | Mapgis3dState           |                         | 无   |
