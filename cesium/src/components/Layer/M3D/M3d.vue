@@ -168,7 +168,6 @@ export default {
       });
       const cesiumOptions = initializeOptions(M3DLayer, viewer);
       zondy.cesium.MapGISM3DSet.fromUrl(url, cesiumOptions).then((m3dset) => {
-        console.log("m3dset: ", m3dset);
         if (!m3dset) {
           return;
         }
@@ -192,7 +191,16 @@ export default {
         vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, {
           url: url,
         });
-        vm.$emit("loaded", { tileset: M3DLayer, m3ds: m3ds });
+        const layerInfo = m3dset.layerinfo;
+        if (layerInfo && layerInfo.length) {
+          const { voxelInfo } = layerInfo[0] || {};
+          if (voxelInfo) {
+            vm.isVoxelLayer = true;
+            m3dset.heightScale = 1000;
+            vm.$emit("handelVoxel", vueIndex);
+          }
+        }
+        vm.$emit("loaded", { tileset: m3ds[0], m3ds: m3ds });
         vm.bindPopupEvent();
       });
     },
@@ -224,7 +232,7 @@ export default {
       const find = vueCesium.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find) {
         const m3ds = find.source;
-        if (m3ds && m3ds.length > 0) {
+        if (m3ds && m3ds.length) {
           return m3ds[0];
         }
         return null;
@@ -336,7 +344,7 @@ export default {
       });
       let titlefield = popupOptions ? popupOptions.title : undefined;
       const properties = await this.getFeaturePorpertiesById(id);
-      if (Object.keys(properties).length > 0) {
+      if (Object.keys(properties).length) {
         if (vm.showPopup) {
           if (this.popupShowType === "default") {
             vm.featureproperties = properties;
@@ -356,7 +364,7 @@ export default {
         // 修改说明：属性信息也统一从feature上获取，更新获取方法
         // 修改人:龚跃健
         // 修改日期：2025-1-9
-        if (propertyIds && propertyIds.length > 0) {
+        if (propertyIds && propertyIds.length) {
           for (let i = 0; i < propertyIds.length; ++i) {
             const propertyId = propertyIds[i];
             result[propertyId] = feature.getProperty(propertyId);
