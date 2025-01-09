@@ -1,16 +1,4 @@
 <template>
-  <!-- <mapgis-3d-virtual-popup
-    v-if="popupShowType === 'default'"
-    :enablePopup="enablePopup"
-    :enableTips="enableTips"
-    :popupOptions="popupOptions"
-    :tipsOptions="tipsOptions"
-    :iotOptions="iotOptions"
-    :clickVisible="iClickVisible"
-    :clickPosition="iClickPosition"
-    :clickFeatures="iClickFeatures"
-  >
-  </mapgis-3d-virtual-popup> -->
   <mapgis-3d-feature-popup
     v-if="featureposition"
     :position="featureposition"
@@ -30,24 +18,69 @@
 </template>
 
 <script>
-import Tileset from "./3DTileset";
+import TilesetOptions from "./3DTilesetOptions";
 import PopupMixin from "../Mixin/PopupMixin";
+import { Cesium3DTilesCacheLayer } from "@mapgis/webclient-common";
+import { initializeOptions } from "@mapgis/webclient-cesium-plugin";
 export default {
   name: "mapgis-3d-3dtiles-layer",
-  mixins: [Tileset, PopupMixin],
+  inject: ["Cesium", "vueCesium", "viewer"],
+  mixins: [PopupMixin],
+  props: {
+    ...TilesetOptions,
+    // 右侧展示气泡框props
+    popupShowType: {
+      type: String,
+      default: "default",
+    },
+    // 气泡框对象
+    popupOverlay: {
+      type: Object,
+      default: () => {},
+    },
+    // datastore服务器ip
+    dataStoreIp: {
+      type: String,
+      default: "192.168.96.101",
+    },
+    // datastore服务器port
+    dataStorePort: {
+      type: String,
+      default: "9014",
+    },
+    // 查询知识图谱的数据集位置
+    dataStoreDataset: {
+      type: String,
+      default: "Graph3/GraphDataset1",
+    },
+    // 弹出框属性
+    popupOptions: {
+      type: Object,
+      default: () => {
+        return { popupType: "card" };
+      },
+    },
+    // token信息
+    token: {
+      type: Object,
+    },
+  },
   data() {
     return {
-      layerIndex: undefined,
+      // 拾取的要素位置
       featureposition: undefined,
+      // 拾取的要素属性
       featureproperties: undefined,
     };
   },
   watch: {
+    // 监听tileset透明度设置变化
     opacity(next) {
       if (next >= 0 && next <= 1) {
         this.changeOpacity(next);
       }
     },
+    // 是否显示弹框
     enablePopup(next) {
       if (next) {
         this.bindPopupEvent();
@@ -55,47 +88,27 @@ export default {
         this.unbindPopupEvent();
       }
     },
+    // 监听tileset的显示/隐藏设置变化
     show(next) {
       const { viewer } = this;
-      const tileset = viewer.scene.layers.getCesium3DTilesetLayer(
-        this.layerIndex
-      );
+      const tileset = this.getTileSet();
+      if (!tileset) {
+        return;
+      }
       tileset.show = next;
     },
   },
+  created() {},
+  mounted() {
+    this.mount();
+  },
+  destroyed() {
+    this.unmount();
+  },
   methods: {
-    createCesiumObject() {
-      const { viewer, Cesium } = this;
-      return new Promise(
-        (resolve) => {
-          const { $props, url, token } = this;
-          const { headers } = $props;
-          let layerIndex;
-          const options = this.getOptions();
-          options.loaded = this.onTilesetLoaded;
-          options.errorCallback = this.onTilesetLoadedError;
-          let urlSource;
-          if (headers) {
-            urlSource = new Cesium.Resource({ url: url, headers: headers });
-          } else if (token && token.value) {
-            // token等信息已拼接在url中，不需要再次处理
-            // urlSource = url + "?" + token.key + "=" + token.value;
-            urlSource = url;
-          } else {
-            urlSource = url;
-          }
-          layerIndex = viewer.scene.layers.appendCesium3DTilesetLayer(
-            urlSource,
-            options
-          );
-          this.layerIndex = layerIndex;
-          resolve({ layerIndex });
-        },
-        (reject) => {}
-      );
-      // let options = { ...$props, url: urlSource };
-      // const tileset = new Cesium.Cesium3DTileset(options);
-    },
+    /**
+     * 构造tileset初始化options
+     */
     getOptions() {
       const { $props } = this;
       let options = {};
@@ -117,93 +130,213 @@ export default {
       });
       return options;
     },
+    /**
+     * @description 初始化组件
+     */
+    mount() {
+      const vm = this;
+      const { viewer, vueIndex, vueKey, vueCesium, $props } = this;
+      const { url, opacity } = this;
+      if (viewer.isDestroyed()) return;
+      const options = this.getOptions();
+      const tilesetLayer = new zondy.layer.Cesium3DTilesCacheLayer({
+        // 服务基地址
+        url,
+        ...options,
+      });
+      const cesiumOptions = initializeOptions(tilesetLayer, viewer);
+      zondy.cesium.Cesium3DTileset.fromUrl(url, cesiumOptions).then(
+        (tileset) => {
+          if (!tileset) {
+            return;
+          }
+          if (options.autoReset) {
+            const boundingSphere = tileset.boundingSphere;
+            const orientation = new Cesium.HeadingPitchRange(
+              0.0,
+              -0.5,
+              boundingSphere.radius * 2.5
+            );
+            viewer.camera.flyToBoundingSphere(boundingSphere, {
+              duration: 0,
+              offset: orientation,
+            });
+          }
+          viewer.scene.primitives.add(tileset);
+          tileset.style = new Cesium.Cesium3DTileStyle({
+            color: `color('#FFFFFF', ${opacity})`,
+          });
+          vueCesium.Tileset3DManager.addSource(vueKey, vueIndex, tileset, {
+            url: url,
+          });
+          vm.$emit("loaded", { tileset: tileset, m3ds: [tileset] });
+          vm.bindPopupEvent();
+        }
+      );
+    },
+    /**
+     * @description 清空组件
+     */
+    unmount() {
+      const { viewer, vueKey, vueIndex, vueCesium } = this;
+      this.removeLayer();
+      this.feature = null;
+      this.unbindPopupEvent();
+      this.$emit("unload");
+      vueCesium.Tileset3DManager.deleteSource(vueKey, vueIndex);
+    },
+    /**
+     * @description 移除3DTiles图层
+     */
+    removeLayer() {
+      const { viewer } = this;
+      const tileset = this.getTileSet();
+      if (tileset) {
+        viewer.scene.primitives.remove(tileset);
+      }
+    },
+    /**
+     * @description 获取TileSet
+     */
+    getTileSet() {
+      const { vueKey, vueIndex } = this;
+      const find = vueCesium.Tileset3DManager.findSource(vueKey, vueIndex);
+      if (find) {
+        let tileset = find.source;
+        if (tileset) {
+          return tileset;
+        }
+        return null;
+      }
+      return null;
+    },
+    /**
+     * @description 绑定气泡框事件
+     */
+    bindPopupEvent() {
+      const { vueKey, vueIndex, vueCesium } = this;
+      const { enablePopup, enableTips, enableModelSwitch } = this;
+
+      let clickhandler, hoverhandler;
+      if (enablePopup || enableModelSwitch) {
+        clickhandler = this.$_bindClickEvent(
+          this.pickFeature,
+          this.cancelFeature,
+          true,
+          false
+        );
+      }
+      if (enableTips) {
+        hoverhandler = this.$_bindHoverEvent(this.pickFeature);
+      }
+      vueCesium.Tileset3DManager.changeOptions(
+        vueKey,
+        vueIndex,
+        "clickhandler",
+        clickhandler
+      );
+      vueCesium.Tileset3DManager.changeOptions(
+        vueKey,
+        vueIndex,
+        "hoverhandler",
+        hoverhandler
+      );
+    },
+    /**
+     * @description 取消绑定气泡框事件
+     */
+    unbindPopupEvent() {
+      const { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.Tileset3DManager.findSource(vueKey, vueIndex);
+      if (find && find.options) {
+        if (find.options.clickhandler) {
+          find.options.clickhandler.destroy();
+        }
+        if (find.options.hoverhandler) {
+          find.options.hoverhandler.destroy();
+        }
+      }
+      // 关闭右侧气泡框
+      this.popupOverlay && this.popupOverlay.setContent(null);
+      this.cancelFeature();
+    },
+    /**
+     * @description 设置tileset透明度
+     * @param {Number} opacity 透明度
+     */
     changeOpacity(opacity) {
       const { vueKey, vueIndex, vueCesium, Cesium } = this;
       const vm = this;
-      let find = vueCesium.Tileset3DManager.findSource(vueKey, vueIndex);
-      if (find) {
-        let tileset = find.source;
-        if (!tileset) return;
-
-        tileset.style = new Cesium.Cesium3DTileStyle({
-          color: `color('#FFFFFF', ${opacity})`,
-        });
+      const tileset = this.getTileSet();
+      if (!tileset) {
+        return;
       }
+      tileset.style = new Cesium.Cesium3DTileStyle({
+        color: `color('#FFFFFF', ${opacity})`,
+      });
     },
-    onTilesetLoaded(tileset) {
-      const vm = this;
-      const { vueIndex, vueKey, vueCesium, url, opacity } = this;
-      if (tileset) {
-        tileset.style = new Cesium.Cesium3DTileStyle({
-          color: `color('#FFFFFF', ${opacity})`,
-        });
-        let tilesetLayer = [tileset];
-        vueCesium.Tileset3DManager.addSource(vueKey, vueIndex, tileset, {
-          url: url,
-        });
-        vm.$emit("loaded", { tileset: tileset, m3d: tilesetLayer });
-        vm.bindPopupEvent();
-      }
-    },
-    onTilesetLoadedError(info) {
-      this.$emit("unLoaded");
-    },
+    /**
+     * @description 拾取
+     * @param {Object} payload cesium鼠标点击事件返回的对象
+     */
     pickFeature(payload) {
+      console.log("payload: ", payload);
       const vm = this;
       const { movement } = payload;
 
       const { popupOptions, highlightStyle, vueKey, vueIndex } = this;
-      // const { color = "rgba(255, 255, 0, 0.6)" } = highlightStyle;
       const { viewer, Cesium } = this;
-      const { version, layerIndex } = this;
+      const { version } = this;
       const { popupShowType } = this;
 
       const pickInfo = {};
 
-      const tileset = viewer.scene.layers.getCesium3DTilesetLayer(layerIndex);
+      const tileset = this.getTileSet();
+      if (!tileset) {
+        return;
+      }
 
       let feature = viewer.scene.pick(movement.position);
 
       this.cancelFeature(false);
 
-      if (feature instanceof Cesium.Cesium3DTileFeature) {
-        if (feature.content.tileset === tileset) {
-          if (popupShowType === "default") {
-            if (vm.showPopup) {
-              vm.featureposition = vm.iClickPosition;
-            }
-            pickInfo.position = vm.iClickPosition;
-          }
-
-          if (feature) {
-            this.feature = feature;
-          }
-
-          feature.color = Cesium.Color.fromCssColorString(highlightStyle);
-
-          let properties;
-          const propertyNames = feature.getPropertyNames();
-          if (propertyNames && propertyNames.length > 0) {
-            properties = {};
-            propertyNames.forEach((item) => {
-              properties[item] = feature.getProperty(item);
-            });
-          }
-
-          if (popupShowType === "default") {
-            vm.featureproperties = properties;
-          } else {
-            vm.popupOverlay &&
-              vm.popupOverlay.setContent(properties ? properties : null);
-          }
-          pickInfo.properties = properties;
-          pickInfo.layerId = vm.vueIndex;
-          vm.$emit("pick-info", pickInfo);
+      if (
+        feature instanceof Cesium.Cesium3DTileFeature &&
+        feature.content.tileset === tileset
+      ) {
+        if (feature) {
+          this.feature = feature;
         }
+        feature.color = Cesium.Color.fromCssColorString(highlightStyle);
+
+        let properties;
+        const propertyIds = feature.getPropertyIds();
+        // 修改说明：属性信息也统一从feature上获取，更新获取方法
+        // 修改人:龚跃健
+        // 修改日期：2025-1-9
+        if (propertyIds && propertyIds.length) {
+          for (let i = 0; i < propertyIds.length; ++i) {
+            const propertyId = propertyIds[i];
+            properties[propertyId] = feature.getProperty(propertyId);
+          }
+        }
+
+        if (popupShowType === "default") {
+          vm.featureproperties = properties;
+        } else {
+          vm.popupOverlay &&
+            vm.popupOverlay.setContent(properties ? properties : null);
+        }
+        pickInfo.properties = properties;
+        pickInfo.layerId = vm.vueIndex;
+        vm.$emit("pick-info", pickInfo);
       } else {
         vm.$emit("pick-info", {});
       }
     },
+    /**
+     * @description 取消拾取内容
+     */
     cancelFeature(sendPickInfo = true) {
       if (this.feature) {
         const { Cesium } = this;
@@ -218,6 +351,9 @@ export default {
       }
       sendPickInfo && this.$emit("pick-info", {});
     },
+  },
+  render(createElement) {
+    return createElement("span");
   },
 };
 </script>

@@ -343,6 +343,7 @@ export default {
         },
       });
       let titlefield = popupOptions ? popupOptions.title : undefined;
+      // 优先基于id，通过IGS要素查询的方式获取要素属性信息
       const properties = await this.getFeaturePorpertiesById(id);
       if (Object.keys(properties).length) {
         if (vm.showPopup) {
@@ -382,40 +383,15 @@ export default {
             }
           }
           pickInfo.properties = result;
-        } else {
-          // 如果从feature上没有获取属性，则通过IGS要素查询的方式获取
-          m3dset.queryAttributes(id).then(function (result) {
-            result = result || {};
-            if (vm.showPopup) {
-              if (this.popupShowType === "default") {
-                vm.featureproperties = result;
-              } else {
-                // title放在最前面
-                let popupContent = {};
-                popupContent = result[titlefield]
-                  ? { title: result[titlefield], ...result }
-                  : { ...result };
-                vm.popupOverlay && vm.popupOverlay.setContent(popupContent);
-              }
-            }
-            pickInfo.properties = result;
-          });
         }
-      }
-      if (this.popupShowType === "default" && vm.iClickPosition) {
-        if (vm.showPopup) {
-          vm.featureposition = vm.iClickPosition;
-        }
-        pickInfo.position = vm.iClickPosition;
       }
       pickInfo.layerId = vm.vueIndex;
       vm.$emit("pick-info", pickInfo);
     },
     /**
-     * @description 设置M3D的显示/隐藏
-     * @param {Boolean} show 是否显示
+     * @description 取消拾取内容
      */
-    cancelFeature(payload) {
+    cancelFeature() {
       const m3dset = this.getM3DSet();
       m3dset.style = undefined;
       this.featureposition = undefined;
