@@ -73,8 +73,6 @@ export default {
       layerStyleCopy: {},
       //确定serviceLayer要使用的manager名字
       managerName: undefined,
-      //确定serviceLayer要使用的provider的名字
-      providerName: undefined,
       /*
       * this.$props.options里面的参数类型检测设置，类型名称全小写，
       * 检测类型有number，boolean，string，object，array
@@ -119,6 +117,15 @@ export default {
         let vm = this;
         let isEqual = this.$_isEqual(vm.options, vm.optionsBack);
         if (!isEqual) {
+          // 防止初始化的时候，图层被多次加载，图层未加载成功时，不执行
+          const { vueIndex, vueKey } = this;
+          const find = window.vueCesium[this.managerName].findSource(
+            vueKey,
+            vueIndex
+          );
+          if (!find) {
+            return;
+          }
           this.unmount();
           this.mount();
           this.optionsBack = this.options;
@@ -155,43 +162,23 @@ export default {
       }
       return true;
     },
-    /*
-     * 通用的mount函数，建议使用时在自己的mount函数里面调用此函数，并在mounted生命周期调用
-     * 使用前请优先处理好自己组建里非通用参数，然后传入$_mount
-     * 例如：
-     * mount(){
-     *   //...处理自己的provider要用的参数，请参考Cesium文档里的Provider
-     *   //在线文档：http://develop.smaryun.com:8899/docs/other/mapgis-cesium/index.html
-     *   //最新文档：\\192.168.82.44\MapGIS 10 开发环境\WebClient\package的develop里面
-     *   let options = {
-     *     opt1: "",
-     *     opt2: ""
-     *   }
-     *   this.$_mount(options);
-     * }
-     *
-     * @param addOpt 需要额外添加的参数
-     * @param vueCesiumLayer 该参数存在时，会替provier处的Cesium[this.providerName]方法，请参考webclient-javascript里的各种Cesium的layer
-     * **/
-    $_mount(addOpt, vueCesiumLayer) {
-      //类型检测
-      this.$_check();
+    /**
+     * 构造options对象
+     * @returns {Object} options对象
+     */
+    $_getOptions() {
       let opt = {},
         options = {};
 
       //取得除options、layerStyle和id之外的必要参数
-      const { $props, vueIndex, vueKey } = this;
+      const { $props } = this;
       Object.keys($props).forEach(function(key) {
         if (key !== "options" && key !== "layerStyle" && key !== "id") {
           opt[key] = $props[key];
         }
       });
-
-      //组合参数
-      options = { ...this.options, ...opt, ...addOpt };
-
       if (this.token) {
-        if (this.providerName === "MapGIS2DDocMapProvider") {
+        if (this.managerName === "IgsDocLayerManager") {
           if (
             options.hasOwnProperty("extensions") &&
             options.extensions.length > 0
@@ -206,25 +193,50 @@ export default {
             ];
           }
         } else if (this.token.value) {
-          options.baseUrl += "?" + this.token.key + "=" + this.token.value;
+          options.tokenKey = this.token.key;
+          options.tokenValue = this.token.value;
+          // this.baseUrl += "?" + this.token.key + "=" + this.token.value;
         }
       }
 
-      options.url = options.baseUrl;
+      // options.url = this.baseUrl;
+
+      //组合参数
+      this.options = { ...options };
+      return this.options;
+    },
+    /*
+     * 通用的mount函数，建议使用时在自己的mount函数里面调用此函数，并在mounted生命周期调用
+     * 使用前请优先处理好自己组建里非通用参数，然后传入$_mount
+     * 例如：
+     * mount(){
+     *   //...处理自己的图层参数，生成cesium里对应的图层
+     *   // 可以参考@mapgis/webclient-common和@mapgis/webclient-cesium-plugin的API文档
+     *   let options = {
+     *     opt1: "",
+     *     opt2: ""
+     *   }
+     *   this.$_mount(imageryLayer,options);
+     * }
+     *
+     * @param provider cesium里对应图层的provider
+     * @param options 图层属性参数
+     * **/
+    $_mount(provider, options) {
+      const { vueIndex, vueKey } = this;
+      //类型检测
+      this.$_check();
 
       //取得webGlobe对象，防止当页面有多个webGlobe只会取得
-      //根据对应的providerName设置provider
       const { layerStyle } = this;
       const { saturation, hue } = options;
       const { visible, opacity, zIndex } = layerStyle;
       const { imageryLayers } = this.$_getWebGlobe();
-
-      let provider;
-      if (vueCesiumLayer) {
-        provider = new vueCesiumLayer(options);
-      } else {
-        provider = new Cesium[this.providerName](options);
-      }
+      // 添加图层到Cesium视图中,不管有没有设置zIndex先统一往上面叠放
+      const imageryLayer = viewer.imageryLayers.addImageryProvider(
+        provider,
+        imageryLayers._layers.length
+      );
 
       //初始化imageryLayers.addImageryProvider需要的index
       let providerZIndex;
@@ -239,13 +251,6 @@ export default {
         //如果有layerStyle.zIndex，则layer的zIndex为layerStyle.zIndex
         providerZIndex = zIndex;
       }
-
-      //不管有没有设置zIndex先同意往上面叠放
-      let imageryLayer = imageryLayers.addImageryProvider(
-        provider,
-        imageryLayers._layers.length
-      );
-
       //如果有zIndex，则保证zIndex大于0的layer始终在zIndex为0的layer上面，并按照zIndex从大到小排序
       //如果没有zIndex，则按初始化顺序向上叠放，如果在此layer的下方含有zIndex大于0的layer，则layer向下一层，直到下方没有包含zIndex大于0的layer
       //只会根据imageryLayers排序，不会影响其他图层
@@ -311,6 +316,9 @@ export default {
         vueKey,
         vueIndex
       );
+      if (!find) {
+        return;
+      }
       imageryLayers.remove(find.source, true);
       window.vueCesium[this.managerName].deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
@@ -656,6 +664,7 @@ export default {
      * @param service 要调用的服务名称
      * **/
     $_initUrl(service) {
+      console.log("service: ", service);
       let _url;
 
       //优先判断url方式
