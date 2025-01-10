@@ -612,8 +612,11 @@ export default {
         transform,
         new Cesium.Matrix4()
       );
-
-      if (m3dSet.constructor.name == "Cesium3DTileset") {
+      /**
+       * 修改说明：m3dSet.construct.name不能判断，因为name被压缩混淆 
+       * 修改时间：2025/1/10
+       */
+      if (m3dSet instanceof Cesium.Cesium3DTileset) {
         let range = { xmin, ymin, xmax, ymax, zmin, zmax };
         Object.keys(range).forEach((item) => {
           if (item == "xmin" || item == "ymin")
