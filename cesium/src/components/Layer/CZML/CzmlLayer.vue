@@ -9,11 +9,11 @@ export default {
   props: {
     url: {
       type: String,
-      default: null
+      default: null,
     },
     token: {
-      type: Object
-    }
+      type: Object,
+    },
   },
   data() {
     return {};
@@ -26,38 +26,38 @@ export default {
   },
   watch: {
     url: {
-      handler: function() {
+      handler: function () {
         this.removeCzml();
         if (this.visible === undefined || this.visible) {
           this.appendCzml(this.url, true);
         }
-      }
+      },
     },
     visible: {
-      handler: function() {
+      handler: function () {
         this.removeCzml();
         if (this.visible === undefined || this.visible) {
           this.appendCzml(this.url, false);
         }
-      }
-    }
+      },
+    },
   },
   methods: {
     async createCesiumObject() {
       return new Promise(
-        resolve => {
+        (resolve) => {
           resolve();
         },
-        reject => {}
+        (reject) => {}
       );
     },
     mount() {
       const { viewer, vueCesium, vueKey, vueIndex, czmlData } = this;
       const vm = this;
-      let promise = this.createCesiumObject();
-      promise.then(function(dataSource) {
+      const promise = this.createCesiumObject();
+      promise.then(function (dataSource) {
         vueCesium.CzmlManager.addSource(vueKey, vueIndex, dataSource, {
-          czmlData: undefined
+          czmlData: undefined,
         });
         vm.appendCzml(vm.url, true);
         vm.$emit("loaded", vm);
@@ -72,9 +72,9 @@ export default {
       if (!url || url.length == 0) {
         return;
       }
-      let { vueKey, vueIndex, Cesium, viewer, token } = this;
-      let find = vueCesium.CzmlManager.findSource(vueKey, vueIndex);
-      let { options } = find;
+      const { vueKey, vueIndex, Cesium, viewer, token } = this;
+      const find = vueCesium.CzmlManager.findSource(vueKey, vueIndex);
+      const { options } = find;
       let { czmlData } = options;
       if (!czmlData || changeUrl) {
         if (token && token.value) {
@@ -83,37 +83,39 @@ export default {
         czmlData = Cesium.CzmlDataSource.load(url, {
           camera: viewer.scene.camera,
           canvas: viewer.scene.canvas,
-          clampToGround: true
+          clampToGround: true,
         });
-        vueCesium.CzmlManager.changeOptions(
-          vueKey,
-          vueIndex,
-          "czmlData",
-          czmlData
-        );
+        czmlData.then((data) => {
+          vueCesium.CzmlManager.changeOptions(
+            vueKey,
+            vueIndex,
+            "czmlData",
+            data
+          );
+        });
       }
       viewer.dataSources.add(czmlData);
       return czmlData;
     },
     removeCzml() {
-      let { viewer } = this;
-      const dataSource = viewer.dataSources.getByName(this.name)[0];
-      if (dataSource) {
-        viewer.dataSources.remove(dataSource);
+      const { vueKey, vueIndex, viewer, vueCesium } = this;
+      const find = vueCesium.CzmlManager.findSource(vueKey, vueIndex);
+      const { options } = find;
+      const { czmlData } = options;
+      if (czmlData) {
+        viewer.dataSources.remove(czmlData);
       }
     },
     unmount() {
       this.removeCzml();
-      let { vueKey, vueIndex, viewer, vueCesium } = this;
-      let find = vueCesium.CzmlManager.findSource(vueKey, vueIndex);
-      let { options } = find;
-      let { czmlData } = options;
-      if (czmlData) {
-        vueCesium.CzmlManager.changeOptions(vueKey, vueIndex, "czmlData", null);
+      const { vueKey, vueIndex, vueCesium } = this;
+      const find = vueCesium.CzmlManager.findSource(vueKey, vueIndex);
+      if (find) {
+        vueCesium.CzmlManager.deleteSource(vueKey, vueIndex);
       }
       this.$emit("unload", this);
-    }
-  }
+    },
+  },
 };
 </script>
 
