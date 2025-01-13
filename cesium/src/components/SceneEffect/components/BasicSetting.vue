@@ -201,7 +201,7 @@ export default {
     initBasicSetting: {
       type: Object,
       default: () => {
-        return this.basicSetting;
+        return undefined;
       },
     },
     // 左侧板宽度
@@ -247,7 +247,10 @@ export default {
         timeline: null,
       });
     }
-    this.basicSetting = this.defaultParams();
+    this.basicSetting = this.initBasicSetting
+      ? JSON.parse(JSON.stringify(this.initBasicSetting))
+      : this.defaultParams();
+
     this.init();
   },
   watch: {
@@ -375,6 +378,7 @@ export default {
       this.enableTimeline(timeline);
       this.enableCompass(compass);
       this.enableZoom(zoom);
+      this.enableColorCorrection(colorCorrection);
       this.brtChange(brightness);
       this.ctrstChange(contrast);
       this.hueChange(hue);
