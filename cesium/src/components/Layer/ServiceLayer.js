@@ -1,6 +1,6 @@
 import { CustomWKID } from "@mapgis/webclient-common";
 export default {
-  inject: ["viewer"],
+  inject: ["Cesium", "viewer", "vueCesium"],
   props: {
     baseUrl: {
       type: String,
@@ -91,11 +91,8 @@ export default {
   watch: {
     layerStyle: {
       handler: function() {
-        let { vueKey, vueIndex } = this;
-        let layer = window.vueCesium[this.managerName].findSource(
-          vueKey,
-          vueIndex
-        );
+        let { vueKey, vueIndex, vueCesium } = this;
+        let layer = vueCesium[this.managerName].findSource(vueKey, vueIndex);
         if (!layer) {
           return;
         }
@@ -118,11 +115,8 @@ export default {
         let isEqual = this.$_isEqual(vm.options, vm.optionsBack);
         if (!isEqual) {
           // 防止初始化的时候，图层被多次加载，图层未加载成功时，不执行
-          const { vueIndex, vueKey } = this;
-          const find = window.vueCesium[this.managerName].findSource(
-            vueKey,
-            vueIndex
-          );
+          const { vueIndex, vueKey, vueCesium } = this;
+          const find = vueCesium[this.managerName].findSource(vueKey, vueIndex);
           if (!find) {
             return;
           }
@@ -135,11 +129,8 @@ export default {
     },
     id: {
       handler: function() {
-        const { vueIndex, vueKey } = this;
-        let layer = window.vueCesium[this.managerName].findSource(
-          vueKey,
-          vueIndex
-        );
+        const { vueIndex, vueKey, vueCesium } = this;
+        let layer = vueCesium[this.managerName].findSource(vueKey, vueIndex);
         layer.source.id = this.id;
       }
     }
@@ -299,7 +290,7 @@ export default {
       }
 
       //将图层加入对应的manager
-      window.vueCesium[this.managerName].addSource(
+      this.vueCesium[this.managerName].addSource(
         vueKey,
         vueIndex,
         imageryLayer,
@@ -310,17 +301,14 @@ export default {
       this.$emit("load", imageryLayer, this);
     },
     $_unmount() {
-      let { vueKey, vueIndex } = this;
+      let { vueKey, vueIndex, vueCesium } = this;
       const { imageryLayers } = this.$_getWebGlobe();
-      let find = window.vueCesium[this.managerName].findSource(
-        vueKey,
-        vueIndex
-      );
+      let find = vueCesium[this.managerName].findSource(vueKey, vueIndex);
       if (!find) {
         return;
       }
       imageryLayers.remove(find.source, true);
-      window.vueCesium[this.managerName].deleteSource(vueKey, vueIndex);
+      vueCesium[this.managerName].deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
     $_checkZIndex(imageryLayers) {
@@ -376,16 +364,17 @@ export default {
       };
     },
     $_getLayers() {
-      let Layers = [],
-        vm = this;
+      const Layers = [];
+      const { vueCesium } = this;
+      const vm = this;
 
-      //遍历window.vueCesium下所有的Manager
-      Object.keys(window.vueCesium).forEach(function(key) {
+      //遍历vueCesium下所有的Manager
+      Object.keys(vueCesium).forEach(function(key) {
         if (key.indexOf("Manager") > -1 && key !== "GlobesManager") {
           //取出含有与webScene组件相同vueKey的Manager对象
-          if (window.vueCesium[key].hasOwnProperty("vueKey")) {
-            if (window.vueCesium[key].hasOwnProperty(vm.vueKey)) {
-              let layerManagers = window.vueCesium[key][vm.vueKey];
+          if (vueCesium[key].hasOwnProperty("vueKey")) {
+            if (vueCesium[key].hasOwnProperty(vm.vueKey)) {
+              let layerManagers = vueCesium[key][vm.vueKey];
               for (let i = 0; i < layerManagers.length; i++) {
                 //确保拥有options并且options里面含有zIndex
                 if (
@@ -436,13 +425,13 @@ export default {
     },
     $_getWebGlobe() {
       let webGlobeObj;
-      const { vueKey, viewer } = this;
+      const { vueKey, viewer, vueCesium } = this;
       //如果this.vueKey，则从GlobesManager中取得webGlobeObj
       if (vueKey) {
         if (vueKey === "default") {
           webGlobeObj = viewer;
         } else {
-          let GlobesManager = window.vueCesium.GlobesManager;
+          let GlobesManager = vueCesium.GlobesManager;
           webGlobeObj = GlobesManager[this.vueKey][0].source;
         }
       } else {

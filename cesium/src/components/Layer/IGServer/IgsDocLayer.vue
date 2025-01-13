@@ -23,11 +23,8 @@ export default {
     layers: {
       handler: function () {
         // 防止初始化的时候，图层被多次加载，图层未加载成功时，不执行
-        const { vueIndex, vueKey } = this;
-        const find = window.vueCesium[this.managerName].findSource(
-          vueKey,
-          vueIndex
-        );
+        const { vueIndex, vueKey, vueCesium } = this;
+        const find = vueCesium[this.managerName].findSource(vueKey, vueIndex);
         if (!find) {
           return;
         }
