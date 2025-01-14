@@ -429,8 +429,10 @@ export default {
       const terrain = this.viewer.terrainProvider;
       return new Promise((resolve) => {
         try {
-          if (terrain.constructor.name.indexOf("EllipsoidTerrainProvider") > -1)
+          if (terrain instanceof this.Cesium.EllipsoidTerrainProvider) {
             resolve(false);
+            return
+          }
           const promise = this.Cesium.sampleTerrainMostDetailed(
             terrain,
             positions
