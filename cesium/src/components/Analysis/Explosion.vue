@@ -373,7 +373,7 @@ export default {
           const tempFeatures = this.getM3DFeatures(m3dObj.children);
           features = [...features, ...tempFeatures];
         } else {
-          const obj = m3dObj.content._attMap._obj;
+          const obj = m3dObj._attMap._obj;
           const zmin = m3dObj._boundingVolume.minimumHeight;
           const zmax = m3dObj._boundingVolume.maximumHeight;
           const keys = Object.keys(obj);
@@ -548,7 +548,7 @@ export default {
           //过滤类型，unique：单值，range：分段
           type: "unique",
           //过滤字段，1.0数据可不填，默认为oid
-          field: "oid",
+          field: "OID",
           //爆炸方向，true：单方向，false：多方向
           singleDirection: false,
           //是否每帧执行爆炸操作，默认false，有lod数据时，请设置为true可实时更新模型位置
@@ -630,15 +630,12 @@ export default {
       const { vueCesium, vueKey, vueIndex } = this;
       let find = vueCesium.ExplosionManager.findSource(vueKey, vueIndex);
       let modelExplosionTool;
-      if (find && find.options && find.options.modelExplosionTool) {
+      let m3dSetArray
+      if (find && find.options) {
         modelExplosionTool = find.options.modelExplosionTool;
-        if (
-          modelExplosionTool._fieldM3DSets &&
-          modelExplosionTool._fieldM3DSets.length > 0 &&
-          modelExplosionTool._fieldM3DSets[0].ready
-        ) {
-          // 确保模型在视图中，避免爆炸后，移除模型，再点结束爆炸
-          modelExplosionTool.resetExplosionByField();
+        m3dSetArray = find.options.m3dSet;
+        if(modelExplosionTool && m3dSetArray) {
+          modelExplosionTool.resetExplosionByField(m3dSetArray)
         }
       }
     },
