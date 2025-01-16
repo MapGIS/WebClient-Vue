@@ -565,7 +565,7 @@ export default {
       let zmin;
       let zmax;
       this.mergeLayersBoundingSphere =
-        this.Cesium.AlgorithmLib.mergeLayersBoundingSphere(m3dSetArray);
+        zondy.cesium.AlgorithmLib.mergeLayersBoundingSphere(m3dSetArray);
 
       for (let i = 0; i < m3dSetArray.length; i++) {
         const m3d = m3dSetArray[i];
@@ -613,7 +613,7 @@ export default {
         new Cesium.Matrix4()
       );
       /**
-       * 修改说明：m3dSet.construct.name不能判断，因为name被压缩混淆 
+       * 修改说明：m3dSet.construct.name不能判断，因为name被压缩混淆
        * 修改时间：2025/1/10
        */
       if (m3dSet instanceof Cesium.Cesium3DTileset) {

@@ -40,9 +40,7 @@
           @expand="onExpand"
           @select="onSelect"
         >
-          <template slot="custom" slot-scope="{}">
-            <!-- <mapgis-ui-iconfont :type="icon" /> -->
-          </template>
+          <template slot="custom" slot-scope="{}"> </template>
           <template
             slot="title"
             slot-scope="{
@@ -147,18 +145,6 @@
       >
       </m3d-menus>
     </mapgis-ui-collapse-card>
-    <!-- <mapgis-3d-virtual-popup
-      :enablePopup="enablePopup"
-      :enableTips="enableTips"
-      :enableIot="iEnableIot"
-      :popupOptions="popupOptions"
-      :tipsOptions="tipsOptions"
-      :iotOptions="iotOptions"
-      :clickVisible="iClickVisible"
-      :clickPosition="iClickPosition"
-      :clickFeatures="iClickFeatures"
-    >
-    </mapgis-3d-virtual-popup> -->
     <mapgis-3d-feature-popup
       v-if="featureposition"
       :position="featureposition"
@@ -167,14 +153,6 @@
       v-bind="popupConfig"
       v-model="featurevisible"
     >
-      <!-- <mapgis-3d-popup-iot
-        :properties="featureproperties"
-        :dataStoreIp="dataStoreIp"
-        :dataStorePort="dataStorePort"
-        :dataStoreDataset="dataStoreDataset"
-      >
-      </mapgis-3d-popup-iot> -->
-      <!-- <mapgis-3d-monitor-point-popup :properties="featureproperties" /> -->
       <component
         :is="popupComponent"
         :properties="featureproperties"
@@ -194,6 +172,15 @@ import { checkTypeNode, loopM3ds, checkTypeIcon } from "./util";
 import M3dMenus from "./components/M3dMenus.vue";
 import PopupMixin from "../Mixin/PopupMixin";
 import * as Feature from "../../service/comprehensive-query/util/feature";
+import { IGSSceneLayer, LayerType } from "@mapgis/webclient-common";
+import {
+  MapGISM3DSet,
+  MapGISTerrainProvider,
+  initializeOptions,
+  InitializeOptionsType,
+  UrlTemplateImageryProvider,
+  MapGISMapServerImageryProvider,
+} from "@mapgis/webclient-cesium-plugin";
 
 const { G3DLayerType, M3DTileDataInfo } = G3D;
 
@@ -353,15 +340,6 @@ export default {
     },
   },
   methods: {
-    createCesiumObject() {
-      return new Promise(
-        (resolve) => {
-          resolve();
-        },
-        (reject) => {}
-      );
-    },
-    onM3dLoaded(e) {},
     mount() {
       const vm = this;
       const { vueIndex, vueKey, vueCesium } = this;
@@ -373,130 +351,209 @@ export default {
       this.ip = ip;
       this.port = port;
       this.domain = domain;
-      let g3dLayer = this.createCesiumObject();
-      let layers = this.parseLayers();
-      if (!layers) this.layerIds = [];
+      const sceneLayer = new IGSSceneLayer({
+        // 服务基地址
+        url,
+        ...$props,
+      });
+      // 加载场景服务
+      sceneLayer.load().then(async (layer) => {
+        const sceneOptions = initializeOptions(layer, viewer);
+        const layers = {};
+        // 存储M3D初始样式
+        const originStyles = [];
+        const m3ds = [];
+        for (let i = 0; i < sceneOptions.length; i++) {
+          const sceneSublayerOptions = sceneOptions[i];
+          const sceneSublayerId = String(sceneSublayerOptions.layerIndex);
+          const optionsType = sceneSublayerOptions.type;
 
-      g3dLayer.then((e) => {
-        let g3d = viewer.scene.layers.appendSceneLayer(url, {
-          ...$props,
-          loaded: function (layer) {
-            // 该回调有多少图层循环进多少次
-          },
-          getDocLayerIndexes: vm.getDocLayerIndexes,
+          // 根据option的类型匹配InitializeOptionType枚举变量并实例化对应的图层对象
+          let imageryProvider;
+          let imageryLayer;
+          switch (optionsType) {
+            // MapGIS M3D图层
+            case InitializeOptionsType.MapGISM3DSet:
+              const m3dSet = await MapGISM3DSet.fromUrl(
+                sceneSublayerOptions.url,
+                sceneSublayerOptions
+              );
+              viewer.scene.primitives.add(m3dSet);
+              viewer.zoomTo(m3dSet);
+              layers[sceneSublayerId] = {
+                type: optionsType,
+                source: m3dSet,
+              };
+              m3ds.push(m3dSet);
+              originStyles.push({ id: sceneSublayerId, style: m3dSet.style });
+              break;
+            // MapGIS地形图层
+            case InitializeOptionsType.MapGISTerrainProvider:
+              viewer.terrainProvider = new MapGISTerrainProvider(
+                sceneSublayerOptions
+              );
+              break;
+            // 覆盖物图层 IGS 2.0
+            case InitializeOptionsType.MapGISMapServerImageryProvider:
+              imageryProvider = new MapGISMapServerImageryProvider(
+                sceneSublayerOptions
+              );
+              imageryLayer =
+                viewer.imageryLayers.addImageryProvider(imageryProvider);
+              layers[sceneSublayerId] = {
+                type: optionsType,
+                source: imageryLayer,
+              };
+              break;
+            // 覆盖物图层 IGS 1.0
+            case InitializeOptionsType.UrlTemplateImageryProvider:
+              imageryProvider = new UrlTemplateImageryProvider(
+                sceneSublayerOptions
+              );
+              imageryLayer =
+                viewer.imageryLayers.addImageryProvider(imageryProvider);
+              layers[sceneSublayerId] = {
+                type: optionsType,
+                source: imageryLayer,
+              };
+              break;
+            case InitializeOptionsType.label:
+              // TODO：注记图层暂未重构，在initializeOptions方法时已经添加到场景中
+              break;
+          }
+        }
+        vueCesium.G3DManager.addSource(vueKey, vueIndex, layers, {
+          m3ds,
+          originStyles,
         });
+
+        this.setLayerTree(layer, layers);
+        if (enablePopup) {
+          vm.bindPopupEvent();
+        }
+        // 设置图层透明度
+        this.changeLayerOpacity(this.opacity);
+        // 设置图层的显示、隐藏
+        this.changeLayerVisible(this.layerIds);
+
+        vm.$emit("loaded", { g3d: layers, component: vm });
       });
 
       if (viewer.isDestroyed()) return;
     },
     unmount() {
-      const { vueCesium, vueKey, vueIndex } = this;
-      const { viewer } = this;
-      const { g3dLayerIndex } = this;
+      const { vueCesium, vueKey, vueIndex, viewer } = this;
       this.unbindPopupEvent();
       // 移除图层的时候，把高亮也移除
       this.cancelHighlight();
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      g3dLayer.remove(true);
+      // 移除场景服务
+      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+      if (find && find.source) {
+        const layerIds = Object.keys(find.source);
+        for (let i = 0; i < layerIds.length; i++) {
+          const layerId = layerIds[i];
+          const layer = find.source[layerId];
+          const layerType = layer.type;
+          const source = layer.source;
+          switch (layerType) {
+            // MapGIS M3D图层
+            case InitializeOptionsType.MapGISM3DSet:
+              viewer.scene.primitives.remove(source);
+              break;
+            // MapGIS地形图层
+            case InitializeOptionsType.MapGISTerrainProvider:
+              break;
+            // 覆盖物图层 IGS 2.0
+            case InitializeOptionsType.MapGISMapServerImageryProvider:
+            // 覆盖物图层 IGS 1.0
+            case InitializeOptionsType.UrlTemplateImageryProvider:
+              viewer.imageryLayers.remove(source, true);
+              break;
+            case InitializeOptionsType.label:
+              // TODO：注记图层暂未重构，在initializeOptions方法时已经添加到场景中
+              break;
+          }
+        }
+      }
       this.$emit("unload", { component: this });
       vueCesium.G3DManager.deleteSource(vueKey, vueIndex);
     },
-    // 图层回调解析
-    getDocLayerIndexes(indexes, g3d) {
-      const { vueIndex, vueKey, vueCesium, Cesium, viewer, enablePopup } = this;
+    /**
+     * 设置场景服务图层树
+     */
+    setLayerTree(layer, source) {
       const { ip, port, domain } = this;
-      const vm = this;
-      let layers = this.parseLayers();
-      // 该回调只触发一次
-      vm.g3dLayerIndex = indexes[0];
-      let collection = new Cesium.PrimitiveCollection();
-      vueCesium.G3DManager.addSource(vueKey, vueIndex, g3d, {
-        m3ds: [],
-        layerId: vueIndex,
-        g3dLayerIndex: vm.g3dLayerIndex,
-        collection: collection,
-        primitiveCollection: viewer.scene.primitives.add(collection),
-      });
-      let g3dLayer = viewer.scene.layers.getLayer(vm.g3dLayerIndex);
-      vm.layerTree[0].version = g3dLayer.version;
-      vm.version = g3dLayer.version;
-      vm.layerTree[0].title = g3dLayer.name;
-      let layerIndexs = g3dLayer.getM3DLayerIndexes();
-
-      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
-
-      if (find && find.options && find.options.m3ds) {
-        let props = layerIndexs.map((i, j) => {
-          let gIndex = i;
-          let layer = g3dLayer.getLayer(`${gIndex}`);
-          return layer.readyPromise;
-        });
-        Promise.all(props).then((m3ds) => {
-          vm.recordOriginStyle();
-          if (enablePopup) {
-            vm.bindPopupEvent();
+      if (!source) {
+        return;
+      }
+      // 设置服务目录树
+      this.layerTree[0].title = layer.title;
+      const sublayers = layer.activeScene.allSublayers.items;
+      if (sublayers && sublayers.length > 0) {
+        for (let i = 0; i < sublayers.length; i++) {
+          const sublayer = sublayers[i];
+          const { layerName, id, type, layerIndex, url } = sublayer;
+          const { version } = source[layerIndex].source;
+          switch (source[layerIndex].type) {
+            // MapGIS M3D图层
+            case InitializeOptionsType.MapGISM3DSet:
+              this.layerTree[0].children.push({
+                title: layerName,
+                key: id,
+                layerIndex,
+                layerType: type,
+                ip,
+                port,
+                domain,
+                gdbp: url,
+                version,
+                icon: "mapgis-layer",
+                menu: "mapgis-down",
+                scopedSlots: {
+                  icon: "custom",
+                  title: "title",
+                },
+              });
+              break;
+            // MapGIS地形图层
+            case InitializeOptionsType.MapGISTerrainProvider:
+              this.layerTree[0].children.push({
+                title: layerName,
+                key: id,
+                layerIndex,
+                layerType: type,
+                subLayerType: "mapgis-terrain",
+                icon: "mapgis-terrain",
+                menu: "mapgis-down",
+                scopedSlots: {
+                  icon: "custom",
+                  title: "title",
+                },
+              });
+              break;
+            // 覆盖物图层 IGS 2.0
+            case InitializeOptionsType.MapGISMapServerImageryProvider:
+            // 覆盖物图层 IGS 1.0
+            case InitializeOptionsType.UrlTemplateImageryProvider:
+              this.layerTree[0].children.push({
+                title: layerName,
+                key: id,
+                layerIndex,
+                layerType: type,
+                subLayerType: "mapgis-vector",
+                icon: "mapgis-vector",
+                menu: "mapgis-down",
+                scopedSlots: {
+                  icon: "custom",
+                  title: "title",
+                },
+              });
+              break;
+            case InitializeOptionsType.label:
+              // TODO：注记图层暂未重构，在initializeOptions方法时已经添加到场景中
+              break;
           }
-          vm.m3ds = m3ds;
-          vueCesium.G3DManager.changeOptions(vueKey, vueIndex, "m3ds", m3ds);
-          let all = [];
-          m3ds.forEach((m3d, i) => {
-            // 形参的m3d并不是表示序号i对应的图层，下一行才是序号i对应的图层
-            let gIndex = layerIndexs[i];
-            let info = g3dLayer.getLayerInfo(gIndex);
-            let layer = g3dLayer.getLayer(`${gIndex}`);
-            let { layerName, gdbpUrl, layerType } = info;
-            all.push(`${gIndex}`);
-            vm.layerTree[0].children.push({
-              title: layerName,
-              key: `${gIndex}`,
-              version: g3dLayer.version,
-              layerIndex: gIndex,
-              layerType,
-              ip,
-              port,
-              domain,
-              gdbp: gdbpUrl,
-              icon: "mapgis-layer",
-              menu: "mapgis-down",
-              scopedSlots: {
-                icon: "custom",
-                title: "title",
-              },
-            });
-            if (layers) {
-              if (layers.indexOf(`${i}`) >= 0) {
-                layer.show = true;
-              } else {
-                layer.show = false;
-              }
-            } else {
-              layer.show = true;
-            }
-          });
-          loopM3ds(m3ds, (types) => {
-            types.forEach((t, i) => {
-              const child = vm.layerTree[0].children;
-              child[layerIndexs[i]].subLayerType = checkTypeIcon(t);
-            });
-          });
-          vm.$emit("loaded", { g3d: vm, component: vm });
-          vm.parseTerrain();
-          vm.parserVector();
-          vm.resortLayers();
-          vm.layerIds = vm.layerIds.concat(all);
-          // 修改全部/指定图层透明度
-          if (vm.opacityLayersArray.length > 0) {
-            vm.opacityLayersArray.forEach((item, index) => {
-              if (typeof item == "number") {
-                vm.opacityLayersArray[index] = item.toString();
-              }
-            });
-            vm.changeLayerOpacity(vm.opacity, vm.opacityLayersArray);
-          } else {
-            vm.changeLayerOpacity(vm.opacity);
-          }
-        });
+        }
       }
     },
     // 搜索需要
@@ -558,86 +615,10 @@ export default {
         this.highlightM3d(layerIndex);
       }
     },
-    // 图层解析
-    parseTerrain() {
-      const vm = this;
-      const { vueKey, vueIndex, vueCesium, viewer } = this;
-      const { g3dLayerIndex } = this;
-
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      if (!g3dLayer) return;
-      let indexes = g3dLayer.getTerrainLayerIndexes();
-      let terrains = g3dLayer.getTerrainLayers();
-      indexes.forEach((i) => {
-        let info = g3dLayer.getLayerInfo(i);
-        let { layerName, layerType } = info;
-        layerType =
-          typeof layerType === "string" ? parseInt(layerType) : layerType;
-        if (layerType == G3DLayerType.g3dTerrainLayer) {
-          vm.layerTree[0].children.push({
-            title: layerName,
-            key: `${i}`,
-            layerIndex: i,
-            layerType,
-            subLayerType: "mapgis-terrain",
-            icon: "mapgis-terrain",
-            menu: "mapgis-down",
-            scopedSlots: {
-              icon: "custom",
-              title: "title",
-            },
-          });
-        }
-        vm.layerIds.push(`${i}`);
-      });
-      vueCesium.G3DManager.changeOptions(
-        vueKey,
-        vueIndex,
-        "terrains",
-        terrains
-      );
-    },
-    parserVector() {
-      const vm = this;
-      const { vueKey, vueIndex, vueCesium, viewer } = this;
-      const { g3dLayerIndex } = this;
-
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      if (!g3dLayer) return;
-      let indexes = g3dLayer.getVectorLayerIndexes();
-      let vectors = g3dLayer.getVectorLayers();
-      indexes.forEach((i) => {
-        let info = g3dLayer.getLayerInfo(i);
-        let { layerName, layerType } = info;
-        layerType =
-          typeof layerType === "string" ? parseInt(layerType) : layerType;
-        if (layerType == G3DLayerType.g3dVectorLayer) {
-          vm.layerTree[0].children.push({
-            title: layerName,
-            key: `${i}`,
-            layerIndex: i,
-            layerType,
-            subLayerType: "mapgis-vector",
-            icon: "mapgis-vector",
-            menu: "mapgis-down",
-            scopedSlots: {
-              icon: "custom",
-              title: "title",
-            },
-          });
-        }
-        vm.layerIds.push(`${i}`);
-      });
-      vueCesium.G3DManager.changeOptions(vueKey, vueIndex, "vectors", vectors);
-    },
     resortLayers() {
       const vm = this;
       let childern = vm.layerTree[0].children;
       let news = childern.sort((a, b) => a.layerIndex - b.layerIndex);
-      console.log("news", news[1]);
-      // vm.layerTree.splice(0, 1, news);
     },
     parseServer(url) {
       url = url || this.url;
@@ -695,55 +676,79 @@ export default {
 
       return layers;
     },
-    changeLayerOpacity(opacity, layers) {
-      layers = layers || this.layerIds;
-      const { g3dLayerIndex, viewer } = this;
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      let indexes = g3dLayer.getAllLayerIndexes();
-      indexes.forEach((index) => {
-        let layer = g3dLayer.getLayer(index);
-        if (layers.indexOf(`${index}`) >= 0) {
-          if (layer) {
-            g3dLayer.translucencyByLayerIndex(index, opacity);
+    /**
+     * 设置图层透明度
+     */
+    changeLayerOpacity(opacity, opacityLayersArray) {
+      const { viewer, Cesium, vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+      if (find && find.source) {
+        const layerIds = Object.keys(find.source);
+        for (let i = 0; i < layerIds.length; i++) {
+          const layerId = layerIds[i];
+          if (
+            opacityLayersArray &&
+            opacityLayersArray.length > 0 &&
+            !opacityLayersArray.includes(layerId)
+          ) {
+            // 只设置指定图层的透明度，暂时不支持设置多个图层对应多个透明度
+            continue;
           }
-        } else {
-          if (layer) {
-            // g3dLayer.translucencyByLayerIndex(index, opacity);
+          const layer = find.source[layerId];
+          const layerType = layer.type;
+          const source = layer.source;
+          switch (layerType) {
+            // MapGIS M3D图层
+            case InitializeOptionsType.MapGISM3DSet:
+              source.style = new Cesium.Cesium3DTileStyle({
+                color: `color('#FFFFFF', ${opacity})`,
+              });
+              break;
+            // MapGIS地形图层
+            case InitializeOptionsType.MapGISTerrainProvider:
+              break;
+            // 覆盖物图层 IGS 2.0
+            case InitializeOptionsType.MapGISMapServerImageryProvider:
+            // 覆盖物图层 IGS 1.0
+            case InitializeOptionsType.UrlTemplateImageryProvider:
+              source.alpha = opacity;
+              break;
+            case InitializeOptionsType.label:
+              // TODO：注记图层暂未重构，在initializeOptions方法时已经添加到场景中
+              break;
           }
         }
-      });
+      }
     },
+    /**
+     * 设置图层的显示/隐藏
+     */
     changeLayerVisible(layers) {
       layers = layers || this.layerIds;
-      const { g3dLayerIndex, viewer } = this;
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      let indexes = g3dLayer.getAllLayerIndexes();
-      this.layerVisibleArr = [];
-      indexes.forEach((index) => {
-        let layer = g3dLayer.getLayer(index);
-        if (layers.indexOf(`${index}`) >= 0) {
-          if (layer) {
-            layer.show = true;
-            g3dLayer.showByLayerIndex(index, true);
-            this.layerVisibleArr.push(index);
-          }
-        } else {
-          if (layer) {
-            layer.show = false;
-            g3dLayer.showByLayerIndex(index, false);
+      const { viewer, Cesium, vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+      if (find && find.source) {
+        const layerIds = Object.keys(find.source);
+        this.layerVisibleArr = [];
+        for (let i = 0; i < layerIds.length; i++) {
+          const layerId = layerIds[i];
+          const layer = find.source[layerId];
+          const layerType = layer.type;
+          const source = layer.source;
+          if (layers.indexOf(`${layerId}`) >= 0) {
+            source.show = true;
+            this.layerVisibleArr.push(layerId);
+          } else {
+            source.show = false;
             const featureIndex = this.prePickFeature?.index;
-            if (index === featureIndex) {
+            if (layerId === featureIndex) {
               this.featureproperties = undefined;
               this.featurevisible = false;
               this.restoreHighlight();
             }
           }
         }
-      });
+      }
     },
     handleExpandItemKey(key) {
       if (key == this.expandItemKey) {
@@ -764,63 +769,29 @@ export default {
       this.layerKey = key;
       this.$refs.card && this.$refs.card.togglePanel();
     },
-    recordOriginStyle() {
-      const { g3dLayerIndex, viewer } = this;
-      const { vueKey, vueIndex, vueCesium } = this;
-
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      let layerIndexs = g3dLayer.getM3DLayerIndexes();
-      let originStyles = [];
-      layerIndexs.forEach((index) => {
-        let m3dlayer = g3dLayer.getLayer(index);
-        if (m3dlayer) {
-          originStyles.push(m3dlayer.style);
-        }
-      });
-      vueCesium.G3DManager.changeOptions(
-        vueKey,
-        vueIndex,
-        "originStyles",
-        originStyles
-      );
-    },
+    /**
+     * 恢复M3D样式
+     */
     restoreOriginStyle() {
-      const { vueKey, vueIndex, vueCesium, g3dLayerIndex, viewer } = this;
-      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
-
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      if (!g3dLayer) return;
-      if (find && find.options.originStyles) {
-        // if (!find.options.originStyles) {
-        //   const lenght = g3dLayer.getAllLayers().length;
-        //   for (let i = 0; i <= lenght - 1; i++) {
-        //     const styles = { color: Cesium.Color.WHITE };
-        //     find.options.originStyles.push(styles);
-        //   }
-        // }
-        find.options.originStyles.forEach((s, i) => {
-          let m3dlayer = g3dLayer.getLayer(String(i));
-          if (m3dlayer) {
-            // m3dlayer.style = s;
-            g3dLayer.translucencyByLayerIndex(i.toString(), this.opacity);
-          }
+      const { vueKey, vueIndex, vueCesium, viewer } = this;
+      const find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+      if (find && find.source && find.options.originStyles) {
+        find.options.originStyles.forEach((item) => {
+          const { id, style } = item;
+          find.source[id].source.style = style;
         });
       }
     },
-    restoreOrigindVisible() {
-      const { vueKey, vueIndex, vueCesium, g3dLayerIndex, viewer } = this;
-      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
-
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      if (find && find.options.originStyles) {
-        find.options.originStyles.forEach((s, i) => {
-          let m3dlayer = g3dLayer.getLayer(String(i));
-          if (m3dlayer) {
-            m3dlayer.show = true;
-          }
+    /**
+     * 恢复M3D显示
+     */
+    restoreOriginVisible() {
+      const { vueKey, vueIndex, vueCesium, viewer } = this;
+      const find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+      if (find && find.source && find.options.originStyles) {
+        find.options.originStyles.forEach((item) => {
+          const { id } = item;
+          find.source[id].source.show = true;
         });
       }
     },
@@ -838,25 +809,25 @@ export default {
       }
     },
     enableIsolation(layer) {
-      const { g3dLayerIndex, viewer } = this;
+      const { viewer, Cesium, vueCesium, vueKey, vueIndex } = this;
       const { layerIndex } = layer;
-
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      let layerIndexs = g3dLayer.getM3DLayerIndexes();
       this.featurevisible = false;
       this.selectedKeys = [`${layerIndex}`];
-      layerIndexs.forEach((index) => {
-        let m3dlayer = g3dLayer.getLayer(index);
-        if (m3dlayer) {
-          if (index != layerIndex) {
-            m3dlayer.show = false;
+      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+      if (find && find.source) {
+        const layerIds = Object.keys(find.source);
+        for (let i = 0; i < layerIds.length; i++) {
+          const layerId = layerIds[i];
+          const layer = find.source[layerId];
+          const source = layer.source;
+          if (layerId != layerIndex) {
+            source.show = false;
           } else {
-            m3dlayer.show = true;
-            viewer.camera.flyToBoundingSphere(m3dlayer.boundingSphere);
+            source.show = true;
+            viewer.zoomTo(source);
           }
         }
-      });
+      }
       let children = this.layerTree[0].children.map((c) => {
         if (c.layerIndex == layerIndex) {
           c.disabled = false;
@@ -873,8 +844,7 @@ export default {
         return c;
       });
       this.layerTree[0].children.splice(0, 1, children[0]);
-      this.restoreOrigindVisible();
-      // this.restoreOriginStyle();
+      this.restoreOriginVisible();
     },
     handleMenu(menu) {
       if (menu == "隐藏面板") {
@@ -892,7 +862,7 @@ export default {
     pickFeature(payload) {
       const { movement, pickedFeature } = payload;
       const vm = this;
-      const { g3dLayerIndex, viewer } = this;
+      const { vueKey, vueIndex, vueCesium, viewer } = this;
       if (
         !pickedFeature ||
         !movement ||
@@ -903,19 +873,18 @@ export default {
         return;
       }
 
-      /* if (vm.featureclickenable) {
-        vm.featurevisible = true;
-      } */
-
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-
       if (!pickedFeature._content && pickedFeature.primitive) {
         this.featurevisible = true;
         return;
       }
       let index = pickedFeature._content._tileset._layerIndex;
-      let tileset = g3dLayer.getLayer(`${index}`);
+      let tileset;
+      const find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+      if (find && find.source) {
+        if (find.source[index]) {
+          tileset = find.source[index].source;
+        }
+      }
       if (
         pickedFeature.tileset !== tileset ||
         !this.layerVisibleArr.includes(index)
@@ -924,14 +893,7 @@ export default {
       }
       vm.selectLayerIndex = index;
       vm.selectedKeys = [`${index}`];
-      let layerInfo = g3dLayer.getLayerInfo(index);
-      const { children } = layerInfo;
-      let enableDynamic = children && children.length > 0 ? true : false;
-      if (enableDynamic) {
-        this.queryDynamic(movement, index);
-      } else {
-        this.queryStatic(movement);
-      }
+      this.queryStatic(movement);
     },
     cancelFeature() {
       this.$emit("pick-info", {});
@@ -986,7 +948,7 @@ export default {
       this.restoreHighlight();
       this.restoreM3d();
       let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
-      if (find && find.options.clickhandler) {
+      if (find && find.options && find.options.clickhandler) {
         find.options.clickhandler.destroy();
         vueCesium.G3DManager.changeOptions(
           vueKey,
@@ -1002,8 +964,13 @@ export default {
     highlightM3d(layerIndex) {
       const { vueKey, vueIndex, vueCesium, Cesium, viewer } = this;
       this.selectLayerIndex = layerIndex;
-      let g3dLayer = viewer.scene.layers.getLayer(this.g3dLayerIndex);
-      let m3dlayer = g3dLayer.getLayer(`${layerIndex}`);
+      let m3dlayer;
+      const find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+      if (find && find.source) {
+        if (find.source[layerIndex]) {
+          m3dlayer = find.source[layerIndex].source;
+        }
+      }
       if (m3dlayer) {
         this.restoreM3d();
         vueCesium.G3DManager.changeOptions(
@@ -1019,93 +986,8 @@ export default {
           m3dlayer.style
         );
         m3dlayer.style = new Cesium.Cesium3DTileStyle({
-          // color: `color('#FFFF00', 1)`
           color: this.highlightStyle,
         });
-      }
-    },
-    queryDynamic(movement, layerIndex) {
-      const vm = this;
-      vm.featureproperties = undefined;
-      const { Cesium, viewer, g3dLayerIndex } = this;
-      const { vueKey, vueIndex, vueCesium } = this;
-      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
-      if (find && find.options) {
-        let { primitiveCollection } = find.options;
-        let cartesian = viewer.getCartesian3Position(movement.position);
-        if (Cesium.defined(cartesian)) {
-          let cartographic = Cesium.Cartographic.fromCartesian(cartesian);
-          let lng = Cesium.Math.toDegrees(cartographic.longitude);
-          let lat = Cesium.Math.toDegrees(cartographic.latitude);
-          let height = cartographic.height;
-          let mapPosition = { x: lng, y: lat, z: height };
-          if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-          let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-          let layerIndexs = g3dLayer.getM3DLayerIndexes();
-          if (layerIndex == undefined || layerIndex < 0) {
-            vm.featurevisible = false;
-            return;
-          } else {
-            if (typeof layerIndex === "string") {
-              layerIndex = parseInt(layerIndex);
-            }
-          }
-          // 查询容差小数位数与坐标位数保持一致。提高查询精度
-          const latStr = lat.toString().split(".")[1];
-          const tolerance = Number(`0.${latStr}`) / Number(latStr);
-
-          g3dLayer.Monomerization(
-            function callback(result) {
-              vm.featurevisible = false;
-              let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
-              if (find) {
-                let last = find.options.feature;
-                primitiveCollection.remove(last);
-              }
-              if (result && result.length > 0) {
-                let feature = result[0];
-                vm.featureproperties = feature.property;
-                if (
-                  vm.featureproperties &&
-                  Object.keys(vm.featureproperties).length > 0
-                ) {
-                  if (vm.popupShowType === "default") {
-                    vm.featurevisible = true;
-                    vm.featureposition = {
-                      longitude: lng,
-                      latitude: lat,
-                      height: height,
-                    };
-                  } else {
-                    vm.popupOverlay &&
-                      vm.popupOverlay.setContent(vm.featureproperties);
-                  }
-                } else {
-                  vm.popupOverlay && vm.popupOverlay.setContent(null);
-                }
-                // _extrudedHeight和_height这样设置后才能贴模型
-                feature.geometryInstances.geometry._extrudedHeight = 0;
-                feature.geometryInstances.geometry._height = 100000;
-                primitiveCollection.add(feature);
-                vueCesium.G3DManager.changeOptions(
-                  vueKey,
-                  vueIndex,
-                  "feature",
-                  feature
-                );
-              }
-            },
-            {
-              position: new Cesium.Cartesian3(
-                mapPosition.x,
-                mapPosition.y,
-                mapPosition.z
-              ),
-              tolerance,
-              layerIndex: String(layerIndex),
-            }
-          );
-        }
       }
     },
     async queryStatic(movement) {
@@ -1144,17 +1026,20 @@ export default {
 
         let longitudeString2, latitudeString2, heightString2;
 
-        // if (Cesium.defined(cartesian2)) {
         let cartographic2 = Cesium.Cartographic.fromCartesian(cartesian);
         longitudeString2 = Cesium.Math.toDegrees(cartographic2.longitude);
         latitudeString2 = Cesium.Math.toDegrees(cartographic2.latitude);
         heightString2 = cartographic2.height;
-        // }
 
         if (cartesian || cartesian2) {
-          let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
           let index = pickedFeature._content._tileset._layerIndex;
-          let tileset = g3dLayer.getLayer(`${index}`);
+          let tileset;
+          const find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+          if (find && find.source) {
+            if (find.source[index]) {
+              tileset = find.source[index].source;
+            }
+          }
           if (pickedFeature.tileset !== tileset) {
             return;
           }
@@ -1302,29 +1187,24 @@ export default {
     },
     // 动态单体化下该方法执行后会导致模型大面积高亮，参考禅道bug2356
     restoreHighlight() {
-      const { g3dLayerIndex, viewer } = this;
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       if (this.prePickFeature) {
         this.prePickFeature.feature.color = this.prePickFeature.color;
         this.prePickFeature = undefined;
       }
-      let m3ds = g3dLayer.getM3DLayerIndexes();
-      m3ds.forEach((index) => {
-        let m3d = g3dLayer.getLayer(index);
-        if (m3d) {
-          // m3d.reset(); //该函数目前底层MapGISM3DSet.reset无效 后期记得修改
-          m3d.style = undefined;
-        }
-      });
+      this.restoreM3d();
     },
     restoreBeforeM3d() {
       if (this.prePickFeature) {
-        let g3dLayer = this.viewer.scene.layers.getLayer(this.g3dLayerIndex);
-        g3dLayer.translucencyByLayerIndex(
-          this.prePickFeature.index,
-          this.opacity
-        );
+        const { vueKey, vueIndex, vueCesium } = this;
+        const find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+        if (find && find.source && find.options.originStyles) {
+          find.options.originStyles.forEach((item) => {
+            const { id, style } = item;
+            if (id === this.prePickFeature.index) {
+              find.source[id].source.style = style;
+            }
+          });
+        }
       }
     },
     handleDynamicQuery() {
