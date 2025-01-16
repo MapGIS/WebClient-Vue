@@ -94,7 +94,6 @@ export default {
             window.graphicsLayer = new GraphicsLayer(viewer);
             let vueKey = "default";
             let vueIndex = this.currentProjectorOverlayLayerId;
-            // viewer.scene.layers.appendGraphicsLayer(window.graphicsLayer);
             window.vueCesium.GraphicsLayerManager.addSource(
               vueKey,
               vueIndex,

@@ -344,7 +344,6 @@ export default {
       tabBarStyle: {
         margin: "0",
         textAlign: "center",
-        // borderBottom: "1px solid #F0F0F0"
       },
       emptyImage: undefined,
       imageStyle: {
@@ -357,14 +356,12 @@ export default {
       selectedIds: [], //选中projector的id集合
       pagination: {
         onChange: (page) => {
-          // console.log(page);
           this.pagination.current = page;
         },
         current: 1,
         size: "small",
         pageSize: 20,
       },
-      // graphicsLayer: undefined,
       // 是否进入设置状态
       isEdit: false,
       //是否开启缓存区
@@ -591,7 +588,6 @@ export default {
         window.graphicsLayer = new GraphicsLayer(viewer);
         let vueKey = "default";
         let vueIndex = this.currentProjectorOverlayLayer.id;
-        // viewer.scene.layers.appendGraphicsLayer(window.graphicsLayer);
         window.vueCesium.GraphicsLayerManager.addSource(
           vueKey,
           vueIndex,
