@@ -1,26 +1,35 @@
+import videojs from "video.js";
+import "videojs-contrib-hls";
+import "video.js/dist/video-js.css";
+import {
+  CreateProjectorList,
+  ProjectorCameraMarkerList,
+} from "../manager/projector-manager.js";
+import { GraphicsLayer, Graphic } from "@mapgis/webclient-cesium-plugin";
 export default {
   props: {
     modelUrl: {
-      type: String
+      type: String,
     },
     modelOffset: {
       type: Object,
       default: () => {
         return { headingOffset: -90, pitchOffset: 0, rollOffset: 0 };
-      }
+      },
     },
     modelScale: {
       type: Number,
-      default: 1
+      default: 1,
     },
+    // 可删除
     hideVPInvisible: {
       type: Boolean,
-      default: false
+      default: false,
     },
     currentProjectorOverlayLayerId: {
       type: String,
-      default: ""
-    }
+      default: "",
+    },
   },
   data() {
     return {
@@ -29,24 +38,34 @@ export default {
   },
   created() {},
   methods: {
+    // 通过id寻找已投放的对象 若未投放则返回null
+    getProjectorById(id) {
+      const { viewer } = this;
+      const { primitives } = viewer.scene;
+      let scenePro = null;
+      for (let i = 0; i < primitives.length; i++) {
+        const p = primitives.get(i);
+        if (p.id === id) {
+          scenePro = p;
+        }
+      }
+      return scenePro;
+    },
+
     /**
      * 投放视频
      */
-    putProjector(projector) {
-      this._addCameraMarker(projector, this.modelUrl, this.modelOffset);
-      let scenePro = this.viewer.scene.visualAnalysisManager.getVisualAnalysisByID(
-        projector.id
-      );
+    putProjector(projector, addMap = true) {
+      // 添加相机的逻辑暂时隐藏
+      // this._addCameraMarker(projector, this.modelUrl, this.modelOffset);
+      let scenePro = this.getProjectorById(projector.id);
+
       if (scenePro) {
         // 视频已经被投放
         return scenePro;
       }
-      const { viewer, Cesium, hideVPInvisible } = this;
+      const { viewer, Cesium } = this;
       const { id, params } = projector;
-      const proType = this._getProjectorType(
-        projector.params.projectorType,
-        projector.params.videoSource.protocol
-      );
       const {
         cameraPosition,
         orientation,
@@ -54,10 +73,14 @@ export default {
         vFOV,
         hintLineVisible,
         areaCoords,
-        areaType
+        areaType,
+        pass,
       } = params;
-      scenePro = new Cesium.SceneProjector(proType);
-      viewer.scene.visualAnalysisManager.add(scenePro, id);
+      // 获取当前投放类型
+      const proType = this._getProjectorType(
+        projector.params.projectorType,
+        projector.params.videoSource.protocol
+      );
 
       if (areaCoords && areaCoords.length) {
         if (
@@ -68,10 +91,10 @@ export default {
           window.graphicsLayer.getGraphicByID(id + "graphic").show = true;
         } else {
           if (!window.graphicsLayer) {
-            window.graphicsLayer = new Cesium.GraphicsLayer(viewer);
+            window.graphicsLayer = new GraphicsLayer(viewer);
             let vueKey = "default";
             let vueIndex = this.currentProjectorOverlayLayerId;
-            viewer.scene.layers.appendGraphicsLayer(window.graphicsLayer);
+            // viewer.scene.layers.appendGraphicsLayer(window.graphicsLayer);
             window.vueCesium.GraphicsLayerManager.addSource(
               vueKey,
               vueIndex,
@@ -98,56 +121,51 @@ export default {
           window.graphicsLayer.addGraphic(this.graphic);
         }
       } else {
+        const { x, y, z } = cameraPosition;
+        const { heading, pitch, roll } = orientation;
+        const sceneProObject = { scene: viewer.scene };
+        // 根据投放类型设置对应资源
         switch (proType) {
-          case Cesium.SceneProjectorType.IMAGE:
-            scenePro.projectionSource = params.imgUrl;
+          case Cesium.SceneProjectorSourceType.IMAGE:
+            sceneProObject.source = params.imgUrl;
             break;
-          case Cesium.SceneProjectorType.VIDEO:
-          case Cesium.SceneProjectorType.HLS:
+          case Cesium.SceneProjectorSourceType.VIDEO:
+          case Cesium.SceneProjectorSourceType.HLS:
             const { protocol, videoUrl } = params.videoSource;
             const element = this.createVideoElement(protocol, videoUrl, id);
-            scenePro.projectionSource = videoUrl;
+            sceneProObject.source = videoUrl;
             break;
-          case Cesium.SceneProjectorType.COLOR:
-            scenePro.projectionSource = new Cesium.Color(1, 0, 0, 1);
+          case Cesium.SceneProjectorSourceType.COLOR:
+            sceneProObject.source = new Cesium.Color(1, 0, 0, 1);
             break;
           default:
             break;
         }
+        // 根据cameraPosition的值设置scenePro的viewPosition属性
         const viewPosition = Cesium.Cartographic.toCartesian(
-          Cesium.Cartographic.fromDegrees(
-            cameraPosition.x,
-            cameraPosition.y,
-            cameraPosition.z
-          )
+          Cesium.Cartographic.fromDegrees(x, y, z)
         );
-        scenePro.viewPosition = viewPosition;
+        sceneProObject.viewPosition = viewPosition;
+        // 设置scenePro的水平广角
+        sceneProObject.horizontAngle = Cesium.Math.toRadians(hFOV);
+        // 设置scenePro的竖直广角
+        sceneProObject.verticalAngle = Cesium.Math.toRadians(vFOV);
+        sceneProObject.heading = Cesium.Math.toRadians(heading);
+        // 俯仰角
+        sceneProObject.pitch = Cesium.Math.toRadians(pitch);
+        sceneProObject.roll = Cesium.Math.toRadians(roll);
 
-        let targetPosition = Cesium.AlgorithmLib.pickFromRay(
-          viewer.scene,
-          viewPosition,
-          { heading: orientation.heading, pitch: orientation.pitch }
-        );
-        if (!targetPosition) {
-          targetPosition = Cesium.AlgorithmLib.pickFromRay(
-            viewer.scene,
-            viewPosition,
-            {
-              heading: orientation.heading,
-              pitch: orientation.pitch,
-              distance: 150
-            }
-          );
-          scenePro.targetPosition = targetPosition;
-        } else {
-          scenePro.targetPosition = targetPosition;
-        }
-        scenePro.horizontAngle = hFOV;
-        scenePro.verticalAngle = vFOV;
-        scenePro.roll = orientation.roll;
-        scenePro.hintLineVisible = hintLineVisible;
-        scenePro.hideVPInvisible = hideVPInvisible;
+        sceneProObject.showLine = hintLineVisible;
+        sceneProObject.pass = pass;
+        // 设置id
+        scenePro = new Cesium.SceneProjectorEx(sceneProObject);
+
+        delete sceneProObject.scene;
+
+        scenePro.id = id;
+        viewer.scene.primitives.add(scenePro);
       }
+      // viewer.scene.visualAnalysisManager.add(scenePro, id);
       return scenePro;
     },
     getVideoPlayerType(protocol) {
@@ -187,30 +205,31 @@ export default {
         loop: false, // 导致视频一结束就重新开始。
         preload: "auto", // 建议浏览器在<video>加载元素后是否应该开始下载视频数据。auto浏览器选择最佳行为,立即开始加载视频（如果浏览器支持）
         aspectRatio: "16:9", // 将播放器置于流畅模式，并在计算播放器的动态大小时使用该值。值应该代表一个比例 - 用冒号分隔的两个数字（例如"16:9"或"4:3"）
-        fluid: true // 当true时，Video.js player将拥有流体大小。换句话说，它将按比例缩放以适应其容器。
+        fluid: true, // 当true时，Video.js player将拥有流体大小。换句话说，它将按比例缩放以适应其容器。
       };
-      const hlsPlayer = window.videojs(videoDom, options);
+      const hlsPlayer = videojs(videoDom, options);
       hlsPlayer.src({
         type: playerType,
-        src: videoUrl
+        src: videoUrl,
       });
       hlsPlayer.load(videoUrl);
       hlsPlayer.play();
       hlsPlayer.loop();
       window.projectorVideoDomMap[id] = {
         videoDom,
-        hlsPlayer
+        hlsPlayer,
       };
       return videoDom;
     },
     createGraphic(type, position, projector) {
+      const { Cesium } = this;
       const { id, params } = projector;
       const {
         projectorType,
         videoSource,
         imgUrl,
         heightReference,
-        offsetHeight
+        offsetHeight,
       } = params;
       let element;
       if (projectorType === "image") {
@@ -222,7 +241,7 @@ export default {
           id
         );
       }
-      let typeGraphic = new Cesium.Graphic({
+      let typeGraphic = new Graphic({
         /**
          * 修改说明：graphic指定id，如果直接使用id会受到vue的影响，所以在id后方加一个"graphic"标识；
          * 修改人：王涵
@@ -240,7 +259,7 @@ export default {
             //图片url
             image: element,
             // x、y轴重复
-            repeat: new Cesium.Cartesian2(1.0, 1.0)
+            repeat: new Cesium.Cartesian2(1.0, 1.0),
           }),
           // 固定高度
           perPositionHeight: heightReference === 0,
@@ -248,8 +267,8 @@ export default {
           offsetHeight: offsetHeight,
           // 是否贴地
           classificationType:
-            heightReference === 2 ? Cesium.ClassificationType.BOTH : undefined
-        }
+            heightReference === 2 ? Cesium.ClassificationType.BOTH : undefined,
+        },
       });
       return typeGraphic;
     },
@@ -280,8 +299,11 @@ export default {
      * 取消投放
      */
     cancelPutProjector(projector) {
-      this.viewer.scene.visualAnalysisManager.removeByID(projector.id);
-      // 直接移除，释放资源
+      const { viewer } = this;
+      const scenePro = this.getProjectorById(projector.id);
+      // 移除scenePro
+      scenePro && viewer.scene.primitives.remove(scenePro);
+      // 移除相关对象中的记录投放对象
       if (
         !!window.graphicsLayer &&
         !!window.graphicsLayer.getGraphicByID(projector.id + "graphic")
@@ -292,15 +314,13 @@ export default {
         !!window.projectorVideoDomMap &&
         !!window.projectorVideoDomMap[projector.id]
       ) {
-        const { videoDom, hlsPlayer } = window.projectorVideoDomMap[
-          projector.id
-        ];
+        const { videoDom, hlsPlayer } =
+          window.projectorVideoDomMap[projector.id];
         if (hlsPlayer) {
           hlsPlayer.dispose();
         }
         delete window.projectorVideoDomMap[projector.id];
       }
-      this._removeCameraMarker(projector.id);
     },
     /**
      * 获取相机模型矩阵
@@ -365,16 +385,18 @@ export default {
     /**
      * 添加相机模型
      */
-    _addCameraMarker(projector, modelUrl, modelOffset) {
-      const { primitives } = this.viewer.scene;
-      for (let i = 0; i < primitives.length; i++) {
-        const p = primitives.get(i);
-        if (p.id === projector.id) {
-          this.modelPrimitive = p;
-          break;
-        }
-      }
-      if (!this.modelPrimitive) {
+    async _addCameraMarker(projector, modelUrl, modelOffset) {
+      // const { primitives } = this.viewer.scene;
+      // for (let i = 0; i < primitives.length; i++) {
+      //   const p = primitives.get(i);
+      //   if (p.id === projector.id) {
+      //     this.modelPrimitive = p;
+      //     break;
+      //   }
+      // }
+      // 获取对应投放对象的相机对象
+      const cameraModelPrimitive = ProjectorCameraMarkerList[projector.id];
+      if (!cameraModelPrimitive) {
         const { Cesium, viewer } = this;
         const { id, params } = projector;
         const { cameraPosition } = params;
@@ -389,50 +411,42 @@ export default {
           modelOffset
         );
         let modelObj = {
-          id,
+          id: id + "camera",
           url: modelUrl,
           modelMatrix: modelMatrix,
-          scale: this.modelScale
+          scale: this.modelScale,
         };
 
-        let modelPrimitive = viewer.scene.primitives.add(
-          Cesium.Model.fromGltf(modelObj)
+        let modelPrimitive = await Cesium.Model.fromGltfAsync(modelObj);
+        const { _boundingSphere: boundingSphere } = modelPrimitive;
+        const { heading, pitch } = params.orientation;
+        const targetPosition = Cesium.AlgorithmLib.pickFromRay(
+          viewer.scene,
+          viewPosition,
+          { heading, pitch, distance: 150 }
         );
-        modelPrimitive.readyPromise.then(() => {
-          // console.log(modelPrimitive);
-          // 获取模型的包围球
-          const { boundingSphere } = modelPrimitive;
-          const { heading, pitch } = params.orientation;
-          const targetPosition = Cesium.AlgorithmLib.pickFromRay(
-            viewer.scene,
-            viewPosition,
-            { heading, pitch, distance: 150 }
-          );
-          const cameraModelPosition = this._getCameraModelPosition(
-            targetPosition,
-            viewPosition,
-            params.orientation,
-            boundingSphere.radius
-          );
-          modelMatrix = this._getModelMatrix(
-            cameraModelPosition,
-            params.orientation,
-            modelOffset
-          );
+        const cameraModelPosition = this._getCameraModelPosition(
+          targetPosition,
+          viewPosition,
+          params.orientation,
+          boundingSphere.radius
+        );
+        modelMatrix = this._getModelMatrix(
+          cameraModelPosition,
+          params.orientation,
+          modelOffset
+        );
 
-          viewer.scene.primitives.remove(modelPrimitive);
+        modelObj = {
+          id: id + "camera",
+          url: modelUrl,
+          modelMatrix: modelMatrix,
+          scale: this.modelScale,
+        };
 
-          modelObj = {
-            id,
-            url: modelUrl,
-            modelMatrix: modelMatrix,
-            scale: this.modelScale
-          };
-
-          this.modelPrimitive = viewer.scene.primitives.add(
-            Cesium.Model.fromGltf(modelObj)
-          );
-        });
+        const addModelPrimitive = await Cesium.Model.fromGltfAsync(modelObj);
+        const cameraPrimitive = viewer.scene.primitives.add(addModelPrimitive);
+        ProjectorCameraMarkerList[id] = cameraPrimitive;
       }
     },
     /**
@@ -462,7 +476,7 @@ export default {
       const coor = {
         lon: longitude,
         lat: latitude,
-        height: cartographic.height
+        height: cartographic.height,
       };
       return coor;
     },
@@ -528,7 +542,7 @@ export default {
       const result = {
         heading: heading,
         pitch: pitch,
-        pitchDirection: pitchDirection
+        pitchDirection: pitchDirection,
       };
       return result;
     },
@@ -538,7 +552,7 @@ export default {
     _getProjectorType(projectorType, protocol) {
       let proType;
       if (projectorType === "image") {
-        proType = this.Cesium.SceneProjectorType.IMAGE;
+        proType = this.Cesium.SceneProjectorSourceType.IMAGE;
       } else if (projectorType === "video") {
         proType = this._getProType(protocol);
       }
@@ -551,15 +565,21 @@ export default {
       let proType;
       switch (protocol) {
         case "m3u8":
-          proType = this.Cesium.SceneProjectorType.HLS;
+          proType = this.Cesium.SceneProjectorSourceType.HLS;
           break;
         case "mp4":
-          proType = this.Cesium.SceneProjectorType.VIDEO;
+          proType = this.Cesium.SceneProjectorSourceType.VIDEO;
           break;
         default:
           break;
       }
       return proType;
-    }
-  }
+    },
+    // 新建投放
+    createProjector(projector) {
+      const { id } = projector;
+      const scenePro = this.putProjector(projector, false);
+      CreateProjectorList[id] = scenePro;
+    },
+  },
 };
