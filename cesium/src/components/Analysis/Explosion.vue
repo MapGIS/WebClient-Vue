@@ -27,7 +27,6 @@
                 v-if="explosionFields.length > 0"
                 v-model="settingCopy.explosionField"
                 placeholder="请选择分组字段"
-                @change="onExplosionFieldChange"
               >
                 <mapgis-ui-select-option
                   v-for="item in explosionFields"
@@ -184,6 +183,8 @@ export default {
   },
   data() {
     return {
+      // m3d版本支持2.0和2.1
+      m3dVersion: '2.0',
       // 默认设置
       settingCopy: {
         groupType: "MapgisUiExplosionUnique",
@@ -209,7 +210,7 @@ export default {
       explosionFields: [],
       dataSource: undefined,
       openAdvancedSetting: false,
-      disableGroupTypeChange: false,
+      disableGroupTypeChange: true,
       segments: 5,
       info: "爆炸距离默认值为模型包围盒高度/2。爆炸方向默认为垂直方向。要素平移距离默认值=(要素中心点高程-索引号最小的要素中心点高程)*爆炸距离。",
     };
@@ -292,26 +293,6 @@ export default {
       });
     },
     /**
-     * 选择分组字段
-     */
-    onExplosionFieldChange(val) {
-      if (!this.explosionFields) {
-        return;
-      }
-      const field = this.explosionFields.find((item) => item.name === val);
-      const fieldType = field.type;
-      if (
-        this.dataSource.dataCount < 3 ||
-        fieldType.toLowerCase() === "string"
-      ) {
-        // 字符串类型的字段只支持单值分组
-        this.disableGroupTypeChange = true;
-      } else {
-        // 非字符串类型的字段支持单值和分组
-        this.disableGroupTypeChange = false;
-      }
-    },
-    /**
      * 切换模型
      */
     onSelectedModelChange(val) {
@@ -373,16 +354,22 @@ export default {
           const tempFeatures = this.getM3DFeatures(m3dObj.children);
           features = [...features, ...tempFeatures];
         } else {
-          const obj = m3dObj._attMap._obj;
+          const contentFeatures = this.getContentFeatures(m3dObj._content)
           const zmin = m3dObj._boundingVolume.minimumHeight;
           const zmax = m3dObj._boundingVolume.maximumHeight;
-          const keys = Object.keys(obj);
-          for (let j = 0; j < keys.length; j++) {
+          for (let j = 0; j < contentFeatures.length; j++) {
+            // 获取要素的全部属性名
+            const featureProperty = contentFeatures[j].getPropertyIds()
+            // 根据属性名得到属性值
+            const contentFeaturesMap = featureProperty.reduce((acc, item, index) => {
+              acc[item] = contentFeatures[j].getProperty(item);
+              return acc;
+            }, {});
             const feature = {
               type: "Feature",
-              id: keys[j],
+              id: j,
               centerHeight: (zmin + zmax) / 2,
-              properties: obj[keys[j]],
+              properties: contentFeaturesMap,
             };
             features.push(feature);
           }
@@ -390,6 +377,24 @@ export default {
       }
       return features;
     },
+    /**
+     * 获取全部瓦片对应的要素
+     */
+     getContentFeatures(content) {
+      let res = []
+      const contentArray = content._contents
+      if(contentArray) {
+        contentArray.forEach(item => {
+         const tempFeatures = this.getContentFeatures(item)
+         res = [...res, ...tempFeatures]
+        }) 
+      }else {
+        const features = content.batchTable._features
+        return features
+      }
+      return res
+     },
+  
     /**
      * 获取分组字段选项数组
      */
@@ -412,7 +417,6 @@ export default {
         this.explosionFields = fields;
         this.settingCopy.explosionField = fields[0].name;
         this.getDataSource();
-        this.onExplosionFieldChange(fields[0].name);
         return fields;
       }
     },
@@ -437,6 +441,7 @@ export default {
         m3dSetArray.length > 0
       ) {
         const m3dSet = m3dSetArray[0];
+        this.m3dVersion = m3dSet._version
         const features = this.getM3DFeatures(m3dSet._root.children);
         features.sort(function (a, b) {
           return a.id - b.id;
@@ -480,7 +485,6 @@ export default {
         if (JSON.stringify(this.explosionFields) !== JSON.stringify(fields)) {
           this.explosionFields = fields;
           this.settingCopy.explosionField = fields[0].name;
-          this.onExplosionFieldChange(this.explosionFields[0].name);
         }
       } else if (this.geoJSONData) {
         const { features } = this.geoJSONData;
@@ -542,13 +546,14 @@ export default {
         const valueGroups = vm.getValueGroups();
         const type =
           groupType === "MapgisUiExplosionUnique" ? "unique" : "range";
+        const field = this.m3dVersion === '2.0' ? 'OID' : 'tid'
         modelExplosionTool.explosionByField(m3dSetArray, {
           //过滤数据
           valueGroups,
           //过滤类型，unique：单值，range：分段
           type: "unique",
-          //过滤字段，1.0数据可不填，默认为oid
-          field: "OID",
+          //过滤字段，2.0OID, 2.1tid
+          field,
           //爆炸方向，true：单方向，false：多方向
           singleDirection: false,
           //是否每帧执行爆炸操作，默认false，有lod数据时，请设置为true可实时更新模型位置
