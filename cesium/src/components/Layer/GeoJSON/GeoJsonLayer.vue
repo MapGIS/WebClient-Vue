@@ -73,15 +73,16 @@ export default {
       this.onGeojsonLoaded(dataObj);
     },
     getGeojsonData(url) {
+      // eslint-disable-next-line promise/param-names
       return new Promise((resolve, inject) => {
         axios
           .get(url)
           .then((res) => {
-            resolve(res);
+            resolve(res.data);
           })
           .catch((e) => {
             console.log(`请求Geojson数据地址：${url}失败`);
-            inject();
+            inject(e);
           });
       });
     },
