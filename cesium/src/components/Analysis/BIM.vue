@@ -71,6 +71,7 @@
             slot-scope="{ title, index, icon, key, count }"
           >
             <span
+              :id="`tree_${key}`"
               :class="{
                 'mapgis-3d-bim-component-span': true,
                 'mapgis-3d-bim-component-span-inline': true,
@@ -78,7 +79,7 @@
             >
               <!-- <mapgis-ui-iconfont :type="icon" /> -->
               <mapgis-ui-tooltip
-                v-if="title && title.indexOf(searchValue) > -1"
+                v-if="title && searchValue && title.indexOf(searchValue) > -1"
               >
                 <template slot="title">{{ title }}({{ count }})</template>
                 <div>
@@ -164,7 +165,6 @@ export default {
         };
       },
     },
-    type: { type: String, default: "ModelLoaded" /* ModelUrl ModelLoaded */ },
     /**
      * @description 分层分户的图层列表, 每个内部{title, vueIndex},
      * @see vueIndex表示当前激活的图层序号
@@ -256,6 +256,7 @@ export default {
       featurevisible: undefined,
       featureclickenable: this.enablePopup,
       disableLayerSelect: false,
+      layerUrl: undefined,
     };
   },
   provide() {
@@ -348,42 +349,30 @@ export default {
     mount() {
       const vm = this;
       const { innerVueIndex, vueKey, vueCesium } = this;
-      const { viewer, enablePopup, type } = this;
+      const { viewer, enablePopup } = this;
 
-      let promise = this.createCesiumObject();
-      promise.then((find) => {
+      const promise = this.createCesiumObject();
+      promise.then(async (find) => {
         if (find && find.source) {
           let { source } = find;
-          let m3d = source && source.length > 0 ? source[0] : undefined;
-          if (type == "ModelUrl") {
-            let find = vueCesium.M3DIgsManager.findSource(
-              vueKey,
-              innerVueIndex
-            );
-            if (find && find.options) {
-              const { url } = find.options;
-              m3d.m3dtreeOptions = { createType: type, url: url };
-            }
-          } else if (type == "ModelLoaded") {
-            m3d.m3dtreeOptions = { createType: type };
-          } else {
-            return;
+          const m3d = source && source.length > 0 ? source[0] : undefined;
+          const version = m3d?.version;
+          // tree数据改为从接口获取
+          this.layerUrl = m3d ? m3d.resource._url : undefined;
+          let tree;
+          if (this.layerUrl) {
+            tree = await this.getBIMTreeData(this.layerUrl);
           }
 
-          // tree数据改为从接口获取
-          const url = m3d ? m3d.resource._url : undefined;
-          url && this.getBIMTreeData(url);
-          let tree = m3d ? m3d.m3dtree : undefined;
           // vm.parseTree(tree);
           vm.$emit("loaded", { component: vm });
-          let collection = new Cesium.PrimitiveCollection();
+          const collection = new Cesium.PrimitiveCollection();
           vueCesium.BimManager.addSource(vueKey, innerVueIndex, m3d, {
             m3d: m3d,
             tree: tree,
             collection: collection,
             primitiveCollection: viewer.scene.primitives.add(collection),
           });
-          vm.recordOriginStyle();
           if (enablePopup) {
             vm.$_bindPickFeature();
           }
@@ -406,11 +395,14 @@ export default {
       }
     },
     clearData() {
-      this.showAllLayer();
-      this.resetAllLayer();
+      this.restoreM3d();
       this.allLayerIds = [];
       this.layerIds = [];
       this.allLayerIds = [];
+      // 将树状json对象转成一维数组
+      this.allLayerObjs = [];
+      // 当前图层的url地址
+      this.layerUrl = undefined;
       this.halfCheckedKeys = [];
       this.layerTree = [];
       this.expandedKeys = [];
@@ -418,34 +410,43 @@ export default {
     },
     // 构件树内部逻辑
     parseTree(tree) {
-      // const displaytree = this.findDisplayTree(tree);
-      let cbtree = this.loopTreeNode(tree, "", undefined);
-      this.layerTree.splice(0, 1, cbtree);
+      const bimTree = this.loopTreeNode(tree, "", undefined);
+      this.layerTree.splice(0, 1, bimTree);
+      // 获取当前构件树所有叶子节点
+      this.leafNodeArr = this.allLayerObjs.filter((item) => !item.children);
+      return bimTree;
+    },
+    generateId() {
+      return parseInt(String(Math.random() * 10000000));
     },
     loopTreeNode(node, prefix, parent) {
       const vm = this;
       // let key = `${prefix}_${node.depth}`;
       let key = `${prefix}_${node.lodLevel}`;
-      vm.layerIds.push(node.name);
-      vm.allLayerIds.push(node.name);
+      // 给节点设置id
+      const uuid = this.generateId();
+      node.id = uuid;
+      vm.layerIds.push(node.id);
+      vm.allLayerIds.push(node.id);
+      vm.allLayerObjs.push(node);
 
       let cbnode = {
         title: node.name,
-        key: node.name,
-        index: node.name,
-        attMap: node.attMap && node.attMap._obj ? node.attMap._obj : {},
+        key: node.id,
+        index: node.id,
         icon: "mapgis-sanweiditu",
         children: [],
         parent: parent,
         isleaf: false,
         count: 0,
+        property: node.property,
         scopedSlots: { icon: "icon", title: "title" },
       };
-      if (cbnode.index == "rootNode") {
+      if (cbnode.level === 0) {
         cbnode.rootNode = true;
       }
-      if (node.childrenNode && node.childrenNode.length > 0) {
-        node.childrenNode.forEach((child) => {
+      if (node.children?.items && node.children?.items.length > 0) {
+        node.children.items.forEach((child) => {
           let c = vm.loopTreeNode(child, key, cbnode);
           cbnode.children.push(c);
           cbnode.count += c.count;
@@ -463,20 +464,6 @@ export default {
       if (!layerTree || layerTree.length <= 0) return undefined;
       let root = layerTree[0];
       return root;
-    },
-    findTreePath(index) {
-      let result = {
-        paths: [],
-        node: undefined,
-      };
-      let root = this.findRoot();
-      let find = this.findNode(root, index);
-      let paths = [];
-      this.findParent(find, paths);
-      this.findChildren(find, paths);
-      result.paths = paths;
-      result.node = find;
-      return result;
     },
     findNode(node, index) {
       const vm = this;
@@ -530,28 +517,6 @@ export default {
         }
       }
     },
-    findDisplayTree(tree) {
-      if (!tree) return;
-      if (tree.index == "rootNode") {
-        return tree;
-      } else {
-        const next = tree.m3dtreeChildren;
-        if (next && next.length > 0) {
-          return this.findDisplayTree(next[0]);
-        }
-      }
-      /* if (!tree || tree.length <= 0) return;
-      const node = tree[0];
-      const { index, rootNode } = node;
-      const { children } = node;
-      if (rootNode) {
-        this.layerTree = children;
-      } else {
-        this.layerIds = this.layerIds.filter((l) => l.index != index);
-        this.allLayerIds = this.allLayerIds.filter((l) => l.index != index);
-        this.findDisplayTree(children);
-      } */
-    },
     actionTree(node, action) {
       const vm = this;
       action(node);
@@ -559,19 +524,36 @@ export default {
         node.children.forEach((child) => vm.actionTree(child, action));
       }
     },
-    disableTree(node) {
-      let root = this.findRoot();
-      this.actionTree(root, (n) => {
+    disableTree(index) {
+      // 根据index查找构件树节点
+      const currentNode = this.findCurrentNode(index);
+      this.actionTree(currentNode, (n) => {
         n.disabled = true;
       });
-      this.actionTree(node, (n) => {
-        n.disabled = false;
-      });
     },
-    enableTree(node) {
-      this.actionTree(node, (n) => {
+    enableTree(index) {
+      // 根据index查找构件树节点
+      const currentNode = this.findCurrentNode(index);
+      this.actionTree(currentNode, (n) => {
         n.disabled = false;
       });
+      this.$forceUpdate();
+    },
+    findCurrentNode(index, treeData) {
+      if (!treeData) {
+        treeData = this.layerTree;
+      }
+      let targetNode = treeData.find((item) => item.index === index);
+      if (targetNode) {
+        return targetNode;
+      } else {
+        treeData.forEach((item) => {
+          if (item.children) {
+            targetNode = this.findCurrentNode(index, item.children);
+          }
+        });
+      }
+      return targetNode;
     },
     // 搜索需要
     onExpand(expandedKeys) {
@@ -595,14 +577,25 @@ export default {
       }
       return parentKey;
     },
+    // 根据数据结构节点将树状结构转为一维数组
+    getCurrentNodeAndChildNodeId(data, allIndexs = []) {
+      for (let i = 0; i < data.length; i++) {
+        const node = data[i];
+        const { id } = node;
+        allIndexs.push(id);
+        if (node.children?.items) {
+          this.getCurrentNodeAndChildNodeId(node.children.items, allIndexs);
+        }
+      }
+    },
     onChange(e) {
       let { layerTree } = this;
       const dataList = [];
       const generateList = (data) => {
         for (let i = 0; i < data.length; i++) {
           const node = data[i];
-          const { key } = node;
-          dataList.push({ key, title: key });
+          const { key, title } = node;
+          dataList.push({ key, title });
           if (node.children) {
             generateList(node.children);
           }
@@ -626,15 +619,19 @@ export default {
       });
     },
     onSelect(e, payload) {
+      // 如果当前构件树有节点被锁定则不进行该操作
+      if (this.isolation) {
+        return;
+      }
       this.selectedKeys = e;
       const { selectedNodes } = payload;
       if (selectedNodes && selectedNodes.length > 0) {
-        let { data } = selectedNodes[0];
-        let { props } = data;
-        let { index } = props;
-        this.highlightM3d(index);
+        const {
+          data: { key },
+        } = selectedNodes[0];
+        this.highlightM3d(key);
       } else {
-        this.resetAllLayer();
+        this.restoreM3d();
       }
     },
     onCheck(checks, payload) {
@@ -644,24 +641,57 @@ export default {
     },
     changeLayerVisible(layers) {
       layers = layers || this.layerIds;
-      const { vueKey, innerVueIndex, vueCesium, allLayerIds } = this;
-      let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
-      if (find && find.options) {
-        const { tree } = find.options;
-        if (!tree) return;
-        allLayerIds.forEach((layer) => {
-          let mapgism3dNode = tree.getM3DByName(layer);
-          if (mapgism3dNode) {
-            mapgism3dNode.forceInvisible = true;
-          }
-        });
-        for (let i = 0; i < layers.length; i++) {
-          let layer = layers[i];
-          let mapgism3dNode = tree.getM3DByName(layer);
-          if (mapgism3dNode) {
-            mapgism3dNode.forceInvisible = false;
-          }
+      const { vueKey, innerVueIndex, vueCesium, Cesium, allLayerIds } = this;
+      const find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
+      const bimLayer = find?.source;
+      if (bimLayer) {
+        let conditions = [];
+        // 如果layers为空则获取根节点设置minTid和maxTid 并且设置透明度为0
+        if (layers.length === 0) {
+          const rootNode = this.findRoot();
+          const {
+            property: { minTid, maxTid },
+          } = rootNode;
+          conditions.push([
+            "(${tid} >= " + minTid + ") && (${tid} <= " + maxTid + ")",
+            "color('#ffffff', 0)",
+          ]);
+        } else {
+          // 通过layers找到构件树叶子节点进行设置minTid和maxTid 并且设置透明度为1
+          const selectedNodes = this.leafNodeArr.filter((item) =>
+            layers.includes(item.id)
+          );
+          const unSelectedNodes = this.leafNodeArr.filter(
+            (item) => !layers.includes(item.id)
+          );
+          // 设置选中的节点显示
+          selectedNodes.forEach((item) => {
+            const {
+              property: { minTid, maxTid },
+            } = item;
+            conditions.push([
+              "(${tid} >= " + minTid + ") && (${tid} <=" + maxTid + ")",
+              "color('#ffffff', 1)",
+            ]);
+          });
+
+          // 设置未选中的节点隐藏
+          unSelectedNodes.forEach((item) => {
+            const {
+              property: { minTid, maxTid },
+            } = item;
+            conditions.push([
+              "(${tid} >= " + minTid + ") && (${tid} <=" + maxTid + ")",
+              "color('#ffffff', 0)",
+            ]);
+          });
         }
+        const targetStyle = new Cesium.Cesium3DTileStyle({
+          color: {
+            conditions,
+          },
+        });
+        bimLayer.style = targetStyle;
       }
     },
     handleExpandItemKey(key) {
@@ -683,46 +713,19 @@ export default {
       this.$refs.card && this.$refs.card.togglePanel();
       this.disableLayerSelect = true;
     },
-    recordOriginStyle() {
-      const { vueKey, innerVueIndex, vueCesium, allLayerIds } = this;
-      let originStyles = [];
 
-      allLayerIds.forEach((l) => {
-        originStyles.push({ name: l, style: undefined });
-      });
-
-      vueCesium.BimManager.changeOptions(
-        vueKey,
-        innerVueIndex,
-        "originStyles",
-        originStyles
-      );
-    },
+    // 重置bim构件树整体样式
     restoreOriginStyle() {
-      const { vueKey, innerVueIndex, vueCesium } = this;
+      const { vueKey, innerVueIndex, vueCesium, Cesium } = this;
       let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
-      if (find && find.options.originStyles) {
-        let { tree } = find.options;
-        find.options.originStyles.forEach((i) => {
-          let mapgism3dNode = tree.getM3DByName(i.name);
-          if (mapgism3dNode) {
-            mapgism3dNode.reset();
-          }
+      if (find && find.source) {
+        // 重置样式
+        const { source } = find;
+        const originStyle = new Cesium.Cesium3DTileStyle({
+          show: "true",
+          color: "color('#ffffff')",
         });
-      }
-    },
-    restoreOrigindVisible() {
-      const { vueKey, innerVueIndex, vueCesium, g3dLayerIndex } = this;
-      let find = vueCesium.StratifiedHousehouldManager.findSource(
-        vueKey,
-        innerVueIndex
-      );
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      if (find && find.options.originStyles) {
-        find.options.originStyles.forEach((s, i) => {
-          let m3dlayer = g3dLayer.getLayer(String(i));
-          m3dlayer.show = true;
-        });
+        source.style = originStyle;
       }
     },
     changeIsolation(layer) {
@@ -735,32 +738,31 @@ export default {
       } else {
         this.layerKey = undefined;
         this.isolation = false;
-        window.setTimeout(() => vm.disableIsolation(), 10);
+        window.setTimeout(() => vm.disableIsolation(layer), 10);
       }
     },
-    enableIsolation(layer) {
-      const { viewer } = this;
-      const { index } = layer;
+    enableIsolation(node) {
+      const { index } = node;
+      // 关闭拾取
       this.featurevisible = false;
       this.selectedKeys = [`${index}`];
-
-      let find = this.findTreePath(index);
-      const { paths, node } = find;
-      let indexs = paths.map((p) => p.index);
-      this.changeLayerVisible(indexs);
-      this.flyToLayer(node.index);
-      this.disableTree(node);
-
-      let root = this.findRoot();
-      this.layerTree.splice(0, 1, root);
-      this.restoreM3d();
+      // 找到锁定的节点（包括下级节点）
+      const isolationNode = this.allLayerObjs.find((item) => item.id === index);
+      const allIndexs = [];
+      this.getCurrentNodeAndChildNodeId([isolationNode], allIndexs);
+      // 设置模型锁定可见的部分
+      this.changeLayerVisible(allIndexs);
+      // flyto到模型锁定位置
+      this.flyToLayer(isolationNode, allIndexs);
+      // 禁用bim构件树锁定节点及子节点
+      this.disableTree(index);
     },
-    disableIsolation() {
-      let root = this.findRoot();
-      this.enableTree(root);
-      this.resetAllLayer();
-      this.showAllLayer();
-      this.layerTree.splice(0, 1, root);
+    disableIsolation(node) {
+      const { index } = node;
+      // 解除构件树的禁用
+      this.enableTree(index);
+      // 重置图层
+      this.restoreM3d();
     },
     handleMenu(menu) {
       if (menu == "隐藏面板") {
@@ -774,41 +776,83 @@ export default {
           this.$_bindPickFeature();
         }
       } else if (menu == "重置图层") {
-        this.resetAllLayer();
+        this.restoreM3d();
       }
     },
-    flyToLayer(index) {
-      const { innerVueIndex, vueKey, vueCesium, viewer } = this;
-      let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
-      if (find && find.options) {
-        let { tree } = find.options;
-        let mapgism3dNode = tree.getM3DByName(index);
-        if (mapgism3dNode) {
-          viewer.camera.flyToBoundingSphere(mapgism3dNode.boundingSphere);
+    flyToLayer(node, allIndexs) {
+      // 要素tid范围默认选择最大边界值
+      const {
+        property: { maxTid },
+      } = node;
+      this.flyToFeature(node, maxTid, allIndexs);
+    },
+    async flyToFeature(node, tid, allIndexs) {
+      // 判断当前节点是否为叶子节点
+      const isLeaf = this.leafNodeArr.find((item) => item.id === node.id);
+      // 找到最小边界值的节点
+      let targetNode;
+      if (isLeaf) {
+        targetNode = node;
+      } else {
+        // 找到所有叶子节点
+        const childLeafNodes = this.leafNodeArr.filter((item) =>
+          allIndexs.includes(item.id)
+        );
+        // 找到maxTid跟tid相同的节点
+        targetNode = childLeafNodes.find(
+          (item) => item.property.maxTid === tid
+        );
+      }
+      // 返回的是targetNode的minTid-maxTid所有值对应的数组
+      const nodeArr = await this.combineItems(targetNode.childrenUri);
+      const nodeInfo =
+        nodeArr.find((item) => item.property.tid === tid) || nodeArr[0];
+      this.flyToBox(nodeInfo.property.box);
+    },
+    // 处理分页存储的构件树JSON文件
+    async combineItems(childrenUri, items = []) {
+      const { data } = await axios.get(this.layerUrl + `/${childrenUri}`);
+      items.push(...data.items);
+      if (data.nextItemsUri) {
+        let nextItemsUri = data.nextItemsUri;
+        if (!nextItemsUri.startsWith("structuretree/")) {
+          nextItemsUri = `structuretree/${nextItemsUri}`;
         }
+        this.combineItems(nextItemsUri, items);
       }
+      return items;
     },
-    resetAllLayer() {
-      const { innerVueIndex, vueKey, vueCesium } = this;
-      let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
-      if (find && find.options) {
-        let { m3d } = find.options;
-        m3d.reset && m3d.reset();
-      }
+    // 将相机视角定位到指定包围体范围
+    flyToBox(box) {
+      const { Cesium, viewer } = this;
+      // 包围盒矩形的长宽高
+      const width = Math.abs(box[0] - box[3]);
+      const height = Math.abs(box[1] - box[4]);
+      const depth = Math.abs(box[2] - box[5]);
+      // 计算对角线长度
+      const diagonalLength = Math.sqrt(
+        width * width + height * height + depth * depth
+      );
+      // 计算包围球半径
+      const boundingSphereRadius = diagonalLength / 2;
+      // 计算中心点坐标
+      const centerPosition = new Cesium.Cartesian3(
+        (box[0] + box[3]) / 2,
+        (box[1] + box[4]) / 2,
+        (box[2] + box[5]) / 2
+      );
+      // 将相机飞到指定的包围球位置
+      viewer.camera.flyToBoundingSphere(
+        new Cesium.BoundingSphere(
+          centerPosition, // 包围球的中心点坐标
+          boundingSphereRadius // 包围球的半径
+        ),
+        {
+          duration: 1, // 相机视角飞行时间
+        }
+      );
     },
-    showAllLayer() {
-      const { innerVueIndex, vueKey, vueCesium, allLayerIds } = this;
-      let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
-      if (find && find.options) {
-        let { tree } = find.options;
-        allLayerIds.forEach((layer) => {
-          let mapgism3dNode = tree.getM3DByName(layer);
-          if (mapgism3dNode) {
-            mapgism3dNode.forceInvisible = false;
-          }
-        });
-      }
-    },
+
     $_pickEvent(movement) {
       const { enableDynamicQuery } = this;
       if (enableDynamicQuery) {
@@ -832,13 +876,10 @@ export default {
       const { vueKey, innerVueIndex } = this;
       this.featurevisible = false;
       this.restoreM3d();
-      let find = vueCesium.StratifiedHousehouldManager.findSource(
-        vueKey,
-        innerVueIndex
-      );
+      let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
       if (find && find.options.clickhandler) {
         find.options.clickhandler.destroy();
-        vueCesium.StratifiedHousehouldManager.changeOptions(
+        vueCesium.BimManager.changeOptions(
           vueKey,
           innerVueIndex,
           "clickhandler",
@@ -858,18 +899,39 @@ export default {
     restoreM3d() {
       this.restoreOriginStyle();
     },
-    highlightM3d(index) {
+    highlightM3d(key) {
       const { vueKey, innerVueIndex, vueCesium, Cesium } = this;
-      this.selectLayerIndex = index;
-      let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
-      if (find && find.options) {
-        let { tree } = find.options;
-        let mapgism3dNode = tree.getM3DByName(index);
-        if (mapgism3dNode) {
-          mapgism3dNode.setNodeColor(
-            Cesium.Color.fromCssColorString(this.highlightStyle)
-          );
-        }
+      const { highlightStyle } = this;
+      this.selectLayerIndex = key;
+      const find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
+      if (find && find.source) {
+        const { source } = find;
+        // 获取当前点击的节点
+        const currentNode = this.allLayerObjs.find((item) => item.id === key);
+        // 获取当前节点及子节点的index
+        const allIndexs = [];
+        this.getCurrentNodeAndChildNodeId([currentNode], allIndexs);
+        // 获取需要高亮的子节点
+        const selectedNodes = this.leafNodeArr.filter((item) =>
+          allIndexs.includes(item.id)
+        );
+        // 设置样式
+        const conditions = [];
+        selectedNodes.forEach((item) => {
+          const {
+            property: { minTid, maxTid },
+          } = item;
+          conditions.push([
+            "(${tid} >= " + minTid + ") && (${tid} <=" + maxTid + ")",
+            highlightStyle,
+          ]);
+        });
+        const targetStyle = new Cesium.Cesium3DTileStyle({
+          color: {
+            conditions,
+          },
+        });
+        source.style = targetStyle;
       }
     },
     handleDynamicQuery() {
@@ -883,53 +945,42 @@ export default {
     queryDynamic(movement) {
       // m3d 不支持动态查询 只有g3d支持动态查询
     },
-    queryStatic(movement) {
-      const vm = this;
-      vm.featureproperties = undefined;
+    async queryStatic(movement) {
+      this.featureproperties = undefined;
       const { Cesium, viewer } = this;
       const { vueKey, innerVueIndex, vueCesium } = this;
       const { highlightStyle } = this;
       const scene = viewer.scene;
-      let root = this.findRoot();
-      let tempRay = new Cesium.Ray();
-      let tempPos = new Cesium.Cartesian3();
-      let bimInfo = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
-      let m3d;
-      if (bimInfo && bimInfo.source) {
-        m3d = bimInfo.source;
-      }
+      const tempRay = new Cesium.Ray();
+      const tempPos = new Cesium.Cartesian3();
+      const bimInfo = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
+      const m3d = bimInfo?.source;
+      // 找不到当前的图层对象不再执行
+      if (!m3d) return;
 
       if (!movement) return;
       if (scene.mode !== Cesium.SceneMode.MORPHING) {
-        let position = movement.position || movement.endPosition;
-        let cartesian = viewer.getCartesian3Position(position);
-        let feature = viewer.scene.pick(position);
-        let ray = scene.camera.getPickRay(position, tempRay);
-        let cartesian2 = scene.globe.pick(ray, scene, tempPos);
+        const position = movement.position || movement.endPosition;
+        const cartesian = viewer.getCartesian3Position(position);
+        const feature = viewer.scene.pick(position);
+        const ray = scene.camera.getPickRay(position, tempRay);
+        const cartesian2 = scene.globe.pick(ray, scene, tempPos);
 
         let longitudeString2, latitudeString2, heightString2;
 
         if (Cesium.defined(cartesian2)) {
-          let cartographic2 = Cesium.Cartographic.fromCartesian(cartesian);
+          const cartographic2 = Cesium.Cartographic.fromCartesian(cartesian);
           longitudeString2 = Cesium.Math.toDegrees(cartographic2.longitude);
           latitudeString2 = Cesium.Math.toDegrees(cartographic2.latitude);
           heightString2 = cartographic2.height;
         }
 
-        if (feature) {
+        if (feature instanceof Cesium.Cesium3DTileFeature) {
           // 修改说明：M3D2.1已弃用viewer.scene.pickOid方法，后面统一从feature上获取要素id，高亮统一使用Cesium3DTileStyle设置
           // 修改人:龚跃健
           // 修改日期：2024-11-22
-          const m3dVersion = m3d ? m3d.version : undefined;
-          let id;
-          let conditions;
-          if (version === "2.1") {
-            id = feature.getProperty("tid");
-            conditions = [["${tid} === ${id}", highlightStyle]];
-          } else {
-            id = feature.getProperty("OID");
-            conditions = [["${OID} === ${id}", highlightStyle]];
-          }
+          const id = feature.getProperty("tid");
+          const conditions = [["${tid} === ${id}", highlightStyle]];
           m3d.style = new Cesium.Cesium3DTileStyle({
             defines: {
               id,
@@ -938,61 +989,43 @@ export default {
               conditions,
             },
           });
-          let paths = [];
-          let find = vm.findId(root, id);
 
-          if (find) {
-            this.findParent(find, paths);
-            let expends = paths.map((p) => p.index);
-            vm.selectedKeys = [find.index];
-            vm.expandedKeys = expends;
-          }
-
-          if (m3d._useRawSaveAtt && Cesium.defined(feature)) {
-            let result = {};
-            const propertyNames = feature.getPropertyNames();
-            propertyNames.forEach((name) => {
-              result[name] = feature.getProperty(name);
-            });
-            vm.featureproperties = result;
-          } else {
-            m3d.queryAttributes(id).then(function (result) {
-              result = result || {};
-              vm.featureproperties = result;
-            });
-          }
+          const result = {};
+          // 兼容属性外置和属性内置的模型，属性外置的模型进行拾取时返回的是promise对象，以及后续获取属性信息同样返回promise对象
+          const propertykeys = await feature.getPropertyIds();
+          await Promise.all(
+            propertykeys.map(async (item) => {
+              result[item] = await feature.getProperty(item);
+            })
+          );
+          this.featureproperties = result;
           if (
-            vm.featureclickenable &&
-            vm.featureproperties &&
-            Object.keys(vm.featureproperties).length > 0
+            this.featureclickenable &&
+            this.featureproperties &&
+            Object.keys(this.featureproperties).length > 0
           ) {
-            vm.featurevisible = true;
-            vm.featureposition = {
+            this.featurevisible = true;
+            this.featureposition = {
               longitude: longitudeString2,
               latitude: latitudeString2,
               height: heightString2,
             };
           }
         } else {
-          vm.featureposition = undefined;
-          vm.featurevisible = false;
+          this.featureposition = undefined;
+          this.featurevisible = false;
         }
       }
     },
+
     // 获取选中的构建树tree数据
     getBIMTreeData(url) {
       return new Promise((resolve, reject) => {
-        const params = {
-          f: "json",
-          include: "descendants",
-          maxDepth: 10,
-          maxCount: 1000,
-        };
         axios
-          .get(url + "/nodes/root", { params })
+          .get(url + "/structuretree.json")
           .then((res) => {
-            this.parseTree(res.data);
-            resolve();
+            // const structureTree = res.data;
+            resolve(this.parseTree(res.data));
           })
           .catch((Error) => {
             this.$message.error("BIM构件树节点信息获取失败！");

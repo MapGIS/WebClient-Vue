@@ -81,29 +81,8 @@ export default {
         return new Promise(resolve => {
           $scriptMain.onload = () => {
             if (global.Cesium) {
-              $scriptPlugin.src =
-                self.pluginPath ||
-                window.VueCesiumPluginPath ||
-                "http://develop.smaryun.com/static/libs/cdn/zondyclient/webclient-cesium-plugin.min.js";
-              $scriptPlugin.onload = () => {
-                if (global.Cesium) {
-                  self.globalLoad = true;
-                  resolve(global.Cesium);
-                } else {
-                  reject(
-                    new Error(
-                      `[网络请求异步加载错误]: ` +
-                        "请检查pluginPath或者网络状态!"
-                    )
-                  );
-                }
-              };
-            } else {
-              reject(
-                new Error(
-                  `[网络请求异步加载错误]: ` + "请检查libPath或者网络状态!"
-                )
-              );
+              self.globalLoad = true;
+              resolve(global.Cesium);
             }
           };
         });

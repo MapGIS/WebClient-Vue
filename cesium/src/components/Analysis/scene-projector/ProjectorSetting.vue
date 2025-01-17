@@ -63,6 +63,15 @@
           size="default"
           class="mapgis-ui-setting-form"
         >
+          <mapgis-ui-form-item v-if="renderType === 0" label="渲染通道">
+            <mapgis-ui-select
+              @change="(val) => onChangeSetting(val, 'pass')"
+              v-model="settingsCopy.params.pass"
+              :options="renderChannelTypes"
+            >
+            </mapgis-ui-select>
+          </mapgis-ui-form-item>
+
           <mapgis-ui-form-item label="数据类型">
             <mapgis-ui-select v-model="projectorType" :options="projectorTypes">
             </mapgis-ui-select>
@@ -78,6 +87,7 @@
             <mapgis-ui-form-item label="服务地址">
               <mapgis-ui-textarea
                 v-model="videoSource.videoUrl"
+                @change="(val) => onChangeSetting(val, 'source', false)"
                 class="full-width"
                 autoSize
                 allowClear
@@ -89,6 +99,7 @@
               <div class="full-width flex">
                 <mapgis-ui-textarea
                   v-model="imgUrl"
+                  @change="(val) => onChangeSetting(val, 'source', false)"
                   autoSize
                   allowClear
                   :disabled="disabledImageUrlInput"
@@ -169,7 +180,7 @@
                     </mapgis-ui-tooltip>
                   </mapgis-ui-input-number-addon>
                 </mapgis-ui-col>
-                <mapgis-ui-col :span="12" style="paddingTop:8px;">
+                <mapgis-ui-col :span="12" style="paddingtop: 8px">
                   <mapgis-ui-input-number-addon
                     :min="0"
                     :step="0.0001"
@@ -204,7 +215,7 @@
                     :max="360"
                     :step="0.1"
                     v-model.number="params.orientation.heading"
-                    @change="val => onChangeSetting(val, 'heading')"
+                    @change="(val) => onChangeSetting(val, 'heading')"
                   >
                     <mapgis-ui-tooltip slot="addonBefore" title="方位角">
                       <mapgis-ui-iconfont type="mapgis-fangwei" />
@@ -217,7 +228,7 @@
                     size="small"
                     :step="0.1"
                     :tooltipVisible="false"
-                    @change="val => onChangeSetting(val, 'heading')"
+                    @change="(val) => onChangeSetting(val, 'heading')"
                   />
                 </mapgis-ui-col>
                 <mapgis-ui-col :span="12">
@@ -226,7 +237,7 @@
                     :max="90"
                     :step="0.1"
                     v-model.number="params.orientation.pitch"
-                    @change="val => onChangeSetting(val, 'pitch')"
+                    @change="(val) => onChangeSetting(val, 'pitch')"
                   >
                     <mapgis-ui-tooltip slot="addonBefore" title="俯仰角">
                       <mapgis-ui-iconfont type="mapgis-fushi" />
@@ -239,16 +250,16 @@
                     :step="0.1"
                     size="small"
                     :tooltipVisible="false"
-                    @change="val => onChangeSetting(val, 'pitch')"
+                    @change="(val) => onChangeSetting(val, 'pitch')"
                   />
                 </mapgis-ui-col>
-                <mapgis-ui-col :span="12" style="paddingTop:8px;">
+                <mapgis-ui-col :span="12" style="paddingtop: 8px">
                   <mapgis-ui-input-number-addon
                     :min="0"
                     :max="360"
                     :step="0.1"
                     v-model.number="params.orientation.roll"
-                    @change="val => onChangeSetting(val, 'roll')"
+                    @change="(val) => onChangeSetting(val, 'roll')"
                   >
                     <mapgis-ui-tooltip slot="addonBefore" title="翻滚角">
                       <mapgis-ui-iconfont type="mapgis-Zzhouxuanzhuan" />
@@ -261,7 +272,7 @@
                     :step="0.1"
                     size="small"
                     :tooltipVisible="false"
-                    @change="val => onChangeSetting(val, 'roll')"
+                    @change="(val) => onChangeSetting(val, 'roll')"
                   />
                 </mapgis-ui-col>
               </mapgis-ui-row>
@@ -274,7 +285,7 @@
                     :max="180"
                     :step="0.1"
                     v-model.number="params.hFOV"
-                    @change="val => onChangeSetting(val, 'horizontAngle')"
+                    @change="(val) => onChangeSetting(val, 'horizontAngle')"
                   >
                     <mapgis-ui-tooltip slot="addonBefore" title="水平">
                       <mapgis-ui-iconfont type="mapgis-shuiping" />
@@ -286,7 +297,7 @@
                     :max="180"
                     :step="0.1"
                     :tooltipVisible="false"
-                    @change="val => onChangeSetting(val, 'horizontAngle')"
+                    @change="(val) => onChangeSetting(val, 'horizontAngle')"
                   />
                 </mapgis-ui-col>
                 <mapgis-ui-col :span="12">
@@ -295,7 +306,7 @@
                     :max="180"
                     :step="0.1"
                     v-model.number="params.vFOV"
-                    @change="val => onChangeSetting(val, 'verticalAngle')"
+                    @change="(val) => onChangeSetting(val, 'verticalAngle')"
                   >
                     <mapgis-ui-tooltip slot="addonBefore" title="垂直">
                       <mapgis-ui-iconfont type="mapgis-chuizhi" />
@@ -308,7 +319,7 @@
                     :step="0.1"
                     size="small"
                     :tooltipVisible="false"
-                    @change="val => onChangeSetting(val, 'verticalAngle')"
+                    @change="(val) => onChangeSetting(val, 'verticalAngle')"
                   />
                 </mapgis-ui-col>
               </mapgis-ui-row>
@@ -319,13 +330,13 @@
             :isTitleBold="true"
             :hasTopMargin="false"
             :hasBottomMargin="false"
-            style="paddingBottom:8px;"
+            style="paddingbottom: 8px"
           >
             <mapgis-ui-switch
               slot="handle"
               size="small"
               v-model="params.hintLineVisible"
-              @change="val => onChangeSetting(val, 'showLine')"
+              @change="(val) => onChangeSetting(val, 'showLine')"
             />
           </mapgis-ui-group-tab>
         </div>
@@ -336,8 +347,8 @@
           :drawStyle="drawStyleCopy"
           :enableControl="enableControl"
         >
-          <div v-if="renderType === 1" style="margin-top: 7px;">
-            <mapgis-ui-group-tab title="绘制投影区域" style="display:inline" />
+          <div v-if="renderType === 1" style="margin-top: 7px">
+            <mapgis-ui-group-tab title="绘制投影区域" style="display: inline" />
             <div class="padding_draw">
               <mapgis-ui-tooltip
                 v-for="(item, i) in draws"
@@ -351,7 +362,7 @@
                   :ghost="true"
                   type="link"
                   @click="item.click"
-                  style="margin: 0 -5px;border:none;"
+                  style="margin: 0 -5px; border: none"
                 >
                   <mapgis-ui-iconfont :type="item.icon" theme="filled" />
                 </mapgis-ui-button>
@@ -400,6 +411,10 @@
 import VueOptions from "../../Base/Vue/VueOptions";
 import { emptyImage } from "../../UI/Base64Image/base64Image";
 import projectorMixins from "./mixins/projector-mixins";
+import {
+  CreateProjectorList,
+  ProjectorCameraMarkerList,
+} from "./manager/projector-manager.js";
 
 export default {
   name: "mapgis-3d-projector-setting",
@@ -420,13 +435,13 @@ export default {
             imgUrl: "", // 图片地址
             videoSource: {
               protocol: "mp4", // 视频传输协议
-              videoUrl: "http://localhost:8895/video/DJI_0008.mp4" // 视频服务地址
+              videoUrl: "http://localhost:8895/video/DJI_0008.mp4", // 视频服务地址
             },
             cameraPosition: { x: 0, y: 0, Z: 0 }, // 相机位置
             orientation: {
               heading: 0, // 方向角
               pitch: 0, // 俯仰角
-              roll: 0 // 滚动角
+              roll: 0, // 滚动角
             },
             hFOV: 15, // 水平视场角
             vFOV: 15, // 垂直视场角
@@ -434,36 +449,97 @@ export default {
             areaCoords: [], // 绘制投放区域方式下存储绘制点位坐标
             renderType: 0,
             heightReference: 2, //是否贴场景选择
-            offsetHeight: 5
+            offsetHeight: 5,
           },
           preHeading: 0,
-          prePitch: 0
+          prePitch: 0,
         };
-      }
+      },
     },
     disabledImageUrlInput: {
       type: Boolean,
-      default: false
+      default: false,
     },
     layout: {
       type: String,
-      default: "vertical" // 'horizontal' 'vertical' 'inline'
+      default: "vertical", // 'horizontal' 'vertical' 'inline'
     },
     currentProjectorOverlayLayerId: {
       type: String,
-      default: ""
+      default: "",
     },
     // 是否是编辑状态进入面板
     isEdit: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
+  },
+
+  data() {
+    return {
+      info: "如需投放到地形上,请开启深度检测",
+      settingsCopy: {},
+      proType: undefined, //投影类型
+      protocols: ["m3u8", "mp4"], // video协议集合
+      projectorTypes: [
+        { value: "video", label: "视频" },
+        { value: "image", label: "图片" },
+      ],
+      renderChannelTypes: [],
+      // scenePro: undefined, //投放对象
+      isGetCameraPosition: false, //是否获取相机位置
+      isGetTargetPosition: false, //是否获取视点位置
+      emptyImage: undefined,
+      imageStyle: {
+        height: "150px",
+        margin: "0 auto",
+      },
+      // modelPrimitive: undefined,
+
+      enableControl: false,
+      // 绘制矩形颜色
+      drawStyleCopy: {
+        color: "#FF8C00",
+        opacity: 0.6,
+      },
+      draws: [
+        {
+          icon: "mapgis-huizhijuxing",
+          tip: "绘制矩形",
+          click: this.drawRectangle,
+        },
+        {
+          icon: "mapgis-draw-polygon",
+          tip: "绘制多边形",
+          click: this.drawPolygon,
+        },
+      ],
+      // 离地高度设置
+      heightReferenceTypes: [
+        { value: 0, label: "使用边界点的高度,仅在绘制区域选择为多边形时生效" },
+        {
+          value: 1,
+          label: "忽略边界点的高度,使用指定的高度",
+        },
+        { value: 2, label: "贴场景" },
+      ],
+      // graphic: undefined,
+      renderType: 0,
+      isPreview: true,
+      // heightReference: 2,
+      // offsetHeight: 5
+    };
   },
   watch: {
     settings: {
       handler() {
         this.settingsCopy = JSON.parse(JSON.stringify(this.settings));
-        this.scenePro = this.putProjector(this.settingsCopy);
+        // 获取投放对象
+        this.scenePro =
+          CreateProjectorList[this.settingsCopy.id] ||
+          this.getProjectorById(this.settingsCopy.id);
+        // 获取投放相机对象
+        // this.cameraMarker = ProjectorCameraMarkerList[this.settingsCopy.id];
         this.renderType = this.settingsCopy.params.renderType || 0;
         this.heightReference =
           this.settingsCopy.params.heightReference != undefined
@@ -471,33 +547,51 @@ export default {
             : 2;
         this.offsetHeight = this.settingsCopy.params.offsetHeight || 5;
         this._changeProjectorType();
+        this.setRenderChannelTypes();
       },
       // deep: true,
-      immediate: true
+      immediate: true,
     },
-    videoSource: {
-      handler() {
-        this._changeProjector();
-      },
+    "settingsCopy.params.cameraPosition": {
+      immediate: false,
       deep: true,
-      immediate: false
-    },
-    imgUrl: {
-      handler() {
-        this._changeProjector();
+      handler(val) {
+        const { Cesium } = this;
+        const { x, y, z } = val;
+        this.viewPosition = Cesium.Cartographic.toCartesian(
+          Cesium.Cartographic.fromDegrees(x, y, z)
+        );
+        this.scenePro.viewPosition = this.viewPosition;
       },
-      deep: true,
-      immediate: false
     },
+    // videoSource: {
+    //   handler() {
+    //     this._changeProjector();
+    //   },
+    //   deep: true,
+    //   immediate: false,
+    // },
+    // imgUrl: {
+    //   handler() {
+    //     this._changeProjector();
+    //   },
+    //   deep: true,
+    //   immediate: false,
+    // },
     projectorType: {
       handler() {
-        this.cancelPutProjector(this.settingsCopy);
-        this.scenePro = undefined;
-        this._changeProjector();
+        const { projectorType } = this;
+        let source;
+        if (projectorType === "video") {
+          source = this.videoSource.videoUrl;
+        } else {
+          source = this.imgUrl;
+        }
+        this.scenePro.source = source;
       },
       deep: true,
-      immediate: false
-    }
+      immediate: false,
+    },
   },
   computed: {
     id() {
@@ -507,31 +601,31 @@ export default {
       return this.settingsCopy.params.videoSource;
     },
     projectorType: {
-      get: function() {
+      get: function () {
         return this.settingsCopy.params.projectorType;
       },
-      set: function(params) {
+      set: function (params) {
         this.settingsCopy.params.projectorType = params;
-      }
+      },
     },
     imgUrl: {
-      get: function() {
+      get: function () {
         return this.settingsCopy.params.imgUrl;
       },
-      set: function(params) {
+      set: function (params) {
         this.settingsCopy.params.imgUrl = params;
-      }
+      },
     },
     orientation() {
       return this.settingsCopy.params.orientation;
     },
     params: {
-      get: function() {
+      get: function () {
         return this.settingsCopy.params;
       },
-      set: function(params) {
+      set: function (params) {
         this.settingsCopy.params = params;
-      }
+      },
     },
     showVideoDiv() {
       return !!(
@@ -549,74 +643,21 @@ export default {
       );
     },
     heightReference: {
-      get: function() {
+      get: function () {
         return this.settingsCopy.params.heightReference;
       },
-      set: function(params) {
+      set: function (params) {
         this.settingsCopy.params.heightReference = params;
-      }
+      },
     },
     offsetHeight: {
-      get: function() {
+      get: function () {
         return this.settingsCopy.params.offsetHeight;
       },
-      set: function(params) {
+      set: function (params) {
         this.settingsCopy.params.offsetHeight = params;
-      }
-    }
-  },
-  data() {
-    return {
-      info: "如需投放到地形上,请开启深度检测",
-      settingsCopy: {},
-      proType: undefined, //投影类型
-      protocols: ["m3u8", "mp4"], // video协议集合
-      projectorTypes: [
-        { value: "video", label: "视频" },
-        { value: "image", label: "图片" }
-      ],
-      // scenePro: undefined, //投放对象
-      isGetCameraPosition: false, //是否获取相机位置
-      isGetTargetPosition: false, //是否获取视点位置
-      emptyImage: undefined,
-      imageStyle: {
-        height: "150px",
-        margin: "0 auto"
       },
-      // modelPrimitive: undefined,
-
-      enableControl: false,
-      // 绘制矩形颜色
-      drawStyleCopy: {
-        color: "#FF8C00",
-        opacity: 0.6
-      },
-      draws: [
-        {
-          icon: "mapgis-huizhijuxing",
-          tip: "绘制矩形",
-          click: this.drawRectangle
-        },
-        {
-          icon: "mapgis-draw-polygon",
-          tip: "绘制多边形",
-          click: this.drawPolygon
-        }
-      ],
-      // 离地高度设置
-      heightReferenceTypes: [
-        { value: 0, label: "使用边界点的高度,仅在绘制区域选择为多边形时生效" },
-        {
-          value: 1,
-          label: "忽略边界点的高度,使用指定的高度"
-        },
-        { value: 2, label: "贴场景" }
-      ],
-      // graphic: undefined,
-      renderType: 0
-      // heightReference: 2,
-      // offsetHeight: 5
-    };
+    },
   },
   mounted() {
     this.mount();
@@ -627,18 +668,34 @@ export default {
     this.unmount();
   },
   methods: {
+    // 设置渲染通道选项
+    setRenderChannelTypes() {
+      const { Cesium } = this;
+      this.renderChannelTypes = [];
+      this.renderChannelTypes.push(
+        ...[
+          { value: Cesium.Pass.ANALYSIS, label: "默认通道" },
+          { value: Cesium.Pass.AFTER_GLOBE, label: "地球渲染后" },
+          { value: Cesium.Pass.AFTER_TILE, label: "瓦片渲染后" },
+          {
+            value: Cesium.Pass.AFTER_TILE_CLASSIFICATION,
+            label: "瓦片覆盖物渲染后",
+          },
+        ]
+      );
+    },
     async createCesiumObject() {
       return new Promise(
-        resolve => {
+        (resolve) => {
           resolve();
         },
-        reject => {}
+        (reject) => {}
       );
     },
     mount() {
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function(dataSource) {
+      promise.then(function (dataSource) {
         vm.$emit("load", vm);
       });
       this._mouseEvent();
@@ -675,7 +732,7 @@ export default {
       }
       this.videoDom = tempVideoDom;
 
-      this.$nextTick(function() {
+      this.$nextTick(function () {
         const projectorVideoContainer = document.getElementById(
           "projectorVideoContainer"
         );
@@ -693,6 +750,12 @@ export default {
       this.params.renderType = e.target.value;
       if (e.target.value == 0) {
         this.removeGraphic();
+        if (!this.scenePro.show) {
+          this.scenePro.show = true;
+        }
+      } else {
+        // 将投放对象隐藏
+        this.scenePro.show = false;
       }
     },
     _heightReferenceTypesChange(e) {
@@ -742,7 +805,7 @@ export default {
           Cesium.Material.ImageType,
           {
             image: element,
-            repeat: new Cesium.Cartesian2(1.0, 1.0)
+            repeat: new Cesium.Cartesian2(1.0, 1.0),
           }
         );
       }
@@ -753,7 +816,7 @@ export default {
     _changeProjectorType() {
       const { projectorType } = this;
       if (projectorType === "image") {
-        this.proType = this.Cesium.SceneProjectorType.IMAGE;
+        this.proType = this.Cesium.SceneProjectorSourceType.IMAGE;
       } else if (projectorType === "video") {
         this._changeProtocol();
         this._getVideoDom();
@@ -765,10 +828,10 @@ export default {
     _changeProtocol() {
       switch (this.videoSource.protocol) {
         case "m3u8":
-          this.proType = this.Cesium.SceneProjectorType.HLS;
+          this.proType = this.Cesium.SceneProjectorSourceType.HLS;
           break;
         case "mp4":
-          this.proType = this.Cesium.SceneProjectorType.VIDEO;
+          this.proType = this.Cesium.SceneProjectorSourceType.VIDEO;
           break;
         default:
           break;
@@ -781,7 +844,7 @@ export default {
       this._changeProjectorType();
       // cesium内核目前修改projectorType和projectionSource(除设置undefined会生效)，不生效，只能重新投放
       switch (this.proType) {
-        case Cesium.SceneProjectorType.IMAGE:
+        case Cesium.SceneProjectorSourceType.IMAGE:
           if (!this.imgUrl || this.imgUrl.length == 0) {
             // this.scenePro.projectionSource = undefined;
             this.cancelPutProjector(this.settingsCopy);
@@ -798,8 +861,8 @@ export default {
             }
           }
           break;
-        case Cesium.SceneProjectorType.VIDEO:
-        case Cesium.SceneProjectorType.HLS:
+        case Cesium.SceneProjectorSourceType.VIDEO:
+        case Cesium.SceneProjectorSourceType.HLS:
           const { videoUrl } = this.videoSource;
           if (!videoUrl || videoUrl.length == 0) {
             // this.scenePro.projectionSource = undefined;
@@ -824,7 +887,7 @@ export default {
             }
           }
           break;
-        case Cesium.SceneProjectorType.COLOR:
+        case Cesium.SceneProjectorSourceType.COLOR:
           if (!this.scenePro) {
             this.scenePro = this.putProjector(this.settingsCopy);
           }
@@ -863,9 +926,10 @@ export default {
     /**
      * 更改投放设置
      */
-    onChangeSetting(val, tag) {
+    onChangeSetting(val, tag, isNumber = true) {
       // console.log(val, tag);
-      this.scenePro[tag] = Number(val);
+      const { Cesium } = this;
+      this.scenePro[tag] = isNumber ? Cesium.Math.toRadians(val) : val;
     },
     /**
      * 获取相机位置按钮事件
@@ -892,7 +956,7 @@ export default {
       const vm = this;
       const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
       //鼠标左击
-      handler.setInputAction(function(movement) {
+      handler.setInputAction(function (movement) {
         if (!vm.scenePro) {
           return;
         }
@@ -905,25 +969,6 @@ export default {
             params.cameraPosition.x = coord.lon;
             params.cameraPosition.y = coord.lat;
             params.cameraPosition.z = coord.height;
-            const { heading, pitch } = vm.params.orientation;
-            //根据相机视点和heading、pitch获取视点位置
-            const targetPosition = Cesium.AlgorithmLib.pickFromRay(
-              viewer.scene,
-              cartesian,
-              { heading: heading, pitch: pitch }
-            );
-            if (targetPosition) {
-              if (!vm.scenePro.projectionSource) {
-                const { protocol, videoUrl } = vm.videoSource;
-                const element = vm.createVideoElement(
-                  protocol,
-                  videoUrl,
-                  vm.id
-                );
-                vm.scenePro.projectionSource = videoUrl;
-              }
-              vm.scenePro.targetPosition = targetPosition;
-            }
           }
           vm.isGetCameraPosition = false;
         } else if (vm.isGetTargetPosition) {
@@ -933,28 +978,15 @@ export default {
             viewPosition,
             cartesian
           );
-          //根据相机视点和heading、pitch获取视点位置
-          const targetPosition = Cesium.AlgorithmLib.pickFromRay(
-            viewer.scene,
-            viewPosition,
-            { heading: heading, pitch: pitch }
-          );
-          if (targetPosition) {
-            if (!vm.scenePro.projectionSource) {
-              const { protocol, videoUrl } = vm.videoSource;
-              const element = vm.createVideoElement(protocol, videoUrl, vm.id);
-              vm.scenePro.projectionSource = videoUrl;
-            }
-            vm.scenePro.targetPosition = targetPosition;
-          }
+          vm.scenePro.heading = heading;
+          vm.scenePro.pitch = pitch;
           vm._updateOrientation(heading, pitch);
           vm.isGetTargetPosition = false;
         }
-        scene.requestRender();
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
       //鼠标移动
-      handler.setInputAction(function(movement) {
+      handler.setInputAction(function (movement) {
         if (!vm.scenePro) {
           return;
         }
@@ -967,32 +999,16 @@ export default {
               viewPosition,
               cartesian
             );
-            //根据相机视点和heading、pitch获取视点位置
-            const targetPosition = Cesium.AlgorithmLib.pickFromRay(
-              viewer.scene,
-              viewPosition,
-              { heading: heading, pitch: pitch }
-            );
-            if (targetPosition) {
-              if (!vm.scenePro.projectionSource) {
-                const { protocol, videoUrl } = vm.videoSource;
-                const element = vm.createVideoElement(
-                  protocol,
-                  videoUrl,
-                  vm.id
-                );
-                vm.scenePro.projectionSource = videoUrl;
-              }
-              vm.scenePro.targetPosition = targetPosition;
-            }
-            vm._updateOrientation(heading, pitch);
+            vm.scenePro.heading = heading;
+            vm.scenePro.pitch = pitch;
+            // 定位后再更新settingCopy的值
+            // vm._updateOrientation(heading, pitch);
           }
         }
-        scene.requestRender();
       }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
       //鼠标右键取消，恢复到拾取之前的值
-      handler.setInputAction(function(movement) {
+      handler.setInputAction(function (movement) {
         if (!vm.scenePro) {
           return;
         }
@@ -1001,24 +1017,8 @@ export default {
           if (cartesian) {
             // 恢复初始值
             const { preHeading, prePitch } = vm;
-            const { viewPosition } = vm.scenePro;
-            //根据相机视点和heading、pitch获取视点位置
-            let targetPosition = Cesium.AlgorithmLib.pickFromRay(
-              viewer.scene,
-              viewPosition,
-              { heading: preHeading, pitch: prePitch }
-            );
-            if (targetPosition) {
-              vm.scenePro.targetPosition = targetPosition;
-            } else {
-              // 如果没有targetPosition，则通过默认设置的距离和朝向参数确定一个targetPosition
-              targetPosition = Cesium.AlgorithmLib.pickFromRay(
-                viewer.scene,
-                viewPosition,
-                { heading: preHeading, pitch: prePitch, distance: 150 }
-              );
-              vm.scenePro.targetPosition = targetPosition;
-            }
+            vm.scenePro.heading = heading;
+            vm.scenePro.pitch = pitch;
             vm._updateOrientation(preHeading, prePitch);
           }
         } else if (vm.renderType == 1) {
@@ -1036,7 +1036,7 @@ export default {
     _updateOrientation(heading, pitch) {
       this.params.orientation.heading = heading;
       this.params.orientation.pitch = pitch;
-      this._updateCameraModel();
+      // this._updateCameraModel();
     },
 
     _updateCameraModel() {
@@ -1189,7 +1189,7 @@ export default {
         Cesium.Material.ImageType,
         {
           image: element,
-          repeat: new Cesium.Cartesian2(1.0, 1.0)
+          repeat: new Cesium.Cartesian2(1.0, 1.0),
         }
       );
       graphic.style.perPositionHeight = params.heightReference === 0;
@@ -1203,10 +1203,24 @@ export default {
      * 确定按钮事件
      */
     _okClick() {
+      const { id } = this;
       // 退出配置前，先恢复投放状态
       if (!this.settings.isProjected) {
         this.cancelPutProjector(this.settingsCopy);
+
         this.scenePro = undefined;
+        // 移除掉CreateProjectorList中记录的对象
+        if (CreateProjectorList[id]) {
+          delete CreateProjectorList[id];
+        }
+
+        // 如果存在graphic类型数据也一起清除
+        if (this.graphic) {
+          window.graphicsLayer &&
+            window.graphicsLayer.removeGraphicByID(
+              this.settingsCopy.id + "graphic"
+            );
+        }
       }
       this.$emit("update-settings", this.settingsCopy);
     },
@@ -1214,19 +1228,36 @@ export default {
      * 取消按钮事件
      */
     _cancelClick() {
+      const { id } = this;
       // 退出配置前，先恢复投放状态,先取消，再恢复投放状态，以确保投放参数是配置之前的参数
       this.cancelPutProjector(this.settingsCopy);
-      this.scenePro = undefined;
+
+      // 移除掉CreateProjectorList中记录的对象
+      if (CreateProjectorList[id]) {
+        delete CreateProjectorList[id];
+      }
+
+      // 移除当前primitive
+      if (this.scenePro) {
+        viewer.scene.primitives.remove(this.scenePro);
+        this.scenePro = null;
+      }
+
+      // 取消时清除绘制的投影面，并让绘制矩形按钮恢复原始状态
+      this.removeDraw();
+      if (this.graphic) {
+        this.graphic = null;
+      }
+
+      // 如果处于投放状态则重新投放
       if (this.settings.isProjected) {
         this.putProjector(this.settings);
       }
       // 设置面板恢复之前的参数
       // this.settingsCopy = JSON.parse(JSON.stringify(this.settings));
-      // 取消时清除绘制的投影面，并让绘制矩形按钮恢复原始状态
-      this.removeDraw();
       this.$emit("cancel");
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped>

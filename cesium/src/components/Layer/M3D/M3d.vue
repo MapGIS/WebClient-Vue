@@ -161,47 +161,49 @@ export default {
       const { url, opacity } = this;
       if (viewer.isDestroyed()) return;
       const options = this.getOptions();
-      const M3DLayer = new zondy.layer.M3DModelCacheLayer({
+      const commonM3DLayer = new M3DModelCacheLayer({
         // 服务基地址
         url,
         ...options,
       });
-      const cesiumOptions = initializeOptions(M3DLayer, viewer);
-      zondy.cesium.MapGISM3DSet.fromUrl(url, cesiumOptions).then((m3dset) => {
-        if (!m3dset) {
-          return;
-        }
-        if (options.autoReset) {
-          const boundingSphere = m3dset.boundingSphere;
-          const orientation = new Cesium.HeadingPitchRange(
-            0.0,
-            -0.5,
-            boundingSphere.radius * 2.5
-          );
-          viewer.camera.flyToBoundingSphere(boundingSphere, {
-            duration: 0,
-            offset: orientation,
-          });
-        }
-        viewer.scene.primitives.add(m3dset);
-        m3dset.style = new Cesium.Cesium3DTileStyle({
-          color: `color('#FFFFFF', ${opacity})`,
-        });
-        let m3ds = [m3dset];
-        vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, {
-          url: url,
-        });
-        const layerInfo = m3dset.layerinfo;
-        if (layerInfo && layerInfo.length) {
-          const { voxelInfo } = layerInfo[0] || {};
-          if (voxelInfo) {
-            vm.isVoxelLayer = true;
-            m3dset.heightScale = 1000;
-            vm.$emit("handelVoxel", vueIndex);
+      commonM3DLayer.load().then((layer) => {
+        const cesiumOptions = initializeOptions(layer, viewer);
+        zondy.cesium.MapGISM3DSet.fromUrl(url, cesiumOptions).then((m3dset) => {
+          if (!m3dset) {
+            return;
           }
-        }
-        vm.$emit("loaded", { tileset: m3ds[0], m3ds: m3ds });
-        vm.bindPopupEvent();
+          if (options.autoReset) {
+            const boundingSphere = m3dset.boundingSphere;
+            const orientation = new Cesium.HeadingPitchRange(
+              0.0,
+              -0.5,
+              boundingSphere.radius * 2.5
+            );
+            viewer.camera.flyToBoundingSphere(boundingSphere, {
+              duration: 0,
+              offset: orientation,
+            });
+          }
+          viewer.scene.primitives.add(m3dset);
+          m3dset.style = new Cesium.Cesium3DTileStyle({
+            color: `color('#FFFFFF', ${opacity})`,
+          });
+          let m3ds = [m3dset];
+          vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, {
+            url: url,
+          });
+          const layerInfo = m3dset.layerinfo;
+          if (layerInfo && layerInfo.length) {
+            const { voxelInfo } = layerInfo[0] || {};
+            if (voxelInfo) {
+              vm.isVoxelLayer = true;
+              m3dset.heightScale = 1000;
+              vm.$emit("handelVoxel", vueIndex);
+            }
+          }
+          vm.$emit("loaded", { tileset: m3ds[0], m3ds: m3ds });
+          vm.bindPopupEvent();
+        });
       });
     },
     /**
