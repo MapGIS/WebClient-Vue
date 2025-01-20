@@ -378,6 +378,7 @@ export default {
                 sceneSublayerOptions.url,
                 sceneSublayerOptions
               );
+              m3dSet._layerIndex = sceneSublayerId;
               viewer.scene.primitives.add(m3dSet);
               viewer.zoomTo(m3dSet);
               layers[sceneSublayerId] = {
