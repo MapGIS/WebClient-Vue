@@ -320,7 +320,7 @@ export default {
         vueKey,
         vueIndex,
         "pickStyle",
-        m3dset.pickedColor || Cesium.Color.fromCssColorString(highlightStyle)
+        m3dset.Cesium3DTileStyle || Cesium.Color.fromCssColorString(highlightStyle)
       );
       // 修改说明：M3D2.1已弃用viewer.scene.pickOid方法，后面统一从feature上获取要素id，高亮统一使用Cesium3DTileStyle设置
       // 修改人:龚跃健
