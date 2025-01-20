@@ -798,7 +798,7 @@ export default {
       );
       if (find && find.options) {
         const { modelExplosion } = find.options;
-        modelExplosion.removeModelExplosion(m3ds);
+        modelExplosion.resetExplosionByField(m3ds);
         setTimeout(function () {
           // 将mapgism3d的modelExplosion属性修改为false，确保不对其他功能造成性能影响
           modelExplosion.recover(m3ds);
@@ -1063,7 +1063,7 @@ export default {
           vectorLeft.z * Math.cos(angle) + vectorUp.z * Math.sin(angle);
         // 如果有移出的楼层则先还原
         if (this.prevFloorId) {
-          modelExplosion.removeModelExplosion([m3ds[this.prevFloorId]]);
+          modelExplosion.resetExplosionByField([m3ds[this.prevFloorId]]);
         }
         this.prevFloorId = data.layerIndex;
         // this.selectedKeys = [`${data.layerIndex}`];
@@ -1152,7 +1152,7 @@ export default {
           );
           if (find && find.options) {
             const { modelExplosion } = find.options;
-            modelExplosion.removeModelExplosion([m3ds[this.prevFloorId]]);
+            modelExplosion.resetExplosionByField([m3ds[this.prevFloorId]]);
             this.restoreM3d();
           }
           this.lastPrevFloorId = this.prevFloorId;
