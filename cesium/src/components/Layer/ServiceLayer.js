@@ -1,4 +1,5 @@
 import { CustomWKID } from "@mapgis/webclient-common";
+import { CustomTilingScheme } from "@mapgis/webclient-cesium-plugin";
 export default {
   inject: ["Cesium", "viewer", "vueCesium"],
   props: {
@@ -738,7 +739,7 @@ export default {
           rectangleNortheast = new Cesium.Cartesian2(maxLength, maxLength);
         }
         const tileInfo = this.$_getTileInfoByWKID(customWKID);
-        tilingScheme = new Cesium.CustomTilingScheme({
+        tilingScheme = new CustomTilingScheme({
           wkid: customWKID,
           axisDirection: axisDirection,
           rectangleSouthwest: rectangleSouthwest,
