@@ -425,6 +425,7 @@ export default {
         vueCesium.G3DManager.addSource(vueKey, vueIndex, layers, {
           m3ds,
           originStyles,
+          commonLayer: layer,
         });
 
         this.setLayerTree(layer, layers);
