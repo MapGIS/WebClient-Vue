@@ -214,7 +214,7 @@ export default {
         if (!tileset || !modelExplosion) {
           return;
         }
-        modelExplosion.removeModelExplosion([tileset]);
+        modelExplosion.resetExplosionByField([tileset]);
       }
     },
   },
