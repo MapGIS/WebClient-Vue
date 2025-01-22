@@ -201,7 +201,7 @@ export default {
     initBasicSetting: {
       type: Object,
       default: () => {
-        return this.basicSetting;
+        return undefined;
       },
     },
     // 左侧板宽度
@@ -247,7 +247,12 @@ export default {
         timeline: null,
       });
     }
-    this.basicSetting = this.defaultParams();
+    this.basicSetting = this.initBasicSetting
+      ? JSON.parse(JSON.stringify(this.initBasicSetting))
+      : this.defaultParams();
+    // 如果罗盘显示在左上或者左下，与左侧的距离传入的stuffWidth保持一致
+    this.resetCompassPosition();
+
     this.init();
   },
   watch: {
@@ -261,6 +266,8 @@ export default {
     initBasicSetting: {
       handler(e) {
         this.basicSetting = JSON.parse(JSON.stringify(this.initBasicSetting));
+        // 如果罗盘显示在左上或者左下，与左侧的距离传入的stuffWidth保持一致
+        this.resetCompassPosition();
         this.init();
       },
       deep: true,
@@ -282,13 +289,7 @@ export default {
           };
         } else {
           // 如果罗盘显示在左上或者左下，与左侧的距离传入的stuffWidth保持一致
-          if (
-            this.basicSetting.compassPosition.anchor === "top-left" ||
-            this.basicSetting.compassPosition.anchor === "bottom-left"
-          ) {
-            this.basicSetting.compassPosition.horizontalOffset =
-              this.stuffWidth;
-          }
+          this.resetCompassPosition();
         }
         this.compassPosition = this.basicSetting.compassPosition;
       },
@@ -333,6 +334,18 @@ export default {
         exposure: viewer.scene.exposure || 0.0,
       };
     },
+    /**
+     * 初始化的时候，如果罗盘显示在左上或者左下，与左侧的距离传入的stuffWidth保持一致
+     */
+    resetCompassPosition() {
+      if (
+        this.stuffWidth !== undefined &&
+        (this.basicSetting.compassPosition.anchor === "top-left" ||
+          this.basicSetting.compassPosition.anchor === "bottom-left")
+      ) {
+        this.basicSetting.compassPosition.horizontalOffset = this.stuffWidth;
+      }
+    },
     init() {
       if (!this.basicSetting) {
         return;
@@ -375,6 +388,7 @@ export default {
       this.enableTimeline(timeline);
       this.enableCompass(compass);
       this.enableZoom(zoom);
+      this.enableColorCorrection(colorCorrection);
       this.brtChange(brightness);
       this.ctrstChange(contrast);
       this.hueChange(hue);
@@ -518,7 +532,8 @@ export default {
         viewer.cesiumNavigation.destroy();
       }
       let options = {};
-      options.enableCompass = this.basicSetting.compass;
+      // 罗盘设置undefined，还是会显示，必须设置成false
+      options.enableCompass = this.basicSetting.compass || false;
       options.enableZoomControls = this.basicSetting.zoom || false;
       viewer.createNavigationTool(options);
       const self = this;
@@ -552,7 +567,8 @@ export default {
         viewer.cesiumNavigation.destroy();
       }
       let options = {};
-      options.enableCompass = this.basicSetting.compass;
+      // 罗盘设置undefined，还是会显示，必须设置成false
+      options.enableCompass = this.basicSetting.compass || false;
       options.enableZoomControls = this.basicSetting.zoom || false;
       viewer.createNavigationTool(options);
       const self = this;
