@@ -233,7 +233,7 @@ export default {
                     vm._enableBrightness(); // 开启光照
                     aspectAnalysis =
                         aspectAnalysis ||
-                        new vm.Cesium.TerrainAnalyse(viewer, {
+                        new zondy.cesium.TerrainAnalyse(viewer, {
                             aspectRampColor: rampColor,
                             aspectRamp: ramp,
                         });

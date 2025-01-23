@@ -213,7 +213,7 @@ export default {
                     this._enableBrightness(); // 开启光照
                     slopeAnalysis =
                         slopeAnalysis ||
-                        new this.Cesium.TerrainAnalyse(viewer, {
+                        new zondy.cesium.TerrainAnalyse(viewer, {
                             slopeRampColor: rampColor,
                             slopeRamp: ramp,
                         });

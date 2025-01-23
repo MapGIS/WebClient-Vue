@@ -419,7 +419,7 @@ export default {
         let modelPrimitive = await Cesium.Model.fromGltfAsync(modelObj);
         const { _boundingSphere: boundingSphere } = modelPrimitive;
         const { heading, pitch } = params.orientation;
-        const targetPosition = Cesium.AlgorithmLib.pickFromRay(
+        const targetPosition = zondy.cesium.AlgorithmLib.pickFromRay(
           viewer.scene,
           viewPosition,
           { heading, pitch, distance: 150 }
@@ -488,7 +488,7 @@ export default {
       const viewCartographic = Cesium.Cartographic.fromCartesian(viewPosition);
       const longitude = Cesium.Math.toDegrees(viewCartographic.longitude);
       const latitude = Cesium.Math.toDegrees(viewCartographic.latitude);
-      const matrix = Cesium.AlgorithmLib.getTransform(
+      const matrix = zondy.cesium.AlgorithmLib.getTransform(
         longitude,
         latitude,
         viewCartographic.height

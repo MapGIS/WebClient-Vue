@@ -1048,7 +1048,7 @@ export default {
         }
         const { boundingSphere } = this.modelPrimitive;
         const { heading, pitch } = params.orientation;
-        const targetPosition = Cesium.AlgorithmLib.pickFromRay(
+        const targetPosition = zondy.cesium.AlgorithmLib.pickFromRay(
           viewer.scene,
           scenePro.viewPosition,
           { heading, pitch, distance: 150 }

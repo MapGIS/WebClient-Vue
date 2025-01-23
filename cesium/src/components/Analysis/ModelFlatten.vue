@@ -287,7 +287,7 @@ export default {
       };
       //无法通过manager获取graphicLayer，否则贴地贴模型失效，暂时只能这样
       if (!window.hasOwnProperty("__graphicsLayer__")) {
-        window.__graphicsLayer__ = new Cesium.GraphicsLayer(viewer, {
+        window.__graphicsLayer__ = new zondy.cesium.GraphicsLayer(viewer, {
           getGraphic: this.getDrawResult,
         });
       }

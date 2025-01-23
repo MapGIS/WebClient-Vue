@@ -125,7 +125,7 @@ export default {
           }
         }
       }
-      const res = this.Cesium.ReImg.fromCanvas(canvas);
+      const res = zondy.cesium.ReImg.fromCanvas(canvas);
       //res.downloadPng(this.imgName);
       const base64 = res.toBase64();
       this.downloadFileByBase64(
