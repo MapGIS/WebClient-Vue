@@ -230,12 +230,19 @@ export default {
         surfFogParams: {
           surfFogDst: 0.0002,
         },
+        // 是否初始化了天气manager
+        initWeatherSource: false
       },
     };
   },
   watch: {
     initWeatherSetting: {
       handler(e) {
+        if(!this.initWeatherSource) {
+          // 要在init函数执行前初始化天气manager
+          this.addWeatherSource()
+          this.initWeatherSource = true
+        }
         this.weatherSetting = JSON.parse(
           JSON.stringify(this.initWeatherSetting)
         );
@@ -251,22 +258,25 @@ export default {
       deep: true,
     },
   },
-  mounted() {
-    const { vueKey, vueIndex } = this;
-    window.vueCesium.SettingToolManager.addSource(
-      vueKey,
-      vueIndex,
-      {},
-      {
-        GlobeCloud: null,
-        SkyBox: null,
-        Rain: null,
-        Fog: null,
-        Snow: null,
-      }
-    );
-  },
   methods: {
+    /**
+     * 添加天气manager
+     */
+    addWeatherSource() {
+      const { vueKey, vueIndex } = this;
+      window.vueCesium.SettingToolManager.addSource(
+        vueKey,
+        vueIndex,
+        {},
+        {
+          GlobeCloud: null,
+          SkyBox: null,
+          Rain: null,
+          Fog: null,
+          Snow: null,
+        }
+      );
+    },
     init() {
       const {
         sun,
