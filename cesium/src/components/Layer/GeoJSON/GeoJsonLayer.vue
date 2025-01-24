@@ -28,6 +28,23 @@ export default {
   data() {
     return {};
   },
+  watch: {
+    opacity(val) {
+      if (this.geojsonLayer) {
+        this.geojsonLayer.opacity = val;
+      }
+    },
+    visible(val) {
+      if (this.geojsonLayer) {
+        this.geojsonLayer.visible = val;
+      }
+    },
+    renderer(val, oldVal) {
+      if (this.geojsonLayer) {
+        this.geojsonLayer.renderer = this.generateRenderer(val);
+      }
+    },
+  },
   mounted() {
     this.mount();
   },
@@ -58,41 +75,43 @@ export default {
       }
       // 若未配置样式则使用layerStyle的样式
       const applyRenderer =
-        JSON.stringify(renderer) === "{}" ? transformRenderer : renderer;
+        JSON.stringify(renderer) === "{}"
+          ? transformRenderer
+          : this.generateRenderer(renderer);
 
-      let dataObj;
-      // 如果data是geojson数据直接处理，如果是url地址则请求数据
-      if (data instanceof Object) {
-        dataObj = data;
-      } else {
-        dataObj = await this.getGeojsonData(data);
-      }
-      const { features } = dataObj;
-      const featureSet = this.constructFeatureSet(features);
-      this.addLayer(viewer, applyRenderer, featureSet);
-      this.onGeojsonLoaded(dataObj);
+      this.commonMap = this.generateCommonMap();
+      this.sceneView = this.generateSceneView(viewer, this.commonMap);
+      this.generateLayer(data, applyRenderer);
+      this.commonMap.add(this.geojsonLayer);
+
+      // let dataObj;
+      // // 如果data是geojson数据直接处理，如果是url地址则请求数据
+      // if (data instanceof Object) {
+      //   dataObj = data;
+      // } else {
+      //   dataObj = await this.getGeojsonData(data);
+      // }
+      // const { features } = dataObj;
+      // const featureSet = this.constructFeatureSet(features);
+      // this.addLayer(viewer, applyRenderer, featureSet);
+      this.onGeojsonLayerLoaded();
     },
-    getGeojsonData(url) {
-      // eslint-disable-next-line promise/param-names
-      return new Promise((resolve, inject) => {
-        axios
-          .get(url)
-          .then((res) => {
-            resolve(res.data);
-          })
-          .catch((e) => {
-            console.log(`请求Geojson数据地址：${url}失败`);
-            inject(e);
-          });
+    generateLayer(data, renderer) {
+      this.geojsonLayer = this.generateGeoJSONLayer({
+        url: data,
+        renderer,
       });
+      console.log("geojsonLayer", this.geojsonLayer);
     },
-    onGeojsonLoaded(dataObj) {
+    onGeojsonLayerLoaded() {
       const { vueIndex, vueKey, vueCesium } = this;
+      const { data } = this;
       if (vueIndex) {
-        let source = [this.innerLayer];
+        let source = [this.geojsonLayer];
         vueCesium.GeojsonManager.addSource(vueKey, vueIndex, source, {
-          data: dataObj,
-          layerIndex: vueIndex,
+          data,
+          sceneView: this.sceneView,
+          commonMap: this.commonMap,
         });
         this.$emit("load", this);
       }
@@ -100,31 +119,14 @@ export default {
     mount() {
       this.createCesiumObject();
     },
-    transformObject(renderer) {
-      renderer = renderer || {};
-      Object.keys(renderer).forEach((key) => {
-        if (key == "distanceDisplayCondition") {
-          renderer[key] = new Cesium.DistanceDisplayCondition(
-            renderer[key][0],
-            renderer[key][1]
-          );
-        }
-        if (typeof renderer[key] == "object") {
-          this.transformObject(renderer[key]);
-        }
-        if (key == "color") {
-          renderer[key] = Cesium.Color.fromCssColorString(renderer[key]);
-        }
-      });
-    },
     unmount() {
-      const { viewer, vueCesium } = this;
+      const { vueCesium } = this;
       const { vueKey, vueIndex } = this;
-      const find = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
-      if (find && find.source) {
-        this.innerLayer.destroy();
-      }
       vueCesium.GeojsonManager.deleteSource(vueKey, vueIndex);
+      this.commonMap.remove(this.geojsonLayer);
+      this.geojsonLayer = null;
+      this.commonMap = null;
+      this.sceneView = null;
       this.$emit("unload", this);
     },
   },
