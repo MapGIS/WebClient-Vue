@@ -36,7 +36,7 @@ export default {
       default: true,
     },
     index: { type: Number },
-    sublayerId: { type: String, default: "Map_湖北省4326:t70" },
+    sublayerId: { type: String },
   },
   data() {
     return {};
