@@ -257,11 +257,11 @@ export default {
       title: "分层分户",
       layerIds: [],
       menus: [
-        {
-          title: "查询",
-          icon: "mapgis-highlight",
-          active: this.enablePopup,
-        },
+        // {
+        //   title: "查询",
+        //   icon: "mapgis-highlight",
+        //   active: this.enablePopup,
+        // },
         {
           title: "模型爆炸",
           icon: "mapgis-fire1",
@@ -274,11 +274,11 @@ export default {
         },
       ],
       collapsemenus: [
-        {
-          title: "查询",
-          icon: "mapgis-highlight",
-          active: this.enablePopup,
-        },
+        // {
+        //   title: "查询",
+        //   icon: "mapgis-highlight",
+        //   active: this.enablePopup,
+        // },
         {
           title: "模型爆炸",
           icon: "mapgis-fire1",
@@ -433,7 +433,6 @@ export default {
 
       let promise = this.createCesiumObject();
       promise.then((find) => {
-        console.log("find: ", find);
         if (find && find.source && find.options) {
           const { source } = find;
           const { commonLayer } = find.options;
@@ -474,7 +473,6 @@ export default {
             vm.relationshipInfo.m3ds = m3ds;
             vm.layerIds = all;
             vm.$emit("loaded", { component: vm });
-            let modelExplosion = new Cesium.ModelExplosion(viewer);
             let collection = new Cesium.PrimitiveCollection();
             vueCesium.StratifiedHousehouldManager.addSource(
               vueKey,
@@ -482,7 +480,6 @@ export default {
               source,
               {
                 m3ds: m3ds,
-                modelExplosion: modelExplosion,
                 collection: collection,
                 primitiveCollection: viewer.scene.primitives.add(collection),
               }
@@ -774,17 +771,86 @@ export default {
       const vector = new Cesium.Cartesian3(0, 0, 1); //向Z轴正方向爆炸
       const expDistance = 5;
       const speed = 0.5;
-      let find = vueCesium.StratifiedHousehouldManager.findSource(
-        vueKey,
-        innerVueIndex
-      );
-      if (find && find.options) {
-        const { modelExplosion } = find.options;
-        modelExplosion.multiLayerAxisExplosionNoAnimate(m3ds, {
-          direction: vector,
-          expDistance: expDistance,
-          speed: speed,
-        });
+      this.multiLayerAxisExplosionNoAnimate(m3ds, {
+        direction: vector,
+        expDistance: expDistance,
+        speed: speed,
+      });
+    },
+    /**
+     * 多图层-轴向爆炸-无动画
+     * @param {Array<MapGISM3DSet>} M3DSets M3DSet数组
+     * @param {Object} options 附加参数
+     * @param {Cartesian3} [options.moveDirection=new Cartesian3(1, 0, 0)] 爆炸方向
+     * @param {Number} [options.expDistance=1] 爆炸间距
+     */
+    multiLayerAxisExplosionNoAnimate(M3DSets, options) {
+      const { Cesium } = this;
+      // 0.赋值
+      const optionsParam = options || {};
+      const moveDirection =
+        optionsParam.direction || new Cesium.Cartesian3(1, 0, 0);
+      const expDistance = optionsParam.expDistance || 1;
+
+      // 1.按照高度排序
+      const sorts = [].concat(M3DSets);
+      for (let index = 0; index < M3DSets.length; index++) {
+        const l = M3DSets[index];
+        const root = l.root;
+        const temp = l.root.transform.clone();
+        const center = root.boundingSphere.center;
+        const truecenter = Cesium.Matrix4.multiplyByPoint(
+          temp,
+          center,
+          new Cesium.Cartesian3()
+        );
+        const lonlat = Cesium.Cartographic.fromCartesian(truecenter);
+        const min = root.boundingVolume.minimumHeight;
+        const max = root.boundingVolume.maximumHeight;
+        const height = (min + max) / 2;
+        l.longitude = Cesium.Math.toDegrees(lonlat.longitude);
+        l.latitude = Cesium.Math.toDegrees(lonlat.latitude);
+        l.height = height;
+        l.root.originTransform = l.root.originTransform || temp;
+      }
+      sorts.sort(function (a, b) {
+        let sub;
+        if (moveDirection.x > 0) {
+          sub = a.longitude - b.longitude;
+        } else if (moveDirection.y > 0) {
+          sub = a.latitude - b.latitude;
+        } else {
+          sub = a.height - b.height;
+        }
+        return sub;
+      });
+
+      // 2.整体偏移
+      const transform = sorts[0].root.transform.clone();
+      const originPoint = new Cesium.Cartesian3(0, 0, 0);
+      const direction = new Cesium.Cartesian3();
+      Cesium.Matrix4.multiplyByPoint(transform, originPoint, originPoint);
+      Cesium.Matrix4.multiplyByPoint(transform, moveDirection, moveDirection);
+      Cesium.Cartesian3.subtract(moveDirection, originPoint, direction);
+      // 射线方向是否为0，如果为0，则默认沿x轴方向移动
+      const length = Cesium.Cartesian3.magnitude(direction);
+      if (length < 1.0e-10) {
+        direction.x = 1.0;
+      }
+      Cesium.Cartesian3.normalize(direction, direction);
+      const tempDirection = direction.clone();
+      for (let i = 0; i < sorts.length; i++) {
+        const tileset = sorts[i];
+        const distance = sorts.length === 1 ? expDistance * 1 : expDistance * i;
+
+        const matrix = tileset.root.transform.clone();
+
+        Cesium.Cartesian3.multiplyByScalar(direction, distance, tempDirection);
+        matrix[12] += tempDirection.x;
+        matrix[13] += tempDirection.y;
+        matrix[14] += tempDirection.z;
+
+        tileset.root.transform = matrix.clone();
       }
     },
     disableExplosion() {
@@ -792,17 +858,15 @@ export default {
       if (!m3ds) {
         return;
       }
-      let find = vueCesium.StratifiedHousehouldManager.findSource(
-        vueKey,
-        innerVueIndex
-      );
-      if (find && find.options) {
-        const { modelExplosion } = find.options;
-        modelExplosion.resetExplosionByField(m3ds);
-        setTimeout(function () {
-          // 将mapgism3d的modelExplosion属性修改为false，确保不对其他功能造成性能影响
-          modelExplosion.recover(m3ds);
-        }, 1000);
+      this.removeModelExplosion(m3ds);
+    },
+    /**
+     * 重置图层
+     */
+    removeModelExplosion(m3dSets) {
+      for (let i = 0; i < m3dSets.length; i++) {
+        var layer = m3dSets[i];
+        layer.root.transform = layer.root.originTransform;
       }
     },
     handleMenu(menu) {
@@ -1045,35 +1109,24 @@ export default {
       if (!tileset) {
         return;
       }
-      let find = vueCesium.StratifiedHousehouldManager.findSource(
-        vueKey,
-        innerVueIndex
-      );
-      if (find && find.options) {
-        const { modelExplosion } = find.options;
-        const vectorLeft = new Cesium.Cartesian3(1, 0, 0);
-        const vectorUp = new Cesium.Cartesian3(0, 1, 0);
-        const vector = new Cesium.Cartesian3();
-        const angle = Cesium.Math.toRadians(-45);
-        vector.x =
-          vectorLeft.x * Math.cos(angle) + vectorUp.x * Math.sin(angle);
-        vector.y =
-          vectorLeft.y * Math.cos(angle) + vectorUp.y * Math.sin(angle);
-        vector.z =
-          vectorLeft.z * Math.cos(angle) + vectorUp.z * Math.sin(angle);
-        // 如果有移出的楼层则先还原
-        if (this.prevFloorId) {
-          modelExplosion.resetExplosionByField([m3ds[this.prevFloorId]]);
-        }
-        this.prevFloorId = data.layerIndex;
-        // this.selectedKeys = [`${data.layerIndex}`];
-        modelExplosion.multiLayerAxisExplosionNoAnimate([tileset], {
-          direction: vector,
-          expDistance: expDistance,
-          speed: speed,
-        });
-        this.highlightM3d(data.layerIndex);
+      const vectorLeft = new Cesium.Cartesian3(1, 0, 0);
+      const vectorUp = new Cesium.Cartesian3(0, 1, 0);
+      const vector = new Cesium.Cartesian3();
+      const angle = Cesium.Math.toRadians(-45);
+      vector.x = vectorLeft.x * Math.cos(angle) + vectorUp.x * Math.sin(angle);
+      vector.y = vectorLeft.y * Math.cos(angle) + vectorUp.y * Math.sin(angle);
+      vector.z = vectorLeft.z * Math.cos(angle) + vectorUp.z * Math.sin(angle);
+      // 如果有移出的楼层则先还原
+      if (this.prevFloorId) {
+        this.removeModelExplosion([m3ds[this.prevFloorId]]);
       }
+      this.prevFloorId = data.layerIndex;
+      this.multiLayerAxisExplosionNoAnimate([tileset], {
+        direction: vector,
+        expDistance: expDistance,
+        speed: speed,
+      });
+      this.highlightM3d(data.layerIndex);
     },
     houseHighlight(data) {
       this.restoreHighlight();
@@ -1146,15 +1199,8 @@ export default {
       return new Promise((resolve) => {
         if (this.prevFloorId) {
           const { vueKey, innerVueIndex, vueCesium, m3ds } = this;
-          let find = vueCesium.StratifiedHousehouldManager.findSource(
-            vueKey,
-            innerVueIndex
-          );
-          if (find && find.options) {
-            const { modelExplosion } = find.options;
-            modelExplosion.resetExplosionByField([m3ds[this.prevFloorId]]);
-            this.restoreM3d();
-          }
+          this.removeModelExplosion([m3ds[this.prevFloorId]]);
+          this.restoreM3d();
           this.lastPrevFloorId = this.prevFloorId;
           this.prevFloorId = undefined;
         }
