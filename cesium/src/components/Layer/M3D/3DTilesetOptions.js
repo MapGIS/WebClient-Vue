@@ -15,7 +15,7 @@ export default {
    */
   vueIndex: {
     type: [String, Number],
-    default: () => (Math.random() * 100000000).toFixed(0)
+    default: () => (Math.random() * 100000000).toFixed(0),
   },
 
   // highlightStyle: {
@@ -27,7 +27,7 @@ export default {
 
   highlightStyle: {
     type: String,
-    default: "rgba(255, 255, 0, 0.6)"
+    default: "rgba(255, 255, 0, 0.6)",
   },
 
   /** @deprecated
@@ -65,7 +65,7 @@ export default {
     }
    */
   offset: {
-    type: Object
+    type: Object,
   },
 
   /**
@@ -79,7 +79,7 @@ export default {
     }
    */
   scale: {
-    type: Object
+    type: Object,
   },
 
   /**
@@ -154,11 +154,6 @@ export default {
    */
   /* lightColor: { type: Object, default: undefined }, */
   luminanceAtZenith: { type: Number, default: 0.2 },
-  /**
-   * @type Array.<Cartesian3>
-   */
-  /* sphericalHarmonicCoefficients: { type: Array, default: undefined }, */
-  specularEnvironmentMaps: { type: String, default: "" },
 
   debugHeatmapTilePropertyName: { type: String, default: "" },
   debugFreezeFrame: { type: Boolean, default: false },
@@ -176,5 +171,5 @@ export default {
   // 但是优先级低于单个传入属性，即如果单个属性有传入值，优先使用传入的值，
   // 如果没有传入，但是extensions中有该属性，则使用extensions里对应的值
   // 修改者：龚跃健 2024/10/28
-  extensions: { type: Object }
+  extensions: { type: Object },
 };

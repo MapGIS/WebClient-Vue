@@ -5,7 +5,7 @@
     </template>
     <template v-else>
       <mapgis-3d-feature-popup
-        if="popupShowType === 'default' && featureposition"
+        v-if="popupShowType === 'default' && featureposition"
         :position="featureposition"
         :popupOptions="popupOptions"
         :componentWidth="popupWidth"
@@ -159,6 +159,7 @@ export default {
       const vm = this;
       const { viewer, vueIndex, vueKey, vueCesium, $props } = this;
       const { url, opacity } = this;
+      const { luminanceAtZenith, maximumMemoryUsage } = this;
       if (viewer.isDestroyed()) return;
       const options = this.getOptions();
       const commonM3DLayer = new M3DModelCacheLayer({
@@ -172,6 +173,8 @@ export default {
           if (!m3dset) {
             return;
           }
+          m3dset.imageBasedLighting.luminanceAtZenith = maximumMemoryUsage;
+          m3dset.cacheBytes = maximumMemoryUsage;
           if (options.autoReset) {
             const boundingSphere = m3dset.boundingSphere;
             const orientation = new Cesium.HeadingPitchRange(
@@ -320,7 +323,8 @@ export default {
         vueKey,
         vueIndex,
         "pickStyle",
-        m3dset.Cesium3DTileStyle || Cesium.Color.fromCssColorString(highlightStyle)
+        m3dset.Cesium3DTileStyle ||
+          Cesium.Color.fromCssColorString(highlightStyle)
       );
       // 修改说明：M3D2.1已弃用viewer.scene.pickOid方法，后面统一从feature上获取要素id，高亮统一使用Cesium3DTileStyle设置
       // 修改人:龚跃健

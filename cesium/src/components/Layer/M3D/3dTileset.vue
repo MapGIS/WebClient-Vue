@@ -137,6 +137,7 @@ export default {
       const vm = this;
       const { viewer, vueIndex, vueKey, vueCesium, $props } = this;
       const { url, opacity } = this;
+      const { luminanceAtZenith, maximumMemoryUsage } = this;
       if (viewer.isDestroyed()) return;
       const options = this.getOptions();
       const tilesetLayer = new zondy.layer.Cesium3DTilesCacheLayer({
@@ -150,6 +151,8 @@ export default {
           if (!tileset) {
             return;
           }
+          tileset.imageBasedLighting.luminanceAtZenith = maximumMemoryUsage;
+          tileset.cacheBytes = maximumMemoryUsage;
           if (options.autoReset) {
             const boundingSphere = tileset.boundingSphere;
             const orientation = new Cesium.HeadingPitchRange(

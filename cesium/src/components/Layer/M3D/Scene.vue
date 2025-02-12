@@ -344,6 +344,7 @@ export default {
       const vm = this;
       const { vueIndex, vueKey, vueCesium } = this;
       const { viewer, url, $props, enablePopup, layerId } = this;
+      const { luminanceAtZenith, maximumMemoryUsage } = this;
 
       let version = this.parseVersion();
       let server = this.parseServer();
@@ -379,7 +380,9 @@ export default {
                 sceneSublayerOptions
               );
               m3dSet._layerIndex = sceneSublayerId;
-              viewer.scene.primitives.add(m3dSet);
+              m3dSet.imageBasedLighting.luminanceAtZenith = maximumMemoryUsage;
+              m3dSet.cacheBytes = maximumMemoryUsage;
+              m3dSet.viewer.scene.primitives.add(m3dSet);
               viewer.zoomTo(m3dSet);
               layers[sceneSublayerId] = {
                 type: optionsType,
