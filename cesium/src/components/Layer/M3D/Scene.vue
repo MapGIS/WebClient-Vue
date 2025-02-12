@@ -396,6 +396,10 @@ export default {
               viewer.terrainProvider = new MapGISTerrainProvider(
                 sceneSublayerOptions
               );
+              layers[sceneSublayerId] = {
+                type: optionsType,
+                source: viewer.terrainProvider,
+              };
               break;
             // 覆盖物图层 IGS 2.0
             case InitializeOptionsType.MapGISMapServerImageryProvider:
@@ -431,8 +435,9 @@ export default {
           originStyles,
           commonLayer: layer,
         });
-
-        this.setLayerTree(layer, layers);
+        if (layers && layers.length) {
+          this.setLayerTree(layer, layers);
+        }
         if (enablePopup) {
           vm.bindPopupEvent();
         }
@@ -447,7 +452,7 @@ export default {
       if (viewer.isDestroyed()) return;
     },
     unmount() {
-      const { vueCesium, vueKey, vueIndex, viewer } = this;
+      const { vueCesium, vueKey, vueIndex, viewer, Cesium } = this;
       this.unbindPopupEvent();
       // 移除图层的时候，把高亮也移除
       this.cancelHighlight();
@@ -467,6 +472,7 @@ export default {
               break;
             // MapGIS地形图层
             case InitializeOptionsType.MapGISTerrainProvider:
+              viewer.terrainProvider = new Cesium.EllipsoidTerrainProvider();
               break;
             // 覆盖物图层 IGS 2.0
             case InitializeOptionsType.MapGISMapServerImageryProvider:
