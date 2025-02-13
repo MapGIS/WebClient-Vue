@@ -348,7 +348,6 @@ export default {
       const { imageryLayers } = viewer;
 
       if (viewer.isDestroyed()) return;
-      this.$emit("load", this);
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then((vectortile) => {
@@ -395,6 +394,39 @@ export default {
 
         //得到layerStyle的副本，供watch使用
         vm.layerStyleCopy = clonedeep(layerStyle);
+
+        //设置图层id，分屏，卷帘使用
+        if (vm.id.length === 0) {
+          imageryLayer.id = vueIndex;
+        } else {
+          imageryLayer.id = this.id;
+        }
+
+        //保存layerId，方便找到zIndex
+        vm.layerId = imageryLayer.id;
+
+        let manageOptions = {
+          zIndex: providerZIndex,
+          id: imageryLayer.id,
+        };
+
+        //如果providerZIndex为0，表示初始化地图时，没有设置zIndex，因此会按照初始化的顺序向上叠放
+        //如果之后给了zIndex，然后又删除了或者置空，则layer放最后一个包含zIndex的layer的下面，并按照zeroIndex排序
+        if (providerZIndex === 0) {
+          let maxZeroIndex = vm.$_getMaxZeroIndex();
+          manageOptions.zeroIndex = maxZeroIndex + 1;
+        }
+
+        //将图层加入对应的manager
+        vm.vueCesium[vm.managerName].addSource(
+          vueKey,
+          vueIndex,
+          imageryLayer,
+          manageOptions
+        );
+
+        //抛出load事件
+        vm.$emit("load", imageryLayer, vm);
       });
       return promise;
     },
