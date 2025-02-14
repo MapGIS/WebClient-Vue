@@ -9,6 +9,7 @@
         :position="featureposition"
         :popupOptions="popupOptions"
         :componentWidth="popupWidth"
+        :enablePopup="enablePopup"
         v-bind="popupConfig"
       >
         <component
@@ -126,6 +127,8 @@ export default {
   created() {},
   mounted() {
     this.mount();
+    console.log(this.popupComponent, 'popupComponent');
+    
   },
   destroyed() {
     this.unmount();
@@ -247,7 +250,6 @@ export default {
     bindPopupEvent() {
       const { vueKey, vueIndex, vueCesium } = this;
       const { enablePopup, enableTips, enableModelSwitch } = this;
-
       let clickhandler, hoverhandler;
       if (enablePopup || enableModelSwitch) {
         clickhandler = this.$_bindClickEvent(
