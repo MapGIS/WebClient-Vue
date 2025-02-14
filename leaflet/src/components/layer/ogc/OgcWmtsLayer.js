@@ -9,8 +9,8 @@ export default {
       default: "",
     },
     tileMatrixSet: {
-      type: String,
-      default: "",
+      type: Object,
+      default: () => {},
     },
     version: {
       type: String,

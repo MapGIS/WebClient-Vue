@@ -12,7 +12,7 @@ export default {
     },
     tileMatrixSet: {
       type: Object,
-      default: "",
+      default: () => {},
     },
     version: {
       type: String,
