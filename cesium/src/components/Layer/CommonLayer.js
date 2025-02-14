@@ -1,4 +1,8 @@
-import { CesiumInnerGraphicsLayer } from "@mapgis/webclient-cesium-plugin";
+import {
+  CesiumInnerGraphicsLayer,
+  IGSFeatureLayerUtil,
+  SceneView,
+} from "@mapgis/webclient-cesium-plugin";
 import {
   Zondy,
   FeatureServer,
@@ -8,7 +12,11 @@ import {
   FeatureSet,
   Geometry,
   ElevationInfo,
-  ElevationMode
+  ElevationMode,
+  IGSFeatureLayer,
+  GeoJSONLayer,
+  WFSLayer,
+  Map,
 } from "@mapgis/webclient-common";
 const { Renderer, Symbol, Color } = Zondy;
 const { SimpleRenderer } = Renderer;
@@ -17,16 +25,16 @@ export default {
   props: {
     opacity: {
       type: Number,
-      default: 1
+      default: 1,
     },
     visible: {
       type: Boolean,
-      default: true
+      default: true,
     },
     renderer: {
       type: Object,
-      default: () => {}
-    }
+      default: () => {},
+    },
   },
   watch: {
     opacity(val) {
@@ -43,7 +51,7 @@ export default {
       if (this.innerLayer && JSON.stringify(val) !== JSON.stringify(oldVal)) {
         this.reloadLayer();
       }
-    }
+    },
   },
   methods: {
     // 构建cesiumInnerGraphicsLayer实例，后续看需不需要统一管理CesiumInnerGraphicsLayer实例
@@ -55,13 +63,13 @@ export default {
     // 通过gdbp查询要素信息
     async queryFeaturesInLayers(gdbps, baseUrl) {
       const featureServer = new FeatureServer({
-        url: baseUrl
+        url: baseUrl,
       });
       const {
-        data: { featureSet }
+        data: { featureSet },
       } = await featureServer.queryFeaturesInLayers({
         gdbp: gdbps,
-        pageCount: 100000
+        pageCount: 100000,
       });
       // 保存featureSet，更新的时候使用
       this.featureSet = featureSet.toJSON();
@@ -96,18 +104,18 @@ export default {
     // 获取textSymbol设置的字段
     getTextSymbolField(renderer) {
       const {
-        symbol: { text }
+        symbol: { text },
       } = renderer;
       return text;
     },
     // geojson中的features对象构建FeatureSet
     constructFeatureSet(features) {
       const featureArr = [];
-      features.forEach(item => {
+      features.forEach((item) => {
         try {
           const feature = new Feature({
             attributes: item.properties,
-            geometry: Geometry.fromJSON(item.geometry)
+            geometry: Geometry.fromJSON(item.geometry),
           });
           featureArr.push(feature);
         } catch (error) {
@@ -126,18 +134,18 @@ export default {
           size: layerStyle.radius,
           outline: new SimpleLineSymbol({
             color: layerStyle.outlineColor,
-            width: layerStyle.outlineWidth
-          })
-        })
+            width: layerStyle.outlineWidth,
+          }),
+        }),
       });
     },
     // 构建简单线的renderer
     getSimpleLineRenderer(layerStyle) {
       return new SimpleRenderer({
         symbol: new SimpleLineSymbol({
-          color: layerStyle.color,
-          width: layerStyle.width
-        })
+          color: layerStyle?.color || new Color(255, 255, 0, 1),
+          width: layerStyle?.width || 20,
+        }),
       });
     },
     // 构建简单区的renderer
@@ -147,9 +155,9 @@ export default {
           color: layerStyle.color,
           outline: new SimpleLineSymbol({
             color: layerStyle.outlineColor,
-            width: layerStyle.lineWidth || layerStyle.outlineWidth
-          })
-        })
+            width: layerStyle.lineWidth || layerStyle.outlineWidth,
+          }),
+        }),
       });
     },
 
@@ -183,14 +191,14 @@ export default {
         this.innerLayer = this.getCesiumInnerGraphicsLayer({
           // id: vueIndex,
           viewer: viewer,
-          elevationInfo: new ElevationInfo({ mode: ElevationMode.OnTheGround })
+          elevationInfo: new ElevationInfo({ mode: ElevationMode.OnTheGround }),
         });
       }
       // 统一专题图的文本类型需要处理
       if (this.isTextSymbol(renderer)) {
         const deepCloneRenderer = JSON.parse(JSON.stringify(renderer));
         const field = deepCloneRenderer.symbol.text;
-        features.forEach(feature => {
+        features.forEach((feature) => {
           // 获取真实的textSymbol
           const attributes = feature.attributes || {};
           deepCloneRenderer.symbol.text = attributes[field];
@@ -202,7 +210,7 @@ export default {
         const transformRenderer = this.transfromRenderer(renderer);
         this.featureSetApplyRenderer(features, transformRenderer);
 
-        features.forEach(feature => {
+        features.forEach((feature) => {
           this.innerLayer.add(feature);
         });
       }
@@ -221,7 +229,7 @@ export default {
         this.innerLayer.removeAll();
         const deepCloneRenderer = JSON.parse(JSON.stringify(renderer));
         const field = deepCloneRenderer.symbol.text;
-        featureArr.forEach(feature => {
+        featureArr.forEach((feature) => {
           // 获取真实的textSymbol
           const attributes = feature.attributes || {};
           deepCloneRenderer.symbol.text = attributes[field];
@@ -229,7 +237,7 @@ export default {
           featureSet.push(Feature.fromJSON(feature));
         });
       } else {
-        featureArr.forEach(feature => {
+        featureArr.forEach((feature) => {
           featureSet.push(Feature.fromJSON(feature));
         });
         this.featureSetApplyRenderer(
@@ -238,15 +246,55 @@ export default {
         );
       }
 
-      featureSet.forEach(feature => {
+      featureSet.forEach((feature) => {
         isTextRenderer
           ? this.innerLayer.add(feature)
           : this.innerLayer.update(feature);
       });
       // 设置透明度
       this.innerLayer.setOpacity(opacity);
-      // 设置是否显示
+      // 设置是否显示eatureSet
       this.innerLayer.setVisible(visible);
-    }
-  }
+    },
+    generateIGSFeatureLayer(options) {
+      return new IGSFeatureLayer(options);
+    },
+    generateGeoJSONLayer(options) {
+      return new GeoJSONLayer(options);
+    },
+    generateWFSLayer(options) {
+      return new WFSLayer(options);
+    },
+    featureToPrimitive(type, features, options) {
+      let primitives;
+      switch (type) {
+        case "IGSFeatureLayerUtil":
+          primitives = IGSFeatureLayerUtil.toPrimitive(features, options);
+          break;
+        default:
+          break;
+      }
+      return primitives;
+    },
+    cloneFeatureSet(featureSet) {
+      return FeatureSet.fromJSON(featureSet);
+    },
+    cloneFeature(feature) {
+      return Feature.fromJSON(feature);
+    },
+    generateRenderer(renderer) {
+      return BaseRenderer.fromJSON(renderer);
+    },
+    generateCommonMap() {
+      return new Map();
+    },
+    generateSceneView(viewer, map) {
+      return new SceneView({
+        // 视图
+        innerView: viewer,
+        // 图层管理容器
+        map,
+      });
+    },
+  },
 };

@@ -1,6 +1,6 @@
 <template>
   <div class="mapgis-3d-m3d-menu-explosion">
-    <mapgis-ui-divider style="fontSize:14px">爆炸设置</mapgis-ui-divider>
+    <mapgis-ui-divider style="fontsize: 14px">爆炸设置</mapgis-ui-divider>
     <div class="mapgis-3d-m3d-menu-explosion-direction">
       <mapgis-ui-row>
         <mapgis-ui-col :span="8" :offset="8"
@@ -35,22 +35,6 @@
       </mapgis-ui-row>
     </div>
     <div class="mapgis-3d-m3d-menu-explosion-content">
-      <!-- <mapgis-ui-input-number-panel
-        transparent
-        size="small"
-        label="朝向角度"
-        v-model="headding"
-        :range="[-360, 360]"
-      >
-      </mapgis-ui-input-number-panel>
-      <mapgis-ui-input-number-panel
-        transparent
-        size="small"
-        label="旋转角度"
-        v-model="angle"
-        :range="[-360, 360]"
-      >
-      </mapgis-ui-input-number-panel> -->
       <mapgis-ui-input-number-panel
         transparent
         size="large"
@@ -97,6 +81,8 @@ export default {
       distance: 5,
       speed: 1,
       moveDirection: undefined,
+      ordinal: 0,
+      deltaDistance: 1,
     };
   },
   created() {},
@@ -119,15 +105,6 @@ export default {
       const vm = this;
       const { Cesium, vueIndex, vueKey, vueCesium } = this;
       const { viewer } = this;
-
-      let explosion = this.createCesiumObject();
-      explosion.then((res) => {
-        let modelExplosion = new Cesium.ModelExplosion(viewer);
-        vueCesium.ExplosionManager.addSource(vueKey, vueIndex, this, {
-          explosion: modelExplosion,
-        });
-      });
-
       if (viewer.isDestroyed()) return;
     },
     unmount() {
@@ -152,48 +129,100 @@ export default {
       if (!tileset) {
         return;
       }
-
-      let find = vueCesium.ExplosionManager.findSource(vueKey, vueIndex);
-      if (find && find.options) {
-        let modelExplosion = find.options.explosion;
-        let layer = tileset;
-        //楼层基于坐标轴绕Z轴旋转了38.5
-        let vectorLeft = new Cesium.Cartesian3(1, 0, 0);
-        let vectorUp = new Cesium.Cartesian3(0, 1, 0);
-        let vector = new Cesium.Cartesian3();
-        let angle = Cesium.Math.toRadians(this.angle);
-        vector.x =
-          vectorLeft.x * Math.cos(angle) + vectorUp.x * Math.sin(angle);
-        vector.y =
-          vectorLeft.y * Math.cos(angle) + vectorUp.y * Math.sin(angle);
-        vector.z =
-          vectorLeft.z * Math.cos(angle) + vectorUp.z * Math.sin(angle);
-        // vector = vector;
-        modelExplosion.multiLayerAxisExplosionWithAnimate([layer], {
-          direction: vector,
-          expDistance: distance,
-          speed: speed,
-        });
-      }
-    },
-    handleDrawDirection() {
-      const vm = this;
-      const { viewer } = this;
-      let drawElement = new zondy.cesium.DrawElement(viewer);
-      drawElement.startDrawingPolyline({
-        color: new Cesium.Color(0.3, 0.7, 0.8, 1.0),
-        callback: function (result) {
-          // vm.moveDirection = result.positions;
-          var polyline = new zondy.cesium.DrawElement.PolylinePrimitive({
-            positions: result.positions,
-            width: 1,
-            geodesic: true,
-          });
-          scene.primitives.add(polyline);
-          polyline.setEditable();
-          primitivesList.push(polyline);
-        },
+      let layer = tileset;
+      //楼层基于坐标轴绕Z轴旋转了38.5
+      let vectorLeft = new Cesium.Cartesian3(1, 0, 0);
+      let vectorUp = new Cesium.Cartesian3(0, 1, 0);
+      let vector = new Cesium.Cartesian3();
+      let angle = Cesium.Math.toRadians(this.angle);
+      vector.x = vectorLeft.x * Math.cos(angle) + vectorUp.x * Math.sin(angle);
+      vector.y = vectorLeft.y * Math.cos(angle) + vectorUp.y * Math.sin(angle);
+      vector.z = vectorLeft.z * Math.cos(angle) + vectorUp.z * Math.sin(angle);
+      this.multiLayerAxisExplosionWithAnimate([layer], {
+        direction: vector,
+        expDistance: distance,
+        speed: speed,
       });
+    },
+    multiLayerAxisExplosionWithAnimate(M3DSets, options) {
+      const { Cesium } = this;
+      const optionsParam = options || {};
+      const moveDirection =
+        optionsParam.direction || new Cesium.Cartesian3(1, 0, 0);
+      for (let index = 0; index < M3DSets.length; index++) {
+        const l = M3DSets[index];
+        const temp = l.root.transform.clone();
+        l.root.originTransform = l.root.originTransform || temp;
+      }
+      const explosion = {
+        directions: [],
+        layers: M3DSets,
+        viewer: this.viewer,
+        expDistance: optionsParam.expDistance || 1,
+        speed: optionsParam.speed || 1,
+      };
+      const layers = M3DSets;
+      if (layers.length === 1) {
+        this.ordinal = 1;
+      }
+      const originPoint = new Cesium.Cartesian3(0, 0, 0);
+      const direction = new Cesium.Cartesian3();
+      Cesium.Matrix4.multiplyByPoint(
+        layers[0].root.transform,
+        originPoint,
+        originPoint
+      );
+      Cesium.Matrix4.multiplyByPoint(
+        layers[0].root.transform,
+        moveDirection,
+        moveDirection
+      ); //此处direction为方向点
+      Cesium.Cartesian3.subtract(moveDirection, originPoint, direction);
+      Cesium.Cartesian3.normalize(direction, direction);
+      for (let i = 0; i < layers.length; i++) {
+        explosion.directions.push(direction);
+        const layer = layers[i];
+        const transform = layer.root.transform.clone();
+      }
+      this.deltaDistance = 0;
+      this.viewer.clock.onTick.addEventListener(this.clockMulti(explosion));
+    },
+    /**
+     * 实现爆炸动画效果的时钟监听事件
+     * @private
+     */
+    clockMulti(explosion) {
+      if (!explosion) {
+        return;
+      }
+      const { Cesium } = this;
+      const { viewer, expDistance, layers, directions } = explosion;
+      let { speed } = explosion;
+      this.deltaDistance += speed;
+      if (this.deltaDistance > expDistance) {
+        speed = expDistance % speed;
+      }
+      for (let i = 0; i < layers.length; i++) {
+        const direction = directions[i];
+        const distance = speed * this.ordinal;
+        const layer = layers[i];
+        let transform = layer.root.transform.clone();
+        const tempDirection = direction.clone();
+        Cesium.Cartesian3.multiplyByScalar(direction, distance, tempDirection);
+        transform[12] += tempDirection.x;
+        transform[13] += tempDirection.y;
+        transform[14] += tempDirection.z;
+        // 设置矩阵
+        layer.root.transform = transform.clone();
+        this.ordinal++;
+      }
+      if (this.deltaDistance > expDistance) {
+        viewer.clock.onTick.removeEventListener(this.clockMulti());
+      }
+      this.ordinal = 0;
+      if (layers.length === 1) {
+        this.ordinal = 1;
+      }
     },
     changeHeadding(rotate) {
       this.angle = this.headding + rotate;
@@ -203,18 +232,23 @@ export default {
       const { layerIndex, viewer, m3ds } = this;
       const { vueKey, vueIndex, vueCesium } = this;
       let tileset;
-      let find = vueCesium.ExplosionManager.findSource(vueKey, vueIndex);
-      if (find && find.options) {
-        let modelExplosion = find.options.explosion;
-        if (m3ds) {
-          tileset = m3ds[layerIndex];
-        } else {
-          tileset = viewer.scene.layers.getM3DLayer(layerIndex);
-        }
-        if (!tileset || !modelExplosion) {
-          return;
-        }
-        modelExplosion.resetExplosionByField([tileset]);
+      if (m3ds) {
+        tileset = m3ds[layerIndex];
+      } else {
+        tileset = viewer.scene.layers.getM3DLayer(layerIndex);
+      }
+      if (!tileset) {
+        return;
+      }
+      this.removeModelExplosion([tileset]);
+    },
+    /**
+     * 重置图层
+     */
+    removeModelExplosion(m3dSets) {
+      for (let i = 0; i < m3dSets.length; i++) {
+        var layer = m3dSets[i];
+        layer.root.transform = layer.root.originTransform;
       }
     },
   },

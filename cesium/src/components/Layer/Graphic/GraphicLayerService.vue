@@ -27,8 +27,8 @@ export default {
         rectangle: 0,
         ellipsoid: 0,
         marker: 0,
-        model: 0
-      }
+        model: 0,
+      },
     };
   },
   methods: {
@@ -60,7 +60,7 @@ export default {
         finishEdit,
         revokeModel,
         revokePoint,
-        finishDraw
+        finishDraw,
       } = options;
       viewer = viewer || this.viewer;
       vueIndex = vueIndex || this.$_getId();
@@ -77,9 +77,8 @@ export default {
         getGraphic: getGraphic,
         finishEdit: finishEdit,
         revokeModel: revokeModel,
-        revokePoint: revokePoint
+        revokePoint: revokePoint,
       });
-      viewer.scene.layers.appendGraphicsLayer(graphicsLayer);
       window.vueCesium.GraphicsLayerManager.addSource(
         vueKey,
         vueIndex,
@@ -95,13 +94,11 @@ export default {
     $_getGraphicLayer(vueIndex, vueKey) {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
-      let GraphicsLayerManager = window.vueCesium.GraphicsLayerManager.findSource(
-        vueKey,
-        vueIndex
-      );
+      let GraphicsLayerManager =
+        window.vueCesium.GraphicsLayerManager.findSource(vueKey, vueIndex);
       return this.hasObject(
         GraphicsLayerManager,
-        function(GraphicsLayerManager) {
+        function (GraphicsLayerManager) {
           return GraphicsLayerManager.source;
         },
         "请初始化GraphicsLayer对象"
@@ -142,7 +139,7 @@ export default {
       if (!options.hasOwnProperty("type")) {
         console.warn("请输入绘制类型！");
       }
-      this.hasObject(graphicsLayer, function(graphicsLayer) {
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
         graphicsLayer.startDrawing(options);
       });
     },
@@ -155,7 +152,7 @@ export default {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
-      this.hasObject(graphicsLayer, function(graphicsLayer) {
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
         graphicsLayer.stopDrawing();
       });
     },
@@ -168,7 +165,7 @@ export default {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
-      this.hasObject(graphicsLayer, function(graphicsLayer) {
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
         graphicsLayer.startEdit();
       });
     },
@@ -181,7 +178,7 @@ export default {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
-      this.hasObject(graphicsLayer, function(graphicsLayer) {
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
         graphicsLayer.stopEdit();
       });
     },
@@ -210,14 +207,14 @@ export default {
         console.warn("样式为空或者不是对象！");
         return;
       }
-      this.hasObject(graphicsLayer, function(graphicsLayer) {
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
         let primitive = graphicsLayer.getGraphicByID(id);
         vm.hasObject(
           primitive,
-          function(primitive) {
-            Object.keys(style).forEach(function(key) {
+          function (primitive) {
+            Object.keys(style).forEach(function (key) {
               if (key === "labelStyle" || key === "billboardStyle") {
-                Object.keys(style[key]).forEach(function(keys) {
+                Object.keys(style[key]).forEach(function (keys) {
                   primitive.style[key][keys] = style[key][keys];
                 });
               } else {
@@ -249,13 +246,13 @@ export default {
         console.warn("dataSource为空或者不是GeoJSON数据！");
         return;
       }
-      this.hasObject(graphicsLayer, function(graphicsLayer) {
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
         let features = dataSource;
         for (let i = 0; i < features.length; i++) {
           let primitive = graphicsLayer.getGraphicByID(features[i].id);
           if (primitive) {
             if (features[i].style && features[i].style instanceof Object) {
-              Object.keys(features[i].style).forEach(function(key) {
+              Object.keys(features[i].style).forEach(function (key) {
                 primitive.style[key] = features[i].style[key];
               });
             }
@@ -276,11 +273,11 @@ export default {
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer();
       let vm = this;
-      this.hasObject(graphicsLayer, function(graphicsLayer) {
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
         let primitive = graphicsLayer.getGraphicByID(id);
         vm.hasObject(
           primitive,
-          function(primitive) {
+          function (primitive) {
             primitive.style[key] = value;
           },
           "标绘对象不存在"
@@ -298,7 +295,7 @@ export default {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
-      return this.hasObject(graphicsLayer, function(graphicsLayer) {
+      return this.hasObject(graphicsLayer, function (graphicsLayer) {
         return graphicsLayer.getGraphicByID(id);
       });
     },
@@ -313,7 +310,7 @@ export default {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
-      return this.hasObject(graphicsLayer, function(graphicsLayer) {
+      return this.hasObject(graphicsLayer, function (graphicsLayer) {
         return graphicsLayer.getGraphicByIndex(index);
       });
     },
@@ -327,7 +324,7 @@ export default {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
-      this.hasObject(graphicsLayer, function(graphicsLayer) {
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
         graphicsLayer.loadJson(JSON.stringify(json));
       });
     },
@@ -361,7 +358,7 @@ export default {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
-      return this.hasObject(graphicsLayer, function(graphicsLayer) {
+      return this.hasObject(graphicsLayer, function (graphicsLayer) {
         return JSON.parse(graphicsLayer.exportToJson());
       });
     },
@@ -376,7 +373,7 @@ export default {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
-      return this.hasObject(graphicsLayer, function(graphicsLayer) {
+      return this.hasObject(graphicsLayer, function (graphicsLayer) {
         let json = graphicsLayer.exportToJson(),
           graphic;
         if (typeof json === "string") {
@@ -400,9 +397,9 @@ export default {
       title = title || "无标题";
       this.hasObject(
         dataSource,
-        function(dataSource) {
+        function (dataSource) {
           const blob = new Blob([JSON.stringify(dataSource)], {
-            type: "application/json;charset=utf-8"
+            type: "application/json;charset=utf-8",
           });
           saveAs(blob, title + ".json");
         },
@@ -419,7 +416,7 @@ export default {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
-      this.hasObject(graphicsLayer, function(graphicsLayer) {
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
         graphicsLayer.removeAllGraphic();
       });
     },
@@ -441,7 +438,7 @@ export default {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
-      this.hasObject(graphicsLayer, function(graphicsLayer) {
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
         graphicsLayer.removeGraphicByIndex(index);
       });
     },
@@ -456,7 +453,7 @@ export default {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
-      this.hasObject(graphicsLayer, function(graphicsLayer) {
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
         graphicsLayer.removeGraphicByID(id);
       });
     },
@@ -469,7 +466,7 @@ export default {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
-      this.hasObject(graphicsLayer, function(graphicsLayer) {
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
         graphicsLayer.destroy();
         window.vueCesium.GraphicsLayerManager.deleteSource(vueKey, vueIndex);
       });
@@ -484,7 +481,7 @@ export default {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
-      return this.hasObject(graphicsLayer, function(graphicsLayer) {
+      return this.hasObject(graphicsLayer, function (graphicsLayer) {
         return graphicsLayer.getAllGraphic();
       });
     },
@@ -512,7 +509,7 @@ export default {
         polylineVolume: "圆管线",
         corridor: "方管线",
         model: "模型",
-        marker: "标注"
+        marker: "标注",
       };
 
       return format[type];
@@ -658,7 +655,7 @@ export default {
                 editPanelValues.outlineColor || "#000000"
               ),
               editPanelValues.outlineOpacity / 100
-            )
+            ),
           };
           break;
         case "label":
@@ -712,7 +709,7 @@ export default {
               editPanelValues.backgroundPadding
             ),
             verticalOrigin: lVerticalOrigin, // 垂直方向以底部来计算标签的位置
-            horizontalOrigin: lHorizontalOrigin
+            horizontalOrigin: lHorizontalOrigin,
           };
           if (editPanelValues.hasOwnProperty("position")) {
             drawOptions.position = editPanelValues.position;
@@ -726,7 +723,7 @@ export default {
             ),
             arcType: Cesium.ArcType.GEODESIC,
             extrudedHeight: editPanelValues.extrudedHeight,
-            offsetHeight: editPanelValues.offsetHeight
+            offsetHeight: editPanelValues.offsetHeight,
           };
           drawOptions.drawWithHeight = true;
           break;
@@ -752,7 +749,7 @@ export default {
             materialType: editPanelValues.materialType,
             isHermiteSpline: editPanelValues.isHermiteSpline,
             loop: editPanelValues.loop,
-            classificationType
+            classificationType,
           };
           switch (editPanelValues.materialType) {
             case "Color":
@@ -767,7 +764,7 @@ export default {
                 color: Cesium.Color.fromAlpha(
                   Cesium.Color.fromCssColorString(editPanelValues.color),
                   editPanelValues.opacity / 100
-                )
+                ),
               };
               break;
             case "PolylineArrow":
@@ -775,7 +772,7 @@ export default {
                 color: Cesium.Color.fromAlpha(
                   Cesium.Color.fromCssColorString(editPanelValues.color),
                   editPanelValues.opacity / 100
-                )
+                ),
               };
               break;
           }
@@ -789,7 +786,7 @@ export default {
             ),
             extrudedHeight: editPanelValues.extrudedHeight,
             offsetHeight: editPanelValues.offsetHeight,
-            isPlanePolygon: true
+            isPlanePolygon: true,
           };
           drawOptions.drawWithHeight = true;
           break;
@@ -808,7 +805,7 @@ export default {
                 ),
                 offsetHeight: editPanelValues.offsetHeight,
                 isPlanePolygon: false,
-                classificationType
+                classificationType,
               };
               break;
             case "Image":
@@ -824,11 +821,11 @@ export default {
                   color: Cesium.Color.fromAlpha(
                     Cesium.Color.WHITE,
                     editPanelValues.opacity / 100
-                  )
+                  ),
                 },
                 height: editPanelValues.height,
                 isPlanePolygon: false,
-                classificationType
+                classificationType,
               };
               break;
           }
@@ -847,7 +844,7 @@ export default {
                   editPanelValues.opacity / 100
                 ),
                 offsetHeight: editPanelValues.offsetHeight,
-                classificationType
+                classificationType,
               };
               break;
             case "Image":
@@ -862,10 +859,10 @@ export default {
                   color: Cesium.Color.fromAlpha(
                     Cesium.Color.WHITE,
                     editPanelValues.opacity / 100
-                  )
+                  ),
                 },
                 stRotation: (Math.PI / 180) * editPanelValues.stRotation,
-                classificationType
+                classificationType,
               };
               break;
             case "text":
@@ -887,9 +884,9 @@ export default {
                       editPanelValues.rtBackgroundColor || "#FFFFFF"
                     ),
                     (editPanelValues.rtBackgroundOpacity || 0) / 100
-                  )
+                  ),
                 },
-                materialType: "text"
+                materialType: "text",
               };
               break;
           }
@@ -900,7 +897,7 @@ export default {
             radius: Number(editPanelValues.radius),
             offsetHeight: editPanelValues.offsetHeight,
             materialType: editPanelValues.materialType,
-            classificationType
+            classificationType,
           };
           editPanelValues.materialType =
             editPanelValues.materialType || "Color";
@@ -920,7 +917,7 @@ export default {
                   ),
                   editPanelValues.materialOpacity / 100
                 ),
-                speed: editPanelValues.speed
+                speed: editPanelValues.speed,
               };
               break;
             case "CircleWaveMaterial":
@@ -933,7 +930,7 @@ export default {
                 ),
                 duration: editPanelValues.duration,
                 gradient: editPanelValues.gradient,
-                count: editPanelValues.count
+                count: editPanelValues.count,
               };
               break;
           }
@@ -948,7 +945,7 @@ export default {
             offsetHeight: editPanelValues.offsetHeight,
             radiusX: editPanelValues.radiusX,
             radiusY: editPanelValues.radiusY,
-            radiusZ: editPanelValues.radiusZ
+            radiusZ: editPanelValues.radiusZ,
           };
           break;
         case "cone":
@@ -959,7 +956,7 @@ export default {
             ),
             radius: Number(editPanelValues.radius),
             extrudedHeight: editPanelValues.extrudedHeight,
-            offsetHeight: editPanelValues.offsetHeight
+            offsetHeight: editPanelValues.offsetHeight,
           };
           break;
         case "wall":
@@ -967,7 +964,7 @@ export default {
             extrudedHeight: editPanelValues.extrudedHeight,
             // height: editPanelValues.height,
             materialType: editPanelValues.materialType,
-            loop: editPanelValues.loop
+            loop: editPanelValues.loop,
           };
           switch (editPanelValues.materialType) {
             case "Color":
@@ -986,7 +983,7 @@ export default {
                 ),
                 duration: editPanelValues.duration,
                 direction: editPanelValues.direction,
-                repeat: new Cesium.Cartesian2(1.0, 1.0)
+                repeat: new Cesium.Cartesian2(1.0, 1.0),
               };
               break;
           }
@@ -1000,7 +997,7 @@ export default {
             ),
             width: editPanelValues.width,
             offsetHeight: editPanelValues.offsetHeight,
-            cornerType: editPanelValues.cornerType
+            cornerType: editPanelValues.cornerType,
           };
           break;
         case "corridor":
@@ -1012,7 +1009,7 @@ export default {
             width: editPanelValues.width,
             cornerType: editPanelValues.cornerType,
             offsetHeight: editPanelValues.offsetHeight,
-            extrudedHeight: editPanelValues.extrudedHeight
+            extrudedHeight: editPanelValues.extrudedHeight,
           };
           break;
         case "cylinder":
@@ -1024,7 +1021,7 @@ export default {
             topRadius: editPanelValues.topRadius,
             bottomRadius: editPanelValues.bottomRadius,
             offsetHeight: editPanelValues.offsetHeight,
-            extrudedHeight: editPanelValues.extrudedHeight
+            extrudedHeight: editPanelValues.extrudedHeight,
           };
           break;
         case "square":
@@ -1034,7 +1031,7 @@ export default {
               editPanelValues.opacity / 100
             ),
             extrudedHeight: editPanelValues.extrudedHeight,
-            offsetHeight: editPanelValues.offsetHeight
+            offsetHeight: editPanelValues.offsetHeight,
           };
           drawOptions.drawWithHeight = true;
           break;
@@ -1068,7 +1065,7 @@ export default {
               editPanelValues.outlineOpacity / 100
             ),
             outlineWidth: editPanelValues.outlineWidth,
-            style: Cesium.LabelStyle.FILL_AND_OUTLINE
+            style: Cesium.LabelStyle.FILL_AND_OUTLINE,
             // pixelOffset: new Cesium.Cartesian2(0, 500)
           };
           let billboardStyle = {
@@ -1082,7 +1079,7 @@ export default {
             color: Cesium.Color.fromAlpha(
               Cesium.Color.fromCssColorString("#FFF"),
               editPanelValues.opacity / 100
-            )
+            ),
           };
           drawOptions.style = {
             // 文字样式
@@ -1098,13 +1095,13 @@ export default {
             // 深度监听，禁用
             disableDepthTestDistance: Number.POSITIVE_INFINITY,
             // //marker的屏幕像素偏移
-            pixelOffset: new Cesium.Cartesian2(0, 0)
+            pixelOffset: new Cesium.Cartesian2(0, 0),
           };
           break;
         case "model":
           drawOptions.style = {
             url: editPanelValues.url,
-            scale: editPanelValues.scale
+            scale: editPanelValues.scale,
           };
           break;
       }
@@ -1136,8 +1133,8 @@ export default {
         );
       }
       return cP;
-    }
-  }
+    },
+  },
 };
 </script>
 

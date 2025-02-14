@@ -95,13 +95,13 @@
               </mapgis-ui-tooltip>
               <mapgis-ui-tooltip v-else>
                 <template slot="title">{{ title }}</template>
-                <div>{{ title }}</div>
+                <div>{{ title }}({{ count }})</div>
               </mapgis-ui-tooltip>
 
               <mapgis-ui-tooltip v-for="(s, j) in submenus" :key="j">
                 <template slot="title">{{ s.tooltip() }}</template>
                 <mapgis-ui-iconfont
-                  v-if="!isolation || selectLayerIndex == key"
+                  v-if="!isolation || selectLayerIndex == index"
                   :type="s.icon()"
                   :class="{
                     iconfont: true,
@@ -635,6 +635,8 @@ export default {
       }
     },
     onCheck(checks, payload) {
+      // 处于锁定图层的状态下构件树的勾选功能不触发
+      if (this.isolation) return;
       const { halfCheckedKeys } = payload;
       this.layerIds = checks;
       this.halfCheckedKeys = checks.concat(halfCheckedKeys);
@@ -729,16 +731,22 @@ export default {
       }
     },
     changeIsolation(layer) {
-      const { key } = layer;
+      const { key, index } = layer;
       const vm = this;
       if (this.layerKey != key) {
         this.layerKey = key;
+        this.selectLayerIndex = index;
         this.isolation = true;
-        window.setTimeout(() => vm.enableIsolation(layer), 10);
+        this.$nextTick(() => {
+          vm.enableIsolation(layer);
+        });
       } else {
         this.layerKey = undefined;
+        this.selectLayerIndex = undefined;
         this.isolation = false;
-        window.setTimeout(() => vm.disableIsolation(layer), 10);
+        this.$nextTick(() => {
+          vm.disableIsolation(layer);
+        });
       }
     },
     enableIsolation(node) {
@@ -946,7 +954,6 @@ export default {
       // m3d 不支持动态查询 只有g3d支持动态查询
     },
     async queryStatic(movement) {
-      this.featureproperties = undefined;
       const { Cesium, viewer } = this;
       const { vueKey, innerVueIndex, vueCesium } = this;
       const { highlightStyle } = this;
@@ -979,7 +986,7 @@ export default {
           // 修改说明：M3D2.1已弃用viewer.scene.pickOid方法，后面统一从feature上获取要素id，高亮统一使用Cesium3DTileStyle设置
           // 修改人:龚跃健
           // 修改日期：2024-11-22
-          const id = feature.getProperty("tid");
+          const id = await feature.getProperty("tid");
           const conditions = [["${tid} === ${id}", highlightStyle]];
           m3d.style = new Cesium.Cesium3DTileStyle({
             defines: {
@@ -1004,12 +1011,14 @@ export default {
             this.featureproperties &&
             Object.keys(this.featureproperties).length > 0
           ) {
-            this.featurevisible = true;
-            this.featureposition = {
-              longitude: longitudeString2,
-              latitude: latitudeString2,
-              height: heightString2,
-            };
+            this.$nextTick(() => {
+              this.featurevisible = true;
+              this.featureposition = {
+                longitude: longitudeString2,
+                latitude: latitudeString2,
+                height: heightString2,
+              };
+            });
           }
         } else {
           this.featureposition = undefined;
