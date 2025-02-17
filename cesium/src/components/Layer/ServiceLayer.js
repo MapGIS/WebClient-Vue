@@ -91,7 +91,10 @@ export default {
   },
   watch: {
     layerStyle: {
-      handler: function() {
+      handler: function(next, old) {
+        if (JSON.stringify(next) === JSON.stringify(old)) {
+          return;
+        }
         let { vueKey, vueIndex, vueCesium } = this;
         let layer = vueCesium[this.managerName].findSource(vueKey, vueIndex);
         if (!layer) {
@@ -111,7 +114,10 @@ export default {
       deep: true
     },
     options: {
-      handler: function() {
+      handler: function(next, old) {
+        if (JSON.stringify(next) === JSON.stringify(old)) {
+          return;
+        }
         let vm = this;
         let isEqual = this.$_isEqual(vm.options, vm.optionsBack);
         if (!isEqual) {
