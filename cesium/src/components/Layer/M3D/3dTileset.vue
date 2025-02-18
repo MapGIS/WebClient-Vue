@@ -151,7 +151,7 @@ export default {
           if (!tileset) {
             return;
           }
-          tileset.imageBasedLighting.luminanceAtZenith = maximumMemoryUsage;
+          tileset.imageBasedLighting.luminanceAtZenith = luminanceAtZenith;
           tileset.cacheBytes = maximumMemoryUsage;
           if (options.autoReset) {
             const boundingSphere = tileset.boundingSphere;

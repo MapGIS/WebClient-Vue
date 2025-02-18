@@ -380,7 +380,7 @@ export default {
                 sceneSublayerOptions
               );
               m3dSet._layerIndex = sceneSublayerId;
-              m3dSet.imageBasedLighting.luminanceAtZenith = maximumMemoryUsage;
+              m3dSet.imageBasedLighting.luminanceAtZenith = luminanceAtZenith;
               m3dSet.cacheBytes = maximumMemoryUsage;
               viewer.scene.primitives.add(m3dSet);
               viewer.zoomTo(m3dSet);
