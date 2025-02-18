@@ -392,6 +392,12 @@ export default {
           pickInfo.properties = result;
         }
       }
+      if (this.popupShowType === "default" && vm.iClickPosition) {
+        if (vm.showPopup) {
+          vm.featureposition = vm.iClickPosition;
+        }
+        pickInfo.position = vm.iClickPosition;
+      }
       pickInfo.layerId = vm.vueIndex;
       vm.$emit("pick-info", pickInfo);
     },

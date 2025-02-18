@@ -872,18 +872,16 @@ export default {
     },
     pickFeature(payload) {
       const { movement, pickedFeature } = payload;
+      const { vueKey, vueIndex, vueCesium, viewer, Cesium } = this;
       const vm = this;
-      const { vueKey, vueIndex, vueCesium, viewer } = this;
       if (
         !pickedFeature ||
         !movement ||
-        (pickedFeature &&
-          pickedFeature.constructor.name !== "Cesium3DTileFeature")
+        !(pickedFeature && pickedFeature instanceof Cesium.Cesium3DTileFeature)
       ) {
         vm.iClickVisible = false;
         return;
       }
-
       if (!pickedFeature._content && pickedFeature.primitive) {
         this.featurevisible = true;
         return;
@@ -1064,105 +1062,65 @@ export default {
           };
           vm.selectLayerIndex = index;
           vm.selectedKeys = [`${index}`];
-          let layerInfo = g3dLayer.getLayerInfo(index);
-          const { layerName, gdbpUrl } = layerInfo;
-          if (version == "1.0" || version == "0.0") {
-            let properties = {};
-            let name = pickedFeature.getProperty("name"); // 获取要素名
-            if (name && name !== "") {
-              const nameStrs = name.split("_");
-              const featureId = nameStrs[nameStrs.length - 1];
-              pickInfo.id = featureId;
-              properties = await this.getFeaturePorpertiesById(
-                featureId,
-                layerName
-              );
-            }
-            if (Object.keys(properties).length > 0) {
-              if (vm.showPopup) {
-                vm.featureproperties = properties;
-                vm.iClickFeatures = [{ properties }];
-              }
-              pickInfo.properties = properties;
-            } else {
-              if (vm.showPopup) {
-                vm.featureproperties = { layerName, gdbpUrl };
-                vm.iClickFeatures = [{ properties: { layerName, gdbpUrl } }];
-              }
-              pickInfo.properties = { layerName, gdbpUrl };
-            }
-            pickedFeature.color =
-              Cesium.Color.fromCssColorString(highlightStyle);
-
-            if (popupShowType === "right") {
-              vm.popupOverlay &&
-                vm.popupOverlay.setContent(vm.featureproperties);
-            }
+          // 修改说明：M3D2.1已弃用viewer.scene.pickOid方法，后面统一从feature上获取要素id，高亮统一使用Cesium3DTileStyle设置
+          // 修改人:龚跃健
+          // 修改日期：2024-11-22
+          const tilesetVersion = tileset.version;
+          let id;
+          let conditions;
+          if (tilesetVersion === "2.1") {
+            id = pickedFeature.getProperty("tid");
+            conditions = [["${tid} === ${id}", highlightStyle]];
           } else {
-            if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0)
-              return;
-            // 修改说明：M3D2.1已弃用viewer.scene.pickOid方法，后面统一从feature上获取要素id，高亮统一使用Cesium3DTileStyle设置
-            // 修改人:龚跃健
-            // 修改日期：2024-11-22
-            const { tilesetVersion } = tileset.version;
-            let id;
-            let conditions;
-            if (tilesetVersion === "2.1") {
-              id = pickedFeature.getProperty("tid");
-              conditions = [["${tid} === ${id}", highlightStyle]];
-            } else {
-              id = pickedFeature.getProperty("OID");
-              conditions = [["${OID} === ${id}", highlightStyle]];
-            }
-            pickInfo.id = id;
-            tileset.style = new Cesium.Cesium3DTileStyle({
-              defines: {
-                id,
-              },
-              color: {
-                conditions,
-              },
-            });
-            const properties20 = await this.getFeaturePorpertiesById(
+            id = pickedFeature.getProperty("OID");
+            conditions = [["${OID} === ${id}", highlightStyle]];
+          }
+          pickInfo.id = id;
+          tileset.style = new Cesium.Cesium3DTileStyle({
+            defines: {
               id,
-              layerName
-            );
-            if (Object.keys(properties20).length > 0) {
-              if (vm.showPopup) {
-                vm.featureproperties = properties20;
-                vm.iClickFeatures = [{ properties20 }];
+            },
+            color: {
+              conditions,
+            },
+          });
+          const properties20 = await this.getFeaturePorpertiesById(id, index);
+          if (Object.keys(properties20).length > 0) {
+            if (vm.showPopup) {
+              vm.featureproperties = properties20;
+              vm.iClickFeatures = [{ properties20 }];
+            }
+            pickInfo.properties = properties20;
+          } else {
+            let result = {};
+            const propertyIds = pickedFeature.getPropertyIds();
+            // 修改说明：属性信息也统一从feature上获取，更新获取方法
+            // 修改人:龚跃健
+            // 修改日期：2025-1-9
+            if (propertyIds && propertyIds.length) {
+              for (let i = 0; i < propertyIds.length; ++i) {
+                const propertyId = propertyIds[i];
+                result[propertyId] = pickedFeature.getProperty(propertyId);
               }
-              pickInfo.properties = properties20;
+              if (vm.showPopup) {
+                vm.featureproperties = result;
+                vm.iClickFeatures = [{ properties: result }];
+              }
+              pickInfo.properties = result;
             } else {
-              if (tileset._useRawSaveAtt && Cesium.defined(pickedFeature)) {
-                // 修改说明：属性信息也统一从feature上获取
-                // 修改人:龚跃健
-                // 修改日期：2024-11-22
-                let result = {};
-                const propertyNames = pickedFeature.getPropertyNames();
-                propertyNames.forEach((name) => {
-                  result[name] = pickedFeature.getProperty(name);
-                });
+              tileset.queryAttributes(id).then(function (result) {
+                result = result || {};
                 if (vm.showPopup) {
                   vm.featureproperties = result;
                   vm.iClickFeatures = [{ properties: result }];
                 }
                 pickInfo.properties = result;
-              } else {
-                tileset.queryAttributes(id).then(function (result) {
-                  result = result || {};
-                  if (vm.showPopup) {
-                    vm.featureproperties = result;
-                    vm.iClickFeatures = [{ properties: result }];
-                  }
-                  pickInfo.properties = result;
-                });
-              }
+              });
+            }
 
-              if (popupShowType === "right") {
-                vm.popupOverlay &&
-                  vm.popupOverlay.setContent(vm.featureproperties);
-              }
+            if (popupShowType === "right") {
+              vm.popupOverlay &&
+                vm.popupOverlay.setContent(vm.featureproperties);
             }
           }
           if (vm.showPopup) {
@@ -1228,7 +1186,7 @@ export default {
     projectScreen(file) {
       this.$emit("project-screen", file);
     },
-    async getFeaturePorpertiesById(id, layerName) {
+    async getFeaturePorpertiesById(id, layerIndex) {
       const properties = {};
       if (this.searchParams) {
         const { domain, serverName, layerIndex, serverType, mapList } =
@@ -1239,7 +1197,7 @@ export default {
           if (mapList && mapList.length > 0) {
             for (let i = 0; i < mapList.length; i++) {
               const item = mapList[i];
-              if (layerName.includes(item.LayerName)) {
+              if (layerIndex.includes(item.LayerIndex)) {
                 gdbp = item.URL;
               }
             }
