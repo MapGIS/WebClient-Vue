@@ -200,8 +200,8 @@ export default {
       // options.url = this.baseUrl;
 
       //组合参数
-      this.options = { ...options };
-      return this.options;
+      this.optionsBack = { ...options };
+      return this.optionsBack;
     },
     /*
      * 通用的mount函数，建议使用时在自己的mount函数里面调用此函数，并在mounted生命周期调用
