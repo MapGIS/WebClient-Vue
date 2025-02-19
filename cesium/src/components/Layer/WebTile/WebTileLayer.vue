@@ -3,6 +3,7 @@
 </template>
 <script>
 import ServiceLayer from "../ServiceLayer";
+import { UrlTemplateImageryProvider } from "@mapgis/webclient-cesium-plugin";
 
 export default {
   name: "mapgis-3d-web-tile-layer",
@@ -12,7 +13,7 @@ export default {
     // 子域名集
     subDomains: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     spatialReference: {
       type: Object,
@@ -61,7 +62,7 @@ export default {
     mount() {
       let { baseUrl } = this;
       //先处理相关参数：
-      let options = {};
+      let options = this.$_getOptions();
       //如果spatialReference存在，则生成tilingScheme对象
       if (this.$props.spatialReference) {
         // 构造CustomTilingScheme
@@ -86,14 +87,14 @@ export default {
           return level - zoomOffset;
         };
       }
-      
+
       // 支持子域名模式，统一子域名关键字
-      const subDomainKeys = ['{s}','{subDomain}','{subDomains}']
-      subDomainKeys.forEach(key => {
+      const subDomainKeys = ["{s}", "{subDomain}", "{subDomains}"];
+      subDomainKeys.forEach((key) => {
         if (baseUrl && baseUrl.includes(key)) {
-          baseUrl = baseUrl.replace(key, '{s}')
+          baseUrl = baseUrl.replace(key, "{s}");
         }
-      })
+      });
 
       // 把format的值放到options.extensions中，cesium接口中需要这么设置
       let tempBaseUrl = baseUrl;
@@ -114,13 +115,13 @@ export default {
         tempBaseUrl = urlStrs[0] + strChilds[1];
       }
 
-      const allOptions = { ...options, baseUrl: tempBaseUrl };
+      const allOptions = { ...options, baseUrl: tempBaseUrl, url: tempBaseUrl };
 
       if (this.subDomains && this.subDomains.length > 0) {
-        allOptions.subdomains = this.subDomains
+        allOptions.subdomains = this.subDomains;
       }
-
-      this.$_mount(allOptions);
+      const provider = new UrlTemplateImageryProvider(allOptions);
+      this.$_mount(provider, allOptions);
     },
     unmount() {
       this.$_unmount();
