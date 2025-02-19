@@ -70,8 +70,8 @@ export default {
         if (vm.layers) {
           cesiumOptions.layers = vm.layers;
         }
-        if (vm.options.extensions) {
-          cesiumOptions.extensions = vm.options.extensions;
+        if (options.extensions) {
+          cesiumOptions.extensions = options.extensions;
         }
         // 构造provider对象
         const provider = new zondy.cesium.MapGISMapServerImageryProvider(
