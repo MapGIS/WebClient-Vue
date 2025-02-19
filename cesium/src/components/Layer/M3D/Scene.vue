@@ -366,6 +366,7 @@ export default {
         const m3ds = [];
         for (let i = 0; i < sceneOptions.length; i++) {
           const sceneSublayerOptions = sceneOptions[i];
+          sceneSublayerOptions.requestVertexNormals = vm.requestVertexNormals;
           const sceneSublayerId = String(sceneSublayerOptions.layerIndex);
           const optionsType = sceneSublayerOptions.type;
 
