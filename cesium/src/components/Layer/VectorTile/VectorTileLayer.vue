@@ -330,9 +330,10 @@ export default {
           : {};
       // 如果style对象属性值有改变，则更新图层（采用先删除在添加图层的方案）
       if (!isEqual(style, options.style)) {
-        this.layerStyle = style;
+        // this.layerStyle = style;
+        // console.log("this.layerStyle: ", this.layerStyle);
         options.style = style;
-        this.$_removeLayer();
+        //this.$_removeLayer();
         this.$vectortile = this.$_addLayer(options);
       }
     },

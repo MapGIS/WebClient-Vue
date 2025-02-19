@@ -91,7 +91,10 @@ export default {
   },
   watch: {
     layerStyle: {
-      handler: function() {
+      handler: function(next, old) {
+        if (JSON.stringify(next) === JSON.stringify(old)) {
+          return;
+        }
         let { vueKey, vueIndex, vueCesium } = this;
         let layer = vueCesium[this.managerName].findSource(vueKey, vueIndex);
         if (!layer) {
@@ -111,7 +114,10 @@ export default {
       deep: true
     },
     options: {
-      handler: function() {
+      handler: function(next, old) {
+        if (JSON.stringify(next) === JSON.stringify(old)) {
+          return;
+        }
         let vm = this;
         let isEqual = this.$_isEqual(vm.options, vm.optionsBack);
         if (!isEqual) {
@@ -194,8 +200,8 @@ export default {
       // options.url = this.baseUrl;
 
       //组合参数
-      this.options = { ...options };
-      return this.options;
+      this.optionsBack = { ...options };
+      return this.optionsBack;
     },
     /*
      * 通用的mount函数，建议使用时在自己的mount函数里面调用此函数，并在mounted生命周期调用
