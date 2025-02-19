@@ -435,7 +435,7 @@ export default {
           originStyles,
           commonLayer: layer,
         });
-        if (layers && layers.length) {
+        if (layers && Object.keys(layers).length) {
           this.setLayerTree(layer, layers);
         }
         if (enablePopup) {
