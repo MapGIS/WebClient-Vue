@@ -60,7 +60,7 @@ export default {
         spatialReference: new SpatialReference({
           wkid: srsCode,
         }),
-        ...this.options,
+        ...options,
       });
       const vm = this;
       // 获取地图图片图层服务的元信息
@@ -70,8 +70,8 @@ export default {
         if (vm.layers) {
           cesiumOptions.layers = vm.layers;
         }
-        if (vm.options.extensions) {
-          cesiumOptions.extensions = vm.options.extensions;
+        if (options.extensions) {
+          cesiumOptions.extensions = options.extensions;
         }
         // 构造provider对象
         const provider = new zondy.cesium.MapGISMapServerImageryProvider(
