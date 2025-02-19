@@ -172,7 +172,11 @@ import { checkTypeNode, loopM3ds, checkTypeIcon } from "./util";
 import M3dMenus from "./components/M3dMenus.vue";
 import PopupMixin from "../Mixin/PopupMixin";
 import * as Feature from "../../service/comprehensive-query/util/feature";
-import { IGSSceneLayer, LayerType } from "@mapgis/webclient-common";
+import {
+  IGSSceneLayer,
+  LayerType,
+  SceneSubLayerType,
+} from "@mapgis/webclient-common";
 import {
   MapGISM3DSet,
   MapGISTerrainProvider,
@@ -359,6 +363,12 @@ export default {
       });
       // 加载场景服务
       sceneLayer.load().then(async (layer) => {
+        const subLayers = layer.activeScene.sublayers.items;
+        subLayers.map((item) => {
+          if (item.type === SceneSubLayerType.terrain) {
+            item.requestVertexNormals = vm.requestVertexNormals;
+          }
+        });
         const sceneOptions = initializeOptions(layer, viewer);
         const layers = {};
         // 存储M3D初始样式
@@ -366,7 +376,6 @@ export default {
         const m3ds = [];
         for (let i = 0; i < sceneOptions.length; i++) {
           const sceneSublayerOptions = sceneOptions[i];
-          sceneSublayerOptions.requestVertexNormals = vm.requestVertexNormals;
           const sceneSublayerId = String(sceneSublayerOptions.layerIndex);
           const optionsType = sceneSublayerOptions.type;
 
