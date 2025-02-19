@@ -165,16 +165,7 @@ export default {
      * @returns {Object} options对象
      */
     $_getOptions() {
-      let opt = {},
-        options = {};
-
-      //取得除options、layerStyle和id之外的必要参数
-      const { $props } = this;
-      Object.keys($props).forEach(function(key) {
-        if (key !== "options" && key !== "layerStyle" && key !== "id") {
-          opt[key] = $props[key];
-        }
-      });
+      let options = {};
       if (this.token) {
         if (this.managerName === "IgsDocLayerManager") {
           if (
@@ -200,7 +191,7 @@ export default {
       // options.url = this.baseUrl;
 
       //组合参数
-      this.optionsBack = { ...options };
+      this.optionsBack = { ...this.optionsBack, ...options };
       return this.optionsBack;
     },
     /*

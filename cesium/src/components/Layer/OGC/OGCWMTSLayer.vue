@@ -79,7 +79,7 @@ export default {
       // 创建WMTS图层对象
       const wmtsLayer = new WMTSLayer({
         url: this.baseUrl,
-        ...this.options,
+        ...options,
       });
       const vm = this;
       // 获取WMTS图层服务的元信息

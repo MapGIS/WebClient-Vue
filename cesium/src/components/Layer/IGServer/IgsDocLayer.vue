@@ -60,7 +60,7 @@ export default {
         spatialReference: new SpatialReference({
           wkid: srsCode,
         }),
-        ...this.options,
+        ...options,
       });
       const vm = this;
       // 获取地图图片图层服务的元信息

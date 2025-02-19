@@ -83,7 +83,7 @@ export default {
       // 创建WMS图层对象
       const wmsLayer = new WMSLayer({
         url: this.baseUrl,
-        ...this.options,
+        ...options,
       });
       const vm = this;
       // 获取WMS图层服务的元信息

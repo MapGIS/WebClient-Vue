@@ -44,7 +44,7 @@ export default {
       // 创建ArcGIS瓦片图层对象
       const arcgisTileLayer = new ArcGISTileLayer({
         url: this.baseUrl,
-        ...this.options,
+        ...options,
       });
       const vm = this;
       // 获取ArcGIS瓦片服务的元信息

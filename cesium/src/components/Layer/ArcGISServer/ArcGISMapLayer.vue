@@ -86,7 +86,7 @@ export default {
       // 创建ArcGIS地图图层对象
       const arcgisMapImageLayer = new ArcGISMapImageLayer({
         url: this.baseUrl,
-        ...this.options,
+        ...options,
       });
       const vm = this;
       // 获取ArcGIS地图服务的元信息
