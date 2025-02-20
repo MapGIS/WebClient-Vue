@@ -15,18 +15,10 @@
       <mapgis-ui-form :layout="layout">
         <mapgis-ui-form-item label="降雨等级">
           <mapgis-ui-select v-model="rainOption">
-            <mapgis-ui-select-option :value="0">
-              小雨
-            </mapgis-ui-select-option>
-            <mapgis-ui-select-option :value="1">
-              中雨
-            </mapgis-ui-select-option>
-            <mapgis-ui-select-option :value="2">
-              大雨
-            </mapgis-ui-select-option>
-            <mapgis-ui-select-option :value="3">
-              暴雨
-            </mapgis-ui-select-option>
+            <mapgis-ui-select-option :value="0"> 小雨 </mapgis-ui-select-option>
+            <mapgis-ui-select-option :value="1"> 中雨 </mapgis-ui-select-option>
+            <mapgis-ui-select-option :value="2"> 大雨 </mapgis-ui-select-option>
+            <mapgis-ui-select-option :value="3"> 暴雨 </mapgis-ui-select-option>
           </mapgis-ui-select>
         </mapgis-ui-form-item>
       </mapgis-ui-form>
@@ -150,7 +142,7 @@
           label="积水颜色"
           :color="floodColorCopy"
           @input="
-            val =>
+            (val) =>
               (floodColorCopy = `rgba(${val.rgba.r},${val.rgba.g},${val.rgba.b},${val.rgba.a})`)
           "
           :disableAlpha="false"
@@ -215,7 +207,7 @@ import * as turf from "@turf/turf";
 import {
   isLogarithmicDepthBufferEnable,
   isLogarithmicDepthBufferSupport,
-  setLogarithmicDepthBufferEnable
+  setLogarithmicDepthBufferEnable,
 } from "../WebGlobe/util";
 
 export default {
@@ -257,56 +249,56 @@ export default {
       handler() {
         this.rainFall = this.rainFallDaily;
       },
-      immediate: true
+      immediate: true,
     },
     drainageVolOfArea: {
       handler() {
         this.drainageVol = this.drainageVolOfArea;
       },
-      immediate: true
+      immediate: true,
     },
     rainAngle: {
       handler() {
         this.angle = this.rainAngle;
       },
-      immediate: true
+      immediate: true,
     },
     costTime: {
-      handler: function(e) {
+      handler: function (e) {
         this.$emit("costTime", e);
       },
-      immediate: true
+      immediate: true,
     },
     pond: {
-      handler: function(e) {
+      handler: function (e) {
         this.$emit("isPonding", e);
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   props: {
     layout: {
       type: String,
-      default: "vertical" // 'horizontal' 'vertical' 'inline'
+      default: "vertical", // 'horizontal' 'vertical' 'inline'
     },
     //积水上涨的时间
     pondingTime: {
       type: Number,
-      default: 24
+      default: 24,
     },
     multiSpeed: {
       type: Number,
-      default: 1
+      default: 1,
     },
     // 降雨量
     rainFallDaily: {
       type: Number,
-      default: 36
+      default: 36,
     },
     // 控制面板显隐,false为隐藏
     pondingPanelShow: {
       type: Boolean,
-      default: true
+      default: true,
     },
     /**
      * @param {String} [pondingArea.type]  输入区域类型,包含"polygon"、"rectangle"、"circle"
@@ -343,24 +335,24 @@ export default {
      *  },
      */
     pondingArea: {
-      type: Object
+      type: Object,
     },
     // 积水仿真组件排水体积(m³)，范围[0-100]
     drainageVolOfArea: {
       type: Number,
-      default: 0
+      default: 0,
     },
 
     // 积水仿真组件降雨角度，范围[-30-30]
     rainAngle: {
       type: Number,
-      default: 30
+      default: 30,
     },
     // 当积水仿真执行错误时(例如计算中途发现没有地形数据)，关闭遮罩的延时
     maskCloseTime: {
       type: Number,
-      default: 1000
-    }
+      default: 1000,
+    },
   },
   data() {
     return {
@@ -368,27 +360,27 @@ export default {
 
       drawStyleCopy: {
         color: "#FF8C00",
-        opacity: 0.6
+        opacity: 0.6,
       },
       draws: [
         {
           icon: "mapgis-huizhijuxing",
           type: "primary",
           tip: "绘制矩形",
-          click: this.drawRectangle
+          click: this.drawRectangle,
         },
         {
           icon: "mapgis-draw-polygon",
           type: "primary",
           tip: "绘制多边形",
-          click: this.drawPolygon
+          click: this.drawPolygon,
         },
         {
           icon: "mapgis-huizhiyuan1",
           type: "primary",
           tip: "绘制圆",
-          click: this.drawCircle
-        }
+          click: this.drawCircle,
+        },
       ],
       //绘制方式的选择
       radioValue: 1,
@@ -397,7 +389,7 @@ export default {
       //输入的圆半径
       circleCenter: {
         longitude: "",
-        latitude: ""
+        latitude: "",
       },
       radius: 0,
 
@@ -435,7 +427,7 @@ export default {
       collapseStyle: {
         border: "0",
         overflow: "hidden",
-        padding: "0"
+        padding: "0",
       },
 
       //分析时的遮罩效果
@@ -451,7 +443,7 @@ export default {
       timer: undefined,
 
       isLogarithmicDepthBufferEnable: undefined,
-      showDetailPara: false
+      showDetailPara: false,
     };
   },
   destroyed() {
@@ -461,13 +453,12 @@ export default {
     mounted() {
       const { vueCesium, vueKey, vueIndex, viewer } = this;
       vueCesium.PondingSimulationManager.addSource(vueKey, vueIndex, null, {
-        rain: null
+        rain: null,
       });
       //viewer.scene.logarithmicDepthBuffer
       //记录对数深度缓冲更改前的状态
-      this.isLogarithmicDepthBufferEnable = isLogarithmicDepthBufferEnable(
-        viewer
-      );
+      this.isLogarithmicDepthBufferEnable =
+        isLogarithmicDepthBufferEnable(viewer);
 
       // setLogarithmicDepthBufferEnable( true, viewer);
       setLogarithmicDepthBufferEnable(
@@ -576,7 +567,7 @@ export default {
       let degrees = circle.geometry.coordinates[0];
       this.lnglat = degrees;
       let allPoint = [];
-      degrees.forEach(function(degree) {
+      degrees.forEach(function (degree) {
         allPoint.push(degree[0], degree[1]);
       });
       return allPoint;
@@ -610,14 +601,14 @@ export default {
         lnglat1[0],
         lnglat2[1],
         lnglat1[0],
-        lnglat1[1]
+        lnglat1[1],
       ];
       return allPoint;
     },
     getPolygonDegrees(degreeArr3) {
       let degreeArr2 = [];
       let degreeArr1 = [];
-      degreeArr3.forEach(function(degree) {
+      degreeArr3.forEach(function (degree) {
         degreeArr2.push([degree[0], degree[1]]);
         degreeArr1.push(degree[0], degree[1]);
       });
@@ -633,8 +624,10 @@ export default {
         // 修改人: 杨琨 2024-8-9
         // 修改说明: 积水仿真内部使用了填挖方分析，填挖方分析目前仅支持SKT地形和MapGIS地形，不支持自带地形，因此使用自带地形时，不进行积水仿真
         if (viewer.terrainProvider instanceof Cesium.EllipsoidTerrainProvider) {
-            vm.$message.warn('使用积水仿真功能时，请添加一个SKT地形图层或者MapGIS地形图层！')
-            return false
+          vm.$message.warn(
+            "使用积水仿真功能时，请添加一个SKT地形图层或者MapGIS地形图层！"
+          );
+          return false;
         }
         if (!vm.pondingPanelShow) {
           // pondingPanelShow为false，面板隐藏，模拟区域通过参数传入
@@ -756,33 +749,27 @@ export default {
 
       //获取地形的高度最值
       let minH, maxH;
-      viewer.terrainProvider.readyPromise
-        .then(function() {
-          // fix(5992): 积水仿真点击后不出结果
-          // 修改人: 杨琨 2024-8-9
-          // 修改说明: 积水仿真必须要有一个场景高度范围，默认从地形上取，只有MapGIS地形有三维范围，SKT地形没有三维范围
-          // 当场景里只添加了SKT地形数据(元数据中只有二维范围，没有三维范围)而没有添加其他三维数据时，无法获取场景的高度范围，因此直接设置为珠穆朗玛峰的高度
-          if (!viewer.terrainProvider.range3D) {
-            maxH = 8848.86;
-            minH = 0;
-          } else {
-            maxH = viewer.terrainProvider.range3D.zMax;
-            minH = viewer.terrainProvider.range3D.zMin;
-          }
-        })
-        .otherwise(function(err) {
-          console.log(err);
-        });
+      // fix(5992): 积水仿真点击后不出结果
+      // 修改人: 杨琨 2024-8-9
+      // 修改说明: 积水仿真必须要有一个场景高度范围，默认从地形上取，只有MapGIS地形有三维范围，SKT地形没有三维范围
+      // 当场景里只添加了SKT地形数据(元数据中只有二维范围，没有三维范围)而没有添加其他三维数据时，无法获取场景的高度范围，因此直接设置为珠穆朗玛峰的高度
+      if (!viewer.terrainProvider.range3D) {
+        maxH = 8848.86;
+        minH = 0;
+      } else {
+        maxH = viewer.terrainProvider.range3D.zMax;
+        minH = viewer.terrainProvider.range3D.zMin;
+      }
 
       let midRange = (minH + maxH) / 2;
       let promise = new Promise(
-        resolve => {
+        (resolve) => {
           //获取绘制区域的高程最值
           vm.loopCutFill(midRange, "minmax", resolve);
         },
-        reject => {}
+        (reject) => {}
       );
-      promise.then(function(payload) {
+      promise.then(function (payload) {
         const { min, max } = payload;
         //将绘制区域的最小高程设置为积水的起始高度
         vm.startHeightCopy = Math.round(min * 100) / 100;
@@ -829,20 +816,20 @@ export default {
         midRange = Math.abs(max + midRange) / 2;
       }
       let promise = new Promise(
-        resolve => {
+        (resolve) => {
           if (!vm.stopCaculate) {
             vm.maskText = "正在进行第 " + vm.loopCount + " 次计算...";
             vm.loopCutFill(midRange, "loop", resolve);
           }
         },
-        reject => {}
+        (reject) => {}
       );
-      promise.then(event => {
+      promise.then((event) => {
         vm.computePondingHeight({
           Vol: event.fillVolume,
           min: min,
           midRange: midRange,
-          max: max
+          max: max,
         });
       });
     },
@@ -854,15 +841,15 @@ export default {
       }
       this.doCutFill({
         height: height,
-        callBack: function(event) {
+        callBack: function (event) {
           vm.handleCallback(eventtype, event, height, resolve);
-        }
+        },
       });
     },
     doCutFill(opt) {
       const { viewer, Cesium, positions } = this;
       // 创建填挖方实例
-      const cutFill = new Cesium.CutFillAnalysis(viewer, opt);
+      const cutFill = new zondy.cesium.CutFillAnalysis(viewer, opt);
       cutFill._pointsPolygon = positions;
       let minMax = cutFill.getMinAndMaxCartesian();
       cutFill.start(minMax);
@@ -880,9 +867,11 @@ export default {
       // 因此当判断填挖方体积都为0时，取消积水仿真分析，给1000毫秒缓存，使得遮罩消失的更自然
       if (eventdata.cutVolume === 0 && eventdata.fillVolume === 0) {
         setTimeout(function () {
-          vm.stopSimulation()
-          vm.$message.warn('该绘制范围内，未检测到地形数据，在绘制几何时，请确保绘制区域内包含了地形数据！')
-        },  vm.maskCloseTime)
+          vm.stopSimulation();
+          vm.$message.warn(
+            "该绘制范围内，未检测到地形数据，在绘制几何时，请确保绘制区域内包含了地形数据！"
+          );
+        }, vm.maskCloseTime);
       } else if (eventtype == "minmax") {
         let min = eventdata.minHeight;
         let max = eventdata.maxHeight;
@@ -896,7 +885,7 @@ export default {
           Vol: fillVolume,
           min: minHeight,
           midRange: height,
-          max: maxHeight
+          max: maxHeight,
         });
       } else if (eventtype == "loop") {
         vm.loopCount++;
@@ -929,7 +918,6 @@ export default {
         let speed = (vm.maxHeightCopy - vm.startHeightCopy) / vm.pondingTime;
         vm.floodSpeedCopy =
           (Math.round(speed * 10000000) / 10000000) * vm.multiSpeed;
-
         vm._removeFlood();
         setLogarithmicDepthBufferEnable(
           isLogarithmicDepthBufferSupport(),
@@ -948,7 +936,8 @@ export default {
       if (positions) {
         vm.removeRain();
 
-        let weather = new Cesium.WeatherEffect(viewer);
+        // let weather = new Cesium.WeatherEffect(viewer);
+        const PostProcessStageLibrary = zondy.cesium.PostProcessStageLibrary;
 
         let options = [
           //小雨
@@ -956,41 +945,42 @@ export default {
             alpha: 0.3,
             speed: 15, //1
             rainLength: 0,
-            factor: 0.1
+            factor: 0.1,
           },
           //中雨
           {
             alpha: 0.5,
             speed: 15, //5
             rainLength: 0.2,
-            factor: 0.1
+            factor: 0.1,
           },
           //大雨
           {
             alpha: 0.6,
             speed: 18,
             rainLength: 1,
-            factor: 0.1
+            factor: 0.1,
           },
           //暴雨
           {
             alpha: 1,
             speed: 20,
             rainLength: 2,
-            factor: 0.1 //0.2
-          }
+            factor: 0.1, //0.2
+          },
         ];
 
         // 雨特效的长度
         let option = options[vm.rainOption];
         option.angle = vm.angle;
-        weather.addRain(option);
-
+        option.viewer = viewer;
+        const rainStage = PostProcessStageLibrary.createRainStage(option);
+        viewer.scene.postProcessStages.add(rainStage);
         vueCesium.PondingSimulationManager.changeOptions(
           vueKey,
           vueIndex,
           "rain",
-          weather
+          rainStage
         );
       }
     },
@@ -1020,7 +1010,7 @@ export default {
       const { rain } = options;
 
       if (rain) {
-        rain.removeRain();
+        viewer.scene.postProcessStages.remove(rain);
         vueCesium.PondingSimulationManager.changeOptions(
           vueKey,
           vueIndex,
@@ -1036,8 +1026,8 @@ export default {
       if (window.drawElement) {
         window.drawElement.stopDrawing();
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
