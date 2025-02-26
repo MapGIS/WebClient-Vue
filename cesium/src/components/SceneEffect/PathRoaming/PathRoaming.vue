@@ -19,12 +19,8 @@
             <mapgis-ui-row>
               <mapgis-ui-col :span="24">
                 <mapgis-ui-radio-group v-model="settingCopy.elevationType">
-                  <mapgis-ui-radio value="addition">
-                    附加高程
-                  </mapgis-ui-radio>
-                  <mapgis-ui-radio value="absolute">
-                    绝对高程
-                  </mapgis-ui-radio>
+                  <mapgis-ui-radio value="addition"> 附加高程 </mapgis-ui-radio>
+                  <mapgis-ui-radio value="absolute"> 绝对高程 </mapgis-ui-radio>
                 </mapgis-ui-radio-group>
               </mapgis-ui-col>
             </mapgis-ui-row>
@@ -48,7 +44,7 @@
             :range="[-180, 180]"
             v-model="settingCopy.heading"
             :disabled="settingCopy.animationType === 1 ? true : false"
-            @change="val => onEffectsChange(val, 'heading')"
+            @change="(val) => onEffectsChange(val, 'heading')"
           />
           <mapgis-ui-input-number-panel
             v-show="settingCopy.animationType === 2"
@@ -57,7 +53,7 @@
             :range="[-180, 180]"
             v-model="settingCopy.pitch"
             :disabled="settingCopy.animationType !== 2 ? true : false"
-            @change="val => onEffectsChange(val, 'pitch')"
+            @change="(val) => onEffectsChange(val, 'pitch')"
           />
           <mapgis-ui-input-number-panel
             v-show="showDistanceSlider()"
@@ -66,9 +62,9 @@
             :range="[1, 200]"
             v-model="settingCopy.range"
             :disabled="settingCopy.animationType === 1 ? true : false"
-            @change="val => changeRange(val)"
+            @change="(val) => changeRange(val)"
           />
-          <mapgis-ui-form-item label="视角" >
+          <mapgis-ui-form-item label="视角">
             <mapgis-ui-row>
               <mapgis-ui-col :span="24">
                 <mapgis-ui-select
@@ -139,29 +135,29 @@
               label="模型方位角"
               :range="[-180, 180]"
               v-model="settingCopy.modelHeading"
-              @change="val => modelHeadingChange(val)"
+              @change="(val) => modelHeadingChange(val)"
             />
           </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
         <div>
           <mapgis-ui-checkbox
-            style="line-height:32px;"
+            style="line-height: 32px"
             :checked="settingCopy.isLoop"
-            @change="e => onCheckBoxChange(e.target.checked, 'isLoop')"
+            @change="(e) => onCheckBoxChange(e.target.checked, 'isLoop')"
           >
             循环
           </mapgis-ui-checkbox>
           <mapgis-ui-checkbox
-            style="line-height:32px;"
+            style="line-height: 32px"
             :checked="settingCopy.showPath"
-            @change="e => onCheckBoxChange(e.target.checked, 'showPath')"
+            @change="(e) => onCheckBoxChange(e.target.checked, 'showPath')"
           >
             显示路径
           </mapgis-ui-checkbox>
           <mapgis-ui-checkbox
-            style="line-height:32px;"
+            style="line-height: 32px"
             :checked="settingCopy.showInfo"
-            @change="e => onCheckBoxChange(e.target.checked, 'showInfo')"
+            @change="(e) => onCheckBoxChange(e.target.checked, 'showInfo')"
           >
             显示提示信息
           </mapgis-ui-checkbox>
@@ -193,7 +189,7 @@ export default {
     ...VueOptions,
     layout: {
       type: String,
-      default: "vertical" // 'horizontal' 'vertical' 'inline'
+      default: "vertical", // 'horizontal' 'vertical' 'inline'
     },
     setting: {
       type: Object,
@@ -212,29 +208,29 @@ export default {
           showInfo: true,
           modelUrl: "",
           modelScale: 1,
-          modelHeading: 0
+          modelHeading: 0,
         };
-      }
+      },
     },
     positions: {
       type: Array,
       required: true,
-      default: () => []
+      default: () => [],
     },
     models: {
       type: Array,
       required: true,
-      default: () => []
-    }
+      default: () => [],
+    },
   },
   computed: {
-    playTitle: function() {
+    playTitle: function () {
       if (!this.isStart) {
         return "开始";
       } else {
         return this.isPause ? "继续" : "暂停";
       }
-    }
+    },
   },
   watch: {
     models: {
@@ -248,7 +244,7 @@ export default {
         }
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     setting: {
       handler() {
@@ -270,8 +266,8 @@ export default {
           this.$set(this.settingCopy, "modelHeading", 0);
         }
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   data() {
     return {
@@ -286,37 +282,37 @@ export default {
         isLoop: true,
         showPath: true,
         showInfo: true,
-        modelScale: 1
+        modelScale: 1,
       },
       isStart: false,
       isPause: false,
       perspectiveOptions: [
         {
           label: "跟随",
-          value: 1
+          value: 1,
         },
         {
           label: "锁定第一视角",
-          value: 2
+          value: 2,
         },
         {
           label: "上帝视角",
-          value: 3
-        }
+          value: 3,
+        },
       ],
       interpolationOptions: [
         {
           label: "拉格朗日插值",
-          value: "LagrangePolynomialApproximation"
+          value: "LagrangePolynomialApproximation",
         },
         {
           label: "线性近似",
-          value: "LinearApproximation"
+          value: "LinearApproximation",
         },
         {
           label: "埃尔米特插值",
-          value: "HermitePolynomialApproximation"
-        }
+          value: "HermitePolynomialApproximation",
+        },
       ],
       modelUrl: "",
       // 备份用户点击的showPath的状态，当视角从锁定第一视角转为其他视角时，恢复状态
@@ -335,15 +331,15 @@ export default {
   methods: {
     async createCesiumObject() {
       return new Promise(
-        resolve => {
+        (resolve) => {
           resolve();
         },
-        reject => {}
+        (reject) => {}
       );
     },
     mount() {
       window.SceneWanderManager = {
-        animation: null
+        animation: null,
       };
 
       //  初始化漫游动画
@@ -352,18 +348,18 @@ export default {
         {
           modelUrl: this.modelUrl,
           model: {
-            scale: this.settingCopy.modelScale
+            scale: this.settingCopy.modelScale,
           },
           //是否执行回调函数
           onPositionTag: true,
           //不让无人机模型的姿态按照矢量速度方向变化
           isSetModelPosture: true,
-          callback: function(result) {}
+          callback: function (result) {},
         }
       );
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function(dataSource) {
+      promise.then(function (dataSource) {
         vm.$emit("load", vm);
       });
     },
@@ -380,12 +376,12 @@ export default {
           let positions;
           if (this.positions[0] instanceof Object) {
             positions = JSON.parse(JSON.stringify(this.positions))
-              .flatMap(t => [
+              .flatMap((t) => [
                 t.x,
                 t.y,
                 this.settingCopy.elevationType === "addition"
                   ? t.z
-                  : this.settingCopy.exHeight
+                  : this.settingCopy.exHeight,
               ])
               .flat();
           } else {
@@ -394,9 +390,8 @@ export default {
                 ? JSON.parse(JSON.stringify(this.positions))
                 : this.getAbsolutePositions();
           }
-          window.SceneWanderManager.animation.positions = this.Cesium.Cartesian3.fromDegreesArrayHeights(
-            positions
-          );
+          window.SceneWanderManager.animation.positions =
+            this.Cesium.Cartesian3.fromDegreesArrayHeights(positions);
           this._setAnimationAttr();
 
           window.SceneWanderManager.animation.start();
@@ -436,7 +431,7 @@ export default {
         showPath,
         showInfo,
         modelScale,
-        modelHeading
+        modelHeading,
       } = this.settingCopy;
 
       // 默认速度的单位为m/s，这里将公里每小时转换为m/s
@@ -447,7 +442,8 @@ export default {
       // fix(6171): PTSYB-场景漫游：设置的参数重新播放时，没有按当前参数显示， 仍是默认回到初始状态
       // 修改人: 杨琨 2024-8-28
       // 修改说明: 新版的场景漫游要求heading和pitch参数的单位为弧度，适配最新的场景漫游工具
-      window.SceneWanderManager.animation.heading = Cesium.Math.toRadians(heading);
+      window.SceneWanderManager.animation.heading =
+        Cesium.Math.toRadians(heading);
       window.SceneWanderManager.animation.pitch = Cesium.Math.toRadians(pitch);
       window.SceneWanderManager.animation.animationType = animationType;
       window.SceneWanderManager.animation.isLoop = isLoop;
@@ -460,13 +456,16 @@ export default {
 
       switch (interpolationAlgorithm) {
         case "LagrangePolynomialApproximation":
-          window.SceneWanderManager.animation.interpolationAlgorithm = this.Cesium.LagrangePolynomialApproximation; // 拉格朗日插值
+          window.SceneWanderManager.animation.interpolationAlgorithm =
+            this.Cesium.LagrangePolynomialApproximation; // 拉格朗日插值
           break;
         case "LinearApproximation":
-          window.SceneWanderManager.animation.interpolationAlgorithm = this.Cesium.LinearApproximation; // 线性近似
+          window.SceneWanderManager.animation.interpolationAlgorithm =
+            this.Cesium.LinearApproximation; // 线性近似
           break;
         case "HermitePolynomialApproximation":
-          window.SceneWanderManager.animation.interpolationAlgorithm = this.Cesium.HermitePolynomialApproximation; // 埃尔米特插值
+          window.SceneWanderManager.animation.interpolationAlgorithm =
+            this.Cesium.HermitePolynomialApproximation; // 埃尔米特插值
           break;
         default:
           break;
@@ -488,10 +487,10 @@ export default {
       // 2、开始漫游时，删除SceneRoaming组件绘制的线
       // 显隐漫游工具绘制的线和提示信息
       if (window.SceneWanderManager.animation.animationType === 2) {
-        window.SceneWanderManager.animation.isShowPath = false
-        window.SceneWanderManager.animation.showInfo = false
-        this.settingCopy.showPath = false
-        this.settingCopy.showInfo = false
+        window.SceneWanderManager.animation.isShowPath = false;
+        window.SceneWanderManager.animation.showInfo = false;
+        this.settingCopy.showPath = false;
+        this.settingCopy.showInfo = false;
       }
       // 开始漫游时，删除SceneRoaming组件绘制的线
       this.$emit("remove-road");
@@ -503,15 +502,15 @@ export default {
       // 修改说明: 当未开始漫游时，用户可以显示和隐藏漫游路径
       if (key === "showPath") {
         // 备份用户点击的showPath的状态，当视角从锁定第一视角转为其他视角时，恢复状态
-        this.showPathBack = val
+        this.showPathBack = val;
         // 显隐SceneRoaming组件绘制的线
         this.$emit("toggle-road", {
-          show: val
+          show: val,
         });
       }
       // 备份用户点击的showInfo的状态，当视角从锁定第一视角转为其他视角时，恢复状态
       if (key === "showInfo") {
-        this.showInfoBack = val
+        this.showInfoBack = val;
       }
       window.SceneWanderManager.animation[key] = val;
     },
@@ -531,16 +530,16 @@ export default {
       } else if (window.SceneWanderManager.animation.animationType === 2) {
         this.settingCopy.range = 10;
         // 当场景漫游的视角类型是锁定第一视角时，隐藏显示路径和显示提示信息的状态
-        this.settingCopy.showPath = false
-        this.settingCopy.showInfo = false
+        this.settingCopy.showPath = false;
+        this.settingCopy.showInfo = false;
       } else {
         this.settingCopy.range = 1;
       }
       window.SceneWanderManager.animation.range = this.settingCopy.range;
       // 当场景漫游的视角类型不是锁定第一视角时，还原显示路径和显示提示信息的状态
       if (value !== 2) {
-        this.settingCopy.showPath = this.showPathBack
-        this.settingCopy.showInfo = this.showInfoBack
+        this.settingCopy.showPath = this.showPathBack;
+        this.settingCopy.showInfo = this.showInfoBack;
       }
     },
     onModelChange(value) {
@@ -564,9 +563,9 @@ export default {
      * @return {Boolean} 是否能设置相机距离
      * */
     showDistanceSlider() {
-      return this.settingCopy.animationType === 1 || this.settingCopy.animationType === 3
-    }
-  }
+      return this.settingCopy.animationType === 3;
+    },
+  },
 };
 </script>
 
