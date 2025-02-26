@@ -357,11 +357,18 @@ export default {
           let { source } = find;
           const m3d = source && source.length > 0 ? source[0] : undefined;
           const version = m3d?.version;
-          // tree数据改为从接口获取
+          // m3d2.1的tree数据改为从接口获取
           this.layerUrl = m3d ? m3d.resource._url : undefined;
           let tree;
-          if (this.layerUrl) {
-            tree = await this.getBIMTreeData(this.layerUrl);
+          if (version === "2.0") {
+            tree = Cesium.M3DTree.createM3DTree(m3d, {
+              createType: "ModelLoaded",
+            });
+            this.parseTree(tree, version);
+          } else if (version === "2.1") {
+            if (this.layerUrl) {
+              tree = await this.getBIMTreeData(this.layerUrl);
+            }
           }
 
           // vm.parseTree(tree);
@@ -372,6 +379,7 @@ export default {
             tree: tree,
             collection: collection,
             primitiveCollection: viewer.scene.primitives.add(collection),
+            version: version,
           });
           if (enablePopup) {
             vm.$_bindPickFeature();
@@ -409,17 +417,60 @@ export default {
       this.selectedKeys = [];
     },
     // 构件树内部逻辑
-    parseTree(tree) {
-      const bimTree = this.loopTreeNode(tree, "", undefined);
+    parseTree(tree, version) {
+      let bimTree;
+      if (version === "2.0") {
+        bimTree = this.loopTreeNode(tree, "", undefined);
+      } else if (version === "2.1") {
+        bimTree = this.loopTreeNodeNew(tree, "", undefined);
+        // 获取当前构件树所有叶子节点
+        this.leafNodeArr = this.allLayerObjs.filter((item) => !item.children);
+      }
       this.layerTree.splice(0, 1, bimTree);
-      // 获取当前构件树所有叶子节点
-      this.leafNodeArr = this.allLayerObjs.filter((item) => !item.children);
       return bimTree;
     },
     generateId() {
       return parseInt(String(Math.random() * 10000000));
     },
+    // m3d2.0数据解析
     loopTreeNode(node, prefix, parent) {
+      const vm = this;
+      let key = `${prefix}_${node.depth}`;
+      // 有节点无nodeName信息 但index属性记录了nodeName对应的属性
+      vm.layerIds.push(node.index || node.nodeName);
+      vm.allLayerIds.push(node.index || node.nodeName);
+
+      let cbnode = {
+        title: node.index || node.nodeName,
+        key: node.index || node.nodeName,
+        index: node.index,
+        attMap: node.attMap && node.attMap._obj ? node.attMap._obj : {},
+        icon: "mapgis-sanweiditu",
+        children: [],
+        parent: parent,
+        isleaf: false,
+        count: 0,
+        scopedSlots: { icon: "icon", title: "title" },
+      };
+      if (cbnode.depth == 0) {
+        cbnode.rootNode = true;
+      }
+      if (node.m3dtreeChildren && node.m3dtreeChildren.length > 0) {
+        node.m3dtreeChildren.forEach((child) => {
+          let c = vm.loopTreeNode(child, key, cbnode);
+          cbnode.children.push(c);
+          cbnode.count += c.count;
+        });
+      }
+      if (cbnode.children.length <= 0) {
+        [delete cbnode.children];
+        cbnode.count = 1;
+        cbnode.isleaf = true;
+      }
+      return cbnode;
+    },
+    // m3d2.1数据解析
+    loopTreeNodeNew(node, prefix, parent) {
       const vm = this;
       // let key = `${prefix}_${node.depth}`;
       let key = `${prefix}_${node.lodLevel}`;
@@ -447,7 +498,7 @@ export default {
       }
       if (node.children?.items && node.children?.items.length > 0) {
         node.children.items.forEach((child) => {
-          let c = vm.loopTreeNode(child, key, cbnode);
+          let c = vm.loopTreeNodeNew(child, key, cbnode);
           cbnode.children.push(c);
           cbnode.count += c.count;
         });
@@ -459,6 +510,21 @@ export default {
       }
       return cbnode;
     },
+    findTreePath(index) {
+      let result = {
+        paths: [],
+        node: undefined,
+      };
+      let root = this.findRoot();
+      let find = this.findNode(root, index);
+      let paths = [];
+      this.findParent(find, paths);
+      this.findChildren(find, paths);
+      result.paths = paths;
+      result.node = find;
+      return result;
+    },
+
     findRoot() {
       const { layerTree } = this;
       if (!layerTree || layerTree.length <= 0) return undefined;
@@ -639,61 +705,83 @@ export default {
       if (this.isolation) return;
       const { halfCheckedKeys } = payload;
       this.layerIds = checks;
-      this.halfCheckedKeys = checks.concat(halfCheckedKeys);
+      this.halfCheckedKeys = [...checks, ...halfCheckedKeys];
     },
     changeLayerVisible(layers) {
       layers = layers || this.layerIds;
       const { vueKey, innerVueIndex, vueCesium, Cesium, allLayerIds } = this;
       const find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
-      const bimLayer = find?.source;
-      if (bimLayer) {
-        let conditions = [];
-        // 如果layers为空则获取根节点设置minTid和maxTid 并且设置透明度为0
-        if (layers.length === 0) {
-          const rootNode = this.findRoot();
-          const {
-            property: { minTid, maxTid },
-          } = rootNode;
-          conditions.push([
-            "(${tid} >= " + minTid + ") && (${tid} <= " + maxTid + ")",
-            "color('#ffffff', 0)",
-          ]);
-        } else {
-          // 通过layers找到构件树叶子节点进行设置minTid和maxTid 并且设置透明度为1
-          const selectedNodes = this.leafNodeArr.filter((item) =>
-            layers.includes(item.id)
-          );
-          const unSelectedNodes = this.leafNodeArr.filter(
-            (item) => !layers.includes(item.id)
-          );
-          // 设置选中的节点显示
-          selectedNodes.forEach((item) => {
-            const {
-              property: { minTid, maxTid },
-            } = item;
-            conditions.push([
-              "(${tid} >= " + minTid + ") && (${tid} <=" + maxTid + ")",
-              "color('#ffffff', 1)",
-            ]);
+
+      const version = find?.options?.version;
+      if (version === "2.0") {
+        const tree = find.options?.tree;
+        if (tree) {
+          // 先让所有节点显示/隐藏
+          allLayerIds.forEach((key) => {
+            const targetNode = tree.getM3DByName(key);
+            if (targetNode) {
+              targetNode.forceInvisible = true;
+            }
           });
 
-          // 设置未选中的节点隐藏
-          unSelectedNodes.forEach((item) => {
-            const {
-              property: { minTid, maxTid },
-            } = item;
-            conditions.push([
-              "(${tid} >= " + minTid + ") && (${tid} <=" + maxTid + ")",
-              "color('#ffffff', 0)",
-            ]);
+          layers.forEach((key) => {
+            const targetNode = tree.getM3DByName(key);
+            if (targetNode) {
+              targetNode.forceInvisible = false;
+            }
           });
         }
-        const targetStyle = new Cesium.Cesium3DTileStyle({
-          color: {
-            conditions,
-          },
-        });
-        bimLayer.style = targetStyle;
+      } else if (version === "2.1") {
+        const bimLayer = find?.source;
+        if (bimLayer) {
+          let conditions = [];
+          // 如果layers为空则获取根节点设置minTid和maxTid 并且设置透明度为0
+          if (layers.length === 0) {
+            const rootNode = this.findRoot();
+            const {
+              property: { minTid, maxTid },
+            } = rootNode;
+            conditions.push([
+              "(${tid} >= " + minTid + ") && (${tid} <= " + maxTid + ")",
+              "color('#ffffff', 0)",
+            ]);
+          } else {
+            // 通过layers找到构件树叶子节点进行设置minTid和maxTid 并且设置透明度为1
+            const selectedNodes = this.leafNodeArr.filter((item) =>
+              layers.includes(item.id)
+            );
+            const unSelectedNodes = this.leafNodeArr.filter(
+              (item) => !layers.includes(item.id)
+            );
+            // 设置选中的节点显示
+            selectedNodes.forEach((item) => {
+              const {
+                property: { minTid, maxTid },
+              } = item;
+              conditions.push([
+                "(${tid} >= " + minTid + ") && (${tid} <=" + maxTid + ")",
+                "color('#ffffff', 1)",
+              ]);
+            });
+
+            // 设置未选中的节点隐藏
+            unSelectedNodes.forEach((item) => {
+              const {
+                property: { minTid, maxTid },
+              } = item;
+              conditions.push([
+                "(${tid} >= " + minTid + ") && (${tid} <=" + maxTid + ")",
+                "color('#ffffff', 0)",
+              ]);
+            });
+          }
+          const targetStyle = new Cesium.Cesium3DTileStyle({
+            color: {
+              conditions,
+            },
+          });
+          bimLayer.style = targetStyle;
+        }
       }
     },
     handleExpandItemKey(key) {
@@ -719,15 +807,30 @@ export default {
     // 重置bim构件树整体样式
     restoreOriginStyle() {
       const { vueKey, innerVueIndex, vueCesium, Cesium } = this;
-      let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
-      if (find && find.source) {
-        // 重置样式
-        const { source } = find;
-        const originStyle = new Cesium.Cesium3DTileStyle({
-          show: "true",
-          color: "color('#ffffff')",
-        });
-        source.style = originStyle;
+      const find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
+      // 获取当前m3d的版本
+      const version = find?.options?.version;
+      if (!version) return;
+
+      if (version === "2.0") {
+        if (find && find.options && find.options.tree) {
+          const { tree } = find.options;
+          const { allLayerIds } = this;
+          allLayerIds.forEach((key) => {
+            const targetNode = tree.getM3DByName(key);
+            targetNode && targetNode.reset();
+          });
+        }
+      } else if (version === "2.1") {
+        if (find && find.source) {
+          // 重置样式
+          const { source } = find;
+          const originStyle = new Cesium.Cesium3DTileStyle({
+            show: "true",
+            color: "color('#ffffff')",
+          });
+          source.style = originStyle;
+        }
       }
     },
     changeIsolation(layer) {
@@ -750,27 +853,53 @@ export default {
       }
     },
     enableIsolation(node) {
+      const { vueKey, innerVueIndex, vueCesium } = this;
+      const { allLayerIds } = this;
+      const find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
+      // 获取当前m3d的版本
+      const version = find?.options?.version;
+      if (!version) return;
+
       const { index } = node;
       // 关闭拾取
       this.featurevisible = false;
       this.selectedKeys = [`${index}`];
+
+      let isolationNode;
       // 找到锁定的节点（包括下级节点）
-      const isolationNode = this.allLayerObjs.find((item) => item.id === index);
-      const allIndexs = [];
-      this.getCurrentNodeAndChildNodeId([isolationNode], allIndexs);
+      let allIndexs = [];
+      if (version === "2.0") {
+        const result = this.findTreePath(index);
+        const { paths, node } = result;
+        allIndexs = paths.map((p) => p.index);
+      } else if (version === "2.1") {
+        isolationNode = this.allLayerObjs.find((item) => item.id === index);
+        this.getCurrentNodeAndChildNodeId([isolationNode], allIndexs);
+      }
       // 设置模型锁定可见的部分
       this.changeLayerVisible(allIndexs);
       // flyto到模型锁定位置
-      this.flyToLayer(isolationNode, allIndexs);
+      this.flyToLayer(isolationNode, allIndexs, version);
       // 禁用bim构件树锁定节点及子节点
       this.disableTree(index);
     },
     disableIsolation(node) {
+      const { vueKey, innerVueIndex, vueCesium } = this;
+      const { allLayerIds } = this;
+      const find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
+      // 获取当前m3d的版本
+      const version = find?.options?.version;
+      if (!version) return;
+
       const { index } = node;
       // 解除构件树的禁用
       this.enableTree(index);
       // 重置图层
-      this.restoreM3d();
+      if (version === "2.0") {
+        this.changeLayerVisible(allLayerIds);
+      } else if (version === "2.1") {
+        this.restoreM3d();
+      }
     },
     handleMenu(menu) {
       if (menu == "隐藏面板") {
@@ -787,12 +916,25 @@ export default {
         this.restoreM3d();
       }
     },
-    flyToLayer(node, allIndexs) {
-      // 要素tid范围默认选择最大边界值
-      const {
-        property: { maxTid },
-      } = node;
-      this.flyToFeature(node, maxTid, allIndexs);
+    flyToLayer(node, allIndexs, version) {
+      if (version === "2.0") {
+        const index = this.selectedKeys[0];
+        const { innerVueIndex, vueKey, vueCesium, viewer } = this;
+        const find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
+        if (find && find.options && find.options.tree) {
+          const { tree } = find.options;
+          const targetNode = tree.getM3DByName(index);
+          if (targetNode) {
+            viewer.camera.flyToBoundingSphere(targetNode.boundingSphere);
+          }
+        }
+      } else if (version === "2.1") {
+        // 要素tid范围默认选择最大边界值
+        const {
+          property: { maxTid },
+        } = node;
+        this.flyToFeature(node, maxTid, allIndexs);
+      }
     },
     async flyToFeature(node, tid, allIndexs) {
       // 判断当前节点是否为叶子节点
@@ -912,34 +1054,49 @@ export default {
       const { highlightStyle } = this;
       this.selectLayerIndex = key;
       const find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
-      if (find && find.source) {
-        const { source } = find;
-        // 获取当前点击的节点
-        const currentNode = this.allLayerObjs.find((item) => item.id === key);
-        // 获取当前节点及子节点的index
-        const allIndexs = [];
-        this.getCurrentNodeAndChildNodeId([currentNode], allIndexs);
-        // 获取需要高亮的子节点
-        const selectedNodes = this.leafNodeArr.filter((item) =>
-          allIndexs.includes(item.id)
-        );
-        // 设置样式
-        const conditions = [];
-        selectedNodes.forEach((item) => {
-          const {
-            property: { minTid, maxTid },
-          } = item;
-          conditions.push([
-            "(${tid} >= " + minTid + ") && (${tid} <=" + maxTid + ")",
-            highlightStyle,
-          ]);
-        });
-        const targetStyle = new Cesium.Cesium3DTileStyle({
-          color: {
-            conditions,
-          },
-        });
-        source.style = targetStyle;
+      // 获取当前m3d的版本
+      const version = find?.options?.version;
+      if (!version) return;
+
+      if (version === "2.0") {
+        if (find && find.options && find.options.tree) {
+          const { tree } = find.options;
+          const targetNode = tree.getM3DByName(key);
+          targetNode &&
+            targetNode.setNodeColor(
+              Cesium.Color.fromCssColorString(highlightStyle)
+            );
+        }
+      } else if (version === "2.1") {
+        if (find && find.source) {
+          const { source } = find;
+          // 获取当前点击的节点
+          const currentNode = this.allLayerObjs.find((item) => item.id === key);
+          // 获取当前节点及子节点的index
+          const allIndexs = [];
+          this.getCurrentNodeAndChildNodeId([currentNode], allIndexs);
+          // 获取需要高亮的子节点
+          const selectedNodes = this.leafNodeArr.filter((item) =>
+            allIndexs.includes(item.id)
+          );
+          // 设置样式
+          const conditions = [];
+          selectedNodes.forEach((item) => {
+            const {
+              property: { minTid, maxTid },
+            } = item;
+            conditions.push([
+              "(${tid} >= " + minTid + ") && (${tid} <=" + maxTid + ")",
+              highlightStyle,
+            ]);
+          });
+          const targetStyle = new Cesium.Cesium3DTileStyle({
+            color: {
+              conditions,
+            },
+          });
+          source.style = targetStyle;
+        }
       }
     },
     handleDynamicQuery() {
@@ -962,8 +1119,9 @@ export default {
       const tempPos = new Cesium.Cartesian3();
       const bimInfo = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
       const m3d = bimInfo?.source;
+      const version = bimInfo?.options?.version;
       // 找不到当前的图层对象不再执行
-      if (!m3d) return;
+      if (!m3d || !version) return;
 
       if (!movement) return;
       if (scene.mode !== Cesium.SceneMode.MORPHING) {
@@ -986,8 +1144,15 @@ export default {
           // 修改说明：M3D2.1已弃用viewer.scene.pickOid方法，后面统一从feature上获取要素id，高亮统一使用Cesium3DTileStyle设置
           // 修改人:龚跃健
           // 修改日期：2024-11-22
-          const id = await feature.getProperty("tid");
-          const conditions = [["${tid} === ${id}", highlightStyle]];
+          let id, conditions;
+          if (version === "2.0") {
+            id = feature.getProperty("OID");
+            conditions = [["${OID} === ${id}", highlightStyle]];
+          } else if (version === "2.1") {
+            id = await feature.getProperty("tid");
+            conditions = [["${tid} === ${id}", highlightStyle]];
+          }
+
           m3d.style = new Cesium.Cesium3DTileStyle({
             defines: {
               id,
@@ -1028,18 +1193,27 @@ export default {
     },
 
     // 获取选中的构建树tree数据
-    getBIMTreeData(url) {
+    getBIMTreeData(url, version = "2.1") {
+      const { Cesium } = this;
       return new Promise((resolve, reject) => {
-        axios
-          .get(url + "/structuretree.json")
-          .then((res) => {
-            // const structureTree = res.data;
-            resolve(this.parseTree(res.data));
-          })
-          .catch((Error) => {
+        if (version === "2.0") {
+          try {
+          } catch (error) {
             this.$message.error("BIM构件树节点信息获取失败！");
-            reject(Error);
-          });
+            reject(error);
+          }
+        } else if (version === "2.1") {
+          axios
+            .get(url + "/structuretree.json")
+            .then((res) => {
+              // const structureTree = res.data;
+              resolve(this.parseTree(res.data, version));
+            })
+            .catch((Error) => {
+              this.$message.error("BIM构件树节点信息获取失败！");
+              reject(Error);
+            });
+        }
       });
     },
   },
