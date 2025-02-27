@@ -61,31 +61,20 @@ export default {
         }
         this.initCityGrowObject();
       },
-      deep: true,
-      immediate: true,
+      deep: true
     },
     formatType: {
       handler(next) {
         this.formatTypeCopy = next;
       },
     },
+    // 速度变化时重新执行动画
     speedValue: {
       handler(next) {
-        if (next > 0) {
-          this.playBtn = true;
-          this.backBtn = false;
-          this.suspendBtn = false;
-          this.startGrow()
-        } else if (next < 0) {
-          this.playBtn = false;
-          this.backBtn = true;
-          this.suspendBtn = false;
-          this.startGrow()
-        } else {
-          this.playBtn = false;
-          this.backBtn = false;
-          this.suspendBtn = true;
+        if(this.suspendBtn) {
+          return
         }
+        this.startGrow()
       },
     },
     playBtn: {
@@ -154,7 +143,8 @@ export default {
     },
     // 改变建筑生长的当前时间
     changeTimeExtent(t) {
-      const { start, end } = this.featureGridCollection.timeInfo.fullTimeExtent
+      if(!this.featureGridCollection) return
+      const { start } = this.featureGridCollection.timeInfo.fullTimeExtent
       this.featureGridCollection.timeExtent = new TimeExtent({
         start,
         end: new Date(t)
@@ -168,6 +158,7 @@ export default {
       let times = [];
       let options = {};
       vm.featureStyleCopy = Object.assign(vm.featureStyleCopy, vm.featureStyle);
+      this.removeCityGrid()
       const igsFeatureLayer = new IGSFeatureLayer({
         url,
         // url: 'http://192.168.82.91:8089/igs/rest/services/Map/深圳市白模/FeatureServer',
@@ -335,7 +326,12 @@ export default {
       this.startGrow();
     },
     backSetting() {
-      this.speedValue = -this.speedValue;
+      if(this.speedValue > 0) {
+        this.speedValue = -this.speedValue;
+      }
+      this.playBtn = false;
+      this.backBtn = true;
+      this.suspendBtn = false;
       this.startGrow();
     },
     suspendSetting() {
@@ -348,6 +344,9 @@ export default {
     },
     playSetting() {
       this.speedValue = Math.abs(this.speedValue);
+      this.playBtn = true;
+      this.backBtn = false;
+      this.suspendBtn = false;
       this.startGrow();
     },
     onChange(value) {
