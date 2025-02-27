@@ -591,7 +591,7 @@ export default class FeatureQuery {
           : option.geometry.getGeometryType();
       queryParam.geometry = option.geometry.toString();
     }
-    queryParam.where = option.where || null;
+    queryParam.where = option.where || '';
     queryParam.returnGeometry = option.returnGeometry || true;
     queryParam.returnAttribute = option.returnAttribute || true;
     queryParam.returnStyle = option.returnStyle || false;
@@ -599,27 +599,27 @@ export default class FeatureQuery {
     queryParam.returnCountOnly = option.returnCountOnly || false;
     queryParam.returnExtentOnly = option.returnExtentOnly || false;
 
-    queryParam.objectIds = option.objectIds || null;
-    queryParam.outFields = option.outFields || null;
-    queryParam.url = option.url || null;
-    queryParam.mapResource = option.mapResource || null;
-    queryParam.distance = option.distance || null;
-    queryParam.geometryPrecision = option.geometryPrecision || null;
-    queryParam.spatialRel = option.spatialRel || null;
-    queryParam.orderByFields = option.orderByFields || null;
-    queryParam.outStatistics = option.outStatistics || null;
+    queryParam.objectIds = option.objectIds || '';
+    queryParam.outFields = option.outFields || '';
+    queryParam.url = option.url || '';
+    queryParam.mapResource = option.mapResource || '';
+    queryParam.distance = option.distance || '';
+    queryParam.geometryPrecision = option.geometryPrecision || '';
+    queryParam.spatialRel = option.spatialRel || '';
+    queryParam.orderByFields = option.orderByFields || '';
+    queryParam.outStatistics = option.outStatistics || '';
     queryParam.groupByFieldsForStatistics =
-      option.groupByFieldsForStatistics || null;
+      option.groupByFieldsForStatistics || '';
     const resultRecordCount = option.pageCount || 10;
     const page = option.page || 0;
     const resultOffset = page * resultRecordCount;
     queryParam.resultRecordCount = resultRecordCount;
     queryParam.resultOffset = resultOffset;
     queryParam.returnZ = option.returnZ || false;
-    queryParam.is6xAcls = option.is6xAcls || null;
+    queryParam.is6xAcls = option.is6xAcls || '';
     queryParam.inSrs = option.inSrs || "WGS1984_度";
     queryParam.outSrs = option.outSrs || "WGS1984_度";
-    let domain = option.domain || null;
+    let domain = option.domain || '';
     if (!domain) {
       const protocol =
         option.protocol || window.location.protocol.split(":")[0];
