@@ -1119,15 +1119,6 @@ export default {
                 vm.iClickFeatures = [{ properties: result }];
               }
               pickInfo.properties = result;
-            } else {
-              tileset.queryAttributes(id).then(function (result) {
-                result = result || {};
-                if (vm.showPopup) {
-                  vm.featureproperties = result;
-                  vm.iClickFeatures = [{ properties: result }];
-                }
-                pickInfo.properties = result;
-              });
             }
 
             if (popupShowType === "right") {
