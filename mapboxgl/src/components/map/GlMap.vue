@@ -21,11 +21,7 @@ import { initManager, initVueMap } from "./manager";
 import { addListener, removeListener } from "resize-detector";
 import debounce from "lodash/debounce";
 
-import plot from "@mapgis/webclient-plot";
-const {
-  PlotLayer2DGroup = Zondy.Plot.PlotLayer2DGroup,
-  FabricLayer = Zondy.Plot.FabricLayer,
-} = plot;
+import { PlotLayer2DGroup, FabricLayer } from "@mapgis/webclient-plot";
 const MapboxDraw = MapboxDrawCom.default;
 
 export default {

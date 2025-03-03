@@ -4,12 +4,11 @@
 
 <script>
 import axios from "axios";
-import plot from "@mapgis/webclient-plot";
-const {
-  SymbolManager = window.Zondy.Plot.SymbolManager,
-  PlotLayer3DGroup = window.Zondy.Plot.PlotLayer3DGroup,
-  PlotLayer3D = window.Zondy.Plot.PlotLayer3D,
-} = plot;
+import {
+  SymbolManager,
+  PlotLayer3DGroup,
+  PlotLayer3D,
+} from "@mapgis/webclient-plot";
 
 export default {
   name: "mapgis-3d-plot-layer",
