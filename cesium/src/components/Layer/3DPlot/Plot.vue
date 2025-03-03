@@ -34,11 +34,7 @@
 
 <script>
 import { styleAttributesUIConfig } from "@mapgis/webclient-vue-ui";
-import plot from "@mapgis/webclient-plot";
-const {
-  SymbolManager = window.Zondy.Plot.SymbolManager,
-  DrawTool = window.Zondy.Plot.DrawTool
-} = plot;
+import { SymbolManager, DrawTool } from "@mapgis/webclient-plot";
 
 export default {
   name: "mapgis-3d-plot",
@@ -48,53 +44,53 @@ export default {
      * 标绘图层的vueKey
      */
     vueKey: {
-      type: String
+      type: String,
     },
     /**
      * 标绘图层的vueIndex
      */
     vueIndex: {
-      type: [Number, String]
+      type: [Number, String],
     },
     /**
      * 符号库url
      */
     symbolUrl: {
       type: [String, Object],
-      required: true
+      required: true,
     },
     /**
      * 字体基地址
      */
     fontUrl: {
       type: String,
-      default: ""
+      default: "",
     },
     /**
      * 标绘符号基地址
      */
     baseUrl: {
       type: String,
-      default: ""
+      default: "",
     },
     isSetPick: {
       type: Boolean,
-      default: true
+      default: true,
     },
     /**
      * 是否使用IGS作文文件服务，默认true
      */
     useIGS: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   created() {
     this.styleAttributesUIConfig = styleAttributesUIConfig;
     // 设置三维标绘的填充类型属性的选项
     this.styleAttributesUIConfig.fillStyleType.options = {
       0: "无填充",
-      1: "实填充"
+      1: "实填充",
     };
     // console.log("styleAttributesUIConfig", styleAttributesUIConfig);
   },
@@ -112,7 +108,7 @@ export default {
       symbolType: undefined,
       styleAttributesUIConfig: undefined,
 
-      canFill: true
+      canFill: true,
     };
   },
   mounted() {
@@ -132,8 +128,8 @@ export default {
           }
         }
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   methods: {
     deletePlot() {
@@ -162,7 +158,7 @@ export default {
       let drawTool = this.getDrawTool();
       if (!drawTool) {
         drawTool = new DrawTool(layer, {
-          addedPlot: function(plot) {
+          addedPlot: function (plot) {
             vm.isDraw = true;
             let exist = vm.getPlot();
             if (exist) {
@@ -187,7 +183,7 @@ export default {
               drawTool.drawPlot(JSON.parse(JSON.stringify(symbol)));
             }
             // console.log("addedPlot--getStyle--json: ", json);
-          }
+          },
         });
         window.vueCesium.DrawToolManager.addSource(
           this.vueKey,
@@ -206,7 +202,7 @@ export default {
       const vm = this;
       let layer = this.getLayer();
       if (!layer) return;
-      layer.pickPlot = async function(plot) {
+      layer.pickPlot = async function (plot) {
         if (!plot) return;
         vm.isDraw = true;
         let exist = vm.getPlot();
@@ -245,34 +241,34 @@ export default {
         manager = new SymbolManager(this.symbolUrl, {
           fontURL: vm.fontUrl,
           baseUrl: vm.baseUrl,
-          requestSymbolSourceType:this.useIGS?'id':'path'
+          requestSymbolSourceType: this.useIGS ? "id" : "path",
         });
         window.PlotSymbolManager = manager;
       }
 
-      manager.getSymbols().then(function(symbols) {
+      manager.getSymbols().then(function (symbols) {
         // console.log("symbols", symbols);
         vm.symbols = [];
         viewer.scene.globe.depthTestAgainstTerrain = false;
         let symbolCls;
-        symbols.children.forEach(item => {
+        symbols.children.forEach((item) => {
           if (item.children[0].children) {
             symbolCls = {
               title: item.name,
-              children: []
+              children: [],
             };
             let clsChildren = {};
-            item.children.forEach(icon => {
-              icon.children.forEach(i => {
+            item.children.forEach((icon) => {
+              icon.children.forEach((i) => {
                 let type = icon.name ? icon.name : i.type;
                 clsChildren[type] = clsChildren[type] || [];
                 clsChildren[type].push(i);
               });
             });
-            Object.keys(clsChildren).forEach(iconT => {
+            Object.keys(clsChildren).forEach((iconT) => {
               symbolCls.children.push({
                 type: iconT,
-                icon: clsChildren[iconT]
+                icon: clsChildren[iconT],
               });
               vm.symbols = [...vm.symbols, ...clsChildren[iconT]];
             });
@@ -281,9 +277,9 @@ export default {
               children: [
                 {
                   type: item.name,
-                  icon: item.children
-                }
-              ]
+                  icon: item.children,
+                },
+              ],
             };
             vm.symbols = [...vm.symbols, ...item.children];
           }
@@ -328,7 +324,7 @@ export default {
         );
       }
       // 调用primitive上的getStyleJSON
-      symbol.getElement().then(function(res) {
+      symbol.getElement().then(function (res) {
         // console.log("symbol", res);
         vm.symbolType = res.type;
         vm.canFill = !res.isMustFill;
@@ -450,16 +446,16 @@ export default {
               name: "符号库",
               symbolId: "51240178-f12e-11ec-9bce-ac74b1ee4018",
               type: "folder",
-              items: []
-            }
-          ]
+              items: [],
+            },
+          ],
         };
         for (let i = 0; i < result.length; i++) {
           this.searchResult.items[0].items.push({
             symbolId: result[i].id,
             name: result[i].name,
             type: result[i].type,
-            path: result[i].src
+            path: result[i].src,
           });
         }
         this.symbolData.symbols.unshift(this.searchResult);
@@ -477,10 +473,11 @@ export default {
       return layerManager && layerManager.source;
     },
     getLayers() {
-      let PlotLayerGroupManager = window.vueCesium.PlotLayerGroupManager.findSource(
-        this.vueKey,
-        this.vueIndex
-      );
+      let PlotLayerGroupManager =
+        window.vueCesium.PlotLayerGroupManager.findSource(
+          this.vueKey,
+          this.vueIndex
+        );
       return PlotLayerGroupManager && PlotLayerGroupManager.source;
     },
     getDrawTool() {
@@ -509,8 +506,8 @@ export default {
     getSymbolManager() {
       let PlotSymbolManager = window.PlotSymbolManager;
       return PlotSymbolManager;
-    }
-  }
+    },
+  },
 };
 </script>
 

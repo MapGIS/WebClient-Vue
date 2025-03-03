@@ -23,7 +23,7 @@
       :is3dLayer="true"
       v-if="!showScriptList"
       @return="
-        e => {
+        (e) => {
           showScriptList = e;
           $emit('save', scriptListCopy[activeIndex]);
         }
@@ -40,7 +40,7 @@
       :min="minValue"
       :max="maxValue"
       :change="
-        e => {
+        (e) => {
           value = e;
         }
       "
@@ -63,7 +63,7 @@
         :min="minValue"
         :max="maxValue"
         @change="
-          e => {
+          (e) => {
             value = e;
           }
         "
@@ -88,8 +88,7 @@
 
 <script>
 import axios from "axios";
-import plot from "@mapgis/webclient-plot";
-const { TimeLine = window.Zondy.Plot.TimeLine } = plot;
+import { TimeLine } from "@mapgis/webclient-plot";
 
 export default {
   name: "mapgis-3d-plot-animation",
@@ -99,22 +98,22 @@ export default {
      * 标绘图层的vueKey
      */
     vueKey: {
-      type: String
+      type: String,
     },
     /**
      * 标绘图层的vueIndex
      */
     vueIndex: {
-      type: [Number, String]
+      type: [Number, String],
     },
     data: {
-      type: [String, Object, Array]
+      type: [String, Object, Array],
     },
     script: {
-      type: [String, Object]
+      type: [String, Object],
     },
     scriptList: {
-      type: [String, Array]
+      type: [String, Array],
     },
     attrsItemOptions: {
       type: Array,
@@ -126,9 +125,9 @@ export default {
           // "fillGradColor",
           "fillStyle",
           "dimModHeight",
-          "lineWidth"
+          "lineWidth",
         ];
-      }
+      },
     },
     attrsItemColorOptions: {
       type: Array,
@@ -138,18 +137,18 @@ export default {
           // "wallGradColor",
           "strokeStyle",
           // "fillGradColor",
-          "fillStyle"
+          "fillStyle",
         ];
-      }
+      },
     },
     showTimeline: {
       type: Boolean,
-      default: true
+      default: true,
     },
     currentTime: {
       type: String,
-      default: "2022-02"
-    }
+      default: "2022-02",
+    },
   },
   data() {
     return {
@@ -163,12 +162,12 @@ export default {
       nodeNames: undefined,
       totalTime: 240,
       interval: "未设置",
-      speed: 1
+      speed: 1,
     };
   },
   watch: {
     data: {
-      handler: async function(e) {
+      handler: async function (e) {
         const vm = this;
         // let json;
         switch (typeof e) {
@@ -185,7 +184,7 @@ export default {
         }
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     // vueIndex(val) {
     //   let layer = this.getLayer();
@@ -197,7 +196,7 @@ export default {
     value(e) {
       let timeline = this.getPlotAnimation();
       timeline && timeline.seek(e * 1000);
-    }
+    },
   },
   mounted() {
     this.mount();
@@ -225,7 +224,7 @@ export default {
     setPick() {
       const vm = this;
       let layer = this.getLayer();
-      layer.pickPlot = function(plot) {
+      layer.pickPlot = function (plot) {
         if (!plot) return;
         // console.log("plot-animation-3d", plot);
         let json = plot.getStyle();
@@ -258,8 +257,8 @@ export default {
         axios({
           method: "get",
           url: vm.data,
-          timeout: 1000
-        }).then(res => {
+          timeout: 1000,
+        }).then((res) => {
           vm.activeIndex = 0;
           vm.scriptListCopy = [res.data];
           timeline.fromJSON(JSON.parse(JSON.stringify(res.data)));
@@ -428,20 +427,22 @@ export default {
       return layerManager && layerManager.source;
     },
     getLayers() {
-      let PlotLayerGroupManager = window.vueCesium.PlotLayerGroupManager.findSource(
-        this.vueKey,
-        this.vueIndex
-      );
+      let PlotLayerGroupManager =
+        window.vueCesium.PlotLayerGroupManager.findSource(
+          this.vueKey,
+          this.vueIndex
+        );
       return PlotLayerGroupManager && PlotLayerGroupManager.source;
     },
     getPlotAnimation() {
-      let PlotAnimationManager = window.vueCesium.PlotAnimationManager.findSource(
-        this.vueKey,
-        this.vueIndex
-      );
+      let PlotAnimationManager =
+        window.vueCesium.PlotAnimationManager.findSource(
+          this.vueKey,
+          this.vueIndex
+        );
       return PlotAnimationManager && PlotAnimationManager.source;
-    }
-  }
+    },
+  },
 };
 </script>
 
