@@ -48,7 +48,7 @@ import {
   CircleMode,
   DragCircleMode,
   DirectMode,
-  SimpleSelectMode
+  SimpleSelectMode,
 } from "@mapgis/mapbox-gl-draw-circle";
 import StaticMode from "@mapgis/mapbox-gl-draw-static-mode";
 
@@ -90,7 +90,7 @@ const drawEvents = {
   drawrender: "draw.render",
   drawactionable: "draw.actionable",
   mousedown: "mousedown",
-  mouseup: "mouseup"
+  mouseup: "mouseup",
 };
 
 export default {
@@ -109,18 +109,18 @@ export default {
       get drawer() {
         // 提供marker给子组件popup或者插槽槽
         return self.drawer;
-      }
+      },
     };
   },
 
   props: {
     editable: {
       type: Boolean,
-      default: true
+      default: true,
     },
     closeEdit: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // expandControl: {
     //   type: Boolean,
@@ -128,28 +128,28 @@ export default {
     // },
     enableControl: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // mapbox drawer options
     keybindings: {
       type: Boolean,
-      default: true
+      default: true,
     },
     touchEnabled: {
       type: Boolean,
-      default: true
+      default: true,
     },
     boxSelect: {
       type: Boolean,
-      default: true
+      default: true,
     },
     clickBuffer: {
       type: Number,
-      default: 2
+      default: 2,
     },
     touchBuffer: {
       type: Number,
-      default: 25
+      default: 25,
     },
     controls: {
       type: Object,
@@ -160,34 +160,34 @@ export default {
           polygon: false,
           trash: false,
           combine_features: false,
-          uncombine_features: false
+          uncombine_features: false,
         };
-      }
+      },
     },
     displayControlsDefault: {
       type: Boolean,
-      default: true
+      default: true,
     },
     styles: {
       type: Array,
-      default: () => DefaultDrawStyle
+      default: () => DefaultDrawStyle,
     },
     modes: {
       type: Object,
-      default: () => modes
+      default: () => modes,
     },
     defaultMode: {
       type: String,
-      default: "simple_select"
+      default: "simple_select",
     },
     userProperties: {
       type: Boolean,
-      default: false
+      default: false,
     },
     showSize: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   data() {
@@ -207,50 +207,50 @@ export default {
           icon: "mapgis-huizhidian2",
           type: "primary",
           tip: "画点",
-          click: this.togglePoint
+          click: this.togglePoint,
         },
         {
           icon: "mapgis-huizhixian1",
           type: "primary",
           tip: "画线",
-          click: this.togglePolyline
+          click: this.togglePolyline,
         },
         {
           icon: "mapgis-huizhijuxing",
           type: "primary",
           tip: "画矩形",
-          click: this.toggleRect
+          click: this.toggleRect,
         },
         {
           icon: "mapgis-draw-polygon",
           type: "primary",
           tip: "画多边形",
-          click: this.togglePolygon
+          click: this.togglePolygon,
         },
         {
           icon: "mapgis-huizhiyuan1",
           type: "primary",
           tip: "画圆",
-          click: this.toggleCircle
+          click: this.toggleCircle,
         },
         {
           icon: "mapgis-icon_huizhiyuanxing",
           type: "primary",
           tip: "画半径",
-          click: this.toggleRadius
+          click: this.toggleRadius,
         },
         {
           icon: "mapgis-shanchu_dianji",
           type: "primary",
           tip: "删除选中图元",
-          click: this.toggleDelete
+          click: this.toggleDelete,
         },
         {
           icon: "mapgis-shanchu_dianji",
           type: "primary",
           tip: "删除全部",
-          click: this.toggleDeleteAll
-        }
+          click: this.toggleDeleteAll,
+        },
       ],
       markerCoordinate: [],
       centerCoordinate: [],
@@ -261,16 +261,16 @@ export default {
       oldFeature: [
         {
           geometry: {
-            coordinates: []
+            coordinates: [],
           },
           id: "",
           properties: {},
-          type: "Feature"
-        }
+          type: "Feature",
+        },
       ],
       showSizeStyle: this.styles,
       // 控制按钮是否可用(在瓦片未加载成功时不可用)
-      btnabled: false
+      btnabled: false,
     };
   },
 
@@ -280,11 +280,11 @@ export default {
       this.drawer.setLngLat(lngLat);
     },
     styles: {
-      handler: function(news) {
+      handler: function (news) {
         this.oldStyles = this.combineStyle(news);
         this.showSizeStyle = news;
-      }
-    }
+      },
+    },
   },
 
   mounted() {
@@ -337,13 +337,13 @@ export default {
     $_initDraw() {
       const draweroptions = {
         ...this.$props,
-        styles: this.oldStyles
+        styles: this.oldStyles,
       };
       this.initial = false;
 
       // draw在初始化map的时候已经作为control添加到map上了
       this.drawer = {
-        ...this.map._controls.find(item => item instanceof MapboxDraw)
+        ...this.map._controls.find((item) => item instanceof MapboxDraw),
       };
       this.drawer.options = { ...draweroptions };
       this.$_compareStyle();
@@ -355,10 +355,7 @@ export default {
      * 一张图因为调用机制的问题，组件初始化时并不能监测到后续添加的地图，因此在测量绘制前调整顺序
      */
     $_moveLayer() {
-      let layersId = [];
-      this.map.getStyle().layers.forEach(layer => {
-        layersId.push(layer.id);
-      });
+      let layersId = this.map.style._order || [];
       for (
         let i = layersId.indexOf("gl-draw-point-static.hot") + 1;
         i < layersId.length;
@@ -388,7 +385,7 @@ export default {
             "drawRender",
             "drawActionable",
             "mousedown",
-            "mouseup"
+            "mouseup",
           ].concat(Object.keys(this.$listeners))
         )
       );
@@ -396,7 +393,7 @@ export default {
 
       // 使用vue的this.$listeners方式来订阅用户指定的事件
       // Object.keys(this.$listeners).forEach(eventName => {
-      listeners.forEach(eventName => {
+      listeners.forEach((eventName) => {
         if (events.includes(eventName)) {
           this.$_bindDrawEvents(
             drawEvents[eventName],
@@ -432,7 +429,7 @@ export default {
       if (vm.drawRadius && eventName === "drawActionable") {
         if (!eventData.actions.trash) {
           let style = vm.oldStyles.filter(
-            s => s.id === "gl-draw-point-inactive"
+            (s) => s.id === "gl-draw-point-inactive"
           );
           if (vm.map.getLayer("centerPoint")) {
             vm.map.setPaintProperty(
@@ -446,7 +443,7 @@ export default {
               style[0].paint["circle-color"]
             );
           }
-          style = vm.oldStyles.filter(s => s.id === "gl-draw-line-inactive");
+          style = vm.oldStyles.filter((s) => s.id === "gl-draw-line-inactive");
           if (vm.map.getLayer("extent")) {
             vm.map.setPaintProperty(
               "extent",
@@ -507,8 +504,8 @@ export default {
     combineStyle(news) {
       let olds = this.oldStyles || DefaultDrawStyle;
       news = news || this.styles;
-      let combines = olds.filter(l => {
-        return !news.find(f => f.id === l.id);
+      let combines = olds.filter((l) => {
+        return !news.find((f) => f.id === l.id);
       });
       combines = combines.concat(news);
       return combines;
@@ -516,7 +513,7 @@ export default {
 
     changeMapStyle(layers) {
       let { map } = this;
-      layers.forEach(layer => {
+      layers.forEach((layer) => {
         // 两种类型，一种cold，一种hot,要在layer.id后面加.cold或者.hot，这才是在map中的layer名
         let layerIds = [];
         layerIds.push(`${layer.id}.cold`, `${layer.id}.hot`);
@@ -527,12 +524,12 @@ export default {
               map.setFilter(layerIds[i], layer.filter);
             }
             if (layer.paint) {
-              Object.keys(layer.paint).forEach(key => {
+              Object.keys(layer.paint).forEach((key) => {
                 map.setPaintProperty(layerIds[i], key, layer.paint[key]);
               });
             }
             if (layer.layout) {
-              Object.keys(layer.layout).forEach(key => {
+              Object.keys(layer.layout).forEach((key) => {
                 map.setLayoutProperty(layerIds[i], key, layer.layout[key]);
               });
             }
@@ -641,7 +638,7 @@ export default {
       let lineString = turf.lineString(
         [
           [onePoint.geometry.coordinates[0], onePoint.geometry.coordinates[1]],
-          [center[0], center[1]]
+          [center[0], center[1]],
         ],
         { name: "line1" }
       );
@@ -652,16 +649,16 @@ export default {
       let midPoint = turf.midpoint(onePoint, point);
       vm.markerCoordinate = [
         midPoint.geometry.coordinates[0],
-        midPoint.geometry.coordinates[1]
+        midPoint.geometry.coordinates[1],
       ];
       vm.radius = parseInt(radiusinkm * 1000);
       if (vm.showSize) {
         vm.showMarkerCopy = true;
         let pointStyle = vm.oldStyles.filter(
-          s => s.id === "gl-draw-point-active"
+          (s) => s.id === "gl-draw-point-active"
         );
         let lineStyle = vm.oldStyles.filter(
-          s => s.id === "gl-draw-line-active"
+          (s) => s.id === "gl-draw-line-active"
         );
         // 先判断是否存在id为extent的线图层，有则删除，无则添加线图层
         if (vm.map.getLayer("centerPoint")) {
@@ -681,13 +678,13 @@ export default {
         } else {
           vm.map.addSource("centerPoint", {
             type: "geojson",
-            data: point
+            data: point,
           });
           vm.map.addLayer({
             id: "centerPoint",
             type: "circle",
             source: "centerPoint",
-            paint: pointStyle[0].paint
+            paint: pointStyle[0].paint,
           });
         }
         if (vm.map.getLayer("extent")) {
@@ -707,19 +704,19 @@ export default {
         } else {
           vm.map.addSource("extent", {
             type: "geojson",
-            data: lineString
+            data: lineString,
           });
           vm.map.addLayer({
             id: "extent",
             type: "line",
             source: "extent",
             // layout:style[0].layout,
-            paint: lineStyle[0].paint
+            paint: lineStyle[0].paint,
           });
         }
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
