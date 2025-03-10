@@ -3,6 +3,7 @@
 </template>
 <script>
 import ServiceLayer from "../ServiceLayer";
+import { ArcGISMapImageLayer } from "@mapgis/webclient-common";
 
 export default {
   name: "mapgis-3d-arcgis-map-layer",
@@ -60,24 +61,53 @@ export default {
   },
   methods: {
     mount() {
-      //先处理相关参数：
-      let options = {};
-      let { layers } = this;
-      if (layers) {
-        if (layers.indexOf("show") >= 0) {
-          layers = this.layers.replace("show:", "");
-        }
-      }
       const { baseUrl } = this;
-      //存在srs，则生成tilingScheme对象
-      if (this.srs) {
-        options.tilingScheme = this.$_setTilingScheme(this.srs);
-      }
-      // 不使用瓦片缓存，部分服务可能没有开启瓦片服务，比如IGS转发的ArcGIS服务
-      options.usePreCachedTilesIfAvailable = false;
-      const allOptions = { ...options, layers, baseUrl };
+      let { layers } = this;
+      if (this.renderMode && this.renderMode === "image-map") {
+        const { viewer } = this;
+        const sublayers = [];
+        let tempLayers = layers || "";
+        if (tempLayers.includes("show:")) {
+          tempLayers = tempLayers.split("show:")[1];
+        }
+        const showLayerIds = tempLayers.split(",");
+        for (let i = 0; i < showLayerIds.length; i++) {
+          if (showLayerIds[i] && showLayerIds[i] !== "") {
+            sublayers.push({
+              id: showLayerIds[i],
+              visible: true,
+            });
+          }
+        }
+        const arcGISMapImageLayer = new ArcGISMapImageLayer({
+          url: baseUrl,
+          renderMode: "image",
+          sublayers,
+        });
+        const self = this;
+        arcGISMapImageLayer.load().then((layer) => {
+          // 获取provider的初始化参数
+          const options = zondy.cesium.util.initializeOptions(layer, viewer);
+          self.$_mount(options);
+        });
+      } else {
+        //先处理相关参数：
+        let options = {};
+        if (layers) {
+          if (layers.indexOf("show") >= 0) {
+            layers = this.layers.replace("show:", "");
+          }
+        }
+        //存在srs，则生成tilingScheme对象
+        if (this.srs) {
+          options.tilingScheme = this.$_setTilingScheme(this.srs);
+        }
+        // 不使用瓦片缓存，部分服务可能没有开启瓦片服务，比如IGS转发的ArcGIS服务
+        options.usePreCachedTilesIfAvailable = false;
+        const allOptions = { ...options, layers, baseUrl };
 
-      this.$_mount(allOptions);
+        this.$_mount(allOptions);
+      }
     },
     unmount() {
       this.$_unmount();

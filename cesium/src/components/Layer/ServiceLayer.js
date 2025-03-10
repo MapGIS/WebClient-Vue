@@ -1,4 +1,5 @@
 import { CustomWKID } from "@mapgis/webclient-common";
+import { GroundPrimitiveLayer } from "@mapgis/webclient-cesium-plugin";
 export default {
   inject: ["viewer"],
   props: {
@@ -65,6 +66,10 @@ export default {
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
       }
+    },
+    renderMode: {
+      type: String,
+      default: "raster"
     }
   },
   data() {
@@ -218,12 +223,27 @@ export default {
       const { saturation, hue } = options;
       const { visible, opacity, zIndex } = layerStyle;
       const { imageryLayers } = this.$_getWebGlobe();
-
       let provider;
-      if (vueCesiumLayer) {
-        provider = new vueCesiumLayer(options);
+      let imageryLayer;
+      if (this.renderMode && this.renderMode === "image-map") {
+        imageryLayer = new GroundPrimitiveLayer(
+          Object.assign(options, {
+            viewer: viewer
+          })
+        );
+        imageryLayer.addLayer();
       } else {
-        provider = new Cesium[this.providerName](options);
+        if (vueCesiumLayer) {
+          provider = new vueCesiumLayer(options);
+        } else {
+          provider = new Cesium[this.providerName](options);
+        }
+
+        //不管有没有设置zIndex先同意往上面叠放
+        imageryLayer = imageryLayers.addImageryProvider(
+          provider,
+          imageryLayers._layers.length
+        );
       }
 
       //初始化imageryLayers.addImageryProvider需要的index
@@ -239,12 +259,6 @@ export default {
         //如果有layerStyle.zIndex，则layer的zIndex为layerStyle.zIndex
         providerZIndex = zIndex;
       }
-
-      //不管有没有设置zIndex先同意往上面叠放
-      let imageryLayer = imageryLayers.addImageryProvider(
-        provider,
-        imageryLayers._layers.length
-      );
 
       //如果有zIndex，则保证zIndex大于0的layer始终在zIndex为0的layer上面，并按照zIndex从大到小排序
       //如果没有zIndex，则按初始化顺序向上叠放，如果在此layer的下方含有zIndex大于0的layer，则layer向下一层，直到下方没有包含zIndex大于0的layer
@@ -311,7 +325,14 @@ export default {
         vueKey,
         vueIndex
       );
-      imageryLayers.remove(find.source, true);
+      if (!find) {
+        return;
+      }
+      if (this.renderMode && this.renderMode === "image-map") {
+        find.source.removeLayer();
+      } else {
+        imageryLayers.remove(find.source, true);
+      }
       window.vueCesium[this.managerName].deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },

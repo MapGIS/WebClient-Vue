@@ -4,6 +4,7 @@
 
 <script>
 import ServiceLayer from "../ServiceLayer";
+import { WMSLayer } from "@mapgis/webclient-common";
 
 export default {
   name: "mapgis-3d-ogc-wms-layer",
@@ -11,12 +12,11 @@ export default {
   mixins: [ServiceLayer],
   props: {
     layers: { type: String, required: true },
-    styles: { type: String,default: "" },
-    // crs: { type: String },
+    styles: { type: String, default: "" },
     srs: { type: String },
-    format:{ type: String , default: "image/png"},
-    transparent:{ type: Boolean , default: true},
-    version:{ type: String , default: "1.1.1"},
+    format: { type: String, default: "image/png" },
+    transparent: { type: Boolean, default: true },
+    version: { type: String, default: "1.1.1" },
   },
   data() {
     return {
@@ -42,10 +42,10 @@ export default {
         times: "object",
         proxy: "object",
         vueKey: "string",
-        vueIndex: "string|number"
+        vueIndex: "string|number",
       },
       managerName: "OGCWMSManager",
-      providerName: "WebMapServiceImageryProvider"
+      providerName: "WebMapServiceImageryProvider",
     };
   },
   mounted() {
@@ -56,50 +56,75 @@ export default {
   },
   watch: {
     layers: {
-      handler: function() {
+      handler: function () {
         this.unmount();
         this.mount();
-      }
+      },
     },
     styles: {
-      handler: function() {
+      handler: function () {
         this.unmount();
         this.mount();
-      }
+      },
     },
     srs: {
-      handler: function() {
+      handler: function () {
         this.unmount();
         this.mount();
-      }
+      },
     },
-    // crs: {
-    //   handler: function() {
-    //     this.unmount();
-    //     this.mount();
-    //   }
-    // }
   },
   methods: {
     mount() {
-      let { srs } = this;
-      let opt = {};
-      //处理独有参数
-      //如果srs或crs存在，则生成tilingScheme对象，动态投影会用到
-      if (srs) {
-        opt.tilingScheme = this.$_setTilingScheme(srs);
+      if (this.renderMode && this.renderMode === "image-map") {
+        const { viewer, baseUrl, layers, styles, transparent } = this;
+        const sublayers = [];
+        if (layers) {
+          const showLayerIds = layers.split(",");
+          for (let i = 0; i < showLayerIds.length; i++) {
+            if (showLayerIds[i] && showLayerIds[i] !== "") {
+              sublayers.push({
+                id: showLayerIds[i],
+                visible: true,
+              });
+            }
+          }
+        }
+        const wmsLayer = new WMSLayer({
+          url: baseUrl,
+          renderMode: "image",
+          // 设置子图层属性，可选项
+          sublayers,
+          styles: styles,
+          imageTransparency: transparent,
+        });
+        const self = this;
+        wmsLayer.load().then((layer) => {
+          // 获取provider的初始化参数
+          const options = zondy.cesium.util.initializeOptions(layer, viewer);
+          self.$_mount(options);
+        });
+      } else {
+        let { srs } = this;
+        let opt = {};
+        //处理独有参数
+        //如果srs或crs存在，则生成tilingScheme对象，动态投影会用到
+        if (srs) {
+          opt.tilingScheme = this.$_setTilingScheme(srs);
+        }
+        opt.parameters = {
+          transparent: this.transparent,
+          format: this.format,
+          version: this.version,
+          styles: this.styles,
+          layers: this.layers,
+        };
+        this.$_mount(opt);
       }
-      opt.parameters = {
-        transparent: this.transparent,
-        format: this.format,
-        version: this.version,
-        styles: this.styles
-      }
-      this.$_mount(opt);
     },
     unmount() {
       this.$_unmount();
-    }
-  }
+    },
+  },
 };
 </script>
