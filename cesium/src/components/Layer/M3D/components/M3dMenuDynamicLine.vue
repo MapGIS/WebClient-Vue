@@ -111,6 +111,7 @@ export default {
       // 3.1 构造扫描线颜色字符串
       const color = Cesium.Color.fromCssColorString(this.lightColor)
       const colorVec4Sting = this.formatNumberToString(color.red) + ', ' + this.formatNumberToString(color.green) + ', ' + this.formatNumberToString(color.blue) + ', ' + this.formatNumberToString(color.alpha)
+      const colorVec3Sting = this.formatNumberToString(color.red) + ', ' + this.formatNumberToString(color.green) + ', ' + this.formatNumberToString(color.blue)
       // 3.2 获取外包盒半径
       const radius = this.formatNumberToString(tileset.boundingSphere.radius)
       // 3.3 获取扫描线宽
@@ -118,7 +119,35 @@ export default {
       // 3.4 获取底部高度偏移
       const bottomHeightOffset = this.formatNumberToString(this.bottomHeightOffset)
       // 3.5 设置自定义着色器
-      tileset.customShader = new Cesium.CustomShader({
+      // Cesium10.7.4.10以及后续版本
+      if (Cesium.MAPGIS_VERSION) {
+        tileset.customShader = new Cesium.CustomShader({
+        uniforms: {},
+        fragmentShaderText: `
+          void fragmentMain(FragmentInput fsInput, inout czm_modelMaterial material) {
+            float currentHeight = fsInput.attributes.positionMC.y + ${bottomHeightOffset} + ${radius};
+            // 将0~1之间的值映射到20~720之间
+            float mappedSpeed = ${this.scanSpeed} * (20.0 - 720.0) + 720.0;
+            // 根据当前帧时间(czm_frameNumber)，获取当前顶点所处的周期
+            float time = fract(czm_frameNumber / mappedSpeed);
+            // 获取当前高度占整体高度的百分比，0到1之间的值
+            // clamp参考https://learn.microsoft.com/zh-cn/previous-versions/hh308289(v=vs.120)
+            currentHeight = clamp(currentHeight / ${radius * 2}, 0.0, 1.0);
+            // 处理周期
+            time = abs(time - 0.5) * 2.0;
+            // 根据高度和周期计算光圈
+            float circle = step(${lineWidth}, abs(currentHeight - time));
+            if (abs(currentHeight - time) < ${lineWidth}) {
+                circle = abs(currentHeight - time) * (1.0 / ${lineWidth});
+            }
+            material.diffuse *= vec3(${colorVec3Sting}) * (1.0 - circle);
+          }
+        `
+      });
+      } 
+      // Cesium10.7.4.10之前的版本
+      else {
+        tileset.customShader = new Cesium.CustomShader({
         uniforms: {},
         fragmentShaderText: `
           void fragmentMain(vec4 position, float frameNumber, vec4 oid, inout vec4 fragColor) {
@@ -140,7 +169,8 @@ export default {
             fragColor += vec4(${colorVec4Sting}) * (1.0 - circle);
           }
         `
-      });
+      }); 
+      }
     }
   }
 };

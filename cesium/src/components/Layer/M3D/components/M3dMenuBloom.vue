@@ -113,6 +113,7 @@ export default {
      * */
     addEffect() {
       const { Cesium } = this;
+
       // 1 获取MapGISM3DSet对象
       let tileset = this.getM3DSet();
       if (!tileset) return
@@ -126,6 +127,7 @@ export default {
       // 3.1 构造呼吸灯颜色字符串
       const color = Cesium.Color.fromCssColorString(this.lightColor)
       const colorVec4Sting = this.formatNumberToString(color.red) + ', ' + this.formatNumberToString(color.green) + ', ' + this.formatNumberToString(color.blue) + ', ' + this.formatNumberToString(color.alpha)
+      const colorVec3Sting = this.formatNumberToString(color.red) + ', ' + this.formatNumberToString(color.green) + ', ' + this.formatNumberToString(color.blue)
       // 3.2 启用渐变
       if (this.enableGradient) {
         // 3.2.1 获取渐变中心高度
@@ -133,7 +135,27 @@ export default {
         // 3.2.2 获取渐变半径
         const gradientRadius = this.formatNumberToString(this.gradientRadius)
         // 3.2.3 设置带渐变的泛光效果
-        tileset.customShader = new Cesium.CustomShader({
+        // Cesium10.7.4.10以及后续版本
+        if (Cesium.MAPGIS_VERSION) {
+          tileset.customShader = new Cesium.CustomShader({
+          uniforms: {},
+          fragmentShaderText: `
+          void fragmentMain(FragmentInput fsInput, inout czm_modelMaterial material) {
+            // 将0~1之间的值映射到5~720之间
+            float mappedSpeed = ${this.breathSpeed} * (5.0 - 720.0) + 720.0;
+            // 根据当前帧时间(czm_frameNumber)，获取当前顶点所处的周期
+            float time = fract(czm_frameNumber / mappedSpeed);
+            time = abs(time - 0.5) * 2.0;
+            float diffHeight = abs(fsInput.attributes.positionMC.y + ${gradientCenterHeight});
+            float mappedValue = clamp(diffHeight / ${gradientRadius}, 0.0, 1.0);
+            material.diffuse *= vec3(${colorVec3Sting}) * (1.0 - mappedValue) * time;
+          }
+        `
+        });
+        } 
+        // Cesium10.7.4.10之前的版本
+        else {
+          tileset.customShader = new Cesium.CustomShader({
           uniforms: {},
           fragmentShaderText: `
           void fragmentMain(vec4 position, float frameNumber, vec4 oid, inout vec4 fragColor) {
@@ -148,10 +170,29 @@ export default {
           }
         `
         });
+        }
       }
       // 3.3 不启用渐变，设置不带渐变的泛光效果
       else {
-        tileset.customShader = new Cesium.CustomShader({
+        // Cesium10.7.4.10以及后续版本
+        if (Cesium.MAPGIS_VERSION) {
+          tileset.customShader = new Cesium.CustomShader({
+          uniforms: {},
+          fragmentShaderText: `
+          void fragmentMain(FragmentInput fsInput, inout czm_modelMaterial material) {
+            // 将0~1之间的值映射到5~720之间
+            float mappedSpeed = ${this.breathSpeed} * (5.0 - 720.0) + 720.0;
+            // 根据当前帧时间(czm_frameNumber)，获取当前顶点所处的周期
+            float time = fract(czm_frameNumber / mappedSpeed);
+            time = abs(time - 0.5) * 2.0;
+            material.diffuse *= vec3(${colorVec3Sting}) * 0.5 * time;
+          }
+        `
+        });
+        } 
+        // Cesium10.7.4.10之前的版本
+        else {
+          tileset.customShader = new Cesium.CustomShader({
           uniforms: {},
           fragmentShaderText: `
           void fragmentMain(vec4 position, float frameNumber, vec4 oid, inout vec4 fragColor) {
@@ -164,6 +205,7 @@ export default {
           }
         `
         });
+        }
       }
     }
   }
