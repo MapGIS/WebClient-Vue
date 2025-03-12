@@ -5,6 +5,7 @@
 <script>
 import ServiceLayer from "../ServiceLayer";
 import { WMSLayer } from "@mapgis/webclient-common";
+import { initializeOptions } from "@mapgis/webclient-cesium-plugin";
 
 export default {
   name: "mapgis-3d-ogc-wms-layer",
@@ -57,24 +58,34 @@ export default {
   watch: {
     layers: {
       handler: function () {
-        this.unmount();
-        this.mount();
+        this.updateLayer();
       },
     },
     styles: {
       handler: function () {
-        this.unmount();
-        this.mount();
+        this.updateLayer();
       },
     },
     srs: {
       handler: function () {
-        this.unmount();
-        this.mount();
+        this.updateLayer();
       },
     },
   },
   methods: {
+    // 防止图层被多次添加
+    updateLayer() {
+      const { vueKey, vueIndex } = this;
+      const find = window.vueCesium[this.managerName].findSource(
+        vueKey,
+        vueIndex
+      );
+      if (!find) {
+        return;
+      }
+      this.unmount();
+      this.mount();
+    },
     mount() {
       if (this.renderMode && this.renderMode === "image-map") {
         const { viewer, baseUrl, layers, styles, transparent } = this;
@@ -101,7 +112,7 @@ export default {
         const self = this;
         wmsLayer.load().then((layer) => {
           // 获取provider的初始化参数
-          const options = zondy.cesium.util.initializeOptions(layer, viewer);
+          const options = initializeOptions(layer, viewer);
           self.$_mount(options);
         });
       } else {

@@ -4,6 +4,7 @@
 <script>
 import ServiceLayer from "../ServiceLayer";
 import { ArcGISMapImageLayer } from "@mapgis/webclient-common";
+import { initializeOptions } from "@mapgis/webclient-cesium-plugin";
 
 export default {
   name: "mapgis-3d-arcgis-map-layer",
@@ -48,18 +49,29 @@ export default {
   watch: {
     srs: {
       handler: function () {
-        this.unmount();
-        this.mount();
+        this.updateLayer();
       },
     },
     layers: {
       handler: function () {
-        this.unmount();
-        this.mount();
+        this.updateLayer();
       },
     },
   },
   methods: {
+    // 防止图层被多次添加
+    updateLayer() {
+      const { vueKey, vueIndex } = this;
+      const find = window.vueCesium[this.managerName].findSource(
+        vueKey,
+        vueIndex
+      );
+      if (!find) {
+        return;
+      }
+      this.unmount();
+      this.mount();
+    },
     mount() {
       const { baseUrl } = this;
       let { layers } = this;
@@ -87,7 +99,7 @@ export default {
         const self = this;
         arcGISMapImageLayer.load().then((layer) => {
           // 获取provider的初始化参数
-          const options = zondy.cesium.util.initializeOptions(layer, viewer);
+          const options = initializeOptions(layer, viewer);
           self.$_mount(options);
         });
       } else {
