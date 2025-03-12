@@ -33,18 +33,14 @@
       >
       <div class="mapgis-city-grow-toolbar">
         <mapgis-ui-tooltip>
-          <template slot="title">
-            跳转至开头
-          </template>
+          <template slot="title"> 跳转至开头 </template>
           <mapgis-ui-iconfont
             type="mapgis-chevrons-left"
             @click.capture.stop="JumpToBegin"
           />
         </mapgis-ui-tooltip>
         <mapgis-ui-tooltip>
-          <template slot="title">
-            快退一步
-          </template>
+          <template slot="title"> 快退一步 </template>
           <mapgis-ui-iconfont
             type="mapgis-chevron-left"
             @click.capture.stop="stepBack"
@@ -63,18 +59,14 @@
           @click.capture.stop="stopGrow"
         />
         <mapgis-ui-tooltip>
-          <template slot="title">
-            快进一步
-          </template>
+          <template slot="title"> 快进一步 </template>
           <mapgis-ui-iconfont
             type="mapgis-chevron-right"
             @click.capture.stop="stepForward"
           />
         </mapgis-ui-tooltip>
         <mapgis-ui-tooltip>
-          <template slot="title">
-            跳转至结尾
-          </template>
+          <template slot="title"> 跳转至结尾 </template>
           <mapgis-ui-iconfont
             type="mapgis-chevrons-right"
             @click.capture.stop="JumpToEnd"
@@ -99,21 +91,21 @@ export default {
   props: {
     width: {
       type: Number,
-      default: 500
+      default: 500,
     },
     enableSteps: {
       type: Boolean,
-      default: false
+      default: false,
     },
     steps: {
       type: Number,
-      default: 2
+      default: 2,
     },
     // 开始点击单体生长时间轴前是否显示整个模型，默认不显示
     isVisibleBeforeGrowing: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
@@ -139,7 +131,7 @@ export default {
       isStartGrow: false,
       infinite: true,
 
-      currentFps: -1
+      currentFps: -1,
     };
   },
   watch: {
@@ -147,21 +139,21 @@ export default {
       handler(next) {
         this.stepsCopy = next;
       },
-      immediate: true
+      immediate: true,
     },
     vueIndex: {
       handler(next) {
         this.unmount();
         this.mount();
-      }
+      },
     },
     isVisibleBeforeGrowing: {
       handler(next) {
         this.isVisibleBeforeGrowing = next;
         this.unmount();
         this.mount();
-      }
-    }
+      },
+    },
   },
   created() {},
   mounted() {
@@ -183,7 +175,7 @@ export default {
       return new Promise((resolve, reject) => {
         let layerIndex = 0;
         this.$_getM3DByInterval(
-          function(m3ds) {
+          function (m3ds) {
             if (m3ds && m3ds.length > 0) {
               if (
                 !m3ds[layerIndex] ||
@@ -207,17 +199,15 @@ export default {
       const vm = this;
       const { innerVueIndex, vueKey, vueCesium } = this;
       const { viewer, enablePopup } = this;
-
       let promise = this.createCesiumObject();
-      promise.then(find => {
+      promise.then((find) => {
         if (find && find.source) {
           let { source } = find;
           let m3d = source && source.length > 0 ? source[0] : undefined;
-          if (m3d.m3dtree === undefined) {
-            this.$message.warning("该m3d模型不能进行单体化建筑生长");
-          }
-          m3d.m3dtreeOptions = { createType: "ModelLoaded" };
-          let tree = m3d ? m3d.m3dtree : undefined;
+          const tree = Cesium.M3DTree.createM3DTree(m3d, {
+            createType: "ModelLoaded",
+          });
+
           vm.parseTree(tree);
           vm.$emit("loaded", { component: vm });
           let collection = new Cesium.PrimitiveCollection();
@@ -225,7 +215,7 @@ export default {
             m3d: m3d,
             tree: tree,
             collection: collection,
-            primitiveCollection: viewer.scene.primitives.add(collection)
+            primitiveCollection: viewer.scene.primitives.add(collection),
           });
 
           // 1.通过构件树隐藏m3d模型
@@ -234,6 +224,9 @@ export default {
           }
           // 2.对获取的树数据中name:时间 进行升序排序
           this.sortDateTime();
+          if (!this.layerIds.length) {
+            this.$message.warning("该m3d模型不能进行单体化建筑生长");
+          }
         }
       });
       if (viewer.isDestroyed()) return;
@@ -270,7 +263,7 @@ export default {
       let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
       if (find && find.options) {
         let { tree } = find.options;
-        allLayerIds.forEach(layer => {
+        allLayerIds.forEach((layer) => {
           let mapgism3dNode = tree.getM3DByName(layer);
           if (mapgism3dNode) {
             mapgism3dNode.forceInvisible = false;
@@ -298,9 +291,9 @@ export default {
         parent: parent,
         isleaf: false,
         count: 0,
-        scopedSlots: { icon: "icon", title: "title" }
+        scopedSlots: { icon: "icon", title: "title" },
       };
-      node.m3dtreeChildren.forEach(child => {
+      node.m3dtreeChildren.forEach((child) => {
         let c = vm.loopTreeNode(child, key, cbnode);
         cbnode.children.push(c);
         cbnode.count += c.count;
@@ -360,7 +353,7 @@ export default {
     findTreePath(index) {
       let result = {
         paths: [],
-        node: undefined
+        node: undefined,
       };
       let root = this.findRoot();
       let find = this.findNode(root, index);
@@ -399,7 +392,7 @@ export default {
       if (node) {
         paths.push(node);
         if (node && node.children) {
-          node.children.forEach(child => {
+          node.children.forEach((child) => {
             this.findChildren(child, paths);
           });
         }
@@ -410,9 +403,9 @@ export default {
       let vm = this;
       //先判断是否是年-月-日的日期格式
       let dateFormat = /^(\d{4})-(\d{1,2})-(\d{1,2})$/;
-      this.layerIds = this.layerIds.filter(x => dateFormat.test(x));
+      this.layerIds = this.layerIds.filter((x) => dateFormat.test(x));
       //  dateFormat = /^(\d{1,4})(-|\/)(\d{1,2})\2(\d{1,2})$/
-      vm.sortDate = this.layerIds.sort(function(obj1, obj2) {
+      vm.sortDate = this.layerIds.sort(function (obj1, obj2) {
         let a = new Date(obj1) / 1000;
         let b = new Date(obj2) / 1000;
         return a > b ? 1 : -1;
@@ -427,7 +420,7 @@ export default {
         let key = parseInt(moment(vm.sortDate[i]).valueOf() / 1000);
         vm.marks[key] = {
           style: { display: "none" },
-          label: parseInt(moment(vm.sortDate[i]).valueOf() / 1000)
+          label: parseInt(moment(vm.sortDate[i]).valueOf() / 1000),
         };
       }
       vm.startTimeCopy = vm.sortDate[0];
@@ -620,8 +613,8 @@ export default {
       } else {
         this.currentFps = this.currentFps - 2;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

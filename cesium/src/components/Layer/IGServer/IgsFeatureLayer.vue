@@ -1,19 +1,5 @@
 <template>
-  <div class="mapgis-popup-default-wrapper">
-    <div v-if="popVisiable">
-      <Popup
-        :position="iClickPosition"
-        :visible="iClickVisible"
-        :forceRender="forceRender"
-      >
-        <mapgis-ui-popup-content
-          :feature="gemotryAttribute[0]"
-          :popupOptions="popupOptions"
-        >
-        </mapgis-ui-popup-content>
-      </Popup>
-    </div>
-  </div>
+  <span />
 </template>
 
 <script>
@@ -29,81 +15,61 @@ export default {
   props: {
     baseUrl: {
       type: String,
-      default: null
+      default: undefined,
     },
     gdbps: {
       type: String,
-      default: null
+      default: undefined,
     },
     renderer: {
       type: Object,
       default() {
         return {};
-      }
-    },
-    filter: {
-      type: Object,
-      default: null
-    },
-    clampToGround: {
-      type: Boolean,
-      default: false
+      },
     },
     featureStyle: {
       type: Object,
       default() {
         return {};
-      }
-    }
+      },
+      renderMode: {
+        type: String,
+        default: "client",
+      },
+    },
   },
   data() {
-    return {
-      layerType: "feature",
-      layerIndex: undefined,
-      layer: undefined,
-      layerRange: [],
-      clickhandler: undefined,
-      hoverhandler: undefined,
-      tempHighlightdata: undefined,
-      tempQueryDataArr: []
-    };
+    return {};
+  },
+  watch: {
+    opacity(val) {
+      if (this.igsFeatureLayer) {
+        this.igsFeatureLayer.opacity = val;
+      }
+    },
+    visible(val) {
+      if (this.igsFeatureLayer) {
+        this.igsFeatureLayer.visible = val;
+      }
+    },
+    renderer(val, oldVal) {
+      if (this.igsFeatureLayer) {
+        this.igsFeatureLayer.renderer = this.generateRenderer(val);
+      }
+    },
   },
   mounted() {
     this.mount();
-    window.reloadLayer = () => this.reloadLayer();
   },
   destroyed() {
     this.unmount();
   },
-  watch: {},
   methods: {
     async createCesiumObject() {
-      let { viewer, vueCesium } = this;
-      let {
-        baseUrl,
-        gdbps,
-        autoReset,
-        renderer,
-        filter,
-        clampToGround,
-        featureStyle,
-        vueIndex
-      } = this;
-      let vm = this;
-      let options = {
-        autoReset,
-        loadAll: true,
-        renderer,
-        clampToGround,
-        filter: filter
-      };
+      const { viewer, vueCesium } = this;
+      const { baseUrl, gdbps, renderer, featureStyle } = this;
+
       let transformRenderer;
-      if (baseUrl && baseUrl.indexOf("/igs/rest/mrfs/layer") !== -1) {
-        options.layers = gdbps;
-      }
-
-      const features = await this.queryFeaturesInLayers(gdbps, baseUrl);
-
       if (
         JSON.stringify(renderer) === "{}" &&
         JSON.stringify(featureStyle) !== "{}"
@@ -114,118 +80,112 @@ export default {
           transformRenderer = this.getRenderer(type, featureStyle);
         }
       }
-      this.addLayer(viewer, transformRenderer || renderer, features);
 
-      this.getDocLayer(vueIndex);
-      // return new Promise(
-      //   resolve => {
-      //     let layerIndex = viewer.scene.layers.appendFeatureLayer(baseUrl, {
-      //       ...options,
-      //       getDocLayerIndexes: vm.getDocLayer
-      //     });
-      //     resolve({ layerIndex: layerIndex });
-      //   },
-      //   reject => {}
-      // );
-    },
-    getDocLayer(index) {
-      const vm = this;
-      const { vueIndex, vueKey, vueCesium, url, enablePopup } = this;
-      if (index) {
-        vm.layerIndex = index;
-        // const layer = viewer.scene.layers.getFeatureLayer(vm.layerIndex[0]);
-        let source = [this.innerLayer];
-        if (source) {
-          vueCesium.IgsFeatureManager.addSource(vueKey, vueIndex, source, {
-            url: vm.baseUrl,
-            layerIndex: vm.layerIndex,
-            clickhandler: vm.clickhandler,
-            hoverhandler: vm.hoverhandler
-          });
-          // vm.layerRange = layer._layerRange;
-          // vm.parseBBox(vm.layerRange);
-        }
-        vm.$emit("load", { data: vm });
-      }
-    },
-    mount() {
-      let {
-        viewer,
-        vueCesium,
-        vueKey,
-        vueIndex,
-        baseUrl,
+      this.commonMap = this.generateCommonMap();
+      this.sceneView = this.generateSceneView(viewer, this.commonMap);
+
+      this.generateFeatureLayer(
         gdbps,
-        enablePopup
-      } = this;
+        baseUrl,
+        transformRenderer || this.generateRenderer(renderer)
+      );
+      this.commonMap.add(this.igsFeatureLayer);
+      // const features = await this.queryFeaturesInLayers(gdbps, baseUrl);
+      // this.addLayer(viewer, transformRenderer || renderer, features);
+      //  this.layerLoaded(features);
 
-      if (!this.mapController) {
-        this.mapController = new Map();
+      this.layerLoaded();
+    },
+    layerLoaded() {
+      const { vueIndex, vueKey, vueCesium } = this;
+      const { gdbps, baseUrl } = this;
+      const source = [this.igsFeatureLayer];
+      if (this.igsFeatureLayer) {
+        vueCesium.IgsFeatureManager.addSource(vueKey, vueIndex, source, {
+          url: baseUrl,
+          gdbp: gdbps,
+          sceneView: this.sceneView,
+          commonMap: this.commonMap,
+        });
       }
-
-      // 判断是否支持图像渲染像素化处理
-      viewer.shadows = true;
-      if (Cesium.FeatureDetection.supportsImageRenderingPixelated()) {
-        viewer.resolutionScale = window.devicePixelRatio;
-      }
-      // 是否开启抗锯齿
-      viewer.scene.fxaa = true;
-      viewer.scene.postProcessStages.fxaa.enabled = true;
-      // this.checkType();
-      let promise = this.createCesiumObject();
-      let vm = this;
-      promise.then(function(dataSource) {
-        // 增加图层click和hover事件，在组件外部获得对象
-        vm.$_bindClickEvent(vm.parseClick);
-        vm.$_bindHoverEvent(vm.parseHover);
-        if (vm.enablePopup) {
-          vm.clickhandler = vm.$_bindClickEvent(vm.clickHighlight);
-        }
-        if (vm.enableClick) {
-          vm.clickhandler = vm.$_bindClickEvent(vm.clickHighlight);
-        }
-        if (vm.enableHover) {
-          vm.hoverhandler = vm.$_bindHoverEvent(vm.hoverHighlight);
-        }
-        if (vm.enableQuery) {
-          vm.queryPrimitive();
-        }
+      this.$emit("load", this);
+    },
+    async mount() {
+      await this.createCesiumObject();
+    },
+    generateFeatureLayer(gdbps, baseUrl, renderer) {
+      const { viewer } = this;
+      const { renderMode, visible, opacity } = this;
+      this.igsFeatureLayer = this.generateIGSFeatureLayer({
+        url: baseUrl,
+        gdbp: gdbps,
+        renderMode,
+        renderer,
+        visible,
+        opacity,
       });
     },
+    async queryFeaturesAndGenerateLayers(gdbps, baseUrl, renderer) {
+      const { viewer } = this;
+      const { renderMode, visible, opacity } = this;
+      this.igsFeatureLayer = this.generateIGSFeatureLayer({
+        url: baseUrl,
+        gdbp: gdbps,
+        renderMode,
+        renderer,
+        visible,
+        opacity,
+      });
+      await this.igsFeatureLayer.load();
+      const featureSet = await this.igsFeatureLayer.queryFeatures();
+      // 保存featureSet，更新的时候使用
+      this.featureSet = featureSet.toJSON();
+      this.addFeaturesToMap();
+    },
+    addFeaturesToMap(renderer) {
+      const { viewer } = this;
+      // 先删除feature
+      if (this.primitives) {
+        this.primitives.forEach((feature) => {
+          viewer.scene.primitives.remove(feature);
+        });
+      }
 
+      // 保证featureSet不变，更新renderer时不再进行网络请求
+      const featuresArr = this.cloneFeatureSet(this.featureSet).features;
+      const features = featuresArr.map((feature) => {
+        return this.cloneFeature(feature);
+      });
+      // 设置features的renderer
+      this.featureSetApplyRenderer(
+        features,
+        renderer
+          ? this.generateRenderer(renderer)
+          : this.igsFeatureLayer.renderer
+      );
+
+      this.primitives = this.featureToPrimitive(
+        "IGSFeatureLayerUtil",
+        features,
+        {
+          viewer,
+        }
+      );
+      this.primitives.forEach((feature) => {
+        viewer.scene.primitives.add(feature);
+      });
+    },
     unmount() {
-      let { viewer, vueCesium } = this;
-      const { vueKey, vueIndex, layerIndex } = this;
-      let find = vueCesium.IgsFeatureManager.findSource(vueKey, vueIndex);
-      // let index = layerIndex;
-      // if (layerIndex instanceof Array) {
-      //   index = layerIndex[0];
-      // }
-      if (find && find.source) {
-        // viewer.scene.layers.removeFeatureLayerByID(index);
-        this.innerLayer.destroy();
-      }
-      if (find && find.clickhandler) {
-        find.clickhandler.destroy();
-      }
-      if (find && find.hoverhandler) {
-        find.hoverhandler.destroy();
-      }
+      const { vueCesium } = this;
+      const { vueKey, vueIndex } = this;
       vueCesium.IgsFeatureManager.deleteSource(vueKey, vueIndex);
-      this.mapController = null;
+      this.commonMap.remove(this.igsFeatureLayer);
+      this.igsFeatureLayer = null;
+      this.commonMap = null;
+      this.sceneView = null;
       this.$emit("unload", this);
     },
-    // 组件回调
-    parseClick(payload) {
-      this.$emit("featureClick", { pick: payload });
-    },
-    parseHover(payload) {
-      this.$emit("featureHover", { pick: payload });
-    },
-    parseBBox(bbox) {
-      this.$emit("bbox", { bbox: bbox });
-    }
-  }
+  },
 };
 </script>
 

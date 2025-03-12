@@ -1,4 +1,8 @@
-import { CesiumInnerGraphicsLayer } from "@mapgis/webclient-cesium-plugin";
+import {
+  CesiumInnerGraphicsLayer,
+  IGSFeatureLayerUtil,
+  SceneView
+} from "@mapgis/webclient-cesium-plugin";
 import {
   Zondy,
   FeatureServer,
@@ -8,7 +12,11 @@ import {
   FeatureSet,
   Geometry,
   ElevationInfo,
-  ElevationMode
+  ElevationMode,
+  IGSFeatureLayer,
+  GeoJSONLayer,
+  WFSLayer,
+  Map
 } from "@mapgis/webclient-common";
 const { Renderer, Symbol, Color } = Zondy;
 const { SimpleRenderer } = Renderer;
@@ -135,8 +143,8 @@ export default {
     getSimpleLineRenderer(layerStyle) {
       return new SimpleRenderer({
         symbol: new SimpleLineSymbol({
-          color: layerStyle.color,
-          width: layerStyle.width
+          color: layerStyle?.color || new Color(255, 255, 0, 1),
+          width: layerStyle?.width || 20
         })
       });
     },
@@ -245,8 +253,48 @@ export default {
       });
       // 设置透明度
       this.innerLayer.setOpacity(opacity);
-      // 设置是否显示
+      // 设置是否显示eatureSet
       this.innerLayer.setVisible(visible);
+    },
+    generateIGSFeatureLayer(options) {
+      return new IGSFeatureLayer(options);
+    },
+    generateGeoJSONLayer(options) {
+      return new GeoJSONLayer(options);
+    },
+    generateWFSLayer(options) {
+      return new WFSLayer(options);
+    },
+    featureToPrimitive(type, features, options) {
+      let primitives;
+      switch (type) {
+        case "IGSFeatureLayerUtil":
+          primitives = IGSFeatureLayerUtil.toPrimitive(features, options);
+          break;
+        default:
+          break;
+      }
+      return primitives;
+    },
+    cloneFeatureSet(featureSet) {
+      return FeatureSet.fromJSON(featureSet);
+    },
+    cloneFeature(feature) {
+      return Feature.fromJSON(feature);
+    },
+    generateRenderer(renderer) {
+      return BaseRenderer.fromJSON(renderer);
+    },
+    generateCommonMap() {
+      return new Map();
+    },
+    generateSceneView(viewer, map) {
+      return new SceneView({
+        // 视图
+        innerView: viewer,
+        // 图层管理容器
+        map
+      });
     }
   }
 };

@@ -176,7 +176,7 @@ export default {
       mHeight: 2000, // 淹没最高高度变化前的值
       timer: null,
       changeMaxHeight: false,
-      changeStartHeight: false
+      changeStartHeight: false,
     };
   },
   created() {},
@@ -263,7 +263,7 @@ export default {
           }, 1000);
         }
       },
-    }
+    },
   },
   methods: {
     async createCesiumObject() {
@@ -314,7 +314,7 @@ export default {
       const options = this._getSourceOptions();
       let { drawElement } = options;
       // 初始化交互式绘制控件
-      drawElement = drawElement || new Cesium.DrawElement(this.viewer);
+      drawElement = drawElement || new zondy.cesium.DrawElement(this.viewer);
       vueCesium.FloodAnalysisManager.changeOptions(
         vueKey,
         vueIndex,
@@ -339,16 +339,16 @@ export default {
     /**
      *  @description 洪水淹没暂停
      */
-     _doPause() {
-        if(this.floodAnalysisReflection) {
-            this.floodAnalysisReflection.pause();
-        }
-     },
+    _doPause() {
+      if (this.floodAnalysisReflection) {
+        this.floodAnalysisReflection.pause();
+      }
+    },
     /**
      * @description 进行洪水淹没分析
      */
     _doAnalysis(isPause) {
-      if(!isPause) {
+      if (!isPause) {
         this._removeFlood();
       }
       const { positions } = this;
@@ -357,28 +357,29 @@ export default {
         return;
       }
       const { vueCesium, vueKey, vueIndex } = this;
-        const positionsArr = [];
-        for (let position of positions) {
-          positionsArr.push(Cesium.Cartographic.fromCartesian(position));
-        }
-        const { minHeight, maxHeightCopy, floodSpeedCopy, floodColorCopy } =
-          this;
-        const waterColor = this._getColor(floodColorCopy);
-        this.waterReflection = isPause ? this.waterReflection : 
-          new Cesium.WaterReflection({
+      const positionsArr = [];
+      for (let position of positions) {
+        positionsArr.push(Cesium.Cartographic.fromCartesian(position));
+      }
+      const { minHeight, maxHeightCopy, floodSpeedCopy, floodColorCopy } = this;
+      const waterColor = this._getColor(floodColorCopy);
+      this.waterReflection = isPause
+        ? this.waterReflection
+        : new zondy.cesium.WaterReflection({
             viewer: this.viewer,
             positions: positionsArr,
             distortionScale: 2.0,
             waterColor,
           });
-        vueCesium.FloodAnalysisManager.changeOptions(
-          vueKey,
-          vueIndex,
-          "waterReflection",
-          this.waterReflection
-        );
-        this.floodAnalysisReflection = isPause ? this.floodAnalysisReflection : 
-          new Cesium.FloodAnalysisReflection({
+      vueCesium.FloodAnalysisManager.changeOptions(
+        vueKey,
+        vueIndex,
+        "waterReflection",
+        this.waterReflection
+      );
+      this.floodAnalysisReflection = isPause
+        ? this.floodAnalysisReflection
+        : new zondy.cesium.FloodAnalysisReflection({
             viewer: this.viewer,
             water: this.waterReflection,
             minHeight,
@@ -389,13 +390,13 @@ export default {
             floodSpeed: Number(floodSpeedCopy),
             closeBorder: true,
           });
-        this.floodAnalysisReflection.start();
-        vueCesium.FloodAnalysisManager.changeOptions(
-          vueKey,
-          vueIndex,
-          "floodAnalysisReflection",
-          this.floodAnalysisReflection
-        );
+      this.floodAnalysisReflection.start();
+      vueCesium.FloodAnalysisManager.changeOptions(
+        vueKey,
+        vueIndex,
+        "floodAnalysisReflection",
+        this.floodAnalysisReflection
+      );
     },
     /**
      * @description 获取SourceOptions,以方便获取洪水淹没分析对象和绘制对象

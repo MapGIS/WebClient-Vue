@@ -272,6 +272,7 @@ export default {
         }
         return [];
       } catch (err) {
+        console.warn(err)
         return [];
       }
     },
@@ -284,7 +285,7 @@ export default {
       let { options } = find || {};
       let { cutTool, drawElement } = options || {};
       // 初始化交互式绘制控件
-      drawElement = drawElement || new Cesium.DrawElement(viewer);
+      drawElement = drawElement || new zondy.cesium.DrawElement(viewer);
       vueCesium.ExcavateAnalysisManager.changeOptions(
         vueKey,
         vueIndex,
@@ -294,7 +295,7 @@ export default {
       this.removeCuttingPlane();
       // 添加一个剖切工具
       this.m3dLayers = await this.getCutLayers();
-      cutTool = new Cesium.CuttingTool(viewer, [...this.m3dLayers], {
+      cutTool = new zondy.cesium.CuttingTool(viewer, [...this.m3dLayers], {
         isCuttingTerrain: true,
         onErrorCallback: function (type, msg) {
           console.warn("错误信息：" + type + ":" + msg);

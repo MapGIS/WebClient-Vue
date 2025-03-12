@@ -238,7 +238,7 @@ export class MapvBaseLayer extends BaseLayer {
         }
 
         let car3 = Cesium.Cartesian3.fromDegrees(coordinate[0], coordinate[1]);
-        let point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
+        let point = Cesium.SceneTransforms.worldToWindowCoordinates(
           self.map.scene,
           car3
         );
@@ -412,7 +412,7 @@ export class MapvBaseLayer extends BaseLayer {
       self.options._size = self.options.size;
     }
 
-    let pixel = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
+    let pixel = Cesium.SceneTransforms.worldToWindowCoordinates(
       scene,
       Cesium.Cartesian3.fromDegrees(0, 0)
     );

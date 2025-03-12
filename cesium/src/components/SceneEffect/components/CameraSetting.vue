@@ -497,12 +497,12 @@ export default {
      * @return {Cesium.GlobeIndependentTranslucency} 控制地表透明度的工具对象
      * */
     initImageLayersTranslucencyManager() {
-      const { Cesium, vueCesium, vueKey, vueIndex } = this;
+      const { vueCesium, vueKey, vueIndex } = this;
       let _independentTranslucency =
         vueCesium.ImageLayersTranslucencyManager.findSource(vueKey, vueIndex);
 
       if (!_independentTranslucency) {
-        _independentTranslucency = new Cesium.GlobeIndependentTranslucency(
+        _independentTranslucency = new zondy.cesium.GlobeIndependentTranslucency(
           viewer
         );
 

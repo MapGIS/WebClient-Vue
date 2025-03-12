@@ -201,7 +201,7 @@ export default {
             let { aspectAnalysis, drawElement } = options;
             const { viewer } = this;
             // 初始化交互式绘制控件
-            drawElement = drawElement || new this.Cesium.DrawElement(viewer);
+            drawElement = drawElement || new zondy.cesium.DrawElement(viewer);
             vueCesium.AspectAnalysisManager.changeOptions(
                 vueKey,
                 vueIndex,
@@ -233,7 +233,7 @@ export default {
                     vm._enableBrightness(); // 开启光照
                     aspectAnalysis =
                         aspectAnalysis ||
-                        new vm.Cesium.TerrainAnalyse(viewer, {
+                        new zondy.cesium.TerrainAnalyse(viewer, {
                             aspectRampColor: rampColor,
                             aspectRamp: ramp,
                         });

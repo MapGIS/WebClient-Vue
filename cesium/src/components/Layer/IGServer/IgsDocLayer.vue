@@ -22,14 +22,20 @@ export default {
   watch: {
     layers: {
       handler: function () {
-        this.updateLayer();
+        // 防止初始化的时候，图层被多次加载，图层未加载成功时，不执行
+        const { vueIndex, vueKey, vueCesium } = this;
+        const find = vueCesium[this.managerName].findSource(vueKey, vueIndex);
+        if (!find) {
+          return;
+        }
+        this.unmount();
+        this.mount();
       },
     },
   },
   data() {
     return {
       managerName: "IgsDocLayerManager",
-      providerName: "MapGISMapServerImageryProvider",
       checkType: {
         tileWidth: "number",
         tileHeight: "number",
@@ -42,62 +48,37 @@ export default {
     this.mount();
   },
   methods: {
-    // 防止图层被多次添加
-    updateLayer() {
-      const { vueKey, vueIndex } = this;
-      const find = window.vueCesium[this.managerName].findSource(
-        vueKey,
-        vueIndex
-      );
-      if (!find) {
-        return;
-      }
-      this.unmount();
-      this.mount();
-    },
     mount() {
+      const { viewer } = this;
+      const options = this.$_getOptions();
       const baseUrl = this.$_initUrl("/igs/rest/mrms/docs/");
-      if (this.renderMode && this.renderMode === "image-map") {
-        let wkid = "4326";
-        if (this.srs && this.srs.includes("EPSG")) {
-          wkid = this.srs.split("EPSG:")[1];
+      const srsCode = this.srs.split(":")[1];
+      // 创建地图图片图层对象
+      const igsMapImageLayer = new IGSMapImageLayer({
+        url: baseUrl,
+        // IGS1.0暂时无法从元信息中获取坐标系，需自行指定图层坐标系
+        spatialReference: new SpatialReference({
+          wkid: srsCode,
+        }),
+        ...options,
+      });
+      const vm = this;
+      // 获取地图图片图层服务的元信息
+      igsMapImageLayer.load().then((layer) => {
+        // 获取provider的初始化参数
+        const cesiumOptions = initializeOptions(layer, viewer);
+        if (vm.layers) {
+          cesiumOptions.layers = vm.layers;
         }
-        const { viewer, layers } = this;
-        const sublayers = [];
-        let tempLayers = layers || "";
-        if (tempLayers.includes("show:")) {
-          tempLayers = tempLayers.split("show:")[1];
+        if (options.extensions) {
+          cesiumOptions.extensions = options.extensions;
         }
-        const showLayerIds = tempLayers.split(",");
-        for (let i = 0; i < showLayerIds.length; i++) {
-          if (showLayerIds[i] && showLayerIds[i] !== "") {
-            sublayers.push({
-              id: showLayerIds[i],
-              visible: true,
-            });
-          }
-        }
-        const igsMapImageLayer = new IGSMapImageLayer({
-          url: baseUrl,
-          renderMode: "image",
-          spatialReference: new SpatialReference({ wkid }),
-          sublayers,
-        });
-        const self = this;
-        igsMapImageLayer.load().then((layer) => {
-          // 获取provider的初始化参数
-          const options = initializeOptions(layer, viewer);
-          self.$_mount(options);
-        });
-      } else {
-        //处理独有参数
-        const tilingScheme = this.$_setTilingScheme(this.srs);
-        this.$_mount({
-          baseUrl: baseUrl,
-          tilingScheme: tilingScheme,
-          layers: this.layers,
-        });
-      }
+        // 构造provider对象
+        const provider = new zondy.cesium.MapGISMapServerImageryProvider(
+          cesiumOptions
+        );
+        vm.$_mount(provider, options);
+      });
     },
     unmount() {
       this.$_unmount();

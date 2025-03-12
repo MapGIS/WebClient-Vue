@@ -82,7 +82,7 @@ export default {
       }
       const dataSource = this.$_getCesiumDataArr(this.dataSource, this.field);
       const [min, max] = this.$_getCesiumDataRange(dataSource);
-      this.heaterInstance = this.Cesium.CesiumHeatmap.create(this.viewer, this.bound, this.selfOptions);
+      this.heaterInstance = zondy.cesium.CesiumHeatmap.create(this.viewer, this.bound, this.selfOptions);
       this.heaterInstance.setWGS84Data(min, max, dataSource);
     },
     /**

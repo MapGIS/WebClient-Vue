@@ -144,7 +144,7 @@ export default {
       if (this.geojson && Object.keys(this.geojson).length > 0) {
         this.removeGraphLayer();
         const { Cesium, viewer } = this;
-        this.thematicMapLayer = new Cesium.ThemeManager(viewer);
+        this.thematicMapLayer = new zondy.cesium.ThemeManager(viewer);
         this.thematicMapLayer.width = this.width;
         this.thematicMapLayer.heightScale = this.heightScale;
         this.thematicMapLayer.attributeName = this.attributeName;

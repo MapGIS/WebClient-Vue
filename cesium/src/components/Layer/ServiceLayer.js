@@ -1,7 +1,7 @@
 import { CustomWKID } from "@mapgis/webclient-common";
-import { GroundPrimitiveLayer } from "@mapgis/webclient-cesium-plugin";
+import { CustomTilingScheme } from "@mapgis/webclient-cesium-plugin";
 export default {
-  inject: ["viewer"],
+  inject: ["Cesium", "viewer", "vueCesium"],
   props: {
     baseUrl: {
       type: String,
@@ -66,10 +66,6 @@ export default {
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
       }
-    },
-    renderMode: {
-      type: String,
-      default: "raster"
     }
   },
   data() {
@@ -78,8 +74,6 @@ export default {
       layerStyleCopy: {},
       //确定serviceLayer要使用的manager名字
       managerName: undefined,
-      //确定serviceLayer要使用的provider的名字
-      providerName: undefined,
       /*
       * this.$props.options里面的参数类型检测设置，类型名称全小写，
       * 检测类型有number，boolean，string，object，array
@@ -97,12 +91,12 @@ export default {
   },
   watch: {
     layerStyle: {
-      handler: function() {
-        let { vueKey, vueIndex } = this;
-        let layer = window.vueCesium[this.managerName].findSource(
-          vueKey,
-          vueIndex
-        );
+      handler: function(next, old) {
+        if (JSON.stringify(next) === JSON.stringify(old)) {
+          return;
+        }
+        let { vueKey, vueIndex, vueCesium } = this;
+        let layer = vueCesium[this.managerName].findSource(vueKey, vueIndex);
         if (!layer) {
           return;
         }
@@ -120,10 +114,19 @@ export default {
       deep: true
     },
     options: {
-      handler: function() {
+      handler: function(next, old) {
+        if (JSON.stringify(next) === JSON.stringify(old)) {
+          return;
+        }
         let vm = this;
         let isEqual = this.$_isEqual(vm.options, vm.optionsBack);
         if (!isEqual) {
+          // 防止初始化的时候，图层被多次加载，图层未加载成功时，不执行
+          const { vueIndex, vueKey, vueCesium } = this;
+          const find = vueCesium[this.managerName].findSource(vueKey, vueIndex);
+          if (!find) {
+            return;
+          }
           this.unmount();
           this.mount();
           this.optionsBack = this.options;
@@ -133,11 +136,8 @@ export default {
     },
     id: {
       handler: function() {
-        const { vueIndex, vueKey } = this;
-        let layer = window.vueCesium[this.managerName].findSource(
-          vueKey,
-          vueIndex
-        );
+        const { vueIndex, vueKey, vueCesium } = this;
+        let layer = vueCesium[this.managerName].findSource(vueKey, vueIndex);
         layer.source.id = this.id;
       }
     }
@@ -160,43 +160,14 @@ export default {
       }
       return true;
     },
-    /*
-     * 通用的mount函数，建议使用时在自己的mount函数里面调用此函数，并在mounted生命周期调用
-     * 使用前请优先处理好自己组建里非通用参数，然后传入$_mount
-     * 例如：
-     * mount(){
-     *   //...处理自己的provider要用的参数，请参考Cesium文档里的Provider
-     *   //在线文档：http://develop.smaryun.com:8899/docs/other/mapgis-cesium/index.html
-     *   //最新文档：\\192.168.82.44\MapGIS 10 开发环境\WebClient\package的develop里面
-     *   let options = {
-     *     opt1: "",
-     *     opt2: ""
-     *   }
-     *   this.$_mount(options);
-     * }
-     *
-     * @param addOpt 需要额外添加的参数
-     * @param vueCesiumLayer 该参数存在时，会替provier处的Cesium[this.providerName]方法，请参考webclient-javascript里的各种Cesium的layer
-     * **/
-    $_mount(addOpt, vueCesiumLayer) {
-      //类型检测
-      this.$_check();
-      let opt = {},
-        options = {};
-
-      //取得除options、layerStyle和id之外的必要参数
-      const { $props, vueIndex, vueKey } = this;
-      Object.keys($props).forEach(function(key) {
-        if (key !== "options" && key !== "layerStyle" && key !== "id") {
-          opt[key] = $props[key];
-        }
-      });
-
-      //组合参数
-      options = { ...this.options, ...opt, ...addOpt };
-
+    /**
+     * 构造options对象
+     * @returns {Object} options对象
+     */
+    $_getOptions() {
+      let options = { ...this.options };
       if (this.token) {
-        if (this.providerName === "MapGIS2DDocMapProvider") {
+        if (this.managerName === "IgsDocLayerManager") {
           if (
             options.hasOwnProperty("extensions") &&
             options.extensions.length > 0
@@ -211,40 +182,50 @@ export default {
             ];
           }
         } else if (this.token.value) {
-          options.baseUrl += "?" + this.token.key + "=" + this.token.value;
+          options.tokenKey = this.token.key;
+          options.tokenValue = this.token.value;
+          // this.baseUrl += "?" + this.token.key + "=" + this.token.value;
         }
       }
 
-      options.url = options.baseUrl;
+      // options.url = this.baseUrl;
+
+      //组合参数
+      this.optionsBack = { ...this.optionsBack, ...options };
+      return this.optionsBack;
+    },
+    /*
+     * 通用的mount函数，建议使用时在自己的mount函数里面调用此函数，并在mounted生命周期调用
+     * 使用前请优先处理好自己组建里非通用参数，然后传入$_mount
+     * 例如：
+     * mount(){
+     *   //...处理自己的图层参数，生成cesium里对应的图层
+     *   // 可以参考@mapgis/webclient-common和@mapgis/webclient-cesium-plugin的API文档
+     *   let options = {
+     *     opt1: "",
+     *     opt2: ""
+     *   }
+     *   this.$_mount(imageryLayer,options);
+     * }
+     *
+     * @param provider cesium里对应图层的provider
+     * @param options 图层属性参数
+     * **/
+    $_mount(provider, options) {
+      const { vueIndex, vueKey } = this;
+      //类型检测
+      this.$_check();
 
       //取得webGlobe对象，防止当页面有多个webGlobe只会取得
-      //根据对应的providerName设置provider
       const { layerStyle } = this;
       const { saturation, hue } = options;
       const { visible, opacity, zIndex } = layerStyle;
       const { imageryLayers } = this.$_getWebGlobe();
-      let provider;
-      let imageryLayer;
-      if (this.renderMode && this.renderMode === "image-map") {
-        imageryLayer = new GroundPrimitiveLayer(
-          Object.assign(options, {
-            viewer: viewer
-          })
-        );
-        imageryLayer.addLayer();
-      } else {
-        if (vueCesiumLayer) {
-          provider = new vueCesiumLayer(options);
-        } else {
-          provider = new Cesium[this.providerName](options);
-        }
-
-        //不管有没有设置zIndex先同意往上面叠放
-        imageryLayer = imageryLayers.addImageryProvider(
-          provider,
-          imageryLayers._layers.length
-        );
-      }
+      // 添加图层到Cesium视图中,不管有没有设置zIndex先统一往上面叠放
+      const imageryLayer = viewer.imageryLayers.addImageryProvider(
+        provider,
+        imageryLayers._layers.length
+      );
 
       //初始化imageryLayers.addImageryProvider需要的index
       let providerZIndex;
@@ -259,7 +240,6 @@ export default {
         //如果有layerStyle.zIndex，则layer的zIndex为layerStyle.zIndex
         providerZIndex = zIndex;
       }
-
       //如果有zIndex，则保证zIndex大于0的layer始终在zIndex为0的layer上面，并按照zIndex从大到小排序
       //如果没有zIndex，则按初始化顺序向上叠放，如果在此layer的下方含有zIndex大于0的layer，则layer向下一层，直到下方没有包含zIndex大于0的layer
       //只会根据imageryLayers排序，不会影响其他图层
@@ -308,7 +288,7 @@ export default {
       }
 
       //将图层加入对应的manager
-      window.vueCesium[this.managerName].addSource(
+      this.vueCesium[this.managerName].addSource(
         vueKey,
         vueIndex,
         imageryLayer,
@@ -319,21 +299,14 @@ export default {
       this.$emit("load", imageryLayer, this);
     },
     $_unmount() {
-      let { vueKey, vueIndex } = this;
+      let { vueKey, vueIndex, vueCesium } = this;
       const { imageryLayers } = this.$_getWebGlobe();
-      let find = window.vueCesium[this.managerName].findSource(
-        vueKey,
-        vueIndex
-      );
+      let find = vueCesium[this.managerName].findSource(vueKey, vueIndex);
       if (!find) {
         return;
       }
-      if (this.renderMode && this.renderMode === "image-map") {
-        find.source.removeLayer();
-      } else {
-        imageryLayers.remove(find.source, true);
-      }
-      window.vueCesium[this.managerName].deleteSource(vueKey, vueIndex);
+      imageryLayers.remove(find.source, true);
+      vueCesium[this.managerName].deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
     $_checkZIndex(imageryLayers) {
@@ -389,16 +362,17 @@ export default {
       };
     },
     $_getLayers() {
-      let Layers = [],
-        vm = this;
+      const Layers = [];
+      const { vueCesium } = this;
+      const vm = this;
 
-      //遍历window.vueCesium下所有的Manager
-      Object.keys(window.vueCesium).forEach(function(key) {
+      //遍历vueCesium下所有的Manager
+      Object.keys(vueCesium).forEach(function(key) {
         if (key.indexOf("Manager") > -1 && key !== "GlobesManager") {
           //取出含有与webScene组件相同vueKey的Manager对象
-          if (window.vueCesium[key].hasOwnProperty("vueKey")) {
-            if (window.vueCesium[key].hasOwnProperty(vm.vueKey)) {
-              let layerManagers = window.vueCesium[key][vm.vueKey];
+          if (vueCesium[key].hasOwnProperty("vueKey")) {
+            if (vueCesium[key].hasOwnProperty(vm.vueKey)) {
+              let layerManagers = vueCesium[key][vm.vueKey];
               for (let i = 0; i < layerManagers.length; i++) {
                 //确保拥有options并且options里面含有zIndex
                 if (
@@ -449,13 +423,13 @@ export default {
     },
     $_getWebGlobe() {
       let webGlobeObj;
-      const { vueKey, viewer } = this;
+      const { vueKey, viewer, vueCesium } = this;
       //如果this.vueKey，则从GlobesManager中取得webGlobeObj
       if (vueKey) {
         if (vueKey === "default") {
           webGlobeObj = viewer;
         } else {
-          let GlobesManager = window.vueCesium.GlobesManager;
+          let GlobesManager = vueCesium.GlobesManager;
           webGlobeObj = GlobesManager[this.vueKey][0].source;
         }
       } else {
@@ -677,6 +651,7 @@ export default {
      * @param service 要调用的服务名称
      * **/
     $_initUrl(service) {
+      console.log("service: ", service);
       let _url;
 
       //优先判断url方式
@@ -761,7 +736,7 @@ export default {
           rectangleNortheast = new Cesium.Cartesian2(maxLength, maxLength);
         }
         const tileInfo = this.$_getTileInfoByWKID(customWKID);
-        tilingScheme = new Cesium.CustomTilingScheme({
+        tilingScheme = new CustomTilingScheme({
           wkid: customWKID,
           axisDirection: axisDirection,
           rectangleSouthwest: rectangleSouthwest,

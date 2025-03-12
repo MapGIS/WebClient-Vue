@@ -393,13 +393,13 @@ export default {
     this.unmount();
   },
   methods: {
+    handleTimeLineWidth() {
+      this.width = this.$refs.timebar.clientWidth;
+    },
     mount() {
       const vm = this;
       this.getWindowWidth();
-      window.onresize = function() {
-        vm.width = vm.$refs.timebar.clientWidth;
-      };
-
+      window.addEventListener('resize', this.handleTimeLineWidth)
       //实现时间轴的拖拽功能
       let ele = document.querySelector(".timeline-needle");
 
@@ -428,6 +428,7 @@ export default {
     unmount() {
       this.stopPlay();
       this.raf = undefined;
+      window.removeEventListener('resize', this.handleTimeLineWidth)
     },
     getWindowWidth() {
       let bar = document.querySelector(".timeline-bar");

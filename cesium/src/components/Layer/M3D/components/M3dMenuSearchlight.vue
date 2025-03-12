@@ -243,7 +243,7 @@ export default {
       const vm = this;
       const { vueKey, vueIndex, vueCesium, Cesium } = this;
       const { searchlightColor } = this;
-      let drawElement = new Cesium.DrawElement(viewer);
+      let drawElement = new zondy.cesium.DrawElement(viewer);
       drawElement.startDrawingPolyline({
         color: new Cesium.Color.fromCssColorString(searchlightColor),
         callback: function(result) {
@@ -251,7 +251,7 @@ export default {
           if (positions && positions.length >= 2) {
             drawElement.stopDrawing();
           }
-          var polyline = new Cesium.DrawElement.PolylinePrimitive({
+          var polyline = new zondy.cesium.DrawElement.PolylinePrimitive({
             positions: result.positions,
             width: 1,
             geodesic: true

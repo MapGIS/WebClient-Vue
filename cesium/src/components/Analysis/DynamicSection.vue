@@ -450,7 +450,7 @@ export default {
 
         dynamicSectionAnalysis =
           dynamicSectionAnalysis ||
-          new this.Cesium.CuttingTool(viewer, m3dSetArray);
+          new zondy.cesium.CuttingTool(viewer, m3dSetArray);
         // 剖切方向
         const direction = this._clippingDirection();
         // 创建剖切对象实例
@@ -565,7 +565,7 @@ export default {
       let zmin;
       let zmax;
       this.mergeLayersBoundingSphere =
-        this.Cesium.AlgorithmLib.mergeLayersBoundingSphere(m3dSetArray);
+        zondy.cesium.AlgorithmLib.mergeLayersBoundingSphere(m3dSetArray);
 
       for (let i = 0; i < m3dSetArray.length; i++) {
         const m3d = m3dSetArray[i];
@@ -612,8 +612,11 @@ export default {
         transform,
         new Cesium.Matrix4()
       );
-
-      if (m3dSet.constructor.name == "Cesium3DTileset") {
+      /**
+       * 修改说明：m3dSet.construct.name不能判断，因为name被压缩混淆
+       * 修改时间：2025/1/10
+       */
+      if (m3dSet instanceof Cesium.Cesium3DTileset) {
         let range = { xmin, ymin, xmax, ymax, zmin, zmax };
         Object.keys(range).forEach((item) => {
           if (item == "xmin" || item == "ymin")

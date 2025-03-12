@@ -272,7 +272,7 @@ export default {
       if (window.drawElement) {
         window.drawElement.stopDrawing();
       }
-      window.drawElement = new Cesium.DrawElement(viewer);
+      window.drawElement = new zondy.cesium.DrawElement(viewer);
       return window.drawElement;
     },
     enableDrawPoint() {
@@ -362,7 +362,7 @@ export default {
             degreeArr.push([lng, lat, height]);
           }
           if (!disableDraw || typeof disableDraw !== "boolean") {
-            let polyline = new Cesium.DrawElement.PolylinePrimitive({
+            let polyline = new zondy.cesium.DrawElement.PolylinePrimitive({
               id: "polyline",
               positions: positions,
               width: drawStyleCopy.line?.size || drawStyleCopy.width,
@@ -415,7 +415,7 @@ export default {
             degreeArr.push([lng, lat, height]);
           }
           if (!disableDraw || typeof disableDraw !== "boolean") {
-            let polygon = new Cesium.DrawElement.PolygonPrimitive({
+            let polygon = new zondy.cesium.DrawElement.PolygonPrimitive({
               positions: positions,
               width: drawStyleCopy.polygon?.size || drawStyleCopy.width,
               material: Cesium.Material.fromType("Color", {
@@ -462,7 +462,7 @@ export default {
         callback: function(result) {
           let extent = result.extent;
           if (!disableDraw || typeof disableDraw !== "boolean") {
-            let rectangle = new Cesium.DrawElement.ExtentPrimitive({
+            let rectangle = new zondy.cesium.DrawElement.ExtentPrimitive({
               extent: extent,
               material: Cesium.Material.fromType("Color", {
                 color: colorStyle
@@ -545,7 +545,7 @@ export default {
           // alert(center.toString() + ' ' + radius.toString());
           var centerCartographic = Cesium.Cartographic.fromCartesian(center);
           let height = centerCartographic.height;
-          let redCircle = new Cesium.DrawElement.CirclePrimitive({
+          let redCircle = new zondy.cesium.DrawElement.CirclePrimitive({
             center: center,
             radius: radius,
             height: height,

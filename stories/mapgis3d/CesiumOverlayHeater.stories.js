@@ -142,7 +142,7 @@ const Template = (args, { argTypes }) => ({
       const boundsWidth = window.Cesium.Cartesian3.distance(pointX, pointY);
       const step = Math.ceil((boundsHeight / 20) * (boundsWidth / 20));
       const count = step > 10000 ? 10000 : step;
-      const pointArr = window.Cesium.AlgorithmLib.getRandomPointByRect(
+      const pointArr = zondy.cesium.AlgorithmLib.getRandomPointByRect(
         west,
         south,
         east,

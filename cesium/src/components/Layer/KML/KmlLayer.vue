@@ -9,25 +9,25 @@ export default {
   props: {
     vueKey: {
       type: String,
-      default: "default"
+      default: "default",
     },
     vueIndex: {
       type: Number,
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
-      }
+      },
     },
     visible: {
       type: Boolean,
-      default: true
+      default: true,
     },
     url: {
       type: String,
-      default: null
+      default: null,
     },
     token: {
-      type: Object
-    }
+      type: Object,
+    },
   },
   computed: {
     name() {
@@ -37,7 +37,7 @@ export default {
         tempUrl = strs[strs.length - 1];
       }
       return tempUrl;
-    }
+    },
   },
   data() {
     return {};
@@ -50,38 +50,38 @@ export default {
   },
   watch: {
     url: {
-      handler: function() {
+      handler: function () {
         this.removeKML();
         if (this.visible === undefined || this.visible) {
           this.appendKml(this.url, true);
         }
-      }
+      },
     },
     visible: {
-      handler: function() {
+      handler: function () {
         this.removeKML();
         if (this.visible === undefined || this.visible) {
           this.appendKml(this.url, false);
         }
-      }
-    }
+      },
+    },
   },
   methods: {
     async createCesiumObject() {
       return new Promise(
-        resolve => {
+        (resolve) => {
           resolve();
         },
-        reject => {}
+        (reject) => {}
       );
     },
     mount() {
       const { viewer, vueCesium, vueKey, vueIndex, kmlData } = this;
       const vm = this;
-      let promise = this.createCesiumObject();
-      promise.then(function(dataSource) {
+      const promise = this.createCesiumObject();
+      promise.then(function (dataSource) {
         vueCesium.KmlManager.addSource(vueKey, vueIndex, dataSource, {
-          kmlData: undefined
+          kmlData: undefined,
         });
         vm.appendKml(vm.url, true);
         vm.$emit("loaded", vm);
@@ -96,48 +96,51 @@ export default {
       if (!url || url.length == 0) {
         return;
       }
-      let { vueKey, vueIndex, Cesium, viewer, token } = this;
-      let find = vueCesium.KmlManager.findSource(vueKey, vueIndex);
-      let { options } = find;
+      const { vueKey, vueIndex, Cesium, viewer, token } = this;
+      const find = vueCesium.KmlManager.findSource(vueKey, vueIndex);
+      const { options } = find;
       let { kmlData } = options;
       if (!kmlData || changeUrl) {
         if (token && token.value) {
           url += "?" + token.key + "=" + token.value;
         }
-        kmlData = Cesium.KmlDataSource.load(url, {
+        const kmlDataSource = new Cesium.KmlDataSource({
           camera: viewer.scene.camera,
           canvas: viewer.scene.canvas,
-          clampToGround: true
+          ellipsoid: Cesium.Ellipsoid.WGS84, //用于地理计算的椭球体
         });
-        vueCesium.KmlManager.changeOptions(
-          vueKey,
-          vueIndex,
-          "kmlData",
-          kmlData
+        kmlData = kmlDataSource.load(
+          url, //kml数据url
+          {
+            clampToGround: false, // 数据是否贴地显示
+          }
         );
+        kmlData.then((data) => {
+          vueCesium.KmlManager.changeOptions(vueKey, vueIndex, "kmlData", data);
+        });
       }
       viewer.dataSources.add(kmlData);
       return kmlData;
     },
     removeKML() {
-      let { viewer } = this;
-      const dataSource = viewer.dataSources.getByName(this.name)[0];
-      if (dataSource) {
-        viewer.dataSources.remove(dataSource);
+      const { vueKey, vueIndex, viewer, vueCesium } = this;
+      const find = vueCesium.KmlManager.findSource(vueKey, vueIndex);
+      const { options } = find;
+      const { kmlData } = options;
+      if (kmlData) {
+        viewer.dataSources.remove(kmlData);
       }
     },
     unmount() {
       this.removeKML();
-      let { vueKey, vueIndex, viewer, vueCesium } = this;
-      let find = vueCesium.KmlManager.findSource(vueKey, vueIndex);
-      let { options } = find;
-      let { kmlData } = options;
-      if (kmlData) {
-        vueCesium.KmlManager.changeOptions(vueKey, vueIndex, "kmlData", null);
+      const { vueKey, vueIndex, vueCesium } = this;
+      const find = vueCesium.KmlManager.findSource(vueKey, vueIndex);
+      if (find) {
+        vueCesium.KmlManager.deleteSource(vueKey, vueIndex);
       }
       this.$emit("unload", this);
-    }
-  }
+    },
+  },
 };
 </script>
 

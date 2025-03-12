@@ -67,9 +67,7 @@
           @expand="onExpand"
           @select="onSelect"
         >
-          <template slot="custom" slot-scope="{}">
-            <!-- <mapgis-ui-iconfont :type="icon" /> -->
-          </template>
+          <template slot="custom" slot-scope="{}"> </template>
           <template
             slot="title"
             slot-scope="{ title, icon, version, gdbp, layerIndex, key, guid }"
@@ -150,27 +148,6 @@
       >
       </mapgis-3d-popup-iot>
     </mapgis-3d-feature-popup>
-    <!-- <mapgis-ui-slider-panel
-      class="mapgis-3d-stratified-household-slider-tree"
-      :values="layerTree"
-      :customLabel="customLabel"
-      @change="changeSimpleMenu"
-      @changeSlider="changeSimpleSlider"
-    >
-    </mapgis-ui-slider-panel> -->
-
-    <!-- modal关系图谱 -->
-    <!-- <mapgis-ui-modal
-      v-model="showModal"
-      :footer="null"
-      :width="1000"
-      :centered="true"
-      class="attribute-model"
-      :bodyStyle="{ padding: '30px 10px 10px' }"
-      :destroyOnClose="true"
-    >
-      <mapgis-3d-relationship-graph :info="relationshipInfo" />
-    </mapgis-ui-modal> -->
   </div>
 </template>
 
@@ -178,6 +155,7 @@
 import BaseLayer from "./BaseLayer";
 import StratifiedHouseholdMenus from "./StratifiedHouseholdMenus.vue";
 import { rgbToHex } from "../Utils/common/color-util";
+import { InitializeOptionsType } from "@mapgis/webclient-cesium-plugin";
 
 export default {
   name: "mapgis-3d-stratified-household",
@@ -279,11 +257,11 @@ export default {
       title: "分层分户",
       layerIds: [],
       menus: [
-        {
-          title: "查询",
-          icon: "mapgis-highlight",
-          active: this.enablePopup,
-        },
+        // {
+        //   title: "查询",
+        //   icon: "mapgis-highlight",
+        //   active: this.enablePopup,
+        // },
         {
           title: "模型爆炸",
           icon: "mapgis-fire1",
@@ -296,11 +274,11 @@ export default {
         },
       ],
       collapsemenus: [
-        {
-          title: "查询",
-          icon: "mapgis-highlight",
-          active: this.enablePopup,
-        },
+        // {
+        //   title: "查询",
+        //   icon: "mapgis-highlight",
+        //   active: this.enablePopup,
+        // },
         {
           title: "模型爆炸",
           icon: "mapgis-fire1",
@@ -385,6 +363,7 @@ export default {
   },
   created() {},
   mounted() {
+    console.log("mounted: ");
     this.mount();
     // 设置关系图谱数据源信息
     this.relationshipInfo.dataStoreIp = this.dataStoreIp;
@@ -454,59 +433,62 @@ export default {
 
       let promise = this.createCesiumObject();
       promise.then((find) => {
-        if (find && find.options) {
-          let { m3ds, g3dLayerIndex } = find.options;
-
-          if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-          let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-          this.g3dLayerIndex = g3dLayerIndex;
-          let layerIndexs = g3dLayer.getM3DLayerIndexes();
-          let all = [];
-          vm.m3ds = m3ds;
-          // m3ds传入关系图谱
-          vm.relationshipInfo.m3ds = m3ds;
-          m3ds.forEach((m3d, i) => {
-            // 形参的m3d并不是表示序号i对应的图层，下一行才是序号i对应的图层
-            let gIndex = layerIndexs[i];
-            let info = g3dLayer.getLayerInfo(gIndex);
-            let { layerName, gdbpUrl, layerType } = info;
-            all.push(`${gIndex}`);
-            vm.layerTree.push({
-              title: layerName,
-              key: `${gIndex}`,
-              version: g3dLayer.version,
-              layerIndex: gIndex,
-              layerType,
-              gdbp: gdbpUrl,
-              guid: m3d._guid,
-              icon: "mapgis-layer",
-              menu: "mapgis-down",
-              scopedSlots: {
-                icon: "custom",
-                title: "title",
-              },
-            });
-          });
-          vm.layerIds = all;
-          vm.$emit("loaded", { component: vm });
-          vm.version = g3dLayer.version;
-          let modelExplosion = new Cesium.ModelExplosion(viewer);
-          let collection = new Cesium.PrimitiveCollection();
-          vueCesium.StratifiedHousehouldManager.addSource(
-            vueKey,
-            innerVueIndex,
-            g3dLayer,
-            {
-              m3ds: m3ds,
-              modelExplosion: modelExplosion,
-              collection: collection,
-              primitiveCollection: viewer.scene.primitives.add(collection),
+        if (find && find.source && find.options) {
+          const { source } = find;
+          const { commonLayer } = find.options;
+          const all = [];
+          const m3ds = [];
+          const sublayers = commonLayer.activeScene.allSublayers.items;
+          if (sublayers && sublayers.length > 0) {
+            for (let i = 0; i < sublayers.length; i++) {
+              const sublayer = sublayers[i];
+              const { layerName, id, type, layerIndex, url } = sublayer;
+              const m3d = source[layerIndex].source;
+              m3d._layerIndex = layerIndex;
+              m3ds.push(m3d);
+              const { version } = m3d;
+              if (
+                source[layerIndex].type === InitializeOptionsType.MapGISM3DSet
+              ) {
+                all.push(`${layerIndex}`);
+                vm.layerTree.push({
+                  title: layerName,
+                  key: `${layerIndex}`,
+                  version,
+                  layerIndex,
+                  layerType: type,
+                  gdbp: url,
+                  guid: m3d._guid,
+                  icon: "mapgis-layer",
+                  menu: "mapgis-down",
+                  scopedSlots: {
+                    icon: "custom",
+                    title: "title",
+                  },
+                });
+              }
             }
-          );
-          vm.recordOriginStyle();
-          vm.recordOriginCustomShader();
-          if (enablePopup) {
-            vm.$_bindPickFeature();
+            vm.m3ds = m3ds;
+            // m3ds传入关系图谱
+            vm.relationshipInfo.m3ds = m3ds;
+            vm.layerIds = all;
+            vm.$emit("loaded", { component: vm });
+            let collection = new Cesium.PrimitiveCollection();
+            vueCesium.StratifiedHousehouldManager.addSource(
+              vueKey,
+              innerVueIndex,
+              source,
+              {
+                m3ds: m3ds,
+                collection: collection,
+                primitiveCollection: viewer.scene.primitives.add(collection),
+              }
+            );
+            vm.recordOriginStyle();
+            vm.recordOriginCustomShader();
+            if (enablePopup) {
+              vm.$_bindPickFeature();
+            }
           }
         }
       });
@@ -515,17 +497,6 @@ export default {
     },
     unmount() {
       const { vueCesium, vueKey, innerVueIndex } = this;
-      const { viewer } = this;
-      let find = vueCesium.StratifiedHousehouldManager.findSource(
-        vueKey,
-        innerVueIndex
-      );
-      if (find && find.options) {
-        /* let { m3ds } = find.options;
-        if (!viewer.isDestroyed() && m3ds) {
-          m3ds.forEach(l => l.destroy());
-        } */
-      }
       this.$emit("unload", { component: this });
       vueCesium.StratifiedHousehouldManager.deleteSource(vueKey, innerVueIndex);
       if (this.interval) {
@@ -612,23 +583,19 @@ export default {
     },
     changeLayerVisible(layers) {
       layers = layers || this.layerIds;
-      const { vueKey, innerVueIndex, vueCesium } = this;
-      let find = vueCesium.G3DManager.findSource(vueKey, innerVueIndex);
-      if (find && find.options) {
-        let m3ds = find.options.m3ds;
-        if (!m3ds) return;
-        m3ds.forEach((m3d, i) => {
-          if (layers) {
-            if (layers.indexOf(`${i}`) >= 0) {
-              m3d.show = true;
-            } else {
-              m3d.show = false;
-            }
-          } else {
+      const { m3ds } = this;
+      if (!m3ds) return;
+      m3ds.forEach((m3d, i) => {
+        if (layers) {
+          if (layers.indexOf(`${i}`) >= 0) {
             m3d.show = true;
+          } else {
+            m3d.show = false;
           }
-        });
-      }
+        } else {
+          m3d.show = true;
+        }
+      });
     },
     handleExpandItemKey(key) {
       if (key == this.expandItemKey) {
@@ -656,17 +623,15 @@ export default {
      * @param {Function} callback 执行存储操作的回调函数
      * */
     recordM3DProps(storeName, callback) {
-      const { g3dLayerIndex, viewer } = this;
-      const { vueKey, innerVueIndex, vueCesium } = this;
-
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      let layerIndexs = g3dLayer.getM3DLayerIndexes();
+      const { viewer } = this;
+      const { vueKey, innerVueIndex, vueCesium, m3ds } = this;
+      if (!m3ds) {
+        return;
+      }
       let props = [];
-      layerIndexs.forEach((index) => {
-        let m3dlayer = g3dLayer.getLayer(index);
-        if (m3dlayer && callback && callback instanceof Function) {
-          callback(m3dlayer, props);
+      m3ds.forEach((m3d) => {
+        if (m3d && callback && callback instanceof Function) {
+          callback(m3d, props);
         }
       });
       vueCesium.StratifiedHousehouldManager.changeOptions(
@@ -694,19 +659,19 @@ export default {
      * @param {Function} callback 执行恢复操作的回调函数
      * */
     restoreOriginProps(storeName, callback) {
-      const { vueKey, innerVueIndex, vueCesium, g3dLayerIndex } = this;
+      const { vueKey, innerVueIndex, vueCesium, m3ds } = this;
+      if (!m3ds) {
+        return;
+      }
       let find = vueCesium.StratifiedHousehouldManager.findSource(
         vueKey,
         innerVueIndex
       );
-
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       if (find && find.options[storeName]) {
         find.options[storeName].forEach((s, i) => {
-          let m3dlayer = g3dLayer.getLayer(`${i}`);
-          if (m3dlayer && callback && callback instanceof Function) {
-            callback(m3dlayer, s);
+          let m3d = m3ds[`${i}`];
+          if (m3d && callback && callback instanceof Function) {
+            callback(m3d, s);
           }
         });
       }
@@ -724,32 +689,28 @@ export default {
       });
     },
     restoreHighlight() {
-      const { g3dLayerIndex, viewer } = this;
-
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      let m3ds = g3dLayer.getM3DLayerIndexes();
-      m3ds.forEach((index) => {
-        let m3d = g3dLayer.getLayer(index);
-        if (m3d) {
-          m3d.reset(); //该函数目前底层MapGISM3DSet.reset无效 后期记得修改
-          m3d.style = undefined;
-        }
-      });
+      const { m3ds } = this;
+      if (m3ds) {
+        m3ds.forEach((m3d) => {
+          if (m3d) {
+            m3d.style = undefined;
+          }
+        });
+      }
     },
     restoreOrigindVisible() {
-      const { vueKey, innerVueIndex, vueCesium, g3dLayerIndex } = this;
+      const { vueKey, innerVueIndex, vueCesium, m3ds } = this;
+      if (!m3ds) {
+        return;
+      }
       let find = vueCesium.StratifiedHousehouldManager.findSource(
         vueKey,
         innerVueIndex
       );
-
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       if (find && find.options.originStyles) {
         find.options.originStyles.forEach((s, i) => {
-          let m3dlayer = g3dLayer.getLayer(`${i}`);
-          m3dlayer.show = true;
+          let m3d = m3ds[i];
+          m3d.show = true;
         });
       }
     },
@@ -767,21 +728,19 @@ export default {
       }
     },
     enableIsolation(layer) {
-      const { g3dLayerIndex, viewer } = this;
+      const { viewer, m3ds } = this;
+      if (!m3ds) {
+        return;
+      }
       const { layerIndex } = layer;
-
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      let layerIndexs = g3dLayer.getM3DLayerIndexes();
       this.featurevisible = false;
       this.selectedKeys = [`${layerIndex}`];
-      layerIndexs.forEach((index) => {
-        let m3dlayer = g3dLayer.getLayer(index);
-        if (index != layerIndex) {
-          m3dlayer.show = false;
+      m3ds.forEach((m3d) => {
+        if (m3d._layerIndex != layerIndex) {
+          m3d.show = false;
         } else {
-          m3dlayer.show = true;
-          viewer.camera.flyToBoundingSphere(m3dlayer.boundingSphere);
+          m3d.show = true;
+          viewer.camera.flyToBoundingSphere(m3d.boundingSphere);
         }
       });
       let children = this.layerTree.map((c) => {
@@ -802,58 +761,112 @@ export default {
       });
       this.layerTree.splice(0, 1, children[0]);
       this.restoreOrigindVisible();
-      // this.restoreOriginStyle();
     },
-    enableExplror() {
-      const { Cesium, g3dLayerIndex, viewer } = this;
+    enableExplosion() {
+      const { Cesium, viewer, m3ds } = this;
+      if (!m3ds) {
+        return;
+      }
       const { vueKey, innerVueIndex, vueCesium } = this;
       const vector = new Cesium.Cartesian3(0, 0, 1); //向Z轴正方向爆炸
       const expDistance = 5;
       const speed = 0.5;
-      let find = vueCesium.StratifiedHousehouldManager.findSource(
-        vueKey,
-        innerVueIndex
-      );
+      this.multiLayerAxisExplosionNoAnimate(m3ds, {
+        direction: vector,
+        expDistance: expDistance,
+        speed: speed,
+      });
+    },
+    /**
+     * 多图层-轴向爆炸-无动画
+     * @param {Array<MapGISM3DSet>} M3DSets M3DSet数组
+     * @param {Object} options 附加参数
+     * @param {Cartesian3} [options.moveDirection=new Cartesian3(1, 0, 0)] 爆炸方向
+     * @param {Number} [options.expDistance=1] 爆炸间距
+     */
+    multiLayerAxisExplosionNoAnimate(M3DSets, options) {
+      const { Cesium } = this;
+      // 0.赋值
+      const optionsParam = options || {};
+      const moveDirection =
+        optionsParam.direction || new Cesium.Cartesian3(1, 0, 0);
+      const expDistance = optionsParam.expDistance || 1;
 
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      let m3ds = [];
-      if (find && find.options) {
-        const { modelExplosion } = find.options;
-        let layerIndexs = g3dLayer.getM3DLayerIndexes();
-        layerIndexs.forEach((index) => {
-          let m3dlayer = g3dLayer.getLayer(index);
-          m3ds.push(m3dlayer);
-        });
-        modelExplosion.multiLayerAxisExplosionNoAnimate(m3ds, {
-          direction: vector,
-          expDistance: expDistance,
-          speed: speed,
-        });
+      // 1.按照高度排序
+      const sorts = [].concat(M3DSets);
+      for (let index = 0; index < M3DSets.length; index++) {
+        const l = M3DSets[index];
+        const root = l.root;
+        const temp = l.root.transform.clone();
+        const center = root.boundingSphere.center;
+        const truecenter = Cesium.Matrix4.multiplyByPoint(
+          temp,
+          center,
+          new Cesium.Cartesian3()
+        );
+        const lonlat = Cesium.Cartographic.fromCartesian(truecenter);
+        const min = root.boundingVolume.minimumHeight;
+        const max = root.boundingVolume.maximumHeight;
+        const height = (min + max) / 2;
+        l.longitude = Cesium.Math.toDegrees(lonlat.longitude);
+        l.latitude = Cesium.Math.toDegrees(lonlat.latitude);
+        l.height = height;
+        l.root.originTransform = l.root.originTransform || temp;
+      }
+      sorts.sort(function (a, b) {
+        let sub;
+        if (moveDirection.x > 0) {
+          sub = a.longitude - b.longitude;
+        } else if (moveDirection.y > 0) {
+          sub = a.latitude - b.latitude;
+        } else {
+          sub = a.height - b.height;
+        }
+        return sub;
+      });
+
+      // 2.整体偏移
+      const transform = sorts[0].root.transform.clone();
+      const originPoint = new Cesium.Cartesian3(0, 0, 0);
+      const direction = new Cesium.Cartesian3();
+      Cesium.Matrix4.multiplyByPoint(transform, originPoint, originPoint);
+      Cesium.Matrix4.multiplyByPoint(transform, moveDirection, moveDirection);
+      Cesium.Cartesian3.subtract(moveDirection, originPoint, direction);
+      // 射线方向是否为0，如果为0，则默认沿x轴方向移动
+      const length = Cesium.Cartesian3.magnitude(direction);
+      if (length < 1.0e-10) {
+        direction.x = 1.0;
+      }
+      Cesium.Cartesian3.normalize(direction, direction);
+      const tempDirection = direction.clone();
+      for (let i = 0; i < sorts.length; i++) {
+        const tileset = sorts[i];
+        const distance = sorts.length === 1 ? expDistance * 1 : expDistance * i;
+
+        const matrix = tileset.root.transform.clone();
+
+        Cesium.Cartesian3.multiplyByScalar(direction, distance, tempDirection);
+        matrix[12] += tempDirection.x;
+        matrix[13] += tempDirection.y;
+        matrix[14] += tempDirection.z;
+
+        tileset.root.transform = matrix.clone();
       }
     },
-    disableExplror() {
-      const { vueKey, innerVueIndex, vueCesium, g3dLayerIndex, viewer } = this;
-      let find = vueCesium.StratifiedHousehouldManager.findSource(
-        vueKey,
-        innerVueIndex
-      );
-      let m3ds = [];
-
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      let layerIndexs = g3dLayer.getM3DLayerIndexes();
-      layerIndexs.forEach((index) => {
-        let m3dlayer = g3dLayer.getLayer(index);
-        m3ds.push(m3dlayer);
-      });
-      if (find && find.options) {
-        const { modelExplosion } = find.options;
-        modelExplosion.removeModelExplosion(m3ds);
-        setTimeout(function () {
-          // 将mapgism3d的modelExplosion属性修改为false，确保不对其他功能造成性能影响
-          modelExplosion.recover(m3ds);
-        }, 1000);
+    disableExplosion() {
+      const { vueKey, innerVueIndex, vueCesium, viewer, m3ds } = this;
+      if (!m3ds) {
+        return;
+      }
+      this.removeModelExplosion(m3ds);
+    },
+    /**
+     * 重置图层
+     */
+    removeModelExplosion(m3dSets) {
+      for (let i = 0; i < m3dSets.length; i++) {
+        var layer = m3dSets[i];
+        layer.root.transform = layer.root.originTransform;
       }
     },
     handleMenu(menu) {
@@ -870,10 +883,10 @@ export default {
       } else if (menu == "模型爆炸") {
         if (this.menus[1].active) {
           this.menus[1].active = false;
-          this.disableExplror();
+          this.disableExplosion();
         } else {
           this.menus[1].active = true;
-          this.enableExplror();
+          this.enableExplosion();
         }
       } else if (menu == "关系图谱") {
         this.menus[2].active = true;
@@ -882,16 +895,10 @@ export default {
         this.relationshipInfo.layerTree = this.layerTree;
         this.relationshipInfo.isFloor = false;
         this.$emit("show-relationship-graph", this.relationshipInfo);
-        // this.showModal = true;
       }
     },
     $_pickEvent(movement) {
-      const { enableStratifiedHouse, enableDynamicQuery } = this;
-      if (enableDynamicQuery) {
-        this.queryDynamic(movement);
-      } else {
-        this.queryStatic(movement);
-      }
+      this.queryStatic(movement);
     },
     $_bindPickFeature() {
       const { vueKey, innerVueIndex } = this;
@@ -939,31 +946,35 @@ export default {
       this.restoreOriginStyle();
     },
     highlightM3d(layerIndex) {
-      const { vueKey, innerVueIndex, vueCesium, layerHighlightColor } = this;
+      const { vueKey, innerVueIndex, vueCesium, layerHighlightColor, m3ds } =
+        this;
+      if (!m3ds) {
+        return;
+      }
       this.selectLayerIndex = layerIndex;
-      let g3dLayer = viewer.scene.layers.getLayer(this.g3dLayerIndex);
-      let m3dlayer = g3dLayer.getLayer(layerIndex);
+
+      const m3d = m3ds.find((item) => item._layerIndex === layerIndex);
       this.restoreM3d();
-      vueCesium.StratifiedHousehouldManager.changeOptions(
-        vueKey,
-        innerVueIndex,
-        "pickerTileset",
-        m3dlayer
-      );
-      vueCesium.StratifiedHousehouldManager.changeOptions(
-        vueKey,
-        innerVueIndex,
-        "pickerTilesetStyle",
-        m3dlayer.style
-      );
       /**
        * @修改说明 使用组件传入的高亮颜色
        * @修改人 龚跃健
        * @修改时间 2022/1/13
        */
-      m3dlayer.style = new Cesium.Cesium3DTileStyle({
+      m3d.style = new Cesium.Cesium3DTileStyle({
         color: layerHighlightColor,
       });
+      vueCesium.StratifiedHousehouldManager.changeOptions(
+        vueKey,
+        innerVueIndex,
+        "pickerTileset",
+        m3d
+      );
+      vueCesium.StratifiedHousehouldManager.changeOptions(
+        vueKey,
+        innerVueIndex,
+        "pickerTilesetStyle",
+        m3d.style
+      );
     },
     handleDynamicQuery() {
       this.featurevisible = false;
@@ -973,93 +984,13 @@ export default {
       this.featureclickenable = this.enablePopup;
       this.disableLayerSelect = false;
     },
-    queryDynamic(movement) {
-      const vm = this;
-      vm.featureproperties = undefined;
-      const { Cesium, viewer, g3dLayerIndex } = this;
-      const { vueKey, innerVueIndex, vueCesium } = this;
-      let find = vueCesium.StratifiedHousehouldManager.findSource(
-        vueKey,
-        innerVueIndex
-      );
-      if (find && find.options) {
-        let { primitiveCollection } = find.options;
-        let cartesian = viewer.getCartesian3Position(movement.position);
-        if (Cesium.defined(cartesian)) {
-          let cartographic = Cesium.Cartographic.fromCartesian(cartesian);
-          let lng = Cesium.Math.toDegrees(cartographic.longitude);
-          let lat = Cesium.Math.toDegrees(cartographic.latitude);
-          let height = cartographic.height;
-          let mapPosition = { x: lng, y: lat, z: height };
-
-          if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-          let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-          let layerIndexs = g3dLayer.getM3DLayerIndexes();
-          let layerIndex =
-            layerIndexs && layerIndexs.length > 0
-              ? typeof layerIndexs[0] == "string"
-                ? parseInt(layerIndexs[0])
-                : layerIndexs[0]
-              : 0;
-          // 查询容差小数位数与坐标位数保持一致。提高查询精度
-          const latStr = lat.toString().split(".")[1];
-          const tolerance = Number(`0.${latStr}`) / Number(latStr);
-
-          g3dLayer.Monomerization(
-            function callback(result) {
-              vm.featurevisible = false;
-              let find = vueCesium.StratifiedHousehouldManager.findSource(
-                vueKey,
-                innerVueIndex
-              );
-              if (find) {
-                let last = find.options.feature;
-                primitiveCollection.remove(last);
-              }
-              if (result && result.length > 0) {
-                let feature = result[0];
-
-                vm.featureproperties = feature.property;
-                if (
-                  vm.featureproperties &&
-                  Object.keys(vm.featureproperties).length > 0
-                ) {
-                  vm.featurevisible = true;
-                  vm.featureposition = {
-                    longitude: lng,
-                    latitude: lat,
-                    height: height,
-                  };
-                }
-                // _extrudedHeight和_height这样设置后才能贴模型
-                feature.geometryInstances.geometry._extrudedHeight = 0;
-                feature.geometryInstances.geometry._height = 100000;
-                primitiveCollection.add(feature);
-                vueCesium.StratifiedHousehouldManager.changeOptions(
-                  vueKey,
-                  innerVueIndex,
-                  "feature",
-                  feature
-                );
-              }
-            },
-            {
-              position: new Cesium.Cartesian3(
-                mapPosition.x,
-                mapPosition.y,
-                mapPosition.z
-              ),
-              tolerance,
-              layerIndex: layerIndex,
-            }
-          );
-        }
-      }
-    },
     queryStatic(movement) {
       const vm = this;
       vm.featureproperties = undefined;
-      const { Cesium, viewer, version, g3dLayerIndex } = this;
+      const { Cesium, viewer, m3ds } = this;
+      if (!m3ds) {
+        return;
+      }
       const { featureHighlightColorProp } = this;
       const scene = viewer.scene;
 
@@ -1093,58 +1024,42 @@ export default {
         }
 
         if (cartesian || cartesian2) {
-          if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-          let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
           let index = pickedFeature._content._tileset._layerIndex;
+
+          const tileset = m3ds.find((item) => item._layerIndex === index);
           vm.selectLayerIndex = index;
           vm.selectedKeys = [`${index}`];
-          if (version == "1.0" || version == "0.0") {
-            let layerInfo = g3dLayer.getLayerInfo(index);
-            const { layerName, gdbpUrl } = layerInfo;
-            vm.featureproperties = { layerName, gdbpUrl };
-            vm.highlightM3d(index);
+          vm.restoreHighlight();
+
+          // 修改说明：M3D2.1已弃用viewer.scene.pickOid方法，后面统一从feature上获取要素id，高亮统一使用Cesium3DTileStyle设置
+          // 修改人:龚跃健
+          // 修改日期：2024-11-22
+          const { tilesetVersion } = tileset.version;
+          let id;
+          let conditions;
+          if (tilesetVersion === "2.1") {
+            id = pickedFeature.getProperty("tid");
+            conditions = [["${tid} === ${id}", featureHighlightColorProp]];
           } else {
-            if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0)
-              return;
-            let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-            let tileset = g3dLayer.getLayer(index);
-            vm.restoreHighlight();
+            id = pickedFeature.getProperty("OID");
+            conditions = [["${OID} === ${id}", featureHighlightColorProp]];
+          }
+          tileset.style = new Cesium.Cesium3DTileStyle({
+            defines: {
+              id,
+            },
+            color: {
+              conditions,
+            },
+          });
 
-            // 修改说明：M3D2.1已弃用viewer.scene.pickOid方法，后面统一从feature上获取要素id，高亮统一使用Cesium3DTileStyle设置
-            // 修改人:龚跃健
-            // 修改日期：2024-11-22
-            const { tilesetVersion } = tileset.version;
-            let id;
-            let conditions;
-            if (tilesetVersion === "2.1") {
-              id = pickedFeature.getProperty("tid");
-              conditions = [["${tid} === ${id}", featureHighlightColorProp]];
-            } else {
-              id = pickedFeature.getProperty("OID");
-              conditions = [["${OID} === ${id}", featureHighlightColorProp]];
-            }
-            tileset.style = new Cesium.Cesium3DTileStyle({
-              defines: {
-                id,
-              },
-              color: {
-                conditions,
-              },
+          if (Cesium.defined(pickedFeature)) {
+            let result = {};
+            const propertyIds = pickedFeature.getPropertyIds();
+            propertyIds.forEach((id) => {
+              result[id] = pickedFeature.getProperty(id);
             });
-
-            if (tileset._useRawSaveAtt && Cesium.defined(pickedFeature)) {
-              let result = {};
-              const propertyNames = pickedFeature.getPropertyNames();
-              propertyNames.forEach((name) => {
-                result[name] = pickedFeature.getProperty(name);
-              });
-              vm.featureproperties = result;
-            } else {
-              tileset.queryAttributes(id).then(function (result) {
-                result = result || {};
-                vm.featureproperties = result;
-              });
-            }
+            vm.featureproperties = result;
           }
           if (
             vm.featureclickenable &&
@@ -1189,48 +1104,40 @@ export default {
       const speed = 1;
       let tileset;
       if (m3ds) {
-        tileset = m3ds[data.layerIndex];
-      } else {
-        tileset = viewer.scene.layers.getM3DLayer(data.layerIndex);
+        tileset = m3ds.find((item) => item._layerIndex === data.layerIndex);
       }
       if (!tileset) {
         return;
       }
-      let find = vueCesium.StratifiedHousehouldManager.findSource(
-        vueKey,
-        innerVueIndex
-      );
-      if (find && find.options) {
-        const { modelExplosion } = find.options;
-        const vectorLeft = new Cesium.Cartesian3(1, 0, 0);
-        const vectorUp = new Cesium.Cartesian3(0, 1, 0);
-        const vector = new Cesium.Cartesian3();
-        const angle = Cesium.Math.toRadians(-45);
-        vector.x =
-          vectorLeft.x * Math.cos(angle) + vectorUp.x * Math.sin(angle);
-        vector.y =
-          vectorLeft.y * Math.cos(angle) + vectorUp.y * Math.sin(angle);
-        vector.z =
-          vectorLeft.z * Math.cos(angle) + vectorUp.z * Math.sin(angle);
-        // 如果有移出的楼层则先还原
-        if (this.prevFloorId) {
-          modelExplosion.removeModelExplosion([m3ds[this.prevFloorId]]);
-        }
-        this.prevFloorId = data.layerIndex;
-        // this.selectedKeys = [`${data.layerIndex}`];
-        modelExplosion.multiLayerAxisExplosionNoAnimate([tileset], {
-          direction: vector,
-          expDistance: expDistance,
-          speed: speed,
-        });
-        this.highlightM3d(data.layerIndex);
+      const vectorLeft = new Cesium.Cartesian3(1, 0, 0);
+      const vectorUp = new Cesium.Cartesian3(0, 1, 0);
+      const vector = new Cesium.Cartesian3();
+      const angle = Cesium.Math.toRadians(-45);
+      vector.x = vectorLeft.x * Math.cos(angle) + vectorUp.x * Math.sin(angle);
+      vector.y = vectorLeft.y * Math.cos(angle) + vectorUp.y * Math.sin(angle);
+      vector.z = vectorLeft.z * Math.cos(angle) + vectorUp.z * Math.sin(angle);
+      // 如果有移出的楼层则先还原
+      if (this.prevFloorId) {
+        this.removeModelExplosion([m3ds[this.prevFloorId]]);
       }
+      this.prevFloorId = data.layerIndex;
+      this.multiLayerAxisExplosionNoAnimate([tileset], {
+        direction: vector,
+        expDistance: expDistance,
+        speed: speed,
+      });
+      this.highlightM3d(data.layerIndex);
     },
     houseHighlight(data) {
       this.restoreHighlight();
-      const { viewer, g3dLayerIndex, featureHighlightColorProp } = this;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      let tileset = g3dLayer.getLayer(data.layerIndex + "");
+      const { viewer, m3ds, featureHighlightColorProp } = this;
+      let tileset;
+      if (m3ds) {
+        tileset = m3ds.find((item) => item._layerIndex === data.layerIndex);
+      }
+      if (!tileset) {
+        return;
+      }
       // 修改说明：M3D2.1已弃用viewer.scene.pickOid方法，后面统一从feature上获取要素id，高亮统一使用Cesium3DTileStyle设置
       // 修改人:龚跃健
       // 修改日期：2024-11-22
@@ -1253,35 +1160,30 @@ export default {
     },
     // 关系图谱打开的根节点为楼层时展示当前楼层
     lockFloor(layerIndex) {
-      const { g3dLayerIndex, viewer } = this;
+      const { g3dLayerIndex, viewer, m3ds } = this;
 
       this.highlightM3d(layerIndex + "");
       this.restoreHighlight();
       this.restoreM3d();
-
-      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      let layerIndexs = g3dLayer.getM3DLayerIndexes();
       this.featurevisible = false;
       this.selectedKeys = [`${layerIndex}`];
-      layerIndexs.forEach((index) => {
-        let m3dlayer = g3dLayer.getLayer(index);
-        if (index != layerIndex) {
-          m3dlayer.show = false;
+      if (!m3ds) {
+        return;
+      }
+      m3ds.forEach((m3d) => {
+        if (m3d._layerIndex != layerIndex) {
+          m3d.show = false;
         } else {
-          m3dlayer.show = true;
+          m3d.show = true;
           if (layerIndex === this.prevFloorId) {
             this.restoreHighlight();
             this.restoreM3d();
           }
-          viewer.camera.flyToBoundingSphere(m3dlayer.boundingSphere);
+          viewer.camera.flyToBoundingSphere(m3d.boundingSphere);
         }
       });
-
-      // this.highlightM3d(layerIndex);
     },
     reloadGraph() {
-      // this.restoreOrigindVisible();
       this.restoreHighlight();
       this.restoreM3d();
     },
@@ -1297,15 +1199,8 @@ export default {
       return new Promise((resolve) => {
         if (this.prevFloorId) {
           const { vueKey, innerVueIndex, vueCesium, m3ds } = this;
-          let find = vueCesium.StratifiedHousehouldManager.findSource(
-            vueKey,
-            innerVueIndex
-          );
-          if (find && find.options) {
-            const { modelExplosion } = find.options;
-            modelExplosion.removeModelExplosion([m3ds[this.prevFloorId]]);
-            this.restoreM3d();
-          }
+          this.removeModelExplosion([m3ds[this.prevFloorId]]);
+          this.restoreM3d();
           this.lastPrevFloorId = this.prevFloorId;
           this.prevFloorId = undefined;
         }

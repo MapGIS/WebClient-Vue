@@ -67,9 +67,22 @@ const Template = (args, { argTypes }) => ({
     },
     camera() {
       let viewer = window.viewer;
-      let view = viewer.camera.getView();
-      delete view.endTransform;
-      delete view.positionWC;
+      const transform = viewer.camera.transform
+      const orientation = {
+        heading: viewer.camera.heading,
+        pitch: viewer.camera.pitch,
+        roll: viewer.camera.roll,
+      };
+      const destination = Cesium.Cartesian3.fromDegrees(
+        viewer.camera._positionCartographic.longitude,
+        viewer.camera._positionCartographic.latitude,
+        viewer.camera._positionCartographic.height
+      );
+      const view = {
+        transform,
+        orientation,
+        destination
+      }
       let info = JSON.stringify(view);
       this.info = info;
     },

@@ -220,7 +220,7 @@ export default {
           this.baseUrl
         ).then((data) => {
           viewer.scene.logarithmicDepthBuffer = true
-          const windManager = new Cesium.Wind3D(viewer, data, {
+          const windManager = new zondy.cesium.Wind3D(viewer, data, {
             //最大粒子数
             particlesNumber: that.particlesNumber,
             //拖尾透明度

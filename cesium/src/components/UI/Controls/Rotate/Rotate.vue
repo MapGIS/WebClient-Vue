@@ -259,7 +259,7 @@ export default {
       let { viewer, Cesium } = this;
       const vm = this;
       // 定义绕点旋转对象
-      let rotatePointTool = new Cesium.AnimationTool(viewer, {
+      let rotatePointTool = new zondy.cesium.AnimationTool(viewer, {
         //类型指定为point
         toolType: "point",
         //绕Z轴旋转角度，弧度值，初始化时有效。

@@ -1092,7 +1092,7 @@ export default {
       //停止上一次的绘制
       let graphicsLayer, DrawTool;
       graphicsLayer = this.$_getGraphicLayer();
-      DrawTool = new this.Cesium.DrawTool(this.viewer, graphicsLayer);
+      DrawTool = new zondy.cesium.DrawTool(this.viewer, graphicsLayer);
       this.$_stopDrawing();
       this.drawMode = drawMode;
       this.currentEditType = "model";
@@ -1145,7 +1145,7 @@ export default {
       this.groupName = name + "模型组" + this.groupNum;
       let graphicsLayer, DrawTool;
       graphicsLayer = this.$_getGraphicLayer();
-      DrawTool = new this.Cesium.DrawTool(this.viewer, graphicsLayer, {
+      DrawTool = new zondy.cesium.DrawTool(this.viewer, graphicsLayer, {
         finishDraw: function() {
           let groupId = Number((Math.random() * 100000000).toFixed(0));
           vm.currentGroupId = groupId;
@@ -1723,7 +1723,7 @@ export default {
           let flashStyle = e.attributes.__flashStyle;
           color.alpha = flashStyle.flashAlpha;
           let newFlashP2D = vm.$_bezierSpline(e.positions, true);
-          let newPolygon = new Cesium.Graphic({
+          let newPolygon = new zondy.cesium.Graphic({
             type: "polygon",
             positions: newFlashP2D,
             style: {

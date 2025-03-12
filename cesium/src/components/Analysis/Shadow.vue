@@ -341,7 +341,7 @@ export default {
       // 开启软阴影，解决阴影出现毛刺现象
       viewer.shadowMap.softShadows = true;
       // 初始化交互式绘制控件
-      let drawElement = new Cesium.DrawElement(viewer);
+      let drawElement = new zondy.cesium.DrawElement(viewer);
       let { date, stretchHeight, minHeight, spacing, shadowColor, sunColor } =
         this.formData;
       // const time = new Date(`${date} ${this.formData.time}`);
@@ -378,7 +378,7 @@ export default {
 
           viewer.scene.globe.depthTestAgainstTerrain = true;
           // 更新阴影分析接口-龚跃健，20240725
-          shadowAnalysis = new Cesium.ShadowRateAnalysis(viewer, {
+          shadowAnalysis = new zondy.cesium.ShadowRateAnalysis(viewer, {
             startTime,
             endTime,
             spacing: spacing,
@@ -429,8 +429,10 @@ export default {
       const terrain = this.viewer.terrainProvider;
       return new Promise((resolve) => {
         try {
-          if (terrain.constructor.name.indexOf("EllipsoidTerrainProvider") > -1)
+          if (terrain instanceof this.Cesium.EllipsoidTerrainProvider) {
             resolve(false);
+            return
+          }
           const promise = this.Cesium.sampleTerrainMostDetailed(
             terrain,
             positions

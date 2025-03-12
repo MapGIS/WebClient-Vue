@@ -154,11 +154,6 @@ export default {
    */
   /* lightColor: { type: Object, default: undefined }, */
   luminanceAtZenith: { type: Number, default: 0.2 },
-  /**
-   * @type Array.<Cartesian3>
-   */
-  /* sphericalHarmonicCoefficients: { type: Array, default: undefined }, */
-  specularEnvironmentMaps: { type: String, default: "" },
 
   debugHeatmapTilePropertyName: { type: String, default: "" },
   debugFreezeFrame: { type: Boolean, default: false },

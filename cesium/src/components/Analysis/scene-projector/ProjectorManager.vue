@@ -32,7 +32,7 @@
             <mapgis-ui-list
               v-if="
                 currentProjectorOverlayLayer &&
-                  Object.keys(currentProjectorOverlayLayer).length > 0
+                Object.keys(currentProjectorOverlayLayer).length > 0
               "
               :key="`list-${currentProjectorOverlayLayer.id}`"
               item-layout="horizontal"
@@ -47,9 +47,7 @@
                 :image-style="imageStyle"
                 v-if="emptyImage && projectorList && projectorList.length === 0"
               >
-                <span slot="description" class="empty-style">
-                  请新建投放
-                </span>
+                <span slot="description" class="empty-style"> 请新建投放 </span>
               </mapgis-ui-empty>
               <mapgis-ui-list-item
                 class="list-item"
@@ -62,7 +60,7 @@
                 <mapgis-ui-toolbar-command
                   :class="item.isProjected ? 'camera-active' : 'camera'"
                   icon="mapgis-shexiangji"
-                  title="投放"
+                  :title="item.isProjected ? '取消投放' : '投放'"
                   @click="_onPutProjector(item)"
                 ></mapgis-ui-toolbar-command>
                 <operations-item
@@ -93,7 +91,7 @@
                 :pageSize="pagination.pageSize"
                 :total="pagination.total"
                 :size="pagination.size"
-                :show-total="total => `共${total}条数据`"
+                :show-total="(total) => `共${total}条数据`"
               ></mapgis-ui-pagination>
               <!-- 批量操作 -->
               <mapgis-ui-setting-footer>
@@ -125,7 +123,7 @@
               class="control-content"
               v-if="
                 currentEditProjector &&
-                  Object.keys(currentEditProjector).length > 0
+                Object.keys(currentEditProjector).length > 0
               "
               :currentProjectorOverlayLayerId="currentProjectorOverlayLayer.id"
               :settings="currentEditProjector"
@@ -156,9 +154,6 @@
 </template>
 
 <script>
-import videojs from "video.js";
-import "videojs-contrib-hls";
-import "video.js/dist/video-js.css";
 import { emptyImage } from "../../UI/Base64Image/base64Image";
 import { newGuid } from "../../Utils/util";
 import VueOptions from "./components/OperationsItem.vue";
@@ -167,8 +162,9 @@ import ProjectorLayerSelect from "./components/ProjectorLayerSelect.vue";
 import projectorMixins from "./mixins/projector-mixins";
 import {
   isLogarithmicDepthBufferEnable,
-  setLogarithmicDepthBufferEnable
+  setLogarithmicDepthBufferEnable,
 } from "../../WebGlobe/util";
+import { GraphicsLayer } from "@mapgis/webclient-cesium-plugin";
 
 window.projectorVideoDomMap = {};
 
@@ -181,80 +177,80 @@ export default {
     ...VueOptions,
     projectorOverlayLayerList: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     currentLayerId: {
       type: String,
-      default: ""
+      default: "",
     },
     currentProjectorId: {
       type: String,
-      default: ""
+      default: "",
     },
     maxProjected: {
       type: Number,
-      default: 10
+      default: 10,
     },
     protocol: {
       type: String,
-      default: "mp4"
+      default: "mp4",
     },
     videoUrl: {
       type: String,
-      default: "http://localhost:8895/video/DJI_0008.mp4"
+      default: "http://localhost:8895/video/DJI_0008.mp4",
     },
     heading: {
       type: Number,
-      default: 90
+      default: 90,
     },
     pitch: {
       type: Number,
-      default: 0
+      default: 0,
     },
     roll: {
       type: Number,
-      default: 0
+      default: 0,
     },
     hFOV: {
       type: Number,
-      default: 0
+      default: 0,
     },
     vFOV: {
       type: Number,
-      default: 0
+      default: 0,
     },
     cameraPosition: {
       type: Object,
       default: () => {
         return { x: 0, y: 0, Z: 0 };
-      }
+      },
     },
     hintLineVisible: {
       type: Boolean,
-      default: true
+      default: true,
     },
     disabledImageUrlInput: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   computed: {
     projectorList: {
-      get: function() {
+      get: function () {
         return this.currentProjectorOverlayLayer &&
           Object.keys(this.currentProjectorOverlayLayer).length > 0
           ? this.currentProjectorOverlayLayer.projectorList
           : [];
       },
-      set: function(projectorList) {
+      set: function (projectorList) {
         this.currentProjectorOverlayLayer.projectorList = projectorList;
         const projectorOverlayLayerList = [
-          ...this.projectorOverlayLayerListCopy
+          ...this.projectorOverlayLayerListCopy,
         ];
-        projectorOverlayLayerList.map(item => {
+        projectorOverlayLayerList.map((item) => {
           if (item.id === this.currentProjectorOverlayLayer.id) {
             item.projectorList = [
-              ...this.currentProjectorOverlayLayer.projectorList
+              ...this.currentProjectorOverlayLayer.projectorList,
             ];
             return item;
           }
@@ -264,7 +260,7 @@ export default {
           "update-projectorOverlayLayerList",
           this.projectorOverlayLayerListCopy
         );
-      }
+      },
     },
     listPagination() {
       return this.isBatch ? false : this.pagination;
@@ -274,7 +270,7 @@ export default {
         Object.keys(this.currentProjectorOverlayLayer).length > 0
         ? this.currentProjectorOverlayLayer.name
         : "";
-    }
+    },
   },
   watch: {
     projectorOverlayLayerList: {
@@ -291,15 +287,16 @@ export default {
             this.layerSelectOptions.push({ id, name });
           }
           if (this.currentLayerId) {
-            this.currentProjectorOverlayLayer = this.projectorOverlayLayerListCopy.find(
-              item => item.id === this.currentLayerId
-            );
+            this.currentProjectorOverlayLayer =
+              this.projectorOverlayLayerListCopy.find(
+                (item) => item.id === this.currentLayerId
+              );
             this._initPutProjectors();
           }
         }
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     projectorList: {
       handler() {
@@ -309,21 +306,22 @@ export default {
         this.reflush = !this.reflush;
       },
       deep: true,
-      immediate: true
+      immediate: true,
     },
     currentLayerId: {
       handler() {
-        this.currentProjectorOverlayLayer = this.projectorOverlayLayerListCopy.find(
-          item => item.id === this.currentLayerId
-        );
+        this.currentProjectorOverlayLayer =
+          this.projectorOverlayLayerListCopy.find(
+            (item) => item.id === this.currentLayerId
+          );
         this._initPutProjectors();
       },
-      immediate: true
+      immediate: true,
     },
     currentProjectorId: {
       handler() {
         this.currentEditProjector = this.projectorList.find(
-          item => item.id === this.currentProjectorId
+          (item) => item.id === this.currentProjectorId
         );
         if (this.currentEditProjector) {
           const { x, y, z } = this.currentEditProjector.params.cameraPosition;
@@ -332,8 +330,8 @@ export default {
           }
         }
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   data() {
     return {
@@ -345,32 +343,29 @@ export default {
       currentEditProjector: null, //当前编辑projector对象
       tabBarStyle: {
         margin: "0",
-        textAlign: "center"
-        // borderBottom: "1px solid #F0F0F0"
+        textAlign: "center",
       },
       emptyImage: undefined,
       imageStyle: {
         height: "150px",
-        margin: "0 auto"
+        margin: "0 auto",
       },
       activeKey: "1",
       activeIndex: undefined,
       isBatch: false, //是否批量操作
       selectedIds: [], //选中projector的id集合
       pagination: {
-        onChange: page => {
-          // console.log(page);
+        onChange: (page) => {
           this.pagination.current = page;
         },
         current: 1,
         size: "small",
-        pageSize: 20
+        pageSize: 20,
       },
-      // graphicsLayer: undefined,
       // 是否进入设置状态
       isEdit: false,
       //是否开启缓存区
-      isLogarithmicDepthBufferEnable: false
+      isLogarithmicDepthBufferEnable: false,
     };
   },
   created() {},
@@ -384,23 +379,22 @@ export default {
   methods: {
     async createCesiumObject() {
       return new Promise(
-        resolve => {
+        (resolve) => {
           resolve();
         },
-        reject => {}
+        (reject) => {}
       );
     },
     mount() {
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function(dataSource) {
+      promise.then(function (dataSource) {
         vm.$emit("load", vm);
       });
       const { viewer } = this;
       //缓存区设置
-      this.isLogarithmicDepthBufferEnable = isLogarithmicDepthBufferEnable(
-        viewer
-      );
+      this.isLogarithmicDepthBufferEnable =
+        isLogarithmicDepthBufferEnable(viewer);
       setLogarithmicDepthBufferEnable(false, viewer);
     },
     unmount() {
@@ -432,7 +426,7 @@ export default {
      */
     _changeLayerName({ id, dataIndex, value }) {
       const projectorOverlayLayerList = [...this.projectorOverlayLayerListCopy];
-      let target = projectorOverlayLayerList.find(item => item.id === id);
+      let target = projectorOverlayLayerList.find((item) => item.id === id);
       if (target) {
         target[dataIndex] = value;
         this.projectorOverlayLayerListCopy = projectorOverlayLayerList;
@@ -458,7 +452,7 @@ export default {
     _deleteLayer(id) {
       const projectorOverlayLayerList = [...this.projectorOverlayLayerListCopy];
       this.projectorOverlayLayerListCopy = projectorOverlayLayerList.filter(
-        item => item.id !== id
+        (item) => item.id !== id
       );
       if (
         this.currentProjectorOverlayLayer &&
@@ -478,9 +472,8 @@ export default {
      * 更改图层名
      */
     _changeLayer(val) {
-      this.currentProjectorOverlayLayer = this.projectorOverlayLayerListCopy.find(
-        item => item.name === val
-      );
+      this.currentProjectorOverlayLayer =
+        this.projectorOverlayLayerListCopy.find((item) => item.name === val);
       this.viewer.scene.visualAnalysisManager.removeAll();
       for (let i = 0; i < this.projectorList.length; i++) {
         const projector = this.projectorList[i];
@@ -550,7 +543,7 @@ export default {
         return;
       }
       // 如果是点击删除按钮触发的，这个item已经被删除，则不需要往后走
-      const projector = this.projectorList.find(pro => pro.id === item.id);
+      const projector = this.projectorList.find((pro) => pro.id === item.id);
       if (!projector) {
         return;
       }
@@ -560,6 +553,7 @@ export default {
      * 新建projector
      */
     _newProjector() {
+      const { Cesium } = this;
       const guid = newGuid();
       const newProjector = {
         id: guid, // 视频id
@@ -570,14 +564,15 @@ export default {
           projectorType: "video",
           imgUrl: "",
           videoSource: {
-            protocol: "m3u8", // 视频传输协议
-            videoUrl: undefined // 视频服务地址
+            protocol: "mp4", // 视频传输协议
+            videoUrl:
+              "http://192.168.82.91:8200/NoneSpatialData/video/scenePro.mp4", // 视频服务地址
           },
-          cameraPosition: { x: 0, y: 0, Z: 0 }, // 相机位置
+          cameraPosition: { x: 0, y: 0, z: 0 }, // 相机位置
           orientation: {
             heading: 0, // 方向角
             pitch: 0, // 俯仰角
-            roll: 0 // 滚动角
+            roll: 0, // 滚动角
           },
           hFOV: 15, // 水平视场角
           vFOV: 15, // 垂直视场角
@@ -585,14 +580,14 @@ export default {
           areaCoords: [],
           renderType: 0, //选择投放方式是绘制还是摄像头参数输入， 0:根据摄像头参数投放，1：指定区域投放
           heightReference: 2, //0:使用areaCoords坐标中的Z;1:忽略areaCoords坐标中的z,使用offsetHeight指定的高度;2:贴场景；默认贴
-          offsetHeight: 5 //离地高度
-        }
+          offsetHeight: 5, //离地高度
+          pass: Cesium.Pass.ANALYSIS,
+        },
       };
       if (!window.graphicsLayer) {
-        window.graphicsLayer = new Cesium.GraphicsLayer(viewer);
+        window.graphicsLayer = new GraphicsLayer(viewer);
         let vueKey = "default";
         let vueIndex = this.currentProjectorOverlayLayer.id;
-        viewer.scene.layers.appendGraphicsLayer(window.graphicsLayer);
         window.vueCesium.GraphicsLayerManager.addSource(
           vueKey,
           vueIndex,
@@ -600,7 +595,8 @@ export default {
         );
       }
       this.isEdit = false;
-      this.putProjector(newProjector);
+      // this.putProjector(newProjector);
+      this.createProjector(newProjector);
       this.currentEditProjector = newProjector;
       this.activeKey = "2";
     },
@@ -612,7 +608,7 @@ export default {
       const { selectedIds } = this;
       for (let i = 0; i < selectedIds.length; i++) {
         const projector = projectorList.find(
-          item => item.id === selectedIds[i]
+          (item) => item.id === selectedIds[i]
         );
         if (projector.params.areaCoords && projector.params.areaCoords.length) {
           this.removeGraphic(projector.id);
@@ -628,13 +624,13 @@ export default {
         }
       }
       this.projectorList = projectorList.filter(
-        item => !selectedIds.includes(item.id)
+        (item) => !selectedIds.includes(item.id)
       );
       this.selectedIds = [];
     },
     _isProjectedList() {
       const projectorList = [...this.projectorList];
-      const list = projectorList.filter(item => item.isProjected);
+      const list = projectorList.filter((item) => item.isProjected);
       return list || [];
     },
     /**
@@ -652,7 +648,7 @@ export default {
           cancelText: "取消",
           onOk() {
             vm._continuePutProjectors();
-          }
+          },
         });
       } else {
         this._continuePutProjectors();
@@ -662,12 +658,12 @@ export default {
       const { selectedIds } = this;
       for (let i = 0; i < selectedIds.length; i++) {
         const projector = this.projectorList.find(
-          item => item.id === selectedIds[i]
+          (item) => item.id === selectedIds[i]
         );
         this.putProjector(projector);
       }
       const projectorList = [...this.projectorList];
-      projectorList.map(item => {
+      projectorList.map((item) => {
         if (selectedIds.indexOf(item.id) > -1) {
           item.isProjected = true;
           return item;
@@ -682,12 +678,12 @@ export default {
       const { selectedIds } = this;
       for (let i = 0; i < selectedIds.length; i++) {
         const projector = this.projectorList.find(
-          item => item.id === selectedIds[i]
+          (item) => item.id === selectedIds[i]
         );
         this.cancelPutProjector(projector);
       }
       const projectorList = [...this.projectorList];
-      projectorList.map(item => {
+      projectorList.map((item) => {
         if (selectedIds.indexOf(item.id) > -1) {
           item.isProjected = false;
           return item;
@@ -699,23 +695,26 @@ export default {
      * 跳转到projector配置界面
      */
     _onGotoSetting(projector, index) {
-      this.currentEditProjector = null;
+      this.currentEditProjector = projector;
       this.isEdit = true;
+      // 已存在的投放回显
+      if (!projector.isProjected) {
+        this.putProjector(projector);
+      }
       setTimeout(() => {
         this.activeIndex = index;
         this.activeKey = "2";
-        this.currentEditProjector = projector;
       }, 50);
     },
     /**
      * 更新projector参数
      */
     _updateSettings(settings) {
-      let target = this.projectorList.find(item => item.id === settings.id);
+      let target = this.projectorList.find((item) => item.id === settings.id);
       let projectorList = [...this.projectorList];
       if (target) {
         // 编辑
-        this.projectorList = projectorList.map(item => {
+        this.projectorList = projectorList.map((item) => {
           if (item.id === settings.id) {
             return settings;
           }
@@ -743,13 +742,13 @@ export default {
      */
     _onDeleteProjector(id) {
       const projectorList = [...this.projectorList];
-      let projector = projectorList.find(item => item.id == id);
+      let projector = projectorList.find((item) => item.id == id);
       if (projector.params.areaCoords && projector.params.areaCoords.length) {
         this.removeGraphic(projector.id);
       } else {
         this.cancelPutProjector(projector);
       }
-      this.projectorList = projectorList.filter(item => item.id !== id);
+      this.projectorList = projectorList.filter((item) => item.id !== id);
       if (this.currentEditProjector && this.currentEditProjector.id === id) {
         this.currentEditProjector = null;
       }
@@ -765,11 +764,25 @@ export default {
      * 单个投放/取消投放
      */
     _onPutProjector(projector) {
+      const { viewer } = this;
+      const { primitives } = viewer.scene;
       let isProjected = false;
-      let scenePro = this.viewer.scene.visualAnalysisManager.getVisualAnalysisByID(
-        projector.id
+      let scenePro = null;
+
+      // 寻找对应的投放对象
+      for (let i = 0; i < primitives.length; i++) {
+        const p = primitives.get(i);
+        if (p.id === projector.id) {
+          scenePro = p;
+        }
+      }
+
+      // 寻找对应的graphic对象
+      const graphic = window.graphicsLayer?.getGraphicByID(
+        projector.id + "graphic"
       );
-      if (scenePro) {
+
+      if (scenePro || graphic) {
         // 视频已经被投放，则取消投放
         this.cancelPutProjector(projector);
         isProjected = false;
@@ -789,7 +802,7 @@ export default {
               vm.putProjector(projector);
               isProjected = true;
               vm._changeIsProjected(isProjected, projector.id);
-            }
+            },
           });
         } else {
           this.putProjector(projector);
@@ -800,7 +813,7 @@ export default {
     },
     _changeIsProjected(isProjected, id) {
       const projectorList = [...this.projectorList];
-      let target = projectorList.find(item => item.id === id);
+      let target = projectorList.find((item) => item.id === id);
       if (target) {
         target.isProjected = isProjected;
         this.projectorList = projectorList;
@@ -810,13 +823,8 @@ export default {
      * 定位到摄像机位置
      */
     _onLocate(item) {
-      const {
-        cameraPosition,
-        orientation,
-        areaCoords,
-        areaType,
-        renderType
-      } = item.params;
+      const { cameraPosition, orientation, areaCoords, areaType, renderType } =
+        item.params;
       const { Cesium, viewer } = this;
       // 摄像头参数投放方式下，projectAreaCoords为undefined
       if (!renderType) {
@@ -831,8 +839,8 @@ export default {
           orientation: {
             heading: Cesium.Math.toRadians(orientation.heading), // 绕垂直于地心的轴旋转 ,相当于头部左右转
             pitch: Cesium.Math.toRadians(orientation.pitch), // 绕经度线旋转， 相当于头部上下
-            roll: Cesium.Math.toRadians(orientation.roll) // 绕纬度线旋转 ，面对的一面瞬时针转
-          }
+            roll: Cesium.Math.toRadians(orientation.roll), // 绕纬度线旋转 ，面对的一面瞬时针转
+          },
         });
       } else {
         let xmin, ymin, xmax, ymax;
@@ -873,11 +881,11 @@ export default {
         );
         // 绘制投放方式下
         viewer.camera.flyTo({
-          destination: rectangle
+          destination: rectangle,
         });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

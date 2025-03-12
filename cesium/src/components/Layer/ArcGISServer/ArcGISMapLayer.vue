@@ -35,7 +35,6 @@ export default {
         vueIndex: "string | Number",
       },
       managerName: "ArcgisManager",
-      providerName: "ArcGisMapServerImageryProvider",
     };
   },
   mixins: [ServiceLayer],
@@ -49,12 +48,26 @@ export default {
   watch: {
     srs: {
       handler: function () {
-        this.updateLayer();
+        // 防止初始化的时候，图层被多次加载，图层未加载成功时，不执行
+        const { vueIndex, vueKey, vueCesium } = this;
+        const find = vueCesium[this.managerName].findSource(vueKey, vueIndex);
+        if (!find) {
+          return;
+        }
+        this.unmount();
+        this.mount();
       },
     },
     layers: {
       handler: function () {
-        this.updateLayer();
+        // 防止初始化的时候，图层被多次加载，图层未加载成功时，不执行
+        const { vueIndex, vueKey, vueCesium } = this;
+        const find = vueCesium[this.managerName].findSource(vueKey, vueIndex);
+        if (!find) {
+          return;
+        }
+        this.unmount();
+        this.mount();
       },
     },
   },
@@ -73,53 +86,39 @@ export default {
       this.mount();
     },
     mount() {
-      const { baseUrl } = this;
+      const { viewer } = this;
+
       let { layers } = this;
-      if (this.renderMode && this.renderMode === "image-map") {
-        const { viewer } = this;
-        const sublayers = [];
-        let tempLayers = layers || "";
-        if (tempLayers.includes("show:")) {
-          tempLayers = tempLayers.split("show:")[1];
+      if (layers) {
+        if (layers.indexOf("show") >= 0) {
+          layers = this.layers.replace("show:", "");
         }
-        const showLayerIds = tempLayers.split(",");
-        for (let i = 0; i < showLayerIds.length; i++) {
-          if (showLayerIds[i] && showLayerIds[i] !== "") {
-            sublayers.push({
-              id: showLayerIds[i],
-              visible: true,
-            });
-          }
-        }
-        const arcGISMapImageLayer = new ArcGISMapImageLayer({
-          url: baseUrl,
-          renderMode: "image",
-          sublayers,
-        });
-        const self = this;
-        arcGISMapImageLayer.load().then((layer) => {
-          // 获取provider的初始化参数
-          const options = initializeOptions(layer, viewer);
-          self.$_mount(options);
-        });
-      } else {
-        //先处理相关参数：
-        let options = {};
+      }
+
+      const options = this.$_getOptions();
+      // 创建ArcGIS地图图层对象
+      const arcgisMapImageLayer = new ArcGISMapImageLayer({
+        url: this.baseUrl,
+        ...options,
+      });
+      const vm = this;
+      // 获取ArcGIS地图服务的元信息
+      arcgisMapImageLayer.load().then(async (layer) => {
+        // 获取provider的初始化参数
+        const cesiumOptions = initializeOptions(layer, viewer);
         if (layers) {
-          if (layers.indexOf("show") >= 0) {
-            layers = this.layers.replace("show:", "");
-          }
-        }
-        //存在srs，则生成tilingScheme对象
-        if (this.srs) {
-          options.tilingScheme = this.$_setTilingScheme(this.srs);
+          cesiumOptions.layers = layers;
         }
         // 不使用瓦片缓存，部分服务可能没有开启瓦片服务，比如IGS转发的ArcGIS服务
-        options.usePreCachedTilesIfAvailable = false;
-        const allOptions = { ...options, layers, baseUrl };
-
-        this.$_mount(allOptions);
-      }
+        cesiumOptions.usePreCachedTilesIfAvailable = false;
+        // 构造provider对象
+        const provider =
+          await zondy.cesium.ArcGISMapServerImageryProvider.fromUrl(
+            vm.baseUrl,
+            cesiumOptions
+          );
+        vm.$_mount(provider, options);
+      });
     },
     unmount() {
       this.$_unmount();

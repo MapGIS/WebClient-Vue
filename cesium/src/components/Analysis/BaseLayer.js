@@ -41,7 +41,7 @@ export default {
       return Cesium;
     },
     $_draw(drawFunction, viewer, analyseFunction, analysisName) {
-      window.drawElement = new window.Cesium.DrawElement(viewer);
+      window.drawElement = new zondy.cesium.DrawElement(viewer);
       let vm = this;
       window.drawElement[drawFunction]({
         callback: function(result) {
@@ -219,7 +219,7 @@ export default {
      * @param {String|Number|Array<String|Number>} vueIndex 查询的图层下标
      * @param {String} types 被查询的数据类型 ['m3d','g3d','tile3d']
      */
-     $_getAll3DTileSetArray(callback, vueKey, vueIndex, types) {
+    $_getAll3DTileSetArray(callback, vueKey, vueIndex, types) {
       vueKey = vueKey || this.vueKey;
       vueIndex = vueIndex || this.vueIndex;
       if (!(vueIndex instanceof Array)) {
@@ -252,7 +252,7 @@ export default {
         for (let i = 0; i < vueIndex.length; i++) {
           tile3d = vueCesium.Tileset3DManager.findSource(vueKey, vueIndex[i]);
           if (tile3d) {
-              m3dArr = m3dArr.concat(tile3d.source);
+            m3dArr = m3dArr.concat(tile3d.source);
           }
         }
         callback(m3dArr);

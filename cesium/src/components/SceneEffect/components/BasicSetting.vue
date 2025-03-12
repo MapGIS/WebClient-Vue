@@ -535,7 +535,7 @@ export default {
       // 罗盘设置undefined，还是会显示，必须设置成false
       options.enableCompass = this.basicSetting.compass || false;
       options.enableZoomControls = this.basicSetting.zoom || false;
-      viewer.createNavigationTool(options);
+      // viewer.createNavigationTool(options);
       const self = this;
       this.$nextTick(() => {
         if (!self.basicSetting.compassPosition) {
@@ -570,7 +570,7 @@ export default {
       // 罗盘设置undefined，还是会显示，必须设置成false
       options.enableCompass = this.basicSetting.compass || false;
       options.enableZoomControls = this.basicSetting.zoom || false;
-      viewer.createNavigationTool(options);
+      // viewer.createNavigationTool(options);
       const self = this;
       this.$nextTick(() => {
         if (!self.basicSetting.compassPosition) {
