@@ -78,10 +78,7 @@ export default {
       });
       layer.load().then(() => {
         const cesiumOptions = initializeOptions(layer);
-        const provider = new zondy.cesium.MapGISMapServerImageryProvider(
-          cesiumOptions
-        );
-        vm.$_mount(provider, cesiumOptions);
+        vm.$_mount(cesiumOptions);
       });
     },
     unmount() {

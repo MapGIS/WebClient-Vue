@@ -47,6 +47,7 @@ export default {
         vueIndex: "string|number",
       },
       managerName: "OGCWMSManager",
+      providerName: "WebMapServiceImageryProvider",
     };
   },
   mounted() {
@@ -64,38 +65,52 @@ export default {
   watch: {
     watchList: {
       handler: function () {
-        // 防止初始化的时候，图层被多次加载，图层未加载成功时，不执行
-        const { vueIndex, vueKey, vueCesium } = this;
-        const find = vueCesium[this.managerName].findSource(vueKey, vueIndex);
-        if (!find) {
-          return;
-        }
-        this.unmount();
-        this.mount();
+        this.updateLayer();
       },
       deep: true,
     },
   },
   methods: {
+    // 防止初始化的时候，图层被多次加载，图层未加载成功时，不执行
+    updateLayer() {
+      const { vueKey, vueIndex } = this;
+      const find = window.vueCesium[this.managerName].findSource(
+        vueKey,
+        vueIndex
+      );
+      if (!find) {
+        return;
+      }
+      this.unmount();
+      this.mount();
+    },
     mount() {
-      const { viewer } = this;
-      const options = this.$_getOptions();
-      // 创建WMS图层对象
+      const { viewer, baseUrl, layers, styles, transparent } = this;
+      const sublayers = [];
+      if (layers) {
+        const showLayerIds = layers.split(",");
+        for (let i = 0; i < showLayerIds.length; i++) {
+          if (showLayerIds[i] && showLayerIds[i] !== "") {
+            sublayers.push({
+              id: showLayerIds[i],
+              visible: true,
+            });
+          }
+        }
+      }
       const wmsLayer = new WMSLayer({
-        url: this.baseUrl,
-        ...options,
+        url: baseUrl,
+        renderMode: "image",
+        // 设置子图层属性，可选项
+        sublayers,
+        styles: styles,
+        imageTransparency: transparent,
       });
-      const vm = this;
-      // 获取WMS图层服务的元信息
+      const self = this;
       wmsLayer.load().then((layer) => {
         // 获取provider的初始化参数
         const cesiumOptions = initializeOptions(layer, viewer);
-        if (vm.layers) {
-          cesiumOptions.layers = vm.layers;
-        }
-        // 构造provider对象
-        const provider = new Cesium.WebMapServiceImageryProvider(cesiumOptions);
-        vm.$_mount(provider, options);
+        this.$_mount(cesiumOptions);
       });
     },
     unmount() {

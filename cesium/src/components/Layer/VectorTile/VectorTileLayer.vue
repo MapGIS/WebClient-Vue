@@ -161,13 +161,6 @@ export default {
     // 移除图层
     $_removeLayer() {
       if (this.$vectortile) {
-        if (this.$vectortile._imageryProvider) {
-          this.$vectortile._imageryProvider._removeEvents();
-          if (this.$vectortile._imageryProvider._dynamicLabelLayer) {
-            this.$vectortile._imageryProvider._dynamicLabelLayer.destroyed();
-            this.$vectortile._imageryProvider._dynamicLabelLayer = null;
-          }
-        }
         this.viewer.imageryLayers.remove(this.$vectortile, true);
         this.$vectortile.show = false;
       }

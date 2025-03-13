@@ -87,8 +87,6 @@ export function initVueCesium() {
   window.vueCesium.AnalysisModelFlattenManager =
     window.vueCesium.AnalysisModelFlattenManager ||
     new AnalysisModelFlattenManager();
-  window.vueCesium.DynamicCuttingManager =
-    window.vueCesium.DynamicCuttingManager || new DynamicCuttingManager();
   window.vueCesium.AnalysisManager =
     window.vueCesium.AnalysisManager || new AnalysisManager();
   window.vueCesium.shadowAnalysisManager =
@@ -352,7 +350,6 @@ export class ExcavateAnalysisManager extends BaseManager {}
 export class FloodAnalysisManager extends BaseManager {}
 export class MarkerManager extends BaseManager {}
 export class AnalysisModelFlattenManager extends BaseManager {}
-export class DynamicCuttingManager extends BaseManager {}
 export class AnalysisManager extends BaseManager {}
 export class HeightLimitedAnalysisManager extends BaseManager {}
 export class shadowAnalysisManager extends BaseManager {}

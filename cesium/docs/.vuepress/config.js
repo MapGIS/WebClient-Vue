@@ -149,7 +149,6 @@ module.exports = {
               ["/api/analysis/Viewshed.md", "可视域分析"],
               ["/api/analysis/Sightline.md", "通视分析"],
               ["/api/analysis/Flood.md", "洪水淹没分析"],
-              ["/api/analysis/DynamicCutting.md", "动态剖切"],
               ["/api/analysis/DynamicSection.md", "动态剖切-高级"],
               ["/api/analysis/Excavate.md", "开挖分析"],
               ["/api/analysis/Fill.md", "填挖方分析"],

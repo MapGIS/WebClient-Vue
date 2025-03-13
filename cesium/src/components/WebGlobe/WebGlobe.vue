@@ -302,7 +302,6 @@ export default {
     let vm = this;
     this.$_loadScript().then((Cesium) => {
       this.Cesium = Cesium;
-      this.CesiumZondy = window.CesiumZondy;
       this.vueCesium = window.vueCesium;
       let container = this.$refs.container;
       let viewer = new Cesium.Viewer(container, {
@@ -342,7 +341,6 @@ export default {
       this.$emit("load", {
         component: this,
         Cesium: Cesium,
-        CesiumZondy: window.CesiumZondy,
         vueCesium: window.vueCesium,
       });
       if (this.container) {

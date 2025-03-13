@@ -19,6 +19,7 @@ export default {
   data() {
     return {
       managerName: "IgsTilecLayerManager",
+      providerName: "MapGISTileServerImageryProvider",
       checkType: {
         tileWidth: "number",
         tileHeight: "number",
@@ -34,7 +35,6 @@ export default {
     mount() {
       //处理独有参数
       const { viewer } = this;
-      const options = this.$_getOptions();
       const baseUrl = this.$_initUrl("/igs/rest/mrms/tile");
       const srsCode = this.tilingScheme.split(":")[1];
       // 创建瓦片图层对象
@@ -44,18 +44,13 @@ export default {
         spatialReference: new SpatialReference({
           wkid: srsCode,
         }),
-        ...options,
       });
       const vm = this;
       // 获取瓦片图层服务的元信息
       igsTileLayer.load().then((layer) => {
         // 获取provider的初始化参数
         const cesiumOptions = initializeOptions(layer, viewer);
-        // 构造provider对象
-        const provider = new zondy.cesium.MapGISTileServerImageryProvider(
-          cesiumOptions
-        );
-        vm.$_mount(provider, options);
+        vm.$_mount(cesiumOptions);
       });
     },
     unmount() {

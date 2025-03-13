@@ -25,6 +25,7 @@ export default {
         vueIndex: "string | Number",
       },
       managerName: "ArcgisManager",
+      providerName: "ArcGISTileServerImageryProvider",
     };
   },
   inject: ["Cesium", "vueCesium"],
@@ -39,25 +40,16 @@ export default {
   methods: {
     mount() {
       const { viewer } = this;
-
-      const options = this.$_getOptions();
       // 创建ArcGIS瓦片图层对象
       const arcgisTileLayer = new ArcGISTileLayer({
         url: this.baseUrl,
-        ...options,
       });
       const vm = this;
       // 获取ArcGIS瓦片服务的元信息
       arcgisTileLayer.load().then(async (layer) => {
         // 获取provider的初始化参数
         const cesiumOptions = initializeOptions(layer, viewer);
-        // 构造provider对象
-        const provider =
-          await zondy.cesium.ArcGISTileServerImageryProvider.fromUrl(
-            vm.baseUrl,
-            cesiumOptions
-          );
-        vm.$_mount(provider, options);
+        vm.$_mount(cesiumOptions);
       });
     },
     unmount() {

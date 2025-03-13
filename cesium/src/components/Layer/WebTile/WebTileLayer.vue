@@ -3,7 +3,6 @@
 </template>
 <script>
 import ServiceLayer from "../ServiceLayer";
-import { UrlTemplateImageryProvider } from "@mapgis/webclient-cesium-plugin";
 
 export default {
   name: "mapgis-3d-web-tile-layer",
@@ -42,7 +41,6 @@ export default {
         vueIndex: "string | Number",
       },
       managerName: "WebTileManager",
-      // providerName: "BaiduImageryProvider", //cesium调用的类名
       providerName: "UrlTemplateImageryProvider",
     };
   },
@@ -54,15 +52,9 @@ export default {
     this.unmount();
   },
   methods: {
-    createCesiumObject() {
-      const { $props } = this;
-      const provider = new Cesium.UrlTemplateImageryProvider($props);
-      return new Cesium.ImageryLayer(provider);
-    },
     mount() {
       let { baseUrl } = this;
-      //先处理相关参数：
-      let options = this.$_getOptions();
+      const options = {};
       //如果spatialReference存在，则生成tilingScheme对象
       if (this.$props.spatialReference) {
         // 构造CustomTilingScheme
@@ -120,8 +112,7 @@ export default {
       if (this.subDomains && this.subDomains.length > 0) {
         allOptions.subdomains = this.subDomains;
       }
-      const provider = new UrlTemplateImageryProvider(allOptions);
-      this.$_mount(provider, allOptions);
+      this.$_mount(allOptions);
     },
     unmount() {
       this.$_unmount();

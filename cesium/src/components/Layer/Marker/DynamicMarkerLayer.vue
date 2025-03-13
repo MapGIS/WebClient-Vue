@@ -40,19 +40,19 @@ export default {
     ...VueOptions,
     data: {
       type: [Object, String],
-      required: true
+      required: true,
     },
     layerStyle: {
       type: Object,
       default: () => {
         return new MarkerStyle({
-          symbol: DefaultInactiveImagePlotting
+          symbol: DefaultInactiveImagePlotting,
         });
-      }
+      },
     },
     highlight: {
       type: Boolean,
-      default: true
+      default: true,
     },
     highlightStyle: {
       type: Object,
@@ -61,57 +61,57 @@ export default {
           enableHoverMarker: true,
           enableHoverFeature: true,
           marker: new MarkerStyle({
-            symbol: DefaultActiveImagePlotting
+            symbol: DefaultActiveImagePlotting,
           }),
           point: new PointStyle(),
           line: new LineStyle(),
-          polygon: new FillStyle()
+          polygon: new FillStyle(),
         };
-      }
+      },
     },
     idField: {
       type: String,
-      default: "fid"
+      default: "fid",
     },
     selects: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     filterWithMap: {
       type: Boolean,
-      default: false
+      default: false,
     },
     fitBound: {
       type: Object,
       default: () => {
         return {};
-      }
+      },
     },
     popupShowType: {
       type: String,
-      default: "default"
+      default: "default",
     },
     popupToggleType: {
       type: String,
-      default: "mouseenter"
+      default: "mouseenter",
     },
     fieldConfigs: {
       type: Array,
       required: false,
-      default: () => []
+      default: () => [],
     },
     // 以图标左上角为原点，增量方式与mapboxgl弹框的offset保持一致，x往右递增，y往下递增
     popupAnchor: {
       type: Object,
       default: () => {
         return { x: 0.5, y: 0 };
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       markers: [],
-      currentLayer: null
+      currentLayer: null,
     };
   },
   watch: {
@@ -121,13 +121,13 @@ export default {
         this.unmount();
         this.mount();
       },
-      deep: true
+      deep: true,
     },
     selects: {
       handler(markers, prevMarkers = []) {
         prevMarkers.forEach(this.onClearHighlightFeature);
         markers.forEach(this.onHighlightFeature);
-      }
+      },
     },
     fitBound: {
       handler(nV) {
@@ -136,7 +136,7 @@ export default {
         }
       },
       immediate: true,
-      deep: true
+      deep: true,
     },
     // fitBound(nV) {
     //   if (nV) {
@@ -148,14 +148,13 @@ export default {
     },
     center(nV) {
       this.zoomToCartesian3(nV[0], nV[1]);
-    }
+    },
   },
   mounted() {
     this.mount();
   },
   destroyed() {
     this.unmount();
-    this.analysisManager = null;
   },
   methods: {
     mount() {
@@ -164,17 +163,12 @@ export default {
       const vm = this;
       const { vueCesium, vueKey, vueIndex, data } = this;
       const viewer = vueCesium.getViewer(vueKey) || this.viewer;
-      let analysisManager = new window.CesiumZondy.Manager.AnalysisManager({
-        viewer: viewer
-      });
 
       let promise = new Cesium.GeoJsonDataSource.load(data);
-      promise.then(function(dataSource) {
+      promise.then(function (dataSource) {
         viewer.dataSources.add(dataSource);
         vm.changeColor(dataSource);
-        vueCesium.GeojsonManager.addSource(vueKey, vueIndex, dataSource, {
-          analysisManager: analysisManager
-        });
+        vueCesium.GeojsonManager.addSource(vueKey, vueIndex, dataSource);
       });
     },
     unmount() {
@@ -196,10 +190,10 @@ export default {
       const vm = this;
       if (typeof data === "string") {
         fetch(data)
-          .then(function(response) {
+          .then(function (response) {
             return response.json();
           })
-          .then(function(resdata) {
+          .then(function (resdata) {
             vm.parseMarker(resdata);
           });
       } else {
@@ -221,7 +215,7 @@ export default {
           coordinates,
           img: layerStyle.symbol,
           properties: f.properties,
-          feature: f
+          feature: f,
         };
 
         return marker;
@@ -229,10 +223,10 @@ export default {
       this.markers = markers;
     },
     getMarker(fid) {
-      return this.markers.find(marker => marker.fid === fid);
+      return this.markers.find((marker) => marker.fid === fid);
     },
     isSelectedMarker(id) {
-      return this.selects.findIndex(idField => idField === id) !== -1;
+      return this.selects.findIndex((idField) => idField === id) !== -1;
     },
     changeFilterWithMap() {
       const { viewer } = this;
@@ -244,7 +238,7 @@ export default {
         xmin: (rectangle.west / Math.PI) * 180,
         ymin: (rectangle.south / Math.PI) * 180,
         xmax: (rectangle.east / Math.PI) * 180,
-        ymax: (rectangle.north / Math.PI) * 180
+        ymax: (rectangle.north / Math.PI) * 180,
       };
       this.$emit("map-bound-change", bounds);
     },
@@ -273,7 +267,7 @@ export default {
         xmin: b_xmin,
         ymin: b_ymin,
         xmax: b_xmax,
-        ymax: b_ymax
+        ymax: b_ymax,
       } = this.getViewExtend();
       // 先查看是否在地图范围内
       // if (xmin > b_xmin && ymin > b_ymin && xmax < b_xmax && ymax < b_ymax) {
@@ -292,10 +286,8 @@ export default {
       // 高亮要素
       const marker = this.getMarker(id);
       const { highlightStyle } = this;
-      const {
-        enableHoverMarker = true,
-        enableHoverFeature = true
-      } = highlightStyle;
+      const { enableHoverMarker = true, enableHoverFeature = true } =
+        highlightStyle;
 
       if (marker) {
         enableHoverFeature && this.highlightFeature(marker);
@@ -331,7 +323,7 @@ export default {
             semiMajorAxis: pixelSize,
             semiMinorAxis: pixelSize,
             outline: outlineColor,
-            material: color
+            material: color,
           });
           entity.ellipse.show = false;
         } else if (entity.polyline) {
@@ -365,13 +357,11 @@ export default {
         const lowerRight3 = viewer.camera.pickEllipsoid(lowerRight, ellipsoid);
 
         // 3D世界坐标转弧度
-        const upperLeftCartographic = ellipsoid.cartesianToCartographic(
-          upperLeft3
-        );
+        const upperLeftCartographic =
+          ellipsoid.cartesianToCartographic(upperLeft3);
         // 3D世界坐标转弧度
-        const lowerRightCartographic = ellipsoid.cartesianToCartographic(
-          lowerRight3
-        );
+        const lowerRightCartographic =
+          ellipsoid.cartesianToCartographic(lowerRight3);
 
         // 弧度转经纬度
         const xmin = this.Cesium.Math.toDegrees(
@@ -427,7 +417,7 @@ export default {
               semiMajorAxis: pixelSize,
               semiMinorAxis: pixelSize,
               outline: outlineColor,
-              material: color
+              material: color,
             });
           } else if (entity.polyline) {
             const style = hline.toCesiumStyle(Cesium);
@@ -453,34 +443,9 @@ export default {
           }
         }
       }
-      /* if (featureGeoJSON.features[0].geometry.type === "3DPolygon") {
-        const { source } = this.sceneController.findSource(
-          featureGeoJSON.features[0].properties.specialLayerId
-        );
-        if (source && source.length > 0) {
-          this.stopDisplay();
-          this.currentLayer = [source[0]];
-          const idList = [featureGeoJSON.features[0].properties.FID];
-          const options = {
-            // 高亮颜色
-            color: new this.Cesium.Color.fromCssColorString(
-              this.highlightStyle.feature.reg.color
-            ),
-            // 高亮模式：REPLACE为替换
-            colorBlendMode: this.Cesium.Cesium3DTileColorBlendMode.REPLACE
-          };
-          // 开始闪烁查找到的模型
-          this.analysisManager.startCustomDisplay(
-            this.currentLayer,
-            idList,
-            options
-          );
-        }
-      } */
     },
     stopDisplay() {
       if (this.currentLayer) {
-        this.analysisManager.stopCustomDisplay(this.currentLayer);
         this.currentLayer = null;
       }
     },
@@ -510,7 +475,7 @@ export default {
         xmin: bbox.xmin,
         ymin: bbox.ymin,
         xmax: bbox.xmax,
-        ymax: bbox.ymax
+        ymax: bbox.ymax,
       };
       if (marker.feature.geometry.type !== "Point") {
         this.zoomTo(bound);
@@ -522,7 +487,7 @@ export default {
     },
     showMarkerDetail(data) {
       this.$emit("show-popup", data);
-    }
-  }
+    },
+  },
 };
 </script>

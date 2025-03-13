@@ -43,6 +43,7 @@ export default {
         vueIndex: "number",
       },
       managerName: "OGCWMTSManager",
+      providerName: "WebMapTileServiceImageryProvider",
     };
   },
   mounted() {
@@ -61,8 +62,11 @@ export default {
     watchList: {
       handler: function () {
         // 防止初始化的时候，图层被多次加载，图层未加载成功时，不执行
-        const { vueIndex, vueKey, vueCesium } = this;
-        const find = vueCesium[this.managerName].findSource(vueKey, vueIndex);
+        const { vueIndex, vueKey } = this;
+        const find = window.vueCesium[this.managerName].findSource(
+          vueKey,
+          vueIndex
+        );
         if (!find) {
           return;
         }
@@ -75,22 +79,16 @@ export default {
   methods: {
     mount() {
       const { viewer } = this;
-      const options = this.$_getOptions();
       // 创建WMTS图层对象
       const wmtsLayer = new WMTSLayer({
         url: this.baseUrl,
-        ...options,
       });
       const vm = this;
       // 获取WMTS图层服务的元信息
       wmtsLayer.load().then((layer) => {
         // 获取provider的初始化参数
         const cesiumOptions = initializeOptions(layer, viewer);
-        // 构造provider对象
-        const provider = new Cesium.WebMapTileServiceImageryProvider(
-          cesiumOptions
-        );
-        vm.$_mount(provider, options);
+        vm.$_mount(cesiumOptions);
       });
     },
     unmount() {
