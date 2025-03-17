@@ -79,7 +79,12 @@ export default {
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
       }
-    }
+    },
+    // 结束绘制是否清除绘制图形
+    clearDrawMode: {
+      type: Boolean,
+      defalut: true
+    },
   },
   data() {
     return {
@@ -252,7 +257,7 @@ export default {
           viewerDraw = GlobesManager[this.vueKey][0].source;
         }
       }
-      if (!this.infinite) {
+      if (!this.infinite && this.clearDrawMode) {
         let drawEntities = window.vueCesium.DrawToolManager.findSource(
           vueKey,
           vueIndex
