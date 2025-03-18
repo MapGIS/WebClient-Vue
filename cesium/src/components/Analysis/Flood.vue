@@ -177,6 +177,16 @@ export default {
       timer: null,
       changeMaxHeight: false,
       changeStartHeight: false,
+      // 绘图工具样式
+      drawStyle: {
+        color: "rgb(255,255,0)",
+        opacity: 0.5,
+        outlineWidth: 1,
+        //边线颜色
+        outlineColor: "#000000",
+        //线宽
+        width: 2,
+      },
     };
   },
   created() {},
@@ -285,6 +295,7 @@ export default {
           floodAnalysis: null,
           floodAnalysisReflection: null,
           waterReflection: null,
+          drawEntities: [],
         });
       });
     },
@@ -293,9 +304,27 @@ export default {
       let find = vueCesium.FloodAnalysisManager.findSource(vueKey, vueIndex);
       if (find) {
         this.remove();
+        this.removeEntities()
       }
       vueCesium.FloodAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
+    },
+    // 移除绘制区域
+    removeEntities(unmount) {
+      let { vueKey, vueIndex, viewer } = this;
+      const { drawEntities } = this._getSourceOptions() || {};
+      if (drawEntities && drawEntities.length) {
+        for (let i = 0; i < drawEntities.length; i++) {
+          viewer.scene.primitives.remove(drawEntities[i]);
+          viewer.entities.remove(drawEntities[i]);
+        }
+        vueCesium.FloodAnalysisManager.changeOptions(
+          vueKey,
+          vueIndex,
+          "drawEntities",
+          []
+        );
+      }
     },
     /**
      * @description rgba值转cesium内部color对象
@@ -321,13 +350,28 @@ export default {
         "drawElement",
         drawElement
       );
-
+      const colorStyle = new Cesium.Color.fromCssColorString(
+        this.drawStyle.color
+      ).withAlpha(this.drawStyle.opacity);
+      drawElement.setGroundPrimitiveType("BOTH");
       // 激活交互式绘制工具
       drawElement.startDrawingPolygon({
         // 绘制完成回调函数
+        color: colorStyle,
         callback: (result) => {
           this.remove();
           this.positions = result.positions;
+
+          const polygon = new zondy.cesium.DrawElement.PolygonPrimitive({
+            positions: this.positions,
+            width: this.drawStyle.width,
+            material: Cesium.Material.fromType("Color", {
+              color: colorStyle,
+            }),
+          });
+          const drawEntity = this.viewer.scene.primitives.add(polygon);
+          const drawEntities = this._getSourceOptions().drawEntities;
+          drawEntities.push(drawEntity);
           this.$emit("showProgress", {
             startHeightCopy: this.startHeightCopy,
             maxHeightCopy: this.maxHeightCopy,
@@ -350,6 +394,7 @@ export default {
     _doAnalysis(isPause) {
       if (!isPause) {
         this._removeFlood();
+        this.removeEntities();
       }
       const { positions } = this;
       if (!positions) {
@@ -462,6 +507,7 @@ export default {
      */
     remove() {
       this._removeFlood();
+      this.removeEntities();
       this.$emit("closeProgress");
       const { vueCesium, vueKey, vueIndex } = this;
       const options = this._getSourceOptions();
