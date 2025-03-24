@@ -3,34 +3,34 @@ import { isDef } from "../../../Utils/util";
 
 export default {
   name: "mapgis-3d-cesium-heater-layer",
-  inject: ["viewer","Cesium"],
+  inject: ["viewer", "Cesium"],
   props: {
     dataSource: {
       // 数据源
-      type: Object
+      type: Object,
     },
     bound: {
       // 图层范围
-      type: Object
+      type: Object,
     },
-    blur:{
-      type:Number,
-      default:0.85
+    blur: {
+      type: Number,
+      default: 0.85,
     },
-    radius:{
-      type:Number,
-      default:20
+    radius: {
+      type: Number,
+      default: 20,
     },
     options: {
       // 热力图配置
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     field: {
       // 统计的属性
       type: String,
-      default: "count"
-    }
+      default: "count",
+    },
   },
   methods: {
     /**
@@ -49,7 +49,7 @@ export default {
           return {
             x,
             y,
-            value
+            value,
           };
         }
       );
@@ -77,12 +77,16 @@ export default {
      * 创建原生热力图层, 支持上层单独调用
      */
     $_createCesiumHeater() {
-      if (!this.dataSource){
+      if (!this.dataSource) {
         return;
       }
       const dataSource = this.$_getCesiumDataArr(this.dataSource, this.field);
       const [min, max] = this.$_getCesiumDataRange(dataSource);
-      this.heaterInstance = zondy.cesium.CesiumHeatmap.create(this.viewer, this.bound, this.selfOptions);
+      this.heaterInstance = zondy.cesium.CesiumHeatmap.create(
+        this.viewer,
+        this.bound,
+        this.selfOptions
+      );
       this.heaterInstance.setWGS84Data(min, max, dataSource);
     },
     /**
@@ -94,30 +98,31 @@ export default {
       } else {
         this.$_createCesiumHeater();
       }
-    }
+    },
   },
   computed: {
     // 配置
     selfOptions({ options }) {
-      let heaterStyle = {radius:this.radius,blur:this.blur};
+      let heaterStyle = { radius: this.radius, blur: this.blur };
       return {
         minOpacity: 0,
         maxOpacity: 1,
         gradient: {
-          "0.25": "rgb(0,0,255)",
-          "0.55": "rgb(0,255,0)",
-          "0.85": "rgb(241,241,15)",
-          "1.0": "rgb(255,0,0)"
+          0.25: "rgb(0,0,255)",
+          0.55: "rgb(0,255,0)",
+          0.85: "rgb(241,241,15)",
+          "1.0": "rgb(255,0,0)",
         },
         spacing: 1, // 边界周围的额外空间
         alpha: 1, // 透明度
         blur: 0.85, // 模糊值
         radius: 20, // 每个热力点半径大小
         useClustering: true, // 是否聚合
+        canChange: false, // 是否自动重算热力半径
         ...options,
-        ...heaterStyle
-      }
-    }
+        ...heaterStyle,
+      };
+    },
   },
   watch: {
     // todo 样式配置更新是否需要重新createHeatMap？有无提供只更新样式配置或者数据的方法？
@@ -129,22 +134,22 @@ export default {
 
           this.$_createCesiumHeater();
         }
-      }
+      },
     },
     bound: {
       deep: true,
       handler(v) {
         this.$_removeCesiumHeater();
         this.$_updateCesiumHeater(v);
-      }
+      },
     },
     dataSource: {
       deep: true,
       handler(v) {
         this.$_removeCesiumHeater();
         this.$_updateCesiumHeater(v);
-      }
-    }
+      },
+    },
   },
   beforeDestroy() {
     this.$_removeCesiumHeater();
@@ -154,6 +159,6 @@ export default {
   },
   render() {
     return null;
-  }
+  },
 };
 </script>
