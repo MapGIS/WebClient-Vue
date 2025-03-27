@@ -219,10 +219,10 @@ export default {
         // 对rectangle中的数据进行坐标系判断，将数据装换成cesium中的rectangle对象 4326/3857
         if (srs === "EPSG:4326") {
           options.rectangle = Cesium.Rectangle.fromDegrees(
-            rectangle.xmin,
-            rectangle.ymin,
-            rectangle.xmax,
-            rectangle.ymax
+            xmin,
+            ymin,
+            xmax,
+            ymax
           );
         } else if (srs === "EPSG:102100" || srs === "EPSG:3857") {
           const projectInfo = zondy.geometry.Projection.project(
