@@ -180,7 +180,7 @@ export default {
         options = {};
 
       //取得除options、layerStyle和id之外的必要参数
-      const { $props, vueIndex, vueKey } = this;
+      const { $props, vueIndex, vueKey, Cesium } = this;
       Object.keys($props).forEach(function (key) {
         if (key !== "options" && key !== "layerStyle" && key !== "id") {
           opt[key] = $props[key];
