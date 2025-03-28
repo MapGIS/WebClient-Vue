@@ -160,7 +160,7 @@ export default {
   /* sphericalHarmonicCoefficients: { type: Array, default: undefined }, */
   specularEnvironmentMaps: { type: String, default: "" },
 
-  debugHeatmapTilePropertyName: { type: String, default: "" },
+  debugHeatmapTilePropertyName: { type: String },
   debugFreezeFrame: { type: Boolean, default: false },
   debugColorizeTiles: { type: Boolean, default: false },
   debugWireframe: { type: Boolean, default: false },

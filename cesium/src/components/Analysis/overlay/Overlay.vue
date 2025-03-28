@@ -290,14 +290,14 @@ export default {
     run() {
       this.maskShow = true;
       this.$emit("listenOverlayAdd", this.overlayAdd);
-      var domain;
+      let domain;
       if (!!this.baseUrl && this.baseUrl.length > 0) {
-        var url = new URL(this.baseUrl);
+        const url = new URL(this.baseUrl);
         domain = url.origin;
       }
       const tempRadius = this.convertRadUnit(this.radius, this.selectedUnit);
       if (this.srcType == "Layer") {
-        var overlayLayer = new OverlayByLayer({
+        const overlayLayer = new OverlayByLayer({
           ip: this.baseUrl.split("/")[2].split(":")[0],
           port: this.baseUrl.split("/")[2].split(":")[1],
           domain,
@@ -321,7 +321,7 @@ export default {
           }
         );
       } else if (this.srcType == "Feature") {
-        var overlayFeature = new OverlayByPolygon({
+        const overlayFeature = new OverlayByPolygon({
           ip: this.baseUrl.split("/")[2].split(":")[0],
           port: this.baseUrl.split("/")[2].split(":")[1],
           domain,
@@ -333,29 +333,37 @@ export default {
           srcInfo1: this.srcALayer,
           desInfo: this.destLayer,
         });
-        var polygonList = this.transformToPoint(this.srcAFeature);
-        var anyLineList = this.transformToAnyLine(polygonList);
-        var gReg = new Zondy.Object.GRegion(anyLineList);
-        overlayFeature.strGRegionXML = JSON.stringify(gReg);
-        overlayFeature.execute(
-          this.AnalysisSuccess,
-          "post",
-          false,
-          "json",
-          () => {
-            this.maskShow = false;
-            console.log("叠加分析失败!");
-          }
-        );
+        const polygonList = this.transformToPoint(this.srcBFeature);
+        if (polygonList.length > 0) {
+          const anyLineList = this.transformToAnyLine(polygonList);
+          const gReg = new Zondy.Object.GRegion(anyLineList);
+          debugger;
+          overlayFeature.strGRegionXML = JSON.stringify(gReg);
+          overlayFeature.execute(
+            this.AnalysisSuccess,
+            "post",
+            false,
+            "json",
+            () => {
+              this.maskShow = false;
+              console.log("叠加分析失败!");
+            }
+          );
+        } else {
+          this.maskShow = false;
+          this.$message.warn("当前选择要素为空，请重新选择");
+        }
       }
     },
     // 将一张图的当前结果集GeoJSON数据转化为点集数组
     transformToPoint(geojson) {
       var polygonList = [];
-      for (var i = 0; i < geojson.features.length; i++) {
-        if (geojson.features[i].geometry.type == "Polygon") {
-          var tempPolygon = geojson.features[i].geometry.coordinates[0];
-          polygonList.push(tempPolygon);
+      if (geojson.features && geojson.features.length > 0) {
+        for (var i = 0; i < geojson.features.length; i++) {
+          if (geojson.features[i].geometry.type == "Polygon") {
+            var tempPolygon = geojson.features[i].geometry.coordinates[0];
+            polygonList.push(tempPolygon);
+          }
         }
       }
       return polygonList;

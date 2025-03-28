@@ -180,7 +180,7 @@ export default {
         options = {};
 
       //取得除options、layerStyle和id之外的必要参数
-      const { $props, vueIndex, vueKey } = this;
+      const { $props, vueIndex, vueKey, Cesium } = this;
       Object.keys($props).forEach(function(key) {
         if (key !== "options" && key !== "layerStyle" && key !== "id") {
           opt[key] = $props[key];
@@ -207,6 +207,47 @@ export default {
           }
         } else if (this.token.value) {
           options.baseUrl += "?" + this.token.key + "=" + this.token.value;
+        }
+      }
+
+      // 将rectangle转为cesium中的rectangle对象
+      if (options.rectangle) {
+        const {
+          rectangle: { xmin, ymin, xmax, ymax },
+          srs
+        } = options;
+        // 对rectangle中的数据进行坐标系判断，将数据装换成cesium中的rectangle对象 4326/3857
+        if (srs === "EPSG:4326") {
+          options.rectangle = Cesium.Rectangle.fromDegrees(
+            xmin,
+            ymin,
+            xmax,
+            ymax
+          );
+        } else if (srs === "EPSG:102100" || srs === "EPSG:3857") {
+          const projectInfo = zondy.geometry.Projection.project(
+            new zondy.geometry.Extent({
+              xmin,
+              ymin,
+              xmax,
+              ymax,
+              spatialReference: new zondy.SpatialReference({
+                wkid: 3857
+              })
+            }),
+            new zondy.SpatialReference({
+              wkid: 4326
+            })
+          ).toJSON();
+          options.rectangle = Cesium.Rectangle.fromDegrees(
+            projectInfo.xmin,
+            projectInfo.ymin,
+            projectInfo.xmax,
+            projectInfo.ymax
+          );
+        } else {
+          // 其他坐标系先不考虑，先将rectangle属性移除，防止因rectangle属性问题导致图层不加载
+          delete options.rectangle;
         }
       }
 
