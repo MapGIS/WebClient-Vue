@@ -30,6 +30,13 @@ export default {
       type: Number,
       default: 0,
     },
+    // bug(24809)JC-webclient-vue封装插件调用geoserver发布的wmts地图服务出图失败，不支持level为字符串类型
+    // 龚跃健-20250328
+    // 出图地址tileMatrix参数中z的前缀
+    tileMatrixPrefix: {
+      type: String,
+      default: "",
+    },
   },
   created() {
     this.CRS = mapboxCustomCRS(this.mapbox, Projection);
@@ -152,8 +159,9 @@ export default {
       } else {
         _baseUrl += "service=WMTS&request=GetTile";
       }
+      const { tileMatrixPrefix } = this;
       const partUrl = this.$_initAllRequestParams().join("&");
-      this._url = `${_baseUrl}&${partUrl}&tileMatrix={z}&tileRow={y}&tileCol={x}`;
+      this._url = `${_baseUrl}&${partUrl}&tileMatrix=${tileMatrixPrefix}{z}&tileRow={y}&tileCol={x}`;
     },
     $_initAllRequestParams() {
       let params = [];

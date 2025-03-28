@@ -152,6 +152,13 @@ All common [layers props](/api/Layers/README.md#props)
 <mapgis-ogc-wmts-layer :source="{ tileSize: 256 }" />
 ```
 
+### `tileMatrixPrefix`
+
+- **类型:** `String`
+- **默认值:** ""
+- **侦听属性**
+- **描述:** 出图地址 tileMatrix 参数中 z 的前缀
+
 :::
 
 ```vue
@@ -222,7 +229,7 @@ export default {
         //添加来源
         sources: {},
         //设置加载并显示来源的图层信息
-        layers: []
+        layers: [],
       }, // 地图样式
       mapZoom: 8, // 地图初始化级数
       outerCenter: [116.39, 40.2], // 地图显示中心
@@ -234,14 +241,14 @@ export default {
       baseUrl:
         "http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer",
       //因为司马云是用的老版本的igs服务，因此offset必须传-1
-      zoomoffset: -1
+      zoomoffset: -1,
     };
   },
 
   created() {
     // 在组件中使用mapbox-gl.js的脚本库功能
     this.mapbox = Mapbox;
-  }
+  },
 };
 </script>
 
