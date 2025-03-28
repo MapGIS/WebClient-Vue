@@ -106,20 +106,23 @@ export default {
     /**
      * @type Array
      * @default []
-     * @description 图层列表
+     * @description 开挖的图层对象数组
      */
     models: {
       type: Array,
       default: () => [],
     },
+    // 填充的底面纹理选项
     terrainGroundFillImages: {
       type: Array,
       default: () => [],
     },
+    // 填充的侧边纹理选项
     terrainWallFillImages: {
       type: Array,
       default: () => [],
     },
+    // 填充使用的图片纹理
     modelFillImage: {
       type: String,
       default: ''

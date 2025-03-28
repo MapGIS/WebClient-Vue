@@ -179,6 +179,8 @@ export { default as MapgisUiTimeline } from "./components/timeline/Timeline.vue"
 export { default as MapgisUiTimelineItem } from "./components/timeline/TimelineItem.vue";
 export { default as MapgisUiTooltip } from "./components/tooltip/Tooltip.vue";
 export { default as MapgisUiTree } from "./components/tree/Tree.vue";
+export { default as MapgisUiVirtualTree } from "./components/virtual-tree/components/ve-tree.vue";
+
 export { default as MapgisUiVideo } from "./components/media/Video.vue";
 
 // Feedback
