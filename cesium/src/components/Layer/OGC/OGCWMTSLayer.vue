@@ -60,7 +60,10 @@ export default {
   },
   watch: {
     watchList: {
-      handler: function () {
+      handler: function (next, old) {
+        if (JSON.stringify(next) === JSON.stringify(old)) {
+          return;
+        }
         // 防止初始化的时候，图层被多次加载，图层未加载成功时，不执行
         const { vueIndex, vueKey } = this;
         const find = window.vueCesium[this.managerName].findSource(
