@@ -243,10 +243,7 @@ export default {
               "ArcGISTileServerImageryProvider",
             ].includes(providerName)
           ) {
-            provider = await zondy.cesium[providerName].fromUrl(
-              options.url,
-              options
-            );
+            provider = await zondy.cesium[providerName].fromUrl(options.url);
           } else if (
             [
               "MapGISMapServerImageryProvider",
