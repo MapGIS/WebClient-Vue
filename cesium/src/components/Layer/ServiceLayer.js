@@ -245,7 +245,7 @@ export default {
           ) {
             provider = await zondy.cesium[providerName].fromUrl(
               options.url,
-              options
+              addOpt
             );
           } else if (
             [
