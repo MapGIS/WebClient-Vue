@@ -402,7 +402,6 @@ export default {
     _doAnalysis(isPause) {
       if (!isPause) {
         this._removeFlood();
-        this.removeEntities()
       }
       const { positions } = this;
       if (!positions) {
