@@ -1,46 +1,24 @@
 <template>
-  <!-- 设置三维标注点不参与深度检测 :disableDepthTestDistance="Number.POSITIVE_INFINITY"-->
-  <mapgis-3d-marker
-    :longitude="popupPosition.longitude"
-    :latitude="popupPosition.latitude"
-    :height="popupPosition.height"
-    :iconUrl="img"
-    :fid="marker.fid"
-    :changeEvent="changeEvent"
-    :farDist="200000000"
-    :disableDepthTestDistance="Number.POSITIVE_INFINITY"
-    @click="clickEvent"
-    @mouseEnter="mouseOver"
-    @mouseLeave="mouseOut"
-  >
+  <div class="mapgis-marker-3d">
     <mapgis-3d-feature-popup
       :vue-key="vueKey"
-      :position="{
-        longitude: popupPosition.longitude,
-        latitude: popupPosition.latitude,
-        height: popupPosition.height
-      }"
+      :position="popupPosition"
+      :properties="filterProperties"
       :visible="showPopup"
-      @change="changePopup"
+      :popupOptions="{ popupType: 'card' }"
+      :componentWidth="popupWidth"
+      @change="changeVisible"
     >
-      <div slot="default">
-        <slot
-          name="popup"
-          :marker="marker"
-          :field-configs="fieldConfigs"
-          :property-keys="propertyKeys"
-        >
-          <mapgis-3d-popup-iot :properties="properties" />
-        </slot>
+      <div slot="default" style="padding: 10px">
+        <mapgis-3d-popup-iot :properties="filterProperties" />
       </div>
     </mapgis-3d-feature-popup>
-  </mapgis-3d-marker>
+  </div>
 </template>
 
 <script>
-/**
- * cesium标注，弹出框使用@mapgis/webclient-vue-cesium里的popup
- */
+import MarkerManager from "./manager/MarkerManager";
+
 export default {
   name: "mapgis-3d-marker-pro",
   inject: ["Cesium", "vueCesium", "viewer"],
@@ -48,71 +26,54 @@ export default {
     vueKey: String,
     marker: {
       type: Object,
-      required: true
+      required: true,
     },
     fieldConfigs: {
       type: Array,
       required: false,
-      default: () => []
+      default: () => [],
     },
     // 当前显示弹出框的标注id
     currentMarkerId: {
       type: String,
-      required: false
+      required: false,
     },
     popupShowType: {
       type: String,
-      default: "default"
+      default: "default",
     },
     popupToggleType: {
       type: String,
-      default: "mouseenter"
+      default: "mouseenter",
     },
     // 以图标左上角为原点，增量方式与mapboxgl弹框的offset保持一致，x往右递增，y往下递增
     popupAnchor: {
       type: Object,
       default: () => {
         return { x: 0.5, y: 0 };
-      }
-    }
+      },
+    },
+    popupWidth: {
+      type: Number,
+      default: 280,
+    },
   },
   data() {
     return {
       showPopup: false,
-      entityNames: []
+      entityNames: [],
+      popupPosition: {},
     };
   },
   computed: {
-    properties() {
-      const obj = {};
-      this.fieldConfigs.forEach(item => {
-        if (this.marker.properties[item.showName]) {
-          obj[item.showName] = this.marker.properties[item.showName];
-        }
-      });
-      return obj;
-    },
     img() {
       return this.marker.img;
-    },
-    popupPosition() {
-      if (!this.marker) {
-        return {};
-      }
-      const { coordinates } = this.marker;
-      const height = coordinates.length > 2 ? Number(coordinates[2]) : 0;
-      const position = {
-        longitude: Number(coordinates[0]),
-        latitude: Number(coordinates[1]),
-        height: height
-      };
-      return position;
     },
     // 根据filedConfigs做一个过滤，去除不可见的
     propertyKeys() {
       const keys = Object.keys(this.marker.properties);
-      return keys.filter(key => {
-        const config = this.fieldConfigs.find(config => config.name === key);
+      return keys.filter((key) => {
+        const config = this.fieldConfigs.find((config) => config.name === key);
 
         if (
           config &&
@@ -125,39 +86,45 @@ export default {
         return true;
       });
     },
-    propertyName() {
-      return function(key) {
-        const config = this.fieldConfigs.find(config => config.name === key);
-
-        if (config && Object.hasOwnProperty.call(config, "title")) {
-          return config.title;
+    filterProperties() {
+      if (this.marker && this.marker.properties) {
+        const obj = {};
+        for (const key in this.marker.properties) {
+          if (key !== "specialLayerBound" && key !== "specialLayerId") {
+            obj[key] = this.marker.properties[key];
+          }
         }
-
-        return key;
-      };
-    }
+        return obj;
+      }
+      return {};
+    },
   },
   watch: {
     // 更换图片，更换地图上的标注
     img: {
       deep: true,
-      handler() {
-        this.updateMarker();
-      }
+      handler(val) {
+        this.updateMarkerImage(val);
+      },
     },
     currentMarkerId: {
       deep: true,
       immediate: true,
       handler() {
         // 当前显示弹出框的标注与组件内的id不一致时，隐藏弹出框
-        if (this.currentMarkerId !== this.marker.fid) {
-          this.showPopup = false;
+        if (this.currentMarkerId !== this.marker.markerId) {
+          if (this.popupShowType === "default") {
+            this.showPopup = false;
+          } else {
+            this.$emit("show-marker-detail", null);
+          }
         }
-      }
-    }
+      },
+    },
   },
   mounted() {
-    const viewer = this.vueCesium.getViewer(this.vueKey) || this.viewer;
+    const { Cesium, viewer } = this;
+    this.markerManager = MarkerManager.getInstance(Cesium, viewer);
     this.updateMarker();
   },
   beforeDestroy() {},
@@ -208,19 +175,32 @@ export default {
       }
     },
     bindEvent() {
-      this.$emit("popupload", this.marker.fid);
+      this.$emit("popupload", this.marker.markerId);
     },
     updateMarker() {
-      /* let marker = { ...this.marker };
-      marker.name = marker.fid;
-      marker.center = marker.coordinates; */
+      const marker = { ...this.marker };
+      marker.mouseOver = (event) => {
+        this.mouseOver(event, marker);
+      };
+      marker.mouseOut = (event) => {
+        this.mouseOut(event, marker);
+      };
+      marker.leftClick = (event) => {
+        this.leftClick(event, marker);
+      };
+      marker.name = marker.markerId;
+      marker.center = marker.coordinates;
+      this.markerManager.addGraphicMarker(marker);
+    },
+    updateMarkerImage(img) {
+      this.markerManager.updateMarkerImage(img, this.marker?.markerId);
     },
     changeEvent(enable) {
       this.showPopup = enable;
     },
-    clickEvent(event) {
-      if (this.popupToggleType === "mouseenter") return;
-      const { changeEvent, fid } = event;
+    mouseOver(event, marker) {
+      if (this.popupToggleType === "click") return;
+      const { changeEvent, markerId } = event;
       if (this.popupShowType === "default") {
         if (changeEvent) {
           changeEvent(true);
@@ -228,38 +208,56 @@ export default {
           this.showPopup = true;
         }
       } else {
-        this.$emit("show-marker-detail", this.propertyKeys, fid);
+        this.$emit("show-marker-detail", this.propertyKeys, markerId);
       }
 
-      this.$emit("marker-id", fid);
-      this.$emit("mouseenter", event, fid);
+      this.$emit("marker-id", markerId);
+      this.$emit("mouseenter", event, markerId);
     },
-    mouseOver(event) {
+    mouseOut(event, marker) {
       if (this.popupToggleType === "click") return;
-      const { changeEvent, fid } = event;
-      if (this.popupShowType === "default") {
-        if (changeEvent) {
-          changeEvent(true);
-        } else {
-          this.showPopup = true;
-        }
-      } else {
-        this.$emit("show-marker-detail", this.propertyKeys, fid);
-      }
-
-      this.$emit("marker-id", fid);
-      this.$emit("mouseenter", event, fid);
-    },
-    mouseOut(event) {
-      if (this.popupToggleType === "click") return;
-      const { changeEvent, fid } = event;
+      const { changeEvent, markerId } = event;
       if (changeEvent) {
         changeEvent(false);
       } else {
         this.showPopup = false;
       }
-      this.$emit("mouseleave", event, fid);
-    }
-  }
+      this.$emit("mouseleave", event, markerId);
+    },
+    leftClick(event, marker) {
+      const { Cesium, viewer } = this;
+      const { coordinates } = marker;
+      const clickPosition = Cesium.Cartographic.fromCartesian(
+        viewer.getCartesian3Position(event.position)
+      );
+      this.popupPosition = {
+        longitude: Cesium.Math.toDegrees(clickPosition.longitude),
+        latitude: Cesium.Math.toDegrees(clickPosition.latitude),
+        height: clickPosition.height,
+      };
+      if (this.popupToggleType === "click") {
+        this.$emit("marker-id", marker.markerId);
+        if (this.popupShowType === "default") {
+          this.showPopup = true;
+        } else {
+          this.$emit("show-marker-detail", this.propertyKeys, markerId);
+        }
+      }
+    },
+    changeVisible(val, popupId) {
+      // console.log(val)
+      // 用户点击弹出框关闭按钮，关闭弹框
+      if (this.showPopup !== val) {
+        this.showPopup = val;
+      }
+      if (val && popupId) {
+        this.changeStyle(popupId);
+      }
+    },
+  },
+  beforeDestroy() {
+    // 移除当前marker
+    this.markerManager.removeGraphicById(this.marker.markerId);
+  },
 };
 </script>
