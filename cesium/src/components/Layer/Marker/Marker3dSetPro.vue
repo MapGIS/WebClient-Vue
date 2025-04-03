@@ -3,7 +3,7 @@
     <mp-3d-marker-pro
       v-for="marker in markers"
       :vue-key="vueKey"
-      :key="marker.fid"
+      :key="marker.markerId"
       :marker="marker"
       :current-marker-id="currentMarkerId"
       :field-configs="fieldConfigs"
@@ -33,36 +33,36 @@ export default {
   props: {
     vueKey: {
       type: String,
-      default: "default"
+      default: "default",
     },
     markers: {
       type: Array,
-      required: true
+      required: true,
     },
     fieldConfigs: {
       type: Array,
       required: false,
-      default: () => []
+      default: () => [],
     },
     popupShowType: {
       type: String,
-      default: "default"
+      default: "default",
     },
     popupToggleType: {
       type: String,
-      default: "mouseenter"
+      default: "mouseenter",
     },
     // 以图标左上角为原点，增量方式与mapboxgl弹框的offset保持一致，x往右递增，y往下递增
     popupAnchor: {
       type: Object,
       default: () => {
         return { x: 0.5, y: 0 };
-      }
-    }
+      },
+    },
   },
   data() {
     return {
-      currentMarkerId: ""
+      currentMarkerId: "",
     };
   },
   methods: {
@@ -91,14 +91,14 @@ export default {
     },
     getPopupProperty(propertyKeys, fid) {
       let detail = {};
-      const marker = this.markers.find(item => item.fid === fid);
-      propertyKeys.forEach(item => {
+      const marker = this.markers.find((item) => item.fid === fid);
+      propertyKeys.forEach((item) => {
         let info = {};
         info[item] = marker.properties[item];
         detail = { ...info, ...detail };
       });
       return detail;
-    }
-  }
+    },
+  },
 };
 </script>

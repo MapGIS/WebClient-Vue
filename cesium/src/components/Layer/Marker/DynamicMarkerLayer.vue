@@ -124,9 +124,23 @@ export default {
       deep: true,
     },
     selects: {
+      deep: true,
       handler(markers, prevMarkers = []) {
-        prevMarkers.forEach(this.onClearHighlightFeature);
-        markers.forEach(this.onHighlightFeature);
+        markers.forEach((item) => {
+          const marker = this.markers.find((target) => target.fid === item);
+          if (marker) {
+            marker.img = this.highlightStyle.marker.symbol;
+          }
+        });
+
+        prevMarkers.forEach((item) => {
+          const marker = this.markers.find((target) => target.fid === item);
+          if (marker) {
+            marker.img = this.layerStyle.symbol;
+          }
+        });
+
+        markers.forEach(this.zoomToMarker);
       },
     },
     fitBound: {
@@ -159,31 +173,13 @@ export default {
   methods: {
     mount() {
       this.parseData();
-
-      const vm = this;
-      const { vueCesium, vueKey, vueIndex, data } = this;
-      const viewer = vueCesium.getViewer(vueKey) || this.viewer;
-
-      let promise = new Cesium.GeoJsonDataSource.load(data);
-      promise.then(function (dataSource) {
-        viewer.dataSources.add(dataSource);
-        vm.changeColor(dataSource);
-        vueCesium.GeojsonManager.addSource(vueKey, vueIndex, dataSource);
-      });
     },
     unmount() {
-      let { viewer, vueKey, vueIndex, vueCesium } = this;
-      const vm = this;
-      vueCesium = this.vueCesium || window.vueCesium;
-      const { dataSources } = viewer;
-      let find = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
-      if (find) {
-        if (dataSources) {
-          dataSources.remove(find.source, true);
-        }
-      }
-      vueCesium.GeojsonManager.deleteSource(vueKey, vueIndex);
+      this.markers = [];
       this.$emit("unload", this);
+    },
+    generateId() {
+      return parseInt(String(Math.random() * 10000000)).toString();
     },
     parseData(data) {
       data = data || this.data;
@@ -211,6 +207,7 @@ export default {
         let id =
           f.properties && f.properties[idField] ? f.properties[idField] : i;
         let marker = {
+          markerId: this.generateId(),
           fid: id,
           coordinates,
           img: layerStyle.symbol,
@@ -224,9 +221,6 @@ export default {
     },
     getMarker(fid) {
       return this.markers.find((marker) => marker.fid === fid);
-    },
-    isSelectedMarker(id) {
-      return this.selects.findIndex((idField) => idField === id) !== -1;
     },
     changeFilterWithMap() {
       const { viewer } = this;
@@ -249,7 +243,10 @@ export default {
         y,
         viewer.camera.positionCartographic.height
       );
-      viewer.camera.flyTo({ destination });
+      viewer.camera.flyTo({
+        destination,
+        orientation: { pitch: Cesium.Math.toRadians(-80) },
+      });
     },
     zoomTo(bound) {
       const { Cesium, viewer } = this;
@@ -280,59 +277,12 @@ export default {
         this.zoomToCartesian3((xmin + xmax) / 2, (ymin + ymax) / 2);
       }
     },
-    mouseEnterEvent(e, id) {
-      const { highlight } = this;
-      if (!highlight) return;
-      // 高亮要素
-      const marker = this.getMarker(id);
-      const { highlightStyle } = this;
-      const { enableHoverMarker = true, enableHoverFeature = true } =
-        highlightStyle;
-
-      if (marker) {
-        enableHoverFeature && this.highlightFeature(marker);
-        enableHoverMarker && this.highlightMarker(marker);
-      }
-    },
-    mouseLeaveEvent(e, id) {
-      const { highlight } = this;
-      if (!highlight) return;
-      const marker = this.getMarker(id);
-      if (marker) {
-        this.clearHighlightFeature(marker);
-        this.clearHighlightMarker(marker);
-        this.stopDisplay();
-      }
-    },
+    mouseEnterEvent(e, id) {},
+    mouseLeaveEvent(e, id) {},
     popupLoad(markerId) {
       this.$emit("popupload", markerId);
     },
-    changeColor(dataSource) {
-      if (!dataSource) return;
-      const { Cesium, highlightStyle } = this;
-      let entities = dataSource.entities.values;
-      const vm = this;
-      const { point } = highlightStyle;
-      for (let i = 0; i < entities.length; i++) {
-        let entity = entities[i];
-        if (entity.billboard) {
-          entity.billboard.show = false;
-          const style = point.toCesiumStyle(Cesium);
-          const { color, pixelSize, outlineColor } = style;
-          entity.ellipse = new Cesium.EllipseGraphics({
-            semiMajorAxis: pixelSize,
-            semiMinorAxis: pixelSize,
-            outline: outlineColor,
-            material: color,
-          });
-          entity.ellipse.show = false;
-        } else if (entity.polyline) {
-          entity.polyline.show = false;
-        } else if (entity.polygon) {
-          entity.polygon.show = false;
-        }
-      }
-    },
+
     getViewExtend() {
       let { vueKey, vueCesium, viewer } = this;
       const params = {};
@@ -444,31 +394,13 @@ export default {
         }
       }
     },
-    stopDisplay() {
-      if (this.currentLayer) {
-        this.currentLayer = null;
-      }
-    },
     clearHighlightFeature(marker) {
       const { vueCesium, vueKey, vueIndex, layerStyle } = this;
       let dataSource = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
       if (!dataSource) return;
       this.changeColor(dataSource.source);
     },
-    highlightMarker(marker) {
-      marker.img = this.highlightStyle.marker.symbol;
-    },
-    clearHighlightMarker(marker) {
-      if (!this.isSelectedMarker(marker.fid)) {
-        marker.img = this.layerStyle.symbol;
-      }
-    },
-    onClearHighlightFeature(fid) {
-      const marker = this.getMarker(fid);
-      this.clearHighlightMarker(marker);
-      // this.stopDisplay();
-    },
-    onHighlightFeature(fid) {
+    zoomToMarker(fid) {
       const marker = this.getMarker(fid);
       let bbox = Feature.getGeoJSONFeatureBound(marker.feature);
       let bound = {
@@ -482,8 +414,6 @@ export default {
       } else {
         this.zoomOrPanTo(bound);
       }
-      this.highlightMarker(marker);
-      this.highlightFeature(marker);
     },
     showMarkerDetail(data) {
       this.$emit("show-popup", data);
