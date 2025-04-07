@@ -9,28 +9,33 @@ export default {
     parentDivClass: {
       type: String,
       required: true,
-      default: "mapgis-ui-map-container"
+      default: "mapgis-ui-map-container",
     },
     loading: {
       type: Boolean,
       required: true,
-      default: false
+      default: false,
     },
     percent: {
       type: Number,
       required: false,
-      default: 0
+      default: 0,
     },
     text: {
       type: String,
       required: false,
-      default: "分析中..."
+      default: "分析中...",
     },
     showSvg: {
       type: Boolean,
       required: false,
-      default: false
-    }
+      default: false,
+    },
+    svgPostion: {
+      type: String,
+      required: false,
+      default: "left",
+    },
   },
   watch: {
     loading: {
@@ -40,7 +45,7 @@ export default {
         } else {
           this.removeMask();
         }
-      }
+      },
     },
     percent: {
       handler() {
@@ -52,19 +57,19 @@ export default {
         );
         const content = this.text.replace(/\{percent\}/g, `${this.percent}%`);
         mpMaskContentDiv[0].innerHTML = content;
-      }
+      },
     },
     text(nV) {
       if (!this.loading) {
         return;
       }
       document.querySelector(".mapgis-ui-mask-content").innerHTML = nV;
-    }
+    },
   },
   data() {
     return {
       maskHtml: `<div class="mapgis-ui-mask"><div class="loading-mask"></div><div class="loading"><div class="loading-indicator"><div class="mapgis-ui-mask-content"><div class='mapgis-ui-mask-spin'></div>${this.text}</mapgis-ui-button></div></div></div>`,
-      maskHtmlSVG: `<div class="mapgis-ui-mask"><div class="loading-mask"></div><div class="loading"><div class="loading-indicator"><svg class="spinner" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg"><circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30" ></circle></svg>${this.text}</div></div></div>`
+      maskHtmlSVG: `<div class="mapgis-ui-mask"><div class="loading-mask"></div><div class="loading"><div class="loading-indicator"><svg class="spinner" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg"><circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30" ></circle></svg>${this.text}</div></div></div>`,
     };
   },
   methods: {
@@ -73,14 +78,14 @@ export default {
       this.removeMask();
 
       //阻止浏览器默认的右键菜单行为
-      document.oncontextmenu = function() {
+      document.oncontextmenu = function () {
         return false;
       };
 
       const parentDivClass = this.parentDivClass || "mapgis-ui-map-container";
       const parent = document.getElementsByClassName(parentDivClass);
       const mask = document.createElement("mapgis-ui-mask");
-      mask.innerHTML = this.showSvg ? this.maskHtmlSVG : this.maskHtml;
+      mask.innerHTML = this.showSvg ? this.getMaskHtmlSVG() : this.maskHtml;
       parent[0].appendChild(mask);
     },
 
@@ -91,7 +96,28 @@ export default {
         const parent = mpMask[0].parentElement;
         parent.removeChild(mpMask[0]);
       }
-    }
-  }
+    },
+
+    getMaskHtmlSVG() {
+      let maskHtmlSVG;
+      switch (this.svgPostion) {
+        case "left":
+          maskHtmlSVG = `<div class="mapgis-ui-mask"><div class="loading-mask"></div><div class="loading"><div class="loading-indicator left"><svg class="spinner" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg"><circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30" ></circle></svg>${this.text}</div></div></div>`;
+          break;
+        case "top":
+          maskHtmlSVG = `<div class="mapgis-ui-mask"><div class="loading-mask"></div><div class="loading"><div class="loading-indicator top"><svg class="spinner" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg"><circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30" ></circle></svg>${this.text}</div></div></div>`;
+          break;
+        case "bottom":
+          maskHtmlSVG = `<div class="mapgis-ui-mask"><div class="loading-mask"></div><div class="loading"><div class="loading-indicator bottom"><svg class="spinner" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg"><circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30" ></circle></svg>${this.text}</div></div></div>`;
+
+          break;
+        case "right":
+          maskHtmlSVG = `<div class="mapgis-ui-mask"><div class="loading-mask"></div><div class="loading"><div class="loading-indicator right">${this.text}<svg class="spinner" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg"><circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30" ></circle></svg></div></div></div>`;
+          break;
+      }
+
+      return maskHtmlSVG;
+    },
+  },
 };
 </script>

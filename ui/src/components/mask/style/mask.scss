@@ -1,5 +1,5 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
 .mapgis-ui-mask {
   .loading-mask {
@@ -31,8 +31,35 @@
     height: auto;
   }
 
-// offset: 187;
-// duration: 1.4s;
+  .loading .left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .loading .top {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .loading .bottom {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .loading .right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row-reverse;
+  }
+
+  // offset: 187;
+  // duration: 1.4s;
 
   .spinner {
     animation: rotator 1.4s linear infinite;
@@ -40,10 +67,10 @@
 
   @keyframes rotator {
     0% {
-    transform: rotate(0deg);
+      transform: rotate(0deg);
     }
     100% {
-    transform: rotate(270deg);
+      transform: rotate(270deg);
     }
   }
 
@@ -52,38 +79,38 @@
     stroke-dashoffset: 0;
     transform-origin: center;
     animation: dash 1.4s ease-in-out infinite,
-    colors (1.4s * 4) ease-in-out infinite;
+      colors (1.4s * 4) ease-in-out infinite;
   }
 
   @keyframes colors {
     0% {
-    stroke: #4285f4;
+      stroke: #4285f4;
     }
     25% {
-    stroke: #de3e35;
+      stroke: #de3e35;
     }
     50% {
-    stroke: #f7c223;
+      stroke: #f7c223;
     }
     75% {
-    stroke: #1b9a59;
+      stroke: #1b9a59;
     }
     100% {
-    stroke: #4285f4;
+      stroke: #4285f4;
     }
   }
 
   @keyframes dash {
     0% {
-    stroke-dashoffset: 187;
+      stroke-dashoffset: 187;
     }
     50% {
-    stroke-dashoffset: 187/4;
-    transform: rotate(135deg);
+      stroke-dashoffset: 187/4;
+      transform: rotate(135deg);
     }
     100% {
-    stroke-dashoffset: 187;
-    transform: rotate(450deg);
+      stroke-dashoffset: 187;
+      transform: rotate(450deg);
     }
   }
 }
