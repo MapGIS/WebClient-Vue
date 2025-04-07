@@ -168,6 +168,7 @@ export default {
         // 服务基地址
         url,
         ...options,
+        extensionOptions: { ...options },
       });
       commonM3DLayer.load().then((layer) => {
         const cesiumOptions = initializeOptions(layer, viewer);

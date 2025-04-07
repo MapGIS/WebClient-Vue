@@ -344,6 +344,27 @@ export default {
     },
   },
   methods: {
+    /**
+     * 构造初始化options
+     */
+    getOptions() {
+      const { $props } = this;
+      let options = {};
+      // 新增extensions属性
+      // 以支持通过对象的方式批量传入图层属性，
+      // 但是优先级低于单个传入属性，即如果单个属性有传入值，优先使用传入的值，
+      // 如果没有传入，但是extensions中有该属性，则使用extensions里对应的值
+      // 修改者：龚跃健 2024/10/28
+      const tempProps = {
+        ...this.$props,
+        ...this.$props.extensions,
+        ...this.$options.propsData,
+      };
+      Object.keys(tempProps).forEach(function (key) {
+        options[key] = tempProps[key];
+      });
+      return options;
+    },
     mount() {
       const vm = this;
       const { vueIndex, vueKey, vueCesium } = this;
@@ -359,7 +380,8 @@ export default {
       const sceneLayer = new IGSSceneLayer({
         // 服务基地址
         url,
-        ...$props,
+        ...options,
+        extensionOptions: { ...options },
       });
       // 加载场景服务
       sceneLayer.load().then(async (layer) => {

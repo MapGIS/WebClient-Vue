@@ -144,6 +144,7 @@ export default {
         // 服务基地址
         url,
         ...options,
+        extensionOptions: { ...options },
       });
       const cesiumOptions = initializeOptions(tilesetLayer, viewer);
       zondy.cesium.Cesium3DTileset.fromUrl(url, cesiumOptions).then(
