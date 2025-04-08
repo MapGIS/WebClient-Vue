@@ -233,6 +233,19 @@ export default {
           })
         );
         imageryLayer.addLayer();
+        // 创建imageryLayer加载完监听
+        if (imageryLayer.primitivesCollection.primitiveAdded) {
+          const primitiveAddedHandler = (event) => {
+            // 添加primitives完成后的操作
+            this.$emit("loaded", this);
+            imageryLayer.primitivesCollection.primitiveAdded.removeEventListener(
+              primitiveAddedHandler
+            );
+          };
+          imageryLayer.primitivesCollection.primitiveAdded.addEventListener(
+            primitiveAddedHandler
+          );
+        }
       } else {
         if (vueCesiumLayer) {
           provider = new vueCesiumLayer(options);
