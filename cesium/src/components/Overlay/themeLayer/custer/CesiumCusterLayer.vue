@@ -25,12 +25,17 @@ export default {
     // 禁用深度检测的距离
     disableDepthTestDistance: {
       type: Number,
-      default: 500000,
+      default: 800,
     },
     // entity偏移距离
     pixelOffset: {
       type: Array,
       default: () => [0, 0], // 负值表示向上偏移
+    },
+    // 高度参考 Cesium.HeightReference
+    heightReference: {
+      type: Number,
+      default: 3, // CLAMP_TO_TERRAIN
     },
     clusterStyle: {
       type: Array,
@@ -253,6 +258,7 @@ export default {
         pixelOffset[1]
       );
       cluster.billboard.disableDepthTestDistance = disableDepthTestDistance;
+      cluster.billboard.heightReference = this.heightReference;
 
       // 设置label
       cluster.label.show = true;
@@ -272,6 +278,7 @@ export default {
         pixelOffset[1]
       );
       cluster.label.disableDepthTestDistance = disableDepthTestDistance;
+      cluster.label.heightReference = this.heightReference;
     },
     createImages() {
       const { clusterStyle } = this;
@@ -341,7 +348,7 @@ export default {
               this.pixelOffset[0],
               this.pixelOffset[1]
             ),
-            heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+            heightReference: this.heightReference,
             disableDepthTestDistance: this.disableDepthTestDistance,
           },
         };
