@@ -215,16 +215,27 @@ export default {
         const {
           rectangle: { xmin, ymin, xmax, ymax },
           srs,
+          spatialReference,
+          tilingScheme,
         } = options;
-        // 对rectangle中的数据进行坐标系判断，将数据装换成cesium中的rectangle对象 4326/3857
-        if (srs === "EPSG:4326") {
+        // 对rectangle中的数据进行坐标系判断，将数据装换成cesium中的rectangle对象
+
+        if (
+          ["EPSG:4326", "EPSG:4490", "EPSG:4610", "EPSG:4214"].includes(srs) ||
+          [4326, 4490, 4610, 4214].includes(
+            spatialReference?.wkid || tilingScheme?.wkid
+          )
+        ) {
           options.rectangle = Cesium.Rectangle.fromDegrees(
             xmin,
             ymin,
             xmax,
             ymax
           );
-        } else if (srs === "EPSG:102100" || srs === "EPSG:3857") {
+        } else if (
+          ["EPSG:102100", "EPSG:3857"].includes(srs) ||
+          [102100, 3857].includes(spatialReference?.wkid || tilingScheme?.wkid)
+        ) {
           const projectInfo = zondy.geometry.Projection.project(
             new zondy.geometry.Extent({
               xmin,
