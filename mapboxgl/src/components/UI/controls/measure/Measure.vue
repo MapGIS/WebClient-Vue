@@ -474,10 +474,7 @@ export default {
      * 一张图因为调用机制的问题，组件初始化时并不能监测到后续添加的地图，因此在测量绘制前调整顺序
      */
     $_moveLayer() {
-      let layersId = [];
-      this.map.getStyle().layers.forEach((layer) => {
-        layersId.push(layer.id);
-      });
+      let layersId = this.map.style._order || [];
       for (
         let i = layersId.indexOf("gl-draw-point-static.hot") + 1;
         i < layersId.length;

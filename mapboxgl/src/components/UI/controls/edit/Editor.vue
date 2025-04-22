@@ -29,7 +29,7 @@
                   :key="key"
                   :addon-before="key"
                   :value="properties[key]"
-                  @change="e => changeProperties(e, key)"
+                  @change="(e) => changeProperties(e, key)"
                 />
               </mapgis-ui-space>
             </div>
@@ -64,7 +64,7 @@ const editEvents = {
   // brower
   drawcreate: "draw.create",
   drawdelete: "draw.delete",
-  drawupdate: "draw.update"
+  drawupdate: "draw.update",
 };
 
 export default {
@@ -76,25 +76,25 @@ export default {
       get editor() {
         // 提供markerg给子组件popup或者插槽槽
         return self.editor;
-      }
+      },
     };
   },
   model: {
     prop: "feature",
-    event: "change.feature"
+    event: "change.feature",
   },
   props: {
     feature: {
       type: Object,
-      required: true
+      required: true,
     },
     enableControl: {
       type: Boolean,
-      default: false
+      default: false,
     },
     closeEdit: {
       type: Boolean,
-      default: false
+      default: false,
     },
     controls: {
       type: Object,
@@ -105,14 +105,14 @@ export default {
           polygon: false,
           trash: false,
           combine_features: false,
-          uncombine_features: false
+          uncombine_features: false,
         };
-      }
+      },
     },
     styles: {
       type: Array,
-      default: () => DefaultEditStyle
-    }
+      default: () => DefaultEditStyle,
+    },
   },
 
   data() {
@@ -125,25 +125,25 @@ export default {
       jsonOptions: {
         search: false,
         mode: "code",
-        onChange: this.changeGeometry
+        onChange: this.changeGeometry,
       },
-      oldStyles: DefaultEditStyle
+      oldStyles: DefaultEditStyle,
     };
   },
 
   watch: {
     feature: {
-      handler: function(next) {
+      handler: function (next) {
         this.parseFeature(next);
         this.toggleFeature();
       },
-      deep: true
+      deep: true,
     },
     styles: {
-      handler: function(news) {
+      handler: function (news) {
         this.oldStyles = this.combineStyle(news);
-      }
-    }
+      },
+    },
   },
 
   mounted() {
@@ -174,7 +174,7 @@ export default {
         feature.id = guid;
         if (feature.geometry.type == "Polygon") {
           feature.geometry.coordinates = feature.geometry.coordinates.map(
-            ring => {
+            (ring) => {
               ring[ring.length - 1] = ring[0];
               return ring;
             }
@@ -195,10 +195,10 @@ export default {
     $_initEdit() {
       const editoroptions = {
         ...this.$props,
-        styles: this.oldStyles
+        styles: this.oldStyles,
       };
       this.editor = {
-        ...this.map._controls.find(item => item instanceof MapboxDraw)
+        ...this.map._controls.find((item) => item instanceof MapboxDraw),
       };
       this.editor.options = { ...editoroptions };
       this.$_compareStyle();
@@ -212,10 +212,7 @@ export default {
      * 一张图因为调用机制的问题，组件初始化时并不能监测到后续添加的地图，因此在测量绘制前调整顺序
      */
     $_moveLayer() {
-      let layersId = [];
-      this.map.getStyle().layers.forEach(layer => {
-        layersId.push(layer.id);
-      });
+      let layersId = this.map.style._order || [];
       for (
         let i = layersId.indexOf("gl-draw-point-static.hot") + 1;
         i < layersId.length;
@@ -238,7 +235,7 @@ export default {
 
       // 使用vue的this.$listeners方式来订阅用户指定的事件
       // Object.keys(this.$listeners).forEach(eventName => {
-      listeners.forEach(eventName => {
+      listeners.forEach((eventName) => {
         if (events.includes(eventName)) {
           this.$_bindEditEvents(
             editEvents[eventName],
@@ -275,8 +272,8 @@ export default {
     combineStyle(news) {
       let olds = this.oldStyles || DefaultEditStyle;
       news = news || this.styles;
-      let combines = olds.filter(l => {
-        return !news.find(f => f.id === l.id);
+      let combines = olds.filter((l) => {
+        return !news.find((f) => f.id === l.id);
       });
       combines = combines.concat(news);
       return combines;
@@ -284,18 +281,18 @@ export default {
 
     changeMapStyle(layers) {
       let { map } = this;
-      layers.forEach(layer => {
+      layers.forEach((layer) => {
         if (map.getLayer(layer)) {
           if (layer.filter) {
             map.setFilter(layer.id, layer.filter);
           }
           if (layer.paint) {
-            Object.keys(layer.paint).forEach(key => {
+            Object.keys(layer.paint).forEach((key) => {
               map.setPaintProperty(layer.id, key, layer.paint[key]);
             });
           }
           if (layer.layout) {
-            Object.keys(layer.layout).forEach(key => {
+            Object.keys(layer.layout).forEach((key) => {
               map.setLayoutProperty(layer.id, key, layer.layout[key]);
             });
           }
@@ -331,7 +328,7 @@ export default {
       this.editor && this.editor.changeMode("simple_select");
       this.showFeature();
       this.editor.changeMode("direct_select", {
-        featureId: this.guid
+        featureId: this.guid,
       });
       if (this.closeEdit) {
         this.editor && this.editor.changeMode("static");
@@ -352,8 +349,8 @@ export default {
       let f = editor.get(guid);
       this.properties = f.properties;
       this.$emit("change.feature", f);
-    }
-  }
+    },
+  },
 };
 </script>
 
