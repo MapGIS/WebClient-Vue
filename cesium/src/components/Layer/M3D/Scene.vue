@@ -373,6 +373,7 @@ export default {
 
       let version = this.parseVersion();
       let server = this.parseServer();
+      const options = this.getOptions();
       let { ip, port, domain } = server;
       this.ip = ip;
       this.port = port;
