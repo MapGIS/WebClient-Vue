@@ -217,8 +217,6 @@ export default {
 
       options.url = options.baseUrl;
 
-      delete options.rectangle;
-
       //取得webGlobe对象，防止当页面有多个webGlobe只会取得
       //根据对应的providerName设置provider
       const { layerStyle } = this;
