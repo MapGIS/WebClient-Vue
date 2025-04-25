@@ -31,59 +31,69 @@ export default {
       default: 0,
     },
   },
-  created() {
-    this.CRS = mapboxCustomCRS(this.mapbox, Projection);
-    //创建tileMatrixSet监听器
-    let watchArr = [
-      "wmtsLayer",
-      "tileMatrixSet",
-      "version",
-      "wmtsStyle",
-      "format",
-    ];
-    for (let i = 0; i < watchArr.length; i++) {
-      this.$watch(watchArr[i], function () {
+  computed: {
+    watchList() {
+      const { wmtsLayer, tileMatrixSet, wmtsStyle } = this;
+      return { wmtsLayer, tileMatrixSet, wmtsStyle };
+    },
+  },
+  watch: {
+    watchList: {
+      handler: function (next, old) {
+        if (JSON.stringify(next) === JSON.stringify(old)) {
+          return;
+        }
         if (this.url) {
           //REST方式，目前还是采用KVP的格式
           this.$_initUrl(this[watchArr[i]], watchArr[i]);
         } else if (this.baseUrl) {
-          if (!this.tileMatrixSet) {
+          if (this.wmtsLayer.length === 0 || !this.tileMatrixSet) {
             return;
           }
           //KVP方式
           this.$_initBaseUrl();
-          if (this.tileMatrixSet && this.tileMatrixSet.tileInfo) {
-            const { tileInfo } = this.tileMatrixSet;
-            const { spatialReference } = tileInfo;
-            let crs;
-            if (this.baseUrl.indexOf("tianditu") > -1) {
-              // 天地图的分辨率比自定义的分辨多一级，0级分辨率是1.4xxxxx，自定义的0级是0.7xxxxx
-              crs = `EPSG:${spatialReference.wkid}`;
-            } else {
-              const { fullExtent } = this.tileMatrixSet.layer.activeLayer;
-              crs = this.$_getCrs(tileInfo, spatialReference, fullExtent);
-            }
-            this.source = { crs };
+          if (!this.source || !this.source.crs) {
+            this.$_initSource();
           }
           //因为OgcBaseLayer只监听了url，因此这里主动调用重绘和绘制方法
           this.$_deferredUnMount();
           this.$_deferredMount();
         }
-      });
-    }
+      },
+      deep: true,
+    },
   },
   methods: {
     $_init() {
+      this.CRS = mapboxCustomCRS(this.mapbox, Projection);
       let { url, wmtsLayer, baseUrl } = this;
       if (url) {
         //REST方式，目前还是采用KVP的格式
         this._url = url;
       } else if (baseUrl) {
-        if (wmtsLayer.length === 0) {
+        if (wmtsLayer.length === 0 || !this.tileMatrixSet) {
           return;
         }
         //KVP方式
         this.$_initBaseUrl();
+        if (!this.source || !this.source.crs) {
+          this.$_initSource();
+        }
+      }
+    },
+    $_initSource() {
+      if (this.tileMatrixSet && this.tileMatrixSet.tileInfo) {
+        const { tileInfo } = this.tileMatrixSet;
+        const { spatialReference } = tileInfo;
+        let crs;
+        if (this.baseUrl.indexOf("tianditu") > -1) {
+          // 天地图的分辨率比自定义的分辨多一级，0级分辨率是1.4xxxxx，自定义的0级是0.7xxxxx
+          crs = `EPSG:${spatialReference.wkid}`;
+        } else {
+          const { fullExtent } = this.tileMatrixSet.layer.activeLayer;
+          crs = this.$_getCrs(tileInfo, spatialReference, fullExtent);
+        }
+        this.source = { crs };
       }
     },
     $_initUrl(propValue, propName) {
