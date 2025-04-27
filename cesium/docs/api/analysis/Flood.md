@@ -18,21 +18,13 @@
 - **默认值:** `(Math.random() * 100000000).toFixed(0)`随机计算值
 - **描述:** 当 mapgis-web-scene 插槽中使用了多个相同组件时，例如多个 mapgis-3d-igs-doc-layer 组件，用来区分组件的标识符。
 
-### `startHeight`
+### `minHeight`
 
 - **类型:** `Number`
 - **可选**
 - **默认值:** `0`
 - **侦听属性**
 - **描述:** 洪水淹没水体起始高度
-
-### `minHeight`
-
-- **类型:** `Number`
-- **可选**
-- **默认值:** `0`
-- **非侦听属性**
-- **描述:** 淹没动画高度起始点
 
 ### `maxHeight`
 
@@ -129,7 +121,6 @@
     <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true" />
     <mapgis-ui-card class="storybook-ui-card">
       <mapgis-3d-analysis-flood
-        :startHeight="startHeight"
         :minHeight="minHeight"
         :maxHeight="maxHeight"
         :floodColor="floodColor"
@@ -158,7 +149,6 @@ export default {
         key: "tk",
         value: "2ddaabf906d4b5418aed0078e1657029"
       },
-      startHeight: 0,
       minHeight: 0,
       maxHeight: 2000,
       floodColor: "rgba(149,232,249,0.5)",
@@ -220,7 +210,6 @@ export default {
     <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true" />
     <mapgis-ui-card class="storybook-ui-card">
       <mapgis-3d-analysis-flood
-        :startHeight="startHeight"
         :minHeight="minHeight"
         :maxHeight="maxHeight"
         :floodColor="floodColor"
@@ -256,7 +245,6 @@ export default {
         key: "tk",
         value: "2ddaabf906d4b5418aed0078e1657029"
       },
-      startHeight: 0,
       minHeight: 0,
       maxHeight: 2000,
       floodColor: "rgba(149,232,249,0.5)",
