@@ -119,7 +119,7 @@
                 label="积水高度(米)"
                 size="small"
                 v-model="maxHeightCopy"
-                :range="[startHeightCopy, maxH]"
+                :range="[minHeightCopy, maxH]"
                 :rangeShow="false"
                 :step="heightStep"
                 :slider="false"
@@ -772,7 +772,7 @@ export default {
       promise.then(function (payload) {
         const { min, max } = payload;
         //将绘制区域的最小高程设置为积水的起始高度
-        vm.startHeightCopy = Math.round(min * 100) / 100;
+        vm.minHeightCopy = Math.round(min * 100) / 100;
 
         vm.midRange = (min + max) / 2;
         //指定绘制区域的最值的平均值为规整高度，计算填方体积
@@ -796,7 +796,7 @@ export default {
         // vm.maxHeightCopy += 1;
 
         //积水上涨高度的步长值
-        // vm.heightStep = (vm.maxHeightCopy - vm.startHeightCopy) / 10;
+        // vm.heightStep = (vm.maxHeightCopy - vm.minHeightCopy) / 10;
 
         vm.maskShow = false;
         vm.isSimulation = true;
@@ -915,7 +915,7 @@ export default {
         }, 1000);
 
         //积水上涨的速度
-        let speed = (vm.maxHeightCopy - vm.startHeightCopy) / vm.pondingTime;
+        let speed = (vm.maxHeightCopy - vm.minHeightCopy) / vm.pondingTime;
         vm.floodSpeedCopy =
           (Math.round(speed * 10000000) / 10000000) * vm.multiSpeed;
         vm._removeFlood();
