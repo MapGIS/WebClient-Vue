@@ -106,6 +106,10 @@ export default {
         }
         self.$_mount(cesiumOptions);
       });
+      // 如果是一张图出图，那么providerName为ArcGISMapServer一张图出图provider
+      if(this.renderMode && this.renderMode === "image-map"){
+        this.providerName = "ArcGISMapServerSingleImageryProvider"
+      }
     },
     unmount() {
       this.$_unmount();

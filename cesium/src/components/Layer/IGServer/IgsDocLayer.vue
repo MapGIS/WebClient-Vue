@@ -88,6 +88,10 @@ export default {
         const cesiumOptions = initializeOptions(layer, viewer);
         self.$_mount(cesiumOptions);
       });
+      // 如果是一张图出图，那么providerName为MapGISMapServer一张图出图provider
+      if(this.renderMode && this.renderMode === "image-map"){
+        this.providerName = "MapGISMapServerSingleImageryProvider"
+      }
     },
     unmount() {
       this.$_unmount();

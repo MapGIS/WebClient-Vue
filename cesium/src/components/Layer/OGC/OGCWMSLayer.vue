@@ -112,6 +112,10 @@ export default {
         const cesiumOptions = initializeOptions(layer, viewer);
         this.$_mount(cesiumOptions);
       });
+      // 如果是一张图出图，那么providerName为wms一张图出图provider
+      if(this.renderMode && this.renderMode === "image-map"){
+        this.providerName = "WebMapServiceSingleImageryProvider"
+      }
     },
     unmount() {
       this.$_unmount();
