@@ -1,4 +1,5 @@
 import IgsBaseLayer from "./OgcBaseLayer";
+import layerEvents from "../../../lib/layerEvents";
 // import { OGC } from "@mapgis/webclient-es6-service";
 
 export default {
@@ -44,10 +45,18 @@ export default {
     reversebbox: {
       type: Boolean,
       default: false
-    }
+    },
+    renderMode: {
+      type: String,
+      default: "raster"
+    },
   },
   watch: {
     layers() {
+      if (this.initial) return;
+      this.changelayers();
+    },
+    renderMode(next) {
       if (this.initial) return;
       this.changelayers();
     }
@@ -126,6 +135,82 @@ export default {
       }
       params.push("transparent=true");
       return params;
-    }
-  }
+    },
+    $_deferredMount() {
+      this.$_init();
+      let source;
+
+      let renderMode = this.renderMode;
+
+      if (renderMode === "image-map") {
+        // image-map类型
+        source = {
+          url: this._url,
+          ...this.source,
+          rebaseRequestUrl: function (url, params) {
+            let bbox;
+            const code = this.map.getCRS().epsgCode.split(":")[1];
+            let bound;
+            if (code === "3857") {
+              bound = params.mercatorBound;
+            } else if (code === "4326") {
+              bound = params.latlngBounds;
+            } else {
+              throw new Error(`不支持EPSG:${code}的投影`);
+            }
+            bbox = bound.toString();
+            const [imageWidth, imageHeight] = params.imageSize;
+            const split =
+              url.split("?").length > 1
+                ? url.split("?")[1].split("&")
+                : url.split("&");
+            split.forEach((part) => {
+              // igs2.0 出一张图模式
+              if (part.includes("size=")) {
+                url = url.replace(part, `size=${imageWidth},${imageHeight}`);
+              }
+              // wms 出一张图模式
+              if (part.includes("width=")) {
+                url = url.replace(part, `width=${imageWidth}`);
+              }
+              if (part.includes("height=")) {
+                url = url.replace(part, `height=${imageHeight}`);
+              }
+              // 动态计算bbox
+              if (
+                part.includes("bbox=") &&
+                !part.includes("reversebbox=false")
+              ) {
+                url = url.replace(part, `bbox=${bbox}`);
+              }
+            });
+            return url;
+          },
+          type: "image-map",
+        };
+      } else {
+        // 瓦片类型
+        source = {
+          type: "raster",
+          tiles: [this._url],
+          tileSize: this.tileSize,
+          ...this.source,
+        };
+      }
+
+      this.map.on("dataloading", this.$_watchSourceLoading);
+      try {
+        this.map.addSource(this.sourceId || this.layerId, source);
+      } catch (err) {
+        if (this.replaceSource) {
+          this.map.removeSource(this.sourceId || this.layerId);
+          this.map.addSource(this.sourceId || this.layerId, source);
+        }
+      }
+      this.$_addLayer();
+      this.$_bindLayerEvents(layerEvents);
+      this.map.off("dataloading", this.$_watchSourceLoading);
+      this.initial = false;
+    },
+  },
 };

@@ -226,59 +226,47 @@ export default {
       let provider;
       let imageryLayer;
       const { providerName } = this;
-      if (this.renderMode && this.renderMode === "image-map") {
-        imageryLayer = new GroundPrimitiveLayer(
-          Object.assign(options, {
-            viewer: viewer
-          })
-        );
-        imageryLayer.addLayer();
-        // 创建imageryLayer加载完监听
-        if (imageryLayer.primitivesCollection.primitiveAdded) {
-          const primitiveAddedHandler = event => {
-            // 添加primitives完成后的操作
-            this.$emit("loaded", this);
-            imageryLayer.primitivesCollection.primitiveAdded.removeEventListener(
-              primitiveAddedHandler
-            );
-          };
-          imageryLayer.primitivesCollection.primitiveAdded.addEventListener(
-            primitiveAddedHandler
-          );
-        }
-      } else {
-        if (vueCesiumLayer) {
+      if (vueCesiumLayer) {
           provider = new vueCesiumLayer(options);
+      } else {
+        if (
+          [
+            "ArcGISMapServerImageryProvider",
+            "ArcGISTileServerImageryProvider"
+          ].includes(providerName)
+        ) {
+          provider = await zondy.cesium[providerName].fromUrl(
+            options.url,
+            addOpt
+          );
+        } else if (
+          [
+            "MapGISMapServerImageryProvider",
+            "MapGISTileServerImageryProvider",
+            "UrlTemplateImageryProvider"
+          ].includes(providerName)
+        ) {
+          provider = new zondy.cesium[providerName](options);
+        } else if (
+          [
+            "MapGISMapServerSingleImageryProvider",
+            "WebMapServiceSingleImageryProvider",
+            "ArcGISMapServerSingleImageryProvider"
+          ].includes(providerName)
+        ) {
+          provider = new zondy.cesium[providerName](
+            Object.assign(options, { viewer: viewer })
+          );
         } else {
-          if (
-            [
-              "ArcGISMapServerImageryProvider",
-              "ArcGISTileServerImageryProvider"
-            ].includes(providerName)
-          ) {
-            provider = await zondy.cesium[providerName].fromUrl(
-              options.url,
-              addOpt
-            );
-          } else if (
-            [
-              "MapGISMapServerImageryProvider",
-              "MapGISTileServerImageryProvider",
-              "UrlTemplateImageryProvider"
-            ].includes(providerName)
-          ) {
-            provider = new zondy.cesium[providerName](options);
-          } else {
-            provider = new Cesium[providerName](options);
-          }
+          provider = new Cesium[providerName](options);
         }
-
-        //不管有没有设置zIndex先同意往上面叠放
-        imageryLayer = imageryLayers.addImageryProvider(
-          provider,
-          imageryLayers._layers.length
-        );
       }
+
+      //不管有没有设置zIndex先同意往上面叠放
+      imageryLayer = imageryLayers.addImageryProvider(
+        provider,
+        imageryLayers._layers.length
+      );
 
       //初始化imageryLayers.addImageryProvider需要的index
       let providerZIndex;
@@ -362,11 +350,7 @@ export default {
       if (!find) {
         return;
       }
-      if (this.renderMode && this.renderMode === "image-map") {
-        find.source.removeLayer();
-      } else {
-        imageryLayers.remove(find.source, true);
-      }
+      imageryLayers.remove(find.source, true);
       window.vueCesium[this.managerName].deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
