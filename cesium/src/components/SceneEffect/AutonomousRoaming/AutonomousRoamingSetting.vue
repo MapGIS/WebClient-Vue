@@ -2,7 +2,6 @@
   <autonomous-roaming
     v-if="isWidgetOpen"
     class="mapgis-3d-autonomous-roaming"
-    :isRunning="isRunning"
     @load="load"
     @unload="unload"
   >
@@ -39,26 +38,24 @@ import AutonomousRoaming from "./components/AutonomousRoaming.vue";
 export default {
   name: "AutonomousRoamingSetting",
   components: {
-    AutonomousRoaming
+    AutonomousRoaming,
   },
   props: {
     publicPath: {
-      type: String
+      type: String,
     },
     isWidgetOpen: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
-    return {
-      isRunning: false
-    };
+    return {};
   },
   computed: {
     imgSrc() {
       return `${this.publicPath}autonomousRoaming/autonomous-roaming-keyboard-demo.png`;
-    }
+    },
   },
   mounted() {},
 
@@ -67,19 +64,17 @@ export default {
       this.roamingTool = roamingTool;
     },
     fullScreenRoaming(isFullScreen) {
-      this.isRunning = true;
       this.roamingTool.enableMouseLook = isFullScreen;
       this.roamingTool.start();
     },
     stopRoaming() {
-      this.isRunning = false;
       this.roamingTool.stop();
     },
     unload(roamingTool) {
       this.stopRoaming();
       this.roamingTool = roamingTool;
-    }
-  }
+    },
+  },
 };
 </script>
 
