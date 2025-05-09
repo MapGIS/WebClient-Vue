@@ -399,7 +399,7 @@ export default {
         const m3ds = [];
         for (let i = 0; i < sceneOptions.length; i++) {
           const sceneSublayerOptions = sceneOptions[i];
-          const sceneSublayerId = String(sceneSublayerOptions.layerIndex);
+          const sceneSublayerId = String(sceneSublayerOptions.id.split(":")[1]);
           const optionsType = sceneSublayerOptions.type;
 
           // 根据option的类型匹配InitializeOptionType枚举变量并实例化对应的图层对象

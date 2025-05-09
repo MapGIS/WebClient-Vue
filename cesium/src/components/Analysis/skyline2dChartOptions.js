@@ -22,8 +22,8 @@ const chartOptions = ({ x, y }) => {
           type: "png",
           show: true,
           title: "保存为图片"
-        },
-        restore: { show: true, title: "刷新" }
+        }
+        // restore: { show: true, title: "刷新" }
       }
     },
     grid: {

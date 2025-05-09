@@ -16,10 +16,11 @@
             :value="centerPosition"
             :props="observerProps"
           /> -->
-          <mapgis-ui-form-item label="线宽度">
+          <mapgis-ui-form-item label="线宽度 [0.1,10.0]">
             <mapgis-ui-input-number-addon
               v-model.number="formData.skylineWidth"
-              :min="0"
+              :min="1"
+              :max="10"
             />
           </mapgis-ui-form-item>
           <!-- <mapgis-ui-mix-row
@@ -67,7 +68,9 @@ import {
   colorToCesiumColor,
   getCenterPosition,
   isLogarithmicDepthBufferEnable,
-  setLogarithmicDepthBufferEnable
+  setLogarithmicDepthBufferEnable,
+  isDepthTestAgainstTerrainEnable,
+  setDepthTestAgainstTerrainEnable,
 } from "../WebGlobe/util";
 
 export default {
@@ -80,7 +83,7 @@ export default {
      */
     layout: {
       type: String,
-      default: "vertical" // 'horizontal' 'vertical' 'inline'
+      default: "vertical", // 'horizontal' 'vertical' 'inline'
     },
     /**
      * @type Number
@@ -89,7 +92,7 @@ export default {
      */
     skylineWidth: {
       type: Number,
-      default: 2
+      default: 2,
     },
     /**
      * @type String
@@ -98,16 +101,16 @@ export default {
      */
     skylineColor: {
       type: String,
-      default: "rgb(255,0,0)"
+      default: "rgb(255,0,0)",
     },
-    ...VueOptions
+    ...VueOptions,
   },
   inject: ["Cesium", "vueCesium", "viewer"],
   data() {
     return {
       formData: {
         skylineWidth: 2,
-        skylineColor: "rgb(255,0,0)"
+        skylineColor: "rgb(255,0,0)",
       },
       loading: null,
       centerPosition: "",
@@ -123,22 +126,23 @@ export default {
       maskShow: false,
       maskText: "正在分析中, 请稍等...",
       //是否开启缓存区
-      isLogarithmicDepthBufferEnable: false
+      isLogarithmicDepthBufferEnable: false,
+      isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
     };
   },
   watch: {
     skylineWidth: {
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         this.formData.skylineWidth = newVal;
       },
-      immediate: true
+      immediate: true,
     },
     skylineColor: {
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         this.formData.skylineColor = newVal;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   mounted() {
     this.skyline2dChart = echarts.init(
@@ -154,40 +158,27 @@ export default {
       const { baseUrl, options } = this;
       // return new Cesium.GeoJsonDataSource.load(baseUrl, options);
       return new Promise(
-        resolve => {
+        (resolve) => {
           resolve();
         },
-        reject => {}
+        (reject) => {}
       );
     },
     mount() {
       const { viewer, vueCesium, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function(dataSource) {
+      promise.then(function (dataSource) {
         vm.$emit("load", vm);
         vueCesium.SkyLineAnalysisManager.addSource(
           vueKey,
           vueIndex,
           dataSource,
           {
-            skyLineAnalysis: null
+            skyLineAnalysis: null,
           }
         );
       });
-      //缓存区设置
-      this.isLogarithmicDepthBufferEnable = isLogarithmicDepthBufferEnable(
-        viewer
-      );
-      if (
-        navigator.userAgent.indexOf("Linux") > 0 &&
-        navigator.userAgent.indexOf("Firefox") > 0
-      ) {
-        setLogarithmicDepthBufferEnable(false, viewer);
-      } else {
-        // 其他浏览器还是设置为true，不然会导致分析结果不正确，cesium1.8版本已不需要再额外设置
-        setLogarithmicDepthBufferEnable(true, viewer);
-      }
     },
     unmount() {
       let { vueCesium, vueKey, vueIndex } = this;
@@ -196,7 +187,23 @@ export default {
         this.remove();
       }
       vueCesium.SkyLineAnalysisManager.deleteSource(vueKey, vueIndex);
-
+      this._restoreCesiumSetting();
+      this.$emit("unload", this);
+    },
+    /**
+     * @description 恢复Cesium设置
+     */
+    _restoreCesiumSetting() {
+      if (
+        this.isDepthTestAgainstTerrainEnable !== undefined &&
+        this.isDepthTestAgainstTerrainEnable !==
+          isDepthTestAgainstTerrainEnable(this.viewer)
+      ) {
+        setDepthTestAgainstTerrainEnable(
+          this.isDepthTestAgainstTerrainEnable,
+          this.viewer
+        );
+      }
       //缓存区设置
       if (
         this.isLogarithmicDepthBufferEnable !==
@@ -207,7 +214,6 @@ export default {
           this.viewer
         );
       }
-      this.$emit("unload", this);
     },
     remove() {
       let { vueCesium, vueKey, vueIndex } = this;
@@ -226,6 +232,7 @@ export default {
         }
       }
       this.$emit("remove");
+      this._restoreCesiumSetting();
     },
     /**
      * 获取二维天际线图表的xy轴信息
@@ -240,12 +247,12 @@ export default {
           y.push((1 - v.y / h).toFixed(8));
           return {
             x,
-            y
+            y,
           };
         },
         {
           x: [],
-          y: []
+          y: [],
         }
       );
     },
@@ -280,6 +287,8 @@ export default {
       this.skyline2dChart.hideLoading();
       this.$emit("success");
       this.$emit("showAnalysis2d", this.skyline2dChart);
+      // 分析完后，恢复cesium场景设置
+      this._restoreCesiumSetting();
     },
     addSkyLine() {
       this.remove();
@@ -291,7 +300,25 @@ export default {
       scene.skyAtmosphere.showGroundAtmosphere = false;
       //
       scene.skyBox.show = false;
-      // scene.skyAtmosphere.show = false;
+
+      this.isDepthTestAgainstTerrainEnable =
+        isDepthTestAgainstTerrainEnable(viewer);
+      if (!this.isDepthTestAgainstTerrainEnable) {
+        // 如果深度检测没有开启，则开启
+        setDepthTestAgainstTerrainEnable(true, viewer);
+      }
+      //缓存区设置
+      this.isLogarithmicDepthBufferEnable =
+        isLogarithmicDepthBufferEnable(viewer);
+      if (
+        navigator.userAgent.indexOf("Linux") > 0 &&
+        navigator.userAgent.indexOf("Firefox") > 0
+      ) {
+        setLogarithmicDepthBufferEnable(false, viewer);
+      } else {
+        // 其他浏览器还是设置为true，不然会导致分析结果不正确，cesium1.8版本已不需要再额外设置
+        setLogarithmicDepthBufferEnable(true, viewer);
+      }
 
       // 创建天际线实例
       let skylineAnalysisVal = options.skylineAnalysis;
@@ -326,8 +353,8 @@ export default {
         const heightStr = `${height.toFixed(2)}m`;
         this.centerPosition = `${lngStr}，${latStr}，${heightStr}`;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
