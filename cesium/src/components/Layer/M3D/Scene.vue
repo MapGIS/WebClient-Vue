@@ -398,7 +398,7 @@ export default {
         const originStyles = [];
         const m3ds = [];
         for (let i = 0; i < sceneOptions.length; i++) {
-          const sceneSublayerOptions = sceneOptions[i];
+          const sceneSublayerOptions = Object.assign({}, options, sceneOptions[i]) ;
           const sceneSublayerId = String(sceneSublayerOptions.id.split(":")[1]);
           const optionsType = sceneSublayerOptions.type;
 

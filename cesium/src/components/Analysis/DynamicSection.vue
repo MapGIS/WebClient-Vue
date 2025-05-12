@@ -409,6 +409,7 @@ export default {
           return;
         }
         this._clearTimer();
+        this.startClipping()
         this.distanceCopy = this.min;
         const self = this;
         this.timer = window.setInterval(() => {
