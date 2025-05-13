@@ -385,9 +385,7 @@ export default {
       this.enableShadow(shadow);
       this.enableDepthTest(depthTest);
       this.enableFPS(FPS);
-      this.enableTimeline(timeline);
-      this.enableCompass(compass);
-      this.enableZoom(zoom);
+
       this.enableColorCorrection(colorCorrection);
       this.brtChange(brightness);
       this.ctrstChange(contrast);
@@ -396,6 +394,9 @@ export default {
       this.exposureChange(exposure);
       this.handleChangeStatebar(statebar);
       this.handleChangeSceneMode(sceneMode);
+      this.enableTimeline(timeline);
+      this.enableCompass(compass);
+      this.enableZoom(zoom);
     },
     /*
      * 地球
@@ -480,6 +481,18 @@ export default {
         }
 
         viewerContainer.appendChild(timelineContainer);
+        // 获取当前UTC时间
+        const utcNow = Cesium.JulianDate.now();
+
+        // 获取当前北京时间（UTC+8）
+        const localTime = Cesium.JulianDate.addHours(
+          utcNow,
+          8,
+          new Cesium.JulianDate()
+        );
+
+        // 设置Cesium的时钟为当前北京时间
+        viewer.clock.currentTime = localTime;
         let timeline = new Cesium.Timeline(timelineContainer, viewer.clock);
         timeline.addEventListener("settime", vm.onTimelineScrubfunction, false);
         timeline.zoomTo(viewer.clock.startTime, viewer.clock.stopTime);
