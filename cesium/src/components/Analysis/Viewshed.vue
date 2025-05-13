@@ -90,6 +90,7 @@
                 <mapgis-ui-input-number-addon
                   v-model.number="posData.viewPositionX"
                   :step="0.0001"
+                  @change="onInputStart"
                 >
                   <mapgis-ui-tooltip slot="addonBefore" title="经度">
                     <mapgis-ui-iconfont type="mapgis-xzhouyidong" />
@@ -100,19 +101,17 @@
                 <mapgis-ui-input-number-addon
                   v-model.number="posData.viewPositionY"
                   :step="0.0001"
-                  type="number"
-                  addon-before="纬度"
+                  @change="onInputStart"
                 >
                   <mapgis-ui-tooltip slot="addonBefore" title="纬度">
                     <mapgis-ui-iconfont type="mapgis-yzhouyidong" />
                   </mapgis-ui-tooltip>
                 </mapgis-ui-input-number-addon>
               </mapgis-ui-col>
-              <mapgis-ui-col :span="12" style="paddingTop:8px;">
+              <mapgis-ui-col :span="12" style="paddingtop: 8px">
                 <mapgis-ui-input-number-addon
                   v-model.number="posData.viewPositionZ"
-                  type="number"
-                  addon-before="高度"
+                  @change="onInputStart"
                 >
                   <mapgis-ui-tooltip slot="addonBefore" title="高度">
                     <mapgis-ui-iconfont type="mapgis-Zzhouyidong" />
@@ -127,8 +126,7 @@
                 <mapgis-ui-input-number-addon
                   v-model.number="posData.targetPositionX"
                   :step="0.0001"
-                  type="number"
-                  addon-before="经度"
+                  @change="onInputStart"
                 >
                   <mapgis-ui-tooltip slot="addonBefore" title="经度">
                     <mapgis-ui-iconfont type="mapgis-xzhouyidong" />
@@ -139,19 +137,17 @@
                 <mapgis-ui-input-number-addon
                   v-model.number="posData.targetPositionY"
                   :step="0.0001"
-                  type="number"
-                  addon-before="纬度"
+                  @change="onInputStart"
                 >
                   <mapgis-ui-tooltip slot="addonBefore" title="纬度">
                     <mapgis-ui-iconfont type="mapgis-yzhouyidong" />
                   </mapgis-ui-tooltip>
                 </mapgis-ui-input-number-addon>
               </mapgis-ui-col>
-              <mapgis-ui-col :span="12" style="paddingTop:8px;">
+              <mapgis-ui-col :span="12" style="paddingtop: 8px">
                 <mapgis-ui-input-number-addon
                   v-model.number="posData.targetPositionZ"
-                  type="number"
-                  addon-before="高度"
+                  @change="onInputStart"
                 >
                   <mapgis-ui-tooltip slot="addonBefore" title="高度">
                     <mapgis-ui-iconfont type="mapgis-Zzhouyidong" />
@@ -183,7 +179,7 @@
                   :showColorText="false"
                   :color="formData.visibleColor"
                   @input="
-                    val =>
+                    (val) =>
                       (formData.visibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
                   "
                 >
@@ -198,7 +194,7 @@
                   :showColorText="false"
                   :color="formData.unVisibleColor"
                   @input="
-                    val =>
+                    (val) =>
                       (formData.unVisibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
                   "
                 >
@@ -218,7 +214,7 @@
                   :color="formData.maskColor"
                   addon-before="可视"
                   @input="
-                    val =>
+                    (val) =>
                       (formData.maskColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
                   "
                 >
@@ -250,7 +246,7 @@ import {
   setFarToNearRatio,
   isLogarithmicDepthBufferSupport,
   isLogarithmicDepthBufferEnable,
-  setLogarithmicDepthBufferEnable
+  setLogarithmicDepthBufferEnable,
 } from "../WebGlobe/util";
 
 export default {
@@ -265,7 +261,7 @@ export default {
      */
     layout: {
       type: String,
-      default: "vertical" // 'horizontal' 'vertical' 'inline'
+      default: "vertical", // 'horizontal' 'vertical' 'inline'
     },
     /**
      * @type Number
@@ -274,7 +270,7 @@ export default {
      */
     horizontAngle: {
       type: Number,
-      default: 60
+      default: 60,
     },
     /**
      * @type Number
@@ -283,7 +279,7 @@ export default {
      */
     verticalAngle: {
       type: Number,
-      default: 60
+      default: 60,
     },
     /**
      * @type String
@@ -292,7 +288,7 @@ export default {
      */
     unVisibleColor: {
       type: String,
-      default: "#ff0000"
+      default: "#ff0000",
     },
     /**
      * @type String
@@ -301,7 +297,7 @@ export default {
      */
     visibleColor: {
       type: String,
-      default: "#00ff00"
+      default: "#00ff00",
     },
     /**
      * @type String
@@ -310,7 +306,7 @@ export default {
      */
     maskColor: {
       type: String,
-      default: "rgba(37, 218, 169, 0.2)"
+      default: "rgba(37, 218, 169, 0.2)",
     },
     /**
      * @type Number
@@ -319,8 +315,8 @@ export default {
      */
     exHeight: {
       type: Number,
-      default: 1.85
-    }
+      default: 1.85,
+    },
   },
   data() {
     return {
@@ -330,7 +326,7 @@ export default {
         unVisibleColor: "#ff0000",
         visibleColor: "#00ff00",
         maskColor: "rgba(37, 218, 169, 0.2)",
-        exHeight: 1.85
+        exHeight: 1.85,
       },
       angleSet: {
         //方向角
@@ -338,7 +334,7 @@ export default {
         // 俯仰角
         pitch: 0,
         // 可视距离
-        viewRadius: 0
+        viewRadius: 0,
       },
       // 坐标数据
       posData: {
@@ -347,7 +343,7 @@ export default {
         viewPositionZ: undefined,
         targetPositionX: undefined,
         targetPositionY: undefined,
-        targetPositionZ: undefined
+        targetPositionZ: undefined,
       },
 
       // 是否为鼠标注册了监听事件
@@ -369,49 +365,49 @@ export default {
 
       handlerAction: undefined,
       farToNearRatio: undefined, // 记录设置前的值
-      isLogarithmicDepthBufferEnable: undefined // 记录设置前的值
+      isLogarithmicDepthBufferEnable: undefined, // 记录设置前的值
     };
   },
   watch: {
     horizontAngle: {
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         this.formData.horizontAngle = newVal;
       },
-      immediate: true
+      immediate: true,
     },
     verticalAngle: {
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         this.formData.verticalAngle = newVal;
       },
-      immediate: true
+      immediate: true,
     },
     unVisibleColor: {
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         this.formData.unVisibleColor = newVal;
       },
-      immediate: true
+      immediate: true,
     },
     visibleColor: {
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         this.formData.visibleColor = newVal;
       },
-      immediate: true
+      immediate: true,
     },
     maskColor: {
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         this.formData.maskColor = newVal;
       },
-      immediate: true
+      immediate: true,
     },
     exHeight: {
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         this.formData.exHeight = newVal;
       },
-      immediate: true
+      immediate: true,
     },
     formData: {
       deep: true,
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         let { Cesium } = this;
         let find = this.findSource();
         const unVisibleColor = new Cesium.Color.fromCssColorString(
@@ -451,11 +447,11 @@ export default {
             this.viewPoint.position._value = cartesian;
           }
         }
-      }
+      },
     },
     angleSet: {
       deep: true,
-      handler: function(newVal) {
+      handler: function (newVal) {
         let { vueKey, vueIndex } = this;
         let find = this.findSource();
         if (find && find.options.visualAnalysis) {
@@ -471,8 +467,8 @@ export default {
           );
           this.updateTargetPosition(find.options.visualAnalysis.targetPosition);
         }
-      }
-    }
+      },
+    },
   },
   mounted() {
     this.mount();
@@ -485,24 +481,24 @@ export default {
       const { baseUrl, options } = this;
       // return new Cesium.GeoJsonDataSource.load(baseUrl, options);
       return new Promise(
-        resolve => {
+        (resolve) => {
           resolve();
         },
-        reject => {}
+        (reject) => {}
       );
     },
     mount() {
       const { vueCesium, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function(dataSource) {
+      promise.then(function (dataSource) {
         vm.$emit("load", vm);
         vueCesium.ViewshedAnalysisManager.addSource(
           vueKey,
           vueIndex,
           dataSource,
           {
-            visualAnalysis: null
+            visualAnalysis: null,
           }
         );
       });
@@ -634,12 +630,10 @@ export default {
     startVisualAnalysis() {
       // 分析之前先清空之前的分析结果，包括观察点和目标点
       this._removeVisualAnalysis();
-      this._resetPos();
       let { viewer, Cesium, vueKey, vueIndex } = this;
       //深度检测开启
-      this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
-        viewer
-      );
+      this.isDepthTestAgainstTerrainEnable =
+        isDepthTestAgainstTerrainEnable(viewer);
       if (!this.isDepthTestAgainstTerrainEnable) {
         // 如果深度检测没有开启，则开启
         setDepthTestAgainstTerrainEnable(true, this.viewer);
@@ -740,8 +734,8 @@ export default {
         position: cartesian,
         point: {
           color: this.Cesium.Color.BLUE,
-          pixelSize: 10
-        }
+          pixelSize: 10,
+        },
       });
     },
 
@@ -845,15 +839,15 @@ export default {
         this.handlerAction = new Cesium.ScreenSpaceEventHandler(
           viewer.scene.canvas
         );
-        this.handlerAction.setInputAction(event => {
+        this.handlerAction.setInputAction((event) => {
           this.registerMouseMoveEvent(event);
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
-        this.handlerAction.setInputAction(event => {
+        this.handlerAction.setInputAction((event) => {
           this.registerMouseLClickEvent(event);
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
-        this.handlerAction.setInputAction(event => {
+        this.handlerAction.setInputAction((event) => {
           this.registerMouseRClickEvent(event);
         }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
         this.isAddEventListener = true;
@@ -940,8 +934,8 @@ export default {
       let { vueCesium, vueKey, vueIndex } = this;
       let find = vueCesium.ViewshedAnalysisManager.findSource(vueKey, vueIndex);
       return find;
-    }
-  }
+    },
+  },
 };
 </script>
 
