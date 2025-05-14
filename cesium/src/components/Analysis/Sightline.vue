@@ -27,7 +27,7 @@
               :disableAlpha="false"
               :color="formData.unVisibleColor"
               @input="
-                val =>
+                (val) =>
                   (formData.unVisibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
               "
             ></mapgis-ui-sketch-color-picker>
@@ -37,10 +37,26 @@
               :disableAlpha="false"
               :color="formData.visibleColor"
               @input="
-                val =>
+                (val) =>
                   (formData.visibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
               "
             ></mapgis-ui-sketch-color-picker>
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item>
+            <template v-slot:label>
+              <label title="提示">
+                提示
+                <mapgis-ui-tooltip slot="tip" placement="top">
+                  <template slot="title">
+                    <span>{{ info }}</span>
+                  </template>
+                  <mapgis-ui-iconfont
+                    type="mapgis-info"
+                    class="mapgis-info"
+                  ></mapgis-ui-iconfont>
+                </mapgis-ui-tooltip>
+              </label>
+            </template>
           </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
         <mapgis-ui-setting-footer>
@@ -65,10 +81,6 @@
 
 <script>
 import VueOptions from "../Base/Vue/VueOptions";
-import {
-  isDepthTestAgainstTerrainEnable,
-  setDepthTestAgainstTerrainEnable
-} from "../WebGlobe/util";
 
 export default {
   name: "mapgis-3d-sightline",
@@ -82,7 +94,7 @@ export default {
      */
     layout: {
       type: String,
-      default: "vertical" // 'horizontal' 'vertical' 'inline'
+      default: "vertical", // 'horizontal' 'vertical' 'inline'
     },
     /**
      * @type Number
@@ -91,7 +103,7 @@ export default {
      */
     exHeight: {
       type: Number,
-      default: 1.85
+      default: 1.85,
     },
     /**
      * @type String
@@ -100,7 +112,7 @@ export default {
      */
     visibleColor: {
       type: String,
-      default: "#008000"
+      default: "#008000",
     },
     /**
      * @type String
@@ -109,7 +121,7 @@ export default {
      */
     unVisibleColor: {
       type: String,
-      default: "#ff0000"
+      default: "#ff0000",
     },
     /**
      * @type String
@@ -118,15 +130,15 @@ export default {
      */
     lookAnalysisTip: {
       type: String,
-      default: '左键单击输入起始点，再次左键单击输入目标点，右键单击结束绘制'
-    }
+      default: "左键单击输入起始点，再次左键单击输入目标点，右键单击结束绘制",
+    },
   },
   data() {
     return {
       formData: {
         exHeight: 1.85,
         visibleColor: "#008000",
-        unVisibleColor: "#ff0000"
+        unVisibleColor: "#ff0000",
       },
       // 是否为鼠标注册了监听事件
       isAddEventListener: false,
@@ -140,42 +152,41 @@ export default {
       // 观察点坐标
       viewPosition: undefined,
 
-      isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
-
       handlerAction: undefined,
 
       percent: 0,
       maskShow: false,
-      maskText: "正在分析中, 请稍等...0%"
+      maskText: "正在分析中, 请稍等...0%",
+      info: "地形通视分析需开启地形深度检测！",
     };
   },
   computed: {
     formDataNew() {
       return JSON.parse(JSON.stringify(this.formData));
-    }
+    },
   },
   watch: {
     exHeight: {
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         this.formData.exHeight = newVal;
       },
-      immediate: true
+      immediate: true,
     },
     visibleColor: {
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         this.formData.visibleColor = newVal;
       },
-      immediate: true
+      immediate: true,
     },
     unVisibleColor: {
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         this.formData.unVisibleColor = newVal;
       },
-      immediate: true
+      immediate: true,
     },
     formDataNew: {
       deep: true,
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         const unVisibleColor = new this.Cesium.Color.fromCssColorString(
           newVal.unVisibleColor
         );
@@ -183,9 +194,9 @@ export default {
           newVal.visibleColor
         );
         let find = this.findSource();
-        const visibilityArr = this.getVisibilityArr()
+        const visibilityArr = this.getVisibilityArr();
         if (visibilityArr.length > 0) {
-          visibilityArr.forEach(item => {
+          visibilityArr.forEach((item) => {
             if (find.options.visiblityAnalysis) {
               let visiblityAnalysis = find.options.visiblityAnalysis;
               visiblityAnalysis.unvisibleColor = unVisibleColor;
@@ -212,31 +223,30 @@ export default {
             );
             // 抬高观察点,此时观察点已有了第一次附加的高度，所以再次变更附加高度应该减去旧的附加高度
             cartographic.height += newVal.exHeight - oldVal.exHeight;
-            const cartesian = this.Cesium.Cartographic.toCartesian(
-              cartographic
-            );
+            const cartesian =
+              this.Cesium.Cartographic.toCartesian(cartographic);
             this.setViewPointPosition(cartesian);
           }
         }
-      }
-    }
+      },
+    },
   },
   methods: {
     async createCesiumObject() {
       const { baseUrl, options } = this;
       // return new Cesium.GeoJsonDataSource.load(baseUrl, options);
       return new Promise(
-        resolve => {
+        (resolve) => {
           resolve();
         },
-        reject => {}
+        (reject) => {}
       );
     },
     mount() {
       const { vueCesium, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function(dataSource) {
+      promise.then(function (dataSource) {
         vm.$emit("load", vm);
         vueCesium.VisiblityAnalysisManager.addSource(
           vueKey,
@@ -245,7 +255,7 @@ export default {
           {
             // 通视分析结果集
             visibilityArr: [],
-            visiblityAnalysis: null
+            visiblityAnalysis: null,
           }
         );
       });
@@ -266,18 +276,10 @@ export default {
     },
     // 点击“分析”按钮回调
     onClickStart() {
-      const { vueKey, vueIndex } = this
+      const { vueKey, vueIndex } = this;
       //开启三维视图事件处理（例如鼠标点击）
       this.startEventHandler();
       this.onClickStop();
-      //深度检测开启
-      this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
-        this.viewer
-      );
-      if (!this.isDepthTestAgainstTerrainEnable) {
-        // 如果深度检测没有开启，则开启
-        setDepthTestAgainstTerrainEnable(true, this.viewer);
-      }
       // fix(6027): PTSYB-通视分析加入“右键单击结束绘制”提示
       // 修改人: 杨琨 2024-8-19
       // 修改说明: 点击通视分析时，初始化Cesium提示框对象，环通视分析已有提示，不需要新增
@@ -297,14 +299,9 @@ export default {
       // 获取当前坐标系标准
       const ellipsoid = this.viewer.scene.globe.ellipsoid;
 
-      if (!this.isDepthTestAgainstTerrainEnable) {
-        // 如果深度检测没有开启，则开启
-        setDepthTestAgainstTerrainEnable(true, this.viewer);
-      }
-
       let visibility;
       let find = this.findSource();
-      const visibilityArr = this.getVisibilityArr()
+      const visibilityArr = this.getVisibilityArr();
       if (find && find.options && find.options.visiblityAnalysis) {
         visibility = find.options.visiblityAnalysis;
         visibilityArr.push(visibility);
@@ -312,13 +309,12 @@ export default {
         visibility = this.createVisibility();
       }
       let drawElement = new zondy.cesium.DrawElement(this.viewer);
-      let cesiumColor = Cesium.Color.fromCssColorString("#FF0000").withAlpha(
-        0.5
-      );
+      let cesiumColor =
+        Cesium.Color.fromCssColorString("#FF0000").withAlpha(0.5);
       drawElement.setGroundPrimitiveType("BOTH");
       drawElement.startDrawingCircle({
         color: cesiumColor,
-        callback: function(result) {
+        callback: function (result) {
           drawElement.setGroundPrimitiveType("NONE");
           drawElement.stopDrawing();
 
@@ -333,9 +329,9 @@ export default {
           visibility.lookAroundAnalysis({
             viewPosition: cartesian,
             radius: result.radius,
-            percentCallback: vm.setPercent
+            percentCallback: vm.setPercent,
           });
-        }
+        },
       });
     },
     setPercent(result) {
@@ -373,7 +369,9 @@ export default {
       );
 
       // 初始化通视分析类
-      const visibility = new zondy.cesium.VisiblityAnalysis({ scene: viewer.scene });
+      const visibility = new zondy.cesium.VisiblityAnalysis({
+        scene: viewer.scene,
+      });
       visibility.unvisibleColor = unVisibleColor;
       visibility.visibleColor = visibleColor;
       // 添加通视分析结果显示
@@ -383,24 +381,9 @@ export default {
       // 修改说明: 在通视分析微件中使用Vue的数组来存储Cesium.VisiblityAnalysis对象，
       // 此时该对象会被Cesium和Vue双重监听，导致部分浏览器卡死，
       // 因此使用VisiblityAnalysisManager上的数组对象来存储Cesium.VisiblityAnalysis对象，避免双重监听
-      const visibilityArr = this.getVisibilityArr()
+      const visibilityArr = this.getVisibilityArr();
       visibilityArr.push(visibility);
       return visibility;
-    },
-    /**
-     * @description 恢复深度检测设置
-     */
-    _restoreDepthTestAgainstTerrain() {
-      if (
-        this.isDepthTestAgainstTerrainEnable !== undefined &&
-        this.isDepthTestAgainstTerrainEnable !==
-          isDepthTestAgainstTerrainEnable(this.viewer)
-      ) {
-        setDepthTestAgainstTerrainEnable(
-          this.isDepthTestAgainstTerrainEnable,
-          this.viewer
-        );
-      }
     },
 
     // 点击“结束分析”按钮回调
@@ -419,9 +402,9 @@ export default {
       }
       this.viewer.entities.removeAll();
 
-      let visibilityArr = this.getVisibilityArr()
+      let visibilityArr = this.getVisibilityArr();
       if (visibilityArr.length > 0 && !this.maskShow) {
-        visibilityArr.forEach(item => {
+        visibilityArr.forEach((item) => {
           // 移除通视分析结果
           this.viewer.scene.visualAnalysisManager.remove(item);
           // 销毁通视分析类
@@ -430,7 +413,7 @@ export default {
         visibilityArr = [];
       }
       //恢复深度检测的原始设置
-      this._restoreDepthTestAgainstTerrain();
+      // this._restoreDepthTestAgainstTerrain();
       this.hasViewPosition = false;
       this.isAddEventListener = false;
       // 清除观察点位置信息
@@ -438,7 +421,7 @@ export default {
       // fix(6027): PTSYB-通视分析加入“右键单击结束绘制”提示
       // 修改人: 杨琨 2024-8-19
       // 修改说明: 销毁微件时，销毁提示框
-      this._destroyToolTip()
+      this._destroyToolTip();
     },
 
     // 为鼠标的各种行为注册监听事件
@@ -446,15 +429,15 @@ export default {
       if (!this.isAddEventListener) {
         const visibility = this.createVisibility();
 
-        this.handlerAction.setInputAction(event => {
+        this.handlerAction.setInputAction((event) => {
           this.registerMouseLClickEvent(event, visibility);
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
-        this.handlerAction.setInputAction(event => {
+        this.handlerAction.setInputAction((event) => {
           this.registerMouseRClickEvent(event);
         }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
 
-        this.handlerAction.setInputAction(event => {
+        this.handlerAction.setInputAction((event) => {
           this.registerMouseMoveEvent(event, visibility);
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
@@ -527,7 +510,7 @@ export default {
       // fix(6027): PTSYB-通视分析加入“右键单击结束绘制”提示
       // 修改人: 杨琨 2024-8-19
       // 修改说明: 点击右键时，销毁提示框
-      this._destroyToolTip()
+      this._destroyToolTip();
     },
 
     // 注册通视分析鼠标移动事件
@@ -571,8 +554,8 @@ export default {
         position: cartesian,
         point: {
           color: this.Cesium.Color.BLUE,
-          pixelSize: 10
-        }
+          pixelSize: 10,
+        },
       });
     },
 
@@ -584,8 +567,8 @@ export default {
         position: cartesian,
         point: {
           color: this.Cesium.Color.RED,
-          pixelSize: 10
-        }
+          pixelSize: 10,
+        },
       });
     },
 
@@ -605,15 +588,15 @@ export default {
      * */
     getVisibilityArr() {
       const find = this.findSource();
-      let visibilityArr = []
+      let visibilityArr = [];
       if (find && find.options) {
         if (find.options.visibilityArr) {
-          visibilityArr = find.options.visibilityArr
+          visibilityArr = find.options.visibilityArr;
         } else {
-          find.options.visibilityArr = visibilityArr
+          find.options.visibilityArr = visibilityArr;
         }
       }
-      return visibilityArr
+      return visibilityArr;
     },
 
     // 销毁toolTip对象
@@ -623,14 +606,14 @@ export default {
         find.options.tooltip.destroy();
         find.options.tooltip = undefined;
       }
-    }
+    },
   },
   mounted() {
     this.mount();
   },
   destroyed() {
     this.unmount();
-  }
+  },
 };
 </script>
 
@@ -655,5 +638,9 @@ export default {
 
 ::v-deep .mapgis-ui-input-affix-wrapper .mapgis-ui-input:not(:first-child) {
   padding-left: 45px;
+}
+
+.mapgis-info {
+  padding: 8px 0;
 }
 </style>

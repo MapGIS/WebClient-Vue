@@ -55,6 +55,22 @@
               ></mapgis-ui-sketch-color-picker>
             </mapgis-ui-form-item>
           </mapgis-ui-switch-panel>
+          <mapgis-ui-form-item>
+            <template v-slot:label>
+              <label title="提示">
+                提示
+                <mapgis-ui-tooltip slot="tip" placement="top">
+                  <template slot="title">
+                    <span>{{ info }}</span>
+                  </template>
+                  <mapgis-ui-iconfont
+                    type="mapgis-info"
+                    class="mapgis-info"
+                  ></mapgis-ui-iconfont>
+                </mapgis-ui-tooltip>
+              </label>
+            </template>
+          </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
         <mapgis-ui-setting-footer>
           <mapgis-ui-button type="primary" @click="analysis"
@@ -75,12 +91,9 @@
 
 <script>
 import VueOptions from "../Base/Vue/VueOptions";
-import {
-  colorToCesiumColor,
-  isDepthTestAgainstTerrainEnable,
-  setDepthTestAgainstTerrainEnable
-} from "../WebGlobe/util";
+import { colorToCesiumColor } from "../WebGlobe/util";
 import * as echarts from "echarts";
+import { TerrainProfile } from "@mapgis/webclient-cesium-plugin";
 
 export default {
   name: "mapgis-3d-analysis-profile",
@@ -94,7 +107,7 @@ export default {
      */
     layout: {
       type: String,
-      default: "vertical" // 'horizontal' 'vertical' 'inline'
+      default: "vertical", // 'horizontal' 'vertical' 'inline'
     },
     /**
      * @type Number
@@ -109,7 +122,7 @@ export default {
      */
     polylineGroundColor: {
       type: String,
-      default: "rgb(255,0,0)"
+      default: "rgb(255,0,0)",
     },
     /**
      * @type Number
@@ -118,7 +131,7 @@ export default {
      */
     samplePrecision: {
       type: Number,
-      default: 2
+      default: 2,
     },
     /**
      * @type Boolean
@@ -127,7 +140,7 @@ export default {
      */
     showPolygon: {
       type: Boolean,
-      default: false
+      default: false,
     },
     /**
      * @type String
@@ -136,7 +149,7 @@ export default {
      */
     pointColor: {
       type: String,
-      default: "rgb(0,255,0)"
+      default: "rgb(0,255,0)",
     },
     /**
      * @type String
@@ -145,7 +158,7 @@ export default {
      */
     polyLineColor: {
       type: String,
-      default: "rgb(0,255,0)"
+      default: "rgb(0,255,0)",
     },
     /**
      * @type String
@@ -154,7 +167,7 @@ export default {
      */
     polygonColor: {
       type: String,
-      default: "rgb(0,0,255)"
+      default: "rgb(0,0,255)",
     },
     /**
      * @type Number
@@ -163,7 +176,7 @@ export default {
      */
     polygonHeight: {
       type: Number,
-      default: 100
+      default: 100,
     },
     /**
      * @type Object
@@ -179,39 +192,38 @@ export default {
               type: "line",
               lineStyle: {
                 color: "#41aeff",
-                type: "solid"
-              }
+                type: "solid",
+              },
             },
             confine: true, // 是否将 tooltip 框限制在图表的区域内。
-            backgroundColor: "rgba(255, 255, 255, 0.8)"
+            backgroundColor: "rgba(255, 255, 255, 0.8)",
           },
           title: {
-            show: false
+            show: false,
           },
           toolbox: {
             feature: {
               saveAsImage: {
                 type: "png",
                 show: true,
-                title: "保存为图片"
+                title: "保存为图片",
               },
-              restore: { show: true, title: "刷新" }
-            }
+            },
           },
           grid: {
             top: 25,
             left: 60,
             right: 20,
             bottom: 20,
-            contentLabel: false
+            contentLabel: false,
           },
           calculable: true,
           xAxis: [
             {
               show: false,
               type: "value",
-              max: "dataMax"
-            }
+              max: "dataMax",
+            },
           ],
           yAxis: [
             {
@@ -219,17 +231,17 @@ export default {
               splitLine: {
                 lineStyle: {
                   color: "#d9d9d9",
-                  type: "dotted"
-                }
+                  type: "dotted",
+                },
               },
               axisTick: {
-                show: false
+                show: false,
               },
               axisLine: {
-                show: false
+                show: false,
               },
               axisLabel: {
-                formatter: value => {
+                formatter: (value) => {
                   const texts = [];
                   if (value > 999) {
                     const text = (Number(value) / 1000).toFixed(2);
@@ -238,16 +250,16 @@ export default {
                     texts.push(`${parseInt(value)}m`);
                   }
                   return texts;
-                }
-              }
-            }
+                },
+              },
+            },
           ],
           series: [
             {
               type: "line",
               smooth: true, // 建议地形平滑显示二维剖面，模型取消平滑
               itemStyle: {
-                color: "#40a9ff"
+                color: "#40a9ff",
               },
               markPoint: {
                 symbol: "circle",
@@ -255,15 +267,15 @@ export default {
                 label: { position: "top" },
                 data: [
                   { type: "max", name: "最高点" },
-                  { type: "min", name: "最低点" }
-                ]
+                  { type: "min", name: "最低点" },
+                ],
               },
-              areaStyle: {}
-            }
-          ]
+              areaStyle: {},
+            },
+          ],
         };
         return echartsOptions;
-      }
+      },
     },
     /**
      * @type Boolean
@@ -272,7 +284,7 @@ export default {
      */
     useMask: {
       type: Boolean,
-      default: true
+      default: true,
     },
     /**
      * @type String
@@ -281,52 +293,52 @@ export default {
      */
     echartsDivId: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   watch: {
     polylineGroundColor: {
       handler() {
         this.polylineGroundColorCopy = this.polylineGroundColor;
       },
-      immediate: true
+      immediate: true,
     },
     samplePrecision: {
       handler() {
         this.samplePrecisionCopy = this.samplePrecision;
       },
-      immediate: true
+      immediate: true,
     },
     showPolygon: {
       handler() {
         this.showPolygonCopy = this.showPolygon;
       },
-      immediate: true
+      immediate: true,
     },
     pointColor: {
       handler() {
         this.pointColorCopy = this.pointColor;
       },
-      immediate: true
+      immediate: true,
     },
     polyLineColor: {
       handler() {
         this.polyLineColorCopy = this.polyLineColor;
       },
-      immediate: true
+      immediate: true,
     },
     polygonColor: {
       handler() {
         this.polygonColorCopy = this.polygonColor;
       },
-      immediate: true
+      immediate: true,
     },
     polygonHeight: {
       handler() {
         this.polygonHeightCopy = this.polygonHeight;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   data() {
     return {
@@ -338,10 +350,10 @@ export default {
       sampleSceneMostDetail: false, // 是否开启高精度采样
       showPolygonCopy: false, // 是否显示剖面
       samplePrecisionCopy: 2, // 采样精度(采样间隔，平面距离，单位米，模型推荐为0.2，地形推荐为2)
-      isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
       maskShow: false,
       maskText: "正在分析中, 请稍等...",
-      profileeChart: undefined
+      profileeChart: undefined,
+      info: "地形剖面分析需开启地形深度检测！",
     };
   },
 
@@ -355,24 +367,24 @@ export default {
   methods: {
     async createCesiumObject() {
       return new Promise(
-        resolve => {
+        (resolve) => {
           resolve();
         },
-        reject => {}
+        (reject) => {}
       );
     },
     mount() {
       const { viewer, vueCesium, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function(dataSource) {
+      promise.then(function (dataSource) {
         vm.$emit("load", vm);
         vueCesium.ProfileAnalysisManager.addSource(
           vueKey,
           vueIndex,
           dataSource,
           {
-            profileAnalysis: null
+            profileAnalysis: null,
           }
         );
       });
@@ -421,14 +433,6 @@ export default {
         this.remove();
       }
 
-      this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
-        this.viewer
-      );
-      if (!this.isDepthTestAgainstTerrainEnable) {
-        // 如果深度检测没有开启，则开启
-        setDepthTestAgainstTerrainEnable(true, this.viewer);
-      }
-
       const {
         polygonColorCopy,
         polygonHeightCopy,
@@ -438,7 +442,7 @@ export default {
         showPolygonCopy,
         samplePrecisionCopy,
         echartsOptions,
-        sampleSceneMostDetail
+        sampleSceneMostDetail,
       } = this;
       const pColor = this._getColor(polygonColorCopy);
       const ptColor = this._getColor(pointColorCopy);
@@ -448,7 +452,7 @@ export default {
       profileAnalysis = null;
       this.profileeChart.setOption(echartsOptions);
       if (!this.Cesium.defined(profileAnalysis)) {
-        profileAnalysis = new zondy.cesium.TerrainProfile(this.viewer, {
+        profileAnalysis = new TerrainProfile(this.viewer, {
           polygonColor: pColor,
           polygonHeight: polygonHeightCopy,
           polyLineColor: lColor,
@@ -458,7 +462,7 @@ export default {
           samplePrecision: samplePrecisionCopy,
           sampleSceneMostDetail,
           profileType, // 0表示只采地形，分析中界面不会卡顿；1表示支持模型和地形，分析中界面会卡顿
-          echart: this.profileeChart
+          echart: this.profileeChart,
         });
       }
       profileAnalysis.profile(this._profileStart, this._profileSuccess);
@@ -485,27 +489,11 @@ export default {
       this.$emit("success");
     },
     /**
-     * @description 恢复深度检测设置
-     */
-    _restoreDepthTestAgainstTerrain() {
-      if (
-        this.isDepthTestAgainstTerrainEnable !== undefined &&
-        this.isDepthTestAgainstTerrainEnable !==
-          isDepthTestAgainstTerrainEnable(this.viewer)
-      ) {
-        setDepthTestAgainstTerrainEnable(
-          this.isDepthTestAgainstTerrainEnable,
-          this.viewer
-        );
-      }
-    },
-    /**
      * @description 移除剖面分析结果，关闭二维剖面显示，恢复深度检测设置
      */
     remove() {
       const profileAnalysis = this._getProfileAnalysis();
       const { vueCesium, vueKey, vueIndex } = this;
-
       // 判断是否已有剖面分析结果
       if (profileAnalysis) {
         // 移除剖面分析显示结果
@@ -518,10 +506,15 @@ export default {
         );
       }
 
-      this._restoreDepthTestAgainstTerrain();
       this.maskShow = false;
       this.$emit("remove");
-    }
-  }
+    },
+  },
 };
 </script>
+
+<style scoped>
+.mapgis-info {
+  padding: 8px 0;
+}
+</style>

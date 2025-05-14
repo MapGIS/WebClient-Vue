@@ -225,6 +225,22 @@
               </mapgis-ui-col>
             </mapgis-ui-row>
           </mapgis-ui-form-item>
+          <mapgis-ui-form-item>
+            <template v-slot:label>
+              <label title="提示">
+                提示
+                <mapgis-ui-tooltip slot="tip" placement="top">
+                  <template slot="title">
+                    <span>{{ info }}</span>
+                  </template>
+                  <mapgis-ui-iconfont
+                    type="mapgis-info"
+                    class="mapgis-info"
+                  ></mapgis-ui-iconfont>
+                </mapgis-ui-tooltip>
+              </label>
+            </template>
+          </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
       </div>
       <mapgis-ui-setting-footer>
@@ -240,8 +256,6 @@
 <script>
 import VueOptions from "../Base/Vue/VueOptions";
 import {
-  isDepthTestAgainstTerrainEnable,
-  setDepthTestAgainstTerrainEnable,
   getFarToNearRatio,
   setFarToNearRatio,
   isLogarithmicDepthBufferSupport,
@@ -361,11 +375,10 @@ export default {
       // 观察点
       // viewPoint: undefined,
 
-      isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
-
       handlerAction: undefined,
       farToNearRatio: undefined, // 记录设置前的值
       isLogarithmicDepthBufferEnable: undefined, // 记录设置前的值
+      info: "地形可视域分析需开启地形深度检测！",
     };
   },
   watch: {
@@ -631,13 +644,6 @@ export default {
       // 分析之前先清空之前的分析结果，包括观察点和目标点
       this._removeVisualAnalysis();
       let { viewer, Cesium, vueKey, vueIndex } = this;
-      //深度检测开启
-      this.isDepthTestAgainstTerrainEnable =
-        isDepthTestAgainstTerrainEnable(viewer);
-      if (!this.isDepthTestAgainstTerrainEnable) {
-        // 如果深度检测没有开启，则开启
-        setDepthTestAgainstTerrainEnable(true, this.viewer);
-      }
       this.farToNearRatio = getFarToNearRatio(this.viewer);
       setFarToNearRatio(1000000, this.viewer);
       this.logarithmicDepthBuffer = isLogarithmicDepthBufferEnable(this.viewer);
@@ -743,16 +749,6 @@ export default {
      * @description 恢复cesium设置
      */
     _restoreCesiumSetting() {
-      if (
-        this.isDepthTestAgainstTerrainEnable !== undefined &&
-        this.isDepthTestAgainstTerrainEnable !==
-          isDepthTestAgainstTerrainEnable(this.viewer)
-      ) {
-        setDepthTestAgainstTerrainEnable(
-          this.isDepthTestAgainstTerrainEnable,
-          this.viewer
-        );
-      }
       if (
         this.isLogarithmicDepthBufferEnable !== undefined &&
         this.isLogarithmicDepthBufferEnable !==
@@ -978,5 +974,9 @@ export default {
 ::v-deep .mapgis-ui-card.mapgis-ui-card-bordered {
   max-height: 100%;
   overflow-y: auto;
+}
+
+.mapgis-info {
+  padding: 8px 0;
 }
 </style>

@@ -21,38 +21,40 @@
           </mapgis-ui-checkbox-group>
           <div v-else>暂无数据！</div>
         </mapgis-ui-row>
-        <mapgis-ui-form-item label="剖面纹理">
-          <mapgis-ui-select
-            class="mapgis-3d-fill-image mapgis-3d-select"
-            :autoWidth="true"
-            size="default"
-            v-model="selectTerrainWall"
-            placeholder="请选择纹理"
-          >
-            <mapgis-ui-select-option
-              v-for="(option, i) in terrainWallFillImages"
-              :key="i"
-              :value="option.value"
-              >{{ option.label }}</mapgis-ui-select-option
+        <mapgis-ui-setting-form :layout="layout" size="default">
+          <mapgis-ui-form-item label="剖面纹理">
+            <mapgis-ui-select
+              class="mapgis-3d-fill-image mapgis-3d-select"
+              :autoWidth="true"
+              size="default"
+              v-model="selectTerrainWall"
+              placeholder="请选择纹理"
             >
-          </mapgis-ui-select>
-        </mapgis-ui-form-item>
-        <mapgis-ui-form-item label="底面纹理">
-          <mapgis-ui-select
-            class="mapgis-3d-fill-image mapgis-3d-select"
-            :autoWidth="true"
-            size="default"
-            v-model="selectTerrainGround"
-            placeholder="请选择纹理"
-          >
-            <mapgis-ui-select-option
-              v-for="(option, i) in terrainGroundFillImages"
-              :key="i"
-              :value="option.value"
-              >{{ option.label }}</mapgis-ui-select-option
+              <mapgis-ui-select-option
+                v-for="(option, i) in terrainWallFillImages"
+                :key="i"
+                :value="option.value"
+                >{{ option.label }}</mapgis-ui-select-option
+              >
+            </mapgis-ui-select>
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="底面纹理">
+            <mapgis-ui-select
+              class="mapgis-3d-fill-image mapgis-3d-select"
+              :autoWidth="true"
+              size="default"
+              v-model="selectTerrainGround"
+              placeholder="请选择纹理"
             >
-          </mapgis-ui-select>
-        </mapgis-ui-form-item>
+              <mapgis-ui-select-option
+                v-for="(option, i) in terrainGroundFillImages"
+                :key="i"
+                :value="option.value"
+                >{{ option.label }}</mapgis-ui-select-option
+              >
+            </mapgis-ui-select>
+          </mapgis-ui-form-item>
+        </mapgis-ui-setting-form>
 
         <mapgis-ui-input-number-panel
           class="mapgis-excavate-form"
@@ -73,6 +75,24 @@
           v-model="useModelFill"
           size="default"
         ></mapgis-ui-switch-panel>
+        <mapgis-ui-setting-form :layout="layout" size="default">
+          <mapgis-ui-form-item>
+            <template v-slot:label>
+              <label title="提示">
+                提示
+                <mapgis-ui-tooltip slot="tip" placement="top">
+                  <template slot="title">
+                    <span>{{ info }}</span>
+                  </template>
+                  <mapgis-ui-iconfont
+                    type="mapgis-info"
+                    class="mapgis-info"
+                  ></mapgis-ui-iconfont>
+                </mapgis-ui-tooltip>
+              </label>
+            </template>
+          </mapgis-ui-form-item>
+        </mapgis-ui-setting-form>
         <mapgis-ui-setting-footer>
           <mapgis-ui-button type="primary" @click="analysis"
             >分析</mapgis-ui-button
@@ -93,16 +113,21 @@
 <script>
 import VueOptions from "../Base/Vue/VueOptions";
 import BaseLayer from "./BaseLayer";
-import {
-  isDepthTestAgainstTerrainEnable,
-  setDepthTestAgainstTerrainEnable
-} from "../WebGlobe/util";
 export default {
   name: "mapgis-3d-excavate-analysis",
   inject: ["Cesium", "vueCesium", "viewer"],
   mixins: [BaseLayer],
   props: {
     ...VueOptions,
+    /**
+     * @type String
+     * @default "vertical"
+     * @description 表单布局
+     */
+    layout: {
+      type: String,
+      default: "vertical", // 'horizontal' 'vertical' 'inline'
+    },
     /**
      * @type Array
      * @default []
@@ -125,8 +150,8 @@ export default {
     // 填充使用的图片纹理
     modelFillImage: {
       type: String,
-      default: ''
-    }
+      default: "",
+    },
   },
   watch: {
     /**
@@ -178,7 +203,7 @@ export default {
       selectTerrainGround: "",
       // 选中的剖面纹理
       selectTerrainWall: "",
-      isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
+      info: "地形开挖分析需开启地形深度检测！",
     };
   },
   computed: {
@@ -219,31 +244,8 @@ export default {
       });
     },
 
-     /**
-     * @description 恢复Cesium设置
-     */
-     _restoreCesiumSetting() {
-      if (
-        this.isDepthTestAgainstTerrainEnable !== undefined &&
-        this.isDepthTestAgainstTerrainEnable !==
-          isDepthTestAgainstTerrainEnable(this.viewer)
-      ) {
-        setDepthTestAgainstTerrainEnable(
-          this.isDepthTestAgainstTerrainEnable,
-          this.viewer
-        )
-      }
-    },
-
     mount() {
       const { viewer, vueCesium, vueKey, vueIndex } = this;
-      this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
-        this.viewer
-      );
-      if (!this.isDepthTestAgainstTerrainEnable) {
-        // 如果深度检测没有开启，则开启
-        setDepthTestAgainstTerrainEnable(true, this.viewer);
-      }
       const vm = this;
       let promise = Promise.resolve();
       promise.then(function (dataSource) {
@@ -261,7 +263,6 @@ export default {
     },
     unmount() {
       this.removeCuttingPlane();
-      this._restoreCesiumSetting();
     },
     /**
      * @description 获取裁剪图层
@@ -275,7 +276,7 @@ export default {
         }
         return [];
       } catch (err) {
-        console.warn(err)
+        console.warn(err);
         return [];
       }
     },
@@ -536,7 +537,7 @@ export default {
             diffuseMaterial: {
               type: "DiffuseMap",
               uniforms: {
-                image: this.modelFillImage
+                image: this.modelFillImage,
               },
             },
           },
@@ -574,7 +575,11 @@ export default {
   display: block;
   margin-bottom: 10px;
 }
-.mapgis-ui-form-item {
+::v-deep .mapgis-ui-form-item {
   margin-bottom: 0;
+}
+
+.mapgis-info {
+  padding: 8px 0;
 }
 </style>

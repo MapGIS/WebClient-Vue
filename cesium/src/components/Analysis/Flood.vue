@@ -44,6 +44,22 @@
               :disableAlpha="false"
             ></mapgis-ui-sketch-color-picker>
           </mapgis-ui-form-item>
+          <mapgis-ui-form-item>
+            <template v-slot:label>
+              <label title="提示">
+                提示
+                <mapgis-ui-tooltip slot="tip" placement="top">
+                  <template slot="title">
+                    <span>{{ info }}</span>
+                  </template>
+                  <mapgis-ui-iconfont
+                    type="mapgis-info"
+                    class="mapgis-info"
+                  ></mapgis-ui-iconfont>
+                </mapgis-ui-tooltip>
+              </label>
+            </template>
+          </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
         <mapgis-ui-setting-footer>
           <mapgis-ui-button type="primary" @click="analysis"
@@ -58,11 +74,7 @@
 
 <script>
 import VueOptions from "../Base/Vue/VueOptions";
-import {
-  colorToCesiumColor,
-  isDepthTestAgainstTerrainEnable,
-  setDepthTestAgainstTerrainEnable,
-} from "../WebGlobe/util";
+import { colorToCesiumColor } from "../WebGlobe/util";
 import { getPolygonSamplePoints } from "../Utils/util";
 
 export default {
@@ -169,7 +181,6 @@ export default {
       floodSpeedCopy: 80,
       positions: null,
       recalculate: false,
-      isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
       mHeight: 2000, // 淹没最高高度变化前的值
       timer: null,
       changeMaxHeight: false,
@@ -186,6 +197,7 @@ export default {
         //线宽
         width: 2,
       },
+      info: "地形淹没分析需开启地形深度检测！",
     };
   },
   created() {},
@@ -399,10 +411,6 @@ export default {
         this.$message.warning("请绘制分析区域");
         return;
       }
-      if (!this.isDepthTestAgainstTerrainEnable) {
-        // 如果深度检测没有开启，则开启
-        setDepthTestAgainstTerrainEnable(true, this.viewer);
-      }
       const { vueCesium, vueKey, vueIndex } = this;
       const positionsArr = [];
       for (let position of positions) {
@@ -465,21 +473,6 @@ export default {
       this._doAnalysis();
     },
     /**
-     * @description 恢复深度检测设置
-     */
-    _restoreDepthTestAgainstTerrain() {
-      if (
-        this.isDepthTestAgainstTerrainEnable !== undefined &&
-        this.isDepthTestAgainstTerrainEnable !==
-          isDepthTestAgainstTerrainEnable(this.viewer)
-      ) {
-        setDepthTestAgainstTerrainEnable(
-          this.isDepthTestAgainstTerrainEnable,
-          this.viewer
-        );
-      }
-    },
-    /**
      * @description 移除洪水淹没分析结果
      */
     _removeFlood() {
@@ -503,7 +496,6 @@ export default {
           null
         );
       }
-      this._restoreDepthTestAgainstTerrain();
     },
     /**
      * @description 移除洪水淹没分析结果，取消交互式绘制事件激活状态，恢复深度检测设置
@@ -564,5 +556,9 @@ export default {
 
 ::v-deep .mapgis-ui-input {
   /* padding: 4px 11px; */
+}
+
+.mapgis-info {
+  padding: 8px 0;
 }
 </style>

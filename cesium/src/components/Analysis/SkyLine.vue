@@ -40,6 +40,22 @@
             type="MapgisUiColorPicker"
             v-model="formData.skylineColor"
           /> -->
+          <mapgis-ui-form-item>
+            <template v-slot:label>
+              <label title="提示">
+                提示
+                <mapgis-ui-tooltip slot="tip" placement="top">
+                  <template slot="title">
+                    <span>{{ info }}</span>
+                  </template>
+                  <mapgis-ui-iconfont
+                    type="mapgis-info"
+                    class="mapgis-info"
+                  ></mapgis-ui-iconfont>
+                </mapgis-ui-tooltip>
+              </label>
+            </template>
+          </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
         <mapgis-ui-setting-footer>
           <mapgis-ui-button type="primary" @click="addSkyLine"
@@ -69,8 +85,6 @@ import {
   getCenterPosition,
   isLogarithmicDepthBufferEnable,
   setLogarithmicDepthBufferEnable,
-  isDepthTestAgainstTerrainEnable,
-  setDepthTestAgainstTerrainEnable,
 } from "../WebGlobe/util";
 
 export default {
@@ -127,7 +141,7 @@ export default {
       maskText: "正在分析中, 请稍等...",
       //是否开启缓存区
       isLogarithmicDepthBufferEnable: false,
-      isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
+      info: "地形天际线分析需开启地形深度检测！",
     };
   },
   watch: {
@@ -194,16 +208,6 @@ export default {
      * @description 恢复Cesium设置
      */
     _restoreCesiumSetting() {
-      if (
-        this.isDepthTestAgainstTerrainEnable !== undefined &&
-        this.isDepthTestAgainstTerrainEnable !==
-          isDepthTestAgainstTerrainEnable(this.viewer)
-      ) {
-        setDepthTestAgainstTerrainEnable(
-          this.isDepthTestAgainstTerrainEnable,
-          this.viewer
-        );
-      }
       //缓存区设置
       if (
         this.isLogarithmicDepthBufferEnable !==
@@ -300,13 +304,6 @@ export default {
       scene.skyAtmosphere.showGroundAtmosphere = false;
       //
       scene.skyBox.show = false;
-
-      this.isDepthTestAgainstTerrainEnable =
-        isDepthTestAgainstTerrainEnable(viewer);
-      if (!this.isDepthTestAgainstTerrainEnable) {
-        // 如果深度检测没有开启，则开启
-        setDepthTestAgainstTerrainEnable(true, viewer);
-      }
       //缓存区设置
       this.isLogarithmicDepthBufferEnable =
         isLogarithmicDepthBufferEnable(viewer);
@@ -362,5 +359,8 @@ export default {
 #skyline-2d-chart {
   width: 300px;
   height: 230px;
+}
+.mapgis-info {
+  padding: 8px 0;
 }
 </style>
