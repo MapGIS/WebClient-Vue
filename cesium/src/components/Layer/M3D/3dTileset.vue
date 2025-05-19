@@ -140,44 +140,44 @@ export default {
       const { luminanceAtZenith, maximumMemoryUsage } = this;
       if (viewer.isDestroyed()) return;
       const options = this.getOptions();
-      console.log("options: ", options);
-      // const tilesetLayer = new zondy.layer.Cesium3DTilesCacheLayer({
-      //   // 服务基地址
-      //   url,
-      //   ...options,
-      //   extensionOptions: { ...options },
-      // });
-      // tilesetLayer.load().then((layer) => {
-      // const cesiumOptions = initializeOptions(layer, viewer);
-      zondy.cesium.Cesium3DTileset.fromUrl(url, options).then((tileset) => {
-        if (!tileset) {
-          return;
-        }
-        tileset.imageBasedLighting.luminanceAtZenith = luminanceAtZenith;
-        tileset.cacheBytes = maximumMemoryUsage;
-        if (options.autoReset) {
-          const boundingSphere = tileset.boundingSphere;
-          const orientation = new Cesium.HeadingPitchRange(
-            0.0,
-            -0.5,
-            boundingSphere.radius * 2.5
-          );
-          viewer.camera.flyToBoundingSphere(boundingSphere, {
-            duration: 0,
-            offset: orientation,
-          });
-        }
-        viewer.scene.primitives.add(tileset);
-        tileset.style = new Cesium.Cesium3DTileStyle({
-          color: `color('#FFFFFF', ${opacity})`,
-        });
-        vueCesium.Tileset3DManager.addSource(vueKey, vueIndex, tileset, {
-          url: url,
-        });
-        vm.$emit("loaded", { tileset: tileset, m3ds: [tileset] });
-        vm.bindPopupEvent();
+      
+      const tilesetLayer = new zondy.layer.Cesium3DTilesCacheLayer({
+        // 服务基地址
+        url,
+        ...options,
+        extensionOptions: { ...options },
       });
-      // });
+      tilesetLayer.load().then((layer) => {
+        const cesiumOptions = initializeOptions(layer, viewer);
+        zondy.cesium.Cesium3DTileset.fromUrl(url, options).then((tileset) => {
+          if (!tileset) {
+            return;
+          }
+          tileset.imageBasedLighting.luminanceAtZenith = luminanceAtZenith;
+          tileset.cacheBytes = maximumMemoryUsage;
+          if (options.autoReset) {
+            const boundingSphere = tileset.boundingSphere;
+            const orientation = new Cesium.HeadingPitchRange(
+              0.0,
+              -0.5,
+              boundingSphere.radius * 2.5
+            );
+            viewer.camera.flyToBoundingSphere(boundingSphere, {
+              duration: 0,
+              offset: orientation,
+            });
+          }
+          viewer.scene.primitives.add(tileset);
+          tileset.style = new Cesium.Cesium3DTileStyle({
+            color: `color('#FFFFFF', ${opacity})`,
+          });
+          vueCesium.Tileset3DManager.addSource(vueKey, vueIndex, tileset, {
+            url: url,
+          });
+          vm.$emit("loaded", { tileset: tileset, m3ds: [tileset] });
+          vm.bindPopupEvent();
+        });
+      });
     },
     /**
      * @description 清空组件
@@ -285,7 +285,7 @@ export default {
      * @param {Object} payload cesium鼠标点击事件返回的对象
      */
     pickFeature(payload) {
-      console.log("payload: ", payload);
+      
       const vm = this;
       const { movement } = payload;
 
