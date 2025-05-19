@@ -721,13 +721,15 @@ export default {
           switch (this.settingCopy.groupType) {
             case 'MapgisUiExplosionUnique':
               const value = directionsArray[i].value
-              const feature = queryFeatures.find(
+              const tempFeatures = queryFeatures.filter(
                 (item) => item.properties[explosionField] == value
               )
-              valueGroups.push({
-                value: feature.properties.FID,
-                direction
-              })
+              for (let f = 0; f < tempFeatures.length; f++) {
+                valueGroups.push({
+                  value: tempFeatures[f].properties.FID,
+                  direction
+                })
+              }
               break
             case 'MapgisUiExplosionRange':
               const { start, end } = directionsArray[i]
