@@ -7,7 +7,7 @@
       class="paddingStyle"
     >
       <mapgis-ui-group-tab
-        title="坡向图例设置"
+        title="坡度图例设置"
         class="slope-parameter-title"
         :hasTopMargin="false"
         :hasBottomMargin="false"
