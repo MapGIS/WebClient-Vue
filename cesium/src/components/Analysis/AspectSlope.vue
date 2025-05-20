@@ -6,7 +6,7 @@
             v-model="slopeFill"
             class="paddingStyle"
         >
-            <mapgis-ui-group-tab title="坡向图例设置" class="slope-parameter-title" :hasTopMargin="false" :hasBottomMargin="false">
+            <mapgis-ui-group-tab title="坡度图例设置" class="slope-parameter-title" :hasTopMargin="false" :hasBottomMargin="false">
                 <mapgis-ui-tooltip slot="tip" placement="top">
                     <template slot="title">
                         <span>{{ info }}</span>
