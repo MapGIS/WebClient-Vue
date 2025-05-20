@@ -27,42 +27,42 @@ export default {
     // 组件宽度
     width: {
       type: [String, Number],
-      default: 200
+      default: 200,
     },
     // 组件最大高度，超出部分overflow: "auto"
     maxHeight: {
       type: Number,
-      default: 400
+      default: 400,
     },
     // 节点是否全部展开
     isExpandAll: {
       type: Boolean,
-      default: true
+      default: true,
     },
     // 默认展开的节点 isExpandAll为true该属性无效
     expandedKeys: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     // 节点是否可以多选
     checkable: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // 是否显示清除按钮
     allowClear: {
       type: Boolean,
-      default: true
+      default: true,
     },
     // 数据目录中选中的document图层
     layers: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     // 默认选中的keys
     selectKeys: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     // 使用同ant-design中tree-select组件的replaceFields属性
     replaceFields: {
@@ -72,15 +72,15 @@ export default {
           children: "sublayers",
           key: "key",
           value: "value",
-          label: "title"
+          label: "title",
         };
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       selectTreeKeys: [...this.selectKeys],
-      layerListArr: []
+      layerListArr: [],
     };
   },
   computed: {
@@ -94,19 +94,23 @@ export default {
     },
     dropdownStyle() {
       return { maxHeight: `${this.maxHeight}px`, overflow: "auto" };
-    }
+    },
   },
   watch: {
-    selectLayers(val) {
-      // 图层为空时取消勾选
-      if (val.length === 0) {
-        this.selectTreeKeys = [];
-      }
-      this.treeConvertList();
+    layers: {
+      deep: true,
+      immediate: true,
+      handler(val) {
+        // 图层为空时取消选中
+        if (val.length === 0) {
+          this.selectTreeKeys = [];
+        }
+        this.treeConvertList();
+      },
     },
     selectTreeKeys(val) {
       this.emitkeys(val);
-    }
+    },
   },
   methods: {
     treeConvertList() {
@@ -114,11 +118,11 @@ export default {
       const keyList = [];
       let currentKey;
       // 将treeData转成list存储起来
-      this.toConvert(this.selectLayers, arr, keyList, currentKey);
+      this.toConvert(this.layers, arr, keyList, currentKey);
       this.layerListArr = arr;
     },
     toConvert(treeData, arr, keyList, currentKey) {
-      treeData.forEach(item => {
+      treeData.forEach((item) => {
         if (item.type) {
           currentKey = item.id;
           item.value = item.id;
@@ -127,39 +131,26 @@ export default {
           item.value = `${currentKey}-${item.id}`;
           item.key = `${currentKey}-${item.id}`;
         }
-        keyList.push(item.key);
+        keyList.push(item.id);
 
         if (item.sublayers && item.sublayers.length > 0) {
           // 单选状态下不让勾选父节点
           if (!this.checkable) {
             item.disabled = true;
           }
-          // arr数组目前只是存储转换成list后的主要信息
-          arr.push({
-            id: item.id,
-            title: item.title,
-            value: item.value,
-            url: item.url,
-            isChild: false
-          });
+          item.isChild = false;
+
           this.toConvert(item.sublayers, arr, keyList, currentKey);
         } else {
-          // arr数组目前只是存储转换成list后的主要信息
-          arr.push({
-            id: item.id,
-            title: item.title,
-            value: item.value,
-            url: item.url,
-            isChild: true,
-            layer: item.layer
-          });
+          item.isChild = true;
         }
+        arr.push(item);
       });
     },
     // 图层对象直接传入tree-select组件控制台会报错,需要转成普通对象
     dealLayers(layers) {
       const newLayers = [];
-      layers.forEach(item => {
+      layers.forEach((item) => {
         const obj = {};
         for (const key in item) {
           if (Object.hasOwnProperty.call(item, key)) {
@@ -173,15 +164,15 @@ export default {
     emitkeys(keys) {
       keys = this.checkable ? keys : [keys];
       const needSelectList = [];
-      keys.forEach(item => {
-        const data = this.layerListArr.find(child => child.value === item);
+      keys.forEach((item) => {
+        const data = this.layerListArr.find((child) => child.value === item);
         data && needSelectList.push(data);
       });
       this.$emit("on-select", keys, needSelectList);
     },
     searchNode(keyword) {},
-    selectNode(node) {}
-  }
+    selectNode(node) {},
+  },
 };
 </script>
 

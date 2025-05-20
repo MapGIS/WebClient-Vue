@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import { deepClone } from "../../util/common/object-util";
+
 export default {
   name: "mapgis-ui-layer-check-list",
   props: {
@@ -116,34 +118,18 @@ export default {
         }
         keyList.push(item.key);
 
+        item.isRoot = item.type;
         if (item.sublayers && item.sublayers.length > 0) {
           // 单选状态下不让勾选父节点
           if (this.isSingleCheck) {
             item.disabled = true;
           }
-          // arr数组目前只是存储转换成list后的主要信息
-          arr.push({
-            id: item.id,
-            key: item.key,
-            title: item.title,
-            url: item.url,
-            isRoot: item.type,
-            isChild: false,
-            isVisible: item.isVisible,
-          });
+          item.isChild = false;
           this.toConvert(item.sublayers, arr, keyList, currentKey);
         } else {
-          arr.push({
-            id: item.id,
-            key: item.key,
-            title: item.title,
-            layer: item.layer,
-            url: item.url,
-            isRoot: item.type,
-            isChild: true,
-            visible: item.visible,
-          });
+          item.isChild = true;
         }
+        arr.push(item);
       });
     },
     dealCheckKeys(keyList, arr) {

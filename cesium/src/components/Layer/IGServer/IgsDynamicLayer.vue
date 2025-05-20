@@ -70,12 +70,23 @@ export default {
       if (typeof gdbps === "string") {
         gdbps = gdbps.split(",");
       }
-      const vm = this;
-      const layer = new IGSFeatureLayer({
+      // 判断是否有tokne信息
+      const queryGdbp = gdbps[0];
+      const param = queryGdbp.split("&");
+      const options = {
         url: baseUrl,
-        gdbp: gdbps[0],
+        gdbp: param[0],
         renderMode: "server",
-      });
+      };
+
+      if (param.length > 1) {
+        const tokenInfo = param[1].split("=");
+        options.tokenKey = tokenInfo[0];
+        options.tokenValue = tokenInfo[1];
+      }
+
+      const vm = this;
+      const layer = new IGSFeatureLayer(options);
       layer.load().then(() => {
         const cesiumOptions = initializeOptions(layer);
         vm.$_mount(cesiumOptions);
