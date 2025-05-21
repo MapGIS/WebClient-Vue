@@ -175,7 +175,7 @@ import * as Feature from "../../service/comprehensive-query/util/feature";
 import {
   IGSSceneLayer,
   LayerType,
-  SceneSubLayerType,
+  IGSSceneOriginLayerType,
 } from "@mapgis/webclient-common";
 import {
   MapGISM3DSet,
@@ -388,7 +388,7 @@ export default {
       sceneLayer.load().then(async (layer) => {
         const subLayers = layer.activeScene.sublayers.items;
         subLayers.map((item) => {
-          if (item.type === SceneSubLayerType.terrain) {
+          if (item.type === IGSSceneOriginLayerType.terrain) {
             item.requestVertexNormals = vm.requestVertexNormals;
           }
         });
