@@ -77,29 +77,17 @@ export default {
       let { layers } = this;
 
       const { viewer } = this;
-      const sublayers = [];
-      let tempLayers = layers || "";
-      if (tempLayers.includes("show:")) {
-        tempLayers = tempLayers.split("show:")[1];
-      }
-      const showLayerIds = tempLayers.split(",");
-      for (let i = 0; i < showLayerIds.length; i++) {
-        if (showLayerIds[i] && showLayerIds[i] !== "") {
-          sublayers.push({
-            id: showLayerIds[i],
-            visible: true,
-          });
-        }
-      }
       const arcGISMapImageLayer = new ArcGISMapImageLayer({
         url: baseUrl,
         renderMode: "image",
-        sublayers,
       });
       const self = this;
       arcGISMapImageLayer.load().then((layer) => {
         // 获取provider的初始化参数
-        const cesiumOptions = initializeOptions(layer, viewer);
+       const cesiumOptions = initializeOptions(layer, viewer);
+        if (layers && layers !== '') {
+          cesiumOptions.layers = layers
+        }
         if (this.renderMode && this.renderMode === "raster") {
           // 不使用瓦片缓存，部分服务可能没有开启瓦片服务，比如IGS转发的ArcGIS服务
           cesiumOptions.usePreCachedTilesIfAvailable = false;
