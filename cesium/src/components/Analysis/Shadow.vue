@@ -385,6 +385,10 @@ export default {
             pointSize: 10,
             minHeight: minHeight,
             maxHeight: minHeight + stretchHeight,
+            colorScheme: [
+              { color: sunColor, rate: 0 },
+              { color: shadowColor, rate: 1 },
+            ],
           });
 
           shadowAnalysis.pointsArray = positions;
