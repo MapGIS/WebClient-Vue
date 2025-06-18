@@ -103,7 +103,7 @@ export default {
   components: {
     modelSwitchPopup,
     Popup,
-    VoxelLayer
+    VoxelLayer,
   },
   data() {
     return {
@@ -235,13 +235,18 @@ export default {
               const { voxelInfo } = layerInfo[0] || {};
               if (voxelInfo) {
                 this.isVoxelLayer = true;
-                m3dLayer.heightScale = 1000
-                this.$emit('handelVoxel', vueIndex)
+                m3dLayer.heightScale = 1000;
+                this.$emit("handelVoxel", vueIndex);
               }
             }
           });
           m3dLayer.style = new Cesium.Cesium3DTileStyle({
-            color: `color('#FFFFFF', ${opacity})`,
+            color:
+              "undefined === ${COLOR}.r ? color('white'," +
+              opacity +
+              "):rgba(${COLOR}.r *255,${COLOR}.g* 255,${COLOR}.b *255, " +
+              opacity +
+              ")",
           });
           let m3ds = [m3dLayer];
           vm.loopM3d(m3ds, "2.0");
@@ -488,7 +493,12 @@ export default {
         if (!m3ds) return;
         m3ds.forEach((m3d) => {
           m3d.style = new Cesium.Cesium3DTileStyle({
-            color: `color('#FFFFFF', ${opacity})`,
+            color:
+              "undefined === ${COLOR}.r ? color('white'," +
+              opacity +
+              "):rgba(${COLOR}.r *255,${COLOR}.g* 255,${COLOR}.b *255, " +
+              opacity +
+              ")",
           });
         });
       }
@@ -577,7 +587,12 @@ export default {
               case M3dType.Model:
               case M3dType.Instance:
                 m3d.style = new Cesium.Cesium3DTileStyle({
-                  color: `color('#FFFFFF', ${opacity})`,
+                  color:
+                    "undefined === ${COLOR}.r ? color('white'," +
+                    opacity +
+                    "):rgba(${COLOR}.r *255,${COLOR}.g* 255,${COLOR}.b *255, " +
+                    opacity +
+                    ")",
                 });
                 break;
               case M3dType.CloudPoint:

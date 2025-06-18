@@ -126,16 +126,26 @@ export default {
         if (!tileset) return;
 
         tileset.style = new Cesium.Cesium3DTileStyle({
-          color: `color('#FFFFFF', ${opacity})`,
+          color:
+            "undefined === ${COLOR}.r ? color('white'," +
+            opacity +
+            "):rgba(${COLOR}.r *255,${COLOR}.g* 255,${COLOR}.b *255, " +
+            opacity +
+            ")",
         });
       }
     },
     onTilesetLoaded(tileset) {
       const vm = this;
-      const { vueIndex, vueKey, vueCesium, url, opacity } = this;
+      const { vueIndex, vueKey, vueCesium, Cesium, url, opacity } = this;
       if (tileset) {
         tileset.style = new Cesium.Cesium3DTileStyle({
-          color: `color('#FFFFFF', ${opacity})`,
+          color:
+            "undefined === ${COLOR}.r ? color('white'," +
+            opacity +
+            "):rgba(${COLOR}.r *255,${COLOR}.g* 255,${COLOR}.b *255, " +
+            opacity +
+            ")",
         });
         let tilesetLayer = [tileset];
         vueCesium.Tileset3DManager.addSource(vueKey, vueIndex, tileset, {
