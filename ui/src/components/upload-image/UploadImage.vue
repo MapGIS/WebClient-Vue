@@ -10,8 +10,15 @@
       :show-upload-list="showUploadList"
       @change="onChangeFile"
     >
-      <img v-if="value" :src="value" />
-      <mapgis-ui-iconfont v-else type="mapgis-upload" class="upload-img" />
+      <div>
+        <mapgis-ui-tooltip slot="tip" placement="top">
+          <template slot="title">
+            <span>{{ info }}</span>
+          </template>
+          <img v-if="value" :src="getImage(value)" />
+          <mapgis-ui-iconfont v-else type="mapgis-upload" class="upload-img" />
+        </mapgis-ui-tooltip>
+      </div>
     </mapgis-ui-upload>
   </div>
 </template>
@@ -48,25 +55,28 @@ export default {
       default: null,
     },
   },
+  data() {
+    return {
+      info: `文件名不能包含下列任何字符：.\\*/:'?"<>|%`,
+    };
+  },
   methods: {
     onChangeFile(info) {
-      if (info.file.status === "uploading") {
+      const { file } = info;
+      if (file.status === "uploading") {
         return;
       }
-      if (info.file.status === "error") {
+      if (file.status === "error") {
         this.$message.error("图片上传失败，请重新上传！");
         return;
       }
-      if (info.file.status === "done") {
-        const url = info.file.response.url;
+      if (file.status === "done") {
+        const fileName = file.name.split(".")[0];
+        const url = file.response.url.replace(
+          fileName,
+          encodeURIComponent(fileName)
+        );
         const { baseUrl } = this;
-        // if (this.uploadUrl.indexOf("://") > -1) {
-        //   const strs = this.uploadUrl.split("://");
-        //   baseUrl = `${strs[0]}://${strs[1].split("/")[0]}`;
-        // } else {
-        //   // 有可能传入的是一个相对路径
-        //   baseUrl = window.location.origin;
-        // }
         if (this.click) {
           this.click(`${baseUrl}${url}`);
         }
@@ -75,6 +85,13 @@ export default {
           ? this.$emit("image-url", `${baseUrl}${url}`)
           : this.$emit("image-url", url);
       }
+    },
+    getImage(image) {
+      // 如果image是完整的路径，则直接返回全路径
+      if (image.includes("://")) {
+        return image;
+      }
+      return `${this.baseUrl}${image}`;
     },
   },
 };
