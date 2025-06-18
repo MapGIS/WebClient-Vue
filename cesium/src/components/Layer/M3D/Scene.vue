@@ -398,7 +398,11 @@ export default {
         const originStyles = [];
         const m3ds = [];
         for (let i = 0; i < sceneOptions.length; i++) {
-          const sceneSublayerOptions = Object.assign({}, options, sceneOptions[i]) ;
+          const sceneSublayerOptions = Object.assign(
+            {},
+            options,
+            sceneOptions[i]
+          );
           const sceneSublayerId = String(sceneSublayerOptions.id.split(":")[1]);
           const optionsType = sceneSublayerOptions.type;
 
@@ -747,7 +751,12 @@ export default {
             // MapGIS M3D图层
             case InitializeOptionsType.MapGISM3DSet:
               source.style = new Cesium.Cesium3DTileStyle({
-                color: `color('#FFFFFF', ${opacity})`,
+                color:
+                  "undefined === ${COLOR}.r ? color('white'," +
+                  opacity +
+                  "):rgba(${COLOR}.r *255,${COLOR}.g* 255,${COLOR}.b *255, " +
+                  opacity +
+                  ")",
               });
               break;
             // MapGIS地形图层

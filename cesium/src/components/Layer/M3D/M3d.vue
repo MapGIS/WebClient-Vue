@@ -192,7 +192,12 @@ export default {
           }
           viewer.scene.primitives.add(m3dset);
           m3dset.style = new Cesium.Cesium3DTileStyle({
-            color: `color('#FFFFFF', ${opacity})`,
+            color:
+              "undefined === ${COLOR}.r ? color('white'," +
+              opacity +
+              "):rgba(${COLOR}.r *255,${COLOR}.g* 255,${COLOR}.b *255, " +
+              opacity +
+              ")",
           });
           let m3ds = [m3dset];
           vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, {
@@ -438,7 +443,12 @@ export default {
         if (!m3ds) return;
         m3ds.forEach((m3d) => {
           m3d.style = new Cesium.Cesium3DTileStyle({
-            color: `color('#FFFFFF', ${opacity})`,
+            color:
+              "undefined === ${COLOR}.r ? color('white'," +
+              opacity +
+              "):rgba(${COLOR}.r *255,${COLOR}.g* 255,${COLOR}.b *255, " +
+              opacity +
+              ")",
           });
         });
       }

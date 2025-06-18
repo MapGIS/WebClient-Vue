@@ -140,7 +140,7 @@ export default {
       const { luminanceAtZenith, maximumMemoryUsage } = this;
       if (viewer.isDestroyed()) return;
       const options = this.getOptions();
-      
+
       const tilesetLayer = new zondy.layer.Cesium3DTilesCacheLayer({
         // 服务基地址
         url,
@@ -169,7 +169,12 @@ export default {
           }
           viewer.scene.primitives.add(tileset);
           tileset.style = new Cesium.Cesium3DTileStyle({
-            color: `color('#FFFFFF', ${opacity})`,
+            color:
+              "undefined === ${COLOR}.r ? color('white'," +
+              opacity +
+              "):rgba(${COLOR}.r *255,${COLOR}.g* 255,${COLOR}.b *255, " +
+              opacity +
+              ")",
           });
           vueCesium.Tileset3DManager.addSource(vueKey, vueIndex, tileset, {
             url: url,
@@ -277,7 +282,12 @@ export default {
         return;
       }
       tileset.style = new Cesium.Cesium3DTileStyle({
-        color: `color('#FFFFFF', ${opacity})`,
+        color:
+          "undefined === ${COLOR}.r ? color('white'," +
+          opacity +
+          "):rgba(${COLOR}.r *255,${COLOR}.g* 255,${COLOR}.b *255, " +
+          opacity +
+          ")",
       });
     },
     /**
@@ -285,7 +295,6 @@ export default {
      * @param {Object} payload cesium鼠标点击事件返回的对象
      */
     pickFeature(payload) {
-      
       const vm = this;
       const { movement } = payload;
 
