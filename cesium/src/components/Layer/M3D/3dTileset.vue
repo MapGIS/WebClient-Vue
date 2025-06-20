@@ -130,58 +130,94 @@ export default {
       });
       return options;
     },
+
+    /**
+     * 移除url路径上的param查询参数
+     */
+    removeSearchParamFromUrl(url, param) {
+      const [base, queryString] = url.split("?");
+      if (!queryString) return url;
+
+      const params = new URLSearchParams(queryString);
+      params.delete(param);
+
+      const newQuery = params.toString();
+      return newQuery ? `${base}?${newQuery}` : base;
+    },
     /**
      * @description 初始化组件
      */
     mount() {
       const vm = this;
       const { viewer, vueIndex, vueKey, vueCesium, $props } = this;
-      const { url, opacity } = this;
+      let { url, opacity } = this;
       const { luminanceAtZenith, maximumMemoryUsage } = this;
       if (viewer.isDestroyed()) return;
       const options = this.getOptions();
+      // 如果配置了token携带位置在headers上
+      if (
+        options.token &&
+        options.token.value &&
+        options.token.where === "headers"
+      ) {
+        options.headers = {
+          token: options.token.value,
+        };
+        // 如果配置了header token，那么url上就不需要token
+        url = this.removeSearchParamFromUrl(url, options.token.key)
+
+        if(options.url) {
+          options.url = this.removeSearchParamFromUrl(options.url, options.token.key)
+        }
+      }
+
+      // 需要过滤出extensionOptions里面的url，要不然会覆盖传入的cesiumOptions.url
+      const { url: optionUrl, ...extensionOptions } = options;
 
       const tilesetLayer = new zondy.layer.Cesium3DTilesCacheLayer({
         // 服务基地址
         url,
         ...options,
-        extensionOptions: { ...options },
+        extensionOptions,
       });
+
       tilesetLayer.load().then((layer) => {
         const cesiumOptions = initializeOptions(layer, viewer);
-        zondy.cesium.Cesium3DTileset.fromUrl(url, options).then((tileset) => {
-          if (!tileset) {
-            return;
-          }
-          tileset.imageBasedLighting.luminanceAtZenith = luminanceAtZenith;
-          tileset.cacheBytes = maximumMemoryUsage;
-          if (options.autoReset) {
-            const boundingSphere = tileset.boundingSphere;
-            const orientation = new Cesium.HeadingPitchRange(
-              0.0,
-              -0.5,
-              boundingSphere.radius * 2.5
-            );
-            viewer.camera.flyToBoundingSphere(boundingSphere, {
-              duration: 0,
-              offset: orientation,
+        zondy.cesium.Cesium3DTileset.fromUrl(cesiumOptions.url, options).then(
+          (tileset) => {
+            if (!tileset) {
+              return;
+            }
+            tileset.imageBasedLighting.luminanceAtZenith = luminanceAtZenith;
+            tileset.cacheBytes = maximumMemoryUsage;
+            if (options.autoReset) {
+              const boundingSphere = tileset.boundingSphere;
+              const orientation = new Cesium.HeadingPitchRange(
+                0.0,
+                -0.5,
+                boundingSphere.radius * 2.5
+              );
+              viewer.camera.flyToBoundingSphere(boundingSphere, {
+                duration: 0,
+                offset: orientation,
+              });
+            }
+            viewer.scene.primitives.add(tileset);
+            tileset.style = new Cesium.Cesium3DTileStyle({
+              color:
+                "undefined === ${COLOR}.r ? color('white'," +
+                opacity +
+                "):rgba(${COLOR}.r *255,${COLOR}.g* 255,${COLOR}.b *255, " +
+                opacity +
+                ")",
             });
+            vueCesium.Tileset3DManager.addSource(vueKey, vueIndex, tileset, {
+              url: url,
+            });
+            vm.$emit("loaded", { tileset: tileset, m3ds: [tileset] });
+            vm.bindPopupEvent();
           }
-          viewer.scene.primitives.add(tileset);
-          tileset.style = new Cesium.Cesium3DTileStyle({
-            color:
-              "undefined === ${COLOR}.r ? color('white'," +
-              opacity +
-              "):rgba(${COLOR}.r *255,${COLOR}.g* 255,${COLOR}.b *255, " +
-              opacity +
-              ")",
-          });
-          vueCesium.Tileset3DManager.addSource(vueKey, vueIndex, tileset, {
-            url: url,
-          });
-          vm.$emit("loaded", { tileset: tileset, m3ds: [tileset] });
-          vm.bindPopupEvent();
-        });
+        );
       });
     },
     /**
