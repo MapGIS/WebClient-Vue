@@ -234,6 +234,26 @@ export default {
         }
       }
     },
+    // 移除除最后一次的所有绘制元素
+    removeNotLastEntities() {
+      let { vueKey, vueIndex } = this;
+      let viewer = this.getWebGlobe();
+      // 取得viewer后，清空当前绘制
+      if (viewer) {
+        let drawEntities = window.vueCesium.DrawToolManager.findSource(
+          vueKey,
+          vueIndex
+        );
+        if (drawEntities) {
+          drawEntities = drawEntities.source;
+          for (let i = 0; i < drawEntities.length - 1; i++) {
+            viewer.scene.primitives.remove(drawEntities[i]);
+            viewer.entities.remove(drawEntities[i]);
+          }
+          drawEntities.source = drawEntities[drawEntities.length - 1];
+        }
+      }
+    },
     getWebGlobe() {
       let viewerDraw;
       let { viewer, vueCesium, Cesium, vueKey, vueIndex } = this;
