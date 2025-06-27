@@ -56,6 +56,9 @@
 
 <script>
 import axios from "axios";
+import { Util } from "@mapgis/webclient-vue-ui";
+const { UrlUtil } = Util
+
 const fileType = {
   video: ["mp4", "avi", "pcx", "ogg", "m3u8", "webm", "hls"],
   image: ["jpg", "png"],
@@ -143,11 +146,13 @@ export default {
     getAccessoryData() {
       this.showAccessoryInfo = false;
       const promises = [];
+      const ip = this.dataStoreIp
+      const port = this.dataStorePort
       this.toTypes.forEach((item) => {
         const promise = new Promise((resolve, reject) => {
           axios
             .get(
-              `${window.location.protocol}//${this.dataStoreIp}:${this.dataStorePort}/datastore/rest/services/dataset/relations`,
+              `${UrlUtil.getOrigin({ ip, port })}/datastore/rest/services/dataset/relations`,
               {
                 params: {
                   fromID: this.Euid,
@@ -194,13 +199,15 @@ export default {
       });
     },
     fileDataStore(rtn) {
+      const ip = this.dataStoreIp
+      const port = this.dataStorePort
       const arr = [];
       rtn.forEach(({ toDataUrl, toExtInfo }) => {
         const names = toDataUrl.split("/");
         if (names.length > 0) {
           const name = names[names.length - 1];
           const { ip, port, provider } = JSON.parse(toExtInfo);
-          const url = `${window.location.protocol}//${this.dataStoreIp}:${this.dataStorePort}/datastore/rest/services/file/${provider}${toDataUrl}/download?isPreview=true`;
+          const url = `${UrlUtil.getOrigin({ ip, port })}/datastore/rest/services/file/${provider}${toDataUrl}/download?isPreview=true`;
           arr.push({
             name,
             url,
@@ -210,10 +217,12 @@ export default {
       return arr;
     },
     iotDevice(rtn) {
+      const ip = this.dataStoreIp
+      const port = this.dataStorePort
       const arr = [];
       rtn.forEach(({ toDataUrl, toExtInfo, toID }) => {
         const { ip, port, provider } = JSON.parse(toExtInfo);
-        const url = `${window.location.protocol}//${this.dataStoreIp}:${this.dataStorePort}/datastore/rest/services/dataset/${provider}${toDataUrl}/iots/devices/videos`;
+        const url = `${UrlUtil.getOrigin({ ip, port })}/datastore/rest/services/dataset/${provider}${toDataUrl}/iots/devices/videos`;
         arr.push({
           name: toID,
           type: "hls",

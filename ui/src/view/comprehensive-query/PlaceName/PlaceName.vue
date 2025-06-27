@@ -84,6 +84,7 @@
 <script>
 import PlaceNamePanel from "./PlaceNamePanel";
 import { LayerType } from "../util/document/layer/layer.js";
+import { getOrigin } from "../../../util/common/url-util"
 
 export default {
   name: "place-name",
@@ -470,7 +471,7 @@ export default {
             layerIndex: LayerIndex,
             serverName: docName,
             geometry: this.geometry,
-            serverUrl: `${window.location.protocol}//${ip}:${port}/igs/rest/mrms/docs/${docName}`,
+            serverUrl: `${getOrigin({ ip, port })}/igs/rest/mrms/docs/${docName}`,
             where
           }
         };

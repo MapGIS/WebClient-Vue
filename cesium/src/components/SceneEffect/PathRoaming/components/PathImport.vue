@@ -36,6 +36,8 @@
 
 <script>
 import axios from "axios";
+import { Util } from "@mapgis/webclient-vue-ui";
+const { UrlUtil } = Util
 
 export default {
   name: "path-import",
@@ -110,10 +112,11 @@ export default {
       } catch {}
     },
     uploadRequest(param) {
+      const { ip, port } = this
       const promise = new Promise((resolve, reject) => {
         axios({
           method: "post",
-          url: `${window.location.protocol}//${this.ip}:${this.port}/igs/rest/services/system/ResourceServer/files`,
+          url: `${UrlUtil.getOrigin({ ip, port })}/igs/rest/services/system/ResourceServer/files`,
           headers: {
             "Content-type": "multipart/form-data",
           },
@@ -132,10 +135,11 @@ export default {
       });
     },
     featureQuery(path) {
+      const { ip, port } = this
       const promise = new Promise((resolve, reject) => {
         axios({
           method: "get",
-          url: `${window.location.protocol}//${this.ip}:${this.port}/igs/rest/services/system/ResourceServer/tempData/features/query?f=json&url=${path}`,
+          url: `${UrlUtil.getOrigin({ ip, port })}/igs/rest/services/system/ResourceServer/tempData/features/query?f=json&url=${path}`,
           timeout: 20000,
         }).then((res) => {
           if (res && res.data) {

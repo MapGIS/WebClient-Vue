@@ -1,4 +1,7 @@
 import axios from "axios";
+import { Util } from "@mapgis/webclient-vue-ui";
+const { UrlUtil } = Util
+
 export default class DataSourceCatalog {
   /**
    * 获取数据源
@@ -8,9 +11,7 @@ export default class DataSourceCatalog {
    * @param {Boolean} param.isDetail 是否获取详情
    */
   static getDataSource({ ip, port, isDetail = false }) {
-    const url = `${
-      window.location.protocol
-    }//${ip}:${port}/igs/rest/mrcs/datasource?f=json&${
+    const url = `${UrlUtil.getOrigin({ ip, port })}/igs/rest/mrcs/datasource?f=json&${
       isDetail ? "getAtt" : "getAttr"
     }=true`;
     const promise = new Promise((resolve, reject) => {
@@ -42,7 +43,7 @@ export default class DataSourceCatalog {
    * @param {String} param.password 密码
    */
   static getDataBase({ ip, port, dataSource, user, password }) {
-    const url = `${window.location.protocol}//${ip}:${port}/igs/rest/mrcs/datasource/${dataSource}?user=${user}&psw=${password}&f=json`;
+    const url = `${UrlUtil.getOrigin({ ip, port })}/igs/rest/mrcs/datasource/${dataSource}?user=${user}&psw=${password}&f=json`;
     const promise = new Promise((resolve, reject) => {
       axios.get(url).then(
         res => {
@@ -73,7 +74,7 @@ export default class DataSourceCatalog {
    * @param {String} param.password 密码
    */
   static getGDBData({ ip, port, gdbp, type, user, password }) {
-    const url = `${window.location.protocol}//${ip}:${port}/igs/rest/mrcs/datasource/${gdbp}/${type}?user=${user}&psw=${password}&containAll=false&f=json`;
+    const url = `${UrlUtil.getOrigin({ ip, port })}/igs/rest/mrcs/datasource/${gdbp}/${type}?user=${user}&psw=${password}&containAll=false&f=json`;
     const promise = new Promise((resolve, reject) => {
       axios.get(url).then(
         res => {
