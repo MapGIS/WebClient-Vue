@@ -47,6 +47,8 @@
 <script>
 import axios from "axios";
 import * as echarts from "echarts";
+import { Util } from "@mapgis/webclient-vue-ui";
+const { UrlUtil } = Util
 
 export default {
   name: "IotDetail",
@@ -100,9 +102,11 @@ export default {
     async getData() {
       let arr = [];
       this.loading = true;
+      const ip = this.dataStoreIp
+      const port = this.dataStorePort
       try {
         const res = await axios.get(
-          `${window.location.protocol}//${this.dataStoreIp}:${this.dataStorePort}/datastore/rest/services/dataset/relations`,
+          `${UrlUtil.getOrigin({ ip, port })}/datastore/rest/services/dataset/relations`,
           {
             params: {
               fromID: this.Euid,
@@ -156,6 +160,8 @@ export default {
       return result;
     },
     genGraph(type) {
+      const ip = this.dataStoreIp
+      const port = this.dataStorePort
       const vm = this;
       this.loading = true;
       var dom = document.getElementById("echarts-graph");
@@ -169,7 +175,7 @@ export default {
       graphChart.showLoading();
       axios
         .post(
-          `${window.location.protocol}//${this.dataStoreIp}:${this.dataStorePort}/datastore/rest/services/dataset/nebula/${this.dataStoreDataset}/knowledgeGraph/graph/query?type=graphRelationType`,
+          `${UrlUtil.getOrigin({ ip, port })}/datastore/rest/services/dataset/nebula/${this.dataStoreDataset}/knowledgeGraph/graph/query?type=graphRelationType`,
           {
             id: this.Euid,
             pageSize: this.pageSize,
@@ -326,13 +332,15 @@ export default {
       this.$emit("project-screen", file);
     },
     fileDataStore(rtn) {
+      const ip = this.dataStoreIp
+      const port = this.dataStorePort
       const arr = [];
       rtn.forEach(({ toDataUrl, toExtInfo }) => {
         const names = toDataUrl.split("/");
         if (names.length > 0) {
           const name = names[names.length - 1];
           const { ip, port, provider } = JSON.parse(toExtInfo);
-          const url = `${window.location.protocol}//${this.dataStoreIp}:${this.dataStorePort}/datastore/rest/services/file/${provider}${toDataUrl}/download?isPreview=true`;
+          const url = `${UrlUtil.getOrigin({ ip, port })}/datastore/rest/services/file/${provider}${toDataUrl}/download?isPreview=true`;
           arr.push({
             name,
             url
@@ -342,10 +350,12 @@ export default {
       return arr;
     },
     iotDevice(rtn) {
+      const ip = this.dataStoreIp
+      const port = this.dataStorePort
       const arr = [];
       rtn.forEach(({ toDataUrl, toExtInfo, toID }) => {
         const { ip, port, provider } = JSON.parse(toExtInfo);
-        const url = `${window.location.protocol}//${this.dataStoreIp}:${this.dataStorePort}/datastore/rest/services/dataset/${provider}${toDataUrl}/iots/devices/videos`;
+        const url = `${UrlUtil.getOrigin({ ip, port })}/datastore/rest/services/dataset/${provider}${toDataUrl}/iots/devices/videos`;
         arr.push({
           name: toID,
           type: "hls",

@@ -23,6 +23,8 @@
 
 <script>
 import axios from "axios";
+import { Util } from "@mapgis/webclient-vue-ui";
+const { UrlUtil } = Util
 
 export default {
   name: "RelationAccessory",
@@ -66,13 +68,15 @@ export default {
       this.$emit("project-screen", file);
     },
     fileDataStore(rtn) {
+      const ip = this.dataStoreIp
+      const port = this.dataStorePort
       const arr = [];
       rtn.forEach(({ toDataUrl, toExtInfo, toType }) => {
         const names = toDataUrl.split("/");
         if (names.length > 0) {
           const name = names[names.length - 1];
           const { ip, port, provider } = JSON.parse(toExtInfo);
-          const url = `${window.location.protocol}//${this.dataStoreIp}:${this.dataStorePort}/datastore/rest/services/file/${provider}${toDataUrl}/download?isPreview=true`;
+          const url = `${UrlUtil.getOrigin({ ip, port })}/datastore/rest/services/file/${provider}${toDataUrl}/download?isPreview=true`;
           arr.push({
             name,
             url,
@@ -83,10 +87,12 @@ export default {
       return arr;
     },
     iotDevice(rtn) {
+      const ip = this.dataStoreIp
+      const port = this.dataStorePort
       const arr = [];
       rtn.forEach(({ toDataUrl, toExtInfo, toID, toType }) => {
         const { ip, port, provider } = JSON.parse(toExtInfo);
-        const url = `${window.location.protocol}//${this.dataStoreIp}:${this.dataStorePort}/datastore/rest/services/dataset/${provider}${toDataUrl}/iots/devices/videos`;
+        const url = `${UrlUtil.getOrigin({ ip, port })}/datastore/rest/services/dataset/${provider}${toDataUrl}/iots/devices/videos`;
         arr.push({
           name: toID,
           type: "hls",
@@ -105,12 +111,13 @@ export default {
     getAccessory(datas) {
       this.loading = true;
       const promiseAll = [];
-
+      const ip = this.dataStoreIp
+      const port = this.dataStorePort
       const fileList = new Promise((resolve, reject) => {
         let arr = [];
         axios
           .get(
-            `${window.location.protocol}//${this.dataStoreIp}:${this.dataStorePort}/datastore/rest/services/dataset/relations`,
+            `${UrlUtil.getOrigin({ ip, port })}/datastore/rest/services/dataset/relations`,
             {
               params: {
                 ...datas,
@@ -140,7 +147,7 @@ export default {
         let arr = [];
         axios
           .get(
-            `${window.location.protocol}//${this.dataStoreIp}:${this.dataStorePort}/datastore/rest/services/dataset/relations`,
+            `${UrlUtil.getOrigin({ ip, port })}/datastore/rest/services/dataset/relations`,
             {
               params: {
                 ...datas,

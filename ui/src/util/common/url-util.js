@@ -22,3 +22,19 @@ export function isUrlValid(urlString) {
 
   return urlMatch.test(urlString)
 }
+
+/**
+ * @description 根据ip和port获取orgin
+ * @param {*} options.ip ip支持域名
+ * @param {*} options.port
+ * @param {*} options.protocol
+ * @returns
+ */
+export function getOrigin({ ip, port, protocol }) {
+  const tempProtocol = protocol || window.location.protocol;
+  let tempOrigin = `${tempProtocol}//${ip}`;
+  if (port && port !== "") {
+    tempOrigin += `:${port}`;
+  }
+  return tempOrigin;
+}

@@ -36,6 +36,9 @@ import * as Zondy from "@mapgis/webclient-es6-service";
 import axios from "axios";
 import DocumentCatalog from "../catalog/document";
 import DataSourceCatalog from "../catalog/data-source";
+import { Util } from "@mapgis/webclient-vue-ui";
+const { UrlUtil } = Util;
+
 export default class FeatureQuery {
   /**
    * 查询通用接口
@@ -227,7 +230,7 @@ export default class FeatureQuery {
         option.protocol || window.location.protocol.split(":")[0];
       const ip = option.ip;
       const port = option.port;
-      domain = `${protocol}://${ip}:${port}`;
+      domain = `${UrlUtil.getOrigin({ ip, port, protocol })}`;
     }
     let queryService;
     if (option.gdbp && !option.docName) {
@@ -378,7 +381,7 @@ export default class FeatureQuery {
         option.protocol || window.location.protocol.split(":")[0];
       const ip = option.ip;
       const port = option.port;
-      domain = `${protocol}://${ip}:${port}`;
+      domain = `${UrlUtil.getOrigin({ ip, port, protocol })}`;
     }
     let url;
     if (option.gdbp) {
@@ -507,7 +510,7 @@ export default class FeatureQuery {
         option.protocol || window.location.protocol.split(":")[0];
       const ip = option.ip;
       const port = option.port;
-      domain = `${protocol}://${ip}:${port}`;
+      domain = `${UrlUtil.getOrigin({ ip, port, protocol })}`;
     }
     let queryService;
     if (option.gdbp) {
@@ -591,7 +594,7 @@ export default class FeatureQuery {
           : option.geometry.getGeometryType();
       queryParam.geometry = option.geometry.toString();
     }
-    queryParam.where = option.where || '';
+    queryParam.where = option.where || "";
     queryParam.returnGeometry = option.returnGeometry || true;
     queryParam.returnAttribute = option.returnAttribute || true;
     queryParam.returnStyle = option.returnStyle || false;
@@ -599,33 +602,33 @@ export default class FeatureQuery {
     queryParam.returnCountOnly = option.returnCountOnly || false;
     queryParam.returnExtentOnly = option.returnExtentOnly || false;
 
-    queryParam.objectIds = option.objectIds || '';
-    queryParam.outFields = option.outFields || '';
-    queryParam.url = option.url || '';
-    queryParam.mapResource = option.mapResource || '';
-    queryParam.distance = option.distance || '';
-    queryParam.geometryPrecision = option.geometryPrecision || '';
-    queryParam.spatialRel = option.spatialRel || '';
-    queryParam.orderByFields = option.orderByFields || '';
-    queryParam.outStatistics = option.outStatistics || '';
+    queryParam.objectIds = option.objectIds || "";
+    queryParam.outFields = option.outFields || "";
+    queryParam.url = option.url || "";
+    queryParam.mapResource = option.mapResource || "";
+    queryParam.distance = option.distance || "";
+    queryParam.geometryPrecision = option.geometryPrecision || "";
+    queryParam.spatialRel = option.spatialRel || "";
+    queryParam.orderByFields = option.orderByFields || "";
+    queryParam.outStatistics = option.outStatistics || "";
     queryParam.groupByFieldsForStatistics =
-      option.groupByFieldsForStatistics || '';
+      option.groupByFieldsForStatistics || "";
     const resultRecordCount = option.pageCount || 10;
     const page = option.page || 0;
     const resultOffset = page * resultRecordCount;
     queryParam.resultRecordCount = resultRecordCount;
     queryParam.resultOffset = resultOffset;
     queryParam.returnZ = option.returnZ || false;
-    queryParam.is6xAcls = option.is6xAcls || '';
+    queryParam.is6xAcls = option.is6xAcls || "";
     queryParam.inSrs = option.inSrs || "WGS1984_度";
     queryParam.outSrs = option.outSrs || "WGS1984_度";
-    let domain = option.domain || '';
+    let domain = option.domain || "";
     if (!domain) {
       const protocol =
         option.protocol || window.location.protocol.split(":")[0];
       const ip = option.ip;
       const port = option.port;
-      domain = `${protocol}://${ip}:${port}`;
+      domain = `${UrlUtil.getOrigin({ ip, port, protocol })}`;
     }
     const url = `${domain}/igs/rest/services/system/ResourceServer/tempData/features/query`;
     const promise = new Promise(resolve => {
@@ -734,7 +737,8 @@ export default class FeatureQuery {
     if (!domain) {
       const protocol =
         option.protocol || window.location.protocol.split(":")[0];
-      domain = `${protocol}://${queryParam.ip}:${queryParam.port}`;
+      const { ip, port } = queryParam;
+      domain = `${UrlUtil.getOrigin({ ip, port, protocol })}`;
     }
     queryParam.domain = domain;
     const promise = new Promise((resolve, reject) => {
@@ -789,7 +793,7 @@ export default class FeatureQuery {
     if (!domain) {
       const protocol =
         option.protocol || window.location.protocol.split(":")[0];
-      domain = `${protocol}://${ip}:${port}`;
+      domain = `${UrlUtil.getOrigin({ ip, port, protocol })}`;
     }
     queryParam.domain = domain;
     const { decode } = option;
