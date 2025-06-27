@@ -164,15 +164,18 @@ export default {
       const { luminanceAtZenith, maximumMemoryUsage } = this;
       if (viewer.isDestroyed()) return;
       const options = this.getOptions();
+
+      // 需要过滤出extensionOptions里面的url，要不然cesiumOptions.url会被覆盖
+      const { url: optionUrl, ...extensionOptions } = options;
       const commonM3DLayer = new M3DModelCacheLayer({
         // 服务基地址
         url,
         ...options,
-        extensionOptions: { ...options },
+        extensionOptions
       });
       commonM3DLayer.load().then((layer) => {
         const cesiumOptions = initializeOptions(layer, viewer);
-        zondy.cesium.MapGISM3DSet.fromUrl(url, cesiumOptions).then((m3dset) => {
+        zondy.cesium.MapGISM3DSet.fromUrl(cesiumOptions.url, cesiumOptions).then((m3dset) => {
           if (!m3dset) {
             return;
           }

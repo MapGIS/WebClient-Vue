@@ -171,7 +171,7 @@ export default {
         }
       }
 
-      // 需要过滤出extensionOptions里面的url，要不然会覆盖传入的cesiumOptions.url
+      // 需要过滤出extensionOptions里面的url，要不然cesiumOptions.url会被覆盖
       const { url: optionUrl, ...extensionOptions } = options;
 
       const tilesetLayer = new zondy.layer.Cesium3DTilesCacheLayer({
@@ -183,7 +183,7 @@ export default {
 
       tilesetLayer.load().then((layer) => {
         const cesiumOptions = initializeOptions(layer, viewer);
-        zondy.cesium.Cesium3DTileset.fromUrl(cesiumOptions.url, options).then(
+        zondy.cesium.Cesium3DTileset.fromUrl(cesiumOptions.url, cesiumOptions).then(
           (tileset) => {
             if (!tileset) {
               return;
