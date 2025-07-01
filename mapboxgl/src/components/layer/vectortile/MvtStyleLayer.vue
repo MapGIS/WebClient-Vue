@@ -183,16 +183,37 @@ export default {
       if (!this.projType == 2) {
         return;
       }
-      const { map, sourcekeys, customCrs } = this;
+      const { map, sourcekeys, customCrs, customLayers } = this;
       let mapLoadedInterval;
       const resetSourceCustomCrs = () => {
-        console.log("map: ", map);
         // 更新map.style.sourceCaches上的crs,第二次加载会被map上的crs覆盖，这里需要重置一下
         if (this.sourcekeys && this.sourcekeys.length && this.customCrs) {
           for (let i = 0; i < this.sourcekeys.length; i++) {
             map.style.sourceCaches[this.sourcekeys[i]].crs = this.customCrs;
             map._update(true);
           }
+        }
+        const { _order } = map.style;
+        if (customLayers && customLayers.length) {
+          customLayers.forEach((item) => {
+            const { layer, afterId } = item;
+            let { beforeId } = item;
+            if (!beforeId) {
+              // 如果没有beforeId，这招afterId的beforeId作为beforeId
+              if (afterId) {
+                const afterLayerIndex = _order.indexOf(afterId);
+                if (afterLayerIndex) {
+                  beforeId = _order[afterLayerIndex + 1];
+                }
+              }
+            }
+
+            if (beforeId) {
+              map.addLayer(layer.implementation, beforeId);
+            } else {
+              map.addLayer(layer.implementation);
+            }
+          });
         }
         if (mapLoadedInterval) {
           clearInterval(mapLoadedInterval);
@@ -259,6 +280,8 @@ export default {
     },
 
     compareStyle(mvtStyle) {
+      this.customLayers = this.$_getCustomLayers();
+
       let currentStyle = this.map.getStyle();
       let oldStyle = currentStyle;
 
@@ -307,6 +330,37 @@ export default {
       this.$emit("change-style", style);
       return style;
     },
+    /**
+     * @description 获取customLayer集合，包含前后图层id
+     */
+    $_getCustomLayers() {
+      let customLayers = [];
+      const { _layers, _order } = this.map.style;
+      const keys = Object.keys(_layers);
+      keys.forEach((key) => {
+        const layer = _layers[key];
+        if (layer.type === "custom") {
+          const { id } = layer;
+          // 找到customLayer在_order里的位置
+          const index = _order.indexOf(id);
+          // 找到beforeId
+          let beforeId;
+          let afterId;
+          if (index && index < length - 1) {
+            beforeId = _order[index + 1];
+          }
+          if (index && index > 0) {
+            afterId = _order[index - 1];
+          }
+          customLayers.push({
+            layer,
+            beforeId,
+            afterId,
+          });
+        }
+      });
+      return customLayers;
+    },
 
     $_getStyleObject(mvtStyle) {
       return mvtStyle || this.mvtStyle;
@@ -346,9 +400,6 @@ export default {
           return total.concat(layer);
         }
       }, []);
-      console.log("mergeLayers");
-      debugger;
-
       // 将未直接合并覆盖的图层重新根据原来的顺序进行插入
       let befores = news.map((u, i) => {
         u.before = i == news.length - 1 ? undefined : news[i + 1];
