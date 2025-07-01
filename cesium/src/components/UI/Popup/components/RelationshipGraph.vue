@@ -112,6 +112,9 @@ import {
 import { LabelLayout, UniversalTransition } from "echarts/features";
 // 引入 Canvas 渲染器，注意引入 CanvasRenderer 或者 SVGRenderer 是必须的一步
 import { CanvasRenderer } from "echarts/renderers";
+import { Util } from "@mapgis/webclient-vue-ui";
+const { UrlUtil } = Util
+
 // 注册必须的组件
 echarts.use([
   TitleComponent,
@@ -951,11 +954,13 @@ export default {
       return label;
     },
     getGraphData() {
+      const ip = this.info.dataStoreIp
+      const port = this.info.dataStorePort
       return new Promise((resolve, reject) => {
         this.loading = true;
         axios
           .post(
-            `${window.location.protocol}//${this.info.dataStoreIp}:${this.info.dataStorePort}/datastore/rest/services/dataset/nebula/${this.info.dataStoreDataset}/knowledgeGraph/graph/query?type=graphRelationType`,
+            `${UrlUtil.getOrigin({ ip, port })}/datastore/rest/services/dataset/nebula/${this.info.dataStoreDataset}/knowledgeGraph/graph/query?type=graphRelationType`,
             {
               id: this.info.floor,
               step: this.info.dataStoreStep || 2,

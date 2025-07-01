@@ -1,6 +1,9 @@
 // @ts-nocheck
 import * as Zondy from "@mapgis/webclient-es6-service";
 import axios from "axios";
+import { Util } from "@mapgis/webclient-vue-ui";
+const { UrlUtil } = Util
+
 export default class DocumentCatalog {
   /**
    * 获取瓦片列表
@@ -9,7 +12,7 @@ export default class DocumentCatalog {
    * @param {Number} param.port 服务端口
    */
   static getTiles({ ip, port }) {
-    const url = `${window.location.protocol}//${ip}:${port}/igs/rest/mrcs/tiles?version=2&f=json`;
+    const url = `${UrlUtil.getOrigin({ ip, port })}/igs/rest/mrcs/tiles?version=2&f=json`;
     const promise = new Promise((resolve, reject) => {
       axios.get(url).then(
         res => {
@@ -36,7 +39,7 @@ export default class DocumentCatalog {
    * @param {Number} param.port 服务端口
    */
   static getDocs({ ip, port }) {
-    const url = `${window.location.protocol}//${ip}:${port}/igs/rest/mrcs/docs?version=2&f=json`;
+    const url = `${UrlUtil.getOrigin({ ip, port })}/igs/rest/mrcs/docs?version=2&f=json`;
     const promise = new Promise((resolve, reject) => {
       axios.get(url).then(
         res => {
@@ -69,7 +72,7 @@ export default class DocumentCatalog {
         option.protocol || window.location.protocol.split(":")[0];
       const ip = option.ip;
       const port = option.port;
-      domain = `${protocol}://${ip}:${port}`;
+      domain = `${UrlUtil.getOrigin({ ip, port, protocol })}`;
     }
     const url = `${domain}/igs/rest/mrcs/docs/${
       option.serverName
@@ -117,7 +120,7 @@ export default class DocumentCatalog {
         option.protocol || window.location.protocol.split(":")[0];
       const ip = option.ip;
       const port = option.port;
-      domain = `${protocol}://${ip}:${port}`;
+      domain = `${UrlUtil.getOrigin({ ip, port, protocol })}`;
     }
     const url = `${domain}/igs/rest/g3d/${option.serverName}/GetDocInfo`;
     const self = this;
@@ -149,7 +152,7 @@ export default class DocumentCatalog {
    * @param {string} param.name 服务名
    */
   static getMapInfoService({ ip, port, name }) {
-    const url = `${window.location.protocol}//${ip}:${port}/igs/rest/mrms/info/${name}?guid=`;
+    const url = `${UrlUtil.getOrigin({ ip, port })}/igs/rest/mrms/info/${name}?guid=`;
     const promise = new Promise((resolve, reject) => {
       axios.get(url).then(
         res => {

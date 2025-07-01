@@ -9,6 +9,8 @@ import { compareStyle } from "./MvtCompare";
 import { DefaultThemeLayers } from "../ThemeLayer/BaseLayer";
 
 import EventBusMapMixin from "../../../lib/eventbus/EventBusMapMixin";
+import { IGSVectorTileLayer, Projection } from "@mapgis/webclient-common";
+import { mapboxCustomCRS } from "@mapgis/webclient-mapboxgl-plugin";
 
 export default {
   name: "mapgis-mvt-style-layer",
@@ -86,7 +88,7 @@ export default {
   },
 
   created() {
-    console.log("created");
+    this.CRS = mapboxCustomCRS(this.mapbox, Projection);
     this.$_deferredMount();
   },
 
@@ -112,6 +114,46 @@ export default {
       } else {
         mvtStyle = style;
       }
+      // 支持自定义裁图的IGS矢量瓦片
+      // 矢量瓦片裁剪后会生成“*_metadata.json”文件，
+      // 其中"projType": 1表示老版经纬度，"projType": 0代表老版web墨卡托。"projType": 2表示自定义。
+      // 目前Desktop界面上主推2。界面上经纬度和web墨卡托只是给了一套标准裁剪参数的2（自定义）。2的裁剪原点和比例尺用户自定义程度特别灵活的
+      // 龚跃健-20250508
+      this.projType = mvtStyle.projType;
+      if (this.projType == 2) {
+        const { sources } = mvtStyle;
+        this.sourcekeys = Object.keys(sources);
+        for (let i = 0; i < this.sourcekeys.length; i++) {
+          const source = sources[this.sourcekeys[i]];
+          if (!source.crs) {
+            const { tiles } = source;
+            if (tiles && tiles.length && tiles[0].includes("/igs/")) {
+              const serviceUrl = tiles[0].split("/tiles/")[0];
+              const commonLayer = new IGSVectorTileLayer({
+                // 服务基地址
+                url: serviceUrl,
+              });
+              // 加载图层元数据
+              await commonLayer.load();
+              const { tileInfo, extent } = commonLayer;
+              const { spatialReference, size, lods, origin } = tileInfo;
+              const { wkid, wkt } = spatialReference;
+              const resolutions = [];
+              for (let d = 0; d < lods.length; d++) {
+                resolutions.push(lods[d].resolution);
+              }
+              this.customCrs = new this.CRS(`EPSG:${wkid}`, wkt, {
+                resolutions,
+                origin: [origin.coordinates[0], origin.coordinates[1]],
+                tileSize: Math.max(size[0], size[1]),
+                bounds: [extent.xmin, extent.ymin, extent.xmax, extent.ymax],
+                unit: "degree",
+              });
+              source.crs = this.customCrs;
+            }
+          }
+        }
+      }
       mode = mode || this.mode;
       if (mode === "add" || mode === "merge") {
         this.$_addStyle(mvtStyle);
@@ -124,6 +166,7 @@ export default {
       before = before || this.before;
       let newStyle = this.compareStyle(mvtStyle);
       this.map.setStyle(newStyle, { diff: true });
+      this.$_updateStyle();
       this.$_emitEvent("added", this);
     },
 
@@ -131,7 +174,60 @@ export default {
       mvtStyle = mvtStyle || this.mvtStyle;
       before = before || this.before;
       this.map.setStyle(mvtStyle, { diff: true });
+      this.$_updateStyle();
       this.$_emitEvent("added", this);
+    },
+
+    $_updateStyle() {
+      // 非自定义裁图的暂时不处理
+      if (!this.projType == 2) {
+        return;
+      }
+      const { map, sourcekeys, customCrs, customLayers } = this;
+      let mapLoadedInterval;
+      const resetSourceCustomCrs = () => {
+        // 更新map.style.sourceCaches上的crs,第二次加载会被map上的crs覆盖，这里需要重置一下
+        if (this.sourcekeys && this.sourcekeys.length && this.customCrs) {
+          for (let i = 0; i < this.sourcekeys.length; i++) {
+            map.style.sourceCaches[this.sourcekeys[i]].crs = this.customCrs;
+            map._update(true);
+          }
+        }
+        const { _order } = map.style;
+        if (customLayers && customLayers.length) {
+          customLayers.forEach((item) => {
+            const { layer, afterId } = item;
+            let { beforeId } = item;
+            if (!beforeId) {
+              // 如果没有beforeId，这招afterId的beforeId作为beforeId
+              if (afterId) {
+                const afterLayerIndex = _order.indexOf(afterId);
+                if (afterLayerIndex) {
+                  beforeId = _order[afterLayerIndex + 1];
+                }
+              }
+            }
+
+            if (beforeId) {
+              map.addLayer(layer.implementation, beforeId);
+            } else {
+              map.addLayer(layer.implementation);
+            }
+          });
+        }
+        if (mapLoadedInterval) {
+          clearInterval(mapLoadedInterval);
+        }
+      };
+      if (map.loaded()) {
+        resetSourceCustomCrs();
+      } else {
+        mapLoadedInterval = setInterval(() => {
+          if (map.loaded()) {
+            resetSourceCustomCrs();
+          }
+        }, 1000);
+      }
     },
 
     remove(oldStyle, removeForce) {
@@ -184,6 +280,8 @@ export default {
     },
 
     compareStyle(mvtStyle) {
+      this.customLayers = this.$_getCustomLayers();
+
       let currentStyle = this.map.getStyle();
       let oldStyle = currentStyle;
 
@@ -232,6 +330,37 @@ export default {
       this.$emit("change-style", style);
       return style;
     },
+    /**
+     * @description 获取customLayer集合，包含前后图层id
+     */
+    $_getCustomLayers() {
+      let customLayers = [];
+      const { _layers, _order } = this.map.style;
+      const keys = Object.keys(_layers);
+      keys.forEach((key) => {
+        const layer = _layers[key];
+        if (layer.type === "custom") {
+          const { id } = layer;
+          // 找到customLayer在_order里的位置
+          const index = _order.indexOf(id);
+          // 找到beforeId
+          let beforeId;
+          let afterId;
+          if (index && index < length - 1) {
+            beforeId = _order[index + 1];
+          }
+          if (index && index > 0) {
+            afterId = _order[index - 1];
+          }
+          customLayers.push({
+            layer,
+            beforeId,
+            afterId,
+          });
+        }
+      });
+      return customLayers;
+    },
 
     $_getStyleObject(mvtStyle) {
       return mvtStyle || this.mvtStyle;
@@ -271,9 +400,6 @@ export default {
           return total.concat(layer);
         }
       }, []);
-      console.log("mergeLayers");
-      debugger;
-
       // 将未直接合并覆盖的图层重新根据原来的顺序进行插入
       let befores = news.map((u, i) => {
         u.before = i == news.length - 1 ? undefined : news[i + 1];

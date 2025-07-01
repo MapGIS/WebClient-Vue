@@ -36,6 +36,8 @@ import * as Zondy from "@mapgis/webclient-es6-service";
 import axios from "axios";
 import DocumentCatalog from "../catalog/document";
 import DataSourceCatalog from "../catalog/data-source";
+import { getOrigin } from "../../../../util/common/url-util";
+
 export default class FeatureQuery {
   /**
    * 查询通用接口
@@ -227,7 +229,7 @@ export default class FeatureQuery {
         option.protocol || window.location.protocol.split(":")[0];
       const ip = option.ip;
       const port = option.port;
-      domain = `${protocol}://${ip}:${port}`;
+      domain = `${getOrigin({ ip, port, protocol })}`;
     }
     let queryService;
     if (option.gdbp && !option.docName) {
@@ -378,7 +380,7 @@ export default class FeatureQuery {
         option.protocol || window.location.protocol.split(":")[0];
       const ip = option.ip;
       const port = option.port;
-      domain = `${protocol}://${ip}:${port}`;
+      domain = `${getOrigin({ ip, port, protocol })}`;
     }
     let url;
     if (option.gdbp) {
@@ -618,7 +620,7 @@ export default class FeatureQuery {
         option.protocol || window.location.protocol.split(":")[0];
       const ip = option.ip;
       const port = option.port;
-      domain = `${protocol}://${ip}:${port}`;
+      domain = `${getOrigin({ ip, port, protocol })}`;
     }
     const url = `${domain}/igs/rest/services/system/ResourceServer/tempData/features/query`;
     const promise = new Promise(resolve => {
@@ -727,7 +729,8 @@ export default class FeatureQuery {
     if (!domain) {
       const protocol =
         option.protocol || window.location.protocol.split(":")[0];
-      domain = `${protocol}://${queryParam.ip}:${queryParam.port}`;
+      const { ip, port } = queryParam
+      domain = `${getOrigin({ ip, port, protocol })}`;
     }
     queryParam.domain = domain;
     const promise = new Promise((resolve, reject) => {
@@ -784,7 +787,7 @@ export default class FeatureQuery {
     if (!domain) {
       const protocol =
         option.protocol || window.location.protocol.split(":")[0];
-      domain = `${protocol}://${ip}:${port}`;
+      domain = `${getOrigin({ ip, port, protocol })}`;
     }
     queryParam.domain = domain;
     const { decode } = option;

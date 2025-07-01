@@ -15,7 +15,7 @@
         <mapgis-ui-setting-form :layout="layout" size="default">
           <mapgis-ui-form-item label="淹没最低高度">
             <mapgis-ui-input-number-addon
-              v-model.number="startHeightCopy"
+              v-model.number="minHeightCopy"
               addon-after="米"
             />
           </mapgis-ui-form-item>
@@ -77,15 +77,6 @@ export default {
      * @type Number
      * @default 0
      * @description 洪水淹没水体起始高度
-     */
-    startHeight: {
-      type: Number,
-      default: 0,
-    },
-    /**
-     * @type Number
-     * @default 0
-     * @description 淹没动画高度起始点
      */
     minHeight: {
       type: Number,
@@ -166,7 +157,7 @@ export default {
   },
   data() {
     return {
-      startHeightCopy: 0, //洪水淹没水体起始高度
+      minHeightCopy: 0, //洪水淹没水体起始高度
       maxHeightCopy: 2000,
       floodColorCopy: "rgba(149,232,249,0.5)",
       floodSpeedCopy: 80,
@@ -176,7 +167,7 @@ export default {
       mHeight: 2000, // 淹没最高高度变化前的值
       timer: null,
       changeMaxHeight: false,
-      changeStartHeight: false
+      changeMinHeight: false,
     };
   },
   created() {},
@@ -188,8 +179,8 @@ export default {
   },
   computed: {
     params() {
-      const { startHeightCopy, speedCopy, floodColorCopy } = this;
-      return { startHeightCopy, speedCopy, floodColorCopy };
+      const { minHeightCopy, speedCopy, floodColorCopy } = this;
+      return { minHeightCopy, speedCopy, floodColorCopy };
     },
   },
   watch: {
@@ -202,19 +193,19 @@ export default {
       deep: true,
       immediate: true,
     },
-    startHeight: {
+    minHeight: {
       handler() {
-        this.startHeightCopy = this.startHeight;
+        this.minHeightCopy = this.minHeight;
       },
       immediate: true,
     },
-    startHeightCopy: {
+    minHeightCopy: {
       handler() {
         const options = this._getSourceOptions();
         if (!options) return;
         const { floodAnalysis } = options;
         if (!floodAnalysis) return;
-        this.changeStartHeight = true;
+        this.changeMinHeight = true;
       },
       immediate: true,
     },
@@ -263,7 +254,7 @@ export default {
           }, 1000);
         }
       },
-    }
+    },
   },
   methods: {
     async createCesiumObject() {
@@ -329,7 +320,7 @@ export default {
           this.remove();
           this.positions = result.positions;
           this.$emit("showProgress", {
-            startHeightCopy: this.startHeightCopy,
+            minHeightCopy: this.minHeightCopy,
             maxHeightCopy: this.maxHeightCopy,
             floodSpeedCopy: this.floodSpeedCopy,
           });
@@ -339,16 +330,16 @@ export default {
     /**
      *  @description 洪水淹没暂停
      */
-     _doPause() {
-        if(this.floodAnalysisReflection) {
-            this.floodAnalysisReflection.pause();
-        }
-     },
+    _doPause() {
+      if (this.floodAnalysisReflection) {
+        this.floodAnalysisReflection.pause();
+      }
+    },
     /**
      * @description 进行洪水淹没分析
      */
     _doAnalysis(isPause) {
-      if(!isPause) {
+      if (!isPause) {
         this._removeFlood();
       }
       const { positions } = this;
@@ -357,31 +348,33 @@ export default {
         return;
       }
       const { vueCesium, vueKey, vueIndex } = this;
-        const positionsArr = [];
-        for (let position of positions) {
-          positionsArr.push(Cesium.Cartographic.fromCartesian(position));
-        }
-        const { minHeight, maxHeightCopy, floodSpeedCopy, floodColorCopy } =
-          this;
-        const waterColor = this._getColor(floodColorCopy);
-        this.waterReflection = isPause ? this.waterReflection : 
-          new Cesium.WaterReflection({
+      const positionsArr = [];
+      for (let position of positions) {
+        positionsArr.push(Cesium.Cartographic.fromCartesian(position));
+      }
+      const { minHeightCopy, maxHeightCopy, floodSpeedCopy, floodColorCopy } =
+        this;
+      const waterColor = this._getColor(floodColorCopy);
+      this.waterReflection = isPause
+        ? this.waterReflection
+        : new Cesium.WaterReflection({
             viewer: this.viewer,
             positions: positionsArr,
             distortionScale: 2.0,
             waterColor,
           });
-        vueCesium.FloodAnalysisManager.changeOptions(
-          vueKey,
-          vueIndex,
-          "waterReflection",
-          this.waterReflection
-        );
-        this.floodAnalysisReflection = isPause ? this.floodAnalysisReflection : 
-          new Cesium.FloodAnalysisReflection({
+      vueCesium.FloodAnalysisManager.changeOptions(
+        vueKey,
+        vueIndex,
+        "waterReflection",
+        this.waterReflection
+      );
+      this.floodAnalysisReflection = isPause
+        ? this.floodAnalysisReflection
+        : new Cesium.FloodAnalysisReflection({
             viewer: this.viewer,
             water: this.waterReflection,
-            minHeight,
+            minHeight: minHeightCopy,
             maxHeight: maxHeightCopy,
             // fix(6037): PTSYB-地形分析中淹没开启水面倒影后，时间轴和图像不对应
             // 修改人: 杨琨 224-8-23
@@ -389,13 +382,13 @@ export default {
             floodSpeed: Number(floodSpeedCopy),
             closeBorder: true,
           });
-        this.floodAnalysisReflection.start();
-        vueCesium.FloodAnalysisManager.changeOptions(
-          vueKey,
-          vueIndex,
-          "floodAnalysisReflection",
-          this.floodAnalysisReflection
-        );
+      this.floodAnalysisReflection.start();
+      vueCesium.FloodAnalysisManager.changeOptions(
+        vueKey,
+        vueIndex,
+        "floodAnalysisReflection",
+        this.floodAnalysisReflection
+      );
     },
     /**
      * @description 获取SourceOptions,以方便获取洪水淹没分析对象和绘制对象

@@ -7,6 +7,8 @@ import {
 import VectorTileProvider from "./vectortile/VectorTileProvider";
 import VectorTileStyle from "./vectortile/MapgisVectorTileStyle";
 import axios from "axios";
+import { Util } from "@mapgis/webclient-vue-ui";
+const { UrlUtil } = Util;
 
 /**
  * @author 基础平台/创新中心 潘卓然 ParnDeedlit
@@ -44,7 +46,10 @@ export class VectorTileRender {
 
     this.url = options.styleUrl;
     if (!this.url && options.ip) {
-      this.url = `${window.location.protocol}//${options.ip}:${options.port}/igs/rest/mrcs/vtiles/0/${options.layerName}`;
+      const { ip, port } = options;
+      this.url = `${UrlUtil.getOrigin({ ip, port })}/igs/rest/mrcs/vtiles/0/${
+        options.layerName
+      }`;
     }
 
     this.options = options;
