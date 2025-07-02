@@ -11,7 +11,7 @@
     <slot>
       <div>
         <mapgis-ui-setting-form :layout="layout" size="default">
-          <mapgis-ui-form-item label="M3D模型">
+          <mapgis-ui-form-item label="模型图层">
             <mapgis-ui-select
               v-model="selectDefaultValue"
               @change="$_chooseM3D"
