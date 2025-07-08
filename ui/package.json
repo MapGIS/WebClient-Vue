@@ -1,6 +1,6 @@
 {
   "name": "@mapgis/webclient-vue-ui",
-  "version": "17.6.0",
+  "version": "17.7.0",
   "description": "中地数码webclient-vue-ui",
   "main1": "dist-libs/webclient-vue-ui.umd.min.js",
   "module": "src/index.js",
