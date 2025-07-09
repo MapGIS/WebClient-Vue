@@ -11,7 +11,7 @@ export default {
       default: "",
     },
     tileMatrixSet: {
-      type: Object,
+      type: String | Object,
       default: "",
     },
     version: {
@@ -169,7 +169,11 @@ export default {
       let params = [];
       params.push("version=" + this.version);
       params.push("style=" + this.wmtsStyle || "");
-      params.push("tileMatrixSet=" + this.tileMatrixSet.id);
+      if (this.tileMatrixSet.id) {
+        params.push("tileMatrixSet=" + this.tileMatrixSet.id);
+      } else {
+        params.push("tileMatrixSet=" + this.tileMatrixSet);
+      }
       params.push("format=" + this.format);
       params.push("layer=" + this.wmtsLayer);
       if (this.token) {

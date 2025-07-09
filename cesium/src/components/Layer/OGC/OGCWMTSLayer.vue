@@ -17,7 +17,11 @@ export default {
   mixins: [ServiceLayer],
   props: {
     wmtsLayer: { type: String, required: true },
-    tileMatrixSet: { type: Object, required: true },
+    tileMatrixSet: {
+      // eslint-disable-next-line vue/require-prop-type-constructor
+      type: String | Object,
+      default: "",
+    },
     wmtsStyle: { type: String, default: "default" },
     tilingScheme: { type: String, required: true },
     format: { type: String, default: "image/png" },
@@ -146,7 +150,9 @@ export default {
       options.layer = this.wmtsLayer;
 
       //将tileMatrixSet转为tileMatrixSetID
-      options.tileMatrixSetID = this.tileMatrixSet.id;
+      options.tileMatrixSetID = this.tileMatrixSet.id
+        ? this.tileMatrixSet.id
+        : this.tileMatrixSet;
 
       this.$_mount(options);
     },
