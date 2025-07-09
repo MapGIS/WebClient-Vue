@@ -35,7 +35,9 @@
 - **类型:** `Object`
 - **必传**
 - **侦听属性**
-- **描述:** wmts 标准中的 TileMatrixSet 属性，即地图矩阵集合
+- **描述:** 对于标准裁图的瓦片，tileMatrixSet 支持传入字符串，即当前的地图矩阵 id(tileMatrixSetId);对于自定义裁图的瓦片,需要根据 tileMatrixSetId 找到地图矩阵集合对应的地图矩阵对象，将地图矩阵对象传入，地图矩阵应该至少包含 id(对应 tileMatrixSetId)和 tileInfo。
+
+  > wmts 标准中的 TileMatrixSet 属性，即地图矩阵集合<br/>
   > 这里以司马云上发布的 WMTS 服务为例，ArcGis 同理，访问http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer?service=WMTS&request=GetCapabilities，获取地图元信息
   > 这里得到的是一个 XML 文档。<br/>
   > ... <br/> > \<TileMatrixSet\> <br/> > \<ows:Title\>采用 arcgis 计算方式的瓦片块阵集\</ows:Title\> <br/> > \<ows:Abstract\>该块阵集使用 arcgis 标准计算的比例尺\</ows:Abstract\> <br/> > \<ows:Identifier\>EPSG:4326*北京市\_arcgis_GB\</ows:Identifier\>//这个值 EPSG:4326*北京市*arcgis_GB 就是 TileMatrixSet 属性所需要的值 <br/> > \<ows:SupportedCRS\>urn:ogc:def:crs:EPSG::4326\</ows:SupportedCRS\> <br/> > \<WellKnownScaleSet\>urn:ogc:def:wkss:OGC:1.0:GoogleCRS84Quad\</WellKnownScaleSet\> <br/>
@@ -193,10 +195,10 @@ export default {
       //token信息
       token: {
         key: "tk",
-        value: "9c157e9585486c02edf817d2ecbc7752",
-      },
+        value: "9c157e9585486c02edf817d2ecbc7752"
+      }
     };
-  },
+  }
 };
 </script>
 
@@ -239,9 +241,9 @@ export default {
       //Cesium的瓦片切图方式
       tilingScheme: "EPSG:4326",
       //返回格式
-      format: "image/png",
+      format: "image/png"
     };
-  },
+  }
 };
 </script>
 
@@ -282,9 +284,9 @@ export default {
       //Cesium的瓦片切图方式
       tilingScheme: "EPSG:4326",
       //返回格式
-      format: "image/png",
+      format: "image/png"
     };
-  },
+  }
 };
 </script>
 
@@ -340,7 +342,7 @@ export default {
       layerStyle: {
         visible: true, //是否显示图层
         opacity: 1, //图层透明度
-        zIndex: 105, //图层zIndex，与css里的zIndex类似
+        zIndex: 105 //图层zIndex，与css里的zIndex类似
       },
       //服务基地址
       baseUrl2:
@@ -353,10 +355,10 @@ export default {
       tilingScheme: "EPSG:4326",
       //样式信息
       layerStyle2: {
-        zIndex: 50,
+        zIndex: 50
       },
       //是否显示图层
-      show: false,
+      show: false
     };
   },
   methods: {
@@ -379,8 +381,8 @@ export default {
       } else {
         this.layerStyle.zIndex = 105;
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -434,10 +436,10 @@ export default {
       //token信息
       token: {
         key: "tk",
-        value: "9c157e9585486c02edf817d2ecbc7752",
+        value: "9c157e9585486c02edf817d2ecbc7752"
       },
       layerStyleWmts: {
-        zIndex: 100,
+        zIndex: 100
       },
       //要加载的url
       urlDoc: "http://localhost:6163/igs/rest/mrms/docs/武汉_专题图_4328",
@@ -447,8 +449,8 @@ export default {
       vueKey: "vueKeyOne",
       vueKey2: "vueKeyTwo",
       layerStyleDoc: {
-        zIndex: 1000,
-      },
+        zIndex: 1000
+      }
     };
   },
   methods: {
@@ -458,8 +460,8 @@ export default {
       } else {
         this.layerStyleDoc.zIndex = 1000;
       }
-    },
-  },
+    }
+  }
 };
 </script>
 ```
