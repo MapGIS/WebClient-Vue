@@ -13,7 +13,8 @@ export default {
   mixins: [ServiceLayer],
   props: {
     wmtsLayer: { type: String, required: true },
-    tileMatrixSet: { type: Object, required: true },
+    // eslint-disable-next-line vue/require-prop-type-constructor
+    tileMatrixSet: { type: String | Object, default: "" },
     wmtsStyle: { type: String, default: "default" },
     tilingScheme: { type: String, required: true },
     format: { type: String, default: "image/png" },
