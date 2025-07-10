@@ -32,8 +32,8 @@ export function isUrlValid(urlString) {
  */
 export function getOrigin({ ip, port, protocol }) {
   const tempProtocol = protocol || window.location.protocol;
-  let tempOrigin = `${tempProtocol}//${ip}`;
-  if (port && port !== "") {
+  let tempOrigin = `${tempProtocol.split(':')[0]}://${ip}`;
+  if (port && port !== '') {
     tempOrigin += `:${port}`;
   }
   return tempOrigin;
