@@ -1,6 +1,6 @@
 import { CustomWKID } from "@mapgis/webclient-common";
 export default {
-  inject: ["viewer"],
+  inject: ["viewer", "Cesium"],
   props: {
     baseUrl: {
       type: String,
@@ -216,7 +216,7 @@ export default {
           rectangle: { xmin, ymin, xmax, ymax },
           srs,
           spatialReference,
-          tilingScheme,
+          tilingScheme
         } = options;
         // 对rectangle中的数据进行坐标系判断，将数据装换成cesium中的rectangle对象
 

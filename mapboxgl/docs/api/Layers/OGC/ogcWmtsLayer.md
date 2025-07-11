@@ -28,17 +28,19 @@ All common [layers props](/api/Layers/README.md#props)
 
 ### `tileMatrixSet`
 
-- **类型:** `String`
+- **类型:** `String | Object`
 - **默认值:** ""
 - **侦听属性**
-- **描述:** wmts 标准中的 TileMatrixSet 属性，即地图矩阵集合
+- **描述:** 对于标准裁图的瓦片，tileMatrixSet 支持传入字符串，即当前的地图矩阵 id(tileMatrixSetId);对于自定义裁图的瓦片,需要根据 tileMatrixSetId 找到地图矩阵集合对应的地图矩阵对象，将地图矩阵对象传入，地图矩阵应该至少包含 id(对应 tileMatrixSetId)和 tileInfo。
 
-  > 这里以司马云上发布的 WMTS 服务为例，ArcGis 同理，访问http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer?service=WMTS&request=GetCapabilities，获取地图元信息
-  > 这里得到的是一个 XML 文档。<br/>
-  > ... <br/> > <TileMatrixSet\> <br/> > \<ows:Title\>采用 arcgis 计算方式的瓦片块阵集\</ows:Title\> <br/> > \<ows:Abstract\>该块阵集使用 arcgis 标准计算的比例尺\</ows:Abstract\> <br/> > \<ows:Identifier\>EPSG:4326*北京市\_arcgis_GB\</ows:Identifier\>//这个值 EPSG:4326*北京市*arcgis_GB 就是 TileMatrixSet 属性所需要的值 <br/> > \<ows:SupportedCRS\>urn:ogc:def:crs:EPSG::4326\</ows:SupportedCRS\> <br/> > \<WellKnownScaleSet\>urn:ogc:def:wkss:OGC:1.0:GoogleCRS84Quad\</WellKnownScaleSet\> <br/>
-  > ... <br/> > \<TileMatrixSet\> <br/>
-  > ... <br/>
-  > 全文搜索\<TileMatrixSet\>关键字，在\<TileMatrixSet\>下找到\<ows:Identifier\>属性，里面的值"EPSG:4326*北京市\_arcgis_GB"就是 tileMatrixSet 属性所需要的
+wmts 标准中的 TileMatrixSet 属性，即地图矩阵集合
+
+> 这里以司马云上发布的 WMTS 服务为例，ArcGis 同理，访问http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer?service=WMTS&request=GetCapabilities，获取地图元信息
+> 这里得到的是一个 XML 文档。<br/>
+> ... <br/> > <TileMatrixSet\> <br/> > \<ows:Title\>采用 arcgis 计算方式的瓦片块阵集\</ows:Title\> <br/> > \<ows:Abstract\>该块阵集使用 arcgis 标准计算的比例尺\</ows:Abstract\> <br/> > \<ows:Identifier\>EPSG:4326*北京市\_arcgis_GB\</ows:Identifier\>//这个值 EPSG:4326*北京市*arcgis_GB 就是 TileMatrixSet 属性所需要的值 <br/> > \<ows:SupportedCRS\>urn:ogc:def:crs:EPSG::4326\</ows:SupportedCRS\> <br/> > \<WellKnownScaleSet\>urn:ogc:def:wkss:OGC:1.0:GoogleCRS84Quad\</WellKnownScaleSet\> <br/>
+> ... <br/> > \<TileMatrixSet\> <br/>
+> ... <br/>
+> 全文搜索\<TileMatrixSet\>关键字，在\<TileMatrixSet\>下找到\<ows:Identifier\>属性，里面的值"EPSG:4326*北京市\_arcgis_GB"就是 tileMatrixSet 属性所需要的
 
 - **注意:** 在 XML 文档中，一般有三种地图矩阵集，分别是 OGC 官方标准计算，arcgis 标准计算，以及 MapGIS 标准计算方式的矩阵集合，在事业部采用的瓦片裁剪的 MapGIS 桌面端版本是 10.2 之后的，三种矩阵集都可以任选其一使用。但 10.2 之前版本的 mapgis 版本裁剪的瓦片需要注意，若 wmts 图层需要和哪些图层（arcgis 还是天地图）叠加使用，就要用不同的矩阵集才不会出现重叠问题。
 
@@ -222,7 +224,7 @@ export default {
         //添加来源
         sources: {},
         //设置加载并显示来源的图层信息
-        layers: []
+        layers: [],
       }, // 地图样式
       mapZoom: 8, // 地图初始化级数
       outerCenter: [116.39, 40.2], // 地图显示中心
@@ -234,14 +236,14 @@ export default {
       baseUrl:
         "http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer",
       //因为司马云是用的老版本的igs服务，因此offset必须传-1
-      zoomoffset: -1
+      zoomoffset: -1,
     };
   },
 
   created() {
     // 在组件中使用mapbox-gl.js的脚本库功能
     this.mapbox = Mapbox;
-  }
+  },
 };
 </script>
 
