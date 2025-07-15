@@ -420,8 +420,23 @@ export default {
               m3dSet.imageBasedLighting.luminanceAtZenith = luminanceAtZenith;
               m3dSet.cacheBytes = maximumMemoryUsage;
               viewer.scene.primitives.add(m3dSet);
+              /**
+               * 修改说明：这里原先用zoomTo方法做图层的跳转，但是在第一次切换二三维的时候，地图会有一个默认的跳转（zoom组件里flyTo）。
+               * 由于zoomTo方法是同步的会被flyTo覆盖，因此图层的跳转没有生效。所以这里图层的跳转改成flyToBoundingSphere
+               * 修改人：程文进
+               * 修改时间：2025/7/15
+               * */
               if (this.autoReset) {
-                viewer.zoomTo(m3dSet);
+                const boundingSphere = m3dSet.boundingSphere;
+                const orientation = new Cesium.HeadingPitchRange(
+                  0.0,
+                  -0.5,
+                  boundingSphere.radius * 2.5
+                );
+                viewer.camera.flyToBoundingSphere(boundingSphere, {
+                  duration: 0,
+                  offset: orientation,
+                });
               }
               layers[sceneSublayerId] = {
                 type: optionsType,
