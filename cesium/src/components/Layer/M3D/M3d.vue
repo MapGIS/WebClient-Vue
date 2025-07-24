@@ -86,6 +86,11 @@ export default {
       type: Object,
       default: () => {},
     },
+     // 图层跳转时间
+     duration: {
+      type: Number,
+      default: 0
+    }
   },
   data() {
     return {
@@ -189,7 +194,7 @@ export default {
               boundingSphere.radius * 2.5
             );
             viewer.camera.flyToBoundingSphere(boundingSphere, {
-              duration: 0,
+              duration: options.duration,
               offset: orientation,
             });
           }
