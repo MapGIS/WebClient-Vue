@@ -231,7 +231,6 @@ export default {
     },
     axisCopy: {
       deep: true,
-      immediate: true,
       handler: function () {
         this._getMaxMin();
         this.startClipping();
@@ -270,7 +269,6 @@ export default {
           }
         );
       });
-      this._getMaxMin();
     },
     unmount() {
       let { vueCesium, vueKey, vueIndex } = this;
@@ -300,11 +298,14 @@ export default {
      */
     _getMaxMin() {
       this._m3dIsReady().then((m3dSetArray) => {
-        if (m3dSetArray && m3dSetArray.length > 0) {
-          const range = this._getM3DSetArrayRange(m3dSetArray);
-          this._getMaxMinByRange(range);
-        }
-      });
+          if (m3dSetArray && m3dSetArray.length > 0) {
+            const range = this._getM3DSetArrayRange(m3dSetArray);
+            this._getMaxMinByRange(range);
+          }
+        })
+        .catch((err) => {
+          console.warn("获取剖切距离的最大最小值捕获异常", err);
+        });
     },
 
     /**
@@ -319,14 +320,14 @@ export default {
               if (m3ds && m3ds.length > 0) {
                 resolve(m3ds);
               } else {
-                reject(null);
+                reject("模型图层为空");
               }
             },
             vueKey,
             checked
           );
         } else {
-          reject(null);
+          reject("没有选择模型图层");
         }
       });
     },
@@ -409,6 +410,7 @@ export default {
           return;
         }
         this._clearTimer();
+        this.startClipping()
         this.distanceCopy = this.min;
         const self = this;
         this.timer = window.setInterval(() => {
@@ -439,37 +441,40 @@ export default {
       this._removeDynaCut();
       this._clearTimer();
       this._m3dIsReady().then((m3dSetArray) => {
-        let { vueCesium, vueKey, vueIndex } = this;
-        let find = vueCesium.DynamicSectionAnalysisManager.findSource(
-          vueKey,
-          vueIndex
-        );
-        let { options } = find;
-        let { dynamicSectionAnalysis } = options;
-        const { viewer } = this;
+          let { vueCesium, vueKey, vueIndex } = this;
+          let find = vueCesium.DynamicSectionAnalysisManager.findSource(
+            vueKey,
+            vueIndex
+          );
+          let { options } = find;
+          let { dynamicSectionAnalysis } = options;
+          const { viewer } = this;
 
-        dynamicSectionAnalysis =
-          dynamicSectionAnalysis ||
+          dynamicSectionAnalysis =
+            dynamicSectionAnalysis ||
           new this.Cesium.CuttingTool(viewer, m3dSetArray);
-        // 剖切方向
-        const direction = this._clippingDirection();
-        // 创建剖切对象实例
-        dynamicSectionAnalysis.createModelCuttingPlane(direction, {
-          distance: this.distanceCopy || 0,
-          color: this._edgeColor(),
-          //是否显示辅助面
-          showCuttingPlane: this.showCuttingPlaneCopy,
-          // 剖切辅助面的宽高缩放比(基于模型球的半径)
-          scaleHeight: this.scaleHeight,
-          scaleWidth: this.scaleWidth,
+          // 剖切方向
+          const direction = this._clippingDirection();
+          // 创建剖切对象实例
+          dynamicSectionAnalysis.createModelCuttingPlane(direction, {
+            distance: this.distanceCopy || 0,
+            color: this._edgeColor(),
+            //是否显示辅助面
+            showCuttingPlane: this.showCuttingPlaneCopy,
+            // 剖切辅助面的宽高缩放比(基于模型球的半径)
+            scaleHeight: this.scaleHeight,
+            scaleWidth: this.scaleWidth,
+          });
+          vueCesium.DynamicSectionAnalysisManager.changeOptions(
+            vueKey,
+            vueIndex,
+            "dynamicSectionAnalysis",
+            dynamicSectionAnalysis
+          );
+        })
+        .catch((err) => {
+          console.warn("startClipping捕获异常", err);
         });
-        vueCesium.DynamicSectionAnalysisManager.changeOptions(
-          vueKey,
-          vueIndex,
-          "dynamicSectionAnalysis",
-          dynamicSectionAnalysis
-        );
-      });
     },
     /**
      * RGB/RGBA转Cesium内部颜色值
