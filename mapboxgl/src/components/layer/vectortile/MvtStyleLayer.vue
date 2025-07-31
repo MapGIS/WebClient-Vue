@@ -46,7 +46,6 @@ export default {
 
   data() {
     return {
-      lastStyle: undefined,
       themeRules: [],
       preBefore: undefined,
     };
@@ -72,8 +71,8 @@ export default {
             }
           }
           this.remove(deleteStyle);
-          this.$_initStyle(this.mode, next);
-          this.lastStyle = next;
+          this.lastStyle = clonedeep(next);
+          this.$_initStyle(this.mode, this.lastStyle);
         } else {
           // 防止被底图覆盖
           if (this.before && this.preBefore !== this.before) {
@@ -84,12 +83,13 @@ export default {
         }
       },
       deep: true,
+      immediate: true,
     },
   },
 
   created() {
     this.CRS = mapboxCustomCRS(this.mapbox, Projection);
-    this.$_deferredMount();
+    // this.$_deferredMount();
   },
 
   beforeDestroy() {
@@ -102,7 +102,7 @@ export default {
       this.initStyle = this.mvtStyle;
       this.initial = false;
       if (typeof this.mvtStyle === "object") {
-        this.lastStyle = this.mvtStyle;
+        this.lastStyle = clonedeep(this.mvtStyle);
       }
     },
 
@@ -171,7 +171,7 @@ export default {
     },
 
     $_setStyle(mvtStyle, before) {
-      mvtStyle = mvtStyle || this.mvtStyle;
+      mvtStyle = mvtStyle || clonedeep(this.mvtStyle);
       before = before || this.before;
       this.map.setStyle(mvtStyle, { diff: true });
       this.$_updateStyle();
@@ -244,20 +244,20 @@ export default {
       layers.forEach((layer) => {
         if (vm.map.getLayer(layer.id)) {
           // 下面地方的处理是针对专题图的显示隐藏特殊处理采取的保留专题图基本的信息前提下更新新的图层可见性
-          let currentThemelayer = map
-            .getStyle()
-            .layers.find((l) => l.id == layer.id);
-          if (currentThemelayer) layer.paint = currentThemelayer.paint;
+          // let currentThemelayer = map
+          //   .getStyle()
+          //   .layers.find((l) => l.id == layer.id);
+          // if (currentThemelayer) layer.paint = currentThemelayer.paint;
           if (removeForce) {
             vm.map.removeLayer(layer.id);
-            let themes = currentLayers.filter((l) => {
-              let find = l.source == layer.source && vm.isThemeLayer(l.id);
-              return find;
-            });
-            if (themes && themes.length > 0) {
-              // 当前图层激活了专题图图层不能直接暴力删除,记录对应规则
-              this.themeRules.push([].concat(layer).concat(themes));
-            }
+            // let themes = currentLayers.filter((l) => {
+            //   let find = l.source == layer.source && vm.isThemeLayer(l.id);
+            //   return find;
+            // });
+            // if (themes && themes.length > 0) {
+            //   // 当前图层激活了专题图图层不能直接暴力删除,记录对应规则
+            //   this.themeRules.push([].concat(layer).concat(themes));
+            // }
           } else {
             let others = currentLayers.filter((l) => l.source == layer.source);
             if (others && others.length >= 2) {
@@ -273,8 +273,9 @@ export default {
 
       Object.keys(sources).forEach((source) => {
         if (vm.map.getSource(source)) {
-          let finds = lefts.find((l) => l.source == source);
-          if (!finds) vm.map.removeSource(source);
+          // let finds = lefts.find((l) => l.source == source);
+          // if (!finds) vm.map.removeSource(source);
+          vm.map.removeSource(source);
         }
       });
     },

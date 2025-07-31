@@ -18,7 +18,7 @@ import ServiceLayer from "../ServiceLayer";
 import clonedeep from "lodash.clonedeep";
 import isEqual from "lodash.isequal";
 import { Util } from "@mapgis/webclient-vue-ui";
-const { UrlUtil } = Util
+const { UrlUtil } = Util;
 
 export default {
   name: "mapgis-3d-vectortile-layer",
@@ -200,9 +200,12 @@ export default {
           if (typeof this.styleUrl === "string") {
             styleUrl = this.styleUrl;
           } else {
-            if (this.ip && this.layerName){
-              const { ip, port } = this
-              styleUrl = `${UrlUtil.getOrigin({ ip, port })}/igs/rest/mrcs/vtiles/0/${this.layerName}`;
+            if (this.ip && this.layerName) {
+              const { ip, port } = this;
+              styleUrl = `${UrlUtil.getOrigin({
+                ip,
+                port,
+              })}/igs/rest/mrcs/vtiles/0/${this.layerName}`;
             }
           }
         } else {
@@ -221,7 +224,7 @@ export default {
             style: styleObject,
           });
           igsVectorTileLayer.load().then((res) => {
-            resolve(res.style);
+            resolve(igsVectorTileLayer.style);
           });
         }
       });
@@ -329,8 +332,8 @@ export default {
       if (!isEqual(style, options.style)) {
         // this.layerStyle = style;
         // console.log("this.layerStyle: ", this.layerStyle);
-        options.style = style;
-        //this.$_removeLayer();
+        options.style = clonedeep(style);
+        this.$_removeLayer();
         this.$vectortile = this.$_addLayer(options);
       }
     },
