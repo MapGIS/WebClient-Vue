@@ -296,7 +296,7 @@ $popup-width: 280px;
 .mapboxgl-popup-content {
   width: auto;
   height: fit-content;
-  padding: 0;
+  padding: 0px 12px 10px 12px;
   background-color: $popover-background !important;
 }
 

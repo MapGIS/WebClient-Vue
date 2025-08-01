@@ -25,6 +25,11 @@ export default {
         this.updateLayer();
       },
     },
+    renderMode: {
+      handler: function () {
+        this.updateLayer();
+      },
+    },
   },
   data() {
     return {
@@ -78,7 +83,7 @@ export default {
       }
       const igsMapImageLayer = new IGSMapImageLayer({
         url: baseUrl,
-        renderMode: "image",
+        renderMode: this.renderMode === "image-map" ? "image" : "tile",
         spatialReference: new SpatialReference({ wkid }),
         sublayers,
       });
@@ -89,8 +94,10 @@ export default {
         self.$_mount(cesiumOptions);
       });
       // 如果是一张图出图，那么providerName为MapGISMapServer一张图出图provider
-      if(this.renderMode && this.renderMode === "image-map"){
-        this.providerName = "MapGISMapServerSingleImageryProvider"
+      if (this.renderMode && this.renderMode === "image-map") {
+        this.providerName = "MapGISMapServerSingleImageryProvider";
+      } else {
+        this.providerName = "MapGISMapServerImageryProvider";
       }
     },
     unmount() {
