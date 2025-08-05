@@ -462,7 +462,7 @@ export default {
     },
     srcLayer: {
       handler(val, oldval) {
-        if (val != oldval) {
+        if (val != oldval && val) {
           this.destLayer = val + this.currentTime();
           this.getAttribute();
         }
@@ -544,7 +544,7 @@ export default {
       queryParam.pageIndex = 0;
       //设置查询要素数目
       queryParam.recordNumber = 1;
-      //实例化地图文档查询服务对象
+        //实例化地图文档查询服务对象
       var queryService = new Zondy.MRFS.QueryLayerFeature(queryParam, {
         ip: (this.baseUrl || "").split("/")[2].split(":")[0],
         port: (this.baseUrl || "").split("/")[2].split(":")[1],
