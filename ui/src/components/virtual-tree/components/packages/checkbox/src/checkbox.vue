@@ -21,7 +21,7 @@
       :role="indeterminate ? 'checkbox' : false"
       :aria-checked="indeterminate ? 'mixed' : false"
     >
-      <span class="el-checkbox__inner"></span>
+      <span :class="`el-checkbox__inner ${className}`"></span>
       <input
         v-if="trueLabel || falseLabel"
         class="el-checkbox__original"
@@ -168,7 +168,8 @@ export default {
     id: String /* 当indeterminate为真时，为controls提供相关连的checkbox的id，表明元素间的控制关系*/,
     controls: String /* 当indeterminate为真时，为controls提供相关连的checkbox的id，表明元素间的控制关系*/,
     border: Boolean,
-    size: String
+    size: String,
+    className: String
   },
   methods: {
     addToStore() {

@@ -235,6 +235,7 @@ export default class FeatureQuery {
     let queryService;
     if (option.gdbp && !option.docName) {
       // 矢量图层
+      queryParam.desSrsName = 'WGS1984_度'
       queryService = new Zondy.MRFS.QueryLayerFeature(queryParam, {
         domain
       });
@@ -386,6 +387,7 @@ export default class FeatureQuery {
     let url;
     if (option.gdbp) {
       // 矢量图层
+      queryParam.desSrsName = 'WGS1984_度'
       queryParam.gdbp = option.gdbp;
       queryParam.srsIds = option.srsIds;
       url = `${domain}/onemap/layer/query`;

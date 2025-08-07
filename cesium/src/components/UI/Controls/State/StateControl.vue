@@ -1,6 +1,7 @@
 <script>
 import VueOptions from "../../../Base/Vue/VueOptions";
 import debounce from "lodash/debounce";
+import { Projection, Point, SpatialReference } from "@mapgis/webclient-common";
 
 export default {
   name: "mapgis-3d-statebar",
@@ -34,6 +35,10 @@ export default {
     bottomMap: {
       type: Boolean,
       default: false,
+    },
+    crs: {
+      type: String,
+      default: "EPSG:4326",
     },
   },
 
@@ -255,7 +260,27 @@ export default {
   render(h) {
     const { longitude, latitude, height, cameraHeight } = this;
     const { viewer, bottomMap } = this;
-    let span = `经度:${longitude}°，纬度:${latitude}°， 海拔高度: ${height},米，相机高度:${cameraHeight}米`;
+    let span = `经度:${Number(longitude).toFixed(4)}°，纬度:${Number(
+      latitude
+    ).toFixed(4)}°， 海拔高度: ${height}米，相机高度:${cameraHeight}米`;
+    if (this.crs && this.crs === "EPSG:3857") {
+      const projectedGeometry = Projection.project(
+        new Point({
+          // 现在为3857坐标系
+          coordinates: [Number(longitude), Number(latitude)],
+          // 当不是4326时请指定坐标系，方便进行投影转换
+          spatialReference: new SpatialReference("EPSG:4326"),
+        }),
+        new SpatialReference({
+          wkid: 3857,
+        })
+      );
+      const x = projectedGeometry.coordinates[0];
+      const y = projectedGeometry.coordinates[1];
+      span = `x:${x.toFixed(4)}，y:${y.toFixed(
+        4
+      )}，海拔高度: ${height}米，相机高度:${cameraHeight}米`;
+    }
     const { container, outStyle } = viewer;
     const name = "mapgis-3d-statebar";
     if (bottomMap) {

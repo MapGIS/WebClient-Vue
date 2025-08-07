@@ -168,6 +168,7 @@
       v-if="basicSetting.statebar"
       :frame="60"
       :bottomMap="true"
+      :crs="crs"
     />
   </div>
 </template>
@@ -207,6 +208,10 @@ export default {
     // 左侧板宽度
     stuffWidth: {
       type: Number,
+    },
+    crs: {
+      type: String,
+      default: "EPSG:4326",
     },
   },
   data() {
@@ -340,8 +345,8 @@ export default {
     resetCompassPosition() {
       if (
         this.stuffWidth !== undefined &&
-        (this.basicSetting.compassPosition.anchor === "top-left" ||
-          this.basicSetting.compassPosition.anchor === "bottom-left")
+        (this.basicSetting?.compassPosition?.anchor === "top-left" ||
+          this.basicSetting?.compassPosition?.anchor === "bottom-left")
       ) {
         this.basicSetting.compassPosition.horizontalOffset = this.stuffWidth;
       }

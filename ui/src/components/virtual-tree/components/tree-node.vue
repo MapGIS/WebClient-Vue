@@ -45,6 +45,9 @@
         :disabled="!!node.disabled"
         @click.native.stop
         @change="handleCheckChange"
+        :class-name="
+          node.data['checkbox-class'] ? node.data['checkbox-class'] : ''
+        "
       ></el-checkbox>
       <span
         v-if="node.loading"

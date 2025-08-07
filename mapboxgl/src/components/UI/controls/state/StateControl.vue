@@ -8,9 +8,10 @@
 <script>
 import { point, distance } from "@turf/turf";
 import controlMixin from "../controlMixin";
+import { Projection, Point, SpatialReference } from "@mapgis/webclient-common";
 
 const StateEvents = {
-  update: "update"
+  update: "update",
 };
 
 export default {
@@ -22,48 +23,48 @@ export default {
      */
     default: {
       type: Boolean,
-      default: true
+      default: true,
     },
     /**
      * 是否返回比例尺,单位：米
      */
     scale: {
       type: Boolean,
-      default: true
+      default: true,
     },
     /**
      * 是否返回级别
      */
     level: {
       type: Boolean,
-      default: true
+      default: true,
     },
     /**
      * 是否返回经度
      */
     lng: {
       type: Boolean,
-      default: true
+      default: true,
     },
     /**
      * 是否返回纬度
      */
     lat: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
 
   computed: {
-    state: function() {
+    state: function () {
       return this.control.value;
-    }
+    },
   },
 
   data() {
     return {
       initial: true,
-      control: undefined
+      control: undefined,
     };
   },
 
@@ -74,7 +75,7 @@ export default {
     this.$_bindSelfEvents(events, this.control);
   },
 
-  methods: {}
+  methods: {},
 };
 
 class StateControl {
@@ -84,7 +85,9 @@ class StateControl {
       scale: 0,
       level: 0,
       lng: 0,
-      lat: 0
+      lat: 0,
+      x: 0,
+      y: 0,
     };
   }
 
@@ -94,7 +97,7 @@ class StateControl {
 
     const controls = ["scale", "level", "lng", "lat"];
 
-    controls.map(c => {
+    controls.map((c) => {
       this[c] = document.createElement("div");
       this[c].id = "mapboxgl-state-bar-" + c;
       this[c].width = "100";
@@ -150,6 +153,24 @@ class StateControl {
     this.lat.textContent = /* "纬度:" + */ lngLat.lat;
     this.value.lng = lngLat.lng;
     this.value.lat = lngLat.lat;
+    if (!this._map) {
+      return;
+    }
+    if (this._map.crs.epsgCode === "EPSG:3857") {
+      const projectedGeometry = Projection.project(
+        new Point({
+          // 现在为3857坐标系
+          coordinates: [lngLat.lng, lngLat.lat],
+          // 当不是4326时请指定坐标系，方便进行投影转换
+          spatialReference: new SpatialReference("EPSG:4326"),
+        }),
+        new SpatialReference({
+          wkid: 3857,
+        })
+      );
+      this.value.x = projectedGeometry.coordinates[0];
+      this.value.y = projectedGeometry.coordinates[1];
+    }
   }
 
   updateScaleAndLevel() {

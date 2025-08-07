@@ -23,6 +23,7 @@
             :initialDepthTest="depthTest"
             :initial-scene-mode="sceneMode"
             :stuffWidth="stuffWidth"
+            :crs="crs"
           ></basic-setting>
         </mapgis-ui-tab-pane>
         <mapgis-ui-tab-pane
@@ -164,6 +165,10 @@ export default {
     stuffWidth: {
       type: Number,
     },
+    crs: {
+      type: String,
+      default: "EPSG:4326",
+    },
   },
   computed: {
     initBasicSetting() {
@@ -206,7 +211,7 @@ export default {
             undgrd: false,
             undgrdParams: {
               groundAlpha: 0.5,
-              enableIndependentTranslucency: false
+              enableIndependentTranslucency: false,
             },
             fov: 60,
           }
@@ -397,7 +402,7 @@ export default {
      * 更新二维影像图层独立控制影响的图层
      * */
     updateIndependentTranslucency() {
-      this.$refs.cameraSetting.updateIndependentTranslucency()
+      this.$refs.cameraSetting.updateIndependentTranslucency();
     },
   },
 };

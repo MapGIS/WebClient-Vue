@@ -1,6 +1,6 @@
 import OgcBaseLayer from "./OgcBaseLayer";
-import { SpatialReference, Point, Projection } from "@mapgis/webclient-common";
-import { mapboxCustomCRS } from "@mapgis/webclient-mapboxgl-plugin";
+import { initializeOptions } from "@mapgis/webclient-mapboxgl-plugin";
+import { WMTSLayer } from "@mapgis/webclient-common";
 
 export default {
   name: "mapgis-ogc-wmts-layer",
@@ -72,7 +72,6 @@ export default {
   },
   methods: {
     $_init() {
-      this.CRS = mapboxCustomCRS(this.mapbox, Projection);
       let { url, wmtsLayer, baseUrl } = this;
       if (url) {
         //REST方式，目前还是采用KVP的格式
@@ -88,20 +87,18 @@ export default {
         }
       }
     },
-    $_initSource() {
-      if (this.tileMatrixSet && this.tileMatrixSet.tileInfo) {
-        const { tileInfo } = this.tileMatrixSet;
-        const { spatialReference } = tileInfo;
-        let crs;
-        if (this.baseUrl.indexOf("tianditu") > -1) {
-          // 天地图的分辨率比自定义的分辨多一级，0级分辨率是1.4xxxxx，自定义的0级是0.7xxxxx
-          crs = `EPSG:${spatialReference.wkid}`;
-        } else {
-          const { fullExtent } = this.tileMatrixSet.layer.activeLayer;
-          crs = this.$_getCrs(tileInfo, spatialReference, fullExtent);
-        }
-        this.source = { crs };
-      }
+    async $_initSource() {
+      // 创建WMTS图层对象
+      const wmtsLayer = new WMTSLayer({
+        url: this.baseUrl,
+      });
+      // 获取WMTS图层服务的元信息
+      const layer = await wmtsLayer.load();
+      // 获取provider的初始化参数
+      const mapboxglOptions = initializeOptions(layer, viewer);
+      const { layers, sources } = mapboxglOptions;
+      const sourceId = layers[0].source;
+      this.source = sources[sourceId];
     },
     $_initUrl(propValue, propName) {
       let propNameLowerCase = propName.toLowerCase();
@@ -123,36 +120,6 @@ export default {
         }
         this._url = this.url;
       }
-    },
-    $_getCrs(tileInfo, spatialReference, extent) {
-      const spatialReferenceCommon = new SpatialReference({
-        wkid: spatialReference.wkid,
-      });
-      const originCommon = new Point({
-        coordinates: [tileInfo.origin.x, tileInfo.origin.y],
-        spatialReference,
-      });
-      const resolutions = {};
-      tileInfo.lods.forEach((lod) => {
-        resolutions[lod.level] = lod.resolution;
-      });
-      if (Object.keys(resolutions).length < 24) {
-        let index = Object.keys(resolutions).length;
-        for (index; index < 23; index++) {
-          resolutions[index] = resolutions[index - 1] / 2;
-        }
-      }
-      const code = `EPSG:${spatialReference.wkid}`;
-      const def = "+proj=longlat +ellps=GRS80 +units=degrees +no_defs";
-
-      const crs = new this.CRS(code, def, {
-        resolutions,
-        origin: [originCommon.coordinates[0], originCommon.coordinates[1]],
-        tileSize: Math.max(tileInfo.size[0], tileInfo.size[1]),
-        bounds: [extent.xmin, extent.ymin, extent.xmax, extent.ymax],
-        unit: "degree",
-      });
-      return crs;
     },
     $_initBaseUrl() {
       let _baseUrl = this.baseUrl;

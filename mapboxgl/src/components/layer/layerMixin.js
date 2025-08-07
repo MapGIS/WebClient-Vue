@@ -121,7 +121,13 @@ export default {
           if (this.initial) return;
           if (next) {
             for (let prop of Object.keys(next)) {
-              this.map.setPaintProperty(this.layerId, prop, next[prop]);
+              if (this.customLayer) {
+                if (prop === "raster-opacity") {
+                  this.customLayer.setOpacity(next[prop]);
+                }
+              } else {
+                this.map.setPaintProperty(this.layerId, prop, next[prop]);
+              }
             }
           }
         },

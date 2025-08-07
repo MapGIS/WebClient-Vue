@@ -231,11 +231,11 @@ export default {
       type: Object,
       default: () => {},
     },
-     // 图层跳转时间
-     duration: {
+    // 图层跳转时间
+    duration: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
   mixins: [PopupMixin],
   components: {
@@ -563,6 +563,9 @@ export default {
         for (let i = 0; i < sublayers.length; i++) {
           const sublayer = sublayers[i];
           const { layerName, id, type, layerIndex, url } = sublayer;
+          if (!source[layerIndex]) {
+            continue;
+          }
           const { version } = source[layerIndex].source;
           switch (source[layerIndex].type) {
             // MapGIS M3D图层

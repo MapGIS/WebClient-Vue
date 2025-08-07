@@ -65,7 +65,11 @@ export default {
             Map: this.baseUrl,
             Subdomains: this.subDomains.toString(),
         }
-        this.map.addLayer(rasterTileLayer(bdLayerId, `Baidu.${bdLayerId}.Map`), this.before);
+        this.customLayer = rasterTileLayer(
+          bdLayerId,
+          `Baidu.${bdLayerId}.Map`
+        );
+        this.map.addLayer(this.customLayer, this.before);
       } else if (wkid === 20010202) {
         // 高德gcj02墨卡托
         const gcjLayerId = this.layerId
@@ -73,7 +77,11 @@ export default {
             Map: this.baseUrl,
             Subdomains: this.subDomains.toString(),
         }
-        this.map.addLayer(rasterTileLayer(gcjLayerId, `GaoDe.${gcjLayerId}.Map`), this.before);
+        this.customLayer = rasterTileLayer(
+          gcjLayerId,
+          `GaoDe.${gcjLayerId}.Map`
+        );
+        this.map.addLayer(this.customLayer, this.before);
       } else {
         if (!this.baseUrl.includes("{z}") && this.baseUrl.includes("{") && this.baseUrl.includes("}/")) {
           const urlStrs = this.baseUrl.split("{");
