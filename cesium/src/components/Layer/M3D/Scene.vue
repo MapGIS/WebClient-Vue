@@ -1247,15 +1247,18 @@ export default {
     async getFeaturePorpertiesById(id, layerIndex) {
       const properties = {};
       if (this.searchParams) {
-        const { domain, serverName, layerIndex, serverType, mapList } =
-          this.searchParams;
+        const { domain, serverName, serverType, mapList } = this.searchParams;
         let { gdbp } = this.searchParams;
-        if (serverType === "IGSMapImage" && layerName) {
+        if (serverType === "IGSMapImage") {
           // 关联的地图文档
           if (mapList && mapList.length > 0) {
             for (let i = 0; i < mapList.length; i++) {
               const item = mapList[i];
-              if (layerIndex.includes(item.LayerIndex)) {
+              if (
+                layerIndex.includes(item.LayerIndex) &&
+                item.URL &&
+                item.URL !== ""
+              ) {
                 gdbp = item.URL;
               }
             }
