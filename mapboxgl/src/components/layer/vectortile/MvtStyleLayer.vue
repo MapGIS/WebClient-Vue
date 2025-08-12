@@ -125,32 +125,30 @@ export default {
         this.sourcekeys = Object.keys(sources);
         for (let i = 0; i < this.sourcekeys.length; i++) {
           const source = sources[this.sourcekeys[i]];
-          if (!source.crs) {
-            const { tiles } = source;
-            if (tiles && tiles.length && tiles[0].includes("/igs/")) {
-              const serviceUrl = tiles[0].split("/tiles/")[0];
-              const commonLayer = new IGSVectorTileLayer({
-                // 服务基地址
-                url: serviceUrl,
-              });
-              // 加载图层元数据
-              await commonLayer.load();
-              const { tileInfo, extent } = commonLayer;
-              const { spatialReference, size, lods, origin } = tileInfo;
-              const { wkid, wkt } = spatialReference;
-              const resolutions = [];
-              for (let d = 0; d < lods.length; d++) {
-                resolutions.push(lods[d].resolution);
-              }
-              this.customCrs = new this.CRS(`EPSG:${wkid}`, wkt, {
-                resolutions,
-                origin: [origin.coordinates[0], origin.coordinates[1]],
-                tileSize: Math.max(size[0], size[1]),
-                bounds: [extent.xmin, extent.ymin, extent.xmax, extent.ymax],
-                unit: "degree",
-              });
-              source.crs = this.customCrs;
+          const { tiles } = source;
+          if (tiles && tiles.length && tiles[0].includes("/igs/")) {
+            const serviceUrl = tiles[0].split("/tiles/")[0];
+            const commonLayer = new IGSVectorTileLayer({
+              // 服务基地址
+              url: serviceUrl,
+            });
+            // 加载图层元数据
+            await commonLayer.load();
+            const { tileInfo, extent } = commonLayer;
+            const { spatialReference, size, lods, origin } = tileInfo;
+            const { wkid, wkt } = spatialReference;
+            const resolutions = [];
+            for (let d = 0; d < lods.length; d++) {
+              resolutions.push(lods[d].resolution);
             }
+            this.customCrs = new this.CRS(`EPSG:${wkid}`, wkt, {
+              resolutions,
+              origin: [origin.coordinates[0], origin.coordinates[1]],
+              tileSize: Math.max(size[0], size[1]),
+              bounds: [extent.xmin, extent.ymin, extent.xmax, extent.ymax],
+              unit: "degree",
+            });
+            source.crs = this.customCrs;
           }
         }
       }
@@ -187,10 +185,12 @@ export default {
       let mapLoadedInterval;
       const resetSourceCustomCrs = () => {
         // 更新map.style.sourceCaches上的crs,第二次加载会被map上的crs覆盖，这里需要重置一下
-        if (this.sourcekeys && this.sourcekeys.length && this.customCrs) {
+        if (this.sourcekeys && this.sourcekeys.length && customCrs) {
           for (let i = 0; i < this.sourcekeys.length; i++) {
-            map.style.sourceCaches[this.sourcekeys[i]].crs = this.customCrs;
-            map._update(true);
+            if (map.style.sourceCaches[this.sourcekeys[i]]) {
+              map.style.sourceCaches[this.sourcekeys[i]].crs = customCrs;
+              map._update(true);
+            }
           }
         }
         const { _order } = map.style;
