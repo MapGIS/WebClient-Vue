@@ -85,7 +85,7 @@ export default {
       this.mount();
     },
     mount() {
-      const { viewer, baseUrl, layers, styles, transparent } = this;
+      const { viewer, baseUrl, layers, styles, transparent, version } = this;
       const sublayers = [];
       if (layers) {
         const showLayerIds = layers.split(",");
@@ -100,11 +100,12 @@ export default {
       }
       const wmsLayer = new WMSLayer({
         url: baseUrl,
-        renderMode: "image",
+        renderMode: this.renderMode == "map-image" ? "image" : "tile",
         // 设置子图层属性，可选项
         sublayers,
         styles: styles,
         imageTransparency: transparent,
+        version,
       });
       const self = this;
       wmsLayer.load().then((layer) => {
@@ -113,8 +114,8 @@ export default {
         this.$_mount(cesiumOptions);
       });
       // 如果是一张图出图，那么providerName为wms一张图出图provider
-      if(this.renderMode && this.renderMode === "image-map"){
-        this.providerName = "WebMapServiceSingleImageryProvider"
+      if (this.renderMode && this.renderMode === "image-map") {
+        this.providerName = "WebMapServiceSingleImageryProvider";
       }
     },
     unmount() {
