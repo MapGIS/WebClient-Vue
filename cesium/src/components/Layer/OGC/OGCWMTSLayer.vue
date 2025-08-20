@@ -82,11 +82,12 @@ export default {
   methods: {
     mount() {
       const { viewer } = this;
-      const { tileMatrixSet, wmtsStyle, format } = this;
+      const { tileMatrixSet, wmtsStyle, format, options } = this;
       const activeWMTSLayer = this.wmtsLayer;
       // 创建WMTS图层对象
       const wmtsLayer = new WMTSLayer({
         url: this.baseUrl,
+        extent: options.rectangle || null,
       });
       const vm = this;
       // 获取WMTS图层服务的元信息

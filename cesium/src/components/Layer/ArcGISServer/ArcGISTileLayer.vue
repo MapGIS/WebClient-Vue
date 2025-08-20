@@ -39,10 +39,11 @@ export default {
   },
   methods: {
     mount() {
-      const { viewer } = this;
+      const { viewer, options } = this;
       // 创建ArcGIS瓦片图层对象
       const arcgisTileLayer = new ArcGISTileLayer({
         url: this.baseUrl,
+        extent: options.rectangle || null,
       });
       const vm = this;
       // 获取ArcGIS瓦片服务的元信息

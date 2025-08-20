@@ -73,20 +73,21 @@ export default {
       this.mount();
     },
     mount() {
-      const { baseUrl } = this;
+      const { baseUrl, options } = this;
       let { layers } = this;
 
       const { viewer } = this;
       const arcGISMapImageLayer = new ArcGISMapImageLayer({
         url: baseUrl,
         renderMode: "image",
+        extent: options.rectangle || null,
       });
       const self = this;
       arcGISMapImageLayer.load().then((layer) => {
         // 获取provider的初始化参数
-       const cesiumOptions = initializeOptions(layer, viewer);
-        if (layers && layers !== '') {
-          cesiumOptions.layers = layers
+        const cesiumOptions = initializeOptions(layer, viewer);
+        if (layers && layers !== "") {
+          cesiumOptions.layers = layers;
         }
         if (this.renderMode && this.renderMode === "raster") {
           // 不使用瓦片缓存，部分服务可能没有开启瓦片服务，比如IGS转发的ArcGIS服务
@@ -95,8 +96,8 @@ export default {
         self.$_mount(cesiumOptions);
       });
       // 如果是一张图出图，那么providerName为ArcGISMapServer一张图出图provider
-      if(this.renderMode && this.renderMode === "image-map"){
-        this.providerName = "ArcGISMapServerSingleImageryProvider"
+      if (this.renderMode && this.renderMode === "image-map") {
+        this.providerName = "ArcGISMapServerSingleImageryProvider";
       }
     },
     unmount() {

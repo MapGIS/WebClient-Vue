@@ -112,6 +112,17 @@ export default {
       if (this.subDomains && this.subDomains.length > 0) {
         allOptions.subdomains = this.subDomains;
       }
+      let rectangle = undefined;
+      // if (this.options.rectangle) {
+      //   const { xmin, ymin, xmax, ymax } = this.options.rectangle;
+      //   rectangle = {
+      //     xmin: (xmin * Math.PI) / 180,
+      //     ymin: (ymin * Math.PI) / 180,
+      //     xmax: (xmax * Math.PI) / 180,
+      //     ymax: (ymax * Math.PI) / 180,
+      //   };
+      // }
+      allOptions.rectangle = rectangle;
       this.$_mount(allOptions);
     },
     unmount() {
