@@ -85,7 +85,8 @@ export default {
       this.mount();
     },
     mount() {
-      const { viewer, baseUrl, layers, styles, transparent, version } = this;
+      const { viewer, baseUrl, layers, styles, transparent, version, options } =
+        this;
       const sublayers = [];
       if (layers) {
         const showLayerIds = layers.split(",");
@@ -106,6 +107,7 @@ export default {
         styles: styles,
         imageTransparency: transparent,
         version,
+        extent: options.rectangle || null,
       });
       const self = this;
       wmsLayer.load().then((layer) => {
