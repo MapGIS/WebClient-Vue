@@ -32,10 +32,10 @@
 
 ### `tileMatrixSet`
 
-- **类型:** `Object`
+- **类型:** `String`
 - **必传**
 - **侦听属性**
-- **描述:** 对于标准裁图的瓦片，tileMatrixSet 支持传入字符串，即当前的地图矩阵 id(tileMatrixSetId);对于自定义裁图的瓦片,需要根据 tileMatrixSetId 找到地图矩阵集合对应的地图矩阵对象，将地图矩阵对象传入，地图矩阵应该至少包含 id(对应 tileMatrixSetId)和 tileInfo。
+- **描述:** wmts 标准中的地图矩阵集 TileMatrixSet 属性的地图矩阵集 id(tileMatrixSetId)。
 
   > wmts 标准中的 TileMatrixSet 属性，即地图矩阵集合<br/>
   > 这里以司马云上发布的 WMTS 服务为例，ArcGis 同理，访问http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer?service=WMTS&request=GetCapabilities，获取地图元信息
@@ -60,7 +60,7 @@
 ### `tilingScheme`
 
 - **类型:** `String`
-- **必传**
+- **可选，拟废弃**
 - **侦听属性**
 - **描述:** Cesium 的瓦片切图方式，目前支持如下值：
   > 经纬度方式请填写:EPSG:4326 <br/>

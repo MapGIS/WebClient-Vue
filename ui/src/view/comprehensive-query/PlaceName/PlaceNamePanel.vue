@@ -321,7 +321,7 @@ export default {
           // 地图文档
           igsParams.docName = this.config.docName;
           igsParams.layerName = this.selectedItem.LayerName;
-          igsParams.layerIdxs = "";
+          igsParams.layerIdxs = this.selectedItem.LayerIndex;
           const igsRes = await Feature.FeatureQuery.query(igsParams, combine);
           let data = igsRes;
           if (combine) {

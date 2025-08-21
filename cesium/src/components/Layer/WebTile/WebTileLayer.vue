@@ -112,6 +112,16 @@ export default {
       if (this.subDomains && this.subDomains.length > 0) {
         allOptions.subdomains = this.subDomains;
       }
+      let rectangle = undefined;
+      if (this.options.rectangle) {
+        const { xmin, ymin, xmax, ymax } = this.options.rectangle;
+        const west = (xmin * Math.PI) / 180;
+        const south = (ymin * Math.PI) / 180;
+        const east = (xmax * Math.PI) / 180;
+        const north = (ymax * Math.PI) / 180;
+        rectangle = new this.Cesium.Rectangle(west, south, east, north);
+      }
+      allOptions.rectangle = rectangle;
       this.$_mount(allOptions);
     },
     unmount() {

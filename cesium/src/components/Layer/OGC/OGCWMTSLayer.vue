@@ -13,10 +13,9 @@ export default {
   mixins: [ServiceLayer],
   props: {
     wmtsLayer: { type: String, required: true },
-    // eslint-disable-next-line vue/require-prop-type-constructor
-    tileMatrixSet: { type: String | Object, default: "" },
+    tileMatrixSet: { type: String, default: "" },
     wmtsStyle: { type: String, default: "default" },
-    tilingScheme: { type: String, required: true },
+    // tilingScheme: { type: String, required: true },
     format: { type: String, default: "image/png" },
   },
   data() {
@@ -83,13 +82,77 @@ export default {
   methods: {
     mount() {
       const { viewer } = this;
+      const { tileMatrixSet, wmtsStyle, format, options } = this;
+      const activeWMTSLayer = this.wmtsLayer;
       // 创建WMTS图层对象
       const wmtsLayer = new WMTSLayer({
         url: this.baseUrl,
+        extent: options.rectangle || null,
       });
       const vm = this;
       // 获取WMTS图层服务的元信息
       wmtsLayer.load().then((layer) => {
+        const { sublayers, tileMatrixSets, activeLayer } = layer;
+        // 判断当前activeLayer的identifier是否与传入的wmtsLayer一致
+        const isSameIdentifier = activeLayer.identifier === activeWMTSLayer;
+        // 找到与传入的tileMatrixSetId一致的tileMatrixSet，若不存在则不处理
+        const targetTileMatrixSet = tileMatrixSets.find(
+          (item) => item.identifier === tileMatrixSet
+        );
+        // 当前activeLayer的identifier是否与传入的wmtsLayer不一致则查找sublayers中对应的activeLayer
+        if (!isSameIdentifier) {
+          // 查找与传入的wmtsLayer一致的sublayer
+          const targetActiveLayer = sublayers.items.find(
+            (item) => item.identifier === activeWMTSLayer
+          );
+          // 找到目标sublayer则使用targetActiveLayer作为activeLayer
+          if (targetActiveLayer) {
+            // 判断传入的tileMatrixSetId是否存在对应的tileMatrixSet
+            if (targetTileMatrixSet) {
+              targetActiveLayer.tileMatrixSetId =
+                targetTileMatrixSet.identifier;
+            }
+            // 设置targetActiveLayer的imageFormat
+            targetActiveLayer.imageFormat = format;
+            // 找到与传入的wmtsStyle一致的styleId，若不存在则不处理
+            const targetStyle = targetActiveLayer.styles.find(
+              (item) => item.id === wmtsStyle
+            );
+            if (targetStyle) {
+              targetActiveLayer.styleId = wmtsStyle;
+            }
+            layer.activeLayer = targetActiveLayer;
+          } else {
+            // 如果不存在与传入的wmtsLayer一致的sublayer则使用默认的activeLayer，即sublayers[0]
+            if (targetTileMatrixSet) {
+              activeLayer.tileMatrixSetId = targetTileMatrixSet.identifier;
+            }
+            // 设置activeLayer的imageFormat
+            activeLayer.imageFormat = format;
+            // 找到与传入的wmtsStyle一致的styleId，若不存在则不处理
+            const targetStyle = activeLayer.styles.find(
+              (item) => item.id === wmtsStyle
+            );
+            if (targetStyle) {
+              activeLayer.styleId = wmtsStyle;
+            }
+          }
+        } else {
+          // activeLayer的identifier与传入的wmtsLayer一致则直接修改activeLayer
+          // 设置activeLayer的tileMatrixSetId
+          if (targetTileMatrixSet) {
+            activeLayer.tileMatrixSetId = targetTileMatrixSet.identifier;
+          }
+          // 设置activeLayer的imageFormat
+          activeLayer.imageFormat = format;
+          // 找到与传入的wmtsStyle一致的styleId，若不存在则不处理
+          const targetStyle = activeLayer.styles.find(
+            (item) => item.id === wmtsStyle
+          );
+          if (targetStyle) {
+            activeLayer.styleId = wmtsStyle;
+          }
+        }
         // 获取provider的初始化参数
         const cesiumOptions = initializeOptions(layer, viewer);
         vm.$_mount(cesiumOptions);

@@ -8,7 +8,7 @@ module.exports = {
     "@storybook/preset-scss",
     "@storybook/addon-links",
     "@storybook/addon-essentials",
-    // "@storybook/addon-knobs",
+    "@storybook/addon-knobs",
     "@storybook/addon-a11y",
     {
       name: '@storybook/addon-storysource',
@@ -46,6 +46,22 @@ module.exports = {
         },
       ],
     });
+
+    // config.module.rules.push({
+    //   test: /\.(js|jsx)$/,
+    //   exclude: /node_modules/,
+    //   use: {
+    //     loader: 'babel-loader',
+    //     options: {
+    //       presets: ['@babel/preset-react', '@babel/preset-env']
+    //     }
+    //   }
+    // });
+
+   
+
+  
+
 
     // If you wish to use `scss` file
     // Keep in mind to install `sass` which I don't see it as apart of your deps
