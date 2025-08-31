@@ -85,8 +85,16 @@ export default {
       this.mount();
     },
     mount() {
-      const { viewer, baseUrl, layers, styles, transparent, version, options } =
-        this;
+      const {
+        viewer,
+        baseUrl,
+        layers,
+        styles,
+        transparent,
+        version,
+        options,
+        token,
+      } = this;
       const sublayers = [];
       if (layers) {
         const showLayerIds = layers.split(",");
@@ -99,7 +107,7 @@ export default {
           }
         }
       }
-      const wmsLayer = new WMSLayer({
+      const paramOptions = {
         url: baseUrl,
         renderMode: this.renderMode == "map-image" ? "image" : "tile",
         // 设置子图层属性，可选项
@@ -108,7 +116,12 @@ export default {
         imageTransparency: transparent,
         version,
         extent: options.rectangle || null,
-      });
+      };
+      if (token.key && token.value) {
+        paramOptions.tokenKey = token.key;
+        paramOptions.tokenValue = token.value;
+      }
+      const wmsLayer = new WMSLayer(paramOptions);
       const self = this;
       wmsLayer.load().then((layer) => {
         // 获取provider的初始化参数
