@@ -73,15 +73,24 @@ export default {
       this.mount();
     },
     mount() {
-      const { baseUrl, options } = this;
+      const { baseUrl, options, token } = this;
       let { layers } = this;
 
       const { viewer } = this;
-      const arcGISMapImageLayer = new ArcGISMapImageLayer({
+
+      const paramOptions = {
         url: baseUrl,
         renderMode: "image",
         extent: options.rectangle || null,
-      });
+      };
+
+      if (token.key && token.value) {
+        const headers = {};
+        headers[token.key] = token.value;
+        paramOptions.headers = headers;
+      }
+
+      const arcGISMapImageLayer = new ArcGISMapImageLayer(paramOptions);
       const self = this;
       arcGISMapImageLayer.load().then((layer) => {
         // 获取provider的初始化参数
