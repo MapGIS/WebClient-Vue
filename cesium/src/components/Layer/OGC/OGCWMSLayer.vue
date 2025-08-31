@@ -115,7 +115,7 @@ export default {
         styles: styles,
         imageTransparency: transparent,
         version,
-        extent: options.rectangle || null,
+        extent: null,
       };
       if (token.key && token.value) {
         paramOptions.tokenKey = token.key;

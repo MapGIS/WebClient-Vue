@@ -87,7 +87,7 @@ export default {
       // 创建WMTS图层对象
       const paramOptions = {
         url: this.baseUrl,
-        extent: options.rectangle || null,
+        extent: null,
       };
       if (token.key && token.value) {
         paramOptions.tokenKey = token.key;
