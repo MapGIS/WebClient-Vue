@@ -85,9 +85,11 @@ export default {
       };
 
       if (token.key && token.value) {
-        const headers = {};
-        headers[token.key] = token.value;
-        paramOptions.headers = headers;
+        // const headers = {};
+        // headers[token.key] = token.value;
+        // paramOptions.headers = headers;
+        paramOptions.tokenKey = token.key;
+        paramOptions.tokenValue = token.value;
       }
 
       const arcGISMapImageLayer = new ArcGISMapImageLayer(paramOptions);

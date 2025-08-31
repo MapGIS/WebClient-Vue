@@ -102,6 +102,7 @@ export default {
       let styleUrl = undefined;
       let styleObject = undefined;
       let url = this.styleUrl;
+
       return new Promise((resolve, reject) => {
         if (this.mvtStyle) {
           if (typeof this.mvtStyle === "string") {
@@ -134,10 +135,14 @@ export default {
         if (!styleUrl && !styleObject) {
           resolve();
         } else {
-          const igsVectorTileLayer = new IGSVectorTileLayer({
-            url: styleUrl,
-            style: styleObject,
-          });
+          const { token } = this;
+          const options = { url: styleUrl, style: styleObject };
+
+          if (token.key && token.value) {
+            options.tokenKey = token.key;
+            options.tokenValue = token.value;
+          }
+          const igsVectorTileLayer = new IGSVectorTileLayer(options);
           igsVectorTileLayer.load().then((res) => {
             resolve(igsVectorTileLayer);
           });
