@@ -324,6 +324,11 @@ export default {
         },
         layers: layers,
       };
+      const { token } = this;
+      if (token.key && token.value) {
+        style.glyphs += `&${token.key}=${token.value}`;
+        style.sprite += `&${token.key}=${token.value}`;
+      }
       // 修改说明：先强制删除draw上面的crs,不然加载会报无法识别crs参数的错误
       // 修改人：龚跃健-20241213
       delete style.sources["mapbox-gl-draw-cold"].crs;
