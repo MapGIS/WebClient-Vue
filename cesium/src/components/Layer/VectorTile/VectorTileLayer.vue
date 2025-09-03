@@ -67,7 +67,14 @@ export default {
       const { viewer, $props } = this;
       const commonLayer = await this.getIGSVectorTileLayer();
       const cesiumOptions = initializeOptions(commonLayer, viewer);
-
+      const { rectangle } = cesiumOptions;
+      if (rectangle) {
+        const { west, south, east, north } = rectangle;
+        // 如果范围无效，则不加载
+        if (west >= east || south >= north) {
+          return;
+        }
+      }
       const optMinimumLevel = $props.options.minimumLevel || 0;
       const optMaximumLevel = $props.options.maximumLevel || 22;
       const minimumLevel = Math.max(

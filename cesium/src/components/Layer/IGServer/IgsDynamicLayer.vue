@@ -89,6 +89,14 @@ export default {
       const layer = new IGSFeatureLayer(options);
       layer.load().then(() => {
         const cesiumOptions = initializeOptions(layer);
+        const { rectangle } = cesiumOptions;
+        if (rectangle) {
+          const { west, south, east, north } = rectangle;
+          // 如果范围无效，则不加载
+          if (west >= east || south >= north) {
+            return;
+          }
+        }
         vm.$_mount(cesiumOptions);
       });
     },
