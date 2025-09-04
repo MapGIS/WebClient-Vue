@@ -946,9 +946,7 @@
 .el-tree {
   position: relative;
   cursor: default;
-  /* background: #FFFFFF; */
-  /* color: #606266; */
-  color: rgba(225, 225, 225, 0.8);
+  color: var(--text-color) !important;
   user-select: none;
 }
 .el-tree__empty-block {
