@@ -359,7 +359,7 @@ export default {
         }
         feature.color = Cesium.Color.fromCssColorString(highlightStyle);
 
-        let properties;
+        let properties = {};
         const propertyIds = feature.getPropertyIds();
         // 修改说明：属性信息也统一从feature上获取，更新获取方法
         // 修改人:龚跃健
