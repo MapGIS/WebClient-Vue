@@ -78,7 +78,7 @@ export default {
       }
       const igsMapImageLayer = new IGSMapImageLayer({
         url: baseUrl,
-        renderMode: "image",
+        renderMode: this.renderMode === "image-map" ? "image" : "tile",
         sublayers,
       });
       const self = this;
