@@ -38,7 +38,7 @@ export default {
         this._zoomOffset = zoomOffset;
         this._url = this.baseUrl + "/tile/{z}/{y}/{x}";
         if (this.map.getCRS().epsgCode.includes("4326")) {
-          if (zoomOffset == 0) {
+          if (!this.baseUrl.includes("/igs/") && zoomOffset == 0) {
             // 这个地方会导致4326无法主动传入offset=0的情况，但是默认的arcgis
             // 测试10.3 10.5 10.7后发现arcigs默认情况下就是offset=-1,
             // 因此忽略主动传入0的场景. 这种情况只会发生在操作arcserver的时候
