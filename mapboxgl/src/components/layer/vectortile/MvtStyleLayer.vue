@@ -146,7 +146,7 @@ export default {
               origin: [origin.coordinates[0], origin.coordinates[1]],
               tileSize: Math.max(size[0], size[1]),
               bounds: [extent.xmin, extent.ymin, extent.xmax, extent.ymax],
-              unit: "degree",
+              unit: spatialReference.isGeographic ? "degree" : undefined,
             });
             source.crs = this.customCrs;
           }
