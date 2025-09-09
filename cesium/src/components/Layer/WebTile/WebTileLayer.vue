@@ -62,15 +62,21 @@ export default {
           this.$props.spatialReference.wkid
         );
       }
-      const zoomOffset = this.$props.options.zoomOffset || 0;
+      // 标准的4326缺裁图方式，第0级分辨率0.7031249999891483,天地图服务第0级为1.4062499999782967
+      let zoomOffset =
+        this.$props.options.zoomOffset ||
+        (this.$props.spatialReference?.wkid === 4326 &&
+          baseUrl.includes("tianditu"))
+          ? -1
+          : 0;
       let tag;
       if (baseUrl.includes("{") && baseUrl.includes("}/")) {
         const urlStrs = baseUrl.split("{");
         tag = urlStrs[1].split("}/")[0];
       }
-      // 如果存在tag，并且zoomOffset不为空或者>0(即只有存在级别偏移的时候),则走customTags的方式
-      if (tag && zoomOffset) {
-        if (tag === "z") {
+      // 如果存在tag,或者zoomOffset不为空且不为0(即只有存在级别偏移的时候),则走customTags的方式
+      if (tag || zoomOffset) {
+        if (baseUrl.includes("{z}")) {
           tag = "sz";
           baseUrl = baseUrl.replace("{z}", "{sz}");
         }
