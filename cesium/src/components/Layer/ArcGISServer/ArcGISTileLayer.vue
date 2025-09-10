@@ -39,12 +39,20 @@ export default {
   },
   methods: {
     mount() {
-      const { viewer, options } = this;
-      // 创建ArcGIS瓦片图层对象
-      const arcgisTileLayer = new ArcGISTileLayer({
+      const { viewer, options, token } = this;
+
+      const paramOptions = {
         url: this.baseUrl,
         extent: options.rectangle || null,
-      });
+      };
+
+      if (token.key && token.value) {
+        paramOptions.tokenKey = token.key;
+        paramOptions.tokenValue = token.value;
+      }
+
+      // 创建ArcGIS瓦片图层对象
+      const arcgisTileLayer = new ArcGISTileLayer(paramOptions);
       const vm = this;
       // 获取ArcGIS瓦片服务的元信息
       arcgisTileLayer.load().then(async (layer) => {

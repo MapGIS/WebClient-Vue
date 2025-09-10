@@ -7,28 +7,28 @@ export default {
   props: {
     baseUrl: {
       type: String,
-      default: null
+      default: null,
     },
     tileSize: {
       type: Number,
-      default: 256
+      default: 256,
     },
     zoomOffset: {
       type: Number,
-      default: 0
+      default: 0,
     },
     forceOffset: {
       type: Boolean,
-      default: false
+      default: false,
     },
     minimumLevel: {
       type: Number,
-      default: 0
+      default: 0,
     },
     maximumLevel: {
       type: Number,
-      default: 22
-    }
+      default: 22,
+    },
   },
   created() {},
   methods: {
@@ -53,8 +53,13 @@ export default {
     $_deferredMount() {
       this.$_init();
 
-      if (this.token) {
-        this._url += "/" + this.token.value;
+      if (this.token && this.token.key && this.token.value) {
+        const url = new URL(this._url);
+        if (url.searchParams.toString().length > 0) {
+          this._url += `&${this.token.key}=${this.token.value}`;
+        } else {
+          this._url += `?${this.token.key}=${this.token.value}`;
+        }
       }
 
       let source = {
@@ -64,7 +69,7 @@ export default {
         mapgisOffset: this._zoomOffset,
         maxzoom: this.maximumLevel,
         minzoom: this.minimumLevel,
-        ...this.source
+        ...this.source,
       };
       //this.map.on为指定类型的事件添加侦听器，可以选择限制为指定样式层中的功能。
       this.map.on("dataloading", this.$_watchSourceLoading);
@@ -80,6 +85,6 @@ export default {
       this.$_bindLayerEvents(layerEvents);
       this.map.off("dataloading", this.$_watchSourceLoading);
       this.initial = false;
-    }
-  }
+    },
+  },
 };
