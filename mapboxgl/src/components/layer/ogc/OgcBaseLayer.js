@@ -25,8 +25,8 @@ export default {
   },
   methods: {
     // 请联合OgcWmsLayer.js的asyncInit/syncInit查看该处代码
-    /* async */ $_deferredMount() {
-      this.$_init();
+    async $_deferredMount() {
+      await this.$_init();
       let source = {
         type: "raster",
         tiles: [this._url],

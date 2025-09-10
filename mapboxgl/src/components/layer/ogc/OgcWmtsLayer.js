@@ -46,7 +46,7 @@ export default {
   },
   watch: {
     watchList: {
-      handler: function (next, old) {
+      handler: async function (next, old) {
         if (JSON.stringify(next) === JSON.stringify(old)) {
           return;
         }
@@ -60,7 +60,7 @@ export default {
           //KVP方式
           this.$_initBaseUrl();
           if (!this.source || !this.source.crs) {
-            this.$_initSource();
+            await this.$_initSource();
           }
           //因为OgcBaseLayer只监听了url，因此这里主动调用重绘和绘制方法
           this.$_deferredUnMount();
@@ -71,7 +71,7 @@ export default {
     },
   },
   methods: {
-    $_init() {
+    async $_init() {
       let { url, wmtsLayer, baseUrl } = this;
       if (url) {
         //REST方式，目前还是采用KVP的格式
@@ -83,17 +83,87 @@ export default {
         //KVP方式
         this.$_initBaseUrl();
         if (!this.source || !this.source.crs) {
-          this.$_initSource();
+          await this.$_initSource();
         }
       }
     },
     async $_initSource() {
+      const { wmtsStyle, format, options, token } = this;
+      const tileMatrixSet = this.tileMatrixSet.id || this.tileMatrixSet;
+      const activeWMTSLayer = this.wmtsLayer;
       // 创建WMTS图层对象
-      const wmtsLayer = new WMTSLayer({
+      const paramOptions = {
         url: this.baseUrl,
-      });
+        extent: null,
+      };
+      if (token.key && token.value) {
+        paramOptions.tokenKey = token.key;
+        paramOptions.tokenValue = token.value;
+      }
+      // 创建WMTS图层对象
+      const wmtsLayer = new WMTSLayer(paramOptions);
       // 获取WMTS图层服务的元信息
       const layer = await wmtsLayer.load();
+      const { sublayers, tileMatrixSets, activeLayer } = layer;
+      // 判断当前activeLayer的identifier是否与传入的wmtsLayer一致
+      const isSameIdentifier = activeLayer.identifier === activeWMTSLayer;
+      // 找到与传入的tileMatrixSetId一致的tileMatrixSet，若不存在则不处理
+      const targetTileMatrixSet = tileMatrixSets.find(
+        (item) => item.identifier === tileMatrixSet
+      );
+      // 当前activeLayer的identifier是否与传入的wmtsLayer不一致则查找sublayers中对应的activeLayer
+      if (!isSameIdentifier) {
+        // 查找与传入的wmtsLayer一致的sublayer
+        const targetActiveLayer = sublayers.items.find(
+          (item) => item.identifier === activeWMTSLayer
+        );
+        // 找到目标sublayer则使用targetActiveLayer作为activeLayer
+        if (targetActiveLayer) {
+          // 判断传入的tileMatrixSetId是否存在对应的tileMatrixSet
+          if (targetTileMatrixSet) {
+            targetActiveLayer.tileMatrixSetId = targetTileMatrixSet.identifier;
+          }
+          // 设置targetActiveLayer的imageFormat
+          targetActiveLayer.imageFormat = format;
+          // 找到与传入的wmtsStyle一致的styleId，若不存在则不处理
+          const targetStyle = targetActiveLayer.styles.find(
+            (item) => item.id === wmtsStyle
+          );
+          if (targetStyle) {
+            targetActiveLayer.styleId = wmtsStyle;
+          }
+          layer.activeLayer = targetActiveLayer;
+        } else {
+          // 如果不存在与传入的wmtsLayer一致的sublayer则使用默认的activeLayer，即sublayers[0]
+          if (targetTileMatrixSet) {
+            activeLayer.tileMatrixSetId = targetTileMatrixSet.identifier;
+          }
+          // 设置activeLayer的imageFormat
+          activeLayer.imageFormat = format;
+          // 找到与传入的wmtsStyle一致的styleId，若不存在则不处理
+          const targetStyle = activeLayer.styles.find(
+            (item) => item.id === wmtsStyle
+          );
+          if (targetStyle) {
+            activeLayer.styleId = wmtsStyle;
+          }
+        }
+      } else {
+        // activeLayer的identifier与传入的wmtsLayer一致则直接修改activeLayer
+        // 设置activeLayer的tileMatrixSetId
+        if (targetTileMatrixSet) {
+          activeLayer.tileMatrixSetId = targetTileMatrixSet.identifier;
+        }
+        // 设置activeLayer的imageFormat
+        activeLayer.imageFormat = format;
+        // 找到与传入的wmtsStyle一致的styleId，若不存在则不处理
+        const targetStyle = activeLayer.styles.find(
+          (item) => item.id === wmtsStyle
+        );
+        if (targetStyle) {
+          activeLayer.styleId = wmtsStyle;
+        }
+      }
       // 获取provider的初始化参数
       const mapboxglOptions = initializeOptions(layer, viewer);
       const { layers, sources } = mapboxglOptions;
