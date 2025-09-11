@@ -1,4 +1,4 @@
-import { CustomWKID } from "@mapgis/webclient-common";
+import { CustomWKID, getExtendExtentByPixel, SpatialReference } from "@mapgis/webclient-common";
 export default {
   inject: ["viewer", "Cesium"],
   props: {
@@ -212,12 +212,28 @@ export default {
 
       // 将rectangle转为cesium中的rectangle对象
       if (options.rectangle) {
-        const {
-          rectangle: { xmin, ymin, xmax, ymax },
-          srs,
-          spatialReference,
-          tilingScheme
-        } = options;
+        const { rectangle, srs, tilingScheme } = options;
+        let { spatialReference } = options;
+        const xmax = Number(rectangle.xmax);
+        const xmin = Number(rectangle.xmin);
+        const ymax = Number(rectangle.ymax);
+        const ymin = Number(rectangle.ymin);
+        // 获取地图服务最大分辨率
+        const tileWidth = this.tileWidth || 256;
+        const maxResolution = Math.max(xmax - xmin, ymax - ymin) / tileWidth;
+        if (!spatialReference) {
+          const epsgNo = srs
+            ? Number(srs.split(":")[1])
+            : spatialReference?.wkid || tilingScheme?.wkid || 4326;
+          spatialReference = new SpatialReference({ wkid: epsgNo });
+        }
+        const validRectangle = getExtendExtentByPixel(
+          { xmin, ymin, xmax, ymax, spatialReference },
+          {
+            extendPixel: 100,
+            resolution: maxResolution,
+          }
+        );
         // 对rectangle中的数据进行坐标系判断，将数据装换成cesium中的rectangle对象
 
         if (
@@ -227,10 +243,10 @@ export default {
           )
         ) {
           options.rectangle = Cesium.Rectangle.fromDegrees(
-            xmin,
-            ymin,
-            xmax,
-            ymax
+            validRectangle.xmin,
+            validRectangle.ymin,
+            validRectangle.xmax,
+            validRectangle.ymax
           );
         } else if (
           ["EPSG:102100", "EPSG:3857"].includes(srs) ||
@@ -238,10 +254,10 @@ export default {
         ) {
           const projectInfo = zondy.geometry.Projection.project(
             new zondy.geometry.Extent({
-              xmin,
-              ymin,
-              xmax,
-              ymax,
+              xmin: validRectangle.xmin,
+              ymin: validRectangle.ymin,
+              xmax: validRectangle.xmax,
+              ymax: validRectangle.ymax,
               spatialReference: new zondy.SpatialReference({
                 wkid: 3857
               })
