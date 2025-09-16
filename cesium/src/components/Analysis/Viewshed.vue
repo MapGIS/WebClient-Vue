@@ -255,13 +255,6 @@
 
 <script>
 import VueOptions from "../Base/Vue/VueOptions";
-import {
-  getFarToNearRatio,
-  setFarToNearRatio,
-  isLogarithmicDepthBufferSupport,
-  isLogarithmicDepthBufferEnable,
-  setLogarithmicDepthBufferEnable,
-} from "../WebGlobe/util";
 
 export default {
   name: "mapgis-3d-viewshed",
@@ -376,8 +369,6 @@ export default {
       // viewPoint: undefined,
 
       handlerAction: undefined,
-      farToNearRatio: undefined, // 记录设置前的值
-      isLogarithmicDepthBufferEnable: undefined, // 记录设置前的值
       info: "地形可视域分析需开启地形深度检测！",
     };
   },
@@ -644,12 +635,6 @@ export default {
       // 分析之前先清空之前的分析结果，包括观察点和目标点
       this._removeVisualAnalysis();
       let { viewer, Cesium, vueKey, vueIndex } = this;
-      this.farToNearRatio = getFarToNearRatio(this.viewer);
-      setFarToNearRatio(1000000, this.viewer);
-      this.logarithmicDepthBuffer = isLogarithmicDepthBufferEnable(this.viewer);
-      if (this.logarithmicDepthBuffer) {
-        setLogarithmicDepthBufferEnable(false, this.viewer);
-      }
 
       this.isAnalyze = true;
 
@@ -745,28 +730,6 @@ export default {
       });
     },
 
-    /**
-     * @description 恢复cesium设置
-     */
-    _restoreCesiumSetting() {
-      if (
-        this.isLogarithmicDepthBufferEnable !== undefined &&
-        this.isLogarithmicDepthBufferEnable !==
-          isLogarithmicDepthBufferEnable(this.viewer)
-      ) {
-        setLogarithmicDepthBufferEnable(
-          this.isLogarithmicDepthBufferEnable,
-          this.viewer
-        );
-      }
-      if (
-        this.farToNearRatio !== undefined &&
-        this.farToNearRatio !== getFarToNearRatio(this.viewer)
-      ) {
-        setFarToNearRatio(this.farToNearRatio, this.viewer);
-      }
-    },
-
     // 点击结束分析按钮回调
     onClickStop() {
       // 注销鼠标的各项监听事件
@@ -791,9 +754,6 @@ export default {
       this.angleSet.heading = 0;
       this.angleSet.pitch = 0;
       this.angleSet.viewRadius = 0;
-
-      //恢复Cesium原始设置
-      this._restoreCesiumSetting();
     },
     /**
      * 移除可视域分析结果
