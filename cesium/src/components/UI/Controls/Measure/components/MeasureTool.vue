@@ -41,6 +41,7 @@
     <measure-3d-setting
       v-if="showSettingPanel"
       :measureConfig="measureConfig"
+      :mode="activeMode"
       @measure-style-change="measureStyleChange"
       @measure-style-resize="measureStyleResize"
     />
