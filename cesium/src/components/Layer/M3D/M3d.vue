@@ -185,7 +185,6 @@ export default {
             return;
           }
           m3dset.imageBasedLighting.luminanceAtZenith = luminanceAtZenith;
-          m3dset.cacheBytes = maximumMemoryUsage;
           if (options.autoReset) {
             const boundingSphere = m3dset.boundingSphere;
             const orientation = new Cesium.HeadingPitchRange(

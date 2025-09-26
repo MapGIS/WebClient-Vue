@@ -232,7 +232,7 @@ export default {
               lightingMode: "DAYNIGHT_SHADING",
               lightColor: "rgba(255,255,255,255)",
             },
-            lightIntensity: 10,
+            lightIntensity: 2,
           }
         );
       }

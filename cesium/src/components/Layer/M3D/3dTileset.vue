@@ -194,7 +194,6 @@ export default {
               return;
             }
             tileset.imageBasedLighting.luminanceAtZenith = luminanceAtZenith;
-            tileset.cacheBytes = maximumMemoryUsage;
             if (options.autoReset) {
               const boundingSphere = tileset.boundingSphere;
               const orientation = new Cesium.HeadingPitchRange(
