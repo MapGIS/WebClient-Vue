@@ -95,7 +95,7 @@
       "lightColor": "rgba(255,255,255,255)"
     },
     // 模型亮度
-    "lightIntensity": 10
+    "lightIntensity": 2
   },
   // 天气设置
   "weatherSetting": {
@@ -226,10 +226,10 @@ export default {
         top: "10px",
         left: "10px",
         width: "320px",
-        background: "#fff"
-      }
+        background: "#fff",
+      },
     };
-  }
+  },
 };
 </script>
 ```

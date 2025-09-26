@@ -32,9 +32,9 @@
 
     <mapgis-ui-input-number-panel
       size="large"
-      label="模型亮度"
+      label="光照强度"
       v-model="lightSetting.lightIntensity"
-      :range="[1, 200]"
+      :range="[0, 200]"
       @change="lightIntensityChange"
     />
   </div>
@@ -83,7 +83,7 @@ export default {
           lightingMode: "DAYNIGHT_SHADING",
           lightColor: "rgba(255,255,255,255)",
         },
-        lightIntensity: 10,
+        lightIntensity: 2,
       },
     };
   },

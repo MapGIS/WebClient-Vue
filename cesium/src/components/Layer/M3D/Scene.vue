@@ -418,7 +418,6 @@ export default {
               );
               m3dSet._layerIndex = sceneSublayerId;
               m3dSet.imageBasedLighting.luminanceAtZenith = luminanceAtZenith;
-              m3dSet.cacheBytes = maximumMemoryUsage;
               viewer.scene.primitives.add(m3dSet);
               /**
                * 修改说明：这里原先用zoomTo方法做图层的跳转，但是在第一次切换二三维的时候，地图会有一个默认的跳转（zoom组件里flyTo）。
