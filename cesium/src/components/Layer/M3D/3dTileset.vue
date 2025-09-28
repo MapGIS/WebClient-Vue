@@ -185,36 +185,36 @@ export default {
         const cesiumOptions = initializeOptions(layer, viewer);
         zondy.cesium.Cesium3DTileset.fromUrl(cesiumOptions.url, cesiumOptions).then(
           (tileset) => {
-            if (!tileset) {
-              return;
-            }
-            tileset.imageBasedLighting.luminanceAtZenith = luminanceAtZenith;
-            if (options.autoReset) {
-              const boundingSphere = tileset.boundingSphere;
-              const orientation = new Cesium.HeadingPitchRange(
-                0.0,
-                -0.5,
-                boundingSphere.radius * 2.5
-              );
-              viewer.camera.flyToBoundingSphere(boundingSphere, {
-                duration: 0,
-                offset: orientation,
-              });
-            }
-            viewer.scene.primitives.add(tileset);
-            tileset.style = new Cesium.Cesium3DTileStyle({
-              color:
-                "undefined === ${COLOR}.r ? color('white'," +
-                opacity +
-                "):rgba(${COLOR}.r *255,${COLOR}.g* 255,${COLOR}.b *255, " +
-                opacity +
-                ")",
+          if (!tileset) {
+            return;
+          }
+          tileset.imageBasedLighting.luminanceAtZenith = luminanceAtZenith;
+          if (options.autoReset) {
+            const boundingSphere = tileset.boundingSphere;
+            const orientation = new Cesium.HeadingPitchRange(
+              0.0,
+              -0.5,
+              boundingSphere.radius * 2.5
+            );
+            viewer.camera.flyToBoundingSphere(boundingSphere, {
+              duration: 0,
+              offset: orientation,
             });
-            vueCesium.Tileset3DManager.addSource(vueKey, vueIndex, tileset, {
-              url: url,
-            });
-            vm.$emit("loaded", { tileset: tileset, m3ds: [tileset] });
-            vm.bindPopupEvent();
+          }
+          viewer.scene.primitives.add(tileset);
+          tileset.style = new Cesium.Cesium3DTileStyle({
+            color:
+              "undefined === ${COLOR}.r ? color('white'," +
+              opacity +
+              "):rgba(${COLOR}.r *255,${COLOR}.g* 255,${COLOR}.b *255, " +
+              opacity +
+              ")",
+          });
+          vueCesium.Tileset3DManager.addSource(vueKey, vueIndex, tileset, {
+            url: url,
+          });
+          vm.$emit("loaded", { tileset: tileset, m3ds: [tileset] });
+          vm.bindPopupEvent();
           }
         );
       });
@@ -356,8 +356,18 @@ export default {
         if (feature) {
           this.feature = feature;
         }
-        feature.color = Cesium.Color.fromCssColorString(highlightStyle);
-
+        const id = feature.getProperty("uniqueId");
+        if (id) {
+          const conditions = [["${uniqueId} === ${id}", highlightStyle]];
+          tileset.style = new Cesium.Cesium3DTileStyle({
+            defines: {
+              id,
+            },
+            color: {
+              conditions,
+            },
+          });
+        }
         let properties = {};
         const propertyIds = feature.getPropertyIds();
         // 修改说明：属性信息也统一从feature上获取，更新获取方法
@@ -393,16 +403,14 @@ export default {
      * @description 取消拾取内容
      */
     cancelFeature(sendPickInfo = true) {
-      if (this.feature) {
-        const { Cesium } = this;
-        this.feature.color = new Cesium.Color();
-        this.feature = null;
-        this.featureposition = undefined;
-        this.featureproperties = undefined;
+      const tileset = this.getTileSet();
+      tileset.style = undefined;
+      this.feature = null;
+      this.featureposition = undefined;
+      this.featureproperties = undefined;
 
-        if (this.popupShowType === "right") {
-          this.popupOverlay && this.popupOverlay.setContent(null);
-        }
+      if (this.popupShowType === "right") {
+        this.popupOverlay && this.popupOverlay.setContent(null);
       }
       sendPickInfo && this.$emit("pick-info", {});
     },
