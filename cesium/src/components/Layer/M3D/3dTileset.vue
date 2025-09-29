@@ -183,6 +183,7 @@ export default {
 
       tilesetLayer.load().then((layer) => {
         const cesiumOptions = initializeOptions(layer, viewer);
+        cesiumOptions.generateUniqueId = true;
         zondy.cesium.Cesium3DTileset.fromUrl(cesiumOptions.url, cesiumOptions).then(
           (tileset) => {
           if (!tileset) {
@@ -358,7 +359,7 @@ export default {
         }
         const id = feature.getProperty("uniqueId");
         if (id) {
-          const conditions = [["${uniqueId} === ${id}", highlightStyle]];
+          const conditions = [["${uniqueId} === '" + id + "'", highlightStyle]];
           tileset.style = new Cesium.Cesium3DTileStyle({
             defines: {
               id,
