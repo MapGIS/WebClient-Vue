@@ -357,8 +357,8 @@ export default {
       // 修改者：龚跃健 2024/10/28
       const tempProps = {
         ...this.$props,
-        ...this.$props.extensions,
         ...this.$options.propsData,
+        ...this.$props.extensions,
       };
       Object.keys(tempProps).forEach(function (key) {
         options[key] = tempProps[key];
@@ -369,7 +369,7 @@ export default {
       const vm = this;
       const { vueIndex, vueKey, vueCesium } = this;
       const { viewer, url, $props, enablePopup, layerId } = this;
-      const { luminanceAtZenith, maximumMemoryUsage } = this;
+      const { luminanceAtZenith, maximumCacheOverflowBytes } = this;
 
       let version = this.parseVersion();
       let server = this.parseServer();
@@ -383,6 +383,8 @@ export default {
         url,
         ...options,
         extensionOptions: { ...options },
+        maximumCacheOverflowBytes:
+          options.maximumCacheOverflowBytes || maximumCacheOverflowBytes,
       });
       // 加载场景服务
       sceneLayer.load().then(async (layer) => {

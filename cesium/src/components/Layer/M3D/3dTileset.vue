@@ -119,8 +119,8 @@ export default {
       // 修改者：龚跃健 2024/10/28
       const tempProps = {
         ...this.$props,
-        ...this.$props.extensions,
         ...this.$options.propsData,
+        ...this.$props.extensions,
       };
       Object.keys(tempProps).forEach(function (key) {
         if (key === "extensions") {
@@ -151,7 +151,7 @@ export default {
       const vm = this;
       const { viewer, vueIndex, vueKey, vueCesium, $props } = this;
       let { url, opacity } = this;
-      const { luminanceAtZenith, maximumMemoryUsage } = this;
+      const { luminanceAtZenith, maximumCacheOverflowBytes } = this;
       if (viewer.isDestroyed()) return;
       const options = this.getOptions();
       // 如果配置了token携带位置在headers上
@@ -164,10 +164,13 @@ export default {
           token: options.token.value,
         };
         // 如果配置了header token，那么url上就不需要token
-        url = this.removeSearchParamFromUrl(url, options.token.key)
+        url = this.removeSearchParamFromUrl(url, options.token.key);
 
-        if(options.url) {
-          options.url = this.removeSearchParamFromUrl(options.url, options.token.key)
+        if (options.url) {
+          options.url = this.removeSearchParamFromUrl(
+            options.url,
+            options.token.key
+          );
         }
       }
 
@@ -179,13 +182,18 @@ export default {
         url,
         ...options,
         extensionOptions,
+        maximumCacheOverflowBytes:
+          extensionOptions.maximumCacheOverflowBytes ||
+          maximumCacheOverflowBytes,
       });
 
       tilesetLayer.load().then((layer) => {
         const cesiumOptions = initializeOptions(layer, viewer);
         cesiumOptions.generateUniqueId = true;
-        zondy.cesium.Cesium3DTileset.fromUrl(cesiumOptions.url, cesiumOptions).then(
-          (tileset) => {
+        zondy.cesium.Cesium3DTileset.fromUrl(
+          cesiumOptions.url,
+          cesiumOptions
+        ).then((tileset) => {
           if (!tileset) {
             return;
           }
@@ -216,8 +224,7 @@ export default {
           });
           vm.$emit("loaded", { tileset: tileset, m3ds: [tileset] });
           vm.bindPopupEvent();
-          }
-        );
+        });
       });
     },
     /**
