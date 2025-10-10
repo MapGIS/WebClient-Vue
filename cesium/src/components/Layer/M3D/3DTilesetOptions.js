@@ -18,26 +18,11 @@ export default {
     default: () => (Math.random() * 100000000).toFixed(0),
   },
 
-  // highlightStyle: {
-  //   type: Object,
-  //   default: () => {
-  //     return new ModelStyle({ color: "rgba(255, 255, 0, 0.6)" });
-  //   }
-  // },
-
   highlightStyle: {
     type: String,
     default: "rgba(255, 255, 0, 0.6)",
   },
 
-  /** @deprecated
-   * @date 2022/03/19 基础平台-潘卓然
-   * @description 保持单个M3D图层针对一个图层的语义，因此该接口需要废弃
-   **/
-  /* layers: {
-    type: [String],
-    default: undefined,
-  }, */
   /**
    * @type Cesium.Resource.headers
    * @example headers: { "szvsud-license-key": '3AE2IROq5nGn5K/+zQlUxSoHoNdjCoS1l5567rK5SKjHfRbQIvhtbInd7S9X6bFl' },
@@ -54,47 +39,17 @@ export default {
 
   // 是否会存在剖面几何,用于折线剖面
   hasSectionGeometry: { type: Boolean, default: false },
-  /**
-   * @type Object
-   * @description 模型的偏移方向，主要用来抬高/降低模型
-   * @example
-   * {
-      longitude: 0,
-      latitude: 0,
-      height: 0
-    }
-   */
+
   offset: {
     type: Object,
   },
 
-  /**
-   * @type Object
-   * @description 模型的缩放比例，用来缩放模型
-   * @example 
-   * {
-      x: 1.0,
-      y: 1.0,
-      z: 1.0
-    }
-   */
   scale: {
     type: Object,
   },
 
-  /**
-   * @type Cesium.Matrix4
-   * @default Matrix4.IDENTITY
-   */
-  /* modelMatrix: { type: Object, default: undefined }, */
-  /**
-   * @type Cesium.ShadowMode
-   * @default ShadowMode.ENABLED
-   */
-  /* shadows: { type: Object, default: undefined }, */
-
   maximumScreenSpaceError: { type: [Number, Array], default: 16 },
-  maximumMemoryUsage: { type: Number, default: 512 },
+  maximumCacheOverflowBytes: { type: Number, default: 536870912 },
 
   cullWithChildrenBounds: { type: Boolean, default: true },
   cullRequestsWhileMoving: { type: Boolean, default: true },
@@ -104,9 +59,9 @@ export default {
   preloadFlightDestinations: { type: Boolean, default: true },
   preferLeaves: { type: Boolean, default: false },
 
-  dynamicScreenSpaceError: { type: Boolean, default: false },
-  dynamicScreenSpaceErrorDensity: { type: Number, default: 0.00278 },
-  dynamicScreenSpaceErrorFactor: { type: Number, default: 4.0 },
+  dynamicScreenSpaceError: { type: Boolean, default: true },
+  dynamicScreenSpaceErrorDensity: { type: Number, default: 0.0002 },
+  dynamicScreenSpaceErrorFactor: { type: Number, default: 24.0 },
   dynamicScreenSpaceErrorHeightFalloff: { type: Number, default: 0.25 },
 
   progressiveResolutionHeightFraction: { type: Number, default: 0.3 },
@@ -114,11 +69,6 @@ export default {
   foveatedScreenSpaceError: { type: Boolean, default: true },
   foveatedConeSize: { type: Number, default: 0.1 },
   foveatedMinimumScreenSpaceErrorRelaxation: { type: Number, default: 0.0 },
-  /**
-   * @type Cesium3DTileset~foveatedInterpolationCallback
-   * @default Cesium.Math.lerp
-   */
-  /* foveatedInterpolationCallback: { type: Function, default: undefined }, */
   foveatedTimeDelay: { type: Number, default: 0.2 },
 
   skipLevelOfDetail: { type: Boolean, default: false },
@@ -129,30 +79,6 @@ export default {
   immediatelyLoadDesiredLevelOfDetail: { type: Boolean, default: false },
   loadSiblings: { type: Boolean, default: false },
 
-  /**
-   * @type Cesium.ClippingPlaneCollection
-   */
-  /* clippingPlanes: { type: Object, default: undefined }, */
-  /**
-   * @type Cesium.ClassificationType
-   */
-  /* classificationType: { type: Object, default: undefined }, */
-  /**
-   * @type Cesium.Ellipsoid
-   * @default Ellipsoid.WGS84
-   */
-  /* ellipsoid: { type: Object, default: undefined }, */
-
-  /* pointCloudShading: { type: Object, default: undefined }, */
-  /**
-   * @type Cartesian2
-   * @default new Cartesian2(1.0, 1.0)
-   */
-  /* imageBasedLightingFactor: { type: Object, default: undefined }, */
-  /**
-   * @type Cartesian3
-   */
-  /* lightColor: { type: Object, default: undefined }, */
   luminanceAtZenith: { type: Number, default: 0.2 },
 
   debugHeatmapTilePropertyName: { type: String },
