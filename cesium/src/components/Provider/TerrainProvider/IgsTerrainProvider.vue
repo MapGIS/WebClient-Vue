@@ -113,8 +113,6 @@ export default {
                 sceneSublayerOptions
               );
               m3dSet._layerIndex = sceneSublayerId;
-              m3dSet.imageBasedLighting.luminanceAtZenith = luminanceAtZenith;
-              m3dSet.cacheBytes = maximumMemoryUsage;
               viewer.scene.primitives.add(m3dSet);
               if (this.autoReset) {
                 viewer.zoomTo(m3dSet);
@@ -218,8 +216,8 @@ export default {
       // 修改者：龚跃健 2024/10/28
       const tempProps = {
         ...this.$props,
-        ...this.$props.extensions,
         ...this.$options.propsData,
+        ...this.$props.extensions,
       };
       Object.keys(tempProps).forEach(function (key) {
         options[key] = tempProps[key];
