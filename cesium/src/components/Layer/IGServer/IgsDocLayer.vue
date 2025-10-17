@@ -85,22 +85,26 @@ export default {
         url: baseUrl,
         renderMode: this.renderMode === "image-map" ? "image" : "tile",
         sublayers,
+        extensionOptions: this.options?.extensions
+          ? this.options.extensions
+          : {},
       });
       const self = this;
       igsMapImageLayer.load().then((layer) => {
-        if (layer.loaded) {
-          // 获取provider的初始化参数
-          const cesiumOptions = initializeOptions(layer, viewer);
-          const { rectangle } = cesiumOptions;
-          if (rectangle) {
-            const { west, south, east, north } = rectangle;
-            // 如果范围无效，则不加载
-            if (west >= east || south >= north) {
-              return;
-            }
-          }
-          self.$_mount(cesiumOptions);
+        if (!layer.loaded) {
+          return;
         }
+        // 获取provider的初始化参数
+        const cesiumOptions = initializeOptions(layer, viewer);
+        const { rectangle } = cesiumOptions;
+        if (rectangle) {
+          const { west, south, east, north } = rectangle;
+          // 如果范围无效，则不加载
+          if (west >= east || south >= north) {
+            return;
+          }
+        }
+        self.$_mount(cesiumOptions);
       });
       // 如果是一张图出图，那么providerName为MapGISMapServer一张图出图provider
       if (this.renderMode && this.renderMode === "image-map") {

@@ -82,6 +82,9 @@ export default {
         url: baseUrl,
         renderMode: "image",
         extent: options.rectangle || null,
+        extensionOptions: this.options?.extensions
+          ? this.options.extensions
+          : {},
       };
 
       if (token.key && token.value) {
@@ -95,6 +98,9 @@ export default {
       const arcGISMapImageLayer = new ArcGISMapImageLayer(paramOptions);
       const self = this;
       arcGISMapImageLayer.load().then((layer) => {
+        if (!layer.loaded) {
+          return;
+        }
         // 获取provider的初始化参数
         const cesiumOptions = initializeOptions(layer, viewer);
         const { rectangle } = cesiumOptions;

@@ -193,6 +193,9 @@ export default {
       });
 
       tilesetLayer.load().then((layer) => {
+        if (!layer.loaded) {
+          return;
+        }
         const cesiumOptions = initializeOptions(layer, viewer);
         cesiumOptions.generateUniqueId = true;
         zondy.cesium.Cesium3DTileset.fromUrl(

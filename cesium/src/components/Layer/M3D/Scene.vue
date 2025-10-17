@@ -393,6 +393,9 @@ export default {
       });
       // 加载场景服务
       sceneLayer.load().then(async (layer) => {
+        if (!layer.loaded) {
+          return;
+        }
         const subLayers = layer.activeScene.sublayers.items;
         subLayers.map((item) => {
           if (item.type === IGSSceneOriginLayerType.terrain) {

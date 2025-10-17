@@ -182,6 +182,9 @@ export default {
           maximumCacheOverflowBytes,
       });
       commonM3DLayer.load().then((layer) => {
+        if (!layer.loaded) {
+          return;
+        }
         const cesiumOptions = initializeOptions(layer, viewer);
         zondy.cesium.MapGISM3DSet.fromUrl(
           cesiumOptions.url,

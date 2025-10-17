@@ -40,23 +40,27 @@ export default {
       // 创建瓦片图层对象
       const igsTileLayer = new IGSTileLayer({
         url: baseUrl,
+        extensionOptions: this.options?.extensions
+          ? this.options.extensions
+          : {},
       });
       const vm = this;
       // 获取瓦片图层服务的元信息
       igsTileLayer.load().then((layer) => {
-        if (layer.loaded) {
-          // 获取provider的初始化参数
-          const cesiumOptions = initializeOptions(layer, viewer);
-          const { rectangle } = cesiumOptions;
-          if (rectangle) {
-            const { west, south, east, north } = rectangle;
-            // 如果范围无效，则不加载
-            if (west >= east || south >= north) {
-              return;
-            }
-          }
-          vm.$_mount(cesiumOptions);
+        if (!layer.loaded) {
+          return;
         }
+        // 获取provider的初始化参数
+        const cesiumOptions = initializeOptions(layer, viewer);
+        const { rectangle } = cesiumOptions;
+        if (rectangle) {
+          const { west, south, east, north } = rectangle;
+          // 如果范围无效，则不加载
+          if (west >= east || south >= north) {
+            return;
+          }
+        }
+        vm.$_mount(cesiumOptions);
       });
     },
     unmount() {

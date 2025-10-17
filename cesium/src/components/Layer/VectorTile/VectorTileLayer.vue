@@ -66,6 +66,9 @@ export default {
     async $_addLayer(opt) {
       const { viewer, $props } = this;
       const commonLayer = await this.getIGSVectorTileLayer();
+      if (!commonLayer) {
+        return;
+      }
       const cesiumOptions = initializeOptions(commonLayer, viewer);
       const { rectangle } = cesiumOptions;
       if (rectangle) {
@@ -143,15 +146,24 @@ export default {
           resolve();
         } else {
           const { token } = this;
-          const options = { url: styleUrl, style: styleObject };
+          const options = {
+            url: styleUrl,
+            style: styleObject,
+            extensionOptions: this.options?.extensions
+              ? this.options.extensions
+              : {},
+          };
 
           if (token.key && token.value) {
             options.tokenKey = token.key;
             options.tokenValue = token.value;
           }
           const igsVectorTileLayer = new IGSVectorTileLayer(options);
-          igsVectorTileLayer.load().then((res) => {
-            resolve(igsVectorTileLayer);
+          igsVectorTileLayer.load().then((layer) => {
+            if (!layer.loaded) {
+              resolve(null);
+            }
+            resolve(layer);
           });
         }
       });
