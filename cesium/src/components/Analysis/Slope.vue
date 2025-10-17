@@ -56,12 +56,12 @@ export default {
             type: Array,
             default: () => {
                 return [
-                    { min: 0, max: 15, color: "rgba(244, 67, 54, 0.5)" },
-                    { min: 15, max: 30, color: "rgba(233, 30, 99, 0.5)" },
-                    { min: 30, max: 45, color: "rgba(156, 39, 176, 0.5)" },
-                    { min: 45, max: 60, color: "rgba(255, 235, 59, 0.5)" },
-                    { min: 60, max: 75, color: "rgba(96, 125, 139, 0.5)" },
-                    { min: 75, max: 90, color: "rgba(76, 175, 80, 0.5)" },
+                    { min: 0, max: 5, color: "rgba(244, 67, 54, 0.5)" },
+                    { min: 5, max: 10, color: "rgba(233, 30, 99, 0.5)" },
+                    { min: 10, max: 20, color: "rgba(156, 39, 176, 0.5)" },
+                    { min: 20, max: 35, color: "rgba(255, 235, 59, 0.5)" },
+                    { min: 35, max: 55, color: "rgba(96, 125, 139, 0.5)" },
+                    { min: 55, max: 90, color: "rgba(76, 175, 80, 0.5)" },
                 ];
             },
         },
