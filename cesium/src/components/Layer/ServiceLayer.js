@@ -54,6 +54,7 @@ export default {
           minimumLevel: 0,
           maximumLevel: 20,
           credit: undefined,
+          extensions: null,
         };
       },
     },
@@ -226,6 +227,9 @@ export default {
       let provider;
       let imageryLayer;
       const { providerName } = this;
+      if (options.hasOwnProperty("extensions")) {
+        delete options.extensions;
+      }
       if (vueCesiumLayer) {
         provider = new vueCesiumLayer(options);
       } else {
@@ -244,6 +248,7 @@ export default {
             "MapGISMapServerImageryProvider",
             "MapGISTileServerImageryProvider",
             "UrlTemplateImageryProvider",
+            "WebMapTileServiceImageryProvider",
           ].includes(providerName)
         ) {
           provider = new zondy.cesium[providerName](options);
