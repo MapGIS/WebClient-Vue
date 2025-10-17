@@ -88,6 +88,9 @@ export default {
       const paramOptions = {
         url: this.baseUrl,
         extent: null,
+        extensionOptions: this.options?.extensions
+          ? this.options.extensions
+          : {},
       };
       if (token.key && token.value) {
         paramOptions.tokenKey = token.key;
@@ -97,6 +100,9 @@ export default {
       const vm = this;
       // 获取WMTS图层服务的元信息
       wmtsLayer.load().then((layer) => {
+        if (!layer.loaded) {
+          return;
+        }
         const { sublayers, tileMatrixSets, activeLayer } = layer;
         // 判断当前activeLayer的identifier是否与传入的wmtsLayer一致
         const isSameIdentifier = activeLayer.identifier === activeWMTSLayer;

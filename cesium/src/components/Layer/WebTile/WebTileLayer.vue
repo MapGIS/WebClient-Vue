@@ -128,6 +128,9 @@ export default {
         rectangle = new this.Cesium.Rectangle(west, south, east, north);
       }
       allOptions.rectangle = rectangle;
+      if (this.options?.extensions) {
+        allOptions = { ...allOptions, ...this.options?.extensions };
+      }
       this.$_mount(allOptions);
     },
     unmount() {

@@ -77,6 +77,9 @@ export default {
         url: baseUrl,
         gdbp: param[0],
         renderMode: "server",
+        extensionOptions: this.options?.extensions
+          ? this.options.extensions
+          : {},
       };
 
       if (param.length > 1) {
@@ -86,8 +89,11 @@ export default {
       }
 
       const vm = this;
-      const layer = new IGSFeatureLayer(options);
-      layer.load().then(() => {
+      const igsFeatureLayer = new IGSFeatureLayer(options);
+      igsFeatureLayer.load().then((layer) => {
+        if (!layer.loaded) {
+          return;
+        }
         const cesiumOptions = initializeOptions(layer);
         const { rectangle } = cesiumOptions;
         if (rectangle) {

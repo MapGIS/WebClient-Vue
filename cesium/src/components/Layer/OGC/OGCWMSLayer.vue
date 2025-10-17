@@ -116,6 +116,9 @@ export default {
         imageTransparency: transparent,
         version,
         extent: null,
+        extensionOptions: this.options?.extensions
+          ? this.options.extensions
+          : {},
       };
       if (token.key && token.value) {
         paramOptions.tokenKey = token.key;
@@ -124,6 +127,9 @@ export default {
       const wmsLayer = new WMSLayer(paramOptions);
       const self = this;
       wmsLayer.load().then((layer) => {
+        if (!layer.loaded) {
+          return;
+        }
         // 获取provider的初始化参数
         const cesiumOptions = initializeOptions(layer, viewer);
         this.$_mount(cesiumOptions);
