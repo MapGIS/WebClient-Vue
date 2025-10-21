@@ -1,150 +1,5 @@
 <template>
   <div>
-    <mapgis-ui-collapse-card
-      class="mapgis-3d-scene-layer"
-      v-if="enableControl"
-      ref="card"
-      position="top-left"
-      :defaultCollapse="false"
-      :outStyle="outStyle"
-      :title="title"
-      @toggle-main="handleBackMain"
-    >
-      <mapgis-ui-iconfont type="mapgis-layer1" slot="icon-hiden" />
-      <span class="mapgis-3d-scene-layer-title" slot="title">{{ title }}</span>
-      <mapgis-ui-space slot="extra" class="mapgis-3d-scene-layer-icons">
-        <mapgis-ui-tooltip v-for="(m, i) in menus" :key="i">
-          <template slot="title">{{ m.title }}</template>
-          <mapgis-ui-iconfont
-            :class="{ active: m.active }"
-            :type="m.icon"
-            @click="handleMenu(m.title)"
-          />
-        </mapgis-ui-tooltip>
-      </mapgis-ui-space>
-      <mapgis-ui-row class="mapgis-3d-g3d-document">
-        <mapgis-ui-input-search
-          style="margin-bottom: 8px"
-          placeholder="搜索"
-          @change="onChange"
-        />
-        <mapgis-ui-tree
-          class="mapgis-3d-g3d-document-tree"
-          checkable
-          showIcon
-          v-model="layerIds"
-          :expanded-keys="expandedKeys"
-          :auto-expand-parent="autoExpandParent"
-          :tree-data="layerTree"
-          :selectedKeys="selectedKeys"
-          @expand="onExpand"
-          @select="onSelect"
-        >
-          <template slot="custom" slot-scope="{}"> </template>
-          <template
-            slot="title"
-            slot-scope="{
-              title,
-              icon,
-              version,
-              gdbp,
-              ip,
-              port,
-              domain,
-              layerIndex,
-              layerType,
-              key,
-              subLayerType,
-            }"
-          >
-            <mapgis-ui-iconfont
-              :type="subLayerType"
-              :style="{ marginRight: '2px' }"
-            />
-            <span
-              :class="{
-                'mapgis-3d-scene-layer-span': true,
-                'mapgis-3d-scene-layer-span-inline': true,
-                select: selectLayerIndex == layerIndex,
-              }"
-            >
-              <span v-if="title && title.indexOf(searchValue) > -1">
-                {{ title.substr(0, title.indexOf(searchValue)) }}
-                <span style="color: #f50">{{ searchValue }}</span>
-                {{
-                  title.substr(title.indexOf(searchValue) + searchValue.length)
-                }}
-              </span>
-              <span v-else>{{ title }}</span>
-              <span
-                v-if="version && key == '地图场景默认键值'"
-                class="mapgis-3d-scene-layer-version"
-                >版本:{{ version }}</span
-              >
-              <mapgis-ui-iconfont
-                v-if="
-                  layerType == type.cache &&
-                  (!isolation || selectLayerIndex == layerIndex)
-                "
-                :type="icon"
-                class="iconfont"
-                style="marginleft: 8px"
-                @click="
-                  () =>
-                    handleActiveItemKey({
-                      title,
-                      version,
-                      gdbp,
-                      ip,
-                      port,
-                      domain,
-                      layerIndex,
-                      key,
-                    })
-                "
-              />
-              <mapgis-ui-iconfont
-                v-if="
-                  layerType == type.cache &&
-                  (!isolation || selectLayerIndex == layerIndex)
-                "
-                :type="layerKey == key ? 'mapgis-unlock' : 'mapgis-lock'"
-                class="iconfont"
-                @click="
-                  () =>
-                    changeIsolation({
-                      title,
-                      icon,
-                      version,
-                      gdbp,
-                      ip,
-                      port,
-                      domain,
-                      layerIndex,
-                      key,
-                    })
-                "
-              />
-            </span>
-          </template>
-        </mapgis-ui-tree>
-      </mapgis-ui-row>
-
-      <m3d-menus
-        slot="panel"
-        size="big"
-        :mode="layerKey == '地图场景默认键值' ? 'g3d' : 'm3d'"
-        :version="version"
-        :g3dLayerIndex="g3dLayerIndex"
-        :layerIndex="selectLayerIndex"
-        :gdbp="gdbp"
-        :ip="ip"
-        :port="port"
-        :domain="domain"
-        @enable-dynamic-query="handleDynamicQuery"
-      >
-      </m3d-menus>
-    </mapgis-ui-collapse-card>
     <mapgis-3d-feature-popup
       v-if="featureposition"
       :position="featureposition"
@@ -166,10 +21,7 @@
 </template>
 
 <script>
-import { G3D } from "@mapgis/webclient-es6-service";
 import G3DOptions from "./G3DOptions";
-import { checkTypeNode, loopM3ds, checkTypeIcon } from "./util";
-import M3dMenus from "./components/M3dMenus.vue";
 import PopupMixin from "../Mixin/PopupMixin";
 import * as Feature from "../../service/comprehensive-query/util/feature";
 import {
@@ -185,8 +37,6 @@ import {
   UrlTemplateImageryProvider,
   MapGISMapServerImageryProvider,
 } from "@mapgis/webclient-cesium-plugin";
-
-const { G3DLayerType, M3DTileDataInfo } = G3D;
 
 export default {
   name: "mapgis-3d-scene-layer",
@@ -233,66 +83,13 @@ export default {
     },
   },
   mixins: [PopupMixin],
-  components: {
-    M3dMenus,
-  },
   data() {
     return {
-      title: "G3D场景图层",
       layerIds: this.parseLayers(),
-      type: {
-        terrain: G3DLayerType.g3dTerrainLayer,
-        cache: G3DLayerType.g3dCacheLayer,
-      },
-      menus: [
-        {
-          title: "静态单体化查询",
-          icon: "mapgis-highlight",
-          active: this.enablePopup,
-        },
-        {
-          title: "批量设置",
-          icon: "mapgis-setting",
-          active: false,
-        },
-        {
-          title: "隐藏面板",
-          icon: "mapgis-hide",
-          active: false,
-        },
-      ],
-      layerTree: [
-        {
-          title: "地图场景",
-          key: "地图场景默认键值",
-          version: "",
-          layerIndex: -99,
-          icon: "mapgis-layer1",
-          menu: "mapgis-down",
-          children: [],
-          scopedSlots: { icon: "custom", title: "title" },
-        },
-      ],
-      expandedKeys: [],
-      searchValue: "",
-      autoExpandParent: true,
-      expandItemKey: undefined,
-      activeItemKey: undefined,
-      gdbp: undefined,
-      g3dLayerIndex: undefined, // g3d图层再整个viewer中的顺序
-      layerKey: undefined,
-      selectLayerIndex: undefined, // 当前g3d图层中子图层m3d的图层顺序
-      selectedKeys: [],
-      version: undefined,
-      ip: "localhost",
-      port: "6163",
-      domain: undefined,
-      isolation: false,
       featureposition: undefined, // {longitude: 0, latitude: 0, height: 0},
       featureproperties: undefined,
       featurevisible: undefined,
       featureclickenable: this.enablePopup,
-      iEnableIot: false,
       layerVisibleArr: [], //记录显示的图层，拾取时隐藏的图层直接忽略
     };
   },
@@ -371,13 +168,7 @@ export default {
       const { viewer, url, $props, enablePopup, layerId } = this;
       const { luminanceAtZenith, maximumCacheOverflowBytes } = this;
 
-      let version = this.parseVersion();
-      let server = this.parseServer();
       const options = this.getOptions();
-      let { ip, port, domain } = server;
-      this.ip = ip;
-      this.port = port;
-      this.domain = domain;
       const sceneLayer = new IGSSceneLayer({
         // 服务基地址
         url,
@@ -493,9 +284,6 @@ export default {
           originStyles,
           commonLayer: layer,
         });
-        if (layers && Object.keys(layers).length) {
-          this.setLayerTree(layer, layers);
-        }
         if (enablePopup) {
           vm.bindPopupEvent();
         }
@@ -546,191 +334,6 @@ export default {
       }
       this.$emit("unload", { component: this });
       vueCesium.G3DManager.deleteSource(vueKey, vueIndex);
-    },
-    /**
-     * 设置场景服务图层树
-     */
-    setLayerTree(layer, source) {
-      const { ip, port, domain } = this;
-      if (!source) {
-        return;
-      }
-      // 设置服务目录树
-      this.layerTree[0].title = layer.title;
-      const sublayers = layer.activeScene.allSublayers.items;
-      if (sublayers && sublayers.length > 0) {
-        for (let i = 0; i < sublayers.length; i++) {
-          const sublayer = sublayers[i];
-          const { layerName, id, type, layerIndex, url } = sublayer;
-          const { version } = source[layerIndex].source;
-          switch (source[layerIndex].type) {
-            // MapGIS M3D图层
-            case InitializeOptionsType.MapGISM3DSet:
-              this.layerTree[0].children.push({
-                title: layerName,
-                key: id,
-                layerIndex,
-                layerType: type,
-                ip,
-                port,
-                domain,
-                gdbp: url,
-                version,
-                icon: "mapgis-layer",
-                menu: "mapgis-down",
-                scopedSlots: {
-                  icon: "custom",
-                  title: "title",
-                },
-              });
-              break;
-            // MapGIS地形图层
-            case InitializeOptionsType.MapGISTerrainProvider:
-              this.layerTree[0].children.push({
-                title: layerName,
-                key: id,
-                layerIndex,
-                layerType: type,
-                subLayerType: "mapgis-terrain",
-                icon: "mapgis-terrain",
-                menu: "mapgis-down",
-                scopedSlots: {
-                  icon: "custom",
-                  title: "title",
-                },
-              });
-              break;
-            // 覆盖物图层 IGS 2.0
-            case InitializeOptionsType.MapGISMapServerImageryProvider:
-            // 覆盖物图层 IGS 1.0
-            case InitializeOptionsType.UrlTemplateImageryProvider:
-              this.layerTree[0].children.push({
-                title: layerName,
-                key: id,
-                layerIndex,
-                layerType: type,
-                subLayerType: "mapgis-vector",
-                icon: "mapgis-vector",
-                menu: "mapgis-down",
-                scopedSlots: {
-                  icon: "custom",
-                  title: "title",
-                },
-              });
-              break;
-            case InitializeOptionsType.label:
-              // TODO：注记图层暂未重构，在initializeOptions方法时已经添加到场景中
-              break;
-          }
-        }
-      }
-    },
-    // 搜索需要
-    onExpand(expandedKeys) {
-      this.expandedKeys = expandedKeys;
-      this.autoExpandParent = false;
-    },
-    getParentKey(key, tree) {
-      let parentKey;
-      for (let i = 0; i < tree.length; i++) {
-        const node = tree[i];
-        if (node.children) {
-          if (node.children.some((item) => item.key === key)) {
-            parentKey = node.key;
-          } else if (this.getParentKey(key, node.children)) {
-            parentKey = this.getParentKey(key, node.children);
-          }
-        }
-      }
-      return parentKey;
-    },
-    onChange(e) {
-      let { layerTree } = this;
-      const dataList = [];
-      const generateList = (data) => {
-        for (let i = 0; i < data.length; i++) {
-          const node = data[i];
-          const { key } = node;
-          dataList.push({ key, title: key });
-          if (node.children) {
-            generateList(node.children);
-          }
-        }
-      };
-      generateList(layerTree);
-
-      const value = e.target.value;
-      const expandedKeys = dataList
-        .map((item) => {
-          if (item.title.indexOf(value) > -1) {
-            return this.getParentKey(item.key, layerTree);
-          }
-          return null;
-        })
-        .filter((item, i, self) => item && self.indexOf(item) === i);
-      Object.assign(this, {
-        expandedKeys,
-        searchValue: value,
-        autoExpandParent: true,
-      });
-    },
-    onSelect(e, payload) {
-      this.selectedKeys = e;
-      const { selectedNodes } = payload;
-      if (selectedNodes && selectedNodes.length > 0) {
-        let { data } = selectedNodes[0];
-        let { props } = data;
-        let { layerIndex } = props;
-        this.highlightM3d(layerIndex);
-      }
-    },
-    resortLayers() {
-      const vm = this;
-      let childern = vm.layerTree[0].children;
-      let news = childern.sort((a, b) => a.layerIndex - b.layerIndex);
-    },
-    parseServer(url) {
-      url = url || this.url;
-      const urlObj = new URL(url);
-      this.ip = urlObj.hostname;
-      this.port = urlObj.port;
-      this.domain = urlObj.origin;
-      return {
-        ip: this.ip,
-        port: this.port,
-        domain: this.domain,
-      };
-    },
-    parseVersion(url) {
-      url = url || this.url;
-      let g3d = new RegExp("/igs/rest/g3d/");
-      let scene = new RegExp("/SceneServer");
-      let find = url.search(g3d);
-      let findScene = url.search(scene);
-      if (find >= 0) {
-        // 0.0 1.0版本的m3d图层，等于2.0版本的g3d图层
-        this.version = "1.0";
-      } else if (findScene >= 0) {
-        // 2.0 版本
-        this.version = "2.0";
-      } else {
-        this.version = "1.0";
-      }
-      return this.version;
-    },
-    parseName(m3d) {
-      let { _gdbpUrl } = m3d;
-      let name;
-      let reg = new RegExp(/\\.*\.mcj/g);
-      let result = _gdbpUrl.match(reg);
-      if (result && result.length > 0) {
-        let temp = result[0];
-        let res = temp.split("\\");
-        let proj = res[res.length - 1];
-        let names = proj.split(".mcj");
-        name = names && names.length > 0 ? names[0] : "未命名";
-      }
-      return name;
     },
     parseLayers(layerString) {
       layerString = layerString || this.layers;
@@ -824,25 +427,6 @@ export default {
         }
       }
     },
-    handleExpandItemKey(key) {
-      if (key == this.expandItemKey) {
-        this.expandItemKey = undefined;
-      } else {
-        this.expandItemKey = key;
-      }
-    },
-    handleActiveItemKey(layer) {
-      const { title, version, gdbp, ip, port, domain, layerIndex, key } = layer;
-      this.title = title;
-      this.gdbp = gdbp;
-      this.version = version;
-      this.ip = ip;
-      this.port = port;
-      this.domain = domain;
-      this.selectLayerIndex = layerIndex;
-      this.layerKey = key;
-      this.$refs.card && this.$refs.card.togglePanel();
-    },
     /**
      * 恢复M3D样式
      */
@@ -854,83 +438,6 @@ export default {
           const { id, style } = item;
           find.source[id].source.style = style;
         });
-      }
-    },
-    /**
-     * 恢复M3D显示
-     */
-    restoreOriginVisible() {
-      const { vueKey, vueIndex, vueCesium, viewer } = this;
-      const find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
-      if (find && find.source && find.options.originStyles) {
-        find.options.originStyles.forEach((item) => {
-          const { id } = item;
-          find.source[id].source.show = true;
-        });
-      }
-    },
-    changeIsolation(layer) {
-      const { key } = layer;
-      const vm = this;
-      if (this.layerKey != key) {
-        this.layerKey = key;
-        this.isolation = true;
-        window.setTimeout(() => vm.enableIsolation(layer), 10);
-      } else {
-        this.layerKey = undefined;
-        this.isolation = false;
-        window.setTimeout(() => vm.disableIsolation(), 10);
-      }
-    },
-    enableIsolation(layer) {
-      const { viewer, Cesium, vueCesium, vueKey, vueIndex } = this;
-      const { layerIndex } = layer;
-      this.featurevisible = false;
-      this.selectedKeys = [`${layerIndex}`];
-      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
-      if (find && find.source) {
-        const layerIds = Object.keys(find.source);
-        for (let i = 0; i < layerIds.length; i++) {
-          const layerId = layerIds[i];
-          const layer = find.source[layerId];
-          const source = layer.source;
-          if (layerId != layerIndex) {
-            source.show = false;
-          } else {
-            source.show = true;
-            viewer.zoomTo(source);
-          }
-        }
-      }
-      let children = this.layerTree[0].children.map((c) => {
-        if (c.layerIndex == layerIndex) {
-          c.disabled = false;
-        } else {
-          c.disabled = true;
-        }
-        return c;
-      });
-      this.layerTree[0].children.splice(0, 1, children[0]);
-    },
-    disableIsolation() {
-      let children = this.layerTree[0].children.map((c) => {
-        c.disabled = false;
-        return c;
-      });
-      this.layerTree[0].children.splice(0, 1, children[0]);
-      this.restoreOriginVisible();
-    },
-    handleMenu(menu) {
-      if (menu == "隐藏面板") {
-        this.$refs.card && this.$refs.card.hide();
-      } else if (menu == "静态单体化查询") {
-        if (this.menus[0].active) {
-          this.menus[0].active = false;
-          this.unbindPopupEvent();
-        } else {
-          this.menus[0].active = true;
-          this.bindPopupEvent();
-        }
       }
     },
     pickFeature(payload) {
@@ -963,8 +470,6 @@ export default {
       ) {
         return;
       }
-      vm.selectLayerIndex = index;
-      vm.selectedKeys = [`${index}`];
       this.queryStatic(movement);
     },
     cancelFeature() {
@@ -1035,7 +540,6 @@ export default {
     },
     highlightM3d(layerIndex) {
       const { vueKey, vueIndex, vueCesium, Cesium, viewer } = this;
-      this.selectLayerIndex = layerIndex;
       let m3dlayer;
       const find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
       if (find && find.source) {
@@ -1064,15 +568,8 @@ export default {
     },
     async queryStatic(movement) {
       const vm = this;
-      const {
-        Cesium,
-        viewer,
-        version,
-        g3dLayerIndex,
-        popupOptions,
-        highlightStyle,
-        popupShowType,
-      } = this;
+      const { Cesium, viewer, popupOptions, highlightStyle, popupShowType } =
+        this;
       const { vueKey, vueIndex, vueCesium } = this;
       const scene = viewer.scene;
 
@@ -1123,8 +620,6 @@ export default {
             color: pickedFeature.color,
             index: pickedFeature._content._tileset._layerIndex,
           };
-          vm.selectLayerIndex = index;
-          vm.selectedKeys = [`${index}`];
           // 修改说明：M3D2.1已弃用viewer.scene.pickOid方法，后面统一从feature上获取要素id，高亮统一使用Cesium3DTileStyle设置
           // 修改人:龚跃健
           // 修改日期：2024-11-22
@@ -1229,13 +724,6 @@ export default {
           });
         }
       }
-    },
-    handleDynamicQuery() {
-      this.featurevisible = false;
-      this.featureclickenable = false;
-    },
-    handleBackMain() {
-      this.featureclickenable = this.enablePopup;
     },
     projectScreen(file) {
       this.$emit("project-screen", file);
