@@ -78,4 +78,9 @@ export default {
    * @description 是否激活查询弹窗
    */
   enablePopup: { type: Boolean, default: false },
+  // 扩展属性，以支持通过对象的方式批量传入图层属性，
+  // 但是优先级低于单个传入属性，即如果单个属性有传入值，优先使用传入的值，
+  // 如果没有传入，但是extensions中有该属性，则使用extensions里对应的值
+  // 修改者：龚跃健 2024/10/28
+  extensions: { type: Object },
 };
