@@ -23,7 +23,7 @@
                 @goto-path="onGotoPath(item)"
                 @delete-path="onDeletePath(item)"
                 @change-path-name="
-                  val => {
+                  (val) => {
                     onChangePathName(val, item.id);
                   }
                 "
@@ -49,7 +49,7 @@
               :columns="addedPositionsColumns"
               :data-source="positions"
               :rowKey="
-                record => {
+                (record) => {
                   return record.number;
                 }
               "
@@ -74,7 +74,7 @@
                   :key="item"
                   :value="text"
                   @change="
-                    e => handleChange(e.target.value, record.number, item)
+                    (e) => handleChange(e.target.value, record.number, item)
                   "
                 />
                 <div v-else :key="item" class="path-position" :title="text">
@@ -168,7 +168,7 @@ export default {
     ...VueOptions,
     layout: {
       type: String,
-      default: "vertical" // 'horizontal' 'vertical' 'inline'
+      default: "vertical", // 'horizontal' 'vertical' 'inline'
     },
     setting: {
       type: Object,
@@ -185,20 +185,20 @@ export default {
           isLoop: true,
           showPath: true,
           showInfo: true,
-          modelUrl: ""
+          modelUrl: "",
         };
-      }
+      },
     },
     models: {
       type: Array,
       required: true,
-      default: () => []
+      default: () => [],
     },
     paths: {
       type: Array,
       required: true,
-      default: () => []
-    }
+      default: () => [],
+    },
   },
   computed: {
     pathTotal() {
@@ -212,17 +212,26 @@ export default {
       },
       set(val) {
         this.addedPositions = [...val];
-      }
-    }
+      },
+    },
   },
   watch: {
     paths: {
       handler() {
         this.pathsCopy = JSON.parse(JSON.stringify(this.paths));
+        // 如果处于路线漫游中，回到漫游列表
+        if (this.roaming) {
+          this.onGotoHome();
+        } else {
+          // 如果处于添加漫游路线中，回到漫游列表
+          if (this.interactiveAdding) {
+            this.onAddPathCancel();
+          }
+        }
       },
       deep: true,
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   data() {
     return {
@@ -238,21 +247,21 @@ export default {
           dataIndex: "number",
           align: "center",
           ellipsis: true,
-          width: 42
+          width: 42,
         },
         {
           title: "经度",
           dataIndex: "x",
           align: "center",
           ellipsis: true,
-          scopedSlots: { customRender: "x" }
+          scopedSlots: { customRender: "x" },
         },
         {
           title: "纬度",
           dataIndex: "y",
           align: "center",
           ellipsis: true,
-          scopedSlots: { customRender: "y" }
+          scopedSlots: { customRender: "y" },
         },
         {
           title: "高度",
@@ -260,15 +269,15 @@ export default {
           align: "center",
           ellipsis: true,
           scopedSlots: { customRender: "z" },
-          width: 60
+          width: 60,
         },
         {
           title: "操作",
           dataIndex: "operation",
           align: "center",
           ellipsis: true,
-          scopedSlots: { customRender: "operation" }
-        }
+          scopedSlots: { customRender: "operation" },
+        },
       ],
       pathsCopy: [],
       // linePoints: [],
@@ -281,26 +290,26 @@ export default {
         {
           icon: "mapgis-upload",
           title: "上传wl文件",
-          click: this._uploadPaths
+          click: this._uploadPaths,
         },
         {
           icon: "mapgis-Import",
           title: "导入",
-          click: this._importPaths
+          click: this._importPaths,
         },
         {
           icon: "mapgis-export",
           title: "导出",
-          click: this._exportPaths
+          click: this._exportPaths,
         },
         {
           icon: "mapgis-save",
           title: "保存",
-          click: this._savePaths
-        }
+          click: this._savePaths,
+        },
       ],
       pathImportModalVisible: false,
-      importModalType: ""
+      importModalType: "",
     };
   },
   created() {},
@@ -313,16 +322,16 @@ export default {
   methods: {
     async createCesiumObject() {
       return new Promise(
-        resolve => {
+        (resolve) => {
           resolve();
         },
-        reject => {}
+        (reject) => {}
       );
     },
     mount() {
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function(dataSource) {
+      promise.then(function (dataSource) {
         vm.$emit("load", vm);
       });
       this.pointArr = [];
@@ -347,7 +356,7 @@ export default {
       this.draw.startDrawingMarker({
         material,
         addDefaultMark: false,
-        callback: coord => {
+        callback: (coord) => {
           // 获取当前坐标系标准
           const ellipsoid = vm.viewer.scene.globe.ellipsoid;
           // 根据坐标系标准，将笛卡尔坐标转换为地理坐标
@@ -362,7 +371,7 @@ export default {
           vm.addedPositions.push({
             x: lonDegree,
             y: latDegree,
-            z: height
+            z: height,
           });
 
           vm.linePoints.push(lonDegree);
@@ -380,14 +389,14 @@ export default {
                 ),
                 width: 2,
                 material: vm.Cesium.Color.RED,
-                clampToGround: false
-              }
+                clampToGround: false,
+              },
             });
           }
 
           // 绘制点 根据linePoints的内容进行绘制点
           vm.drawPoint(true);
-        }
+        },
       });
     },
     getPathId() {
@@ -417,13 +426,13 @@ export default {
         interpolationAlgorithm,
         isLoop,
         showPath,
-        showInfo
+        showInfo,
       } = this.setting;
       const pathPositions = this.addedPositions
-        .map(item => {
+        .map((item) => {
           return [item.x, item.y, item.z];
         })
-        .reduce(function(a, b) {
+        .reduce(function (a, b) {
           return a.concat(b);
         });
       const path = {
@@ -442,8 +451,8 @@ export default {
           isLoop,
           showPath,
           showInfo,
-          modelUrl: ""
-        }
+          modelUrl: "",
+        },
       };
       this.pathsCopy.push(path);
 
@@ -481,7 +490,7 @@ export default {
      */
     onChangePathName(val, id) {
       const paths = [...this.pathsCopy];
-      let target = paths.find(item => item.id === id);
+      let target = paths.find((item) => item.id === id);
       if (target) {
         target.name = val;
         this.pathsCopy = paths;
@@ -489,7 +498,7 @@ export default {
     },
     updateSetting(val) {
       const vm = this;
-      this.pathsCopy.map(item => {
+      this.pathsCopy.map((item) => {
         if (item.id == vm.roamingPath.id) {
           item.para = { ...val };
         }
@@ -504,7 +513,7 @@ export default {
     },
     removePoint() {
       if (this.pointArr && this.pointArr.length > 0) {
-        this.pointArr.forEach(item => {
+        this.pointArr.forEach((item) => {
           this.viewer.entities.remove(item);
         });
         this.pointArr = [];
@@ -520,8 +529,8 @@ export default {
           ),
           width: 2,
           material: this.Cesium.Color.RED,
-          clampToGround: false
-        }
+          clampToGround: false,
+        },
       });
       this.viewer.flyTo(this.polyline);
     },
@@ -531,7 +540,7 @@ export default {
      * */
     toggleRoad(payLoad) {
       if (this.polyline) {
-        this.polyline.show = payLoad.show
+        this.polyline.show = payLoad.show;
       }
     },
     drawPoint(flag) {
@@ -541,7 +550,7 @@ export default {
         const drawArr = [
           this.linePoints[this.linePoints.length - 3],
           this.linePoints[this.linePoints.length - 2],
-          this.linePoints[this.linePoints.length - 1]
+          this.linePoints[this.linePoints.length - 1],
         ];
         const point = this.viewer.entities.add({
           position: this.Cesium.Cartesian3.fromDegrees(
@@ -551,8 +560,8 @@ export default {
           ),
           point: {
             pixelSize: 10,
-            color: this.Cesium.Color.RED
-          }
+            color: this.Cesium.Color.RED,
+          },
         });
         this.pointArr.push(point);
       } else {
@@ -561,7 +570,7 @@ export default {
           const drawArr = [
             this.linePoints[i],
             this.linePoints[i + 1],
-            this.linePoints[i + 2]
+            this.linePoints[i + 2],
           ];
           const point = this.viewer.entities.add({
             position: this.Cesium.Cartesian3.fromDegrees(
@@ -571,8 +580,8 @@ export default {
             ),
             point: {
               pixelSize: 10,
-              color: this.Cesium.Color.RED
-            }
+              color: this.Cesium.Color.RED,
+            },
           });
           this.pointArr.push(point);
         }
@@ -613,12 +622,12 @@ export default {
       if (this.pathsCopy && this.pathsCopy.length > 0) {
         const exportPaths = {
           pathData: this.pathsCopy,
-          version: 1.0 // 添加版本1.0标识
+          version: 1.0, // 添加版本1.0标识
         };
         const pathJson = JSON.stringify(exportPaths);
         const datetime = Date.now();
         const blob = new Blob([pathJson], {
-          type: "application/json;charset=utf-8"
+          type: "application/json;charset=utf-8",
         });
         saveAs(blob, `pathJson_${datetime}.json`);
         this.$message.success("导出成功");
@@ -642,7 +651,7 @@ export default {
         interpolationAlgorithm,
         isLoop,
         showPath,
-        showInfo
+        showInfo,
       } = this.setting;
       const node = {
         name: `${name}${pathId}`,
@@ -660,16 +669,16 @@ export default {
           isLoop,
           showPath,
           showInfo,
-          modelUrl: ""
-        }
+          modelUrl: "",
+        },
       };
       this.pathsCopy.push(node);
     },
     // 导入json更新漫游路径
     updatePaths(data) {
       if (!data) return this.$message.error("导入失败，未获取到漫游路径");
-      data.pathData.forEach(path => {
-        const index = this.pathsCopy.findIndex(item => item.id === path.id);
+      data.pathData.forEach((path) => {
+        const index = this.pathsCopy.findIndex((item) => item.id === path.id);
         if (index > -1) {
           this.pathsCopy.splice(index, 1, path);
         } else {
@@ -684,7 +693,7 @@ export default {
         newData[i].y = Number(newData[i].y);
         newData[i].z = Number(newData[i].z);
       }
-      const target = newData.find(item => index === item.number);
+      const target = newData.find((item) => index === item.number);
       if (target) {
         delete target.editable;
         this.positions = newData;
@@ -693,13 +702,13 @@ export default {
     },
     editPosition(index) {
       const newData = [...this.positions];
-      const currentKey = newData.find(item => item.number === index);
+      const currentKey = newData.find((item) => item.number === index);
       currentKey.editable = true;
       this.positions = newData;
     },
     handleChange(value, index, column) {
       const newData = [...this.positions];
-      const target = newData.find(item => index === item.number);
+      const target = newData.find((item) => index === item.number);
       if (target) {
         target[column] = value;
         this.positions = newData;
@@ -708,7 +717,7 @@ export default {
     // 重新绘制路线
     resizeRoaming() {
       this.linePoints = [];
-      this.addedPositions.forEach(item => {
+      this.addedPositions.forEach((item) => {
         this.linePoints.push(item.x);
         this.linePoints.push(item.y);
         this.linePoints.push(item.z);
@@ -724,13 +733,13 @@ export default {
             ),
             width: 2,
             material: this.Cesium.Color.RED,
-            clampToGround: false
-          }
+            clampToGround: false,
+          },
         });
       }
       this.drawPoint();
-    }
-  }
+    },
+  },
 };
 </script>
 
