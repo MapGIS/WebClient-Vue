@@ -288,7 +288,6 @@ export default {
       return Feature.fromJSON(feature);
     },
     generateRenderer(renderer) {
-      console.log("generateRenderer", BaseRenderer.fromJSON(renderer));
       return BaseRenderer.fromJSON(renderer);
     },
     generateCommonMap() {
