@@ -260,6 +260,11 @@ export default {
       return new IGSFeatureLayer(options);
     },
     generateGeoJSONLayer(options) {
+      let { url } = options;
+      if (url instanceof FeatureSet) {
+        // GeoJSONLayer的url不能传FeatureSet对象，支持传url字符串和GeoJSON对象
+        options.url = url.toGeoJSON();
+      }
       return new GeoJSONLayer(options);
     },
     generateWFSLayer(options) {
