@@ -278,22 +278,50 @@ export default {
         this.projectorOverlayLayerListCopy = JSON.parse(
           JSON.stringify(this.projectorOverlayLayerList)
         );
+        // 记录之前的数据
+        const oldProjectorList = [...this.projectorList];
         if (this.projectorOverlayLayerListCopy.length > 0) {
-          // 默认取第一个
-          // this.currentProjectorOverlayLayer = this.projectorOverlayLayerListCopy[0];
           this.layerSelectOptions = [];
           for (let i = 0; i < this.projectorOverlayLayerListCopy.length; i++) {
             const { id, name } = this.projectorOverlayLayerListCopy[i];
             this.layerSelectOptions.push({ id, name });
           }
-          if (this.currentLayerId) {
-            this.currentProjectorOverlayLayer =
-              this.projectorOverlayLayerListCopy.find(
-                (item) => item.id === this.currentLayerId
-              );
-            this._initPutProjectors();
+          let currentLayerIdTemp = this.currentLayerId;
+          if (!currentLayerIdTemp || currentLayerIdTemp === "") {
+            currentLayerIdTemp = this.projectorOverlayLayerListCopy[0].id;
+          }
+          this.currentProjectorOverlayLayer =
+            this.projectorOverlayLayerListCopy.find(
+              (item) => item.id === currentLayerIdTemp
+            );
+        }
+        // 同步删除视图中的投放
+        if (oldProjectorList.length > 0) {
+          for (let i = 0; i < oldProjectorList.length; i++) {
+            const projector = oldProjectorList[i];
+            const hasProjector = this.projectorList.find(
+              (item) => item.id === projector.id
+            );
+            if (!hasProjector) {
+              if (
+                projector.params.areaCoords &&
+                projector.params.areaCoords.length
+              ) {
+                this.removeGraphic(projector.id);
+              } else {
+                // 取消被删除projector的投放
+                this.cancelPutProjector(projector);
+                if (
+                  this.currentEditProjector &&
+                  this.currentEditProjector.id === projector.id
+                ) {
+                  this.currentEditProjector = null;
+                }
+              }
+            }
           }
         }
+        this._initPutProjectors();
       },
       deep: true,
       immediate: true,
