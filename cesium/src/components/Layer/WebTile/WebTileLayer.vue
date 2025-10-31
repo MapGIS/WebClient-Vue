@@ -113,7 +113,7 @@ export default {
         tempBaseUrl = urlStrs[0] + strChilds[1];
       }
 
-      const allOptions = { ...options, baseUrl: tempBaseUrl, url: tempBaseUrl };
+      let allOptions = { ...options, baseUrl: tempBaseUrl, url: tempBaseUrl };
 
       if (this.subDomains && this.subDomains.length > 0) {
         allOptions.subdomains = this.subDomains;
