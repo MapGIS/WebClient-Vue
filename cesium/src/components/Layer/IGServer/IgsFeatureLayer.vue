@@ -32,10 +32,10 @@ export default {
       default() {
         return {};
       },
-      renderMode: {
-        type: String,
-        default: "client",
-      },
+    },
+    renderMode: {
+      type: String,
+      default: "client",
     },
   },
   data() {

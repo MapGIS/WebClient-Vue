@@ -4,7 +4,7 @@
       <mapgis-ui-form-item label="分段字段">
         <mapgis-ui-select v-model="groupField" @change="handleChange">
           <mapgis-ui-select-option
-            v-for="(item, index) in fieldInfoMap"
+            v-for="(item, index) in fieldInfo"
             :key="index"
             :value="item.name"
             >{{ item.name }}</mapgis-ui-select-option
@@ -14,7 +14,7 @@
       <mapgis-ui-form-item label="统计字段">
         <mapgis-ui-select v-model="statisticsField" @change="handleChange">
           <mapgis-ui-select-option
-            v-for="(item, index) in fieldInfo"
+            v-for="(item, index) in fieldInfoMap"
             :key="index"
             :value="item.name"
             >{{ item.name }}</mapgis-ui-select-option
