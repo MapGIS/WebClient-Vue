@@ -47,6 +47,9 @@ export default {
   },
   mounted() {
     this.mount();
+    window.test = () => {
+      this.geojsonLayer.renderer = this.generateRenderer(this.renderer);
+    };
   },
   destroyed() {
     this.unmount();
