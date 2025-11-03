@@ -299,6 +299,8 @@ export default {
         innerView: viewer,
         // 图层管理容器
         map,
+        // 实例化SceneView对象时是否执行视角调整（goTo）操作
+        initialGoTo: false,
       });
     },
   },
