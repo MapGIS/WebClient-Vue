@@ -25,6 +25,8 @@ export default class MarkerManager {
       innerView: viewer,
       // 图层管理容器
       map: this.commonMap,
+      // 实例化SceneView对象时是否执行视角调整（goTo）操作
+      initialGoTo: false,
     });
     this.graphicsCollection = new GraphicsLayer(viewer, {});
     this.commonMap.add(this.graphicsCollection);
