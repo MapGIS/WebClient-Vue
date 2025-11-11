@@ -25,8 +25,7 @@ const mapboxSourceProps = {
 
 const mapboxLayerStyleProps = {
   layerId: {
-    type: String,
-    required: true,
+    type: String
   },
   layer: {
     type: Object,
@@ -164,22 +163,29 @@ export default {
 
   beforeDestroy() {
     const { $_beforeDestroy } = this;
+    /*
+     * feat(7686): 兼容GeoServer平台发布的WMS/WMTS服务
+     * 修改说明: 使用统一接口获取layerId或sourceId
+     * 修改人: 杨琨 2025-11-10
+     */
+    let layerId = this.$_getLayerId();
+    let sourceId = this.$_getSourceId();
     if (this.map) {
       try {
         $_beforeDestroy && $_beforeDestroy(); // geojson-layer
-        this.map.removeLayer(this.layerId);
+        this.map.removeLayer(layerId);
       } catch (err) {
         this.$_emitEvent("layer-does-not-exist", {
-          layerId: this.sourceId || this.layerId,
+          layerId: sourceId || layerId,
           error: err,
         });
       }
       if (this.clearSource) {
         try {
-          this.map.removeSource(this.sourceId || this.layerId);
+          this.map.removeSource(sourceId);
         } catch (err) {
           this.$_emitEvent("source-does-not-exist", {
-            sourceId: this.sourceId || this.layerId,
+            sourceId: sourceId || layerId,
             error: err,
           });
         }
@@ -230,6 +236,27 @@ export default {
       this.$_emitEvent("layer-removed", { layerId: this.layerId });
       this.$destroy();
     },
+    /**
+     * 获取Source对象
+     * @returns {Object} Source对象
+    */
+    $_getSource() {
+      return this.source || this.sourceBack
+    },
+    /**
+     * 获取sourceId
+     * @returns {String} sourceId
+    */
+    $_getSourceId() {
+      return this.sourceId || this.sourceIdBack || this.layerId
+    },
+    /**
+     * 获取layerId
+     * @returns {String} sourceId
+    */
+    $_getLayerId() {
+      return this.layerId || this.layerIdBack
+    }
   },
 
   render() {},
