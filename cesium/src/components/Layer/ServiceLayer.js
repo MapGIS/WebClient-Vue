@@ -83,7 +83,7 @@ export default {
     /**
      * webclient-common库的Layer对象，用于构造Cesium引擎的图层对象
      */
-    sourceLayer: {
+    commonLayer: {
       type: Object,
       default: null
     }
@@ -164,7 +164,7 @@ export default {
      * 修改说明: 监听是否传入了commonLayer属性，如果传入了，就使用该对象构造MapBox引擎的图层对象，否则使用原有逻辑添加
      * 修改人: 杨琨 2025-11-6
      */
-    sourceLayer: {
+    commonLayer: {
       handler: function(newLayer, oldLayer) {
         const { vueKey, vueIndex } = this;
         // 是否重新加载图层
@@ -971,7 +971,7 @@ export default {
         vueKey,
         vueIndex,
         layerStyle,
-        sourceLayer
+        commonLayer
       } = this;
       const { zIndex } = layerStyle;
       // 删除先前添加的图层
@@ -986,9 +986,9 @@ export default {
         window.vueCesium[this.managerName].deleteSource(vueKey, vueIndex);
       }
       // 获取provider的初始化参数
-      const options = initializeOptions(sourceLayer, viewer);
-      const tileInfo = TileInfoUtil.getTileInfoByLayer(sourceLayer);
-      const { minScale, maxScale } = sourceLayer;
+      const options = initializeOptions(commonLayer, viewer);
+      const tileInfo = TileInfoUtil.getTileInfoByLayer(commonLayer);
+      const { minScale, maxScale } = commonLayer;
       options.maximumLevel = TileInfoUtil.getTileLevelByScale(
         maxScale,
         tileInfo
@@ -999,7 +999,7 @@ export default {
       );
       // 构造provider对象
       let provider;
-      switch (sourceLayer.type) {
+      switch (commonLayer.type) {
         case LayerType.wmts:
           provider = new Cesium.WebMapTileServiceImageryProvider(options);
           break;
@@ -1019,7 +1019,7 @@ export default {
         if (this.id.length === 0) {
           imageryLayer.id = vueIndex;
         } else {
-          imageryLayer.id = sourceLayer.id;
+          imageryLayer.id = commonLayer.id;
         }
         //保存layerId，方便找到zIndex
         this.layerId = imageryLayer.id;

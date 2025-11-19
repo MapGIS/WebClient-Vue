@@ -10,7 +10,7 @@ export default {
     /**
      * webclient-common库的Layer对象，用于构造MapBox引擎的图层对象
      */
-    sourceLayer: {
+    commonLayer: {
       type: Object,
       default: null,
     },
@@ -21,7 +21,7 @@ export default {
      * 修改说明: 监听是否传入了commonLayer属性，如果传入了，就使用该对象构造MapBox引擎的图层对象，否则使用原有逻辑添加
      * 修改人: 杨琨 2025-11-10
      */
-    sourceLayer: {
+    commonLayer: {
       handler: function (newLayer, oldLayer) {
         // 是否重新加载图层
         let reloadLayer = true;
@@ -90,7 +90,7 @@ export default {
      * 修改说明: 如果外部没有传入commonLayer，则按原有逻辑构造图层
      * 修改人: 杨琨 2025-11-10
      */
-    if (!this.sourceLayer) {
+    if (!this.commonLayer) {
       this.$_deferredMount();
 
       if (this.url) {
@@ -181,15 +181,15 @@ export default {
      * 通过webclient-common的layer来构造并添加mapboxgl的图层
      */
     $_deferredMountBySourceLayer() {
-      const { sourceLayer } = this;
-      if (sourceLayer) {
+      const { commonLayer } = this;
+      if (commonLayer) {
         this.$_deferredUnMount();
-        const mapboxglOptions = initializeOptions(sourceLayer, viewer);
+        const mapboxglOptions = initializeOptions(commonLayer, viewer);
         const { layers, sources } = mapboxglOptions;
-        this.layerIdBack = sourceLayer.id;
+        this.layerIdBack = commonLayer.id;
         this.sourceIdBack = layers[0].source;
-        const tileInfo = TileInfoUtil.getTileInfoByLayer(sourceLayer);
-        const { minScale, maxScale } = sourceLayer;
+        const tileInfo = TileInfoUtil.getTileInfoByLayer(commonLayer);
+        const { minScale, maxScale } = commonLayer;
         this.sourceBack = sources[this.sourceIdBack];
         if (this.sourceBack) {
           this.sourceBack.maxzoom = TileInfoUtil.getTileLevelByScale(maxScale, tileInfo);
