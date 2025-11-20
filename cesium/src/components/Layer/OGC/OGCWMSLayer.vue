@@ -12,7 +12,7 @@ export default {
   inject: ["Cesium", "viewer"],
   mixins: [ServiceLayer],
   props: {
-    layers: { type: String, required: true },
+    layers: { type: String },
     styles: { type: String, default: "" },
     // crs: { type: String },
     srs: { type: String },
@@ -85,6 +85,10 @@ export default {
       this.mount();
     },
     mount() {
+      // 只有当baseUrl存在时，才进行原始图层添加的逻辑，当baseUrl不存在时，有可能是仅初始化图层或者通过sourceLayer来添加图层
+      if (!this.baseUrl) {
+        return
+      }
       const {
         viewer,
         baseUrl,

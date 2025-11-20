@@ -139,6 +139,8 @@ export default {
     $_deferredMount() {
       this.$_init();
       let source;
+      const sourceObject = this.$_getSource();
+      const sourceId = this.$_getSourceId();
 
       let renderMode = this.renderMode;
 
@@ -146,7 +148,7 @@ export default {
         // image-map类型
         source = {
           url: this._url,
-          ...this.source,
+          ...sourceObject,
           rebaseRequestUrl: function (url, params) {
             let bbox;
             const code = this.map.getCRS().epsgCode.split(":")[1];
@@ -194,17 +196,17 @@ export default {
           type: "raster",
           tiles: [this._url],
           tileSize: this.tileSize,
-          ...this.source,
+          ...sourceObject,
         };
       }
 
       this.map.on("dataloading", this.$_watchSourceLoading);
       try {
-        this.map.addSource(this.sourceId || this.layerId, source);
+        this.map.addSource(sourceId, source);
       } catch (err) {
         if (this.replaceSource) {
-          this.map.removeSource(this.sourceId || this.layerId);
-          this.map.addSource(this.sourceId || this.layerId, source);
+          this.map.removeSource(sourceId);
+          this.map.addSource(sourceId, source);
         }
       }
       this.$_addLayer();

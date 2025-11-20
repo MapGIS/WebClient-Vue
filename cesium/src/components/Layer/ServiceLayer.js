@@ -1,44 +1,52 @@
-import { CustomWKID } from "@mapgis/webclient-common";
-import { GroundPrimitiveLayer } from "@mapgis/webclient-cesium-plugin";
+import {
+  CustomWKID,
+  zondy,
+  LayerType,
+  TileInfoUtil
+} from "@mapgis/webclient-common";
+import {
+  GroundPrimitiveLayer,
+  initializeOptions
+} from "@mapgis/webclient-cesium-plugin";
 export default {
   inject: ["Cesium", "viewer", "vueCesium"],
   props: {
     baseUrl: {
       type: String,
-      default: null,
+      default: null
     },
     domain: {
       type: String,
-      default: null,
+      default: null
     },
     protocol: {
       type: String,
-      default: "http://",
+      default: "http://"
     },
     ip: {
       type: String,
-      default: null,
+      default: null
     },
     port: {
       type: String,
-      default: null,
+      default: null
     },
     serverName: {
       type: String,
-      default: null,
+      default: null
     },
     layerStyle: {
       type: Object,
-      default: function () {
+      default: function() {
         return {
           visible: true,
-          opacity: 1,
+          opacity: 1
         };
-      },
+      }
     },
     id: { type: String, default: "" },
     token: {
-      type: Object,
+      type: Object
     },
     options: {
       type: Object,
@@ -54,24 +62,31 @@ export default {
           minimumLevel: 0,
           maximumLevel: 20,
           credit: undefined,
-          extensions: null,
+          extensions: null
         };
-      },
+      }
     },
     vueKey: {
       type: String,
-      default: "default",
+      default: "default"
     },
     vueIndex: {
       type: Number,
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
-      },
+      }
     },
     renderMode: {
       type: String,
-      default: "raster",
+      default: "raster"
     },
+    /**
+     * webclient-common库的Layer对象，用于构造Cesium引擎的图层对象
+     */
+    commonLayer: {
+      type: Object,
+      default: null
+    }
   },
   data() {
     return {
@@ -94,11 +109,13 @@ export default {
       checkType: undefined,
       layerId: undefined,
       optionsBack: undefined,
+      // 是否是第一次通过传入common图层的方式加载图层
+      isFirstAddLayer: false
     };
   },
   watch: {
     layerStyle: {
-      handler: function () {
+      handler: function() {
         let { vueKey, vueIndex } = this;
         let layer = window.vueCesium[this.managerName].findSource(
           vueKey,
@@ -118,10 +135,10 @@ export default {
         }
         this.layerStyleCopy = { ...this.layerStyle };
       },
-      deep: true,
+      deep: true
     },
     options: {
-      handler: function () {
+      handler: function() {
         let vm = this;
         let isEqual = this.$_isEqual(vm.options, vm.optionsBack);
         if (!isEqual) {
@@ -130,18 +147,64 @@ export default {
           this.optionsBack = this.options;
         }
       },
-      deep: true,
+      deep: true
     },
     id: {
-      handler: function () {
+      handler: function() {
         const { vueIndex, vueKey } = this;
         let layer = window.vueCesium[this.managerName].findSource(
           vueKey,
           vueIndex
         );
         layer.source.id = this.id;
-      },
+      }
     },
+    /*
+     * feat(7686): 兼容GeoServer平台发布的WMS/WMTS服务
+     * 修改说明: 监听是否传入了commonLayer属性，如果传入了，就使用该对象构造MapBox引擎的图层对象，否则使用原有逻辑添加
+     * 修改人: 杨琨 2025-11-6
+     */
+    commonLayer: {
+      handler: function(newLayer, oldLayer) {
+        const { vueKey, vueIndex } = this;
+        // 是否重新加载图层
+        let reloadLayer = true;
+        const find = window.vueCesium[this.managerName].findSource(
+          vueKey,
+          vueIndex
+        );
+        const findImageryLayer = find ? find.source : null;
+        if (findImageryLayer) {
+          if (newLayer.opacity !== oldLayer.opacity) {
+            reloadLayer = false;
+            findImageryLayer.alpha = newLayer.opacity;
+          }
+          if (newLayer.visible !== oldLayer.visible) {
+            reloadLayer = false;
+            findImageryLayer.show = newLayer.visible;
+          }
+        }
+        if (reloadLayer) {
+          if (!this.isFirstAddLayer) {
+            this.$_deferredMountBySourceLayer();
+            this.isFirstAddLayer = true;
+          } else {
+            const oldLayerJSON = oldLayer.toJSON();
+            const newLayerJSON = newLayer.toJSON();
+            try {
+              if (
+                JSON.stringify(oldLayerJSON) !== JSON.stringify(newLayerJSON)
+              ) {
+                this.$_deferredMountBySourceLayer();
+              }
+            } catch (error) {
+              this.$_deferredMountBySourceLayer();
+            }
+          }
+        }
+      },
+      deep: true
+    }
   },
   mounted() {
     this.optionsBack = this.options;
@@ -187,7 +250,7 @@ export default {
 
       //取得除options、layerStyle和id之外的必要参数
       const { $props, vueIndex, vueKey, Cesium } = this;
-      Object.keys($props).forEach(function (key) {
+      Object.keys($props).forEach(function(key) {
         if (key !== "options" && key !== "layerStyle" && key !== "id") {
           opt[key] = $props[key];
         }
@@ -204,11 +267,11 @@ export default {
           ) {
             options.extensions.push({
               key: this.token.key,
-              value: this.token.value,
+              value: this.token.value
             });
           } else {
             options.extensions = [
-              { key: this.token.key, value: this.token.value },
+              { key: this.token.key, value: this.token.value }
             ];
           }
         } else if (this.token.value) {
@@ -236,7 +299,7 @@ export default {
         if (
           [
             "ArcGISMapServerImageryProvider",
-            "ArcGISTileServerImageryProvider",
+            "ArcGISTileServerImageryProvider"
           ].includes(providerName)
         ) {
           provider = await zondy.cesium[providerName].fromUrl(
@@ -248,7 +311,7 @@ export default {
             "MapGISMapServerImageryProvider",
             "MapGISTileServerImageryProvider",
             "UrlTemplateImageryProvider",
-            "WebMapTileServiceImageryProvider",
+            "WebMapTileServiceImageryProvider"
           ].includes(providerName)
         ) {
           provider = new zondy.cesium[providerName](options);
@@ -256,7 +319,7 @@ export default {
           [
             "MapGISMapServerSingleImageryProvider",
             "WebMapServiceSingleImageryProvider",
-            "ArcGISMapServerSingleImageryProvider",
+            "ArcGISMapServerSingleImageryProvider"
           ].includes(providerName)
         ) {
           provider = new zondy.cesium[providerName](
@@ -324,7 +387,7 @@ export default {
 
       let manageOptions = {
         zIndex: providerZIndex,
-        id: imageryLayer.id,
+        id: imageryLayer.id
       };
 
       //如果providerZIndex为0，表示初始化地图时，没有设置zIndex，因此会按照初始化的顺序向上叠放
@@ -408,7 +471,7 @@ export default {
       }
       return {
         currentLayer: currentLayer,
-        index: index,
+        index: index
       };
     },
     $_getLayers() {
@@ -416,7 +479,7 @@ export default {
         vm = this;
 
       //遍历window.vueCesium下所有的Manager
-      Object.keys(window.vueCesium).forEach(function (key) {
+      Object.keys(window.vueCesium).forEach(function(key) {
         if (key.indexOf("Manager") > -1 && key !== "GlobesManager") {
           //取出含有与webScene组件相同vueKey的Manager对象
           if (window.vueCesium[key].hasOwnProperty("vueKey")) {
@@ -440,7 +503,7 @@ export default {
       });
 
       //对数组进行排序
-      Layers.sort(function (a, b) {
+      Layers.sort(function(a, b) {
         if (a.options && b.options) {
           return a.options.zIndex - b.options.zIndex;
         }
@@ -682,7 +745,7 @@ export default {
     $_checkProps(checkObj, checkType) {
       let vm = this;
       if (checkObj && checkType) {
-        Object.keys(checkObj).forEach(function (key) {
+        Object.keys(checkObj).forEach(function(key) {
           let result;
           if (checkType.hasOwnProperty(key) && typeof key === "string") {
             result = vm.$_checkValue(checkObj, key, checkType[key]);
@@ -761,7 +824,7 @@ export default {
         let customWKID;
         let axisDirection = {
           x: 1,
-          y: -1,
+          y: -1
         };
         let rectangleSouthwest;
         let rectangleNortheast;
@@ -769,7 +832,7 @@ export default {
         if ([CustomWKID.bd09ll, CustomWKID.bd09mc].indexOf(customWKID) > -1) {
           axisDirection = {
             x: 1,
-            y: 1,
+            y: 1
           };
           rectangleSouthwest = new Cesium.Cartesian2(
             -20037726.37,
@@ -790,7 +853,7 @@ export default {
           axisDirection: axisDirection,
           rectangleSouthwest: rectangleSouthwest,
           rectangleNortheast: rectangleNortheast,
-          tileInfo: tileInfo,
+          tileInfo: tileInfo
         });
       } else {
         tilingScheme = new Cesium.GeographicTilingScheme();
@@ -836,9 +899,9 @@ export default {
           size: tileSize, // 瓦片宽高的像素大小
           origin: {
             coordinates: [0, 0], // 裁图原点
-            type: "Point", // 裁图原点类型
+            type: "Point" // 裁图原点类型
           },
-          lods: lods,
+          lods: lods
         };
       } else if (wkid === 20010202) {
         // 构建自定义Wkid 国测局02墨卡托的默认TileInfo
@@ -857,16 +920,16 @@ export default {
           size: tileSize, // 瓦片宽高的像素大小
           origin: {
             coordinates: [-maxLength, maxLength], // 裁图原点
-            type: "Point", // 裁图原点类型
+            type: "Point" // 裁图原点类型
           },
-          lods: lods,
+          lods: lods
         };
       } else if (wkid === 20020901 || wkid === 20010201) {
         const extent = {
           xmin: -180,
           ymin: -90,
           xmax: 180,
-          ymax: 90,
+          ymax: 90
         };
         const numberOfMinLevelTilesX = 2;
         tileSize = 256;
@@ -881,7 +944,7 @@ export default {
           const lod = {
             level: i,
             resolution,
-            scale: (mapUnitToMeters * (resolution * 96)) / 0.0254,
+            scale: (mapUnitToMeters * (resolution * 96)) / 0.0254
           };
           lods.push(lod);
         }
@@ -891,12 +954,105 @@ export default {
           size: tileSize, // 瓦片宽高的像素大小
           origin: {
             coordinates: [180, -90], // 裁图原点
-            type: "Point",
+            type: "Point"
           },
-          lods: lods,
+          lods: lods
         };
       }
       return tileInfo;
     },
-  },
+    /**
+     * 根据Common的Layer初始化并添加引擎图层
+     */
+    $_deferredMountBySourceLayer() {
+      const {
+        Cesium,
+        viewer,
+        vueKey,
+        vueIndex,
+        layerStyle,
+        commonLayer
+      } = this;
+      const { zIndex } = layerStyle;
+      // 删除先前添加的图层
+      const find = window.vueCesium[this.managerName].findSource(
+        vueKey,
+        vueIndex
+      );
+      const findImageryLayer = find ? find.source : null;
+      if (findImageryLayer) {
+        const { imageryLayers } = this.$_getWebGlobe();
+        imageryLayers.remove(findImageryLayer, true);
+        window.vueCesium[this.managerName].deleteSource(vueKey, vueIndex);
+      }
+      // 获取provider的初始化参数
+      const options = initializeOptions(commonLayer, viewer);
+      const tileInfo = TileInfoUtil.getTileInfoByLayer(commonLayer);
+      const { minScale, maxScale } = commonLayer;
+      options.maximumLevel = TileInfoUtil.getTileLevelByScale(
+        maxScale,
+        tileInfo
+      );
+      options.minimumLevel = TileInfoUtil.getTileLevelByScale(
+        minScale,
+        tileInfo
+      );
+      // 构造provider对象
+      let provider;
+      switch (commonLayer.type) {
+        case LayerType.wmts:
+          provider = new Cesium.WebMapTileServiceImageryProvider(options);
+          break;
+        case LayerType.wms:
+          provider = new Cesium.WebMapServiceImageryProvider(options);
+          break;
+        default:
+          break;
+      }
+      if (provider) {
+        // 添加图层到Cesium视图中
+        const { imageryLayers } = this.$_getWebGlobe();
+        const imageryLayer = imageryLayers.addImageryProvider(provider);
+
+        // 沿用老的组件添加逻辑
+        // 设置图层id，分屏，卷帘使用
+        if (this.id.length === 0) {
+          imageryLayer.id = vueIndex;
+        } else {
+          imageryLayer.id = commonLayer.id;
+        }
+        //保存layerId，方便找到zIndex
+        this.layerId = imageryLayer.id;
+        //初始化imageryLayers.addImageryProvider需要的index
+        let providerZIndex;
+        if (zIndex < 0) {
+          throw new Error("zIndex不能为负数");
+        } else if (!zIndex) {
+          //如果没有设置layerStyle.zIndex，则layer的zIndex统一设置为0，并且按照初始化的顺序向上叠放
+          providerZIndex = 0;
+        } else {
+          //确定zIndex不能重复
+          this.$_checkZIndex(imageryLayers);
+          //如果有layerStyle.zIndex，则layer的zIndex为layerStyle.zIndex
+          providerZIndex = zIndex;
+        }
+
+        //如果有zIndex，则保证zIndex大于0的layer始终在zIndex为0的layer上面，并按照zIndex从大到小排序
+        //如果没有zIndex，则按初始化顺序向上叠放，如果在此layer的下方含有zIndex大于0的layer，则layer向下一层，直到下方没有包含zIndex大于0的layer
+        //只会根据imageryLayers排序，不会影响其他图层
+        this.$_initLayerIndex();
+        //将图层加入对应的manager
+        let manageOptions = {
+          zIndex: zIndex,
+          id: imageryLayer.id
+        };
+        window.vueCesium[this.managerName].addSource(
+          vueKey,
+          vueIndex,
+          imageryLayer,
+          manageOptions
+        );
+      }
+    }
+  }
 };

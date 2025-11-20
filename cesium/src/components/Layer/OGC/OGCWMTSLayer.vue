@@ -12,7 +12,7 @@ export default {
   inject: ["Cesium", "viewer"],
   mixins: [ServiceLayer],
   props: {
-    wmtsLayer: { type: String, required: true },
+    wmtsLayer: { type: String },
     tileMatrixSet: { type: String, default: "" },
     wmtsStyle: { type: String, default: "default" },
     // tilingScheme: { type: String, required: true },
@@ -81,6 +81,10 @@ export default {
   },
   methods: {
     mount() {
+      // 只有当baseUrl存在时，才进行原始图层添加的逻辑，当baseUrl不存在时，有可能是仅初始化图层或者通过sourceLayer来添加图层
+      if (!this.baseUrl) {
+        return
+      }
       const { viewer } = this;
       const { tileMatrixSet, wmtsStyle, format, options, token } = this;
       const activeWMTSLayer = this.wmtsLayer;
