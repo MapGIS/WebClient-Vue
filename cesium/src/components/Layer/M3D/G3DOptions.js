@@ -12,20 +12,20 @@ export default {
    */
   vueIndex: {
     type: [String, Number],
-    default: () => (Math.random() * 100000000).toFixed(0),
+    default: () => (Math.random() * 100000000).toFixed(0)
   },
 
   /**
    * @description 图层过滤功能:'show:0,1'表示显示第0，1个图层，'hide:0，2'表示隐藏第0，2个图层
    */
   layerId: {
-    type: String,
+    type: String
   },
 
   /**
    * @description g3d网络请求地址
    */
-  url: { type: String, required: true },
+  url: { type: String },
 
   /**
    * @description 图层透明度
@@ -39,7 +39,7 @@ export default {
     type: Array,
     default() {
       return [];
-    },
+    }
   },
 
   autoReset: { type: Boolean, default: true },
@@ -82,5 +82,5 @@ export default {
   // 但是优先级低于单个传入属性，即如果单个属性有传入值，优先使用传入的值，
   // 如果没有传入，但是extensions中有该属性，则使用extensions里对应的值
   // 修改者：龚跃健 2024/10/28
-  extensions: { type: Object },
+  extensions: { type: Object }
 };
