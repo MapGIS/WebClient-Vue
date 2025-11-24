@@ -36,6 +36,7 @@ import {
   InitializeOptionsType,
   UrlTemplateImageryProvider,
   MapGISMapServerImageryProvider,
+  MapGISDynamicLabelCollection
 } from "@mapgis/webclient-cesium-plugin";
 
 export default {
@@ -86,6 +87,13 @@ export default {
       type: Number,
       default: 0,
     },
+     /**
+     * webclient-common库的Layer对象，用于构造Cesium引擎的图层对象
+     */
+    commonLayer: {
+      type: Object,
+      default: null
+    }
   },
   mixins: [PopupMixin],
   data() {
@@ -96,6 +104,8 @@ export default {
       featurevisible: undefined,
       featureclickenable: this.enablePopup,
       layerVisibleArr: [], //记录显示的图层，拾取时隐藏的图层直接忽略
+      // 是否是第一次通过传入common图层的方式加载图层
+      isFirstAddLayer: false
     };
   },
   provide() {
@@ -144,6 +154,72 @@ export default {
     layerIds(next) {
       this.changeLayerVisible(this.layerIds);
     },
+    commonLayer: {
+      handler: async function(newLayer, oldLayer) {
+        const { vueKey, vueIndex } = this;
+        // 是否重新加载图层
+        let reloadLayer = true;
+        // 更新透明度和显隐参数属性
+        const find = window.vueCesium.G3DManager.findSource(
+          vueKey,
+          vueIndex
+        );
+        const findSource = find ? find.source : null;
+        if (findSource) {
+          if (newLayer.opacity !== oldLayer.opacity) {
+            reloadLayer = false;
+            this.changeLayerOpacity(newLayer.opacity);
+          }
+          if (newLayer.visible !== oldLayer.visible) {
+            reloadLayer = false;
+            const layerIds = Object.keys(find.source);
+            if (newLayer.visible === true) {
+              this.changeLayerVisible("show:" + layerIds.toString());     
+            } else if (newLayer.visible === false) {
+              this.changeLayerVisible("show");     
+            }
+          }
+        }
+        // 更新子图层显隐参数
+        let isUpdateSubLayerVisible = false;
+        const newSubLayers = newLayer.activeScene.allSublayers.items;
+        this.layerVisibleArr = []
+        for (let index = 0; index < newSubLayers.length; index++) {
+          if (newSubLayers[index].originLayerType !== IGSSceneOriginLayerType.groupLayer3D) {
+            const oldSubLayer = oldLayer.activeScene.findSublayerById(newSubLayers[index].id)
+            if(oldSubLayer && oldSubLayer.visible !== newSubLayers[index].visible) {
+              isUpdateSubLayerVisible = true;
+            }
+            if(newSubLayers[index].visible) {
+              this.layerVisibleArr.push(newSubLayers[index].id);
+            }
+          }
+        }
+        if (isUpdateSubLayerVisible) {
+          reloadLayer = false
+          this.changeLayerVisible("show:" + this.layerVisibleArr.toString());  
+        }
+        // 是否重新加载图层
+        if (reloadLayer) {
+          if (!this.isFirstAddLayer) {
+            this.$_deferredMountByCommonLayer(newLayer);
+            this.isFirstAddLayer = true;
+          } else {
+            const oldLayerJSON = oldLayer.toJSON();
+            const newLayerJSON = newLayer.toJSON();
+            try {
+              if (
+                JSON.stringify(oldLayerJSON) !== JSON.stringify(newLayerJSON)
+              ) {
+                this.$_deferredMountByCommonLayer(newLayer);
+              }
+            } catch (error) {
+              this.$_deferredMountByCommonLayer(newLayer);
+            }
+          }
+        }
+      }
+    }
   },
   methods: {
     /**
@@ -168,6 +244,10 @@ export default {
       return options;
     },
     mount() {
+      // 当commonLayer存在时，使用commonLayer构造图层，否则按照原始逻辑构造图层
+      if (this.commonLayer) {
+        return
+      }
       const vm = this;
       const { vueIndex, vueKey, vueCesium } = this;
       const { viewer, url, $props, enablePopup, layerId } = this;
@@ -279,7 +359,7 @@ export default {
                 source: imageryLayer,
               };
               break;
-            case InitializeOptionsType.label:
+            case InitializeOptionsType.MapGISDynamicLabelCollection:
               // TODO：注记图层暂未重构，在initializeOptions方法时已经添加到场景中
               break;
           }
@@ -331,8 +411,8 @@ export default {
             case InitializeOptionsType.UrlTemplateImageryProvider:
               viewer.imageryLayers.remove(source, true);
               break;
-            case InitializeOptionsType.label:
-              // TODO：注记图层暂未重构，在initializeOptions方法时已经添加到场景中
+            case InitializeOptionsType.MapGISDynamicLabelCollection:
+              viewer.scene.primitives.remove(source)
               break;
           }
         }
@@ -414,7 +494,7 @@ export default {
                 },
               });
               break;
-            case InitializeOptionsType.label:
+            case InitializeOptionsType.MapGISDynamicLabelCollection:
               // TODO：注记图层暂未重构，在initializeOptions方法时已经添加到场景中
               break;
           }
@@ -583,7 +663,7 @@ export default {
             case InitializeOptionsType.UrlTemplateImageryProvider:
               source.alpha = opacity;
               break;
-            case InitializeOptionsType.label:
+            case InitializeOptionsType.MapGISDynamicLabelCollection:
               // TODO：注记图层暂未重构，在initializeOptions方法时已经添加到场景中
               break;
           }
@@ -972,6 +1052,124 @@ export default {
       }
       return properties;
     },
+    /**
+     * 根据Common的Layer初始化并添加引擎图层
+     * @param {Object} layer common的场景图层对象
+     */
+    async $_deferredMountByCommonLayer(layer) {
+      this.unmount()
+      const { vueKey, vueIndex, viewer } = this;
+      const layers = {};
+      // 存储M3D初始样式
+      const originStyles = [];
+      const m3ds = [];
+      const subLayers = layer.activeScene.sublayers.items;
+      // todo: 临时处理，common库场景图层克隆方法会丢掉layer对象，后续common库优化后删除
+      subLayers.forEach((subLayer) => {
+        subLayer.layer = layer;
+      });
+      const allSublayers = layer.activeScene.allSublayers.items;
+      allSublayers.forEach((subLayer) => {
+        subLayer.layer = layer;
+      });
+      // 构造场景子图层
+      const opacityLayerIds = []
+      const subLayerOptions = initializeOptions(layer, viewer);
+      for (let subLayerOption of subLayerOptions) {
+        let imageryProvider
+        let imageryLayer
+        const sublayerId = String(subLayerOption.id.split(":")[1]);
+        const sublayerType = subLayerOption.type
+        switch (sublayerType) {
+          // MapGIS M3D图层
+          case InitializeOptionsType.MapGISM3DSet:
+            subLayerOption = Object.assign(subLayerOption, layer.extensionOptions);
+            const { luminanceAtZenith = 0.2 } = layer.extendProps
+            const m3dSet = await MapGISM3DSet.fromUrl(
+              subLayerOption.url,
+              subLayerOption
+            );
+            viewer.scene.primitives.add(m3dSet);
+            window.m3dSet = m3dSet;
+            m3dSet._layerIndex = sublayerId;
+            m3dSet.imageBasedLighting.luminanceAtZenith = luminanceAtZenith;
+            layers[sublayerId] = {
+              type: sublayerType,
+              source: m3dSet,
+            }
+            originStyles.push({ id: sublayerId, style: m3dSet.style });
+            m3ds.push(m3dSet);
+            opacityLayerIds.push(sublayerId);
+
+            if (this.autoReset) {
+              const boundingSphere = m3dSet.boundingSphere;
+              const orientation = new Cesium.HeadingPitchRange(
+                0.0,
+                -0.5,
+                boundingSphere.radius * 2.5
+              );
+              viewer.camera.flyToBoundingSphere(boundingSphere, {
+                duration: subLayerOptions.duration,
+                offset: orientation,
+              });
+            }
+          break;
+          // MapGIS地形图层
+          case InitializeOptionsType.MapGISTerrainProvider:
+            viewer.terrainProvider = new MapGISTerrainProvider(
+              subLayerOption
+            );
+            layers[sublayerId] = {
+              type: sublayerType,
+              source: viewer.terrainProvider,
+            };
+            break;
+          // 覆盖物图层 IGS 2.0
+          case InitializeOptionsType.MapGISMapServerImageryProvider:
+            imageryProvider = new MapGISMapServerImageryProvider(
+              subLayerOption
+            );
+            imageryLayer = viewer.imageryLayers.addImageryProvider(imageryProvider);
+            layers[sublayerId] = {
+              type: sublayerType,
+              source: imageryLayer,
+            };
+            opacityLayerIds.push(sublayerId);
+          break;
+          // 覆盖物图层 IGS 1.0
+          case InitializeOptionsType.UrlTemplateImageryProvider:
+            imageryProvider = new UrlTemplateImageryProvider(
+              subLayerOption
+            );
+            imageryLayer = viewer.imageryLayers.addImageryProvider(imageryProvider);
+            layers[sublayerId] = {
+              type: sublayerType,
+              source: imageryLayer,
+            };
+            opacityLayerIds.push(sublayerId);
+          break;
+          // 注记图层
+          case InitializeOptionsType.MapGISDynamicLabelCollection:
+            const primitive = new MapGISDynamicLabelCollection(subLayerOption)
+            viewer.scene.primitives.add(primitive)
+            layers[sublayerId] = {
+              type: sublayerType,
+              source: primitive,
+            };
+          break;
+        }
+      }
+      vueCesium.G3DManager.addSource(vueKey, vueIndex, layers, {
+        m3ds,
+        originStyles,
+        commonLayer: layer,
+      });
+      // 更新透明度
+      this.changeLayerOpacity(layer.opacity, opacityLayerIds)
+      // 初始化时绑定弹出框事件，方法内部会判断是否要开启弹出框
+      this.bindPopupEvent();
+      this.$emit("loaded", { g3d: layers, component: this });
+    }
   },
 };
 </script>

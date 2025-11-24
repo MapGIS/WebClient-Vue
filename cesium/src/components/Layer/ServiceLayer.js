@@ -186,7 +186,7 @@ export default {
         }
         if (reloadLayer) {
           if (!this.isFirstAddLayer) {
-            this.$_deferredMountBySourceLayer();
+            this.$_deferredMountByCommonLayer();
             this.isFirstAddLayer = true;
           } else {
             const oldLayerJSON = oldLayer.toJSON();
@@ -195,10 +195,10 @@ export default {
               if (
                 JSON.stringify(oldLayerJSON) !== JSON.stringify(newLayerJSON)
               ) {
-                this.$_deferredMountBySourceLayer();
+                this.$_deferredMountByCommonLayer();
               }
             } catch (error) {
-              this.$_deferredMountBySourceLayer();
+              this.$_deferredMountByCommonLayer();
             }
           }
         }
@@ -964,7 +964,7 @@ export default {
     /**
      * 根据Common的Layer初始化并添加引擎图层
      */
-    $_deferredMountBySourceLayer() {
+    $_deferredMountByCommonLayer() {
       const {
         Cesium,
         viewer,

@@ -46,7 +46,7 @@ export default {
         // 重新加载图层
         if (reloadLayer) {
           if (!this.isFirstAddLayer) {
-            this.$_deferredMountBySourceLayer();
+            this.$_deferredMountByCommonLayer();
             this.isFirstAddLayer = true;
           } else {
             const oldLayerJSON = oldLayer.toJSON();
@@ -55,10 +55,10 @@ export default {
               if (
                 JSON.stringify(oldLayerJSON) !== JSON.stringify(newLayerJSON)
               ) {
-                this.$_deferredMountBySourceLayer();
+                this.$_deferredMountByCommonLayer();
               }
             } catch (error) {
-              this.$_deferredMountBySourceLayer();
+              this.$_deferredMountByCommonLayer();
             }
           }
         }
@@ -180,7 +180,7 @@ export default {
     /**
      * 通过webclient-common的layer来构造并添加mapboxgl的图层
      */
-    $_deferredMountBySourceLayer() {
+    $_deferredMountByCommonLayer() {
       const { commonLayer } = this;
       if (commonLayer) {
         this.$_deferredUnMount();
