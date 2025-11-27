@@ -33,6 +33,10 @@ export default {
   },
   methods: {
     mount() {
+      // 当commonLayer存在时，使用commonLayer构造图层，否则按照原始逻辑构造图层
+      if (this.commonLayer) {
+        return
+      }
       //处理独有参数
       const { viewer } = this;
       const baseUrl = this.$_initUrl("/igs/rest/mrms/tile");

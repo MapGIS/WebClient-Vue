@@ -74,6 +74,8 @@ export default {
     },
     $_deferredMount() {
       this.$_init();
+      const sourceObject = this.$_getSource();
+      const sourceId = this.$_getSourceId();
       let source = {
         type: "raster",
         tiles: [this._url],
@@ -81,15 +83,15 @@ export default {
         mapgisOffset: this._zoomOffset,
         maxzoom: this.maximumLevel,
         minzoom: this.minimumLevel,
-        ...this.source
+        ...sourceObject
       };
       this.map.on("dataloading", this.$_watchSourceLoading);
       try {
-        this.map.addSource(this.sourceId || this.layerId, source);
+        this.map.addSource(sourceId, source);
       } catch (err) {
         if (this.replaceSource) {
-          this.map.removeSource(this.sourceId || this.layerId);
-          this.map.addSource(this.sourceId || this.layerId, source);
+          this.map.removeSource(sourceId);
+          this.map.addSource(sourceId, source);
         }
       }
       this.$_addLayer();

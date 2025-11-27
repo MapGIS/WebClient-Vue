@@ -989,22 +989,46 @@ export default {
       const options = initializeOptions(commonLayer, viewer);
       const tileInfo = TileInfoUtil.getTileInfoByLayer(commonLayer);
       const { minScale, maxScale } = commonLayer;
-      options.maximumLevel = TileInfoUtil.getTileLevelByScale(
-        maxScale,
-        tileInfo
-      );
-      options.minimumLevel = TileInfoUtil.getTileLevelByScale(
-        minScale,
-        tileInfo
-      );
+      if (minScale >= 0 && maxScale >= 0 && maxScale < minScale) {
+        options.maximumLevel = TileInfoUtil.getTileLevelByScale(
+          maxScale,
+          tileInfo
+        );
+        options.minimumLevel = TileInfoUtil.getTileLevelByScale(
+          minScale,
+          tileInfo
+        );
+      }
       // 构造provider对象
       let provider;
+      /*
+       * feat(3395): PTSYB-天地图放大到一定程度后，不显示“此级别下，该区域无影像”
+       * 修改说明: cesium组件支持通过common库的IGS瓦片、IGS矢量瓦片、ArcGIS瓦片、ArcGIS矢量瓦片以及网络瓦片
+       * 版权所有: 武汉中地数码科技有限公司
+       * 修改人: 杨琨 2025-11-27
+       */
       switch (commonLayer.type) {
         case LayerType.wmts:
           provider = new Cesium.WebMapTileServiceImageryProvider(options);
+          provider.isStretchImage = options.isStretchImage;
           break;
         case LayerType.wms:
           provider = new Cesium.WebMapServiceImageryProvider(options);
+          break;
+        case LayerType.igsTile:
+          provider = new zondy.cesium.MapGISTileServerImageryProvider(options);
+          break;
+        case LayerType.arcgisTile:
+          provider = new zondy.cesium.ArcGISTileServerImageryProvider(options);
+          break;
+        case LayerType.igsVectorTile:
+          provider = new zondy.cesium.MapGISVectorTileImageryProvider(options);
+          break;
+        case LayerType.arcgisVectorTile:
+          provider = new zondy.cesium.ArcGISVectorTileImageryProvider(options);
+          break;
+        case LayerType.webTile:
+          provider = new zondy.cesium.UrlTemplateImageryProvider(options);
           break;
         default:
           break;
