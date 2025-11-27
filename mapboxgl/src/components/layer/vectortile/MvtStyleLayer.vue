@@ -138,10 +138,10 @@ export default {
               const { tileInfo, extent } = commonLayer;
               const { spatialReference, size, lods, origin } = tileInfo;
               const { wkid, wkt } = spatialReference;
-              const resolutions = [];
-              for (let d = 0; d < lods.length; d++) {
-                resolutions.push(lods[d].resolution);
-              }
+              const resolutions = {};
+              lods.forEach((lod, index) => {
+                resolutions[index] = lod.resolution;
+              });
               this.customCrs = new this.CRS(`EPSG:${wkid}`, wkt, {
                 resolutions,
                 origin: [origin.coordinates[0], origin.coordinates[1]],

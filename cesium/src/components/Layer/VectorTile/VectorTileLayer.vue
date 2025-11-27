@@ -1,24 +1,15 @@
 <script>
+import { IGSVectorTileLayer } from "@mapgis/webclient-common";
 import {
-  Extent,
-  TileInfo,
-  SpatialReference,
-  Point,
-  IGSVectorTileLayer,
-} from "@mapgis/webclient-common";
-import {
-  getTilingScheme,
-  CustomTilingScheme,
   MapGISVectorTileImageryProvider,
-  getProviderExtent,
-  VectorTileLayerUtil,
+  initializeOptions,
 } from "@mapgis/webclient-cesium-plugin";
 import VectorTileOptions from "./VectorTileOptions";
 import ServiceLayer from "../ServiceLayer";
 import clonedeep from "lodash.clonedeep";
 import isEqual from "lodash.isequal";
 import { Util } from "@mapgis/webclient-vue-ui";
-const { UrlUtil } = Util
+const { UrlUtil } = Util;
 
 export default {
   name: "mapgis-3d-vectortile-layer",
@@ -29,7 +20,6 @@ export default {
       managerName: "VectorTileManager",
     };
   },
-  inject: ["Cesium", "viewer", "vueCesium"],
   created() {},
   mounted() {
     this.$_mount().then(() => {
@@ -43,15 +33,15 @@ export default {
     layerStyle: {
       handler: function (next, old) {
         let { vueKey, vueIndex, vueCesium } = this;
-        let layer = vueCesium[this.managerName].findSource(vueKey, vueIndex);
+        let layer = vueCesium[this.managerName]?.findSource(vueKey, vueIndex);
         if (!layer) {
           return;
         }
         if (this.layerStyleCopy.visible !== this.layerStyle.visible) {
-          layer.source.show = this.layerStyle.visible;
+          layer.show = this.layerStyle.visible;
         }
         if (this.layerStyleCopy.opacity !== this.layerStyle.opacity) {
-          layer.source.alpha = this.layerStyle.opacity;
+          layer.alpha = this.layerStyle.opacity;
         }
         if (this.layerStyleCopy.zIndex !== this.layerStyle.zIndex) {
           this.$_moveLayer();
@@ -63,101 +53,50 @@ export default {
   },
   methods: {
     async createCesiumObject() {
-      const { $props, viewer, vueCesium } = this;
-      const { tilingScheme } = $props;
-      let tileScheme = undefined;
-
-      // 获取tilingScheme对象
-      if (tilingScheme) {
-        if (typeof tilingScheme === "string") {
-          tileScheme = this.checkTiling(tilingScheme);
-        } else {
-          tileScheme = tilingScheme;
-        }
-      } else if ($props.tileInfo && $props.spatialReference && $props.extent) {
-        // 传入tileInfo、spatialReference、extent，获取自定义的tilingScheme对象
-        tileScheme = this.getCustomTilingScheme(
-          $props.tileInfo,
-          $props.spatialReference,
-          $props.extent
-        );
-      } else {
-        // 没有传tilingScheme和tileInfo、spatialReference、extent，给定默认4326地理坐标系
-        tileScheme = new Cesium.GeographicTilingScheme();
-      }
-
       return new Promise(
         async (resolve) => {
-          let vectortile;
-
-          // 获取图层tileInfo上的最大最小层级，与传入的最大最小层级区交集
-          const limitLevels = this.$_getLevelRangeByTileInfo($props.tileInfo);
-          let minimumLevel = 0;
-          let maximumLevel = 22;
-          if ($props.options) {
-            const optMinimumLevel = $props.options.minimumLevel || 0;
-            const optMaximumLevel = $props.options.maximumLevel || 22;
-            minimumLevel = Math.max(optMinimumLevel, limitLevels[0]);
-            maximumLevel = Math.min(optMaximumLevel, limitLevels[1]);
-          }
-
-          const opt = {
-            ...$props,
-            minimumLevel,
-            maximumLevel,
-            tilingScheme: tileScheme,
-          };
-
-          // 获取provider图层范围
-          const extent = getProviderExtent(opt, opt.tilingScheme.rectangle);
-          // 矢量瓦片动态注记wgs84Extent需要将extent的空间参考系强制设置为EPSG:4326
-          extent.spatialReference = new SpatialReference("EPSG:4326");
-          opt.rectangle = new Cesium.Rectangle(
-            extent.xmin,
-            extent.ymin,
-            extent.xmax,
-            extent.ymax
-          );
-
-          // 获取矢量瓦片图层样式对象
-          opt.style = await this.getMVTStyleObject();
-
-          opt.scene = viewer.scene;
-          opt.tileWidth =
-            opt.tileInfo && opt.tileInfo.size ? opt.tileInfo.size[0] : 256;
-          opt.tileHeight =
-            opt.tileInfo && opt.tileInfo.size ? opt.tileInfo.size[1] : 256;
           // 添加矢量图层
-          vectortile = this.$_addLayer(opt);
+          const vectortile = this.$_addLayer({});
           resolve(vectortile);
         },
         (reject) => {}
       );
     },
     // 添加图层
-    $_addLayer(opt) {
-      // 初始化构建MapGISVectorTileImageryProvider对象
-      const vectorTileProvider = new MapGISVectorTileImageryProvider({
-        style: opt.style,
-        opacity: opt.opacity ? opt.opacity : 1,
-        // 初始化是否可见
-        show: opt.visible ? opt.visible : true,
-        tilingScheme: opt.tilingScheme,
-        scene: opt.scene,
-        labelsRenderMode: opt.labelsRenderMode
-          ? opt.labelsRenderMode
-          : "off-screen",
-        rectangle: opt.rectangle,
-        tileWidth: opt.tileWidth,
-        tileHeight: opt.tileHeight,
-        transform: opt.mvtExtent
-          ? [512 / opt.mvtExtent, 0, 0, 512 / opt.mvtExtent, 0, 0]
-          : [0.125, 0, 0, 0.125, 0, 0],
-        tokenKey: opt.tokenKey ? opt.tokenKey : "",
-        tokenValue: opt.tokenValue ? opt.tokenValue : "",
-        minimumLevel: opt.minimumLevel,
-        maximumLevel: opt.maximumLevel,
-      });
+    async $_addLayer(opt) {
+      const { viewer, $props } = this;
+      const commonLayer = await this.getIGSVectorTileLayer();
+      if (!commonLayer) {
+        return;
+      }
+      const cesiumOptions = initializeOptions(commonLayer, viewer);
+      const { rectangle } = cesiumOptions;
+      if (rectangle) {
+        const { west, south, east, north } = rectangle;
+        // 如果范围无效，则不加载
+        if (west >= east || south >= north) {
+          return;
+        }
+      }
+      const optMinimumLevel = $props.options.minimumLevel || 0;
+      const optMaximumLevel = $props.options.maximumLevel || 22;
+      const minimumLevel = Math.max(
+        optMinimumLevel,
+        cesiumOptions.minimumLevel
+      );
+      const maximumLevel = Math.min(
+        optMaximumLevel,
+        cesiumOptions.maximumLevel
+      );
+
+      const options = {
+        ...cesiumOptions,
+        show: $props.visible ? $props.visible : true,
+        opacity: $props.opacity ? $props.opacity : 1,
+        minimumLevel,
+        maximumLevel,
+      };
+      const vectorTileProvider = new MapGISVectorTileImageryProvider(options);
       // 添加图层到Cesium视图中
       return viewer.imageryLayers.addImageryProvider(vectorTileProvider);
     },
@@ -168,26 +107,12 @@ export default {
         this.$vectortile.show = false;
       }
     },
-    // 根据tileInfo获取层级范围
-    $_getLevelRangeByTileInfo(tileInfo) {
-      const levels = [0, 22];
-      if (
-        !tileInfo ||
-        !Array.isArray(tileInfo.lods) ||
-        tileInfo.lods.length === 0
-      ) {
-        return levels;
-      }
-      const lods = tileInfo.lods;
-      const firstLevel = lods[0].level;
-      const lastLevel = lods[lods.length - 1].level;
-      return [firstLevel, lastLevel];
-    },
     // 获取适量瓦片样式对象
-    getMVTStyleObject() {
+    getIGSVectorTileLayer() {
       let styleUrl = undefined;
       let styleObject = undefined;
       let url = this.styleUrl;
+
       return new Promise((resolve, reject) => {
         if (this.mvtStyle) {
           if (typeof this.mvtStyle === "string") {
@@ -201,9 +126,12 @@ export default {
           if (typeof this.styleUrl === "string") {
             styleUrl = this.styleUrl;
           } else {
-            if (this.ip && this.layerName){
-              const { ip, port } = this
-              styleUrl = `${UrlUtil.getOrigin({ ip, port })}/igs/rest/mrcs/vtiles/0/${this.layerName}`;
+            if (this.ip && this.layerName) {
+              const { ip, port } = this;
+              styleUrl = `${UrlUtil.getOrigin({
+                ip,
+                port,
+              })}/igs/rest/mrcs/vtiles/0/${this.layerName}`;
             }
           }
         } else {
@@ -217,61 +145,28 @@ export default {
         if (!styleUrl && !styleObject) {
           resolve();
         } else {
-          const igsVectorTileLayer = new IGSVectorTileLayer({
+          const { token } = this;
+          const options = {
             url: styleUrl,
             style: styleObject,
-          });
-          igsVectorTileLayer.load().then((res) => {
-            resolve(res.style);
+            extensionOptions: this.options?.extensions
+              ? this.options.extensions
+              : {},
+          };
+
+          if (token.key && token.value) {
+            options.tokenKey = token.key;
+            options.tokenValue = token.value;
+          }
+          const igsVectorTileLayer = new IGSVectorTileLayer(options);
+          igsVectorTileLayer.load().then((layer) => {
+            if (!layer.loaded) {
+              resolve(null);
+            }
+            resolve(layer);
           });
         }
       });
-    },
-    checkTiling(tileMatrixSetName) {
-      let tilingScheme;
-      if (
-        tileMatrixSetName === "EPSG:4326" ||
-        tileMatrixSetName === "EPSG:4490" ||
-        tileMatrixSetName === "EPSG:4610" ||
-        tileMatrixSetName === "EPSG:4214"
-      ) {
-        tilingScheme = new Cesium.GeographicTilingScheme();
-      } else if (tileMatrixSetName === "EPSG:3857") {
-        tilingScheme = new Cesium.WebMercatorTilingScheme();
-      } else {
-        tilingScheme = new Cesium.GeographicTilingScheme();
-      }
-      return tilingScheme;
-    },
-    // 根据tileInfo、spatialReference、extent，获取自定义TilingScheme对象
-    getCustomTilingScheme(tileInfo, spatialReference, extent) {
-      const spatialReferenceCommon = new SpatialReference({
-        wkid: spatialReference.wkid,
-      });
-      const originCommon = new Point({
-        coordinates: [tileInfo.origin.x, tileInfo.origin.y],
-        spatialReference,
-      });
-      const extentCommon = new Extent({
-        xmin: extent.xmin,
-        ymin: extent.ymin,
-        xmax: extent.xmax,
-        ymax: extent.ymax,
-      });
-      const tileInfoCommon = new TileInfo({
-        dpi: tileInfo.dpi,
-        format: tileInfo.format,
-        origin: originCommon,
-        lods: tileInfo.lods,
-        spatialReference: spatialReferenceCommon,
-        size: tileInfo.size,
-      });
-      const tilingScheme = getTilingScheme(
-        spatialReferenceCommon,
-        extentCommon,
-        tileInfoCommon
-      );
-      return tilingScheme;
     },
     watchProp() {
       const {
@@ -303,23 +198,6 @@ export default {
           deep: true,
         });
       }
-      if (vectortilejson) {
-        this.$watch("vectortilejson", {
-          handler(nextStyle, oldStyle) {
-            const isEqualStyle = isEqual(nextStyle, oldStyle);
-            // 判断条件中增加比较新旧style值的逻辑。当nextStyle和oldStyle的对象属性值相同，不更新style。
-            if (
-              typeof nextStyle === "object" &&
-              !isEqualStyle &&
-              this.$vectortile !== undefined &&
-              !viewer.isDestroyed()
-            ) {
-              this.updateStyle(nextStyle);
-            }
-          },
-          deep: true,
-        });
-      }
     },
     updateStyle(style) {
       const options =
@@ -328,8 +206,7 @@ export default {
           : {};
       // 如果style对象属性值有改变，则更新图层（采用先删除在添加图层的方案）
       if (!isEqual(style, options.style)) {
-        this.layerStyle = style;
-        options.style = style;
+        options.style = clonedeep(style);
         this.$_removeLayer();
         this.$vectortile = this.$_addLayer(options);
       }
@@ -346,7 +223,6 @@ export default {
       const { imageryLayers } = viewer;
 
       if (viewer.isDestroyed()) return;
-      this.$emit("load", this);
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then((vectortile) => {
@@ -393,6 +269,39 @@ export default {
 
         //得到layerStyle的副本，供watch使用
         vm.layerStyleCopy = clonedeep(layerStyle);
+
+        //设置图层id，分屏，卷帘使用
+        if (vm.id.length === 0) {
+          imageryLayer.id = vueIndex;
+        } else {
+          imageryLayer.id = this.id;
+        }
+
+        //保存layerId，方便找到zIndex
+        vm.layerId = imageryLayer.id;
+
+        let manageOptions = {
+          zIndex: providerZIndex,
+          id: imageryLayer.id,
+        };
+
+        //如果providerZIndex为0，表示初始化地图时，没有设置zIndex，因此会按照初始化的顺序向上叠放
+        //如果之后给了zIndex，然后又删除了或者置空，则layer放最后一个包含zIndex的layer的下面，并按照zeroIndex排序
+        if (providerZIndex === 0) {
+          let maxZeroIndex = vm.$_getMaxZeroIndex();
+          manageOptions.zeroIndex = maxZeroIndex + 1;
+        }
+
+        //将图层加入对应的manager
+        vm.vueCesium[vm.managerName].addSource(
+          vueKey,
+          vueIndex,
+          imageryLayer,
+          manageOptions
+        );
+
+        //抛出load事件
+        vm.$emit("load", imageryLayer, vm);
       });
       return promise;
     },

@@ -46,7 +46,6 @@ export default {
         ellipsoid: "object",
         credit: "object|string",
         subdomains: "string|array",
-        startLevel: "number",
         vueKey: "string",
         vueIndex: "number",
       },
@@ -110,42 +109,6 @@ export default {
         options.tilingScheme = this.$_setTilingScheme(this.tilingScheme);
       }
 
-      //处理天地图的wmts
-      let checkTileMatrixLabels = this.$_checkValue(
-        this.options,
-        "tileMatrixLabels",
-        ""
-      );
-      if (
-        checkTileMatrixLabels === "null" &&
-        this.tilingScheme === "EPSG:4326"
-      ) {
-        if (this.baseUrl.indexOf("tianditu") > -1) {
-          options.tileMatrixLabels = [
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20",
-          ];
-        }
-      }
-
       //将wmtsLayer转为layer
       options.layer = this.wmtsLayer;
 
@@ -172,6 +135,23 @@ export default {
         xmax: extent.xmax,
         ymax: extent.ymax,
       });
+
+      /*
+       * fix(29802): JJ-PTSYB-.net IGS发布的WMTS服务加载失败
+       * 修改说明: common里tileInfo的Lods的level就是waf中传入的tileInfo的Lods的levelValue；需移除options中的startLevel属性
+       * 版权所有: 武汉中地数码科技有限公司
+       * 修改人: 龚跃健 2025-11-21
+       */
+      const newLods = [];
+      for (let j = 0; j < tileInfo.lods.length; j++) {
+        newLods.push({
+          level: tileInfo.lods[j].levelValue,
+          resolution: tileInfo.lods[j].resolution,
+          scale: tileInfo.lods[j].scale,
+        });
+      }
+      // 重新给tileInfo.lods赋值
+      tileInfo.lods = newLods;
       const tileInfoCommon = new TileInfo({
         dpi: tileInfo.dpi,
         format: tileInfo.format,
