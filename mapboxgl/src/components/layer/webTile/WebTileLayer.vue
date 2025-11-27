@@ -6,6 +6,8 @@ import rasterTileLayer from "../customtile/rasterTileLayer.js";
 import rasterLayer from "../RasterLayer.js";
 import layerEvents from "../../../lib/layerEvents";
 import { newGuid } from "../../util";
+import { TileInfoUtil } from "@mapgis/webclient-common";
+import { initializeOptions } from "@mapgis/webclient-mapboxgl-plugin";
 
 export default {
   name: "mapgis-web-tile-layer",
@@ -13,7 +15,6 @@ export default {
   props: {
     layerId: {
       type: String,
-      required: true,
     },
     sourceId: {
       type: String,
@@ -116,7 +117,7 @@ export default {
       try {
         this.map.addSource(layer.sourceId, mapSource)
       } catch (err) {
-        if (this.replaceSource) {mapSource
+        if (this.replaceSource) {
           this.map.removeSource(this.sourceId || this.layerId);
           this.map.addSource(this.sourceId || this.layerId, source);
         }
@@ -230,6 +231,40 @@ export default {
         }
       }
       return layer
+    },
+    /**
+     * 通过webclient-common的layer来构造并添加mapboxgl的图层
+     */
+    $_deferredMountByCommonLayer() {
+      const { commonLayer } = this;
+      if (commonLayer) {
+        this.$_deferredUnMount();
+        const mapboxglOptions = initializeOptions(commonLayer, viewer);
+        const { layers = [], sources = [] } = mapboxglOptions;
+        this.layerIdBack = commonLayer.id;
+        if (layers[0]) {
+          if (layers[0].type === "custom") {
+            this.customLayer = layers[0];
+            this.customLayer.id = this.layerIdBack
+            this.map.addLayer(this.customLayer, this.before);
+          } else {
+            layers[0].id = commonLayer.id;
+            this.layerIdBack = layers[0].id;
+            this.sourceIdBack = layers[0].source;
+            this.sourceBack = sources[this.sourceIdBack];
+            this.map.on("dataloading", this.$_watchSourceLoading);
+            try {
+              this.map.addSource(this.sourceIdBack, this.sourceBack)
+            } catch (err) {
+              if (this.replaceSource) {
+                this.map.removeSource(this.sourceIdBack);
+                this.map.addSource(this.sourceIdBack, this.sourceBack);
+              }
+            }
+            this.map.addLayer(layers[0], this.before);
+          }
+        }
+      }
     },
   }
 };

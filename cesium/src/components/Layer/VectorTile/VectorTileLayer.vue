@@ -22,6 +22,10 @@ export default {
   },
   created() {},
   mounted() {
+    // 当commonLayer存在时，使用commonLayer构造图层，否则按照原始逻辑构造图层
+    if (this.commonLayer) {
+      return
+    }
     this.$_mount().then(() => {
       this.watchProp();
     });

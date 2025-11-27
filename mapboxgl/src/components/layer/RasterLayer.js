@@ -29,11 +29,21 @@ export default {
         const layerId = this.$_getLayerId();
         if (newLayer.opacity !== oldLayer.opacity) {
           reloadLayer = false;
-          this.map.setPaintProperty(
-            layerId,
-            "raster-opacity",
-            newLayer.opacity
-          );
+          /*
+           * feat(3395): PTSYB-天地图放大到一定程度后，不显示“此级别下，该区域无影像”
+           * 修改说明: 支持调整自定义图层的透明度
+           * 版权所有: 武汉中地数码科技有限公司
+           * 修改人: 杨琨 2025-11-27
+           */
+          if (this.customLayer) {
+            this.customLayer.setOpacity(newLayer.opacity);
+          } else {
+            this.map.setPaintProperty(
+              layerId,
+              "raster-opacity",
+              newLayer.opacity
+            );
+          }
         }
         if (newLayer.visible !== oldLayer.visible) {
           reloadLayer = false;
@@ -80,6 +90,8 @@ export default {
       sourceIdBack: null,
       // 用于保存mapbox的source对象
       sourceBack: null,
+      // 用于保存mapbox的layer对象
+      layerBack: null,
       // 是否是第一次通过传入common图层的方式加载图层
       isFirstAddLayer: false,
     };
@@ -151,8 +163,9 @@ export default {
        */
       const layerId = this.$_getLayerId();
       const sourceId = this.$_getSourceId();
+      const layerObject = this.$_getLayer();
       let layer = {
-        ...this.layer,
+        ...layerObject,
         id: layerId,
         type: "raster",
         source: sourceId,
@@ -186,14 +199,12 @@ export default {
         this.$_deferredUnMount();
         const mapboxglOptions = initializeOptions(commonLayer, viewer);
         const { layers, sources } = mapboxglOptions;
-        this.layerIdBack = commonLayer.id;
+        layers[0].id = commonLayer.id;
+        this.layerIdBack = layers[0].id;
         this.sourceIdBack = layers[0].source;
-        const tileInfo = TileInfoUtil.getTileInfoByLayer(commonLayer);
-        const { minScale, maxScale } = commonLayer;
         this.sourceBack = sources[this.sourceIdBack];
+        this.layerBack = layers[0]
         if (this.sourceBack) {
-          this.sourceBack.maxzoom = TileInfoUtil.getTileLevelByScale(maxScale, tileInfo);
-          this.sourceBack.minzoom = TileInfoUtil.getTileLevelByScale(minScale, tileInfo);
           this.$_deferredMount();
         }
       }

@@ -9,8 +9,8 @@ import { compareStyle } from "./MvtCompare";
 import { DefaultThemeLayers } from "../ThemeLayer/BaseLayer";
 
 import EventBusMapMixin from "../../../lib/eventbus/EventBusMapMixin";
-import { IGSVectorTileLayer, Projection } from "@mapgis/webclient-common";
-import { mapboxCustomCRS } from "@mapgis/webclient-mapboxgl-plugin";
+import { IGSVectorTileLayer, Projection, TileInfoUtil } from "@mapgis/webclient-common";
+import { mapboxCustomCRS, initializeOptions } from "@mapgis/webclient-mapboxgl-plugin";
 
 export default {
   name: "mapgis-mvt-style-layer",
@@ -42,18 +42,37 @@ export default {
       default: 22,
     },
     token: { Object },
+    /**
+     * webclient-common库的Layer对象，用于构造MapBox引擎的图层对象
+     */
+    commonLayer: {
+      type: Object,
+      default: null,
+    },
   },
 
   data() {
     return {
       themeRules: [],
       preBefore: undefined,
+      // 用于保存mapbox样式图层的id
+      layerIdBack: null,
+      // 用于保存mapbox的source的id
+      sourceIdBack: null,
+      // 用于保存mapbox的source对象
+      sourceBack: null,
+      // 是否是第一次通过传入common图层的方式加载图层
+      isFirstAddLayer: false,
     };
   },
 
   watch: {
     mvtStyle: {
       handler(next, old) {
+        // 当commonLayer存在时，使用commonLayer构造图层，否则按照原始逻辑构造图层
+        if (this.commonLayer) {
+          return;
+        }
         let deleteStyle = old;
         let { lastStyle } = this;
         if (!compareStyle(next, old)) {
@@ -85,6 +104,50 @@ export default {
       deep: true,
       immediate: true,
     },
+    commonLayer: {
+      handler: function (newLayer, oldLayer) {
+        this.lastStyle = clonedeep(newLayer._style);
+        // 是否重新加载图层
+        let reloadLayer = true;
+        // 更改透明度或者显隐参数，不重新加载图层
+        if (this.isFirstAddLayer) {
+          if (JSON.stringify(newLayer._style.layers) !== JSON.stringify(oldLayer._style.layers)) {
+            reloadLayer = false;
+            this.lastStyle.layers.forEach((styleLayer) => {
+              const paintKeys = Object.keys(styleLayer.paint)
+              paintKeys.forEach((key) => {
+                this.map.setPaintProperty(styleLayer.id, key, styleLayer.paint[key]);
+              })
+              const layoutKeys = Object.keys(styleLayer.layout)
+              layoutKeys.forEach((key) => {
+                this.map.setLayoutProperty(styleLayer.id, key, styleLayer.layout[key]);
+              })
+            })
+          }
+        }
+        // 重新加载图层
+        if (reloadLayer) {
+          if (!this.isFirstAddLayer) {
+            this.$_deferredMountByCommonLayer();
+            this.isFirstAddLayer = true;
+          } else {
+            const oldLayerJSON = oldLayer.toJSON();
+            const newLayerJSON = newLayer.toJSON();
+            try {
+              if (
+                JSON.stringify(oldLayerJSON) !== JSON.stringify(newLayerJSON)
+              ) {
+                this.$_deferredMountByCommonLayer();
+              }
+            } catch (error) {
+              this.$_deferredMountByCommonLayer();
+            }
+          }
+        }
+      },
+      deep: true,
+    },
+
   },
 
   created() {
@@ -649,6 +712,28 @@ export default {
         }
       });
       return newTiles;
+    },
+    /**
+     * 通过webclient-common的layer来构造并添加mapboxgl的图层
+     */
+    $_deferredMountByCommonLayer() {
+      const { commonLayer } = this;
+      if (commonLayer) {
+        this.remove(this.lastStyle)
+        const mapboxglOptions = initializeOptions(commonLayer, viewer);
+        const { layers, sources } = mapboxglOptions;
+        this.lastStyle = clonedeep(mapboxglOptions);
+        const tileInfo = TileInfoUtil.getTileInfoByLayer(commonLayer);
+        const { minScale, maxScale } = commonLayer;
+        const sourcesArr = Object.entries(sources)
+        for (let i = 0; i < sourcesArr.length; i++) {
+          const sourceArr = sourcesArr[i]
+          this.map.addSource(sourceArr[0], sourceArr[1])
+        }
+        for (let j = 0; j < layers.length; j++) {
+          this.map.addLayer(layers[j])
+        }
+      }
     },
   },
 };

@@ -256,6 +256,13 @@ export default {
     */
     $_getLayerId() {
       return this.layerId || this.layerIdBack
+    },
+    /**
+     * 获取layer
+     * @returns {Object} sourceId
+    */
+    $_getLayer() {
+      return this.layer || this.layerBack
     }
   },
 
