@@ -133,20 +133,17 @@ export default {
         spatialReference,
       });
       const resolutions = {};
-      tileInfo.lods.forEach((lod) => {
-        resolutions[lod.level] = lod.resolution;
+      const levelValues = {};
+      tileInfo.lods.forEach((lod, index) => {
+        resolutions[index] = lod.resolution;
+        levelValues[index] = `${lod.levelValue}`;
       });
-      if (Object.keys(resolutions).length < 24) {
-        let index = Object.keys(resolutions).length;
-        for (index; index < 23; index++) {
-          resolutions[index] = resolutions[index - 1] / 2;
-        }
-      }
       const code = `EPSG:${spatialReference.wkid}`;
       const def = "+proj=longlat +ellps=GRS80 +units=degrees +no_defs";
 
       const crs = new this.CRS(code, def, {
         resolutions,
+        levelValues,
         origin: [originCommon.coordinates[0], originCommon.coordinates[1]],
         tileSize: Math.max(tileInfo.size[0], tileInfo.size[1]),
         bounds: [extent.xmin, extent.ymin, extent.xmax, extent.ymax],
