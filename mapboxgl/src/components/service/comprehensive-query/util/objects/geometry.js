@@ -145,7 +145,7 @@ export class GeometryExp {
       if (_middleYCrossArray.length >= 2) {
         // 2.3.1.1 对middleY构成的线上的交点，通过x坐标的值从大到小进行排序
         _middleYCrossArray.sort(function (A, B) {
-          return (A.x ?? 0) - (B.x ?? 0);
+          return (A.x || 0) - (B.x || 0);
         });
 
         // 2.3.1.2 通过交点计算label点坐标
