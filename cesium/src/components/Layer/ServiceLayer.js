@@ -1019,7 +1019,8 @@ export default {
           provider = new zondy.cesium.MapGISTileServerImageryProvider(options);
           break;
         case LayerType.arcgisTile:
-          provider = new zondy.cesium.ArcGISTileServerImageryProvider(options);
+          provider = new Cesium.UrlTemplateImageryProvider(options);
+          provider.isStretchImage = options.isStretchImage;
           break;
         case LayerType.igsVectorTile:
           provider = new zondy.cesium.MapGISVectorTileImageryProvider(options);
