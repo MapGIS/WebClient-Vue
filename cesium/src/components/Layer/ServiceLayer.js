@@ -1,6 +1,10 @@
-import { CustomWKID, getExtendExtentByPixel, SpatialReference } from "@mapgis/webclient-common";
+import {
+  CustomWKID,
+  getExtendExtentByPixel,
+  SpatialReference
+} from "@mapgis/webclient-common";
 export default {
-  inject: ["viewer", "Cesium"],
+  inject: ["viewer", "Cesium", "vueCesium"],
   props: {
     baseUrl: {
       type: String,
@@ -231,7 +235,7 @@ export default {
           { xmin, ymin, xmax, ymax, spatialReference },
           {
             extendPixel: 100,
-            resolution: maxResolution,
+            resolution: maxResolution
           }
         );
         // 对rectangle中的数据进行坐标系判断，将数据装换成cesium中的rectangle对象
@@ -278,7 +282,7 @@ export default {
         }
       }
 
-      options.url = options.baseUrl;
+      options.url = options.url || options.baseUrl;
 
       //取得webGlobe对象，防止当页面有多个webGlobe只会取得
       //根据对应的providerName设置provider
