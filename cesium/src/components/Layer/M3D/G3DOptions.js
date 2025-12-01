@@ -12,14 +12,14 @@ export default {
    */
   vueIndex: {
     type: [String, Number],
-    default: () => (Math.random() * 100000000).toFixed(0)
+    default: () => (Math.random() * 100000000).toFixed(0),
   },
 
   /**
    * @description 图层过滤功能:'show:0,1'表示显示第0，1个图层，'hide:0，2'表示隐藏第0，2个图层
    */
   layerId: {
-    type: String
+    type: String,
   },
 
   /**
@@ -39,7 +39,7 @@ export default {
     type: Array,
     default() {
       return [];
-    }
+    },
   },
 
   autoReset: { type: Boolean, default: true },
@@ -51,10 +51,6 @@ export default {
   hasSectionGeometry: { type: Boolean, default: false },
 
   /**
-   * @description 是否异步请求
-   */
-  synchronous: { type: Boolean, default: true },
-  /**
    * @description 是否显示包围盒
    */
   showBoundingVolume: { type: Boolean, default: false },
@@ -65,61 +61,26 @@ export default {
   /**
    * @description 模型最大内存使用量
    */
-  maximumMemoryUsage: { type: Number, default: 512 },
+  maximumCacheOverflowBytes: { type: Number, default: 536870912 },
   /**
    * @description 图层过滤功能
    */
   layers: { type: String, default: undefined },
   /**
-   * @description 是否使用前端缓存
-   */
-  useIDB: { type: Boolean, default: false },
-  /**
-   * @description 前端最大缓存级别
-   */
-  maxCacheLevel: { type: Number, default: 3 },
-  /**
-   * @description 矢量图层单个瓦片加载的矢量要素数量
-   */
-  tileFeaturesCount: { type: Number, default: 400 },
-  /**
    * @description 跳转时间，以秒为单位
    */
   duration: { type: Number, default: 1 },
-  /**
-   * @description 镜头朝向
-   * @see Cesium.HeadingPitchRange
-   * @default new HeadingPitchRange(0.0, -0.5, mergeBoundingSphere.radius * 2.5
-   */
-  orientation: { type: Object },
   /**
    * @description 是否激活地形法向量
    */
   requestVertexNormals: { type: Boolean, default: false },
   /**
-   * @description 代理
-   */
-  proxy: { type: Object },
-  /**
    * @description 是否激活查询弹窗
    */
   enablePopup: { type: Boolean, default: false },
-  /**
-   * @description 是否激活默认UI
-   */
-  enableControl: { type: Boolean, default: false },
-
-  outStyle: {
-    type: Object,
-    default: () => {
-      return {
-        position: "absolute",
-        zIndex: 1000,
-        height: "450px",
-        width: "270px",
-        top: "0px",
-        left: "0px"
-      };
-    }
-  }
+  // 扩展属性，以支持通过对象的方式批量传入图层属性，
+  // 但是优先级低于单个传入属性，即如果单个属性有传入值，优先使用传入的值，
+  // 如果没有传入，但是extensions中有该属性，则使用extensions里对应的值
+  // 修改者：龚跃健 2024/10/28
+  extensions: { type: Object },
 };

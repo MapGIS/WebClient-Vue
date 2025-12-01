@@ -119,8 +119,8 @@ export default {
       // 修改者：龚跃健 2024/10/28
       const tempProps = {
         ...this.$props,
-        ...this.$props.extensions,
         ...this.$options.propsData,
+        ...this.$props.extensions,
       };
       Object.keys(tempProps).forEach(function (key) {
         if (key === "extensions") {
@@ -151,7 +151,7 @@ export default {
       const vm = this;
       const { viewer, vueIndex, vueKey, vueCesium, $props } = this;
       let { url, opacity } = this;
-      const { luminanceAtZenith, maximumMemoryUsage } = this;
+      const { luminanceAtZenith, maximumCacheOverflowBytes } = this;
       if (viewer.isDestroyed()) return;
       const options = this.getOptions();
       // 如果配置了token携带位置在headers上
@@ -164,10 +164,13 @@ export default {
           token: options.token.value,
         };
         // 如果配置了header token，那么url上就不需要token
-        url = this.removeSearchParamFromUrl(url, options.token.key)
+        url = this.removeSearchParamFromUrl(url, options.token.key);
 
-        if(options.url) {
-          options.url = this.removeSearchParamFromUrl(options.url, options.token.key)
+        if (options.url) {
+          options.url = this.removeSearchParamFromUrl(
+            options.url,
+            options.token.key
+          );
         }
       }
 
@@ -179,45 +182,52 @@ export default {
         url,
         ...options,
         extensionOptions,
+        maximumCacheOverflowBytes:
+          extensionOptions.maximumCacheOverflowBytes ||
+          maximumCacheOverflowBytes,
       });
 
       tilesetLayer.load().then((layer) => {
+        if (!layer.loaded) {
+          return;
+        }
         const cesiumOptions = initializeOptions(layer, viewer);
-        zondy.cesium.Cesium3DTileset.fromUrl(cesiumOptions.url, cesiumOptions).then(
-          (tileset) => {
-            if (!tileset) {
-              return;
-            }
-            tileset.imageBasedLighting.luminanceAtZenith = luminanceAtZenith;
-            tileset.cacheBytes = maximumMemoryUsage;
-            if (options.autoReset) {
-              const boundingSphere = tileset.boundingSphere;
-              const orientation = new Cesium.HeadingPitchRange(
-                0.0,
-                -0.5,
-                boundingSphere.radius * 2.5
-              );
-              viewer.camera.flyToBoundingSphere(boundingSphere, {
-                duration: 0,
-                offset: orientation,
-              });
-            }
-            viewer.scene.primitives.add(tileset);
-            tileset.style = new Cesium.Cesium3DTileStyle({
-              color:
-                "undefined === ${COLOR}.r ? color('white'," +
-                opacity +
-                "):rgba(${COLOR}.r *255,${COLOR}.g* 255,${COLOR}.b *255, " +
-                opacity +
-                ")",
-            });
-            vueCesium.Tileset3DManager.addSource(vueKey, vueIndex, tileset, {
-              url: url,
-            });
-            vm.$emit("loaded", { tileset: tileset, m3ds: [tileset] });
-            vm.bindPopupEvent();
+        cesiumOptions.generateUniqueId = true;
+        zondy.cesium.Cesium3DTileset.fromUrl(
+          cesiumOptions.url,
+          cesiumOptions
+        ).then((tileset) => {
+          if (!tileset) {
+            return;
           }
-        );
+          tileset.imageBasedLighting.luminanceAtZenith = luminanceAtZenith;
+          if (options.autoReset) {
+            const boundingSphere = tileset.boundingSphere;
+            const orientation = new Cesium.HeadingPitchRange(
+              0.0,
+              -0.5,
+              boundingSphere.radius * 2.5
+            );
+            viewer.camera.flyToBoundingSphere(boundingSphere, {
+              duration: 0,
+              offset: orientation,
+            });
+          }
+          viewer.scene.primitives.add(tileset);
+          tileset.style = new Cesium.Cesium3DTileStyle({
+            color:
+              "undefined === ${COLOR}.r ? color('white'," +
+              opacity +
+              "):rgba(${COLOR}.r *255,${COLOR}.g* 255,${COLOR}.b *255, " +
+              opacity +
+              ")",
+          });
+          vueCesium.Tileset3DManager.addSource(vueKey, vueIndex, tileset, {
+            url: url,
+          });
+          vm.$emit("loaded", { tileset: tileset, m3ds: [tileset] });
+          vm.bindPopupEvent();
+        });
       });
     },
     /**
@@ -357,9 +367,19 @@ export default {
         if (feature) {
           this.feature = feature;
         }
-        feature.color = Cesium.Color.fromCssColorString(highlightStyle);
-
-        let properties;
+        const id = feature.getProperty("uniqueId");
+        if (id) {
+          const conditions = [["${uniqueId} === '" + id + "'", highlightStyle]];
+          tileset.style = new Cesium.Cesium3DTileStyle({
+            defines: {
+              id,
+            },
+            color: {
+              conditions,
+            },
+          });
+        }
+        let properties = {};
         const propertyIds = feature.getPropertyIds();
         // 修改说明：属性信息也统一从feature上获取，更新获取方法
         // 修改人:龚跃健
@@ -379,6 +399,12 @@ export default {
         }
         pickInfo.properties = properties;
         pickInfo.layerId = vm.vueIndex;
+        if (this.popupShowType === "default" && vm.iClickPosition) {
+          if (vm.showPopup) {
+            vm.featureposition = vm.iClickPosition;
+          }
+          pickInfo.position = vm.iClickPosition;
+        }
         vm.$emit("pick-info", pickInfo);
       } else {
         vm.$emit("pick-info", {});
@@ -388,16 +414,14 @@ export default {
      * @description 取消拾取内容
      */
     cancelFeature(sendPickInfo = true) {
-      if (this.feature) {
-        const { Cesium } = this;
-        this.feature.color = new Cesium.Color();
-        this.feature = null;
-        this.featureposition = undefined;
-        this.featureproperties = undefined;
+      const tileset = this.getTileSet();
+      tileset.style = undefined;
+      this.feature = null;
+      this.featureposition = undefined;
+      this.featureproperties = undefined;
 
-        if (this.popupShowType === "right") {
-          this.popupOverlay && this.popupOverlay.setContent(null);
-        }
+      if (this.popupShowType === "right") {
+        this.popupOverlay && this.popupOverlay.setContent(null);
       }
       sendPickInfo && this.$emit("pick-info", {});
     },

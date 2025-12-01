@@ -7,7 +7,7 @@ import clonedeep from "lodash.clonedeep";
 import PopupMixin from "../Mixin/PopupVirtual";
 import BaseLayer from "./BaseLayer";
 import CommonLayer from "../CommonLayer";
-import axios from "axios";
+import { Projection, SpatialReference } from "@mapgis/webclient-common";
 
 export default {
   name: "mapgis-3d-geojson-layer",
@@ -47,13 +47,16 @@ export default {
   },
   mounted() {
     this.mount();
+    window.test = () => {
+      this.geojsonLayer.renderer = this.generateRenderer(this.renderer);
+    };
   },
   destroyed() {
     this.unmount();
   },
   methods: {
     async createCesiumObject() {
-      const { viewer, vueCesium } = this;
+      const { viewer, vueCesium, Cesium } = this;
       const { data, renderer, layerStyle } = this;
 
       let transformRenderer;
@@ -83,17 +86,27 @@ export default {
       this.sceneView = this.generateSceneView(viewer, this.commonMap);
       this.generateLayer(data, applyRenderer);
       this.commonMap.add(this.geojsonLayer);
-
-      // let dataObj;
-      // // 如果data是geojson数据直接处理，如果是url地址则请求数据
-      // if (data instanceof Object) {
-      //   dataObj = data;
-      // } else {
-      //   dataObj = await this.getGeojsonData(data);
-      // }
-      // const { features } = dataObj;
-      // const featureSet = this.constructFeatureSet(features);
-      // this.addLayer(viewer, applyRenderer, featureSet);
+      const { autoReset } = this;
+      this.geojsonLayer.load().then((layer) => {
+        if (autoReset) {
+          const projectedGeometry = Projection.project(
+            layer.extent,
+            new SpatialReference({
+              wkid: 4326,
+            })
+          );
+          const { xmin, ymin, xmax, ymax } = projectedGeometry;
+          const rectangle = new Cesium.Rectangle.fromDegrees(
+            xmin,
+            ymin,
+            xmax,
+            ymax
+          );
+          viewer.camera.flyTo({
+            destination: rectangle,
+          });
+        }
+      });
       this.onGeojsonLayerLoaded();
     },
     generateLayer(data, renderer) {
@@ -101,7 +114,6 @@ export default {
         url: data,
         renderer,
       });
-      console.log("geojsonLayer", this.geojsonLayer);
     },
     onGeojsonLayerLoaded() {
       const { vueIndex, vueKey, vueCesium } = this;

@@ -40,16 +40,26 @@ export default {
       // 创建瓦片图层对象
       const igsTileLayer = new IGSTileLayer({
         url: baseUrl,
-        // IGS1.0暂时无法从元信息中获取坐标系，需自行指定图层坐标系
-        spatialReference: new SpatialReference({
-          wkid: srsCode,
-        }),
+        extensionOptions: this.options?.extensions
+          ? this.options.extensions
+          : {},
       });
       const vm = this;
       // 获取瓦片图层服务的元信息
       igsTileLayer.load().then((layer) => {
+        if (!layer.loaded) {
+          return;
+        }
         // 获取provider的初始化参数
         const cesiumOptions = initializeOptions(layer, viewer);
+        const { rectangle } = cesiumOptions;
+        if (rectangle) {
+          const { west, south, east, north } = rectangle;
+          // 如果范围无效，则不加载
+          if (west >= east || south >= north) {
+            return;
+          }
+        }
         vm.$_mount(cesiumOptions);
       });
     },

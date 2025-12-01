@@ -146,8 +146,8 @@ export default {
       // 修改者：龚跃健 2024/10/28
       const tempProps = {
         ...this.$props,
-        ...this.$props.extensions,
         ...this.$options.propsData,
+        ...this.$props.extensions,
       };
       Object.keys(tempProps).forEach(function (key) {
         options[key] = tempProps[key];
@@ -161,7 +161,7 @@ export default {
       const vm = this;
       const { viewer, vueIndex, vueKey, vueCesium, $props } = this;
       const { url, opacity } = this;
-      const { luminanceAtZenith, maximumMemoryUsage } = this;
+      const { luminanceAtZenith, maximumCacheOverflowBytes } = this;
       if (viewer.isDestroyed()) return;
       const options = this.getOptions();
 
@@ -171,16 +171,24 @@ export default {
         // 服务基地址
         url,
         ...options,
-        extensionOptions
+        extensionOptions,
+        maximumCacheOverflowBytes:
+          extensionOptions.maximumCacheOverflowBytes ||
+          maximumCacheOverflowBytes,
       });
       commonM3DLayer.load().then((layer) => {
+        if (!layer.loaded) {
+          return;
+        }
         const cesiumOptions = initializeOptions(layer, viewer);
-        zondy.cesium.MapGISM3DSet.fromUrl(cesiumOptions.url, cesiumOptions).then((m3dset) => {
+        zondy.cesium.MapGISM3DSet.fromUrl(
+          cesiumOptions.url,
+          cesiumOptions
+        ).then((m3dset) => {
           if (!m3dset) {
             return;
           }
           m3dset.imageBasedLighting.luminanceAtZenith = luminanceAtZenith;
-          m3dset.cacheBytes = maximumMemoryUsage;
           if (options.autoReset) {
             const boundingSphere = m3dset.boundingSphere;
             const orientation = new Cesium.HeadingPitchRange(

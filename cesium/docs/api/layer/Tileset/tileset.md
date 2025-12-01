@@ -88,12 +88,12 @@
 - **描述** 这个最大屏幕几何异常 [英文原文](https://prismic-io.s3.amazonaws.com/cesium/5f705923-8ff1-410e-990a-0018157e8086_3d-tiles-overview.pdf)， [中文链接](https://www.cnblogs.com/onsummer/p/13357226.html)
 - ![几何异常](../m3d/image/maximumScreenSpaceError.png)
 
-### `maximumMemoryUsage`
+### `maximumCacheOverflowBytes`
 
 - **类型**: `Number`
 - **非侦听属性** 非-watch 属性
-- **默认值** `512`
-- **描述** 最大内存使用
+- **默认值** `536870912`
+- **描述** 用于缓存瓦片的 GPU 内存最大附加容量（以字节为单位）
 
 ### `fillClip`
 
@@ -117,43 +117,42 @@
 
 ### 其他 3d-tileset 通用属性
 
-| 名称                                      | 类型    | 默认值  |
-| :---------------------------------------- | :------ | :------ |
-| cullWithChildrenBounds                    | Boolean | true    |
-| cullRequestsWhileMoving                   | Boolean | true    |
-| cullRequestsWhileMovingMultiplier         | Number  | 60.0    |
-| preloadWhenHidden                         | Boolean | false   |
-| preloadFlightDestinations                 | Boolean | true    |
-| preferLeaves                              | Boolean | false   |
-| dynamicScreenSpaceError                   | Boolean | false   |
-| dynamicScreenSpaceErrorDensity            | Number  | 0.00278 |
-| dynamicScreenSpaceErrorFactor             | Number  | 4.0     |
-| dynamicScreenSpaceErrorHeightFalloff      | Number  | 0.25    |
-| progressiveResolutionHeightFraction       | Number  | 0.3     |
-| foveatedScreenSpaceError                  | Boolean | true    |
-| foveatedConeSize                          | Number  | 0.1     |
-| foveatedMinimumScreenSpaceErrorRelaxation | Number  | 0.0     |
-| foveatedTimeDelay                         | Number  | 0.2     |
-| skipLevelOfDetail                         | Boolean | false   |
-| baseScreenSpaceError                      | Number  | 1024    |
-| skipScreenSpaceErrorFactor                | Number  | 16      |
-| skipLevels                                | Number  | 1       |
-| immediatelyLoadDesiredLevelOfDetail       | Boolean | false   |
-| loadSiblings                              | Boolean | false   |
-| luminanceAtZenith                         | Number  | 0.2     |
-| specularEnvironmentMaps                   | String  | ""      |
-| debugHeatmapTilePropertyName              | String  | ""      |
-| debugFreezeFrame                          | Boolean | false   |
-| debugColorizeTiles                        | Boolean | false   |
-| debugWireframe                            | Boolean | false   |
-| debugShowBoundingVolume                   | Boolean | false   |
-| debugShowContentBoundingVolume            | Boolean | false   |
-| debugShowViewerRequestVolume              | Boolean | false   |
-| debugShowGeometricError                   | Boolean | false   |
-| debugShowRenderingStatistics              | Boolean | false   |
-| debugShowMemoryUsage                      | Boolean | false   |
-
-| debugShowUrl
+| 名称                                      | 类型    | 默认值 |
+| :---------------------------------------- | :------ | :----- |
+| cullWithChildrenBounds                    | Boolean | true   |
+| cullRequestsWhileMoving                   | Boolean | true   |
+| cullRequestsWhileMovingMultiplier         | Number  | 60.0   |
+| preloadWhenHidden                         | Boolean | false  |
+| preloadFlightDestinations                 | Boolean | true   |
+| preferLeaves                              | Boolean | false  |
+| dynamicScreenSpaceError                   | Boolean | false  |
+| dynamicScreenSpaceErrorDensity            | Number  | 0.0002 |
+| dynamicScreenSpaceErrorFactor             | Number  | 24.0   |
+| dynamicScreenSpaceErrorHeightFalloff      | Number  | 0.25   |
+| progressiveResolutionHeightFraction       | Number  | 0.3    |
+| foveatedScreenSpaceError                  | Boolean | true   |
+| foveatedConeSize                          | Number  | 0.1    |
+| foveatedMinimumScreenSpaceErrorRelaxation | Number  | 0.0    |
+| foveatedTimeDelay                         | Number  | 0.2    |
+| skipLevelOfDetail                         | Boolean | false  |
+| baseScreenSpaceError                      | Number  | 1024   |
+| skipScreenSpaceErrorFactor                | Number  | 16     |
+| skipLevels                                | Number  | 1      |
+| immediatelyLoadDesiredLevelOfDetail       | Boolean | false  |
+| loadSiblings                              | Boolean | false  |
+| luminanceAtZenith                         | Number  | 0.2    |
+| specularEnvironmentMaps                   | String  | ""     |
+| debugHeatmapTilePropertyName              | String  | ""     |
+| debugFreezeFrame                          | Boolean | false  |
+| debugColorizeTiles                        | Boolean | false  |
+| debugWireframe                            | Boolean | false  |
+| debugShowBoundingVolume                   | Boolean | false  |
+| debugShowContentBoundingVolume            | Boolean | false  |
+| debugShowViewerRequestVolume              | Boolean | false  |
+| debugShowGeometricError                   | Boolean | false  |
+| debugShowRenderingStatistics              | Boolean | false  |
+| debugShowMemoryUsage                      | Boolean | false  |
+| debugShowUrl                              | Boolean | false  |
 
 ### `@load`
 

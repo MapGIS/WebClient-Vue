@@ -148,7 +148,7 @@ export default {
     return {
       aspectArrow: true,
       slopeFill: true,
-      arrowRepeat: 1.0,
+      arrowRepeat: 7.0,
       displayOption: "arrowAspectSlope", //"aspectArrow", "slope", "arrowAspectSlope"
 
       //popup参数设置

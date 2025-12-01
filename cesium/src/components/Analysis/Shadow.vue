@@ -435,7 +435,7 @@ export default {
         try {
           if (terrain instanceof this.Cesium.EllipsoidTerrainProvider) {
             resolve(false);
-            return
+            return;
           }
           const promise = this.Cesium.sampleTerrainMostDetailed(
             terrain,
@@ -593,7 +593,7 @@ export default {
       if (findSource && findSource.options) {
         // 移除阴影分析显示结果
         this.visible = false;
-        findSource.options.shadowAnalysis.clear();
+        findSource.options.shadowAnalysis.destroy();
         findSource.options.shadowAnalysis = null;
         // 取消交互式绘制矩形事件激活状态
         findSource.options.drawElement.stopDrawing();

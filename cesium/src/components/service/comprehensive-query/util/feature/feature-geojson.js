@@ -15,15 +15,15 @@ export function getGeoJSONFeatureCenter(feature) {
       center = geometry.coordinates[a];
       break;
     case "Polygon":
-      center = GeometryExp.getCenterOfGravityPoint(geometry.coordinates[0]);
+      const centerPoint = GeometryExp.getPolygonLabel(geometry.coordinates[0]);
+      center = centerPoint.coordinates;
       break;
     case "MultiPolygon":
       const coordinates = geometry.coordinates;
       const centers = [];
       for (let i = 0; i < coordinates.length; i += 1) {
-        const tempCenter = GeometryExp.getCenterOfGravityPoint(
-          coordinates[i][0]
-        );
+        const tempCenterPoint = GeometryExp.getPolygonLabel(coordinates[i][0]);
+        const tempCenter = tempCenterPoint.coordinates;
         if (tempCenter) {
           centers.push(tempCenter);
         }
@@ -36,7 +36,8 @@ export function getGeoJSONFeatureCenter(feature) {
           (centers[0][1] + centers[1][1]) / 2,
         ];
       } else if (centers.length > 3) {
-        center = GeometryExp.getCenterOfGravityPoint(centers);
+        const centerPoint = GeometryExp.getPolygonLabel(centers);
+        center = centerPoint.coordinates;
       }
       break;
     default:

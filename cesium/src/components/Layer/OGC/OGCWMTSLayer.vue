@@ -82,16 +82,27 @@ export default {
   methods: {
     mount() {
       const { viewer } = this;
-      const { tileMatrixSet, wmtsStyle, format, options } = this;
+      const { tileMatrixSet, wmtsStyle, format, options, token } = this;
       const activeWMTSLayer = this.wmtsLayer;
       // 创建WMTS图层对象
-      const wmtsLayer = new WMTSLayer({
+      const paramOptions = {
         url: this.baseUrl,
-        extent: options.rectangle || null,
-      });
+        extent: null,
+        extensionOptions: this.options?.extensions
+          ? this.options.extensions
+          : {},
+      };
+      if (token.key && token.value) {
+        paramOptions.tokenKey = token.key;
+        paramOptions.tokenValue = token.value;
+      }
+      const wmtsLayer = new WMTSLayer(paramOptions);
       const vm = this;
       // 获取WMTS图层服务的元信息
       wmtsLayer.load().then((layer) => {
+        if (!layer.loaded) {
+          return;
+        }
         const { sublayers, tileMatrixSets, activeLayer } = layer;
         // 判断当前activeLayer的identifier是否与传入的wmtsLayer一致
         const isSameIdentifier = activeLayer.identifier === activeWMTSLayer;

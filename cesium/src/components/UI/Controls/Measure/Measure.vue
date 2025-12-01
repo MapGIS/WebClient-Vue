@@ -54,7 +54,17 @@ export default {
       initial: false,
       measureStyles: {},
       waitManagerName: "GlobesManager",
-      measureConfig: {},
+      measureConfig: {
+        textType: "宋体",
+        textColor: "#1890ff",
+        textSize: "14",
+        lineType: "实线",
+        lineColor: "#1890ff",
+        lineOpacity: 1,
+        lineWidth: 3,
+        fillColor: "#1890ff",
+        fillOpacity: 0.4,
+      },
     };
   },
   watch: {
@@ -73,7 +83,32 @@ export default {
     featureConfig: {
       handler(val) {
         if (val) {
-          this.measureConfig.lineColor = val?.feature?.line?.color || "#1890ff";
+          const labelConfig = this.featureConfig.label;
+          const featureConfig = this.featureConfig.feature;
+
+          const textConfig = labelConfig?.text;
+          if (textConfig) {
+            this.measureConfig.textColor =
+              textConfig.color || this.measureConfig.textColor;
+            this.measureConfig.textSize =
+              Number(textConfig.fontSize) || this.measureConfig.textSize;
+            this.measureConfig.textType =
+              textConfig.fontFamily || this.measureConfig.textType;
+          }
+
+          const lineConfig = featureConfig?.line;
+          if (lineConfig) {
+            this.measureConfig.lineColor =
+              lineConfig.color || this.measureConfig.lineColor;
+            this.measureConfig.lineWidth =
+              Number(lineConfig.size) || this.measureConfig.lineWidth;
+          }
+
+          const fillConfig = featureConfig?.reg;
+          if (fillConfig) {
+            this.measureConfig.fillColor =
+              fillConfig.color || this.measureConfig.fillColor;
+          }
         }
       },
       deep: true,
@@ -133,17 +168,17 @@ export default {
       this.$_enableMeasure("MeasureSlopeTool");
     },
     async $_enableMeasure(MeasureName, MeasureType) {
-      const lineConfig = this.featureConfig?.feature?.line || {
-        color: "rgba(255,0,0,1)",
-        size: "3",
+      const lineConfig = {
+        color: this.measureConfig.lineColor,
+        size: this.measureConfig.lineWidth,
       };
-      const labelConfig = this.featureConfig?.label?.text || {
-        color: "rgba(255,0,102,1)",
-        fontSize: "14",
-        fontFamily: "华文行楷",
+      const labelConfig = {
+        color: this.measureConfig.textColor,
+        fontSize: this.measureConfig.textSize,
+        fontFamily: this.measureConfig.textType,
       };
-      const areaConfig = this.featureConfig?.feature?.reg || {
-        color: "rgba(255,255,0,0.5)",
+      const areaConfig = {
+        color: this.measureConfig.fillColor,
       };
       if (this.measureConfig.lineColor) {
         this.measureStyles.lineColor = Cesium.Color.fromCssColorString(
@@ -182,6 +217,12 @@ export default {
           MeasureObject.font = `${labelConfig.fontSize}px ${labelConfig.fontFamily}`;
         }
       }
+      // 贴底线面接口一致
+      if (MeasureName === "MeasureStickLengthTool") {
+        MeasureName = "MeasureLengthTool";
+      } else if (MeasureName === "MeasureStickAreaTool") {
+        MeasureName = "MeasureAreaTool";
+      }
       if (MeasureName === "MeasureLengthTool") {
         MeasureObject.paneNum = 256;
       } else if (MeasureName === "MeasureAreaTool") {
@@ -217,12 +258,6 @@ export default {
         measureObject[element] = MeasureObject[element];
       }
       measureObject = Object.assign(measureObject, this.options);
-      // 贴底线面接口一致
-      if (MeasureName === "MeasureStickLengthTool") {
-        MeasureName = "MeasureLengthTool";
-      } else if (MeasureName === "MeasureStickAreaTool") {
-        MeasureName = "MeasureAreaTool";
-      }
       let measure = new zondy.cesium[MeasureName](viewer, measureObject);
       this.measure = measure;
       window.vueCesium.MeasureToolManager.addSource(vueKey, vueIndex, measure);

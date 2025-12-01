@@ -73,19 +73,44 @@ export default {
       this.mount();
     },
     mount() {
-      const { baseUrl, options } = this;
+      const { baseUrl, options, token } = this;
       let { layers } = this;
 
       const { viewer } = this;
-      const arcGISMapImageLayer = new ArcGISMapImageLayer({
+
+      const paramOptions = {
         url: baseUrl,
         renderMode: "image",
         extent: options.rectangle || null,
-      });
+        extensionOptions: this.options?.extensions
+          ? this.options.extensions
+          : {},
+      };
+
+      if (token.key && token.value) {
+        // const headers = {};
+        // headers[token.key] = token.value;
+        // paramOptions.headers = headers;
+        paramOptions.tokenKey = token.key;
+        paramOptions.tokenValue = token.value;
+      }
+
+      const arcGISMapImageLayer = new ArcGISMapImageLayer(paramOptions);
       const self = this;
       arcGISMapImageLayer.load().then((layer) => {
+        if (!layer.loaded) {
+          return;
+        }
         // 获取provider的初始化参数
         const cesiumOptions = initializeOptions(layer, viewer);
+        const { rectangle } = cesiumOptions;
+        if (rectangle) {
+          const { west, south, east, north } = rectangle;
+          // 如果范围无效，则不加载
+          if (west >= east || south >= north) {
+            return;
+          }
+        }
         if (layers && layers !== "") {
           cesiumOptions.layers = layers;
         }

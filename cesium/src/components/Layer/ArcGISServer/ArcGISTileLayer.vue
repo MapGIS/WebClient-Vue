@@ -39,17 +39,39 @@ export default {
   },
   methods: {
     mount() {
-      const { viewer, options } = this;
-      // 创建ArcGIS瓦片图层对象
-      const arcgisTileLayer = new ArcGISTileLayer({
+      const { viewer, options, token } = this;
+
+      const paramOptions = {
         url: this.baseUrl,
         extent: options.rectangle || null,
-      });
+        extensionOptions: this.options?.extensions
+          ? this.options.extensions
+          : {},
+      };
+
+      if (token.key && token.value) {
+        paramOptions.tokenKey = token.key;
+        paramOptions.tokenValue = token.value;
+      }
+
+      // 创建ArcGIS瓦片图层对象
+      const arcgisTileLayer = new ArcGISTileLayer(paramOptions);
       const vm = this;
       // 获取ArcGIS瓦片服务的元信息
-      arcgisTileLayer.load().then(async (layer) => {
+      arcgisTileLayer.load().then((layer) => {
+        if (!layer.loaded) {
+          return;
+        }
         // 获取provider的初始化参数
         const cesiumOptions = initializeOptions(layer, viewer);
+        const { rectangle } = cesiumOptions;
+        if (rectangle) {
+          const { west, south, east, north } = rectangle;
+          // 如果范围无效，则不加载
+          if (west >= east || south >= north) {
+            return;
+          }
+        }
         vm.$_mount(cesiumOptions);
       });
     },

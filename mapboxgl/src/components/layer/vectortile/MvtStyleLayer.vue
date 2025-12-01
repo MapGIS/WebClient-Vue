@@ -137,16 +137,16 @@ export default {
             const { tileInfo, extent } = commonLayer;
             const { spatialReference, size, lods, origin } = tileInfo;
             const { wkid, wkt } = spatialReference;
-            const resolutions = [];
-            for (let d = 0; d < lods.length; d++) {
-              resolutions.push(lods[d].resolution);
-            }
+            const resolutions = {};
+            lods.forEach((lod, index) => {
+              resolutions[index] = lod.resolution;
+            });
             this.customCrs = new this.CRS(`EPSG:${wkid}`, wkt, {
               resolutions,
               origin: [origin.coordinates[0], origin.coordinates[1]],
               tileSize: Math.max(size[0], size[1]),
               bounds: [extent.xmin, extent.ymin, extent.xmax, extent.ymax],
-              unit: "degree",
+              unit: spatialReference.isGeographic ? "degree" : undefined,
             });
             source.crs = this.customCrs;
           }
@@ -323,6 +323,11 @@ export default {
         },
         layers: layers,
       };
+      const { token } = this;
+      if (token.key && token.value) {
+        style.glyphs += `&${token.key}=${token.value}`;
+        style.sprite += `&${token.key}=${token.value}`;
+      }
       // 修改说明：先强制删除draw上面的crs,不然加载会报无法识别crs参数的错误
       // 修改人：龚跃健-20241213
       delete style.sources["mapbox-gl-draw-cold"].crs;

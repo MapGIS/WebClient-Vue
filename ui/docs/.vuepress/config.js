@@ -103,6 +103,15 @@ module.exports = {
               },
               ["/api/technology/borderbox.md", "科技风-卡片"],
               ["/api/technology/decoration.md", "科技风-装饰"],
+              {
+                title: "json编辑组件",
+                collapsable: false,
+              },
+              ["/api/jsoneditorTextarea/jsoneditorTextarea.md", "json编辑器"],
+              [
+                "/api/popJsoneditorDialog/popJsoneditorDialog.md",
+                "json编辑器弹框",
+              ],
             ],
           },
           {

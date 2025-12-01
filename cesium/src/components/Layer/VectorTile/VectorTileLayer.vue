@@ -66,8 +66,18 @@ export default {
     async $_addLayer(opt) {
       const { viewer, $props } = this;
       const commonLayer = await this.getIGSVectorTileLayer();
+      if (!commonLayer) {
+        return;
+      }
       const cesiumOptions = initializeOptions(commonLayer, viewer);
-
+      const { rectangle } = cesiumOptions;
+      if (rectangle) {
+        const { west, south, east, north } = rectangle;
+        // 如果范围无效，则不加载
+        if (west >= east || south >= north) {
+          return;
+        }
+      }
       const optMinimumLevel = $props.options.minimumLevel || 0;
       const optMaximumLevel = $props.options.maximumLevel || 22;
       const minimumLevel = Math.max(
@@ -102,6 +112,7 @@ export default {
       let styleUrl = undefined;
       let styleObject = undefined;
       let url = this.styleUrl;
+
       return new Promise((resolve, reject) => {
         if (this.mvtStyle) {
           if (typeof this.mvtStyle === "string") {
@@ -134,12 +145,25 @@ export default {
         if (!styleUrl && !styleObject) {
           resolve();
         } else {
-          const igsVectorTileLayer = new IGSVectorTileLayer({
+          const { token } = this;
+          const options = {
             url: styleUrl,
             style: styleObject,
-          });
-          igsVectorTileLayer.load().then((res) => {
-            resolve(igsVectorTileLayer);
+            extensionOptions: this.options?.extensions
+              ? this.options.extensions
+              : {},
+          };
+
+          if (token.key && token.value) {
+            options.tokenKey = token.key;
+            options.tokenValue = token.value;
+          }
+          const igsVectorTileLayer = new IGSVectorTileLayer(options);
+          igsVectorTileLayer.load().then((layer) => {
+            if (!layer.loaded) {
+              resolve(null);
+            }
+            resolve(layer);
           });
         }
       });

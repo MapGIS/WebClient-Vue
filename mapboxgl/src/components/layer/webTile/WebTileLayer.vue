@@ -180,16 +180,13 @@ export default {
       // 解析zoomOffset
       let _zoomOffset = zoomOffset;
       if (this.map.getCRS().epsgCode.includes("4326")) {
-        if (
-            url.indexOf('tianditu.com/DataServer') > -1 ||
-            url.indexOf('tianditu.gov.cn/DataServer') > -1 
-          ) {
-            // 天地图DataServer服务第0级1.4062499999782967
-            _zoomOffset = _zoomOffset === undefined ? 0 : _zoomOffset;
-          } else {
-            // 标准的4326缺裁图方式，第0级分辨率0.7031249999891483，和mapboxgl引擎默认的4326 crs第0级分辨率1.4062499999782967相比，缺少一级
-            _zoomOffset = _zoomOffset === undefined ? -1 : _zoomOffset - 1;
-          }
+        if (url.includes('tianditu.com') || url.includes('tianditu.gov.cn')) {
+          // 天地图第0级1.4062499999782967
+          _zoomOffset = _zoomOffset === undefined ? 0 : _zoomOffset;
+        } else {
+          // 标准的4326缺裁图方式，第0级分辨率0.7031249999891483，和mapboxgl引擎默认的4326 crs第0级分辨率1.4062499999782967相比，缺少一级
+          _zoomOffset = _zoomOffset === undefined ? -1 : _zoomOffset - 1;
+        }
       }
       rasterSource.mapgisOffset = _zoomOffset
 
