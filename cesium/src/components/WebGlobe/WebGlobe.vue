@@ -24,9 +24,6 @@ export default {
     libPath: {
       type: String,
     },
-    pluginPath: {
-      type: String,
-    },
     height: {
       type: Number,
     },
