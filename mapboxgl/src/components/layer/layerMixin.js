@@ -241,28 +241,33 @@ export default {
      * @returns {Object} Source对象
     */
     $_getSource() {
-      return this.source || this.sourceBack
+      return this.sourceBack || this.source
     },
     /**
      * 获取sourceId
      * @returns {String} sourceId
     */
     $_getSourceId() {
-      return this.sourceId || this.sourceIdBack || this.layerId
+      return this.sourceIdBack || this.sourceId || this.layerId
     },
     /**
      * 获取layerId
      * @returns {String} sourceId
     */
     $_getLayerId() {
-      return this.layerId || this.layerIdBack
+      return this.layerIdBack || this.layerId
     },
     /**
      * 获取layer
      * @returns {Object} sourceId
     */
     $_getLayer() {
-      return this.layer || this.layerBack
+      /*
+       * fix(30091): 栅格瓦片采用隐藏模式，2D视图结果效果为拉伸
+       * 修改说明: 获取layer时，优先返回图层组件的layerBack，没有则返回layer
+       * 修改人: 杨琨 2025-12-5
+       */
+      return this.layerBack || this.layer
     }
   },
 
