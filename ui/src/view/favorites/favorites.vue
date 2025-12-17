@@ -58,7 +58,7 @@
               <mapgis-ui-ant-icon
                 class="icon-style"
                 type="delete"
-                @click="$event => $event.stopPropagation()"
+                @click="($event) => $event.stopPropagation()"
               />
             </mapgis-ui-tooltip>
           </mapgis-ui-popconfirm>
@@ -76,7 +76,7 @@
             <span
               :title="node.name"
               :class="{
-                'checked-node': node.children.length === 0
+                'checked-node': node.children.length === 0,
               }"
             >
               <mapgis-ui-ant-icon
@@ -123,7 +123,7 @@
                   <mapgis-ui-ant-icon
                     class="icon-style"
                     type="delete"
-                    @click="$event => $event.stopPropagation()"
+                    @click="($event) => $event.stopPropagation()"
                   />
                 </mapgis-ui-tooltip>
               </mapgis-ui-popconfirm>
@@ -153,41 +153,31 @@
 export default {
   name: "mapgis-ui-favorites",
   props: {
-    // 数据目录所以节点信息（整个tree）
-    checkData: {
-      type: Array,
-      default: () => []
-    },
-    // 数据目录勾选中的key
-    checkKeys: {
-      type: Array,
-      default: () => []
-    },
     // 列表模式下tree组件中节点信息展示的替换字段{title: "name",key: "guid"}，具体使用参考ant-design-vue中的tree组件对应api
     replaceFields: {
       type: Object,
       default: () => {
         return {
           title: "name",
-          key: "guid"
+          key: "guid",
         };
-      }
+      },
     },
     // 初始化从接口获取的数据
     dataList: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     // 展示类型 list 列表模式 image 缩略图模式
     showType: {
       type: String,
-      default: "image"
+      default: "image",
     },
     // baseUrl 用于回显图片
     baseUrl: {
       type: String,
-      default: ""
-    }
+      default: "",
+    },
   },
   data() {
     return {
@@ -196,10 +186,9 @@ export default {
       searchValue: "",
       bookMarkName: "",
       showAddName: false,
-      checkKeysRelation: {},
       title: "",
       type: "",
-      editIndex: undefined
+      editIndex: undefined,
     };
   },
   watch: {
@@ -210,24 +199,24 @@ export default {
         this.bookMarkListCopy = JSON.parse(JSON.stringify(this.dataList));
         if (this.searchValue) {
           this.bookMarkList = this.bookMarkListCopy.filter(
-            item => item.name.indexOf(this.searchValue) !== -1
+            (item) => item.name.indexOf(this.searchValue) !== -1
           );
         } else {
           this.bookMarkList = JSON.parse(JSON.stringify(this.dataList));
         }
-      }
-    }
+      },
+    },
   },
   computed: {
     getImage() {
-      return image => {
+      return (image) => {
         if (image.startsWith("/file")) {
           const appProductName = window._CONFIG.productName || "psmap";
           return `${this.baseUrl}/${appProductName}${image}`;
         }
         return `${this.baseUrl}${image}`;
       };
-    }
+    },
   },
 
   mounted() {},
@@ -254,7 +243,7 @@ export default {
       const deepCloneData = JSON.parse(JSON.stringify(data));
       this.bookMarkName = deepCloneData.name;
       const editIndex = this.bookMarkListCopy.findIndex(
-        item => item.id === deepCloneData.id
+        (item) => item.id === deepCloneData.id
       );
       this.editIndex = editIndex;
     },
@@ -269,7 +258,7 @@ export default {
         return;
       }
       const hasExist = this.bookMarkList.find(
-        item => item.name === this.bookMarkName
+        (item) => item.name === this.bookMarkName
       );
       if (hasExist) {
         this.$message.warning("输入的名称已存在!");
@@ -288,160 +277,23 @@ export default {
       this.onAddCancel();
       // 调用接口保存数据
     },
-    getCheckData(data) {
-      const treeConvertList = [];
-      // 将tree转成array
-      this.treeToArray(data, treeConvertList, undefined);
-      // 通过勾选节点寻找父节点
-      const treeData = [];
-      // 处理key
-      const checkedChildKeys = this.getKeys(treeConvertList);
-      checkedChildKeys.forEach(item => {
-        const child = [];
-        // 递归从treeConvertList获取关联数据
-        this.findParent(treeConvertList, child, item);
-        // 合并treeData
-        this.mergeTreeData(treeData, child);
-      });
-      // 保存关联关系,查看时跳转勾选数据目录节点
-      this.getCheckRelation(treeData);
-
-      // 将array转成tree结构
-      const treeNeedData = [];
-      treeData.forEach(item => {
-        const child = this.arrayToTree(item);
-        treeNeedData.push(child[0]);
-      });
-      return treeNeedData;
-    },
-    treeToArray(data, arr, parentId) {
-      data.forEach(item => {
-        item.parentId = parentId;
-        arr.push(item);
-        if (item.children && item.children.length > 0) {
-          this.treeToArray(item.children, arr, item.guid);
-        }
-      });
-    },
-    findParent(data, child, childId) {
-      const current = data.find(item => item.guid === childId);
-      child.push(current);
-      if (!current.parentId) return;
-      const parent = data.find(item => item.guid === current.parentId);
-      this.findParent(data, child, parent.guid);
-    },
-    arrayToTree(list) {
-      const treeList = [];
-      const map = {};
-      list.forEach(item => {
-        item.children = [];
-        map[item.guid] = item;
-      });
-
-      list.forEach(item => {
-        // 对于每一个元素来说，先找它的上级
-        // 如果能找到，说明它有上级，则要把它添加到上级的children中去
-        // 如果找不到，说明它没有上级，直接添加到 treeList
-        const parent = map[item.parentId];
-        // 如果存在则表示item不是最顶层的数据
-        if (parent) {
-          parent.children.push(item);
-        } else {
-          // 如果不存在 则是顶层数据
-          treeList.push(item);
-        }
-      });
-      return treeList;
-    },
-    getKeys(list) {
-      const keys = [];
-      this.checkKeys.forEach(item => {
-        const data = list.find(node => node.guid === item);
-        if (data && !data.children) {
-          keys.push(item);
-        }
-        // !data.children && keys.push(item);
-      });
-      return keys;
-    },
-    mergeTreeData(treeData, child) {
-      if (treeData.length === 0) {
-        treeData.push(child);
-      } else {
-        const childRoot = child.find(item => !item.parentId);
-        let flag;
-        treeData.forEach((item, index) => {
-          const target = item.find(node => node.guid === childRoot.guid);
-          if (target) flag = index;
-        });
-
-        if (typeof flag === "number") {
-          const newData = this.mergeData(treeData[flag], child);
-          treeData[flag] = newData;
-        } else {
-          treeData.push(child);
-        }
-      }
-    },
-    mergeData(treeData, child) {
-      const add = [];
-      treeData.forEach(item => {
-        const data = child.find(node => node.guid === item.guid);
-        !data && add.push(item);
-      });
-      return [...add, ...child];
-    },
-    getCheckRelation(treeData) {
-      this.checkKeysRelation = {};
-      treeData.forEach(item => {
-        const parent = item.find(node => node.level === 0);
-        const childs = item.filter(node => !node.children);
-        this.checkKeysRelation[parent.guid] = [];
-        childs.forEach(node => {
-          this.checkKeysRelation[parent.guid].push(node.guid);
-        });
-      });
-    },
     onSearch() {},
     searchValueChange() {
       if (!this.searchValue) {
         this.bookMarkList = JSON.parse(JSON.stringify(this.bookMarkListCopy));
       } else {
         this.bookMarkList = this.bookMarkListCopy.filter(
-          item => item.name.indexOf(this.searchValue) !== -1
+          (item) => item.name.indexOf(this.searchValue) !== -1
         );
       }
     },
     onAddData() {
-      const data = {
-        // 唯一id
-        id: undefined,
-        // 场景定格名称
-        name: this.bookMarkName,
-        image: "",
-        // 地图模式，若当前二维地图数据是三维地图下保存的数据则自动跳转三维地图
-        is2DMapMode: undefined,
-        // 数据目录勾选的key
-        checkKeys: [...this.checkKeys],
-        // 数据目录勾选的key与对应的tab映射关系
-        checkKeysRelation: {},
-        // 存储当前场景展示的tree数据
-        data: [],
-        // 配置参数，如保存数据时的地图范围等数据，用于还原
-        options: {}
-      };
-      if (this.checkKeys.length > 0) {
-        const checkData = JSON.parse(JSON.stringify(this.checkData));
-        const treeData = this.getCheckData(checkData);
-        data.data = treeData;
-        data.checkKeysRelation = this.checkKeysRelation;
-      }
-      this.$emit("addData", data);
+      this.$emit("addData", this.bookMarkName);
     },
     onEditData() {
       this.$emit("editData", this.bookMarkName, this.editIndex);
-    }
-  }
+    },
+  },
 };
 </script>
 
