@@ -27,7 +27,7 @@ export default {
         let reloadLayer = true;
         // 更改透明度或者显隐参数，不重新加载图层
         const layerId = this.$_getLayerId();
-        if (newLayer.opacity !== oldLayer.opacity) {
+        if (oldLayer && newLayer.opacity !== oldLayer.opacity) {
           reloadLayer = false;
           /*
            * feat(3395): PTSYB-天地图放大到一定程度后，不显示“此级别下，该区域无影像”
@@ -45,7 +45,7 @@ export default {
             );
           }
         }
-        if (newLayer.visible !== oldLayer.visible) {
+        if (oldLayer && newLayer.visible !== oldLayer.visible) {
           reloadLayer = false;
           if (newLayer.visible === true) {
             this.map.setLayoutProperty(layerId, "visibility", "visible");
@@ -59,12 +59,8 @@ export default {
             this.$_deferredMountByCommonLayer();
             this.isFirstAddLayer = true;
           } else {
-            const oldLayerJSON = oldLayer.toJSON();
-            const newLayerJSON = newLayer.toJSON();
             try {
-              if (
-                JSON.stringify(oldLayerJSON) !== JSON.stringify(newLayerJSON)
-              ) {
+              if (newLayer.url !== oldLayer?.url) {
                 this.$_deferredMountByCommonLayer();
               }
             } catch (error) {
@@ -74,6 +70,7 @@ export default {
         }
       },
       deep: true,
+      immediate: true,
     },
   },
   data() {
@@ -106,7 +103,7 @@ export default {
       this.$_deferredMount();
 
       if (this.url) {
-      this.$watch("url", function(next) {
+        this.$watch("url", function (next) {
           if (this.initial) return;
           this.$_deferredUnMount();
           this.$_deferredMount();
@@ -203,7 +200,7 @@ export default {
         this.layerIdBack = layers[0].id;
         this.sourceIdBack = layers[0].source;
         this.sourceBack = sources[this.sourceIdBack];
-        this.layerBack = layers[0]
+        this.layerBack = layers[0];
         if (this.sourceBack) {
           this.$_deferredMount();
         }

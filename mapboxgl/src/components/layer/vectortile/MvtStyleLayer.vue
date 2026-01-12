@@ -9,8 +9,15 @@ import { compareStyle } from "./MvtCompare";
 import { DefaultThemeLayers } from "../ThemeLayer/BaseLayer";
 
 import EventBusMapMixin from "../../../lib/eventbus/EventBusMapMixin";
-import { IGSVectorTileLayer, Projection, TileInfoUtil } from "@mapgis/webclient-common";
-import { mapboxCustomCRS, initializeOptions } from "@mapgis/webclient-mapboxgl-plugin";
+import {
+  IGSVectorTileLayer,
+  Projection,
+  TileInfoUtil,
+} from "@mapgis/webclient-common";
+import {
+  mapboxCustomCRS,
+  initializeOptions,
+} from "@mapgis/webclient-mapboxgl-plugin";
 
 export default {
   name: "mapgis-mvt-style-layer",
@@ -111,43 +118,57 @@ export default {
         let reloadLayer = true;
         // 更改透明度或者显隐参数，不重新加载图层
         if (this.isFirstAddLayer) {
-          if (JSON.stringify(newLayer._style.layers) !== JSON.stringify(oldLayer._style.layers)) {
+          if (
+            JSON.stringify(newLayer._style.layers) !==
+            JSON.stringify(oldLayer._style.layers)
+          ) {
             reloadLayer = false;
             this.lastStyle.layers.forEach((styleLayer) => {
-              const paintKeys = Object.keys(styleLayer.paint)
+              const paintKeys = Object.keys(styleLayer.paint);
               paintKeys.forEach((key) => {
-                this.map.setPaintProperty(styleLayer.id, key, styleLayer.paint[key]);
-              })
-              const layoutKeys = Object.keys(styleLayer.layout)
+                this.map.setPaintProperty(
+                  styleLayer.id,
+                  key,
+                  styleLayer.paint[key]
+                );
+              });
+              const layoutKeys = Object.keys(styleLayer.layout);
               layoutKeys.forEach((key) => {
-                this.map.setLayoutProperty(styleLayer.id, key, styleLayer.layout[key]);
-              })
-            })
+                this.map.setLayoutProperty(
+                  styleLayer.id,
+                  key,
+                  styleLayer.layout[key]
+                );
+              });
+            });
           }
         }
         // 重新加载图层
-        if (reloadLayer) {
-          if (!this.isFirstAddLayer) {
-            this.$_deferredMountByCommonLayer();
-            this.isFirstAddLayer = true;
-          } else {
-            const oldLayerJSON = oldLayer.toJSON();
-            const newLayerJSON = newLayer.toJSON();
-            try {
-              if (
-                JSON.stringify(oldLayerJSON) !== JSON.stringify(newLayerJSON)
-              ) {
-                this.$_deferredMountByCommonLayer();
+        const self = this;
+        this.$nextTick(() => {
+          if (reloadLayer) {
+            if (!self.isFirstAddLayer) {
+              self.$_deferredMountByCommonLayer();
+              self.isFirstAddLayer = true;
+            } else {
+              const oldLayerJSON = oldLayer.toJSON();
+              const newLayerJSON = newLayer.toJSON();
+              try {
+                if (
+                  JSON.stringify(oldLayerJSON) !== JSON.stringify(newLayerJSON)
+                ) {
+                  self.$_deferredMountByCommonLayer();
+                }
+              } catch (error) {
+                self.$_deferredMountByCommonLayer();
               }
-            } catch (error) {
-              this.$_deferredMountByCommonLayer();
             }
           }
-        }
+        });
       },
       deep: true,
+      immediate: true,
     },
-
   },
 
   created() {
@@ -719,19 +740,23 @@ export default {
     $_deferredMountByCommonLayer() {
       const { commonLayer } = this;
       if (commonLayer) {
-        this.remove(this.lastStyle)
+        this.remove(this.lastStyle);
         const mapboxglOptions = initializeOptions(commonLayer, viewer);
         const { layers, sources } = mapboxglOptions;
         this.lastStyle = clonedeep(mapboxglOptions);
         const tileInfo = TileInfoUtil.getTileInfoByLayer(commonLayer);
         const { minScale, maxScale } = commonLayer;
-        const sourcesArr = Object.entries(sources)
+        const sourcesArr = Object.entries(sources);
         for (let i = 0; i < sourcesArr.length; i++) {
-          const sourceArr = sourcesArr[i]
-          this.map.addSource(sourceArr[0], sourceArr[1])
+          const sourceArr = sourcesArr[i];
+          this.map.addSource(sourceArr[0], sourceArr[1]);
         }
         for (let j = 0; j < layers.length; j++) {
-          this.map.addLayer(layers[j])
+          if (this.before) {
+            this.map.addLayer(layers[j], this.before);
+          } else {
+            this.map.addLayer(layers[j]);
+          }
         }
       }
     },
