@@ -1,7 +1,7 @@
 <template>
   <div class="comprehensive-place-name-panel-container">
     <mapgis-ui-spin :spinning="spinning" v-if="!cluster">
-      <template v-if="geojson.features.length > 0">
+      <template v-if="geojson.features.length > 0 && geojson.features[0].properties">
         <ul class="comprehensive-place-name-panel">
           <li
             v-for="(item, i) in geojson.features"
@@ -10,14 +10,14 @@
             @mouseleave="mouseLeave(i)"
             @click="setActivePoint(i)"
           >
-            <div class="img-place-name-panel">
-              <img :src="activeImage(item.properties.markerId)" />
-            </div>
-            <div class="content-place-name-panel">
-              <p v-for="(config, index) in fieldConfigs" :key="index">
-                <label>{{ config.title }}:</label>
-                <span>{{ item.properties[config.name] }}</span>
-              </p>
+              <div class="img-place-name-panel">
+                <img :src="activeImage(item.properties.markerId)" />
+              </div>
+              <div class="content-place-name-panel">
+                <p v-for="(config, index) in fieldConfigs" :key="index">
+                  <label>{{ config.title }}:</label>
+                  <span>{{ item.properties[config.name] }}</span>
+                </p>
             </div>
           </li>
         </ul>
@@ -166,6 +166,9 @@ export default {
       immediate: true,
       handler() {
         this.selectMarkers = [];
+        if (this.activeTab === this.name) {
+          this.$emit("update-geojson", this.geojson);
+        }
         this.updataMarkers();
       }
     }
@@ -201,7 +204,6 @@ export default {
     updataMarkers() {
       if (this.activeTab === this.name) {
         this.$emit("select-markers", this.selectMarkers);
-        this.$emit("update-geojson", this.geojson);
         this.$emit("color-cluster", this.selectedItem.color);
       }
     },
@@ -289,7 +291,9 @@ export default {
           this.maxCount = geoCode.totalCount
             ? geoCode.totalCount
             : features.length;
-          this.updataMarkers();
+          if (this.activeTab === this.name) {
+            this.$emit("update-geojson", this.geojson);
+          }
         }
       } catch (error) {
         window.console.log(error);
@@ -364,7 +368,9 @@ export default {
         this.maxCount = geoJSONData.dataCount
           ? geoJSONData.dataCount
           : features.length;
-        this.updataMarkers();
+        if (this.activeTab === this.name) {
+          this.$emit("update-geojson", this.geojson);
+        }
       } catch (error) {
         window.console.log(error);
       } finally {

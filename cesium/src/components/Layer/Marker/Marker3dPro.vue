@@ -127,7 +127,6 @@ export default {
     this.markerManager = MarkerManager.getInstance(Cesium, viewer);
     this.updateMarker();
   },
-  beforeDestroy() {},
   methods: {
     changePopup(val, popupId) {
       this.showPopup = val;

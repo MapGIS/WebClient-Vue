@@ -187,6 +187,10 @@ export default {
   methods: {
     // 初始化聚合图
     async initData(data) {
+      // 聚合只支持点图层
+      if(!data || data.features.length === 0 || data.features[0].geometry.type!=="Point") {
+        return
+      }
       const { clusterEnabled, clusterPixelRange } = this;
       this.creatClusterObject();
       // 创建Billboard对应的image记录
