@@ -146,6 +146,8 @@ export default {
       handler(markers, prevMarkers = []) {
         prevMarkers.forEach(this.onClearHighlightFeature);
         markers.forEach(this.onHighlightFeature);
+        // 缩放到选中的要素范围
+        markers.forEach(this.zoomToMarker);
       }
     },
     fitBound: {
@@ -235,6 +237,21 @@ export default {
     },
     isSelectedMarker(id) {
       return this.selects.findIndex(idField => idField === id) !== -1;
+    },
+    zoomToMarker(fid) {
+      const marker = this.getMarker(fid);
+      let bbox = Feature.getGeoJSONFeatureBound(marker.feature);
+      let bound = {
+        xmin: bbox.xmin,
+        ymin: bbox.ymin,
+        xmax: bbox.xmax,
+        ymax: bbox.ymax,
+      };
+      if (marker.feature.geometry.type !== "Point") {
+        this.zoomTo(bound);
+      } else {
+        this.zoomOrPanTo(bound);
+      }
     },
     zoomTo(bound) {
       if (!bound) return;
