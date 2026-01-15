@@ -26,6 +26,7 @@
     "@antv/g6": "3.1.1",
     "@antv/hierarchy": "^0.6.8",
     "@mapbox/mapbox-gl-style-spec": "13.23.1",
+    "@mapgis/cesium": "~17.2.0",
     "@mapgis/webclient-cesium-plugin": "~17.8.0",
     "@mapgis/webclient-es6-service": "~16.2.0",
     "@mapgis/webclient-plot": "~17.8.0",
