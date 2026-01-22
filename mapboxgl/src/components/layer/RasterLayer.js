@@ -59,8 +59,12 @@ export default {
             this.$_deferredMountByCommonLayer();
             this.isFirstAddLayer = true;
           } else {
+            const oldLayerJSON = oldLayer.toJSON();
+            const newLayerJSON = newLayer.toJSON();
             try {
-              if (newLayer.url !== oldLayer?.url) {
+              if (
+                JSON.stringify(oldLayerJSON) !== JSON.stringify(newLayerJSON)
+              ) {
                 this.$_deferredMountByCommonLayer();
               }
             } catch (error) {

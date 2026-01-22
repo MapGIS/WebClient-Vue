@@ -67,27 +67,17 @@ export default {
         wkid = this.srs.split("EPSG:")[1];
       }
       const { viewer, layers } = this;
-      const sublayers = [];
-      let tempLayers = layers || "";
-      if (tempLayers.includes("show:")) {
-        tempLayers = tempLayers.split("show:")[1];
-      }
-      const showLayerIds = tempLayers.split(",");
-      for (let i = 0; i < showLayerIds.length; i++) {
-        if (showLayerIds[i] && showLayerIds[i] !== "") {
-          sublayers.push({
-            id: showLayerIds[i],
-            visible: true,
-          });
-        }
-      }
+      // 修改说明：目前common层如果没有传组图层id，则不会显示组图层及其子图层，但是一张图的layers中是排除了组图层id的，原因可以看bug(6552)
+      // 这里将layers挂到extensionOptions上，不再传sublayers
+      // 龚跃健-2026-1-21
+      const extensionOptions = this.options?.extensions
+          ? this.options.extensions
+          : {};
+      extensionOptions.layers = layers;
       const igsMapImageLayer = new IGSMapImageLayer({
         url: baseUrl,
         renderMode: this.renderMode === "image-map" ? "image" : "tile",
-        sublayers,
-        extensionOptions: this.options?.extensions
-          ? this.options.extensions
-          : {},
+        extensionOptions,
       });
       const self = this;
       igsMapImageLayer.load().then((layer) => {
