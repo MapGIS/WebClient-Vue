@@ -70,9 +70,7 @@ export default {
       // 修改说明：目前common层如果没有传组图层id，则不会显示组图层及其子图层，但是一张图的layers中是排除了组图层id的，原因可以看bug(6552)
       // 这里将layers挂到extensionOptions上，不再传sublayers
       // 龚跃健-2026-1-21
-      const extensionOptions = this.options?.extensions
-          ? this.options.extensions
-          : {};
+      const extensionOptions = JSON.parse(JSON.stringify(this.options?.extensions || {}))
       extensionOptions.layers = layers;
       const igsMapImageLayer = new IGSMapImageLayer({
         url: baseUrl,
