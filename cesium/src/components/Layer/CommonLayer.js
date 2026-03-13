@@ -2,6 +2,7 @@ import {
   CesiumInnerGraphicsLayer,
   IGSFeatureLayerUtil,
   SceneView,
+  initializeOptions,
 } from "@mapgis/webclient-cesium-plugin";
 import {
   Zondy,
@@ -11,6 +12,7 @@ import {
   Feature,
   FeatureSet,
   Geometry,
+  GeometryType,
   ElevationInfo,
   ElevationMode,
   IGSFeatureLayer,
@@ -183,6 +185,33 @@ export default {
       return renderer;
     },
 
+    // 通过要素类型构造renderer
+    getFeatureRenderer(type, layerStyle) {
+      let renderer;
+      switch (type) {
+        case GeometryType.point:
+        case GeometryType.multiPoint:
+          renderer = this.getSimplePointRenderer(layerStyle);
+          break;
+        case GeometryType.lineString:
+        case GeometryType.multiLineString:
+          renderer = this.getSimpleLineRenderer(layerStyle);
+          break;
+        case GeometryType.polygon:
+        case GeometryType.multiPolygon:
+        case GeometryType.extent:
+        case GeometryType.circle:
+          renderer = this.getSimplePolygonRenderer(layerStyle);
+          break;
+        default:
+      }
+      return renderer;
+    },
+
+    initializeOptions(layer, viewer) {
+      return initializeOptions(layer, viewer);
+    },
+
     // 添加图层
     addLayer(viewer, renderer, features) {
       const { opacity, visible } = this;
@@ -257,7 +286,22 @@ export default {
       this.innerLayer.setVisible(visible);
     },
     generateIGSFeatureLayer(options) {
-      return new IGSFeatureLayer(options);
+      //在三维上多边形带有弧度，多个IGSFeatureLayer没有办法控制顺序，需要设置贴地模式
+      const defaultOption = {
+        elevationInfo: new ElevationInfo({ mode: ElevationMode.onTheGround }),
+      };
+
+      return new IGSFeatureLayer({
+        ...defaultOption,
+        ...options,
+      });
+    },
+    setOnTheGroundElevationInfo(layer) {
+      if (layer) {
+        layer.elevationInfo = new ElevationInfo({
+          mode: ElevationMode.onTheGround,
+        });
+      }
     },
     generateGeoJSONLayer(options) {
       let { url } = options;

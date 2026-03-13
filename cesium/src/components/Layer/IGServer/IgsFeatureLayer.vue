@@ -18,7 +18,7 @@ export default {
       default: undefined,
     },
     gdbps: {
-      type: String,
+      type: [Array, String],
       default: undefined,
     },
     renderer: {
@@ -36,6 +36,13 @@ export default {
     renderMode: {
       type: String,
       default: "client",
+    },
+    token: {
+      type: Object,
+      default: () => {},
+    },
+    commonLayer: {
+      type: Object,
     },
   },
   data() {
@@ -57,6 +64,14 @@ export default {
         this.igsFeatureLayer.renderer = this.generateRenderer(val);
       }
     },
+    baseUrl(val) {
+      this.unmount();
+      this.mount();
+    },
+    gdbps(val) {
+      this.unmount();
+      this.mount();
+    },
   },
   mounted() {
     this.mount();
@@ -67,32 +82,40 @@ export default {
   methods: {
     async createCesiumObject() {
       const { viewer, vueCesium } = this;
-      const { baseUrl, gdbps, renderer, featureStyle } = this;
+      const { renderer, featureStyle } = this;
 
       let transformRenderer;
-      if (
-        JSON.stringify(renderer) === "{}" &&
-        JSON.stringify(featureStyle) !== "{}"
-      ) {
-        const fristFeature = features[0];
-        if (fristFeature) {
-          const type = fristFeature.geometry.type;
-          transformRenderer = this.getRenderer(type, featureStyle);
-        }
-      }
 
       this.commonMap = this.generateCommonMap();
       this.sceneView = this.generateSceneView(viewer, this.commonMap);
 
-      this.generateFeatureLayer(
-        gdbps,
-        baseUrl,
-        transformRenderer || this.generateRenderer(renderer)
-      );
+      if (this.commonLayer) {
+        this.igsFeatureLayer = this.commonLayer.clone();
+        // 在三维上多边形带有弧度，多个IGSFeatureLayer没有办法控制顺序，需要设置贴地模式
+        this.setOnTheGroundElevationInfo(this.igsFeatureLayer);
+        this.igsFeatureLayer.renderer = this.generateRenderer(renderer);
+      } else {
+        this.generateFeatureLayer(this.generateRenderer(renderer));
+      }
+
+      if (
+        JSON.stringify(renderer) === "{}" &&
+        JSON.stringify(featureStyle) !== "{}"
+      ) {
+        if (!this.igsFeatureLayer.loaded) {
+          await this.igsFeatureLayer.load();
+        }
+
+        const layerRenderer = this.getFeatureRenderer(
+          this.igsFeatureLayer.geometryType,
+          featureStyle
+        );
+        if (layerRenderer) {
+          this.igsFeatureLayer.renderer = layerRenderer;
+        }
+      }
+
       this.commonMap.add(this.igsFeatureLayer);
-      // const features = await this.queryFeaturesInLayers(gdbps, baseUrl);
-      // this.addLayer(viewer, transformRenderer || renderer, features);
-      //  this.layerLoaded(features);
 
       this.layerLoaded();
     },
@@ -104,6 +127,7 @@ export default {
         vueCesium.IgsFeatureManager.addSource(vueKey, vueIndex, source, {
           url: baseUrl,
           gdbp: gdbps,
+          commonLayer: this.igsFeatureLayer,
           sceneView: this.sceneView,
           commonMap: this.commonMap,
         });
@@ -113,17 +137,30 @@ export default {
     async mount() {
       await this.createCesiumObject();
     },
-    generateFeatureLayer(gdbps, baseUrl, renderer) {
+    generateFeatureLayer(renderer) {
       const { viewer } = this;
-      const { renderMode, visible, opacity } = this;
-      this.igsFeatureLayer = this.generateIGSFeatureLayer({
+      const { baseUrl, renderMode, visible, opacity, token } = this;
+
+      let { gdbps } = this;
+      if (typeof gdbps === "string") {
+        gdbps = gdbps.split(",");
+      }
+
+      const options = {
         url: baseUrl,
-        gdbp: gdbps,
+        gdbp: gdbps[0],
         renderMode,
         renderer,
         visible,
         opacity,
-      });
+      };
+
+      if (token.tokenKey && token.tokenValue) {
+        options.tokenKey = token.tokenKey;
+        options.tokenValue = token.tokenValue;
+      }
+
+      this.igsFeatureLayer = this.generateIGSFeatureLayer(options);
     },
     async queryFeaturesAndGenerateLayers(gdbps, baseUrl, renderer) {
       const { viewer } = this;
