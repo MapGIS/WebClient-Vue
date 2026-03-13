@@ -90,7 +90,11 @@ export default {
       if (this.marker && this.marker.properties) {
         const obj = {};
         for (const key in this.marker.properties) {
-          if (key !== "specialLayerBound" && key !== "specialLayerId") {
+          if (
+            key !== "specialLayerBound" &&
+            key !== "specialLayerId" &&
+            key !== "specialLayerType"
+          ) {
             obj[key] = this.marker.properties[key];
           }
         }

@@ -23,7 +23,7 @@
 <script>
 import G3DOptions from "./G3DOptions";
 import PopupMixin from "../Mixin/PopupMixin";
-import * as Feature from "../../service/comprehensive-query/util/feature";
+import BindingQueryMixin from "./mixins/BindingQueryMixin";
 import {
   IGSSceneLayer,
   LayerType,
@@ -36,7 +36,7 @@ import {
   InitializeOptionsType,
   UrlTemplateImageryProvider,
   MapGISMapServerImageryProvider,
-  MapGISDynamicLabelCollection
+  MapGISDynamicLabelCollection,
 } from "@mapgis/webclient-cesium-plugin";
 
 export default {
@@ -77,25 +77,20 @@ export default {
       type: String,
       default: "rgba(255,255,0,0.5)",
     },
-    // 挂靠的查询参数，比如三维简单要素类，如果有挂靠的查询参数，则拾取的要素属性使用从三维简单要素类里的内容
-    searchParams: {
-      type: Object,
-      default: () => {},
-    },
     // 图层跳转时间
     duration: {
       type: Number,
       default: 0,
     },
-     /**
+    /**
      * webclient-common库的Layer对象，用于构造Cesium引擎的图层对象
      */
     commonLayer: {
       type: Object,
-      default: null
-    }
+      default: null,
+    },
   },
-  mixins: [PopupMixin],
+  mixins: [PopupMixin, BindingQueryMixin],
   data() {
     return {
       layerIds: this.parseLayers(),
@@ -105,7 +100,7 @@ export default {
       featureclickenable: this.enablePopup,
       layerVisibleArr: [], //记录显示的图层，拾取时隐藏的图层直接忽略
       // 是否是第一次通过传入common图层的方式加载图层
-      isFirstAddLayer: false
+      isFirstAddLayer: false,
     };
   },
   provide() {
@@ -155,15 +150,12 @@ export default {
       this.changeLayerVisible(this.layerIds);
     },
     commonLayer: {
-      handler: async function(newLayer, oldLayer) {
+      handler: async function (newLayer, oldLayer) {
         const { vueKey, vueIndex } = this;
         // 是否重新加载图层
         let reloadLayer = true;
         // 更新透明度和显隐参数属性
-        const find = window.vueCesium.G3DManager.findSource(
-          vueKey,
-          vueIndex
-        );
+        const find = window.vueCesium.G3DManager.findSource(vueKey, vueIndex);
         const findSource = find ? find.source : null;
         if (findSource) {
           if (newLayer.opacity !== oldLayer.opacity) {
@@ -174,30 +166,38 @@ export default {
             reloadLayer = false;
             const layerIds = Object.keys(find.source);
             if (newLayer.visible === true) {
-              this.changeLayerVisible("show:" + layerIds.toString());     
+              this.changeLayerVisible("show:" + layerIds.toString());
             } else if (newLayer.visible === false) {
-              this.changeLayerVisible("show");     
+              this.changeLayerVisible("show");
             }
           }
         }
         // 更新子图层显隐参数
         let isUpdateSubLayerVisible = false;
         const newSubLayers = newLayer.activeScene.allSublayers.items;
-        this.layerVisibleArr = []
+        this.layerVisibleArr = [];
         for (let index = 0; index < newSubLayers.length; index++) {
-          if (newSubLayers[index].originLayerType !== IGSSceneOriginLayerType.groupLayer3D) {
-            const oldSubLayer = oldLayer.activeScene.findSublayerById(newSubLayers[index].id)
-            if(oldSubLayer && oldSubLayer.visible !== newSubLayers[index].visible) {
+          if (
+            newSubLayers[index].originLayerType !==
+            IGSSceneOriginLayerType.groupLayer3D
+          ) {
+            const oldSubLayer = oldLayer.activeScene.findSublayerById(
+              newSubLayers[index].id
+            );
+            if (
+              oldSubLayer &&
+              oldSubLayer.visible !== newSubLayers[index].visible
+            ) {
               isUpdateSubLayerVisible = true;
             }
-            if(newSubLayers[index].visible) {
+            if (newSubLayers[index].visible) {
               this.layerVisibleArr.push(newSubLayers[index].id);
             }
           }
         }
         if (isUpdateSubLayerVisible) {
-          reloadLayer = false
-          this.changeLayerVisible("show:" + this.layerVisibleArr.toString());  
+          reloadLayer = false;
+          this.changeLayerVisible("show:" + this.layerVisibleArr.toString());
         }
         // 是否重新加载图层
         if (reloadLayer) {
@@ -218,8 +218,8 @@ export default {
             }
           }
         }
-      }
-    }
+      },
+    },
   },
   methods: {
     /**
@@ -246,7 +246,7 @@ export default {
     mount() {
       // 当commonLayer存在时，使用commonLayer构造图层，否则按照原始逻辑构造图层
       if (this.commonLayer) {
-        return
+        return;
       }
       const vm = this;
       const { vueIndex, vueKey, vueCesium } = this;
@@ -412,7 +412,7 @@ export default {
               viewer.imageryLayers.remove(source, true);
               break;
             case InitializeOptionsType.MapGISDynamicLabelCollection:
-              viewer.scene.primitives.remove(source)
+              viewer.scene.primitives.remove(source);
               break;
           }
         }
@@ -915,13 +915,13 @@ export default {
               conditions,
             },
           });
-          const properties20 = await this.getFeaturePorpertiesById(id, index);
-          if (Object.keys(properties20).length > 0) {
+          const properties = await this.getFeaturePorpertiesById(id, index);
+          if (properties && Object.keys(properties).length > 0) {
             if (vm.showPopup) {
-              vm.featureproperties = properties20;
-              vm.iClickFeatures = [{ properties20 }];
+              vm.featureproperties = properties;
+              vm.iClickFeatures = [{ properties }];
             }
-            pickInfo.properties = properties20;
+            pickInfo.properties = properties;
           } else {
             let result = {};
             const propertyIds = pickedFeature.getPropertyIds();
@@ -1002,54 +1002,12 @@ export default {
       this.$emit("project-screen", file);
     },
     async getFeaturePorpertiesById(id, layerIndex) {
-      const properties = {};
-      if (this.searchParams) {
-        const { domain, serverName, serverType, mapList } = this.searchParams;
-        let { gdbp } = this.searchParams;
-        if (serverType === "IGSMapImage") {
-          // 关联的地图文档
-          if (mapList && mapList.length > 0) {
-            for (let i = 0; i < mapList.length; i++) {
-              const item = mapList[i];
-              if (
-                layerIndex.includes(item.LayerIndex) &&
-                item.URL &&
-                item.URL !== ""
-              ) {
-                gdbp = item.URL;
-              }
-            }
-          }
-        }
-        const featureSet = await Feature.FeatureQuery.query(
-          {
-            domain,
-            f: "json",
-            IncludeAttribute: true,
-            IncludeGeometry: false,
-            IncludeWebGraphic: false,
-            where: null,
-            gdbp,
-            docName: serverName,
-            layerIdxs: layerIndex,
-            rtnLabel: false,
-            objectIds: id,
-            requestType: "POST",
-          },
-          false,
-          true
-        );
-        if (featureSet && featureSet.SFEleArray) {
-          const { AttStruct, SFEleArray } = featureSet;
-          const { FldAlias, FldName } = AttStruct;
-          const { AttValue } = SFEleArray[0];
-
-          for (let i = 0; i < AttValue.length; i++) {
-            const tag = FldAlias[i] ? FldAlias[i] : FldName[i];
-            properties[tag] = AttValue[i];
-          }
-        }
-      }
+      const { viewer, Cesium, vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+      // 通过layerIndex找到对应的子图层，获取title
+      const { commonLayer } = find.options;
+      const sublayer = commonLayer.findSublayerById(layerIndex);
+      const properties = await this.getFeatureProperties(sublayer, id);
       return properties;
     },
     /**
@@ -1057,7 +1015,7 @@ export default {
      * @param {Object} layer common的场景图层对象
      */
     async $_deferredMountByCommonLayer(layer) {
-      this.unmount()
+      this.unmount();
       const { vueKey, vueIndex, viewer } = this;
       const layers = {};
       // 存储M3D初始样式
@@ -1073,18 +1031,21 @@ export default {
         subLayer.layer = layer;
       });
       // 构造场景子图层
-      const opacityLayerIds = []
+      const opacityLayerIds = [];
       const subLayerOptions = initializeOptions(layer, viewer);
       for (let subLayerOption of subLayerOptions) {
-        let imageryProvider
-        let imageryLayer
+        let imageryProvider;
+        let imageryLayer;
         const sublayerId = String(subLayerOption.id.split(":")[1]);
-        const sublayerType = subLayerOption.type
+        const sublayerType = subLayerOption.type;
         switch (sublayerType) {
           // MapGIS M3D图层
           case InitializeOptionsType.MapGISM3DSet:
-            subLayerOption = Object.assign(subLayerOption, layer.extensionOptions);
-            const { luminanceAtZenith = 0.2 } = layer.extendProps
+            subLayerOption = Object.assign(
+              subLayerOption,
+              layer.extensionOptions
+            );
+            const { luminanceAtZenith = 0.2 } = layer.extendProps;
             const m3dSet = await MapGISM3DSet.fromUrl(
               subLayerOption.url,
               subLayerOption
@@ -1096,7 +1057,7 @@ export default {
             layers[sublayerId] = {
               type: sublayerType,
               source: m3dSet,
-            }
+            };
             originStyles.push({ id: sublayerId, style: m3dSet.style });
             m3ds.push(m3dSet);
             opacityLayerIds.push(sublayerId);
@@ -1113,12 +1074,10 @@ export default {
                 offset: orientation,
               });
             }
-          break;
+            break;
           // MapGIS地形图层
           case InitializeOptionsType.MapGISTerrainProvider:
-            viewer.terrainProvider = new MapGISTerrainProvider(
-              subLayerOption
-            );
+            viewer.terrainProvider = new MapGISTerrainProvider(subLayerOption);
             layers[sublayerId] = {
               type: sublayerType,
               source: viewer.terrainProvider,
@@ -1129,34 +1088,34 @@ export default {
             imageryProvider = new MapGISMapServerImageryProvider(
               subLayerOption
             );
-            imageryLayer = viewer.imageryLayers.addImageryProvider(imageryProvider);
+            imageryLayer =
+              viewer.imageryLayers.addImageryProvider(imageryProvider);
             layers[sublayerId] = {
               type: sublayerType,
               source: imageryLayer,
             };
             opacityLayerIds.push(sublayerId);
-          break;
+            break;
           // 覆盖物图层 IGS 1.0
           case InitializeOptionsType.UrlTemplateImageryProvider:
-            imageryProvider = new UrlTemplateImageryProvider(
-              subLayerOption
-            );
-            imageryLayer = viewer.imageryLayers.addImageryProvider(imageryProvider);
+            imageryProvider = new UrlTemplateImageryProvider(subLayerOption);
+            imageryLayer =
+              viewer.imageryLayers.addImageryProvider(imageryProvider);
             layers[sublayerId] = {
               type: sublayerType,
               source: imageryLayer,
             };
             opacityLayerIds.push(sublayerId);
-          break;
+            break;
           // 注记图层
           case InitializeOptionsType.MapGISDynamicLabelCollection:
-            const primitive = new MapGISDynamicLabelCollection(subLayerOption)
-            viewer.scene.primitives.add(primitive)
+            const primitive = new MapGISDynamicLabelCollection(subLayerOption);
+            viewer.scene.primitives.add(primitive);
             layers[sublayerId] = {
               type: sublayerType,
               source: primitive,
             };
-          break;
+            break;
         }
       }
       vueCesium.G3DManager.addSource(vueKey, vueIndex, layers, {
@@ -1165,11 +1124,11 @@ export default {
         commonLayer: layer,
       });
       // 更新透明度
-      this.changeLayerOpacity(layer.opacity, opacityLayerIds)
+      this.changeLayerOpacity(layer.opacity, opacityLayerIds);
       // 初始化时绑定弹出框事件，方法内部会判断是否要开启弹出框
       this.bindPopupEvent();
       this.$emit("loaded", { g3d: layers, component: this });
-    }
+    },
   },
 };
 </script>
