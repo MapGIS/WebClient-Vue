@@ -1,14 +1,14 @@
 var __awaiter =
   (this && this.__awaiter) ||
-  function(thisArg, _arguments, P, generator) {
+  function (thisArg, _arguments, P, generator) {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function(resolve) {
+        : new P(function (resolve) {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function(resolve, reject) {
+    return new (P || (P = Promise))(function (resolve, reject) {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,7 +47,7 @@ export default class FeatureQuery {
    * @param {boolean} combine 是否走聚合查询方式。不涉及分页的，走IGS默认的，设置为向前光标速度更快；聚合查询做了优化，查询速度 比IGS默认的快速，支持属性聚合
    */
   static query(option, combine, is3D) {
-    return __awaiter(this, void 0, void 0, function*() {
+    return __awaiter(this, void 0, void 0, function* () {
       if (!option) {
         return null;
       }
@@ -63,7 +63,7 @@ export default class FeatureQuery {
     });
   }
   static isDataStoreQuery(option) {
-    return __awaiter(this, void 0, void 0, function*() {
+    return __awaiter(this, void 0, void 0, function* () {
       const { ip, port, gdbp } = option;
       let isDataStoreQuery = false;
       let DNSName = "";
@@ -75,7 +75,7 @@ export default class FeatureQuery {
         const result = yield DataSourceCatalog.getDataSource({
           ip,
           port,
-          isDetail: true
+          isDetail: true,
         });
         const dsName = gdbp.split("@")[1].split("/")[0];
         if (result && result.length > 0) {
@@ -90,7 +90,7 @@ export default class FeatureQuery {
       }
       return {
         isDataStoreQuery,
-        DNSName
+        DNSName,
       };
     });
   }
@@ -102,13 +102,16 @@ export default class FeatureQuery {
    * @returns {Promise<void>}
    */
   static igsQuery(option, combine, is3D) {
-    return __awaiter(this, void 0, void 0, function*() {
+    return __awaiter(this, void 0, void 0, function* () {
       if (!is3D && option.docName && option.layerIdxs !== undefined) {
         // 参数是否含有文档名和图层索引号
         const docInfo = yield DocumentCatalog.getDocInfo({
           serverName: option.docName,
           ip: option.ip,
-          port: option.port
+          port: option.port,
+          domain: option.domain,
+          tokenKey: option.tokenKey,
+          tokenValue: option.tokenValue,
         });
         const data =
           docInfo === null || docInfo === void 0
@@ -171,7 +174,7 @@ export default class FeatureQuery {
    * @param {string} [option.gdbp] 图层的gdbp地址，多个图层用逗号分隔
    * @param {string} [option.srsIds] 投影参考系，多个图层用半角逗号分隔
    * 矢量文档的要素查询
-   * @param {string} [option.docName] 文档名称</param>
+   * @param {string} [option.docName] 文档名称</param>。docName和layerIdxs同时存在时，优先执行矢量文档的要素查询
    * @param {Number} [option.mapIndex] 地图在文档下得序号（一般值为0）
    * @param {string} [option.layerIdxs] 要查询的图层索引(多个请用','分隔),单个索引支持组的情况，比如0-0-1-2，前面三级就是组的索引
    * 时空云的必须参数
@@ -179,13 +182,13 @@ export default class FeatureQuery {
    */
   static igsQueryFeature(option) {
     let queryParam;
-    if (option.gdbp) {
+    if (option.docName && option.layerIdxs) {
+      // 矢量文档
+      queryParam = new Zondy.MRFS.QueryParameter();
+    } else if (option.gdbp) {
       // 矢量图层
       queryParam = new Zondy.MRFS.QueryByLayerParameter(option.gdbp);
       queryParam.proj = option.srsIds;
-    } else {
-      // 矢量文档
-      queryParam = new Zondy.MRFS.QueryParameter();
     }
     queryParam.resultFormat = option.f || "geojson";
     queryParam.geometry = option.geometry || null;
@@ -200,7 +203,7 @@ export default class FeatureQuery {
           ? option.EnableDisplayCondition
           : false,
       Intersect: option.Intersect !== undefined ? option.Intersect : true,
-      MustInside: option.MustInside !== undefined ? option.MustInside : false
+      MustInside: option.MustInside !== undefined ? option.MustInside : false,
     });
     queryParam.struct = new Zondy.MRFS.QueryFeatureStruct({
       IncludeAttribute:
@@ -210,7 +213,7 @@ export default class FeatureQuery {
       IncludeWebGraphic:
         option.IncludeWebGraphic !== undefined
           ? option.IncludeWebGraphic
-          : false
+          : false,
     });
     queryParam.objectIds = option.objectIds || null;
     queryParam.orderField = option.orderField || null;
@@ -224,6 +227,7 @@ export default class FeatureQuery {
       option.coordPrecision || option.coordPrecision === 0
         ? option.coordPrecision
         : 2;
+
     let domain = option.domain || null;
     if (!domain) {
       const protocol =
@@ -232,20 +236,19 @@ export default class FeatureQuery {
       const port = option.port;
       domain = `${UrlUtil.getOrigin({ ip, port, protocol })}`;
     }
+
+    // 添加token
+    if (option.tokenKey && option.tokenValue) {
+      queryParam.tokenKey = option.tokenKey;
+      queryParam.tokenValue = option.tokenValue;
+    }
+
     let queryService;
-    if (option.gdbp && !option.docName) {
-      // 矢量图层
-      queryParam.desSrsName = 'WGS1984_度'
-      queryService = new Zondy.MRFS.QueryLayerFeature(queryParam, {
-        domain
-      });
-    } else {
+    if (option.docName && option.layerIdxs) {
+      // fix(29289)在线地图加载的服务查询不到属性表和元数据，自定义查询和要素查询均失败
+      // 修改说明：如果有地图服务名，则走地图服务的查询，原因是云门户不支持gdbp的查询
+      // 修改人：龚跃健 20260107
       // 矢量文档
-      if (!option.docName || !option.layerIdxs) {
-        return null;
-      }
-      // 文档名
-      const { docName } = option;
       // 文档索引
       const mapIndex = option.mapIndex || 0;
       // 图层索引号
@@ -253,32 +256,50 @@ export default class FeatureQuery {
         option.layerIdxs || option.layerIdxs === "0" ? option.layerIdxs : "*";
       // 时空云文档名
       const dataService = option.dataService || option.docName;
-      queryParam.partUrl = `docs/${docName}/${mapIndex}/${layerIdxs}/query?dataService=${dataService}`;
+      const requestType = option.requestType;
+      // 文档名
+      let { docName } = option;
+      if (docName.includes("?")) {
+        // 防止docName上挂了token
+        const strs = docName.split("?");
+        docName = strs[0];
+        const tokenStr = strs[1];
+        queryParam.partUrl = `docs/${docName}/${mapIndex}/${layerIdxs}/query?dataService=${dataService}&${tokenStr}`;
+      } else {
+        queryParam.partUrl = `docs/${docName}/${mapIndex}/${layerIdxs}/query?dataService=${dataService}`;
+      }
       queryService = new Zondy.MRFS.QueryDocFeature(
         queryParam,
         docName,
         layerIdxs,
         {
-          domain
+          domain,
+          requestType,
         }
       );
+    } else if (option.gdbp) {
+      // 矢量图层
+      queryParam.desSrsName = "WGS1984_度";
+      queryService = new Zondy.MRFS.QueryLayerFeature(queryParam, {
+        domain,
+      });
     }
     const promise = new Promise((resolve, reject) => {
       queryService.query(
-        res => {
+        (res) => {
           if (!res) {
             resolve(undefined);
           } else {
             resolve(res);
           }
         },
-        error => {
+        (error) => {
           console.log(error);
           reject(error);
         }
       );
     });
-    return promise.then(res => {
+    return promise.then((res) => {
       return res;
     });
   }
@@ -349,7 +370,7 @@ export default class FeatureQuery {
           ? option.EnableDisplayCondition
           : false,
       Intersect: option.Intersect !== undefined ? option.Intersect : true,
-      MustInside: option.MustInside !== undefined ? option.MustInside : false
+      MustInside: option.MustInside !== undefined ? option.MustInside : false,
     });
     queryParam.rule = rule.toJSON();
     const structs = new Zondy.MRFS.QueryFeatureStruct({
@@ -360,7 +381,7 @@ export default class FeatureQuery {
       IncludeWebGraphic:
         option.IncludeWebGraphic !== undefined
           ? option.IncludeWebGraphic
-          : false
+          : false,
     });
     queryParam.structs = structs.toJSON();
     queryParam.objectIds = option.objectIds || undefined;
@@ -387,7 +408,7 @@ export default class FeatureQuery {
     let url;
     if (option.gdbp) {
       // 矢量图层
-      queryParam.desSrsName = 'WGS1984_度'
+      queryParam.desSrsName = "WGS1984_度";
       queryParam.gdbp = option.gdbp;
       queryParam.srsIds = option.srsIds;
       url = `${domain}/onemap/layer/query`;
@@ -409,7 +430,7 @@ export default class FeatureQuery {
     }
     const promise = new Promise((resolve, reject) => {
       axios.get(url, { params: queryParam }).then(
-        res => {
+        (res) => {
           const { data } = res;
           if (!data) {
             reject("undefined");
@@ -417,12 +438,12 @@ export default class FeatureQuery {
             resolve(data);
           }
         },
-        error => {
+        (error) => {
           reject(error);
         }
       );
     });
-    return promise.then(data => {
+    return promise.then((data) => {
       return data;
     });
   }
@@ -487,7 +508,7 @@ export default class FeatureQuery {
           ? option.EnableDisplayCondition
           : false,
       Intersect: option.Intersect !== undefined ? option.Intersect : true,
-      MustInside: option.MustInside !== undefined ? option.MustInside : false
+      MustInside: option.MustInside !== undefined ? option.MustInside : false,
     });
     queryParam.struct = new Zondy.MRFS.QueryFeatureStruct({
       IncludeAttribute:
@@ -497,7 +518,7 @@ export default class FeatureQuery {
       IncludeWebGraphic:
         option.IncludeWebGraphic !== undefined
           ? option.IncludeWebGraphic
-          : false
+          : false,
     });
     queryParam.objectIds = option.objectIds || null;
     queryParam.orderField = option.orderField || null;
@@ -520,7 +541,7 @@ export default class FeatureQuery {
       queryService = new Zondy.G3D.G3DMapDoc({
         domain,
         gdbp: option.gdbp,
-        ...queryParam
+        ...queryParam,
       });
     } else {
       // 矢量文档
@@ -536,11 +557,11 @@ export default class FeatureQuery {
         domain,
         docName,
         layerindex: layerIdxs,
-        ...queryParam
+        ...queryParam,
       });
     }
-    const promise = new Promise(resolve => {
-      queryService.GetFeature(res => {
+    const promise = new Promise((resolve) => {
+      queryService.GetFeature((res) => {
         if (!res) {
           resolve(undefined);
         } else {
@@ -548,7 +569,7 @@ export default class FeatureQuery {
         }
       });
     });
-    return promise.then(res => {
+    return promise.then((res) => {
       return res;
     });
   }
@@ -633,8 +654,8 @@ export default class FeatureQuery {
       domain = `${UrlUtil.getOrigin({ ip, port, protocol })}`;
     }
     const url = `${domain}/igs/rest/services/system/ResourceServer/tempData/features/query`;
-    const promise = new Promise(resolve => {
-      axios.get(url, { params: { ...queryParam } }).then(res => {
+    const promise = new Promise((resolve) => {
+      axios.get(url, { params: { ...queryParam } }).then((res) => {
         if (!res || !res.data) {
           resolve(undefined);
         } else {
@@ -642,7 +663,7 @@ export default class FeatureQuery {
         }
       });
     });
-    return promise.then(res => {
+    return promise.then((res) => {
       return res;
     });
   }
@@ -745,19 +766,19 @@ export default class FeatureQuery {
     queryParam.domain = domain;
     const promise = new Promise((resolve, reject) => {
       new Zondy.PostGIS.PostgisQueryService(queryParam).query(
-        res => {
+        (res) => {
           if (!res || !res.features) {
             reject("undefined");
           } else {
             resolve(res);
           }
         },
-        error => {
+        (error) => {
           reject(error);
         }
       );
     });
-    return promise.then(res => {
+    return promise.then((res) => {
       return res;
     });
   }
@@ -811,19 +832,19 @@ export default class FeatureQuery {
     }
     const promise = new Promise((resolve, reject) => {
       new fun(queryParam).query(
-        res => {
+        (res) => {
           if (!res || !res.t) {
             reject("undefined");
           } else {
             resolve(res.t);
           }
         },
-        error => {
+        (error) => {
           reject(error);
         }
       );
     });
-    return promise.then(res => {
+    return promise.then((res) => {
       return res;
     });
   }
