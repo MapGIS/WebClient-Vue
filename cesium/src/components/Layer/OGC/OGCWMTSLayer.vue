@@ -5,8 +5,7 @@
 <script>
 import ServiceLayer from "../ServiceLayer";
 import { WMTSLayer } from "@mapgis/webclient-common";
-import { initializeOptions } from "@mapgis/webclient-cesium-plugin";
-import debounce from "lodash/debounce";
+
 export default {
   name: "mapgis-3d-ogc-wmts-layer",
   inject: ["Cesium", "viewer"],
@@ -83,7 +82,7 @@ export default {
     mount() {
       // 只有当baseUrl存在时，才进行原始图层添加的逻辑，当baseUrl不存在时，有可能是仅初始化图层或者通过sourceLayer来添加图层
       if (!this.baseUrl) {
-        return
+        return;
       }
       const { viewer } = this;
       const { tileMatrixSet, wmtsStyle, format, options, token } = this;
@@ -95,83 +94,19 @@ export default {
         extensionOptions: this.options?.extensions
           ? this.options.extensions
           : {},
+        activeLayer: {
+          id: activeWMTSLayer,
+          tileMatrixSetId: tileMatrixSet,
+          styleId: wmtsStyle,
+          imageFormat: format,
+        },
       };
       if (token.key && token.value) {
         paramOptions.tokenKey = token.key;
         paramOptions.tokenValue = token.value;
       }
       const wmtsLayer = new WMTSLayer(paramOptions);
-      const vm = this;
-      // 获取WMTS图层服务的元信息
-      wmtsLayer.load().then((layer) => {
-        if (!layer.loaded) {
-          return;
-        }
-        const { sublayers, tileMatrixSets, activeLayer } = layer;
-        // 判断当前activeLayer的identifier是否与传入的wmtsLayer一致
-        const isSameIdentifier = activeLayer.identifier === activeWMTSLayer;
-        // 找到与传入的tileMatrixSetId一致的tileMatrixSet，若不存在则不处理
-        const targetTileMatrixSet = tileMatrixSets.find(
-          (item) => item.identifier === tileMatrixSet
-        );
-        // 当前activeLayer的identifier是否与传入的wmtsLayer不一致则查找sublayers中对应的activeLayer
-        if (!isSameIdentifier) {
-          // 查找与传入的wmtsLayer一致的sublayer
-          const targetActiveLayer = sublayers.items.find(
-            (item) => item.identifier === activeWMTSLayer
-          );
-          // 找到目标sublayer则使用targetActiveLayer作为activeLayer
-          if (targetActiveLayer) {
-            // 判断传入的tileMatrixSetId是否存在对应的tileMatrixSet
-            if (targetTileMatrixSet) {
-              targetActiveLayer.tileMatrixSetId =
-                targetTileMatrixSet.identifier;
-            }
-            // 设置targetActiveLayer的imageFormat
-            targetActiveLayer.imageFormat = format;
-            // 找到与传入的wmtsStyle一致的styleId，若不存在则不处理
-            const targetStyle = targetActiveLayer.styles.find(
-              (item) => item.id === wmtsStyle
-            );
-            if (targetStyle) {
-              targetActiveLayer.styleId = wmtsStyle;
-            }
-            layer.activeLayer = targetActiveLayer;
-          } else {
-            // 如果不存在与传入的wmtsLayer一致的sublayer则使用默认的activeLayer，即sublayers[0]
-            if (targetTileMatrixSet) {
-              activeLayer.tileMatrixSetId = targetTileMatrixSet.identifier;
-            }
-            // 设置activeLayer的imageFormat
-            activeLayer.imageFormat = format;
-            // 找到与传入的wmtsStyle一致的styleId，若不存在则不处理
-            const targetStyle = activeLayer.styles.find(
-              (item) => item.id === wmtsStyle
-            );
-            if (targetStyle) {
-              activeLayer.styleId = wmtsStyle;
-            }
-          }
-        } else {
-          // activeLayer的identifier与传入的wmtsLayer一致则直接修改activeLayer
-          // 设置activeLayer的tileMatrixSetId
-          if (targetTileMatrixSet) {
-            activeLayer.tileMatrixSetId = targetTileMatrixSet.identifier;
-          }
-          // 设置activeLayer的imageFormat
-          activeLayer.imageFormat = format;
-          // 找到与传入的wmtsStyle一致的styleId，若不存在则不处理
-          const targetStyle = activeLayer.styles.find(
-            (item) => item.id === wmtsStyle
-          );
-          if (targetStyle) {
-            activeLayer.styleId = wmtsStyle;
-          }
-        }
-        // 获取provider的初始化参数
-        const cesiumOptions = initializeOptions(layer, viewer);
-        vm.$_mount(cesiumOptions);
-      });
+      this.$_loadCommonLayer(wmtsLayer);
     },
     unmount() {
       this.$_unmount();

@@ -4,7 +4,6 @@
 <script>
 import ServiceLayer from "../ServiceLayer";
 import { IGSMapImageLayer, SpatialReference } from "@mapgis/webclient-common";
-import { initializeOptions } from "@mapgis/webclient-cesium-plugin";
 
 export default {
   name: "mapgis-3d-igs-doc-layer",
@@ -67,39 +66,25 @@ export default {
         wkid = this.srs.split("EPSG:")[1];
       }
       const { viewer, layers } = this;
-      // 修改说明：目前common层如果没有传组图层id，则不会显示组图层及其子图层，但是一张图的layers中是排除了组图层id的，原因可以看bug(6552)
-      // 这里将layers挂到extensionOptions上，不再传sublayers
-      // 龚跃健-2026-1-21
-      const extensionOptions = JSON.parse(JSON.stringify(this.options?.extensions || {}))
-      extensionOptions.layers = layers;
-      const igsMapImageLayer = new IGSMapImageLayer({
-        url: baseUrl,
-        renderMode: this.renderMode === "image-map" ? "image" : "tile",
-        extensionOptions,
-      });
-      const self = this;
-      igsMapImageLayer.load().then((layer) => {
-        if (!layer.loaded) {
-          return;
-        }
-        // 获取provider的初始化参数
-        const cesiumOptions = initializeOptions(layer, viewer);
-        const { rectangle } = cesiumOptions;
-        if (rectangle) {
-          const { west, south, east, north } = rectangle;
-          // 如果范围无效，则不加载
-          if (west >= east || south >= north) {
-            return;
-          }
-        }
-        self.$_mount(cesiumOptions);
-      });
       // 如果是一张图出图，那么providerName为MapGISMapServer一张图出图provider
       if (this.renderMode && this.renderMode === "image-map") {
         this.providerName = "MapGISMapServerSingleImageryProvider";
       } else {
         this.providerName = "MapGISMapServerImageryProvider";
       }
+      // 修改说明：目前common层如果没有传组图层id，则不会显示组图层及其子图层，但是一张图的layers中是排除了组图层id的，原因可以看bug(6552)
+      // 这里将layers挂到extensionOptions上，不再传sublayers
+      // 龚跃健-2026-1-21
+      const extensionOptions = JSON.parse(
+        JSON.stringify(this.options?.extensions || {})
+      );
+      extensionOptions.layers = layers;
+      const igsMapImageLayer = new IGSMapImageLayer({
+        url: baseUrl,
+        renderMode: this.renderMode === "image-map" ? "image" : "tile",
+        extensionOptions,
+      });
+      this.$_loadCommonLayer(igsMapImageLayer);
     },
     unmount() {
       this.$_unmount();

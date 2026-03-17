@@ -227,6 +227,38 @@ export default {
       }
       return true;
     },
+    // 加载common图层
+    async $_loadCommonLayer(commonLayer) {
+      // 修改说明：增加时间戳，防止图层被多次添加，确保在频繁更新时只加载最后一次更新的图层;
+      // timestampVue是为了避免与commonLayer上原有的timestamp冲突
+      // 龚跃健-2026-1-29
+      this.timestampVue = new Date().getTime();
+      if (commonLayer.extendProps) {
+        commonLayer.extendProps.timestampVue = this.timestampVue;
+      } else {
+        commonLayer.extendProps = {
+          timestampVue: this.timestampVue,
+        };
+      }
+      const loadedLayer = await commonLayer.load();
+      if (loadedLayer.extendProps.timestampVue < this.timestampVue) {
+        return undefined;
+      }
+      if (!loadedLayer.loaded) {
+        return undefined;
+      }
+      // 获取provider的初始化参数
+      const cesiumOptions = initializeOptions(loadedLayer, viewer);
+      const { rectangle } = cesiumOptions;
+      if (rectangle) {
+        const { west, south, east, north } = rectangle;
+        // 如果范围无效，则不加载
+        if (west >= east || south >= north) {
+          return;
+        }
+      }
+      await this.$_mount(cesiumOptions);
+    },
     /*
      * 通用的mount函数，建议使用时在自己的mount函数里面调用此函数，并在mounted生命周期调用
      * 使用前请优先处理好自己组建里非通用参数，然后传入$_mount
@@ -412,6 +444,9 @@ export default {
       this.$emit("load", imageryLayer, this);
     },
     $_unmount() {
+      // 修改说明：给时间戳重新赋值，如果在commonLayer load过程中执行this.$_unmount()方法，则可以阻止图层的加载;
+      // 龚跃健-2026-1-30
+      this.timestampVue = new Date().getTime();
       let { vueKey, vueIndex } = this;
       const { imageryLayers } = this.$_getWebGlobe();
       let find = window.vueCesium[this.managerName].findSource(

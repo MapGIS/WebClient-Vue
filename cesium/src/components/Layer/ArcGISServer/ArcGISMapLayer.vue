@@ -4,7 +4,6 @@
 <script>
 import ServiceLayer from "../ServiceLayer";
 import { ArcGISMapImageLayer } from "@mapgis/webclient-common";
-import { initializeOptions } from "@mapgis/webclient-cesium-plugin";
 
 export default {
   name: "mapgis-3d-arcgis-map-layer",
@@ -77,53 +76,38 @@ export default {
       let { layers } = this;
 
       const { viewer } = this;
+      // 如果是一张图出图，那么providerName为ArcGISMapServer一张图出图provider
+      if (this.renderMode && this.renderMode === "image-map") {
+        this.providerName = "ArcGISMapServerSingleImageryProvider";
+      }
+
+      const extensionOptions = JSON.parse(
+        JSON.stringify(this.options?.extensions || {})
+      );
+
+      if (layers && layers !== "") {
+        extensionOptions.layers = layers;
+      }
+
+      if (this.renderMode && this.renderMode === "raster") {
+        // 不使用瓦片缓存，部分服务可能没有开启瓦片服务，比如IGS转发的ArcGIS服务
+        extensionOptions.usePreCachedTilesIfAvailable = false;
+      }
 
       const paramOptions = {
         url: baseUrl,
         renderMode: "image",
         extent: options.rectangle || null,
-        extensionOptions: this.options?.extensions
-          ? this.options.extensions
-          : {},
+        extensionOptions,
       };
 
       if (token.key && token.value) {
-        // const headers = {};
-        // headers[token.key] = token.value;
-        // paramOptions.headers = headers;
         paramOptions.tokenKey = token.key;
         paramOptions.tokenValue = token.value;
       }
 
       const arcGISMapImageLayer = new ArcGISMapImageLayer(paramOptions);
-      const self = this;
-      arcGISMapImageLayer.load().then((layer) => {
-        if (!layer.loaded) {
-          return;
-        }
-        // 获取provider的初始化参数
-        const cesiumOptions = initializeOptions(layer, viewer);
-        const { rectangle } = cesiumOptions;
-        if (rectangle) {
-          const { west, south, east, north } = rectangle;
-          // 如果范围无效，则不加载
-          if (west >= east || south >= north) {
-            return;
-          }
-        }
-        if (layers && layers !== "") {
-          cesiumOptions.layers = layers;
-        }
-        if (this.renderMode && this.renderMode === "raster") {
-          // 不使用瓦片缓存，部分服务可能没有开启瓦片服务，比如IGS转发的ArcGIS服务
-          cesiumOptions.usePreCachedTilesIfAvailable = false;
-        }
-        self.$_mount(cesiumOptions);
-      });
-      // 如果是一张图出图，那么providerName为ArcGISMapServer一张图出图provider
-      if (this.renderMode && this.renderMode === "image-map") {
-        this.providerName = "ArcGISMapServerSingleImageryProvider";
-      }
+      this.$_loadCommonLayer(arcGISMapImageLayer);
     },
     unmount() {
       this.$_unmount();

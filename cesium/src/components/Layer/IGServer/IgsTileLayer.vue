@@ -5,7 +5,6 @@
 <script>
 import ServiceLayer from "../ServiceLayer";
 import { IGSTileLayer, SpatialReference } from "@mapgis/webclient-common";
-import { initializeOptions } from "@mapgis/webclient-cesium-plugin";
 
 export default {
   name: "mapgis-3d-igs-tile-layer",
@@ -35,7 +34,7 @@ export default {
     mount() {
       // 当commonLayer存在时，使用commonLayer构造图层，否则按照原始逻辑构造图层
       if (this.commonLayer) {
-        return
+        return;
       }
       //处理独有参数
       const { viewer } = this;
@@ -48,24 +47,7 @@ export default {
           ? this.options.extensions
           : {},
       });
-      const vm = this;
-      // 获取瓦片图层服务的元信息
-      igsTileLayer.load().then((layer) => {
-        if (!layer.loaded) {
-          return;
-        }
-        // 获取provider的初始化参数
-        const cesiumOptions = initializeOptions(layer, viewer);
-        const { rectangle } = cesiumOptions;
-        if (rectangle) {
-          const { west, south, east, north } = rectangle;
-          // 如果范围无效，则不加载
-          if (west >= east || south >= north) {
-            return;
-          }
-        }
-        vm.$_mount(cesiumOptions);
-      });
+      this.$_loadCommonLayer(igsTileLayer);
     },
     unmount() {
       this.$_unmount();
