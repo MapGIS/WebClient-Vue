@@ -741,7 +741,7 @@ export default {
       const { commonLayer } = this;
       if (commonLayer) {
         this.remove(this.lastStyle);
-        const mapboxglOptions = initializeOptions(commonLayer, viewer);
+        const mapboxglOptions = initializeOptions(commonLayer);
         const { layers, sources } = mapboxglOptions;
         this.lastStyle = clonedeep(mapboxglOptions);
         const tileInfo = TileInfoUtil.getTileInfoByLayer(commonLayer);

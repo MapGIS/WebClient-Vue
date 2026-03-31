@@ -198,7 +198,7 @@ export default {
       const { commonLayer } = this;
       if (commonLayer) {
         this.$_deferredUnMount();
-        const mapboxglOptions = initializeOptions(commonLayer, viewer);
+        const mapboxglOptions = initializeOptions(commonLayer);
         const { layers, sources } = mapboxglOptions;
         layers[0].id = commonLayer.id;
         this.layerIdBack = layers[0].id;
