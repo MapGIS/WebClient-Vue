@@ -68,6 +68,7 @@ import aspect from "./Aspect.vue";
 import slope from "./Slope.vue";
 import Popup from "../UI/Popup/Popup.vue";
 import PopupContent from "../UI/Geojson/Popup.vue";
+import { Polygon } from "@mapgis/webclient-common";
 
 export default {
   name: "mapgis-3d-aspect-slope",
@@ -243,6 +244,39 @@ export default {
         // 绘制完成回调函数
         callback: (result) => {
           drawElement.stopDrawing();
+
+          const positions = result.positions;
+          // 需要进行地形是否有法向量的判断, 没有法向量要给用户一个提示
+          const terrainProvider = viewer.terrainProvider;
+
+          if (terrainProvider instanceof zondy.cesium.MapGISTerrainProvider) {
+            const coordinates = [[]];
+            positions.forEach((position) => {
+              const cartographic = Cesium.Cartographic.fromCartesian(position);
+              coordinates[0].push([
+                Cesium.Math.toDegrees(cartographic.longitude),
+                Cesium.Math.toDegrees(cartographic.latitude),
+                cartographic.height,
+              ]);
+            });
+
+            const polygon = new Polygon({
+              coordinates,
+            });
+
+            const layers = terrainProvider.getLayersByRange(polygon);
+
+            if (!layers?.length) {
+              return this.$message.error("此处分析区域没有地形");
+            }
+          }
+
+          // 判断地形是否含有法向量
+          const hasVertexNormals = terrainProvider.hasVertexNormals;
+          if (!hasVertexNormals) {
+            return this.$message.error("坡度坡向分析需要带法线地形");
+          }
+
           this._enableBrightness(); // 开启光照
           aspectSlopeAnalysis =
             aspectSlopeAnalysis ||
