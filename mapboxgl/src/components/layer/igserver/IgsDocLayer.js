@@ -215,6 +215,7 @@ export default {
           tiles: [this._url],
           tileSize: this.tileSize,
           mapgisOffset: this.zoomOffset,
+          maxzoom: this.map.getMaxZoom(),
           ...this.source,
         };
       }
