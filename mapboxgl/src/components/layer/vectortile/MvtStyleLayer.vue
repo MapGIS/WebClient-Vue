@@ -118,7 +118,7 @@ export default {
       if (!this.commonLayer) {
         return;
       }
-      if (this.newBefore !== oldBefore) {
+      if (newBefore !== oldBefore) {
         this.$_deferredMountByCommonLayer();
       }
     },
