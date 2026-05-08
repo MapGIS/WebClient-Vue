@@ -111,6 +111,17 @@ export default {
       deep: true,
       immediate: true,
     },
+    before: function (newBefore, oldBefore) {
+      // 修改说明：如果新加的图层要显示在矢量瓦片下层，则需要重新加载矢量瓦片，把新加的图层ID作为矢量瓦片的beforeId
+      // 修改人：龚跃健-20260507
+      // 如果是已加载并且beforeId发生了变化才重新加载图层
+      if (!this.commonLayer) {
+        return;
+      }
+      if (newBefore !== oldBefore) {
+        this.$_deferredMountByCommonLayer();
+      }
+    },
     commonLayer: {
       handler: function (newLayer, oldLayer) {
         this.lastStyle = clonedeep(newLayer._style);
@@ -741,7 +752,7 @@ export default {
       const { commonLayer } = this;
       if (commonLayer) {
         this.remove(this.lastStyle);
-        const mapboxglOptions = initializeOptions(commonLayer, viewer);
+        const mapboxglOptions = initializeOptions(commonLayer);
         const { layers, sources } = mapboxglOptions;
         this.lastStyle = clonedeep(mapboxglOptions);
         const tileInfo = TileInfoUtil.getTileInfoByLayer(commonLayer);

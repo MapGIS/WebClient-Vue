@@ -169,6 +169,7 @@ export default {
           type: "raster",
           tiles: [this._url],
           tileSize: this.tileSize,
+          maxzoom: this.map.getMaxZoom(),
           ...this.source
         };
       }

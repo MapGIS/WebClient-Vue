@@ -30,9 +30,9 @@ import { G3D } from "@mapgis/webclient-es6-service";
 import Tileset3dOptions from "./3DTilesetOptions";
 import { M3dType, M3dType_0_0 } from "./M3dType";
 import PopupMixin from "../Mixin/PopupMixin";
+import BindingQueryMixin from "./mixins/BindingQueryMixin";
 import modelSwitchPopup from "./components/M3dModelSwitch";
 import Popup from "../../UI/Popup/Popup.vue";
-import * as Feature from "../../service/comprehensive-query/util/feature";
 import VoxelLayer from "./Voxel.vue";
 import { M3DModelCacheLayer } from "@mapgis/webclient-common";
 import { initializeOptions } from "@mapgis/webclient-cesium-plugin";
@@ -46,7 +46,7 @@ export default {
     VoxelLayer,
   },
   inject: ["Cesium", "vueCesium", "viewer"],
-  mixins: [PopupMixin],
+  mixins: [PopupMixin, BindingQueryMixin],
   props: {
     ...Tileset3dOptions,
     // 右侧展示气泡框props
@@ -81,16 +81,11 @@ export default {
         return { popupType: "card" };
       },
     },
-    // 挂靠的查询参数，比如三维简单要素类，如果有挂靠的查询参数，则拾取的要素属性使用从三维简单要素类里的内容
-    searchParams: {
-      type: Object,
-      default: () => {},
-    },
-     // 图层跳转时间
-     duration: {
+    // 图层跳转时间
+    duration: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
   data() {
     return {
@@ -218,6 +213,7 @@ export default {
           let m3ds = [m3dset];
           vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, {
             url: url,
+            commonLayer: layer,
           });
           const layerInfo = m3dset.layerinfo;
           if (layerInfo && layerInfo.length) {
@@ -374,7 +370,7 @@ export default {
       let titlefield = popupOptions ? popupOptions.title : undefined;
       // 优先基于id，通过IGS要素查询的方式获取要素属性信息
       const properties = await this.getFeaturePorpertiesById(id);
-      if (Object.keys(properties).length) {
+      if (properties && Object.keys(properties).length) {
         if (vm.showPopup) {
           if (this.popupShowType === "default") {
             vm.featureproperties = properties;
@@ -475,38 +471,12 @@ export default {
      * @return {Object} 要素属性信息
      */
     async getFeaturePorpertiesById(id) {
-      const properties = {};
-      if (this.searchParams) {
-        const { domain, serverName, layerIndex, gdbp } = this.searchParams;
-        const featureSet = await Feature.FeatureQuery.query(
-          {
-            domain,
-            f: "json",
-            IncludeAttribute: true,
-            IncludeGeometry: false,
-            IncludeWebGraphic: false,
-            where: null,
-            gdbp,
-            docName: serverName,
-            layerIdxs: layerIndex,
-            rtnLabel: false,
-            objectIds: id,
-            requestType: "POST",
-          },
-          false,
-          true
-        );
-        if (featureSet && featureSet.SFEleArray) {
-          const { AttStruct, SFEleArray } = featureSet;
-          const { FldAlias, FldName } = AttStruct;
-          const { AttValue } = SFEleArray[0];
+      const { vueKey, vueIndex } = this;
+      const find = vueCesium.M3DIgsManager.findSource(vueKey, vueIndex);
+      // 通过webclient-common层的图层对象，获取title
+      const { commonLayer } = find.options;
+      const properties = await this.getFeatureProperties(commonLayer, id);
 
-          for (let i = 0; i < AttValue.length; i++) {
-            const tag = FldAlias[i] ? FldAlias[i] : FldName[i];
-            properties[tag] = AttValue[i];
-          }
-        }
-      }
       return properties;
     },
   },

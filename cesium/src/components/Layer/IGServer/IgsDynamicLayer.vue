@@ -4,7 +4,6 @@
 <script>
 import ServiceLayer from "../ServiceLayer";
 import { IGSFeatureLayer } from "@mapgis/webclient-common";
-import { initializeOptions } from "@mapgis/webclient-cesium-plugin";
 
 export default {
   name: "mapgis-3d-igs-dynamic-layer",
@@ -88,23 +87,8 @@ export default {
         options.tokenValue = tokenInfo[1];
       }
 
-      const vm = this;
       const igsFeatureLayer = new IGSFeatureLayer(options);
-      igsFeatureLayer.load().then((layer) => {
-        if (!layer.loaded) {
-          return;
-        }
-        const cesiumOptions = initializeOptions(layer);
-        const { rectangle } = cesiumOptions;
-        if (rectangle) {
-          const { west, south, east, north } = rectangle;
-          // 如果范围无效，则不加载
-          if (west >= east || south >= north) {
-            return;
-          }
-        }
-        vm.$_mount(cesiumOptions);
-      });
+      this.$_loadCommonLayer(igsFeatureLayer);
     },
     unmount() {
       this.$_unmount();

@@ -5,7 +5,6 @@
 <script>
 import ServiceLayer from "../ServiceLayer";
 import { WMSLayer } from "@mapgis/webclient-common";
-import { initializeOptions } from "@mapgis/webclient-cesium-plugin";
 
 export default {
   name: "mapgis-3d-ogc-wms-layer",
@@ -87,7 +86,7 @@ export default {
     mount() {
       // 只有当baseUrl存在时，才进行原始图层添加的逻辑，当baseUrl不存在时，有可能是仅初始化图层或者通过sourceLayer来添加图层
       if (!this.baseUrl) {
-        return
+        return;
       }
       const {
         viewer,
@@ -111,6 +110,10 @@ export default {
           }
         }
       }
+      // 如果是一张图出图，那么providerName为wms一张图出图provider
+      if (this.renderMode && this.renderMode === "image-map") {
+        this.providerName = "WebMapServiceSingleImageryProvider";
+      }
       const paramOptions = {
         url: baseUrl,
         renderMode: this.renderMode == "map-image" ? "image" : "tile",
@@ -129,19 +132,7 @@ export default {
         paramOptions.tokenValue = token.value;
       }
       const wmsLayer = new WMSLayer(paramOptions);
-      const self = this;
-      wmsLayer.load().then((layer) => {
-        if (!layer.loaded) {
-          return;
-        }
-        // 获取provider的初始化参数
-        const cesiumOptions = initializeOptions(layer, viewer);
-        this.$_mount(cesiumOptions);
-      });
-      // 如果是一张图出图，那么providerName为wms一张图出图provider
-      if (this.renderMode && this.renderMode === "image-map") {
-        this.providerName = "WebMapServiceSingleImageryProvider";
-      }
+      this.$_loadCommonLayer(wmsLayer);
     },
     unmount() {
       this.$_unmount();

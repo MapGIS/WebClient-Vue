@@ -2,6 +2,7 @@ import layerMixin from "../layerMixin";
 import layerEvents from "../../../lib/layerEvents";
 import clonedeep from "lodash.clonedeep";
 
+import { IGSFeatureLayer } from "@mapgis/webclient-common";
 import { MRFS } from "@mapgis/webclient-es6-service";
 const { QueryDocFeature, QueryLayerFeature } = MRFS;
 
@@ -44,8 +45,22 @@ export default {
       type: Boolean,
       default: true,
     },
+    renderMode: {
+      type: String,
+      default: "client",
+    },
+    token: {
+      type: Object,
+      default: () => {},
+    },
+    commonLayer: {
+      type: Object,
+    },
   },
   render(h) {
+    if (!this.showLayer) {
+      return h();
+    }
     return h("div", [
       h("mapgis-geojson-layer", {
         ref: "geojsonLayer",
@@ -53,7 +68,7 @@ export default {
           layerId: this.layerId,
           sourceId: this.sourceId,
           visible: this.visible,
-          data: this.baseUrl,
+          data: this.geojsonData,
           layerStyle: this.layerStyle.featureStyle,
           enablePopup: this.enablePopup,
           popupOptions: this.popupOptions,
@@ -66,76 +81,64 @@ export default {
       }),
     ]);
   },
+  data() {
+    return {
+      geojsonData: null,
+      showLayer: false,
+    };
+  },
+  watch: {
+    baseUrl(val) {
+      this.showLayer = false;
+      this.$nextTick(() => {
+        this.mount();
+      });
+    },
+    gdbps(val) {
+      this.showLayer = false;
+      this.$nextTick(() => {
+        this.mount();
+      });
+    },
+  },
+  mounted() {
+    this.mount();
+  },
   methods: {
-    $_init() {
-      if (this.baseUrl) {
-        let partUrl = this.$_initAllRequestParams().join("&");
-        this._url = encodeURI(this.baseUrl + "?" + partUrl) + "&bbox={bbox}";
-      } else if (this.url) {
-        let url = this.url;
-        if (url.indexOf("?") === -1) {
-          url += "?";
-          url += "bbox={bbox}&";
-        } else if (url.indexOf("bbox") === -1) {
-          url += "&bbox={bbox}&";
-        }
-        let partUrl = this.$_initAllRequestParams().join("&");
-        url += partUrl;
-        this._url = url;
-        return;
+    async mount() {
+      if (this.commonLayer) {
+        this.igsFeatureLayer = this.commonLayer.clone();
       } else {
-        let domain = this.domain;
-        if (!domain) {
-          domain = this.protocol + "://" + this.ip + ":" + this.port;
+        const { baseUrl, gdbps, token, renderMode } = this;
+        if (baseUrl && gdbps) {
+          const options = {
+            url: baseUrl,
+            gdbp: gdbps,
+            renderMode,
+          };
+          if (token.tokenKey && token.tokenValue) {
+            options.tokenKey = token.tokenKey;
+            options.tokenValue = token.tokenValue;
+          }
+          this.igsFeatureLayer = new IGSFeatureLayer(options);
         }
-        let tempUrl = domain + "/igs/rest/mrms/layers";
-        let partUrl = this.$_initAllRequestParams().join("&");
-        this._url = encodeURI(tempUrl + "?" + partUrl) + "&bbox={bbox}";
       }
-    },
-    $_initAllRequestParams() {
-      let params = [];
-      params.push("guid=" + this.guid);
-      let gdbps;
-      if (typeof this.gdbps === "string") {
-        gdbps = this.gdbps;
-      } else {
-        gdbps = this.gdbps.toString();
-      }
-      params.push("gdbps=" + gdbps);
-
-      if (this.filters) {
-        params.push("filters=" + this.filters);
-      }
-      if (this.igsMapStyle) {
-        params.push("style=" + JSON.stringify(this.igsMapStyle));
-      }
-
-      return params;
-    },
-    $_deferredMount() {
-      /* this.$_init();
-      let source = {
-        type: "raster",
-        tiles: [this._url],
-        tileSize: this.tileSize,
-        mapgisOffset: this.zoomOffset,
-        ...this.source
-      };
-
-      this.map.on("dataloading", this.$_watchSourceLoading);
       try {
-        this.map.addSource(this.sourceId || this.layerId, source);
-      } catch (err) {
-        if (this.replaceSource) {
-          this.map.removeSource(this.sourceId || this.layerId);
-          this.map.addSource(this.sourceId || this.layerId, source);
+        if (!this.igsFeatureLayer.loaded) {
+          await this.igsFeatureLayer.load();
         }
+        const jsonData = await this.igsFeatureLayer.queryFeatures({
+          resultRecordCount: 100000,
+        });
+        this.geojsonData = jsonData.toGeoJSON();
+        this.showLayer = true;
+      } catch (error) {
+        this.geojsonData = null;
+        this.showLayer = false;
       }
-      this.$_addLayer();
-      this.$_bindLayerEvents(layerEvents);
-      this.map.off("dataloading", this.$_watchSourceLoading);
-      this.initial = false; */
     },
+  },
+  beforeDestroy() {
+    this.showLayer = false;
   },
 };
