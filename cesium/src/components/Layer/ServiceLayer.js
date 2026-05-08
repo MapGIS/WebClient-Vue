@@ -166,8 +166,6 @@ export default {
      */
     commonLayer: {
       handler: function (newLayer, oldLayer) {
-        console.log("oldLayer: ", oldLayer);
-        console.log("newLayer: ", newLayer);
         const { vueKey, vueIndex } = this;
         // 是否重新加载图层
         let reloadLayer = true;
